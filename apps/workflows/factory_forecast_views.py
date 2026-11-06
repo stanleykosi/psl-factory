@@ -68,9 +68,15 @@ def create(request):
 def detail(request,work):
     from .factory_views import presentation,permitted
     scenario,selected=service.source(work,request.user,False)
-    inputs=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,scenario_reference=scenario.reference,initial=selected)
+    inputs=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,scenario_reference=scenario.reference,initial=selected)
     human_actions={'actual','verify','match','unmatch','review','priority'}
     forms_list=[r for r in commands(work.case,request.POST if request.method=='POST' else None) if r['action'] in human_actions]
+    pin=service.observed(work,'forecast_run')
+    for entry in forms_list:
+        f=entry['form']
+        if 'run' in f.fields:f.fields['run'].queryset=f.fields['run'].queryset.filter(pk=pin)
+        if 'scenario' in f.fields:f.fields['scenario'].queryset=f.fields['scenario'].queryset.filter(pk=scenario.pk)
+        if 'match' in f.fields:f.fields['match'].queryset=f.fields['match'].queryset.filter(root_id=service.forecast.root_of(scenario).pk)
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('work_revision',p.get('revision','0')));case_revision=int(p.get('case_revision',p.get('revision','0')))
@@ -78,6 +84,9 @@ def detail(request,work):
             elif action=='correct':
                 if not inputs.is_valid():raise ValidationError('Choose exact scenario, horizon and complete source inventory')
                 service.correct(request.user,work.pk,revision,case_revision,inputs.selection(),p.get('reason',''))
+            elif action=='restart':
+                if not inputs.is_valid():raise ValidationError('Choose exact current scenario, horizon and source inventory')
+                service.restart(request.user,work.pk,revision,case_revision,inputs.selection(),int(p.get('configuration','0')),p.get('reason',''))
             elif action in human_actions:
                 form=next(r['form'] for r in forms_list if r['action']==action)
                 if not form.is_valid():raise ValidationError(form.errors.as_text())

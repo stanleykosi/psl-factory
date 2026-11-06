@@ -4,6 +4,7 @@ Selections are not calculation pins: every native case actual remains in the
 native manifest even when it was not selected as a scenario assumption.
 """
 from copy import deepcopy
+from datetime import date
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from apps.core.models import Evidence
@@ -88,12 +89,20 @@ def investigation(actor, case, value, run_id=None):
     else:
         findings.append('Calculate the exact selected scenario using the configured native forecast method')
     p = scenario.payload
+    repeated = bool(scenario.parent_id and scenario.parent.scenario.parent_id and any(x['disposition']=='carry' for x in p['rollover']))
+    if repeated:
+        findings.append('Repeated carry retains original age; Finance should reassess continuing validity. Fresh opening evidence is not renewed evidence of receipt certainty.')
+    aging = [{'item':i['key'], 'original_due':i['original_due'], 'expected_on':i['expected_on'],
+              'days_past_original_due':max(0,(date.fromisoformat(p['as_of'])-date.fromisoformat(i['original_due'])).days) if i['original_due'] else None}
+             for i in p['items']]
     result = {
         'protocol': 'factory-forecast-investigation/v1',
         'selection': deepcopy(value),
         'selection_hash': digest(value),
         'calculation_pin': {'run_id': run.pk, 'sha256': run.sha256, 'current': current} if run else None,
         'calculation_inventory': deepcopy(run.manifest) if run else None,
+        'rollover': {'parent_run':scenario.parent_id, 'root_scenario':scenario.root_id, 'dispositions':deepcopy(p['rollover']), 'repeated_carry':repeated},
+        'aging': aging,
         'coverage': deepcopy(p['coverage']),
         'openings': deepcopy(p['openings']),
         'assumptions': deepcopy(p['items']),

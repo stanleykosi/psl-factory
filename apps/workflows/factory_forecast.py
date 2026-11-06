@@ -90,12 +90,12 @@ def document(work):
     return ForecastBinding.objects.select_related('version__document', 'version__template').filter(version_id=observed(work, 'document_version'), run__case=work.case).first()
 
 
-def principal(work, value, name):
+def principal(work, value, name, *, calculation_only=False):
     from django.contrib.auth import get_user_model
     u = get_user_model().objects.filter(pk=value[name], is_active=True).first()
     if not u:
         raise ValidationError('owner_needed: Configure the forecast '+name.replace('_id', ''))
-    actions = ['case.read', 'finance.read', 'factory.execute'] + (['finance.forecast.calculate', 'finance.publish', 'document.draft'] if name == 'preparer_id' else ['document.publish'])
+    actions = ['case.read', 'finance.read', 'factory.execute'] + (['finance.forecast.calculate'] + ([] if calculation_only else ['finance.publish', 'document.draft']) if name == 'preparer_id' else ['document.publish'])
     try:
         for action in actions:
             require(u, work.case, action)
@@ -111,6 +111,7 @@ def report(work, actor=None):
     if not r:
         return status
     try:
+        status['stage'] = 'rework'
         forecast.ensure_current(r)
         status['stage'] = 'review'
         forecast.approved(r)
@@ -133,7 +134,8 @@ def snapshot(work, value, reader=None):
         if e.kind not in latest or latest[e.kind].version < e.version:
             latest[e.kind] = e
     missing = [k for k in value['required_evidence_kinds'] if k not in latest]
-    stale = [k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at < timezone.now()-timedelta(seconds=value['max_age_seconds'])]
+    cutoff = timezone.now()-timedelta(seconds=value['max_age_seconds'])
+    stale = [k for k in value['required_evidence_kinds'] if any(e.kind == k and e.created_at < cutoff for e in rows)]
     native = report(work, actor)
     jobs = list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'))
     state = {'case_revision':work.case.revision, 'profile':work.policy_id, 'sources':[(e.pk, e.sha256) for e in rows]+[(work.source_head_id,work.source_head.sha256)], 'native':native, 'checks':{'selection':digest(selected)}, 'jobs':[(j.pk,j.status) for j in jobs]}
@@ -155,8 +157,10 @@ def eligible(work, value, state, latest, missing, stale, tasks, jobs):
     stage = state['native']['stage']
     if stage == 'calculate':
         return ['ACT08'], 'Calculate the exact scenario using native Finance rules'
+    if stage == 'rework':
+        return [], 'Native calculation changed; explicitly correct the same source selection or select a revised scenario before recalculation'
     if stage == 'review':
-        return [], 'Await exact native human forecast review; actual verification and priorities remain human decisions'
+        return [], 'Await native readiness and exact human forecast review: '+state['native']['finding']
     if stage == 'complete':
         return ['ACT13'], 'Verify reviewed forecast and every aggregate recipient receipt'
     binding = document(work)
@@ -167,6 +171,8 @@ def act(work, choice, value, latest, missing, tasks, jobs):
     from .factory import access
     case = lock_case(work.execution_actor, work.case_id, 'factory.execute')
     access(work.execution_actor, case, 'factory.execute', DEFINITION)
+    from apps.identity.models import Grant
+    list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
     if case.revision != work.case.revision:
         raise ValidationError('STALE_VERSION: forecast sources changed')
     _, selected = source(work, work.execution_actor)
@@ -175,7 +181,7 @@ def act(work, choice, value, latest, missing, tasks, jobs):
     if kind == 'ACT04':
         return {'head':work.source_head_id, 'investigation':sources.investigation(work.execution_actor, case, selected, r.pk if r else None)}
     if kind == 'ACT08':
-        u = principal(work, value, 'preparer_id')
+        u = principal(work, value, 'preparer_id', calculation_only=True)
         r = sources.prepare(u, case.pk, selected, case.revision)
         return {'head':work.source_head_id, 'forecast_run':r.pk}
     if kind == 'ACT09':
@@ -234,6 +240,10 @@ def verify(work, actor=None):
         raise ValidationError('Await exact reviewed aggregate forecast')
     review = forecast.approved(r)
     v = binding.version
+    if v.template_id != selected['template_id'] or v.audience != selected['audience']:
+        raise ValidationError('Exact selected template and audience required for final verification')
+    if forecast_documents.report_inputs(r,v.audience) != binding.snapshot:
+        raise ValidationError('Exact current native forecast report inputs required for final verification')
     current_version(work.case,v.pk)
     dr = validate_review(work.case,v)
     policies,recipients,retention = publication_requirements(work.case,v)
@@ -350,7 +360,33 @@ def projection(actor, work):
     except PermissionDenied:pass
     run_id=observed(work,'forecast_run')
     r=sources.selected_run(actor,work.case,selected,run_id,current=False) if run_id else None
-    return {'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct}
+    for job in jobs:
+        job.can_operate=False;job.can_retry=False
+        job.receipts=list(PublicationReceipt.objects.filter(publication=job.publication).order_by('pk'))
+        try:
+            require(actor,work.case,'document.operate')
+            job.can_operate=not (work.lease_until and work.lease_until>timezone.now()) and not job.receipts and (job.status in ['pending','unknown','held'] or job.status=='leased' and job.lease_until and job.lease_until<=timezone.now())
+            job.can_retry=job.can_operate and not work.cancel_requested and job.status=='held'
+        except PermissionDenied:pass
+    review_roles=[]
+    if current and r and status['stage']=='review' and not work.cancel_requested and not (work.lease_until and work.lease_until>timezone.now()):
+        from apps.policy.document_validators import ROLES
+        try:
+            require(actor,work.case,'finance.forecast.review');forecast.review_snapshot(r)
+            for role in ROLES:
+                try:
+                    forecast.review_authority(actor,work.case,'forecast_rollover' if scenario.parent_id else 'forecast',role,'approve',r.actor_id);review_roles.append(role)
+                except (ValidationError,PermissionDenied):pass
+        except (ValidationError,PermissionDenied):pass
+    can_restart=False;restart_policy=None
+    try:
+        require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
+        from apps.policy.services import active_component
+        from .factory_definitions import definition
+        restart_policy=active_component(definition(DEFINITION)['component'],work.case).pk
+        can_restart=work.cancel_requested and work.status=='cancelled' and not (work.lease_until and work.lease_until>timezone.now()) and not any(j.status in ['pending','unknown','leased','held'] for j in jobs) and not PublicationReceipt.objects.filter(publication__factory_work=work).exists()
+    except (PermissionDenied,ValidationError):pass
+    return {'can_restart':can_restart,'restart_policy':restart_policy,'review_roles':review_roles,'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct}
 
 
 def reconcile(actor,work_id,expected,adapter=None):
@@ -378,7 +414,7 @@ def operate(actor,work_id,expected,case_expected,job_id,action,reason):
     from apps.documents.delivery import operate_publication
     w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);require(actor,w.case,'document.operate')
-    if any(type(pk) is not int or pk<1 for pk in [expected,case_expected,job_id]) or w.revision!=expected:raise ValidationError('STALE_VERSION: refresh exact change and project versions')
+    if any(type(pk) is not int or pk<1 for pk in [expected,case_expected,job_id]) or w.revision!=expected:raise ValidationError('STALE_VERSION: refresh exact forecast and engagement versions')
     if w.lease_until and w.lease_until>timezone.now():raise ValidationError('Wait for the current worker before operating delivery')
     if not PublicationJob.objects.filter(pk=job_id,publication__factory_work=w).exists():raise ValidationError('Choose this work original delivery')
     if action not in ['cancel','retry'] or not isinstance(reason,str):raise ValidationError('Choose a native recovery action and explain it')
@@ -401,3 +437,46 @@ def cancel(actor,work_id,expected):
     if w.lease_until and w.lease_until>timezone.now():return w
     w.status=cancellation_status(w);w.finding='Stopping work cannot undo an already delivered document or forecast review.'
     w.lease_until=None;w.revision+=1;w.save();return w
+
+
+@transaction.atomic
+def restart(actor, work_id, expected, case_expected, selected, configuration_id, reason):
+    """Fresh human instruction after settled, never-delivered preparation only."""
+    from .factory import access, profile
+    from .factory_definitions import definition
+    from apps.agents.factory_coordinator import pending, has_receipt
+    from apps.policy.services import active_component
+    w = Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
+    access(actor,w.case,'factory.manage',DEFINITION)
+    w.case=lock_case(actor,w.case_id,'evidence.add',case_expected)
+    if type(expected) is not int or w.revision!=expected or w.status!='cancelled' or not w.cancel_requested:
+        raise ValidationError('Only settled stopped forecast preparation can receive a fresh instruction')
+    if w.lease_until and w.lease_until>timezone.now() or PublicationJob.objects.filter(publication__factory_work=w,status__in=['pending','unknown','leased','held']).exists():
+        raise ValidationError('Resolve every original effect before restarting')
+    planning=pending(w)
+    if planning and not has_receipt(planning):
+        raise ValidationError('Resolve the original planning response before restarting')
+    if PublicationReceipt.objects.filter(publication__factory_work=w).exists():
+        raise ValidationError('Delivered forecasts require source-owned follow-up, not restart')
+    if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:
+        raise ValidationError('Explain the explicit fresh preparation instruction')
+    old,previous=source(w,actor,False)
+    scenario,rows=sources.selection(actor,w.case,selected)
+    if scenario.reference!=old.reference:
+        raise ValidationError('Restart only the exact native scenario reference')
+    config=active_component(definition(DEFINITION)['component'],w.case)
+    if type(configuration_id) is not int or config.pk!=configuration_id:
+        raise ValidationError('Explicitly select the exact current reviewed operating policy')
+    old_policy=w.policy_id
+    if old_policy and old_policy!=config.pk:
+        require(actor,w.case,'policy.activate')
+    w.policy=config
+    _,value=profile(w)
+    principal(w,value,'preparer_id');principal(w,value,'executor_id')
+    if w.budget_limit==0 and w.budget_used==0:
+        w.budget_limit=value['max_tokens']
+    old_head=w.source_head_id
+    w.source_head=capture(actor,w.case,selected,'factory.forecast_source')
+    w.cancel_requested=False;w.status='ready';w.finding='';w.lease_until=None;w.fence+=1;w.revision+=1;w.save()
+    event(actor,w.case,'factory.forecast_restarted',work=w.pk,previous=old_head,current=w.source_head_id,previous_policy=old_policy,current_policy=config.pk,reason=reason,spent=w.budget_used,lifetime_allowance=w.budget_limit)
+    return w

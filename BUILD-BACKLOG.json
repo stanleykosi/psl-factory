@@ -1,4 +1,25 @@
 {
+  "forecast_factory_increment": {
+    "status": "in_progress",
+    "process_ids": [
+      "F36",
+      "F37",
+      "F38",
+      "F39",
+      "F40",
+      "F41",
+      "F42"
+    ],
+    "source_branch": "build/factory-forecast",
+    "current_step": "Explicit native source/horizon selection, case-wide calculation pins, human decisions, aggregate receipts, source-owned rework, F42 native lineage and settled fresh-instruction restart implemented. Frozen provisional68-test cohort passed on035976a; not composed acceptance.",
+    "next_step": "Compose workflows0067/documents0023 only after accepted0065/0066/0022 plus impact0043 reconciliation; run final701, then separate typed group row-exclusion increment.",
+    "limits": [
+      "No new whole-process or full108 acceptance.",
+      "F39-N01 full-chain production oracle is owner-supplied, not inferred from synthetic monthly_cash_chain_v1.",
+      "F43 group projection and recipient/disclosure policy remain separate engineering and owner-configuration work.",
+      "Held performance operation and incomplete sign archive are not dependencies."
+    ]
+  },
   "controlled_change_factory_increment": {
     "status": "in_progress",
     "branch": "build/pmo-change",

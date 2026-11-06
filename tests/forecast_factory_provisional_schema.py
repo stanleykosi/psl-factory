@@ -23,6 +23,18 @@ def work_sql(previous):
   WHERE e.id=NEW.source_head_id AND e.case_id=NEW.case_id AND s.case_id=NEW.case_id
    AND e.kind='agent_private_forecast_intake' AND e.body::jsonb->>'protocol'='factory-forecast-selection/v1'
    AND s.reference=NEW.request->>'scenario_reference'
+   AND e.body::jsonb-ARRAY['protocol','scenario_id','as_of','months','source_ids','template_id','audience']='{}'::jsonb
+   AND e.body::jsonb->>'audience' IN ('internal','management')
+   AND jsonb_typeof(e.body::jsonb->'source_ids')='array'
+   AND jsonb_array_length(e.body::jsonb->'source_ids')=(SELECT count(*) FROM (
+    SELECT s.evidence_id AS id UNION SELECT (item->>'evidence_id')::bigint FROM jsonb_array_elements(s.payload->'openings') item
+    UNION SELECT (item->>'evidence_id')::bigint FROM jsonb_array_elements(s.payload->'items') item) exact_sources)
+   AND NOT EXISTS(SELECT id FROM (
+    SELECT s.evidence_id AS id UNION SELECT (item->>'evidence_id')::bigint FROM jsonb_array_elements(s.payload->'openings') item
+    UNION SELECT (item->>'evidence_id')::bigint FROM jsonb_array_elements(s.payload->'items') item) exact_sources
+    WHERE NOT e.body::jsonb->'source_ids' @> jsonb_build_array(id))
+   AND (e.body::jsonb->'template_id'='null'::jsonb OR EXISTS(SELECT 1 FROM documents_template t
+    WHERE t.id=(e.body::jsonb->>'template_id')::bigint AND t.case_id=NEW.case_id AND t.definition->>'document_type'='finance_report'))
    AND e.body::jsonb->>'as_of'=s.payload->>'as_of' AND e.body::jsonb->'months'=s.payload->'months'
    AND a.action IN ('factory.forecast_intake','factory.forecast_source')
    AND a.data=jsonb_build_object('evidence_id',e.id,'sha256',e.sha256)
