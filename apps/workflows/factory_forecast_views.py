@@ -17,7 +17,7 @@ from .factory_forecast_sources import PROTOCOL
 class InputsForm(forms.Form):
     as_of = forms.DateField(label='Exact selected scenario as-of date')
     months = forms.JSONField(label='Exact ordered month horizon', help_text='For example ["2026-11", "2026-12"]. Must equal the selected native scenario.')
-    audience = forms.ChoiceField(choices=[('internal','Internal aggregate'),('management','Management aggregate')])
+    audience = forms.ChoiceField(choices=[('internal','Internal aggregate'),('management','Management aggregate'),('group','Separate owner-permitted group report')])
 
     def __init__(self, case, *args, scenario_reference=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,7 +25,7 @@ class InputsForm(forms.Form):
         if scenario_reference:scenarios=scenarios.filter(reference=scenario_reference)
         self.fields['scenario_id']=forms.ModelChoiceField(queryset=scenarios.order_by('-pk'),label='Exact native scenario revision')
         self.fields['source_ids']=forms.ModelMultipleChoiceField(queryset=Evidence.objects.filter(case=case,pk__in=set(e for s in scenarios for e in [s.evidence_id]+[r['evidence_id'] for r in s.payload['openings']+s.payload['items']])),label='Complete selected scenario, opening and assumption evidence')
-        self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type='finance_report'),required=False,label='Aggregate forecast report template')
+        self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['finance_report','finance_group_report']),required=False,label='Aggregate forecast report template')
 
     def selection(self):
         d=self.cleaned_data
@@ -69,11 +69,14 @@ def detail(request,work):
     from .factory_views import presentation,permitted
     scenario,selected=service.source(work,request.user,False)
     inputs=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,scenario_reference=scenario.reference,initial=selected)
-    human_actions={'actual','verify','match','unmatch','review','priority'}
+    human_actions={'actual','verify','match','unmatch','review','priority','group_review'}
     forms_list=[r for r in commands(work.case,request.POST if request.method=='POST' else None) if r['action'] in human_actions]
     pin=service.observed(work,'forecast_run')
     for entry in forms_list:
         f=entry['form']
+        if 'version' in f.fields:
+            binding=service.document(work)
+            f.fields['version'].queryset=f.fields['version'].queryset.filter(pk=binding.version_id if binding and selected['audience']=='group' else None)
         if 'run' in f.fields:f.fields['run'].queryset=f.fields['run'].queryset.filter(pk=pin)
         if 'scenario' in f.fields:f.fields['scenario'].queryset=f.fields['scenario'].queryset.filter(pk=scenario.pk)
         if 'match' in f.fields:f.fields['match'].queryset=f.fields['match'].queryset.filter(root_id=service.forecast.root_of(scenario).pk)

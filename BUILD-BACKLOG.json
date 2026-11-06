@@ -14717,10 +14717,28 @@
     "whole_process_promotion": false
   },
   "current_composition714": {
-    "status": "running",
+    "status": "interrupted_executor_restart",
     "source": "343c46b",
     "run": 714,
     "tests": 154,
+    "whole_process_promotion": false,
+    "completed_ok_lines": 60,
+    "final_result": false
+  },
+  "p56_composition": {
+    "status": "integrated_composed_regression_pending",
+    "source": "b81fa40",
+    "integration": "60d60e1",
+    "family_run": 713,
+    "family_tests_passed": 257,
+    "pending_run": 720,
+    "whole_process_promotion": false
+  },
+  "current_composition720": {
+    "status": "running",
+    "source": "d2c7edf",
+    "run": 720,
+    "tests": 282,
     "whole_process_promotion": false
   }
 }

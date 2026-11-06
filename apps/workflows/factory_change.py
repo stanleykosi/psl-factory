@@ -125,7 +125,9 @@ def snapshot(work,value,reader=None):
     ids={v.evidence_id}|set(v.assessments.values_list('evidence_id',flat=True))|set(v.decisions.values_list('evidence_id',flat=True))
     if data['inputs']['authorization_id']:ids.update(ChangeAuthorization.objects.get(pk=data['inputs']['authorization_id']).execution.values_list('evidence_id',flat=True))
     latest={KIND:work.source_head}
-    for e in public_evidence(Evidence.objects.filter(case=work.case,pk__in=ids)).order_by('pk'):
+    evidence=Evidence.objects.filter(case=work.case,pk__in=ids)
+    allowed=public_evidence(evidence)|evidence.filter(pk=v.evidence_id,source='psl:p56-confirmed-request/v1')
+    for e in allowed.order_by('pk'):
         if e.kind not in latest or latest[e.kind].version<e.version:latest[e.kind]=e
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]

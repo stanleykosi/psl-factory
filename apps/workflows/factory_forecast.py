@@ -62,7 +62,7 @@ def start(actor, case_id, key, value, reference, expected=None):
         raise ValidationError('Bounded work identity and description required')
     payload = {'scenario_reference':scenario.reference, 'reference':reference}
     sha = digest(payload)
-    business = digest([str(case.pk), DEFINITION, scenario.reference])
+    business = digest([str(case.pk), DEFINITION, scenario.reference]+(['group'] if value['audience']=='group' else []))
     old = Work.objects.filter(case=case).filter(Q(key=key) | Q(definition=DEFINITION, business_key=business)).first()
     if old:
         if old.actor_id != actor.pk or old.definition != DEFINITION or old.key == key and old.request_hash != sha:
@@ -107,7 +107,7 @@ def principal(work, value, name, *, calculation_only=False):
 def report(work, actor=None):
     _, value = source(work, actor)
     r = calculation(work, actor)
-    status = {'stage':'calculate', 'run':r.pk if r else None, 'finding':''}
+    status = {'stage':'calculate','audience':value['audience'], 'run':r.pk if r else None, 'finding':''}
     if not r:
         return status
     try:
@@ -115,6 +115,14 @@ def report(work, actor=None):
         forecast.ensure_current(r)
         status['stage'] = 'review'
         forecast.approved(r)
+        if value['audience']=='group':
+            from apps.finance import group_forecast
+            status['stage']='group_policy'
+            group_forecast.inputs(r)
+            binding=document(work)
+            if binding:
+                status['stage']='group_review'
+                group_forecast.approved(binding.version)
         status['stage'] = 'publication'
         verify(work, actor)
         status['stage'] = 'complete'
@@ -147,7 +155,7 @@ def snapshot(work, value, reader=None):
 def eligible(work, value, state, latest, missing, stale, tasks, jobs):
     job = pending_job(jobs)
     if job:
-        return ['ACT11' if job.status == 'pending' else 'ACT12'], 'Deliver or reconcile the original aggregate forecast report'
+        return ['ACT11' if job.status == 'pending' else 'ACT12'], 'Deliver or reconcile the original reviewed cash report'
     if any(j.status in ['held','leased'] for j in jobs):
         return [], 'Resolve the original controlled delivery before changing sources'
     if not Activity.objects.filter(work=work, key=investigation_key(work,state), status='succeeded').exists():
@@ -159,12 +167,14 @@ def eligible(work, value, state, latest, missing, stale, tasks, jobs):
         return ['ACT08'], 'Calculate the exact scenario using native Finance rules'
     if stage == 'rework':
         return [], 'Native calculation changed; explicitly correct the same source selection or select a revised scenario before recalculation'
+    if stage in ['group_policy','group_review']:
+        return [], 'Await exact group owner disclosure or human artifact/recipient review: '+state['native']['finding']
     if stage == 'review':
         return [], 'Await native readiness and exact human forecast review: '+state['native']['finding']
     if stage == 'complete':
         return ['ACT13'], 'Verify reviewed forecast and every aggregate recipient receipt'
     binding = document(work)
-    return (['ACT09'], 'Prepare the reviewed aggregate forecast') if not binding else (['ACT11'], 'Reserve current reviewed aggregate report delivery')
+    return (['ACT09'], 'Prepare the owner-permitted group rows' if state['native']['audience']=='group' else 'Prepare the reviewed aggregate forecast') if not binding else (['ACT11'], 'Reserve current reviewed aggregate report delivery')
 
 
 def act(work, choice, value, latest, missing, tasks, jobs):
@@ -256,6 +266,9 @@ def verify(work, actor=None):
     receipts = list(PublicationReceipt.objects.filter(publication=p).order_by('pk'))
     if not receipts or {x.recipient_id for x in receipts} != set(recipients) or any(x.payload != v.payload or x.payload_sha256 != v.payload_sha256 for x in receipts):
         raise ValidationError('Every exact aggregate forecast recipient receipt required')
+    if v.audience=='group':
+        from apps.finance.group_forecast import verified as group_verified
+        group_verified(v)
     return {'verified':True,'head':work.source_head_id,'forecast_run':r.pk,'forecast_review':review.pk,'document_version':v.pk,'publication':p.pk,'receipt_ids':[x.pk for x in receipts],'cash_mutated':False,'execution_authorized':False}
 
 
@@ -275,6 +288,8 @@ def correct(actor, work_id, expected, case_expected, selected, reason):
         raise ValidationError('Reconcile original planning response before source correction')
     old,previous = source(w,actor,False)
     scenario,rows = sources.selection(actor,w.case,selected)
+    if (selected['audience']=='group')!=(previous['audience']=='group'):
+        raise ValidationError('Start separate explicit work for the group audience; correction preserves audience class')
     if scenario.reference != old.reference:
         raise ValidationError('Correct only this native scenario reference')
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:
@@ -290,6 +305,8 @@ def correct(actor, work_id, expected, case_expected, selected, reason):
                 current_version(w.case,binding.version_id)
         except (ValidationError,PermissionDenied):
             stale = True
+        if binding and selected['audience']=='group' and binding.version.reviews.order_by('-pk').filter(verdict__in=['return','reject']).exists():
+            stale=True
         cancelled = PublicationJob.objects.filter(publication__factory_work=w,publication__version_id=binding.version_id if binding else None,status='cancelled').exists()
         if not stale and not cancelled:
             raise ValidationError('Provide changed sources or resolve a stale/cancelled original output')
@@ -312,7 +329,13 @@ def human_action(actor, work_id, expected, case_expected, scenario_id, action, d
     r = calculation(w,actor)
     if action in ['review','priority'] and (not r or data['run'].pk != r.pk):
         raise ValidationError('Choose the exact current work calculation pin')
-    if action == 'review':
+    if action == 'group_review':
+        from apps.finance import group_forecast
+        binding=document(w)
+        if selected['audience']!='group' or not binding or data['version'].pk!=binding.version_id:
+            raise ValidationError('Choose this work exact group artifact')
+        result=group_forecast.review(actor,w.case_id,binding.version_id,data['role'],data['verdict'],data['reason'],case_expected)
+    elif action == 'review':
         result = forecast.review(actor,w.case_id,r.pk,data['role'],data['verdict'],data['evidence'].pk,data['reason'],case_expected)
     elif action == 'priority':
         result = forecast.prioritize(actor,w.case_id,r.pk,data['role'],data['reference'],data['description'],data['owner'].pk,data['due_at'],data['evidence'].pk,data['reason'],case_expected)
@@ -386,7 +409,14 @@ def projection(actor, work):
         restart_policy=active_component(definition(DEFINITION)['component'],work.case).pk
         can_restart=work.cancel_requested and work.status=='cancelled' and not (work.lease_until and work.lease_until>timezone.now()) and not any(j.status in ['pending','unknown','leased','held'] for j in jobs) and not PublicationReceipt.objects.filter(publication__factory_work=work).exists()
     except (PermissionDenied,ValidationError):pass
-    return {'can_restart':can_restart,'restart_policy':restart_policy,'review_roles':review_roles,'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct}
+    group_disclosure=None
+    group_binding=document(work)
+    if group_binding and selected['audience']=='group':
+        from django.contrib.auth import get_user_model
+        group_disclosure={'configuration':group_binding.snapshot['projection_config'],
+            'recipients':list(get_user_model().objects.filter(pk__in=group_binding.snapshot['projection']['recipient_ids']).order_by('pk').values('id','username')),
+            'payload_sha256':group_binding.version.payload_sha256}
+    return {'group_disclosure':group_disclosure,'can_restart':can_restart,'restart_policy':restart_policy,'review_roles':review_roles,'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct}
 
 
 def reconcile(actor,work_id,expected,adapter=None):
@@ -462,6 +492,8 @@ def restart(actor, work_id, expected, case_expected, selected, configuration_id,
         raise ValidationError('Explain the explicit fresh preparation instruction')
     old,previous=source(w,actor,False)
     scenario,rows=sources.selection(actor,w.case,selected)
+    if (selected['audience']=='group')!=(previous['audience']=='group'):
+        raise ValidationError('Start separate explicit work for the group audience; restart preserves audience class')
     if scenario.reference!=old.reference:
         raise ValidationError('Restart only the exact native scenario reference')
     config=active_component(definition(DEFINITION)['component'],w.case)

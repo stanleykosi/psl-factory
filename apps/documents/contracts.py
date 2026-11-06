@@ -3,12 +3,12 @@ import json
 from django.core.exceptions import ValidationError
 from jsonschema import Draft202012Validator
 
-AUDIENCES = ['internal','client','management']
+AUDIENCES = ['internal','client','management','group']
 PUBLIC_FIELDS = ['financial_metrics','bu_totals','requirements_mapping','commercial_terms','executive_summary','scope','timeline','risks','dependencies','status','issue_impact','issue_status','issue_resolution','next_steps','decisions','actions','owners','deadlines','participants']
 FIELDS = PUBLIC_FIELDS + ['internal_notes']
 FIELD_LIST = {'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':FIELDS}}
 TEMPLATE_SCHEMA = {'type':'object','properties':{
-    'document_type':{'enum':['sow','status_report','minutes','project_artifact','rfp_response','finance_report','accepted_finance_metadata']},
+    'document_type':{'enum':['sow','status_report','minutes','project_artifact','rfp_response','finance_report','finance_group_report','accepted_finance_metadata']},
     'required_fields':FIELD_LIST,
     'internal_review_required':{'type':'boolean'},
     'audience_fields':{'type':'object','properties':{a:FIELD_LIST for a in AUDIENCES},'additionalProperties':False,'minProperties':1}},
@@ -29,6 +29,9 @@ def validate_template(value):
     if value['document_type']=='finance_report':
         if 'client' in value['audience_fields'] or value.get('internal_review_required') is not False or not {'executive_summary','financial_metrics','bu_totals'}.issubset(value['required_fields']):
             raise ValidationError('Finance reports require internal/management aggregate sections and configured Finance output review; no client audience or invented PMO review')
+    if 'group' in value['audience_fields'] or value['document_type']=='finance_group_report':
+        if value['document_type']!='finance_group_report' or value.get('internal_review_required') is not True or value['audience_fields']!={'group':['executive_summary','financial_metrics','bu_totals']} or value['required_fields']!=['executive_summary','financial_metrics','bu_totals']:
+            raise ValidationError('Group forecast needs its separate exact template and mandatory disclosure review')
     client=value['audience_fields'].get('client')
     if client and ('internal_notes' in client or 'executive_summary' not in client or 'executive_summary' not in value['required_fields']):
         raise ValidationError('Client templates require an executive summary and cannot expose internal notes')

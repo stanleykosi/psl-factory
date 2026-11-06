@@ -40,6 +40,16 @@ def project_payload(title,definition,audience,fields):
 
 @transaction.atomic
 def create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None):
+    if audience=='group':raise ValidationError('Use the native group disclosure preparation service')
+    return _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id)
+
+
+@transaction.atomic
+def _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None,*,authorized_restricted_source_ids=()):
+    """Private storage primitive. Domain callers must independently authorize and
+    recompute current fields plus the exact cited restricted-source set. Never
+    accept this set from public forms, HTTP payloads or agent tool arguments.
+    """
     case=lock_case(actor,case_id,'document.draft',expected)
     template=Template.objects.filter(case=case,pk=template_id).first()
     if not template or audience not in AUDIENCES or not title.strip() or len(title)>240:
@@ -50,7 +60,9 @@ def create_version(actor,case_id,template_id,title,audience,fields,expected,docu
         'required':['text','evidence_ids'],'additionalProperties':False} for key in FIELDS},'additionalProperties':False},fields)
     source_ids=sorted({pk for field in fields.values() for pk in field['evidence_ids']})
     sources=[subject(case,pk) for pk in source_ids]
-    if any(restricted(e) for e in sources):raise ValidationError('Restricted source evidence requires its authorized domain interface')
+    if not isinstance(authorized_restricted_source_ids,(list,tuple,set)) or any(type(pk) is not int or pk<1 for pk in authorized_restricted_source_ids) or not set(authorized_restricted_source_ids).issubset(source_ids):
+        raise ValidationError('Native restricted sources must be exact cited positive evidence IDs')
+    if any(restricted(e) and e.pk not in authorized_restricted_source_ids for e in sources):raise ValidationError('Restricted source evidence requires its authorized domain interface')
     if document_id:
         document=Document.objects.filter(case=case,pk=document_id).first()
         if not document or document.title!=title:
@@ -61,7 +73,7 @@ def create_version(actor,case_id,template_id,title,audience,fields,expected,docu
         number=1
     payload=project_payload(title,template.definition,audience,fields)
     version=Version.objects.create(document=document,number=number,template=template,audience=audience,fields=fields,
-        source_manifest=[{'id':e.pk,'version':e.version,'sha256':e.sha256} for e in sources],baseline_manifest=baseline_manifest(case),
+        source_manifest=[{'id':e.pk,'version':e.version,'sha256':e.sha256} for e in sources],baseline_manifest={} if audience=='group' else baseline_manifest(case),
         payload=payload,payload_sha256=digest(payload),created_by=actor)
     for task in HumanTask.objects.filter(version__document=document,status='open'):
         task.status='obsolete';task.save(update_fields=['status'])
@@ -76,7 +88,7 @@ def preflight(version):
     findings=[]
     from apps.finance.documents import binding_for
     finance_binding=binding_for(version)
-    if version.template.definition['document_type']=='finance_report' and not finance_binding:findings.append('Finance report requires an exact source-bound Finance output review')
+    if version.template.definition['document_type'] in ['finance_report','finance_group_report'] and not finance_binding:findings.append('Finance report requires an exact source-bound Finance output review')
     if finance_binding:
         from apps.finance.documents import binding_findings as finance_findings
         findings.extend(finance_findings(finance_binding))
@@ -111,7 +123,7 @@ def preflight(version):
         findings.extend(binding_findings(commercial_binding))
     if not Document.objects.filter(pk=version.document_id,current_id=version.pk).exists():
         findings.append('A newer document revision is current')
-    if version.baseline_manifest!=baseline_manifest(version.document.case):
+    if version.baseline_manifest!=({} if version.audience=='group' else baseline_manifest(version.document.case)):
         findings.append('PMO baseline changed; prepare and review a new document revision')
     from apps.pmo.models import GateDocumentBinding
     binding=GateDocumentBinding.objects.filter(version=version).select_related('candidate').first()
@@ -158,7 +170,7 @@ def current_version(case,version_id):
 def request_review(actor,case_id,version_id,expected):
     case=lock_case(actor,case_id,'document.request_review',expected)
     version=current_version(case,version_id)
-    if version.template.definition['document_type']=='finance_report':raise ValidationError('Finance reports use configured Finance output review; no PMO Lead task is required')
+    if version.template.definition['document_type'] in ['finance_report','finance_group_report']:raise ValidationError('Finance reports use configured Finance output review; no PMO Lead task is required')
     if HumanTask.objects.filter(version=version).exists():
         raise ValidationError('Review was already requested; returned/rejected content needs a new version')
     task=HumanTask.objects.create(case=case,version=version,created_by=actor)
@@ -174,6 +186,7 @@ def review_version(actor,case_id,version_id,verdict,note,expected,delegated=Fals
     if verdict not in ['approve','return','reject'] or not note.strip() or len(note)>4000:
         raise ValidationError('Choose a review decision and provide a concise rationale')
     version=current_version(case,version_id)
+    if version.audience=='group':raise ValidationError('Use the exact native group disclosure review')
     task=HumanTask.objects.select_for_update().filter(case=case,version=version,status='open').first()
     if not task:
         raise ValidationError('This version has no open human review task')
@@ -235,6 +248,9 @@ def publication_requirements(case,version):
 
 
 def validate_review(case,version):
+    if version.audience=='group':
+        from apps.finance.group_forecast import approved
+        return approved(version)
     review=version.reviews.order_by('-pk').first()
     if not review and version.audience!='client' and version.template.definition.get('internal_review_required') is False:
         return None

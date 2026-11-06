@@ -21,6 +21,10 @@ def workbench(request,case_id):
     require(request.user,case,'document.read')
     templates=Template.objects.filter(case=case).exclude(definition__document_type='accepted_finance_metadata').order_by('name','-version')
     versions=Version.objects.filter(document__case=case).exclude(template__definition__document_type='accepted_finance_metadata').select_related('document','template').order_by('-pk')
+    finance_reader=Grant.objects.filter(case=case,user=request.user,action='finance.read',active=True).exists()
+    if not finance_reader:
+        versions=versions.filter(forecastbinding__isnull=True)
+        templates=templates.exclude(definition__document_type='finance_group_report').exclude(pk__in=Version.objects.filter(document__case=case,forecastbinding__isnull=False).values('template_id'))
     evidence=public_evidence(case.evidence.all()).order_by('-pk')
     tf=TemplateForm();df=DraftForm();rf=ReviewForm();cf=CandidateForm();gf=GateForm()
     candidates=DeliveryCandidate.objects.filter(case=case)
@@ -92,9 +96,11 @@ def workbench(request,case_id):
                 try:require(request.user,case,'approval.source.read:'+binding.observation.receipt.system)
                 except (PermissionDenied,ValidationError):continue
             candidate.visible_gates.append(gate)
+    visible_jobs=PublicationJob.objects.filter(publication__version__document__case=case).exclude(publication__version__template__definition__document_type='accepted_finance_metadata')
+    if not finance_reader:visible_jobs=visible_jobs.filter(publication__version__forecastbinding__isnull=True)
     return render(request,'documents/workbench.html',{'case':case,'actions':actions,'template_form':tf,'draft_form':df,'review_form':rf,
         'candidate_form':cf,'gate_form':gf,'candidates':candidate_rows,'templates':templates,'versions':items,'tasks':HumanTask.objects.filter(case=case).exclude(version__template__definition__document_type='accepted_finance_metadata').select_related('version__document').order_by('-pk'),
-        'jobs':PublicationJob.objects.filter(publication__version__document__case=case).exclude(publication__version__template__definition__document_type='accepted_finance_metadata').select_related('publication__version__document').order_by('-pk'),
+        'jobs':visible_jobs.select_related('publication__version__document').order_by('-pk'),
         'agent_runs':case.agentrun_set.filter(process_id__in=['P52','P53','P31']).order_by('-pk')[:20] if 'agent.document' in actions or 'agent.gates' in actions else []})
 
 @login_required
@@ -106,6 +112,9 @@ def inbox(request):
             from apps.finance.accepted_documents import recipient_access
             recipient_access(request.user,receipt)
             require(request.user,version.document.case,'document.receive:'+version.audience)
+            if version.audience=='group':
+                from apps.finance.group_forecast import recipient_access
+                recipient_access(request.user,receipt)
             if version.template.definition.get('document_type')=='finance_report':
                 require(request.user,version.document.case,'finance.read')
         except (PermissionDenied,ValidationError):continue

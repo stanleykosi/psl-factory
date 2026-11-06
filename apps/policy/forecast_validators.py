@@ -42,7 +42,10 @@ def validate_projection(target):
     audience=existing['audiences']['items']
     audience['properties'].update(columns={'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['actual','budget','prior','variance','prior_variance','ratio']}},charts={'type':'boolean'})
     schema['properties'].update(existing)
+    from .group_forecast_validators import GROUP,validate_group
+    schema['properties']['group']=GROUP
     v=typed(target,'schema:psl/forecast-projection/v1',schema)
+    if 'group' in v:validate_group(v['group'])
     if len({r['audience'] for r in v['forecast']})!=len(v['forecast']):raise ValidationError('Duplicate forecast audience')
     audiences=v.get('audiences',[])
     if ('audiences' in v)!=('disclosure' in v) or len({r['audience'] for r in audiences})!=len(audiences):raise ValidationError('Preserve exact existing Finance projection and disclosure together')

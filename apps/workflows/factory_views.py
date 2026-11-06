@@ -63,7 +63,8 @@ def intake_options(actor):
 def intake(request):
     queue=request.GET.get('queue','needs_me')
     if queue not in QUEUES:queue='needs_me'
-    response=render(request,'factory/intake.html',{'options':intake_options(request.user),'queue':queue,'q':request.GET.get('q','').strip()[:120]})
+    from .factory_change_intake import pending_intakes
+    response=render(request,'factory/intake.html',{'options':intake_options(request.user),'change_intakes':pending_intakes(request.user),'queue':queue,'q':request.GET.get('q','').strip()[:120]})
     response['Cache-Control']='no-store';return response
 
 def visible(actor):
