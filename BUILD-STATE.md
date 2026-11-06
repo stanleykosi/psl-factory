@@ -1,6 +1,6 @@
 # PSL operations factory build state — 6 November 2026
 
-Cloud continuation is active at the user's request. Source was checked out from GitHub commit05590af; no deployment, live provider, external connection or original desktop database was used. Local integration branch:build/cloud-milestone. Nothing pushed.
+Cloud continuation is active at the user's request. Source was checked out from GitHub commit05590af; no deployment, live provider, external connection or original desktop database was used. Local integration branch:build/cloud-milestone. Public source/test backup verified at fbfb3a737f340d4b2ac518605f20ff0da6887d99 on origin/build/cloud-milestone; main unchanged. New cloud-run evidence remains local and is excluded from public backup. See PUBLIC-BACKUP.md.
 
 Release scope remains63 PMO+45 Finance(108), with all122 IDs/13 families and14 deferred BaaS identities preserved. Full108 internal gate NOT_MET; no new whole-process acceptance is claimed.
 
@@ -14,13 +14,13 @@ Release scope remains63 PMO+45 Finance(108), with all122 IDs/13 families and14 d
 
 ## Active work
 
-The literal mixed-version P47 review test, Finance supplied-intake historical provenance and note/formula lineage are integrated and pass668. Typed statement/note/SOCE input binding is the next isolated implementation increment; its schema/guard plan is approved for engineering only. Evidence-backed internal-mock acceptance validation replaces the obsolete permanent all-unevaluated test without promoting any process.
+The literal mixed-version P47 review test, Finance supplied-intake historical provenance and note/formula lineage are integrated and pass668. Selected statement input binding is integrated with67858PASS (626.182s test/628.664s process), immutable native source/output-review pins and exact aggregate publication. It does not claim full statements or complete SOCE. Performance factory connection and explicit reviewed sign conversion remain active in isolation. Evidence-backed internal-mock acceptance validation replaces the obsolete permanent all-unevaluated test without promoting any process.
 
 ## Browser verification route
 
 Supported cloud-browser primary RFP journey PASS on source668:actual UI intake, scoped agent work, both response reviews, PM→Head of PMO→CEO costing, separate outward review, one mock receipt, actual synthetic outcome and verified Route A without signed baseline. GET preservation and Enter activation PASS. Preview remains running at localhost8025/work/1 in cloud tab4, marked deliverable. Six screenshots/native readbacks and exact source match are preserved.
 
-Narrow layout and full tab order remain unverified; supported viewport controls did not expose a usable resize and organizational DevTools restriction was respected. Browser found a datetime-local whole-minute precision edge; seconds/timezone fix is in isolated test676, not integrated yet. Earlier standalone Chromium IPC failures remain historical only and were not a valid inference that the supported cloud browser was unavailable.
+Narrow layout and full tab order remain unverified; supported viewport controls did not expose a usable resize and organizational DevTools restriction was respected. Browser found a datetime-local whole-minute precision edge; seconds/timezone fix is now integrated from passing run676 (3 tests,101.692s;242 fresh migrations). All1434 tested source hashes match integration; no browser rerun of this fix is claimed. Earlier standalone Chromium IPC failures remain historical only and were not a valid inference that the supported cloud browser was unavailable.
 
 ## Next
 

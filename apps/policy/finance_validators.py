@@ -5,7 +5,7 @@ from apps.pmo.services import subject
 from apps.finance.rules import decimal,evaluate,formula_order
 from .document_validators import typed,ROLES
 
-SUPPORTED={'D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.join_overlap_rule_id',
+SUPPORTED={'D06.statement_contract','D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.join_overlap_rule_id',
     'D07.effective_membership_ref','D07.allocation_pool_rules','D07.rounding_residual_rule_id',
     'D10.report_category_effective_dates','D10.audience_projection_rules','D10.restatement_rule_id','D10.forecast_inclusion_rule_id'}
 KEY={'type':'string','pattern':'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$'}
@@ -61,6 +61,9 @@ def validate_reference(component,target,case,runtime=False):
         if 'bu_tolerance' in v['report_controls']:decimal(v['report_controls']['bu_tolerance'],nonnegative=True)
         if v3:validate_method(v['performance'],case)
         return
+    if component=='D06.statement_contract':
+        from .statement_validators import validate_reference as validate_statement
+        return validate_statement(target,case)
     name,schema=SCHEMAS[component]
     projection_v2=component=='D10.audience_projection_rules' and target.schema_ref=='schema:psl/finance-projection/v2'
     if projection_v2:

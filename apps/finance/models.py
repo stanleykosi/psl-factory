@@ -78,3 +78,5 @@ from .acceptance_models import PrivateReadinessPacket
 from .receipt_followup_models import FinanceReceiptFollowup,FinanceReceiptFollowupDecision
 from .followup_successor_models import FinanceFollowupSuccessor,FinanceFollowupSuccessorReview
 from .transport_models import FinanceAuthenticatedIntake
+
+from .statement_models import FinanceStatementInput

@@ -33,6 +33,9 @@ def workbench(request,case_id):
             elif action=='map':analysis.map_source(a,c,d['source'].pk,[x.pk for x in d['adjustments']],v)
             elif action=='allocate':analysis.allocate(a,c,d['parent'].pk,d['metrics'],v)
             elif action=='calculate':analysis.calculate(a,c,d['parent'].pk,v)
+            elif action=='statement':
+                from .statements import assemble
+                assemble(a,c,d['parent'].pk,d['contract'].pk,v)
             elif action=='report':draft_report(a,c,d['run'].pk,d['template'].pk,d['audience'],v)
             elif action=='investigate':investigate_finance(a,c,d['run'].pk,v)
             messages.success(request,'Finance evidence and preview history updated');return redirect('finance_analysis',case_id=c)

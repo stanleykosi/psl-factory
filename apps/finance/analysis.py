@@ -135,6 +135,9 @@ def stage_snapshot(actor,source,kind,parent,request):
         **({'formula_result_implementation':'finance-note-lineage/v1'} if kind=='formula' else {}),**({'hr_basis_access':hr_basis_access} if hr_basis_access else {})},configs
 
 def ensure_current(run):
+    if run.kind=='statement':
+        from .statements import ensure_current as current_statement
+        return current_statement(run)
     parent=run.parent
     snapshot,_=stage_snapshot(run.actor,run.source,run.kind,parent,run.request)
     if snapshot!=run.snapshot:raise ValidationError('Source, policy, review or authority changed; rebuild the exact Finance preview')
@@ -193,6 +196,9 @@ def adjustment(actor,case_id,source_id,reference,kind,lines,evidence_id,note_tex
     event(actor,case,'finance.reporting_adjustment',adjustment=a.pk,ledger_posted=False);bump(case);return a
 
 def certification_findings(run):
+    if run.kind=='statement':
+        ensure_current(run)
+        return list(run.result['findings'])
     ensure_current(run);findings=[];cursor=run
     while cursor:
         if cursor.result['status']!='complete':findings.append(f'{cursor.kind} #{cursor.pk} contains unknowns, unallocated values or source exceptions')
@@ -230,14 +236,14 @@ def review(actor,case_id,purpose,target_id,role,verdict,evidence_id,note_text,ex
             source_for(case,item.source_id)
             if FinanceAdjustment.objects.filter(source=item.source,reference=item.reference).order_by('-number').first().pk!=item.pk:raise ValidationError('Select the latest adjustment revision')
     elif purpose=='output':
-        item=FinanceRun.objects.filter(case=case,pk=target_id,kind='formula').first();target={'run':item}
+        item=FinanceRun.objects.filter(case=case,pk=target_id,kind__in=['formula','statement']).first();target={'run':item}
         if item:
             ensure_current(item)
             if verdict=='approve':
                 findings=certification_findings(item)
                 if findings:raise ValidationError(findings)
     else:
-        item=Configuration.objects.filter(case=case,pk=target_id,component__in=[k for k,v in PURPOSE.items() if v==purpose]).first();target={'configuration':item}
+        item=Configuration.objects.filter(case=case,pk=target_id,component__in=[k for k,v in PURPOSE.items() if v==purpose]+(['D06.statement_contract'] if purpose=='formula' else [])).first();target={'configuration':item}
         if item and active_component(item.component,case).pk!=item.pk:raise ValidationError('Review the exact active Finance configuration version')
     if item is None:raise ValidationError('Review target must match this case and Finance purpose')
     preparer=item.created_by_id if 'configuration' in target else item.actor_id

@@ -24,7 +24,7 @@ def report_inputs(run,audience):
         review=current_decision(run.case,'performance',performance=run)
         if not review['valid']:raise ValidationError('Obtain the exact configured performance review')
         return _report_projection(run,audience,review)
-    if run.kind!='formula':raise ValidationError('Select an exact formula output')
+    if run.kind not in ['formula','statement']:raise ValidationError('Select an exact formula output')
     findings=certification_findings(run)
     if findings:raise ValidationError(findings)
     review=current_review(run.case,'output',run=run)
@@ -60,7 +60,7 @@ def projection_rows(run,projection):
         'company':display(run.result['company']) if projection['include_company'] else {},
         'by_bu':{bu:display(run.result['by_bu'][bu]) for bu in projection['bu_keys']},'source_run':run.pk,
         'accounting_basis':run.result.get('accounting_basis',run.source.accounting_basis if isinstance(run,FinanceRun) else None),'ratio_multiplier':run.result.get('method',{}).get('multiplier'),'comparison_definition':run.result.get('method',{}).get('ratio'),'columns':columns,'included_periods':run.result.get('included_periods',[]),'budget_version':run.result.get('budget_version'),'chart_spec':{'implementation':'signed_grouped_bars_v1','data':[{'scope':row['scope'],'bu':row['bu'],'metric':row['metric'],'label':row['label'],'unit':row['unit'],**{column:row[column] for column in columns if column in ['actual','budget','prior']}} for row in run.result.get('chart',[]) if row['metric'] in projection['formula_keys'] and (row['scope']=='company' and projection['include_company'] or row['bu'] in projection['bu_keys'])]} if projection.get('charts') else None,
-        'scope':'Selected source, reporting adjustments and configured metrics; not ledger posting, financial close, invoice or payment.'}
+        'scope':('Selected statement lines only; full statement and balance-sheet oracle remain deferred. ' if isinstance(run,FinanceRun) and run.kind=='statement' else '')+'Selected source, reporting adjustments and configured metrics; not ledger posting, financial close, invoice or payment.'}
 
 @transaction.atomic
 def draft_report(actor,case_id,run_id,template_id,audience,expected,performance=False):

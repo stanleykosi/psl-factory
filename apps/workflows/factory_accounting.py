@@ -94,6 +94,17 @@ def requirements(work,source,value,formula,mapping=None,allocation=None,reader=N
         if not row:raise ValidationError('Selected reporting adjustment needs source-owned correction')
         rows.append({'purpose':'adjustment','subject':'adjustment','id':row.pk,'preparer':row.actor_id})
     if formula and not analysis.certification_findings(formula):rows.append({'purpose':'output','subject':'run','id':formula.pk,'preparer':formula.actor_id})
+    if value.get('statement_contract_id') is not None and formula and analysis.current_review(work.case,'output',run=formula)['valid']:
+        from apps.finance.statements import COMPONENT
+        config=resolve(COMPONENT,work.case)
+        if config.status!='ACTIVE' or config.configuration.pk!=value['statement_contract_id']:missing.append(COMPONENT)
+        else:
+            contract=config.configuration
+            rows.append({'purpose':'formula','subject':'configuration','id':contract.pk,'preparer':contract.created_by_id})
+            for item in reference_values(contract)[0]['inputs']:
+                source_run=FinanceRun.objects.get(case=work.case,pk=item['source_run'])
+                if not any(r['subject']=='run' and r['id']==source_run.pk for r in rows):
+                    rows.append({'purpose':'output','subject':'run','id':source_run.pk,'preparer':source_run.actor_id})
     for row in rows:row['review']=analysis.current_review(work.case,row['purpose'],**{row['subject']+'_id':row['id']})
     return rows,missing,policies
 
@@ -147,7 +158,18 @@ def snapshot(work,value,reader=None):
     parent=allocation if value['allocation_mode']=='company_and_bu' else mapping
     formula=current_run(work,source,'formula',parent) if parent else None
     reviews,unconfigured,policies=requirements(work,source,value,formula,mapping,allocation,reader=reader)
-    document=document_for(work,formula,value)
+    base_formula=formula;statement=None
+    if value.get('statement_contract_id') is not None and formula:
+        for candidate in FinanceRun.objects.filter(case=work.case,source=source,kind='statement',parent=formula).order_by('-pk'):
+            if candidate.request!={'contract_id':value['statement_contract_id']}:continue
+            try:analysis.ensure_current(candidate)
+            except (ValidationError,PermissionDenied):continue
+            statement=candidate;break
+        if statement:
+            formula=statement
+            if not analysis.certification_findings(statement):
+                reviews.append({'purpose':'output','subject':'run','id':statement.pk,'preparer':statement.actor_id,'review':analysis.current_review(work.case,'output',run=statement)})
+    document=document_for(work,formula,value) if not value.get('statement_contract_id') or statement else None
     publications=Publication.objects.filter(Q(factory_work=work)|Q(version=document.version if document else None))
     jobs=list(PublicationJob.objects.filter(publication__in=publications).select_related('publication__version').order_by('pk'))
     tasks=list(HumanTask.objects.filter(case=work.case,factory_key__startswith=f'factory:{work.pk}:').order_by('pk'))
@@ -157,6 +179,8 @@ def snapshot(work,value,reader=None):
         'document':document.pk if document else None,'jobs':[(j.pk,j.status,j.fence) for j in jobs],
         'tasks':[(t.pk,t.status,t.revision) for t in tasks],
         'receipts':list(PublicationReceipt.objects.filter(publication__in=publications).values_list('pk','operation_key'))}
+    if value.get('statement_contract_id') is not None:
+        state.update(base_formula=base_formula.pk if base_formula else None,statement=statement.pk if statement else None)
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,tasks,jobs
 
@@ -181,6 +205,7 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if value['allocation_mode'] is None or value['allocation_mode']=='company_and_bu' and value['bu_metrics'] is None:return ['ACT10'],'Configure the accounting allocation scope'
     if value['allocation_mode']=='company_and_bu' and not state['allocation']:return ['ACT08'],'Prepare the configured native BU allocation'
     if not state['formula']:return ['ACT08'],'Prepare the configured native formula output'
+    if value.get('statement_contract_id') is not None and not state.get('statement'):return ['ACT08'],'Bind the exact reviewed statement input inventory'
     formula=FinanceRun.objects.get(pk=state['formula'])
     if analysis.certification_findings(formula):return [],'Resolve the native accounting findings and recheck the source-owned inputs'
     if not state['document']:return ['ACT09'],'Prepare the source-owned aggregate Finance report'
@@ -224,6 +249,10 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             created.append(task.pk)
         return {'review_tasks':created,'waiting':'finance_review' if created else None,'approval_granted':False}
     if kind=='ACT08':
+        if value.get('statement_contract_id') is not None and state.get('base_formula') and not state.get('statement'):
+            from apps.finance.statements import assemble
+            run=assemble(work.execution_actor,work.case_id,state['base_formula'],value['statement_contract_id'],case.revision)
+            return {'finance_run':run.pk,'kind':run.kind,'result_status':run.result['status'],'ledger_posted':False}
         stage='mapping' if not state['mapping'] else 'allocation' if value['allocation_mode']=='company_and_bu' and not state['allocation'] else 'formula'
         parent_id=None if stage=='mapping' else state['mapping'] if stage=='allocation' else state['allocation'] or state['mapping']
         run=adapter.prepare(work,source,stage,FinanceRun.objects.get(pk=parent_id) if parent_id else None,value['bu_metrics'],inputs(work)['adjustment_ids'])

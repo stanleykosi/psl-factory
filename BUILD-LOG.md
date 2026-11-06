@@ -1435,3 +1435,15 @@ Integrated supplied CSV intake, historical provenance and private note/formula l
 ## 6 November 2026 — supported cloud browser proof
 
 Actual supported CUA cloud browser completed the source668 RFP workflow through verified Route A. One publication/submission/receipt/outcome/disposition; no imported signed baseline. All simulation decisions through visible UI; GET preservation and Enter action passed. Six screenshots and native readbacks retained; preview remains available. Narrow layout/full tab order unverified. Found whole-minute datetime-local precision edge; targeted seconds/current-timezone fix underway separately. Earlier standalone launch failures did not establish supported-browser unavailability; localhost required starting the app on the cloud desktop instead of the isolated exec namespace.
+
+## 6 November 2026: public source backup and RFP precision integration
+
+Public working branch build/cloud-milestone verified at fbfb3a737f340d4b2ac518605f20ff0da6887d99, exact tree5a1d8df06825b29c7f49d8e42930a096f161a2b7. Main remains05590afd11494c6c5d973bace2694a2e7da8e73a. New cloud evidence files remain local and are excluded from public backup; PUBLIC-BACKUP.md discloses this. Future backups must exclude these files and any newly generated runtime evidence unless separately authorized.
+
+Integrated RFP seconds-resolution datetime-local input and active timezone label:6763PASS/101.692s,242 fresh migrations; all1434 tested source hashes match this integration. Covers seconds submission, future/pre-submission rejection, three timezone labels and complete native console flow. No browser rerun or whole-process acceptance claimed. Statement67755PASS/1ERROR (stale-output test expectation); final678 correction/refinements pending. Performance674 can compose stable tested schema while final statement acceptance remains pending.
+
+## 6 November: selected statement binding integrated
+
+Feature c67e233 is integrated as8ea654a, evidence d1b2d35 as7bff494. Run67858PASS/626.182s unittest/628.664s process, source unchanged;1440 source files matched the tested feature commit. Integrated Finance/shared files match; only RFP template/test and enhanced runner differ from678 manifest. Fresh schema245 migrations/334 tables with zero business rows; migration hashes and predecessor SQL guard reconstruction verified. Preserved673/675/677 failures are not passes. Django check and model-state dry-run pass after integration; the latter did not check offline DB history.
+
+Selected-line contracts retain exact formula outputs/reviews, immutable bindings, current read authority, multi-source citations and aggregate-only receipt publication. Native configured preparer-review rules are preserved, and missing statement policy holds only after upstream mapping/allocation/formula/output review. Full statement/SOCE completeness and independent owner oracle are not claimed. Performance674 and explicit convention conversion680 remain isolated, with681 reserved for performance corrections. Current public source backup is590f7fe; this newer local integration is pending filtered publication. All new runtime evidence stays local.

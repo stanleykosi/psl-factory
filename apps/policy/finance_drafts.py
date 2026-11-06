@@ -12,7 +12,7 @@ from .services import register_reference,save_draft
 
 ARRAYS={'D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.allocation_pool_rules','D10.report_category_effective_dates'}
 STRINGS={'D07.join_overlap_rule_id','D07.effective_membership_ref','D07.rounding_residual_rule_id','D06.source_schema_ref','D10.restatement_rule_id'}
-EXTRA={'D10.restatement_rule_id':'schema:psl/finance-restatement/v1','D05.decision_action_matrix':'schema:psl/decision-actions/v4','D06.unit_sign_currency_period':'schema:psl/source-conventions/v2','D06.source_schema_ref':'schema:psl/controlled-csv/v1'}
+EXTRA={'D06.statement_contract':'schema:psl/finance-statement/v1','D10.restatement_rule_id':'schema:psl/finance-restatement/v1','D05.decision_action_matrix':'schema:psl/decision-actions/v4','D06.unit_sign_currency_period':'schema:psl/source-conventions/v2','D06.source_schema_ref':'schema:psl/controlled-csv/v1'}
 
 ARRAYS |= BILLING_ARRAYS | SETTLEMENT_ARRAYS
 STRINGS |= BILLING_STRINGS | SETTLEMENT_STRINGS | {'D10.forecast_inclusion_rule_id'}

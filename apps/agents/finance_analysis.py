@@ -19,7 +19,7 @@ def investigate_finance(actor,case_id,run_id,expected):
     current=True
     try:
         ensure_current(run)
-        if run.kind=='formula':findings+=certification_findings(run)
+        if run.kind in ['formula','statement']:findings+=certification_findings(run)
     except (ValidationError,PermissionDenied) as exc:
         current=False;findings+=getattr(exc,'messages',[str(exc)])
     from apps.policy.models import Configuration
@@ -37,5 +37,8 @@ def investigate_finance(actor,case_id,run_id,expected):
         'next_work':'Resolve exact unmapped/unknown/source/basis and rule-review findings; rebuild previews after approved changes. Investigate conserved totals and rounding residuals before configured Finance output review.',
         'approval_granted':False,'ledger_posted':False,'rules_changed':False,'external_authenticity_verified':False,
         'oracle_scope':'Synthetic tests validate the configured algorithm; original workbook/provider equivalence requires actual owner oracles.'}
+    if run.kind=='statement':
+        result['statement_inputs']=[dict(item['declaration'],source_operation_key=item['operation_key'],review_id=item['review']['id'],source_evidence_ids=item.get('source_evidence_ids',[])) for item in run.snapshot['inputs']]
+        result['scope']='Selected statement lines only; full statement oracle remains deferred.'
     log=AgentRun.objects.create(case=case,actor=actor,evidence=run.source.evidence,provider='deterministic-finance-lineage-v1',process_id='F23',result=result)
     event(actor,case,'agent.finance_investigation',run=log.pk,finance_run=run.pk);return log
