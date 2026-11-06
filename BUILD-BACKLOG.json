@@ -11,13 +11,39 @@
   },
   "current_recovery_increment": {
     "status": "in_progress",
-    "latest_finished_test_run": 665,
+    "latest_finished_test_run": 668,
     "last_passing_connected_run": 610,
     "current_test_run": null,
-    "rfp_increment": {"status":"in_progress","process_ids":["P45","P46","P47","P48","P49"],"implemented":"Closed typed factory intake/rework/coordinator; useful native investigation/preparation; primary console/native human decisions; controlled exact publication/receipts/outcome verification; historical submitted-version validation; explicit current-owner selection policy/settings; document reuse and cancellation/returned-review recovery","latest":"66351PASS broader integration before historical change;66415PASS/1FAIL at cancellation setup with five unreached;6656PASS/578.937s unittest/590.254s process covers failed/unreached paths with identical production source. Failed evidence retained; overlapping suites are not unique process coverage","evidence":"docs/test-evidence/2026-11-01-factory-run665.json","gap_map":"docs/design/2026-11-01/RFP-CONNECTION-GAP-MAP.md","remaining":"Source-specific assignment/contribution/material-change branch acceptance; changed-P49 upstream/native regression; retained/fresh migration proof; current-source native-browser and per-ID connected acceptance","authority":"Consolidation request; existing native source rules, no invented policies/grants","policy_slots":"Existing assignment/review/outcome authorities and real executor/template/route remain owner-controlled; ambiguous actual submissions need configured explicit owner selection; disputed/post-disposition corrections have no invented automatic precedence"},
-    "intake_authority_increment": {"status":"bounded_implementation_verified","evidence":"6463PASS;6485PASS;6492PASS actual receipt dependency/contention;6504PASS source rework","current":"13 appDBs0059 preserved;238 fresh migrations;333rowsets/1572indexes GET preserved; preview650, native browser unavailable separately recorded","acceptance":"docs/test-evidence/2026-11-04-factory-intake-authority-acceptance.json"},
-    "receipt_transport_increment": {"status":"bounded_implementation_verified","last_result":"6404PASS;6415PASS including actual recovery-to-publication/contention;6433PASS;6447PASS. Source manifests and failed evidence retained","current":"All13 application databases0058 preserved;237 fresh migrations;333 GET rowsets/1572indexes unchanged; preview644. Native browser control unavailable, application readback verified separately","acceptance":"docs/test-evidence/2026-11-04-factory-receipt-recovery-acceptance.json"},
-    "latest_result": "6656PASS/578.937s unittest/590.254s process;66415PASS/1FAIL before cancellation setup, retained. Same production bytes; test-only claim-aware setup correction proven.66351PASS is prior broader integration baseline. RFP connection implemented with bounded tests, source-branch/upstream regression, migration/browser/per-ID acceptance pending. Feature work paused for initial GitHub source handoff; full108 gate NOT_MET",
+    "rfp_increment": {
+      "status": "in_progress",
+      "process_ids": [
+        "P45",
+        "P46",
+        "P47",
+        "P48",
+        "P49"
+      ],
+      "implemented": "Closed typed factory intake/rework/coordinator; useful native investigation/preparation; primary console/native human decisions; controlled exact publication/receipts/outcome verification; historical submitted-version validation; explicit current-owner selection policy/settings; document reuse and cancellation/returned-review recovery",
+      "latest": "668133PASS/701.199s unittest/703.323s process; integrated source unchanged.66661PASS wider RFP recovery baseline. Supported cloud-browser localhost journey active; no process promotion yet.",
+      "evidence": "docs/test-evidence/2026-11-01-factory-run668.json",
+      "gap_map": "docs/design/2026-11-01/RFP-CONNECTION-GAP-MAP.md",
+      "remaining": "Primary supported-browser journey and GET/Enter proof passed668 source. Integrate seconds/timezone UI fix; narrow/full tab-order checks and per-ID whole-process reconciliation remain. Original desktop DBs untouched.",
+      "authority": "Consolidation request; existing native source rules, no invented policies/grants",
+      "policy_slots": "Existing assignment/review/outcome authorities and real executor/template/route remain owner-controlled; ambiguous actual submissions need configured explicit owner selection; disputed/post-disposition corrections have no invented automatic precedence"
+    },
+    "intake_authority_increment": {
+      "status": "bounded_implementation_verified",
+      "evidence": "6463PASS;6485PASS;6492PASS actual receipt dependency/contention;6504PASS source rework",
+      "current": "13 appDBs0059 preserved;238 fresh migrations;333rowsets/1572indexes GET preserved; preview650, native browser unavailable separately recorded",
+      "acceptance": "docs/test-evidence/2026-11-04-factory-intake-authority-acceptance.json"
+    },
+    "receipt_transport_increment": {
+      "status": "bounded_implementation_verified",
+      "last_result": "6404PASS;6415PASS including actual recovery-to-publication/contention;6433PASS;6447PASS. Source manifests and failed evidence retained",
+      "current": "All13 application databases0058 preserved;237 fresh migrations;333 GET rowsets/1572indexes unchanged; preview644. Native browser control unavailable, application readback verified separately",
+      "acceptance": "docs/test-evidence/2026-11-04-factory-receipt-recovery-acceptance.json"
+    },
+    "latest_result": "668133PASS/701.199s unittest/703.323s process; integrated source unchanged.66661PASS wider RFP recovery baseline. Supported cloud-browser localhost journey active; no process promotion yet.",
     "accounting_receipt_reuse_evidence": "docs/test-evidence/2026-11-01-factory-run633.json",
     "source_reader_evidence": "docs/test-evidence/2026-11-01-factory-run630.json",
     "implemented": "Typed nullable authority, immutable starter and reviewed execution binding, current worker adapters, independent Finance metadata/review, configuration/reviewer UI and failed-claim stale-write guard",
@@ -34,7 +60,25 @@
     ],
     "policy_slots": "Owner nominees, responsibilities, independence and validity remain unset outside synthetic tests; real provider/external activation deferred",
     "full_product_complete": false,
-    "acceptance_evidence": "docs/test-evidence/2026-11-04-factory-execution-acceptance.json"
+    "acceptance_evidence": "docs/test-evidence/2026-11-04-factory-execution-acceptance.json",
+    "cloud_continuation": {
+      "status": "in_progress",
+      "source_commit": "05590afd11494c6c5d973bace2694a2e7da8e73a",
+      "branch": "build/cloud-milestone",
+      "fresh_schema": "docs/test-evidence/2026-11-06-cloud-fresh-schema.json",
+      "browser": "primary_supported_cloud_journey_PASS_auxiliary_gaps",
+      "finance_intake_run": 672,
+      "integration": "668133PASS",
+      "published": false,
+      "next_increment": "typed statement/note/SOCE inputs; run673 and finance0063/workflows0063 reserved",
+      "browser_evidence": "docs/test-evidence/2026-11-06-cloud-rfp-browser-supported-668.json",
+      "active_increments": [
+        "statement bindings corrected authority/fresh schema677",
+        "explicit budget/performance factory674 after statement dependency",
+        "RFP seconds/timezone UI676"
+      ],
+      "next_unreserved_run": 678
+    }
   },
   "status_values": [
     "not_started",
@@ -1865,7 +1909,7 @@
         "docs/runbooks/payment-controls.md"
       ],
       "test_evidence": [
-        "BUILD-TESTS.md: RUN82â€“86 and RUN89 retained failures; RUN87 24 passed67.996s; RUN88 broader173 passed640.264s before final narrow refinements; RUN90 final27 passed109.867s. Suites overlap.",
+        "BUILD-TESTS.md: RUN82\u00e2\u20ac\u201c86 and RUN89 retained failures; RUN87 24 passed67.996s; RUN88 broader173 passed640.264s before final narrow refinements; RUN90 final27 passed109.867s. Suites overlap.",
         "docs/test-evidence/2026-10-21-run-87-payments.txt",
         "docs/test-evidence/2026-10-21-run-88-connected.txt",
         "docs/test-evidence/2026-10-21-run-90-payment-final.txt",

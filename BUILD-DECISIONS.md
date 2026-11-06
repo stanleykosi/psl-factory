@@ -1118,3 +1118,11 @@ Shared final presentation now gives settled cancellation precedence over retaine
 
 Fixture provisioning uses a new process with the isolated database selected and asserted before importing Django. Creating a database through a connector can materialise default Django connection settings; changing only PGDATABASE later is insufficient. The first helper was stopped before seeding; exact process/source/interruption and before/after main fingerprint proof are retained. Its child migration completed; corrected fixture passed target/empty-plan checks. Do not reset/delete the cohort or imply main was rolled back. This is a developer-fixture correction, not production authority or a business-policy decision.
 
+
+## 6 November 2026 — cloud verification boundaries
+
+Engineering decision:use a new isolated cloud PostgreSQL schema for the requested continuation; do not copy or replay original desktop operational state. Historical desktop preservation helpers are not portable. Cloud browser launch failures are an environment verification blocker, not proof of UI failure or acceptance. Keep native/HTTP tests distinct. All owner policies, approvals and external effects remain governed by existing native services; no deployment or real provider activation.
+
+## 6 November 2026 — supplied intake and private note provenance
+
+Use immutable native Audit records as per-submission intake receipts while FinancialImport remains content-hash identity; case locks serialize deduplication. Historical receipt/validation provenance is a read projection outside eligibility hashes, with explicit bounded coverage and no current-approval implication. Keep detailed note rows separate from company metrics, agent disclosures and controlled aggregate documents. Version formula-stage snapshots so old no-lineage results cannot be silently reused; preserve ordinary subtraction and defer semantic sign conversion to an explicit reviewed contract. Acceptance counts now derive from validated whole-process evidence packets, never a fixed all-unevaluated assertion or summed test counts.

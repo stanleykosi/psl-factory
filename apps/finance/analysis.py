@@ -131,7 +131,8 @@ def stage_snapshot(actor,source,kind,parent,request):
             adjustments.append({'id':adj.pk,'review':decision})
     return {'source':source.pk,'source_hash':source.batch.source_sha256,'source_evidence':source.evidence_id,
         'parent':{'id':parent.pk,'key':parent.operation_key} if parent else None,'policies':states,'reviews':reviews,
-        'source_review':current_review(source.case,'source',source=source),'adjustments':adjustments,**({'hr_basis_access':hr_basis_access} if hr_basis_access else {})},configs
+        'source_review':current_review(source.case,'source',source=source),'adjustments':adjustments,
+        **({'formula_result_implementation':'finance-note-lineage/v1'} if kind=='formula' else {}),**({'hr_basis_access':hr_basis_access} if hr_basis_access else {})},configs
 
 def ensure_current(run):
     parent=run.parent

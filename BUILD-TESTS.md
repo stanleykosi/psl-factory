@@ -1828,3 +1828,15 @@ Documentation and planning metadata only; runtime source, original evidence and 
 ## 30 October 2026 — Direct editorial review validation
 
 Directly reviewed the changed product definitions, guides, current plan, backlog metadata and latest build records. Corrections use direct file patches; Python is used only to validate document structure, links, JSON, status/source preservation and checkpoint fingerprints. Results are recorded in docs/test-evidence/2026-10-30-operations-factory-editorial-checks.json. This is documentation integrity evidence; no application/PostgreSQL/provider test was run or claimed for these editorial changes.
+
+## Cloud run666 — 6 November 2026
+
+`docs/test-evidence/2026-11-01-factory-run666.json`:61PASS,633.618s unittest/636.215s process, Python3.13.17/PostgreSQL16.11; unchanged source manifest. Native RFP/upstream/historical/policy/operator/HTTP/cancellation/recovery/concurrency/real elapsed leases and four new branch tests. Check and migration dry-run passed; fresh schema proof/log in2026-11-06-cloud-fresh-{schema.json,migrations.txt}. Original retained databases untouched, not revalidated. Chromium156 browser attempts both failed before any page actions at IPC permissions; exact normal/elevated launch failures retained. No screenshot, visual, keyboard or narrow-screen pass claimed.
+
+## Integrated run668 — 6 November 2026
+
+133PASS/701.199s unittest/703.323s process, Python3.13.17/PostgreSQL16.11, exact command and unchanged source in docs/test-evidence/2026-11-01-factory-run668{.json,-source.json,.txt}. Includes five RFP source branches (literal mixed-version included), primary HTTP chain, Finance supplied intake/provenance/factory/execution/analysis/performance and workers, eight note-lineage cases and24 acceptance guard tests. Static check/migration dry-run PASS. Run67143PASS,67218PASS,66725PASS overlap these tests and do not increase process count.669 failed before tests (Unix socket startup);67017PASS/1ERROR was invalid test-only assignment to read-only execution_actor, corrected for672 with production identical. Lineage debug5PASS/1FAIL expected403 versus actual404 retained and corrected. Supported cloud-browser localhost test is a distinct ongoing validation, not the failed standalone Chromium launch.
+
+## Source668 supported-cloud browser
+
+See2026-11-06-cloud-rfp-browser-supported-668.json and source-match record. Primary actual UI journey PASS, one native mock receipt and verified Route A, no baseline import; GET digest before/after reload identical, Enter action PASS. Six JPGs preserve intake/reviews/outward/receipt/verified stages. Narrow/full-tab-order not established; organizational DevTools restriction respected. Minute-only datetime-local rejected an otherwise valid seconds timestamp; documented for676 fix, not hidden. No live customer approval/external effect.

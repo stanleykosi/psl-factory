@@ -1,33 +1,27 @@
 # PSL operations factory build state — 6 November 2026
 
-Feature work is paused at the user's request for the initial source/build handoff to GitHub stanleykosi/psl-factory. Another agent should use docs/runbooks/agent-checkout.md; local databases/credentials/runtime state are retained on the original machine and excluded from Git.
+Cloud continuation is active at the user's request. Source was checked out from GitHub commit05590af; no deployment, live provider, external connection or original desktop database was used. Local integration branch:build/cloud-milestone. Nothing pushed.
 
-Release scope is63 PMO+45 Finance IDs (108). Preserve all122 IDs/13 families and existing14 deferred BaaS behavior. Full108 internal gate is NOT_MET. Canonical whole-process acceptance remains0/108; this does not mean native behavior is absent. Owner policies, real AI/provider evaluations and external connections remain deferred separately from engineering gaps.
+Release scope remains63 PMO+45 Finance(108), with all122 IDs/13 families and14 deferred BaaS identities preserved. Full108 internal gate NOT_MET; no new whole-process acceptance is claimed.
 
-## Completed with evidence
+## Current verified checkpoint
 
--663:51 PostgreSQL tests PASS,859.736s unittest/869.485s process. Includes genuine elapsed factory-lease recovery, full primary RFP HTTP flow, shared factory safety controls and full native RFP regression. Static check and migration dry-run pass.
--662:3PASS, including complete HTTP intake→native reviews→controlled mock submission→actual human win→verified Route A, loss correction and cancellation recovery.661 retained9PASS/1FAIL/1ERROR; both failures passed662 with unchanged application code, exact transient cause unestablished.
--Earlier bounded accounting, delivery, source-authority and receipt-recovery evidence remains recorded in BUILD-TESTS.md/BUILD-LOG.md and archived state. These bounded results do not constitute whole-process acceptance.
+-668 integrated:133PASS,701.199s unittest/703.323s process; source unchanged. Covers Finance supplied intake/provenance/accounting/execution/analysis/performance/workers, note-lineage golden cases, RFP literal mixed-version and complete primary HTTP flow, plus acceptance guards. Static check and migration dry-run PASS.
 
-## Current implementation and verification
+-666:61 PostgreSQL tests PASS,633.618s unittest/636.215s process; source unchanged throughout. Covers current RFP historical-outcome service, complete primary HTTP/native reviews/mock receipt/actual outcome, source-specific assignment/Security/material-change branches, policy lifecycle, recovery, two-connection conversion and genuine lease expiry.
+-Fresh cloud schema:Python3.13.17, PostgreSQL16.11, exact requirements.lock;242 migrations,333 tables,zero business rows before fixtures. Original13 retained desktop databases were not accessed or migrated.
+-66725PASS,67143PASS and67218PASS are integrated and covered by668. Failed669 startup,670 test-only property assignment and earlier lineage403/404 assertion evidence remain preserved. Overlapping tests are not additional process acceptance.
 
-RFP P45–P49 uses closed typed intake, native evidence investigation/preparation, parallel response reviews, ordered commercial decisions, exact outward review/publication, recipient receipts, actual customer outcome and fresh project/loss handoff. Native ledgers remain authoritative; agents cannot approve or infer won/lost.
+## Active work
 
-Post663 changes add historical submission validation independent of former staff grants/later unsent drafts; explicit same-RFP submitted-version choice; nullable versioned outcome-selection policy/settings; complete streamed inventory digests with bounded display; and operator cancellation/rework/reuse controls. New workflows0062 changes only the RFP verification branch; composition664 proves prior workflow/publication predicates byte-identical. These changes are not covered by663.
+The literal mixed-version P47 review test, Finance supplied-intake historical provenance and note/formula lineage are integrated and pass668. Typed statement/note/SOCE input binding is the next isolated implementation increment; its schema/guard plan is approved for engineering only. Evidence-backed internal-mock acceptance validation replaces the obsolete permanent all-unevaluated test without promoting any process.
 
-664 reached16 of21:15PASS/1FAIL,749.525s unittest/758.594s process. Failure was an uninstrumented false worker-tick assertion before cancellation setup; actual cause unestablished.665 finished6PASS/578.937s unittest/590.254s process, covering cancellation/reuse/rework, full HTTP and policy-shape tests. Only that test's claim-aware setup/diagnostics changed; application source unchanged, proven by rfp-followup665.json. Static664 PASS; before baselines/composition664/665 captured. No suite running; next unused666. No current-source migration/browser acceptance yet.
+## Browser verification route
 
-## Retained data and browser
+Supported cloud-browser primary RFP journey PASS on source668:actual UI intake, scoped agent work, both response reviews, PM→Head of PMO→CEO costing, separate outward review, one mock receipt, actual synthetic outcome and verified Route A without signed baseline. GET preservation and Enter activation PASS. Preview remains running at localhost8025/work/1 in cloud tab4, marked deliverable. Six screenshots/native readbacks and exact source match are preserved.
 
-All13 retained application databases remain workflows0059/documents0018. No business actions, migrations, grants, budgets or old scenarios replayed. New0060/documents0019/0061/0062 are test_psl only. Preservation helper permits exactly those four migrations after passing source-aligned evidence and checks every prior rowset/index/other guard.
-
-No preview running. Codex native browser is connected, but tab7/browser2 shows an older cached8024 page. No latest-source screenshot or browser acceptance yet. A new isolated synthetic8025 preview is prepared; provision only after passing tests, preservation and fresh zero-business-row schema proof.
+Narrow layout and full tab order remain unverified; supported viewport controls did not expose a usable resize and organizational DevTools restriction was respected. Browser found a datetime-local whole-minute precision edge; seconds/timezone fix is in isolated test676, not integrated yet. Earlier standalone Chromium IPC failures remain historical only and were not a valid inference that the supported cloud browser was unavailable.
 
 ## Next
 
-Finish664 and fix actual failures without weakening controls; run appropriate existing native/upstream/recovery regressions for changed P49 behavior. Preserve13 retained databases, prove fresh migrations, then exercise current-source operator journey in Codex native browser. Evaluate per-ID acceptance against canonical requirements with honest remaining gaps.
-
-Then extend existing finance-accounts/v1 from supplied trial-balance import through native mapping/formula/note lineage, reviewed accounts and budget/performance. Reuse existing Finance calculations/reviews; unknown mappings, formulas/oracles, units, sign conventions, budgets and real owners stay typed policy slots. Continue remaining108 connections and recovery paths.
-
-Detailed immediate instructions: HANDOFF.md. Historical state preserved at docs/handoffs/BUILD-STATE-before-664-2026-11-05.md; exact commands/results remain in BUILD-TESTS.md and immutable docs/test-evidence/ files.
+Integrate only passing isolated changes, run source-aligned Finance/shared regressions and P47 branch, then update coverage with bounded evidence. Complete cloud-browser acceptance once available. Remaining Finance engineering includes typed statement/equity bindings, explicit convention-conversion contracts and budget/performance factory connections; real owner values stay separate deferred slots. See HANDOFF.md and immutable run records. Historical665/664 failures and evidence remain unchanged.
