@@ -24,7 +24,9 @@ def commands(case,data=None):
       'match':('Match actual to expected item',{'scenario':select(ForecastScenario),'item_key':forms.CharField(max_length=100),'actual':select(ForecastActual),'amount':forms.CharField(max_length=64),'operation_key':forms.CharField(max_length=100),'evidence':ev('forecast_match')}),
       'unmatch':('Reverse an actual match',{'match':select(ForecastMatch),'evidence':ev('forecast_match'),'reason':reason()}),
       'priority':('Record reviewed priority and owned follow-up',{'run':select(ForecastRun),'role':choice(ROLES),'reference':forms.CharField(max_length=160),'description':forms.CharField(max_length=1000),'owner':forms.ModelChoiceField(get_user_model().objects.filter(grant__case=case,grant__action='action.own',grant__active=True,is_active=True).distinct()),'due_at':forms.DateTimeField(),'evidence':ev('forecast_review'),'reason':reason()}),
-      'draft':('Prepare reviewed audience report',{'run':select(ForecastRun),'template':select(Template),'audience':choice(['internal','management'])}),
+      'draft':('Prepare reviewed audience report',{'run':select(ForecastRun),'template':select(Template),'audience':choice(['internal','management','group'])}),
+      'group_review':('Decide exact group disclosure and recipients',{'version':select(Version),'role':choice(ROLES),'verdict':choice(['approve','return','reject']),'reason':reason()}),
+      'group_verify':('Verify every group recipient receipt',{'version':select(Version)}),
       'publish':('Reserve reviewed publication',{'version':select(Version)}),
       'investigate':('Investigate forecast coverage and actuals',{'run':select(ForecastRun)}),
       'policy':('Draft forecast policy',{'component':choice(['D10.forecast_inclusion_rule_id','D10.audience_projection_rules','D05.decision_action_matrix']),'content':forms.JSONField(widget=forms.Textarea(attrs={'rows':8})),'evidence':ev('policy_decision'),'effective_from':forms.DateTimeField()})}

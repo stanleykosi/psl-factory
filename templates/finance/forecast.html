@@ -1,4 +1,7 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<section><h2>Group cash report work</h2><p>Prepare only explicitly permitted rows, obtain exact disclosure and recipient approval, then verify controlled delivery. Group balances require a separately validated owner method. Management is not the group audience.</p>
+{% for item in groups %}<article><h3>{{ item.stage }}</h3><p>Reviewed calculation {{ item.run.pk }}{% if item.version %}, group document {{ item.version.pk }}{% endif %}</p><p>{{ item.finding }}</p></article>{% empty %}<p>Start with an exact reviewed native forecast. No group membership or eligibility is assumed.</p>{% endfor %}</section>
+
 <p><a href="{% url 'case' case.pk %}">{{ case|workspace_name }}</a> / Finance</p><h1>Cash forecast, coverage and actuals</h1>
 <nav><a href="{% url 'finance_settlement' case.pk %}">Corrected receivables</a> · <a href="{% url 'policy' case.pk %}">Business rules</a> · <a href="{% url 'document_inbox' %}">Published reports</a></nav>
 <p>Forecasts combine explicitly selected assumptions and verified actuals within declared account and source coverage. Unknown values remain unknown. A reviewed forecast grants no spending, payment or release authority.</p>

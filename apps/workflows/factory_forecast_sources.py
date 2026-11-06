@@ -40,10 +40,10 @@ def selection(actor, case, value, *, current=True):
     rows = list(Evidence.objects.filter(case=case, pk__in=ids).order_by('pk'))
     if len(rows) != len(expected):
         raise ValidationError('Every forecast source must belong to this case')
-    if value['template_id'] is not None and (type(value['template_id']) is not int or not Template.objects.filter(case=case, pk=value['template_id'], definition__document_type='finance_report').exists()):
-        raise ValidationError('Select this case aggregate Finance template')
-    if value['audience'] not in ['internal', 'management']:
-        raise ValidationError('Choose an exact aggregate forecast audience')
+    if value['template_id'] is not None and (type(value['template_id']) is not int or not Template.objects.filter(case=case, pk=value['template_id'], definition__document_type='finance_group_report' if value['audience']=='group' else 'finance_report').exists()):
+        raise ValidationError('Select this case exact Finance template for the chosen audience')
+    if value['audience'] not in ['internal', 'management', 'group']:
+        raise ValidationError('Choose an explicit internal, management or separate group audience')
     if current:
         require(scenario.actor, case, 'finance.forecast.capture')
         if ForecastScenario.objects.filter(case=case, reference=scenario.reference, number__gt=scenario.number).exists():
@@ -75,6 +75,23 @@ def prepare(actor, case_id, value, expected):
 def investigation(actor, case, value, run_id=None):
     """Pure scoped diagnostic. No approval, actual verification or matching tools."""
     scenario, rows = selection(actor, case, value)
+    if value['audience']=='group':
+        from apps.finance import group_forecast
+        projected=None;findings=[];pin=None
+        if run_id is not None:
+            r=selected_run(actor,case,value,run_id,current=False);pin={'run_id':r.pk,'sha256':r.sha256}
+            try:
+                disclosure=group_forecast.inputs(r)
+                projected=group_forecast.project(r.result,disclosure['projection'])
+            except (ValidationError,PermissionDenied) as exc:
+                findings.append('Group preparation held: exact current native approval, owner disclosure selection and supplied oracle are required.')
+        else:findings.append('Calculate and review the exact native scenario before group disclosure preparation')
+        return {'protocol':'factory-group-forecast-investigation/v1','selection_hash':digest(value),
+                'calculation_pin':pin,'projection':projected,'findings':findings,
+                'human_waits':['Owner selects exact group rows, fields, recipients and supplied disclosure oracle.',
+                               'A configured human approves exact group artifact and destination.'],
+                'approval_granted':False,'cash_mutated':False,'execution_authorized':False,
+                'tools':['group_projection_read'],'scope':'Only explicitly permitted native rows; no internal totals or source bodies.'}
     findings = []
     run = None
     current = False

@@ -81,11 +81,17 @@ def draft_report(actor,case_id,run_id,template_id,audience,expected,performance=
 
 def binding_findings(binding):
     try:
+        if binding.version.audience=='group':
+            from .group_forecast import check_content
+            check_content(binding)
         if binding.snapshot!=report_inputs(binding.run,binding.version.audience):return ['Finance source, rule, review or audience changed; rebuild and review the current output']
     except (ValidationError,PermissionDenied) as exc:return ['Finance report held: '+str(exc)]
     return []
 
 def publication_requirements(binding,recipients):
+    if binding.version.audience=='group':
+        from .group_forecast import recipient_requirements
+        return recipient_requirements(binding,recipients)
     from django.contrib.auth import get_user_model
     for user in get_user_model().objects.filter(pk__in=recipients):require(user,binding.run.case,'finance.read')
     roles=active_component('D05.role_principal_assignments',binding.run.case)

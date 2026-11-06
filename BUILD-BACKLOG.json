@@ -14713,5 +14713,17 @@
       "Held performance action and incomplete sign archive untouched",
       "F21 and downstream BU report assembly separate"
     ]
+  },
+  "group_forecast_increment": {
+    "processes": [
+      "F43"
+    ],
+    "status": "in_progress",
+    "branch": "build/f43-group-report",
+    "baseline": "7c777d8",
+    "source_checkpoint": "ee45e1a",
+    "scope": "Existing forecast work connection with explicit group intent and exact human disclosure review; owner aggregate financial oracle unresolved.",
+    "evidence": "Broad diagnostic09 128PASS/340.925s, unchanged source. Subsequent narrow diagnostic10 29PASS/151.621s, unchanged source. Actual0071/final712 pending accepted0070.",
+    "blocker": "Actual accepted workflows0070 predecessor required; no fabricated final graph."
   }
 }

@@ -31,6 +31,12 @@ def workbench(request,case_id):
             elif action=='unmatch':forecast.unmatch(a,c,d['match'].pk,d['evidence'].pk,d['reason'],v)
             elif action=='priority':forecast.prioritize(a,c,d['run'].pk,d['role'],d['reference'],d['description'],d['owner'].pk,d['due_at'],d['evidence'].pk,d['reason'],v)
             elif action=='draft':forecast_documents.draft(a,c,d['run'].pk,d['template'].pk,d['audience'],v)
+            elif action=='group_review':
+                from .group_forecast import review
+                review(a,c,d['version'].pk,d['role'],d['verdict'],d['reason'],v)
+            elif action=='group_verify':
+                from .group_forecast import verified
+                verified(d['version'])
             elif action=='publish':reserve_publication(a,c,d['version'].pk,v)
             elif action=='investigate':investigate(a,c,d['run'].pk,v)
             elif action=='policy':
@@ -48,8 +54,24 @@ def workbench(request,case_id):
         except (ValidationError,PermissionDenied):pass
     actuals=list(ForecastActual.objects.filter(case=case).order_by('-pk')[:50])
     for r in actuals:r.verified=forecast.actual_available(r)
-    return render(request,'finance/forecast.html',{'case':case,'commands':forms,'runs':runs,'actuals':actuals,
+    groups=[]
+    from .group_forecast import inputs,approved,verified
+    for r in runs:
+        row={'run':r,'stage':'Prepare permitted group rows','finding':''}
+        try:inputs(r)
+        except (ValidationError,PermissionDenied) as exc:row.update(stage='Owner decision or current source needed',finding=str(exc))
+        groups.append(row)
+    for b in ForecastBinding.objects.filter(run__case=case,version__audience='group').select_related('version','run'):
+        row={'run':b.run,'version':b.version,'stage':'Review disclosure and recipients','finding':''}
+        try:
+            approved(b.version);row['stage']='Controlled delivery and receipt verification';verified(b.version);row['stage']='Every recipient verified'
+        except (ValidationError,PermissionDenied) as exc:row['finding']=str(exc)
+        groups.append(row)
+    response=render(request,'finance/forecast.html',{'case':case,'groups':groups,'commands':forms,'runs':runs,'actuals':actuals,
         'scenarios':ForecastScenario.objects.filter(case=case).order_by('-pk')[:30],'reviews':ForecastReview.objects.filter(run__case=case).order_by('-pk')[:30],
         'matches':ForecastMatch.objects.filter(case=case).order_by('-pk')[:50],'bindings':ForecastBinding.objects.filter(run__case=case).select_related('version__document').order_by('-pk')[:20],
         'priorities':ForecastPriority.objects.filter(review__run__case=case).select_related('action__current').order_by('-pk')[:30],
         'agents':AgentRun.objects.filter(case=case,provider='deterministic-forecast-v1').order_by('-pk')[:5]})
+
+    response['Cache-Control']='no-store'
+    return response

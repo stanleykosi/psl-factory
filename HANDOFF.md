@@ -1,3 +1,19 @@
+
+## F43 ready for actual predecessor composition (not accepted)
+
+Broad diagnostic09 passes128 tests in340.925s with unchanged source. Subsequent narrow diagnostic10 passes29 tests in151.621s with unchanged source, including immutable group/non-group work identity across native correction, restart and direct SQL. Group metadata requires explicitly selected source currency, basis and as-of date. All runtime evidence remains local and preserved; earlier failures are not relabeled.
+
+Only provisional disposable workflow guard extension was used for connected diagnostics. Actual documents0024 is present; workflows0071 and final712 are intentionally absent until parent supplies accepted actual0070. Use collaboration follow-up to resume composition. No invented predecessor, no public writes, no held Finance performance/sign work, no new browser or whole-process/108 acceptance.
+
+## F43 privacy and native-work checkpoint (final graph pending)
+
+Diagnostic08:28PASS,153.678s tests, source unchanged. Covers exact group native/factory path, human disclosure/rework, unknown-delivery reconciliation, full-table read-only GETs, generic case/document/agent source denial with broader non-Finance grants, and historical D10/D11 recipient-policy invalidation. Diagnostic07:124PASS/1FAIL,332.768s; solely an old audience-error-message wording expectation, corrected. Earlier failed diagnostics retained.
+
+Native forecast source evidence (including exact generic input evidence referenced by captured scenarios), derived internal forecast snapshots and group snapshots are excluded from generic readers/retrieval. Native authorized paths remain available. Generic create_version has no bypass parameter; private storage receives exact independently validated source IDs only. P56's separate marker predicates must be preserved during actual0070 composition. Final712 still awaits accepted0070→0071 and clean native schema; no process/108/browser/live acceptance claim.
+## F43 separate group projection checkpoint (pending runtime)
+
+Independent build/f43-group-report starts from accepted forecast7c777d8. Typed exact-run owner row/field/recipient policy, selected native item projection without inherited aggregate balances, separate group document/template, exact human disclosure review, controlled native publication/receipt verification and documents0024 guard implemented. Source-only static checks pass. PostgreSQL and final712 are pending; no acceptance claimed. Owner aggregate/full-chain financial oracle remains unresolved; no recipients or eligibility inferred. Native F36-F42 factory remains unchanged. Held Finance performance/sign work untouched. Public backup denied; local checkpoint only. See docs/runbooks/group-forecast.md.
+
 ## Payroll composed checkpoint, final699 pending
 
 Accepted Emergencyca6d1e4 merged as1300977. Actual workflows0066 is additive on exact0065; accepted documents0022 unchanged. Provisional test guard removed. Freeze and run fresh699 before acceptance. Impact702 remains separate and full108 remains held.
@@ -140,3 +156,7 @@ Yielding capacity at parent request. Resume only after parent supplies accepted 
 6 November Emergency697 accepted and integrated as ca6d1e4:62PASS,603.633s unittest/606.159s runner. All1463 runtime source hashes exactly match featureb2b8d35. Fresh249 migrations/334 tables,331 business tables empty before and after, identical migration hashes/rowcounts; owned cluster stopped. Actual workflows0065/documents0022 now available for payroll0066/699 and forecast0067/701. Local evidence from2f36ba9 is retained but never included in public source backups. Static check and model dry-run pass; parent offline DB warning is not a new live history check. Emergency verifies native retrospective decisions and exact report receipts, not deployment or ordinary closure. Updated browser/composed-source proof remains pending. Held Finance action remains untouched.
 
 Forecast actual composition resumed: accepted963b59e payroll/Emergency and88611fb native impact integrated in isolated branch, retaining all three envelope registries and exact predecessor bytes. Actual workflows0067_factory_forecast extends0066; documents0023_factory_forecast extends0022; work dependency explicitly includes pmo0043_change_impact. Provisional test SQL helper and override removed. Final701 will use actual graph, not provisional schema. Parent707 remains independently running; no result claimed. Resolved additive source conflicts and corrected a conflict-resolution placement in the exception queue; a real queue assertion now covers stale verified forecast visibility.
+
+## F43 native and factory group connection checkpoint (not accepted)
+
+Native disclosure diagnostic04 passes18 with unchanged source. Existing finance-forecast/v1 now has explicit group intent, group-only scoped investigation, native preparation, exact human disclosure/recipient wait and original delivery/recovery/verification. Diagnostic05 preserves22PASS/1FAIL: existing unauthorized work route returns404 rather than the fixture-expected403. Source unchanged. Diagnostics01–03 failures retained. Workflows0071 is reserved after actual0070; provisional disposable0067 extension is diagnostic only. Final712 and migration composition pending. No full-process/108 acceptance, financial oracle, live recipient or public-write claim.
