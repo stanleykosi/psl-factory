@@ -64,6 +64,15 @@ CHANGE_SCHEMA='schema:psl/factory-change-execution/v1'
 CHANGE_VALUE=deepcopy(GO_LIVE_VALUE)
 CHANGE_VALUE['properties']['definition']={'const':'pmo-change/v1'}
 
+PPE_COMPONENT='OPS.factory_ppe_execution'
+PPE_SCHEMA='schema:psl/factory-ppe-execution/v1'
+PPE_VALUE=deepcopy(PLANNING_VALUE)
+PPE_VALUE['properties']['definition']={'const':'finance-ppe/v1'}
+PAYROLL_COMPONENT='OPS.factory_payroll_execution'
+PAYROLL_SCHEMA='schema:psl/factory-payroll-execution/v1'
+PAYROLL_VALUE=deepcopy(PLANNING_VALUE)
+PAYROLL_VALUE['properties']['definition']={'const':'finance-payroll/v1'}
+
 def validate_reference(component,target,case,runtime=False):
     planning=component==PLANNING_COMPONENT
     commercial=component==COMMERCIAL_COMPONENT
@@ -74,11 +83,11 @@ def validate_reference(component,target,case,runtime=False):
     closure=component==CLOSURE_COMPONENT
     change=component==CHANGE_COMPONENT
     go_live=component==GO_LIVE_COMPONENT or change
-    schema,shape={COMPONENT:(SCHEMA,VALUE),PLANNING_COMPONENT:(PLANNING_SCHEMA,PLANNING_VALUE),
+    schema,shape={PAYROLL_COMPONENT:(PAYROLL_SCHEMA,PAYROLL_VALUE),COMPONENT:(SCHEMA,VALUE),PLANNING_COMPONENT:(PLANNING_SCHEMA,PLANNING_VALUE),
         COMMERCIAL_COMPONENT:(COMMERCIAL_SCHEMA,COMMERCIAL_VALUE),DELIVERY_COMPONENT:(DELIVERY_SCHEMA,DELIVERY_VALUE),
         HYPERCARE_COMPONENT:(HYPERCARE_SCHEMA,HYPERCARE_VALUE),ARCHIVE_COMPONENT:(ARCHIVE_SCHEMA,ARCHIVE_VALUE),
         HANDOVER_COMPONENT:(HANDOVER_SCHEMA,HANDOVER_VALUE),CLOSURE_COMPONENT:(CLOSURE_SCHEMA,CLOSURE_VALUE),
-        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE)}.get(component,(SCHEMA,VALUE))
+        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE),PPE_COMPONENT:(PPE_SCHEMA,PPE_VALUE)}.get(component,(SCHEMA,VALUE))
     from .factory_provider_profiles import shape_for,scope
     value=typed(target,*shape_for(target,schema,shape));scope(case,value)
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')

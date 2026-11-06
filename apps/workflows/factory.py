@@ -24,6 +24,9 @@ TERMINAL={'verified','cancelled','blocked','owner_needed','configuration_needed'
 def access(actor,case,action='factory.read',envelope='pmo-finance/v1'):
     if not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current active actor required')
     for key in ['case.read',definition(envelope)['read'],action]:require(actor,case,key)
+    if envelope=='finance-ppe/v1':
+        from apps.finance.ppe import readable
+        readable(actor,case)
 
 def profile(work,*,recovery=False):
     config=active_component(definition(work.definition)['component'],work.case);value=reference_values(config)[0]
@@ -99,6 +102,15 @@ def invoice_job_observation(jobs):
     return [(job.pk,job.status,'expired' if job.status=='leased' and uncertain_job(job) else None) for job in jobs]
 
 def _snapshot(work,value,reader=None):
+    if work.definition=='finance-ppe/v1':
+        from . import factory_ppe
+        return factory_ppe.snapshot(work,value,reader=reader)
+    if work.definition=='finance-forecast/v1':
+        from .factory_forecast import snapshot as forecast_snapshot
+        return forecast_snapshot(work,value,reader=reader)
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll import snapshot as payroll_snapshot
+        return payroll_snapshot(work,value,reader=reader)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency import snapshot as emergency_snapshot
         return emergency_snapshot(work,value,reader=reader)
@@ -161,12 +173,21 @@ def snapshot(work,value,reader=None):
     return (state,*result[1:])
 
 def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
+    if work.definition=='finance-ppe/v1':
+        from . import factory_ppe
+        return factory_ppe.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
     if work.definition=='rfp-response/v1':
         from .factory_rfp import eligible as rfp_eligible
         return rfp_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
     if work.definition=='finance-accounts/v1':
         from .factory_accounting import eligible as accounting_eligible
         return accounting_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='finance-forecast/v1':
+        from .factory_forecast import eligible as forecast_eligible
+        return forecast_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll import eligible as payroll_eligible
+        return payroll_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency import eligible as emergency_eligible
         return emergency_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
@@ -263,6 +284,9 @@ def task(work,kind,context,resolver=None):
     return row
 
 def act(work,choice,value,latest,missing,tasks,jobs):
+    if work.definition=='finance-ppe/v1':
+        from . import factory_ppe
+        return factory_ppe.act(work,choice,value,latest,missing,tasks,jobs)
     if work.execution_binding_id is not None:
         previous_revision=work.case.revision
         work.case=lock_case(work.execution_actor,work.case_id,'factory.execute')
@@ -274,6 +298,12 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if work.definition=='finance-accounts/v1':
         from .factory_accounting import act as accounting_act
         return accounting_act(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='finance-forecast/v1':
+        from .factory_forecast import act as forecast_act
+        return forecast_act(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll import act as payroll_act
+        return payroll_act(work,choice,value,latest,missing,tasks,jobs)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency import act as emergency_act
         return emergency_act(work,choice,value,latest,missing,tasks,jobs)
@@ -411,10 +441,13 @@ def cancellation_status(work):
     from apps.agents.factory_coordinator import pending,has_receipt
     planning=pending(work)
     if planning and not has_receipt(planning):return 'waiting_effect'
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll import publication_history
+        if publication_history(work).exists():return 'followup_needed'
     if work.definition=='delivery-closure/v1':
         from apps.pmo.models import DeliveryRecord
         if DeliveryRecord.objects.filter(dossier_id=work.request['dossier'],dossier__case=work.case,kind='closure').exists():return 'followup_needed'
-    if work.definition in ['pmo-emergency/v1','pmo-change/v1','rfp-response/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1','finance-accounts/v1']:
+    if work.definition in ['finance-forecast/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1','finance-accounts/v1']:
         from apps.documents.models import PublicationJob,PublicationReceipt
         if PublicationJob.objects.filter(publication__factory_work=work,status__in=['pending','unknown','leased','held']).exists():return 'waiting_effect'
         if PublicationReceipt.objects.filter(publication__factory_work=work).exists():return 'followup_needed'
@@ -506,8 +539,10 @@ def run_once(work_id,provider=None,adapter=None):
             if fresh['hash']!=observed['hash'] or fresh['work_revision']!=observed['work_revision']:raise ValidationError('STALE_VERSION: case/evidence/decision/work changed while planning')
             if not isinstance(answer,dict) or set(answer)!={'activity','citations'} or answer['activity'] not in options:raise PermissionDenied('FORBIDDEN: model choice is outside current capabilities')
             if not isinstance(answer['citations'],list) or not answer['citations'] or any(type(pk) is not int or pk not in context['evidence_ids'] for pk in answer['citations']):raise ValidationError('Unsupported citation')
-            process={'pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
+            process={'finance-ppe/v1':'F07','finance-forecast/v1':'F39','finance-payroll/v1':'F16','pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
                 'delivery-hypercare/v1':'P35','delivery-release/v1':'P32','planning/v1':'P26'}.get(work.definition)
+            if work.definition=='finance-payroll/v1':
+                process='F18' if observed['native']['stage'] in ['aggregate','aggregate_review','publish','receipt','complete'] else 'F17' if observed['native']['stage'] in ['match','match_review'] else 'F16'
             if work.definition=='pmo-emergency/v1':
                 process='P62' if observed['native']['outcome'] else 'P61'
             if work.definition=='pmo-change/v1':
@@ -527,7 +562,7 @@ def run_once(work_id,provider=None,adapter=None):
             if work.definition=='rfp-response/v1' and answer['activity']=='ACT04':
                 from .factory_rfp import investigation_key as rfp_investigation_key
                 child_key=rfp_investigation_key(work,observed)
-            if work.definition in ['pmo-emergency/v1','pmo-change/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] and answer['activity']=='ACT04':
+            if work.definition in ['finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] and answer['activity']=='ACT04':
                 from .factory_delivery import investigation_key
                 child_key=investigation_key(work,observed)
             child,created=Activity.objects.get_or_create(work=work,key=child_key,defaults={'parent':activity,'kind':answer['activity'],'plan_revision':work.plan_revision})
@@ -723,6 +758,9 @@ def reconcile(actor,work_id,expected):
     if Work.objects.filter(pk=work_id,definition='rfp-response/v1').exists():
         from .factory_rfp import reconcile as rfp_reconcile
         return rfp_reconcile(actor,work_id,expected)
+    if Work.objects.filter(pk=work_id,definition='finance-forecast/v1').exists():
+        from .factory_forecast import reconcile as forecast_reconcile
+        return forecast_reconcile(actor,work_id,expected)
     if Work.objects.filter(pk=work_id,definition='pmo-emergency/v1').exists():
         from .factory_emergency import reconcile as emergency_reconcile
         return emergency_reconcile(actor,work_id,expected)

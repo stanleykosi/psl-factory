@@ -1,12 +1,13 @@
 {
   "normal_impact_integration": {
-    "status": "integrated_composed_regression_pending",
+    "status": "integrated_composed_regression_passed",
     "source": "297f153",
     "integration": "88611fb",
     "evidence": "702119PASS/1fixtureERROR with104nonimpactPASS;70416PASS on corrected module;runtime and non-impact tests identical",
-    "pending_run": 707,
-    "pending_tests": 49,
-    "whole_process_promotion": false
+    "whole_process_promotion": false,
+    "verified_run": 709,
+    "tests_passed": 49,
+    "interrupted_run": 707
   },
   "emergency_factory_increment": {
     "status": "implemented_bounded_tests_passed",
@@ -14684,5 +14685,25 @@
     ],
     "full_factory_implemented": false,
     "owner_policies": "deferred"
+  },
+  "payroll_forecast_restart_composition": {
+    "status": "integrated_regression_passed",
+    "source": "303a9d3",
+    "run": 711,
+    "test_count": 109,
+    "forecast_proof": "710:149PASS",
+    "payroll_proof": "699:110PASS/1assertionFAIL +708:5PASS",
+    "restart_proof": "7052:8PASS",
+    "whole_process_promotion": false,
+    "tests_passed": 109
+  },
+  "ppe_composition": {
+    "status": "integrated_composed_regression_pending",
+    "source": "a5d4761",
+    "integration": "b2db4d3",
+    "family_run": 703,
+    "family_tests_passed": 138,
+    "pending_run": 714,
+    "whole_process_promotion": false
   }
 }
