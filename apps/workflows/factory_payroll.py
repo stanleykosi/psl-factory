@@ -231,3 +231,45 @@ def cancel(actor,work_id,expected):
     if w.lease_until and w.lease_until>timezone.now():return w
     w.status=cancellation_status(w);w.finding='Stopping preparation does not undo a published aggregate or recipient receipt.'
     w.lease_until=None;w.revision+=1;w.save();return w
+
+def publication_history(work):
+    """All native request versions belonging to this canonical payroll work."""
+    return PayrollPublication.objects.filter(request__case=work.case,request__reference=work.request['payroll_reference'])
+
+@transaction.atomic
+def restart(actor,work_id,expected,case_expected,request_id,inputs,configuration_id,instruction_key,reason):
+    from .factory import access,profile,adopt_profile
+    from .factory_definitions import definition
+    from apps.agents.factory_coordinator import pending,has_receipt
+    w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
+    access(actor,w.case,'factory.manage',DEFINITION)
+    case=lock_case(actor,w.case_id,'evidence.add');w.case=case
+    validate(native.KEY,instruction_key)
+    if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the fresh payroll instruction without employee details')
+    q=native.exact(case,PayrollRequest,request_id)
+    if q.reference!=w.request['payroll_reference']:raise ValidationError('Select the same canonical payroll request')
+    input_rows(actor,case,q,inputs)
+    config=active_component(definition(DEFINITION)['component'],case)
+    if type(configuration_id) is not int or configuration_id!=config.pk:raise ValidationError('Select the exact current execution profile')
+    intent={'request_id':q.pk,'inputs':inputs,'configuration_id':configuration_id,'reason':reason}
+    sha=digest(intent)
+    old=Audit.objects.filter(case=case,action='factory.payroll_restarted',data__work=w.pk,data__instruction_key=instruction_key).first()
+    if old:
+        if old.actor_id!=actor.pk or old.data['intent_sha256']!=sha or old.data['current']!=w.source_head_id or w.cancel_requested:raise ValidationError('Restart instruction was reused for changed intent or later work')
+        profile(w);return w
+    if type(expected) is not int or type(case_expected) is not int or w.revision!=expected or case.revision!=case_expected:raise ValidationError('STALE_VERSION: refresh payroll work and workspace')
+    if publication_history(w).exists():raise ValidationError('A publication exists in this payroll request history; use native follow-up, not restart')
+    if w.status!='cancelled' or not w.cancel_requested:raise ValidationError('Only settled never-published cancellation can receive a fresh instruction')
+    if w.lease_until and w.lease_until>timezone.now():raise ValidationError('Wait for the original worker to stop')
+    planning=pending(w)
+    if planning and not has_receipt(planning):raise ValidationError('Reconcile the original planning response before restarting')
+    # No external effect occurs here. Denied native adoption rolls this entire
+    # transaction back, including the tentative reopening and instruction.
+    instruction=add_evidence(actor,case.pk,'agent_private_payroll_restart_instruction',json.dumps({'work':w.pk,'instruction_key':instruction_key,**intent},sort_keys=True),'psl:payroll-restart/v1')
+    prior=w.source_head_id
+    w.source_head=capture(actor,case,q,inputs,'factory.payroll_source')
+    w.cancel_requested=False;w.status='ready';w.finding='';w.lease_until=None;w.observation_hash='';w.fence+=1;w.revision+=1;w.save()
+    if w.policy_id!=config.pk:w=adopt_profile(actor,w.pk,w.revision,configuration_id,reason)
+    else:profile(w)
+    event(actor,case,'factory.payroll_restarted',work=w.pk,previous=prior,current=w.source_head_id,instruction=instruction.pk,instruction_key=instruction_key,intent_sha256=sha,configuration=config.pk,spent=w.budget_used,lifetime_allowance=w.budget_limit)
+    return w

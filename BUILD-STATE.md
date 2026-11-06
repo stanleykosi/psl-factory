@@ -81,3 +81,10 @@ Controlled-change factory implementation is isolated on build/pmo-change. It con
 
 
 6 November Standard/conditional commercial696 integrated: feature27e3495 as172d500, local evidence8eabaf7.45PASS,914.628s tests/917.309s process, source unchanged; all1452 tested runtime hashes match main. Fresh247 migrations/334 tables,331 business tables empty before/after. Covers full Standard route, Normal/Standard conditional commercial approvals/delivery/actual signed adoption, native change.authorize capability and missing-client-signature rejection only after exact valid notice/go-live receipts. Earlier692 supported-browser proof remains historical to its source; this capability change has automated proof, not new browser coverage. No P57/P59 whole-process promotion. New impact candidate is under independent review/correction before700; Emergency697, payroll699 and forecast701 are separate independent tasks. Held performance action remains untouched.
+
+
+## 6 November: independent payroll restart recovery
+
+Accepted payroll actual0066 remains the699/708 split proof. Separate restart705 increment reopens only settled never-published work with an explicit idempotent instruction; preserves identity, lifetime allowance, audit and original executor; checks current private-source/manager authority and exact profile through atomic native adoption. Publication history covers every canonical request version. No schema change.
+
+Diagnostic7050 was interrupted by execution-environment restart, log mid-test and final outcome/shutdown unknown. Original evidence is preserved with a separate interruption record; stale database is not reused. Eight class-qualified restart tests now include actual unresolved-planner refusal, transaction rollback, revoked grants/original ownership, historical publication and console GET/POST. Fresh UTF8 PostgreSQL final705 pending; no restart acceptance claim yet. Held Finance performance work remains untouched.

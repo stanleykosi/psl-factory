@@ -421,8 +421,8 @@ def cancellation_status(work):
     planning=pending(work)
     if planning and not has_receipt(planning):return 'waiting_effect'
     if work.definition=='finance-payroll/v1':
-        from .factory_payroll import publication
-        if publication(work):return 'followup_needed'
+        from .factory_payroll import publication_history
+        if publication_history(work).exists():return 'followup_needed'
     if work.definition=='delivery-closure/v1':
         from apps.pmo.models import DeliveryRecord
         if DeliveryRecord.objects.filter(dossier_id=work.request['dossier'],dossier__case=work.case,kind='closure').exists():return 'followup_needed'

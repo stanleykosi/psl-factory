@@ -71,7 +71,7 @@ def presentation(actor,work):
 def detail(request,work):
     panel=presentation(request.user,work)['payroll'];recipient=panel.get('recipient_only',False)
     if panel.get('restricted'):raise PermissionDenied('Current nominated source reader or aggregate recipient required')
-    form=None if recipient else InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial={**panel['inputs'],'request_id':panel['request'].pk})
+    form=None if recipient else InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,initial={**panel['inputs'],'request_id':panel['request'].pk})
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
@@ -84,11 +84,16 @@ def detail(request,work):
                 if action=='review':values={'kind':p.get('kind'),'subject_id':int(p.get('subject_id','0')),'verdict':p.get('verdict'),'operation_key':p.get('operation_key',''),'evidence_id':int(p.get('evidence_id','0'))}
                 elif action=='receive':values={'publication_id':int(p.get('publication_id','0'))}
                 payroll.human_action(request.user,work.pk,revision,case_revision,action,values)
+            elif action=='restart':
+                if not form or not form.is_valid():raise ValidationError('Select exact current payroll sources')
+                payroll.restart(request.user,work.pk,revision,case_revision,form.cleaned_data['request_id'].pk,form.inputs(),int(p.get('configuration_id','0')),p.get('instruction_key',''),p.get('reason',''))
             elif action=='cancel':payroll.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,action)
             else:raise ValidationError('Choose a current payroll action')
             messages.success(request,'Native payroll action recorded');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    response=render(request,'factory/payroll_detail.html',{'row':row,'case':work.case,'inputs_form':form,'review_key':'review-'+uuid4().hex,'review_evidence':Evidence.objects.filter(case=work.case,kind='payroll_review') if not recipient else []})
+    from apps.policy.models import Configuration
+    profiles=Configuration.objects.filter(case=work.case,component='OPS.factory_payroll_execution').order_by('-pk') if row['payroll'].get('can_correct') else []
+    response=render(request,'factory/payroll_detail.html',{'row':row,'case':work.case,'inputs_form':form,'review_key':'review-'+uuid4().hex,'restart_key':'restart-'+uuid4().hex,'restart_profiles':profiles,'review_evidence':Evidence.objects.filter(case=work.case,kind='payroll_review') if not recipient else []})
     response['Cache-Control']='no-store';return response
