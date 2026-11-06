@@ -10,13 +10,10 @@
       "P59",
       "P60"
     ],
-    "deferred_factory_connections": [
-      "P61",
-      "P62"
-    ],
+    "deferred_factory_connections": [],
     "implementation": "Native controlled change connection; Standard keeps native catalogue controls; Emergency uses its separate native route.",
-    "evidence": "Initial8-test native debug passed; final692 pending. Historical tests are not current runtime proof.",
-    "next": "Complete source-aligned synthetic PostgreSQL verification, review, browser/operator acceptance and remaining108 connections."
+    "evidence": "69645PASS on27e3495: full Standard and conditional commercial paths plus missing-client-signature negative; fresh247/334 schema. Local evidence only; no whole-process promotion.",
+    "next": "Complete independent Emergency697 proof, integrate with independent P57/P59 work and revalidate current source/browser; no whole-process promotion."
   },
   "version": "0.7",
   "meeting_ready_release": {
@@ -30,7 +27,7 @@
   },
   "current_recovery_increment": {
     "status": "in_progress",
-    "latest_finished_test_run": 696,
+    "latest_finished_test_run": 679,
     "last_passing_connected_run": 610,
     "current_test_run": null,
     "rfp_increment": {
@@ -14660,5 +14657,24 @@
     ],
     "full_factory_implemented": false,
     "owner_policies": "deferred"
+  },
+  "emergency_factory_increment": {
+    "status": "in_progress",
+    "process_ids": [
+      "P61",
+      "P62"
+    ],
+    "implementation": "Separate native Emergency preauthorization, actual outcome, retrospective reconciliation and controlled report receipt envelope. No deployment or ordinary closure.",
+    "source_chain": [
+      "workflows0065_factory_emergency",
+      "documents0022_factory_emergency"
+    ],
+    "evidence": "Initial9 native tests PASS196.770s; expanded diagnostics and final697 pending at this source checkpoint.",
+    "limits": [
+      "No whole-process acceptance",
+      "No live provider or deployment",
+      "No current browser proof",
+      "No retrospective repair of missing or late authorization"
+    ]
   }
 }

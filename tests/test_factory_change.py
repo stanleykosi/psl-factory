@@ -53,6 +53,7 @@ class FactoryChangeTests(TestCase):
         response=self.client.post(url,{'action':'close','revision':self.work.revision,'case_revision':rev(self.case),'receipt':receipt.pk,'pm_signature':pm.pk,'client_signature':client.pk,'note':'Actual PM attests supplied signatures on this exact delivered version'})
         self.assertEqual(response.status_code,302);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         self.assertEqual(len(change.verify(self.work)['receipt_ids']),2);self.assertFalse(change.verify(self.work)['deployment_authorized'])
+        page=self.client.get(url);self.assertContains(page,'Inspect the recorded signed closure');self.assertNotContains(page,'<h2>Review source-owned changes</h2>',html=True);self.assertContains(page,'Executive summary');self.assertContains(page,'within this document')
         self.assertEqual(connection.vendor,'postgresql')
     def test_idempotent_intake_and_cross_case_or_revision_references_rejected(self):
         self.start();old=self.work.pk
@@ -108,6 +109,7 @@ class FactoryChangeTests(TestCase):
         self.advance();self.assertEqual(change.document(self.work,'notice').pk,v.pk)
         change.correct(self.actor,self.work.pk,self.work.revision,rev(self.case),self.cv.pk,self.inputs,'Reviewed redraft of returned exact document')
         self.advance();new=change.document(self.work,'notice');self.assertNotEqual(v.pk,new.pk);self.assertGreater(self.work.budget_used,spent)
+        self.client.force_login(self.actor);page=self.client.get(reverse('factory_detail',args=[self.work.pk]));self.assertContains(page,'Earlier source-package documents');self.assertContains(page,f'Exact earlier version {v.pk}');self.assertContains(page,'Replacements may start at version 1')
         self.assertFalse(Publication.objects.filter(version=v).exists());self.review('notice');self.advance()
         self.assertEqual(PublicationReceipt.objects.filter(publication__factory_work=self.work).count(),1)
 
