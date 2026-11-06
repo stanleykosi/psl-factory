@@ -86,8 +86,8 @@ def detail(request,work):
             messages.success(request,'Controlled change action recorded');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work);panel=row['change']
-    human_permissions={a:permitted(request.user,work,a) for a in ['change.manage','change.decide','change.progress:Engineering','change.progress:QA']}
+    human_permissions={a:permitted(request.user,work,a) for a in ['change.manage','change.authorize','change.decide','change.progress:Engineering','change.progress:QA']}
     assessors=[c for c in change.changes.CONTRIBUTORS if permitted(request.user,work,'change.assess:'+c)]
     evidence=public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')
     signatures=public_evidence(Evidence.objects.filter(case=work.case,kind='signature')).order_by('-pk') if panel['can_close'] else []
-    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.manage'],'can_execution':any(human_permissions.values()),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES})
+    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.authorize'],'can_execution':any(human_permissions[k] for k in ['change.manage','change.progress:Engineering','change.progress:QA']),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES})
