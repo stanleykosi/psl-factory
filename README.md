@@ -1,3 +1,7 @@
+INCOMPLETE SOURCE-ONLY BACKUP: backup/incomplete-sign-conversion
+
+This branch preserves the independently tested statement sign/conversion feature on public backup54178de. It deliberately excludes pending performance source and all newly generated runtime evidence. It is not a runnable integration, deployment candidate or milestone acceptance: migration0065 references predecessor0064_factory_performance and document0022 references0021_factory_performance, which are intentionally absent here. Do not migrate or deploy this branch. The feature passed104 tests on its complete isolated test source; that result does not certify this deliberately partial backup tree. Continue from the coordinated integration branch when its dependencies are accepted.
+
 # PSL Product Studio — AI Agent Operations Factory
 
 PSL Product Studio is being built as **PSL’s AI agent operations factory**. Requests, projects, transactions and service issues enter as traceable work, move through connected production stations, and produce verified business outputs. Agents perform useful operational work, people make accountable decisions, and deterministic services enforce the rules.

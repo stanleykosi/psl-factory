@@ -40,13 +40,21 @@ def snapshot(actor,parent,contract_id):
         metric=source.result['company'].get(row['metric'])
         if metric is None:raise ValidationError('Exact source company metric required')
         if metric['unit']!=row['unit']:raise ValidationError('Statement unit mismatch; no silent scaling')
-        if row['source_sign'] is None or row['destination_sign'] is None:
+        converted=metric['value'];conversion=None
+        if value.get('convention_mode')=='producer_verified':
+            from .conventions import transfer
+            converted,conversion,problems=transfer(parent.case,row,source,metric);findings.extend(problems)
+        elif row['source_sign'] is None or row['destination_sign'] is None:
             findings.append('Explicit reviewed presentation-sign declaration is missing: '+row['destination'])
         elif row['source_sign']!=row['destination_sign']:
             findings.append('Convention conversion requires a separate typed reviewed contract: '+row['destination'])
         if metric['value'] is None:findings.append('Unknown statement input: '+row['destination'])
-        figures[row['destination']]={'value':metric['value'],'unit':metric['unit'],'rule_key':row['destination']}
+        figures[row['destination']]={'value':converted,'unit':metric['unit'],'rule_key':row['destination']}
         inputs.append({'declaration':row,'operation_key':source.operation_key,'result_hash':analysis.digest(source.result),'review':decision,'source_evidence_ids':source.result.get('source_evidence_ids',[])})
+        if value.get('convention_mode')=='producer_verified':
+            inputs[-1]['convention_transfer']=conversion
+            if conversion:
+                inputs[-1]['source_evidence_ids']=sorted(set(inputs[-1]['source_evidence_ids'])|{conversion['producer']['declaration']['evidence_id'],conversion['conversion']['declaration']['evidence_id'],conversion['conversion']['declaration']['oracle_evidence_id']})
     if value['oracle_evidence_id'] is None:findings.append('Owner-approved selected-line oracle is missing; whole-statement oracle remains deferred')
     else:
         from apps.pmo.services import subject
@@ -56,7 +64,7 @@ def snapshot(actor,parent,contract_id):
             actual=metric['value'];expected=oracle[key]
             if (actual is None)!=(expected is None) or actual is not None and decimal(actual)!=decimal(expected):
                 findings.append('Selected-line oracle differs: '+key)
-    snap={'implementation':'finance-statement-inputs/v1','parent':{'id':parent.pk,'key':parent.operation_key},
+    snap={'implementation':'finance-statement-inputs/v2' if value.get('convention_mode')=='producer_verified' else 'finance-statement-inputs/v1','parent':{'id':parent.pk,'key':parent.operation_key},
         'policies':{COMPONENT:{'id':contract.pk,'revision':contract.revision,'status':'ACTIVE'}},
         'reviews':{COMPONENT:review},'source_review':parent.snapshot['source_review'],'inputs':inputs}
     result={**anchor,'company':figures,'by_bu':{},'status':'needs_attention' if findings else 'complete','findings':findings,

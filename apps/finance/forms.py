@@ -23,7 +23,7 @@ def commands(case,data=None):
         'policy':('Save Finance policy draft',{'component':choice(sorted(set(SCHEMAS)|set(EXTRA))),'content':js('Versioned typed records; no executable workbook expressions or default account/ratio values.'),
             'evidence':evidence(['policy_decision']),'effective_from':forms.DateTimeField()}),
         'review':('Record configured Finance review',{'purpose':choice(['source','mapping','formula','allocation','adjustment','output']),'source':src(),
-            'configuration':forms.ModelChoiceField(Configuration.objects.filter(case=case,component__in=['D06.account_bu_maps','D06.rule_oracle_refs','D06.statement_contract','D07.allocation_pool_rules','D07.rounding_residual_rule_id','D10.report_category_effective_dates'])),
+            'configuration':forms.ModelChoiceField(Configuration.objects.filter(case=case,component__in=['D06.account_bu_maps','D06.rule_oracle_refs','D06.statement_contract','D06.producer_conventions','D06.statement_conversions','D07.allocation_pool_rules','D07.rounding_residual_rule_id','D10.report_category_effective_dates'])),
             'adjustment':forms.ModelChoiceField(FinanceAdjustment.objects.filter(source__case=case)),'run':run(),'role':choice(ROLES),'verdict':choice(['approve','return','reject']),
             'evidence':evidence(['finance_review']),'note':forms.CharField(max_length=4000,widget=forms.Textarea(attrs={'rows':2}))}),
         'adjust':('Capture reporting adjustment',{'source':src(),'reference':forms.CharField(max_length=100),'kind':choice(['additive','reclassification']),

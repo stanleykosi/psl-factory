@@ -243,7 +243,7 @@ def review(actor,case_id,purpose,target_id,role,verdict,evidence_id,note_text,ex
                 findings=certification_findings(item)
                 if findings:raise ValidationError(findings)
     else:
-        item=Configuration.objects.filter(case=case,pk=target_id,component__in=[k for k,v in PURPOSE.items() if v==purpose]+(['D06.statement_contract'] if purpose=='formula' else [])).first();target={'configuration':item}
+        item=Configuration.objects.filter(case=case,pk=target_id,component__in=[k for k,v in PURPOSE.items() if v==purpose]+(['D06.statement_contract','D06.producer_conventions','D06.statement_conversions'] if purpose=='formula' else [])).first();target={'configuration':item}
         if item and active_component(item.component,case).pk!=item.pk:raise ValidationError('Review the exact active Finance configuration version')
     if item is None:raise ValidationError('Review target must match this case and Finance purpose')
     preparer=item.created_by_id if 'configuration' in target else item.actor_id

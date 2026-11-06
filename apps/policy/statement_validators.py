@@ -15,7 +15,18 @@ VALUE=obj({'entity':KEY,'period':PERIOD,'accounting_basis':{'type':'string','min
     'inputs':rows(LINE),'oracle_evidence_id':{'anyOf':[ID,{'type':'null'}]}})
 
 def validate_reference(target,case):
-    value=typed(target,'schema:psl/finance-statement/v1',VALUE)
+    v2=target.schema_ref=='schema:psl/finance-statement/v2'
+    shape=VALUE
+    if v2:
+        import copy
+        shape=copy.deepcopy(VALUE)
+        shape['properties']['convention_mode']={'const':'producer_verified'}
+        shape['required'].append('convention_mode')
+        line=shape['properties']['inputs']['items']
+        line['properties']['transfer']={'enum':['identity','reverse_sign']}
+        for key,schema in [('producer_contract_id',ID),('conversion_contract_id',ID),('producer_key',KEY),('conversion_key',KEY)]:
+            line['properties'][key]={'anyOf':[schema,{'type':'null'}]};line['required'].append(key)
+    value=typed(target,'schema:psl/finance-statement/v2' if v2 else 'schema:psl/finance-statement/v1',shape)
     if len({r['destination'] for r in value['inputs']})!=len(value['inputs']):
         raise ValidationError('Statement destinations must be unique')
     from apps.finance.models import FinanceRun,FinanceReview

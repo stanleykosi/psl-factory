@@ -101,7 +101,17 @@ def requirements(work,source,value,formula,mapping=None,allocation=None,reader=N
         else:
             contract=config.configuration
             rows.append({'purpose':'formula','subject':'configuration','id':contract.pk,'preparer':contract.created_by_id})
-            for item in reference_values(contract)[0]['inputs']:
+            statement_value=reference_values(contract)[0]
+            for item in statement_value['inputs']:
+                if statement_value.get('convention_mode')=='producer_verified':
+                    from apps.finance.conventions import PRODUCER,CONVERSION
+                    for component,selector in [(PRODUCER,'producer_contract_id'),(CONVERSION,'conversion_contract_id')]:
+                        selected=resolve(component,work.case)
+                        policies[component]={'status':selected.status,'id':selected.configuration.pk if selected.configuration else None}
+                        if selected.status!='ACTIVE' or selected.configuration.pk!=item[selector]:
+                            if component not in missing:missing.append(component)
+                        elif not any(r['subject']=='configuration' and r['id']==selected.configuration.pk for r in rows):
+                            rows.append({'purpose':'formula','subject':'configuration','id':selected.configuration.pk,'preparer':selected.configuration.created_by_id})
                 source_run=FinanceRun.objects.get(case=work.case,pk=item['source_run'])
                 if not any(r['subject']=='run' and r['id']==source_run.pk for r in rows):
                     rows.append({'purpose':'output','subject':'run','id':source_run.pk,'preparer':source_run.actor_id})

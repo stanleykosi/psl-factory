@@ -5,7 +5,7 @@ from apps.pmo.services import subject
 from apps.finance.rules import decimal,evaluate,formula_order
 from .document_validators import typed,ROLES
 
-SUPPORTED={'D06.statement_contract','D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.join_overlap_rule_id',
+SUPPORTED={'D06.producer_conventions','D06.statement_conversions','D06.statement_contract','D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.join_overlap_rule_id',
     'D07.effective_membership_ref','D07.allocation_pool_rules','D07.rounding_residual_rule_id',
     'D10.report_category_effective_dates','D10.audience_projection_rules','D10.restatement_rule_id','D10.forecast_inclusion_rule_id'}
 KEY={'type':'string','pattern':'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$'}
@@ -42,6 +42,9 @@ SCHEMAS={
     'formula_keys':KEYS,'bu_keys':KEYS,'include_company':{'type':'boolean'},'publisher_roles':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':ROLES}}}))}))}
 
 def validate_reference(component,target,case,runtime=False):
+    if component in {'D06.producer_conventions','D06.statement_conversions'}:
+        from .convention_validators import validate_reference as convention
+        return convention(component,target,case)
     if component=='D10.forecast_inclusion_rule_id':
         from .forecast_validators import validate_method
         validate_method(target,case);return

@@ -36,6 +36,78 @@
         ],
         "additionalProperties": false
       }
+    },
+    {
+      "id": "D06.producer_conventions",
+      "parent_decision_id": "D06",
+      "schema_ref": "schema:psl/policy-component/D06.producer_conventions/v1",
+      "subject_scope": "Exact case, reviewed producer and selected statement boundary",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "D06.statement_conversions",
+      "parent_decision_id": "D06",
+      "schema_ref": "schema:psl/policy-component/D06.statement_conversions/v1",
+      "subject_scope": "Exact case, reviewed producer and selected statement boundary",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
     }
   ],
   "operation_dependencies": [
@@ -43,6 +115,13 @@
       "operation": "finance.statement",
       "required_components": [
         "D06.statement_contract"
+      ]
+    },
+    {
+      "operation": "finance.statement.conversion",
+      "required_components": [
+        "D06.producer_conventions",
+        "D06.statement_conversions"
       ]
     }
   ]
