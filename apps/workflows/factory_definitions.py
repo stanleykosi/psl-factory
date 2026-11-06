@@ -2,6 +2,7 @@
 from django.core.exceptions import ValidationError
 
 DEFINITIONS={
+    'finance-forecast/v1':{'component':'OPS.factory_forecast_execution','read':'finance.read','title':'Reviewed cash forecast and actual follow-up'},
     'pmo-change/v1':{'component':'OPS.factory_change_execution','read':'change.read','title':'Controlled change and signed closure'},
     'rfp-response/v1':{'component':'OPS.factory_rfp_execution','read':'rfp.read','title':'RFP response and project handoff'},
     'finance-accounts/v1':{'component':'OPS.factory_accounting_execution','read':'finance.read','title':'Accounting preparation and reviewed reports'},
