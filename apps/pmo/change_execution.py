@@ -41,17 +41,21 @@ def authorization_recovery(case,auth):
 
 
 def execution_manifest(auth):
+    from .change_impacts import deviation_hold
+    deviation_hold(auth)
     latest = {}
     for e in auth.execution.order_by('pk'):latest[e.kind]=e
     if set(latest)!={'plan_updated','implemented','testing_validated','documentation_updated'}:
         raise ValidationError('Updated plan, implementation, validated testing and documentation evidence required')
     if latest['testing_validated'].pk < latest['implemented'].pk:
         raise ValidationError('Latest implementation has not been validated')
+    from .change_impacts import validate_execution
+    validate_execution(auth, latest)
     return [latest[k].pk for k in sorted(latest)]
 
 
 @transaction.atomic
-def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, expected):
+def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, expected, *, scope_items=None, dossier_id=None):
     actions={'plan_updated':'change.manage','implemented':'change.progress:Engineering','testing_validated':'change.progress:QA','documentation_updated':'change.manage'}
     if kind not in actions:raise ValidationError('Choose an explicit implementation evidence category')
     case=lock_case(actor,case_id,actions[kind],expected)
@@ -63,7 +67,9 @@ def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, 
     prior=set(auth.execution.values_list('kind',flat=True))
     if kind=='implemented' and 'plan_updated' not in prior:raise ValidationError('Record the updated plan before implementation evidence')
     if kind=='testing_validated' and 'implemented' not in prior:raise ValidationError('Record completed implementation before testing validation')
-    result=ChangeExecutionEvent.objects.create(authorization=auth,kind=kind,evidence=evidence,note=note,actor=actor)
+    from .change_impacts import execution_details
+    details,evidence=execution_details(actor,case,auth,kind,evidence,scope_items,dossier_id)
+    result=ChangeExecutionEvent.objects.create(impact_details=details,authorization=auth,kind=kind,evidence=evidence,note=note,actor=actor)
     event(actor,case,'change.execution_evidence',execution=result.pk,authorization=auth.pk,kind=kind)
     bump(case)
     return result
@@ -80,11 +86,13 @@ def draft_change_document(actor,case_id,authorization_id,template_id,purpose,exp
     template=Template.objects.filter(case=case,pk=template_id,definition__document_type__in=['status_report','project_artifact']).first()
     if not template:raise ValidationError('Select this case reviewed change template')
     v=auth.version
+    from .change_impacts import timeline_text
+    approved_timeline=timeline_text(auth)
     execution_ids = execution_manifest(auth) if purpose=='go_live' else []
     fields={'executive_summary':{'text':v.description,'evidence_ids':[v.evidence_id]},
         'scope':{'text':v.module+': '+v.description,'evidence_ids':[v.evidence_id]},
         'status':{'text':'Authorized '+v.category+' change '+v.change.reference+'. This document does not authorize deployment.','evidence_ids':[v.evidence_id]},
-        'timeline':{'text':'See the exact linked owner impact and agreed timeline evidence.','evidence_ids':sorted(set(v.assessments.filter(pk__in=auth.assessment_ids).values_list('evidence_id',flat=True)))},
+        'timeline':{'text':approved_timeline or 'See the exact linked owner impact and agreed timeline evidence.','evidence_ids':sorted(set(v.assessments.filter(pk__in=auth.assessment_ids).values_list('evidence_id',flat=True)))},
         'next_steps':{'text':'Coordinate implementation, validate testing and capture signed change go-live acceptance.','evidence_ids':[v.evidence_id]}}
     if purpose=='go_live':
         fields['status']={'text':'Completed implementation and validated testing recorded for '+v.change.reference+'. Capture PM and Client acceptance of this exact version.',

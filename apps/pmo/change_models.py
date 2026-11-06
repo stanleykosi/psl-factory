@@ -28,6 +28,7 @@ class ChangeVersion(AppendOnly):
 
 
 class ChangeAssessment(AppendOnly):
+    impact_details = models.JSONField(default=dict)
     version = models.ForeignKey(ChangeVersion, on_delete=models.PROTECT, related_name='assessments')
     contributor = models.CharField(max_length=40)
     cost_impact = models.BooleanField(null=True)
@@ -70,6 +71,7 @@ class ChangeDocumentBinding(AppendOnly):
 
 
 class ChangeExecutionEvent(AppendOnly):
+    impact_details = models.JSONField(default=dict)
     authorization = models.ForeignKey(ChangeAuthorization, on_delete=models.PROTECT, related_name='execution')
     kind = models.CharField(max_length=30)
     evidence = models.ForeignKey('core.Evidence', on_delete=models.PROTECT)

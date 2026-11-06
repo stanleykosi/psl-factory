@@ -244,6 +244,17 @@ class CommercialTests(TestCase):
         with self.assertRaises(PolicyHold):valid_approvals(v,['PM'])
 
 
+def impact_fixture(team, timeline=False):
+    # Explicit synthetic owner statements, never production defaults.
+    return {'outputs':{'discipline':team+' reviewed its synthetic discipline impact',
+        'timeline':'Milestone moves from 2026-11-10 to 2026-11-12' if timeline else 'No timeline change',
+        'cost_resource':'No additional resources in this synthetic fixture',
+        'risk':'No additional risk in this synthetic fixture',
+        'dependency':'No additional dependency in this synthetic fixture'},
+        'production_impact':False if team=='Infra' else None,
+        'scope_items':['CR-001/item-1'] if team=='Engineering' else None}
+
+
 class ControlledChangeTests(TestCase):
     def setUp(self):
         self.actor,self.case,self.e,self.t=fixture(existing=True)
@@ -252,7 +263,7 @@ class ControlledChangeTests(TestCase):
         self.cv=log_change(self.actor,self.case.pk,'CR-001','Normal','Delivery','New work requested','Client evidence',self.source.pk,rev(self.case))
 
     def assessments(self,cost=True,timeline=True,client=True):
-        for team in CONTRIBUTORS:assess_change(self.actor,self.case.pk,self.cv.pk,team,cost,timeline,client,self.source.pk,'Owner impact assessment',rev(self.case))
+        for team in CONTRIBUTORS:assess_change(self.actor,self.case.pk,self.cv.pk,team,cost,timeline,client,self.source.pk,'Owner impact assessment',rev(self.case),**impact_fixture(team,timeline))
 
     def decisions(self):
         for role in ['Product','Engineering','Client','Engineering Lead','Security Manager']:
@@ -345,7 +356,7 @@ class ChangeExecutionTests(TestCase):
         evidence={}
         for kind,e_kind in [('plan_updated','plan'),('implemented','change_implementation'),('testing_validated','change_validation'),('documentation_updated','document')]:
             source=add_evidence(self.actor,self.case.pk,e_kind,'Owner evidence '+kind,'synthetic:execution')
-            evidence[kind]=record_execution(self.actor,self.case.pk,auth.pk,kind,source.pk,'Captured exact change evidence',rev(self.case))
+            evidence[kind]=record_execution(self.actor,self.case.pk,auth.pk,kind,source.pk,'Captured exact change evidence',rev(self.case),scope_items=['CR-001/item-1'] if kind=='implemented' else None)
         return evidence
 
     def change_template(self):

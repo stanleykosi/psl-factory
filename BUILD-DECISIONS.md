@@ -1131,3 +1131,8 @@ Use immutable native Audit records as per-submission intake receipts while Finan
 ## 6 November2026 — independent controlled-change connection on restored54178de
 
 pmo-change/v1 coordinates existing native P56-P60 records with exact source pins, human-only business decisions, scoped investigation/controlled drafting, recipient receipts and actual signature closure. It does not recreate the change engine. Source and scope decisions are in docs/runbooks/controlled-change-factory.md. Standard retains native catalogue controls; Emergency P61/P62 remains on its separate native route, not ordinary change authorization. First factory notice audience is explicit client. No policy, real owner, deployment or external authenticity is invented. Independent workflows0064/documents0021 build only on restored existing predecessors; absent held Finance/performance work is neither imported nor reconstructed.
+
+
+## 6 November2026 — Normal change impact handoffs
+
+Normal impact records use explicit owner-authored statements and scope comparison identifiers, not machine interpretation or invented department thresholds. Additive pmo0043 preserves immutable history; missing old detail holds new eligibility. Existing report and P32 readiness services remain authoritative. See docs/runbooks/normal-change-impact.md.

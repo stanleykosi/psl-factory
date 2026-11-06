@@ -71,10 +71,14 @@ def detail(request,work):
                 if action=='assess':
                     flags={'unknown':None,'true':True,'false':False}
                     if any(p.get(k) not in flags for k in ['cost_impact','timeline_impact','client_facing']):raise ValidationError('Choose true, false or unknown impact')
+                    from apps.pmo.change_impacts import assessment_form
+                    values.update(assessment_form(p))
                     values.update(contributor=p.get('contributor',''),**{k:flags[p[k]] for k in ['cost_impact','timeline_impact','client_facing']})
                 elif action=='decide':values.update(role=p.get('role',''),verdict=p.get('verdict',''))
                 elif action=='authorize':values['commercial']=int(p['commercial']) if p.get('commercial') else None
-                else:values['kind']=p.get('kind','')
+                else:
+                    from apps.pmo.change_impacts import execution_form
+                    values.update(execution_form(p));values['kind']=p.get('kind','')
                 change.human_action(request.user,work.pk,revision,case_revision,int(p.get('change_version','0')),action,values)
             elif action=='restart':change.restart(request.user,work.pk,revision,case_revision,p.get('reason',''))
             elif action=='cancel':change.cancel(request.user,work.pk,revision)

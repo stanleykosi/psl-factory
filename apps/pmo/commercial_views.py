@@ -1,3 +1,4 @@
+from .change_impacts import assessment_form, execution_form
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
@@ -31,7 +32,7 @@ def workbench(request,case_id):
                 if not f.is_valid():raise ValidationError(f.errors.as_text())
                 d=f.cleaned_data;decide_proposal(request.user,case.pk,int(p['proposal']),d['role'],d['verdict'],d['note'],expected,d['delegated'])
             elif action=='draft':draft_submission(request.user,case.pk,int(p['proposal']),int(p['template']),expected)
-            elif action=='response':capture_response(request.user,case.pk,int(p['proposal']),int(p['receipt']),p['kind'],int(p['evidence']),p['note'],expected)
+            elif action=='response':capture_response(request.user,case.pk,int(p['proposal']),int(p['receipt']),p['kind'],int(p['evidence']),p['note'],expected,**execution_form(p))
             elif action=='adopt':adopt_signed(request.user,case.pk,int(p['proposal']),int(p['response']),expected)
             elif action=='investigate':investigate_proposal(request.user,case.pk,int(p['proposal']),expected)
             else:raise ValidationError('Unsupported commercial command')
@@ -71,10 +72,10 @@ def changes(request,case_id):
                 def flag(key):
                     if p.get(key) not in ['unknown','true','false']:raise ValidationError('Select true, false or unknown')
                     return {'unknown':None,'true':True,'false':False}[p[key]]
-                assess_change(request.user,case.pk,int(p['version']),p['contributor'],flag('cost_impact'),flag('timeline_impact'),flag('client_facing'),int(p['evidence']),p['note'],expected)
+                assess_change(request.user,case.pk,int(p['version']),p['contributor'],flag('cost_impact'),flag('timeline_impact'),flag('client_facing'),int(p['evidence']),p['note'],expected,**assessment_form(p))
             elif action=='decide':decide_change(request.user,case.pk,int(p['version']),p['role'],p['verdict'],int(p['evidence']),p['note'],expected)
             elif action=='authorize':authorize_change(request.user,case.pk,int(p['version']),int(p['commercial']) if p.get('commercial') else None,expected)
-            elif action=='execution':record_execution(request.user,case.pk,int(p['authorization']),p['kind'],int(p['evidence']),p['note'],expected)
+            elif action=='execution':record_execution(request.user,case.pk,int(p['authorization']),p['kind'],int(p['evidence']),p['note'],expected,**execution_form(p))
             elif action=='draft_change':draft_change_document(request.user,case.pk,int(p['authorization']),int(p['template']),p['purpose'],expected,p.get('audience','client'))
             elif action=='close':close_change(request.user,case.pk,int(p['authorization']),int(p['receipt']),int(p['pm_signature']),int(p['client_signature']),p['note'],expected)
             elif action=='standard_approve':preapprove(request.user,case.pk,p['catalogue_key'],p['role'],p['verdict'],int(p['evidence']),p['note'],expected)
