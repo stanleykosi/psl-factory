@@ -1,3 +1,7 @@
+## Independent payroll implementation checkpoint (pending)
+
+New F16–F18 native connection in isolated build/cloud-payroll-f16-f18 on740382c. Static checks pass; new factory PostgreSQL acceptance pending exact accepted Emergency0065 and reserved payroll0066/final699. No placeholder migration, no documents migration and no held performance/sign dependency. See docs/runbooks/payroll-factory.md. Native payroll diagnostics running; no whole-process claim.
+
 # PSL operations factory build state — 6 November 2026
 
 ## Current integrated PMO checkpoint
@@ -48,3 +52,6 @@ Integrate only passing isolated changes, run source-aligned Finance/shared regre
 ## Independent PMO continuation from restored54178de
 
 Controlled-change factory implementation is isolated on build/pmo-change. It connects native Normal P56-P60 intake selection, human assessments/authorization/execution, scoped investigation/drafting, exact controlled notice/go-live review and recipient delivery, actual signature closure and source/effect recovery. Standard uses existing native controls. Emergency P61/P62 is explicitly identified but not routed through ordinary authorization. See docs/runbooks/controlled-change-factory.md. Initial8-test native debug passed; final source-aligned692 is pending. No new whole-process acceptance, live activation, deployment or public runtime evidence. Historical tests elsewhere in this file remain historical, not proof for this restored runtime.
+
+
+6 November supported cloud-browser Normal proof PASS on unchanged1451-file692runtime: UI intake,4owner assessments,2decisions,exact authorization,returned notice retained undelivered then fresh reviewed preparation,notice receipt,4execution events,go-live review/receipt and actual synthetic signature attestation→verified Work1. GET revisions preserved; Enterapproval/visibleTabfocus and inspected579px reflow. Native receipts1/2,closure1,allowance2000/20000. No deployment/external-authenticity/distinct-principal/fullkeyboard/375px/canceled-effectUI claim. Local evidence docs/test-evidence/2026-11-06-pmo-change-browser692; preview8027/work/1 tab2 retained (reverify recorded owned process identities before stopping). Minor exact-label/verified-next-action polish queued outside proof freeze. Whole-process gaps remain for Infra impact/P32,plan+weekly-report propagation,extra-scope detection and full branch coverage; not promoted.

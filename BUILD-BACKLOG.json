@@ -1,4 +1,21 @@
 {
+  "payroll_factory_increment": {
+    "process_ids": [
+      "F16",
+      "F17",
+      "F18"
+    ],
+    "status": "in_progress",
+    "scope": "Independent restricted payroll factory connection using native input/combine/match/aggregate/review/publication/recipient-receipt services",
+    "checkpoint": "b4b2e54; source saved, not accepted",
+    "next": "Complete disposable native diagnostics, then compose workflows0066_factory_payroll only from accepted Emergency0065 and run frozen final699",
+    "limitations": [
+      "No shared payroll migration yet",
+      "No browser or whole-process acceptance",
+      "Held performance action and incomplete sign archive untouched",
+      "F21 and downstream BU report assembly separate"
+    ]
+  },
   "controlled_change_factory_increment": {
     "status": "in_progress",
     "branch": "build/pmo-change",

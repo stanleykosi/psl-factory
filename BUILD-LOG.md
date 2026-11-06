@@ -1466,3 +1466,9 @@ Independent isolated PostgreSQL reproduction confirmed the new convention predic
 
 
 6 November resumed PMO integration: baseline69566PASS117.684s/220.911s unchanged; fresh245migrations334tables. Independent factory69240PASS204.921s/206.890s unchanged1451sources exactly match main after integration2d92f07; fresh247migrations334tables,331business tables empty before/after. Local evidence9cdd98f. NoDB69427PASS. Django check and model-state dryrun pass; latter offline history warning retained. Browser/whole-process acceptance pending; Standard/commercial696 then separate Emergency697 next. Held performance action remains untouched.
+
+
+6 November supported cloud-browser Normal proof PASS on unchanged1451-file692runtime: UI intake,4owner assessments,2decisions,exact authorization,returned notice retained undelivered then fresh reviewed preparation,notice receipt,4execution events,go-live review/receipt and actual synthetic signature attestation→verified Work1. GET revisions preserved; Enterapproval/visibleTabfocus and inspected579px reflow. Native receipts1/2,closure1,allowance2000/20000. No deployment/external-authenticity/distinct-principal/fullkeyboard/375px/canceled-effectUI claim. Local evidence docs/test-evidence/2026-11-06-pmo-change-browser692; preview8027/work/1 tab2 retained (reverify recorded owned process identities before stopping). Minor exact-label/verified-next-action polish queued outside proof freeze. Whole-process gaps remain for Infra impact/P32,plan+weekly-report propagation,extra-scope detection and full branch coverage; not promoted.
+
+
+6 November2026: New independent payroll factory service, policy envelope and console checkpoint. Native review/publication/recipient receipts retained; metadata-only generic attempts. Static check passes. Shared schema and final699 pending Emergency0065 acceptance; not claimed complete.

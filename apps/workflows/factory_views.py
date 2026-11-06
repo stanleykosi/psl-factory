@@ -32,6 +32,7 @@ QUEUES={'needs_me':'Needs my attention','active':'Active work','decisions':'Deci
 
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
+    ('finance-payroll/v1','Coordinate restricted payroll','Carry exact native payroll inputs through HR matching, human review and aggregate recipient receipt.',('factory.start','payroll.read','payroll.private.read','evidence.add')),
     ('pmo-change/v1','Coordinate a controlled change','Carry exact native change evidence through human decisions, controlled delivery and signed closure.',('factory.start','change.read','evidence.add')),
     ('rfp-response/v1','Prepare an RFP response','Investigate received requirements, prepare the response and track reviewed submission through the actual customer outcome.',('factory.start','rfp.read','evidence.add')),
     ('finance-accounts/v1','Prepare management accounts','Carry a controlled trial balance through Finance review and an aggregate report.',('factory.start','finance.read','finance.calculate','evidence.add')),
@@ -76,6 +77,9 @@ def presentation(actor,work):
     return decorate(actor,work,_presentation(actor,work))
 
 def _presentation(actor,work):
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll_views import presentation as payroll_presentation
+        return payroll_presentation(actor,work)
     if work.definition=='rfp-response/v1':
         from .factory_rfp_views import presentation as rfp_presentation
         return rfp_presentation(actor,work)
@@ -385,7 +389,7 @@ def index(request):
     query=visible(request.user)
     if q:query=query.filter(Q(request__reference__icontains=q)|Q(case__title__icontains=q)|Q(key__icontains=q))
     if queue=='verified':query=query.filter(status='verified')
-    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
+    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['finance-payroll/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
     else:query=query.exclude(status__in=['verified','cancelled'])
     query=query.distinct().order_by('-updated_at','-pk');items=[]
@@ -433,6 +437,9 @@ def create(request):
     if envelope=='finance-accounts/v1':
         from .factory_accounting_views import create as create_accounting
         return create_accounting(request)
+    if envelope=='finance-payroll/v1':
+        from .factory_payroll_views import create as create_payroll
+        return create_payroll(request)
     if envelope=='pmo-change/v1':
         from .factory_change_views import create as create_change
         return create_change(request)
@@ -473,6 +480,9 @@ def detail(request,work_id):
     if work.definition=='finance-accounts/v1':
         from .factory_accounting_views import detail as accounting_detail
         return accounting_detail(request,work)
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll_views import detail as payroll_detail
+        return payroll_detail(request,work)
     if work.definition=='pmo-change/v1':
         from .factory_change_views import detail as change_detail
         return change_detail(request,work)
@@ -793,8 +803,8 @@ def configuration(request,case_id):
         from .factory_rfp_views import RFPProfileForm
         form_class=RFPProfileForm
     form=form_class(case,request.POST if request.method=='POST' else None,definition=envelope)
-    if envelope in ['pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
-        for name in (['executor_id','information_resolver_id'] if envelope in ['planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
+    if envelope in ['finance-payroll/v1','pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
+        for name in (['executor_id','information_resolver_id'] if envelope in ['finance-payroll/v1','planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
             form.fields[name].widget=forms.HiddenInput();form.fields[name].disabled=True
     if envelope in ['pmo-change/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1']:
         form.fields['executor_id'].label='Controlled document publisher'
@@ -818,7 +828,7 @@ def configuration(request,case_id):
             value['route_key']=value['route_key'] or None
         selected=value.pop('provider') or None
         if 'provider' not in request.POST:selected='synthetic_factory_v1' if case.synthetic else None
-        value.update(definition=envelope,review_role=None if envelope in ['pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
+        value.update(definition=envelope,review_role=None if envelope in ['finance-payroll/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
         try:
             draft_operator_policy(request.user,case.pk,component,value,proof.pk,timezone.now());messages.success(request,'Draft saved. Validate it before activation.');return redirect(request.path+'?definition='+envelope)
         except ValidationError as exc:form.add_error(None,str(exc))
