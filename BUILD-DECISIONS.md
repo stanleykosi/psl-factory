@@ -1126,3 +1126,8 @@ Engineering decision:use a new isolated cloud PostgreSQL schema for the requeste
 ## 6 November 2026 — supplied intake and private note provenance
 
 Use immutable native Audit records as per-submission intake receipts while FinancialImport remains content-hash identity; case locks serialize deduplication. Historical receipt/validation provenance is a read projection outside eligibility hashes, with explicit bounded coverage and no current-approval implication. Keep detailed note rows separate from company metrics, agent disclosures and controlled aggregate documents. Version formula-stage snapshots so old no-lineage results cannot be silently reused; preserve ordinary subtraction and defer semantic sign conversion to an explicit reviewed contract. Acceptance counts now derive from validated whole-process evidence packets, never a fixed all-unevaluated assertion or summed test counts.
+
+
+## 6 November2026 — independent controlled-change connection on restored54178de
+
+pmo-change/v1 coordinates existing native P56-P60 records with exact source pins, human-only business decisions, scoped investigation/controlled drafting, recipient receipts and actual signature closure. It does not recreate the change engine. Source and scope decisions are in docs/runbooks/controlled-change-factory.md. Standard retains native catalogue controls; Emergency P61/P62 remains on its separate native route, not ordinary change authorization. First factory notice audience is explicit client. No policy, real owner, deployment or external authenticity is invented. Independent workflows0064/documents0021 build only on restored existing predecessors; absent held Finance/performance work is neither imported nor reconstructed.

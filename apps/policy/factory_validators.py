@@ -59,6 +59,11 @@ GO_LIVE_VALUE=deepcopy(COMMERCIAL_VALUE)
 GO_LIVE_VALUE['properties'].update(definition={'const':'delivery-go-live/v1'},preparer_id=deepcopy(ID))
 GO_LIVE_VALUE['required'].append('preparer_id')
 
+CHANGE_COMPONENT='OPS.factory_change_execution'
+CHANGE_SCHEMA='schema:psl/factory-change-execution/v1'
+CHANGE_VALUE=deepcopy(GO_LIVE_VALUE)
+CHANGE_VALUE['properties']['definition']={'const':'pmo-change/v1'}
+
 def validate_reference(component,target,case,runtime=False):
     planning=component==PLANNING_COMPONENT
     commercial=component==COMMERCIAL_COMPONENT
@@ -67,12 +72,13 @@ def validate_reference(component,target,case,runtime=False):
     archive=component==ARCHIVE_COMPONENT
     handover=component==HANDOVER_COMPONENT
     closure=component==CLOSURE_COMPONENT
-    go_live=component==GO_LIVE_COMPONENT
+    change=component==CHANGE_COMPONENT
+    go_live=component==GO_LIVE_COMPONENT or change
     schema,shape={COMPONENT:(SCHEMA,VALUE),PLANNING_COMPONENT:(PLANNING_SCHEMA,PLANNING_VALUE),
         COMMERCIAL_COMPONENT:(COMMERCIAL_SCHEMA,COMMERCIAL_VALUE),DELIVERY_COMPONENT:(DELIVERY_SCHEMA,DELIVERY_VALUE),
         HYPERCARE_COMPONENT:(HYPERCARE_SCHEMA,HYPERCARE_VALUE),ARCHIVE_COMPONENT:(ARCHIVE_SCHEMA,ARCHIVE_VALUE),
         HANDOVER_COMPONENT:(HANDOVER_SCHEMA,HANDOVER_VALUE),CLOSURE_COMPONENT:(CLOSURE_SCHEMA,CLOSURE_VALUE),
-        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE)}.get(component,(SCHEMA,VALUE))
+        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE)}.get(component,(SCHEMA,VALUE))
     from .factory_provider_profiles import shape_for,scope
     value=typed(target,*shape_for(target,schema,shape));scope(case,value)
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')
@@ -97,8 +103,8 @@ def validate_reference(component,target,case,runtime=False):
                 for required in ['case.read','delivery.read','delivery.manage']:
                     if not Grant.objects.filter(case=case,user_id=value[name],action=required,active=True).exists():raise ValidationError('Closure finaliser requires current same-case delivery permissions; PM business authority is rechecked at runtime')
             if go_live:
-                required_actions=['case.read','delivery.read']+(['document.publish'] if name=='executor_id' else
-                    ['delivery.manage','document.draft','document.request_review'] if name=='preparer_id' else [])
+                required_actions=['case.read','change.read' if change else 'delivery.read']+(['document.publish'] if name=='executor_id' else
+                    ['change.manage' if change else 'delivery.manage','document.draft','document.request_review'] if name=='preparer_id' else [])
                 for required in required_actions:
                     if not Grant.objects.filter(case=case,user_id=value[name],action=required,active=True).exists():raise ValidationError('Go-live principal requires current same-project permissions; selection does not appoint a PM')
     return value

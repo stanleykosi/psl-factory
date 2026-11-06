@@ -2,6 +2,42 @@
   "classification": "Supplemental engineering operator/protection interfaces; no new process or consolidated D group, no default RPO/RTO or real appointments",
   "components": [
     {
+      "id": "OPS.factory_change_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_change_execution/v1",
+      "subject_scope": "Exact native change revision and selected human authorization; scoped investigation and controlled document drafting/delivery. Human assessments, decisions, implementation attestations and signatures remain native. Emergency preauthorization and retrospective are not ordinary change authorization.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.rfp_outcome_reconciliation",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.rfp_outcome_reconciliation/v1",

@@ -1860,3 +1860,9 @@ Local evidence commit1386c0c preserves exact current-template seconds/timezone b
 ## 6 November: acceptance evidence tooling
 
 The validator now permits existing zero-byte runtime package files only when the expected hash matches, while empty evidence artifacts remain rejected. Main tests:27PASS (684,2.053s process), no database used, source unchanged. Runner now uses unbuffered Python and records actual finished_at to avoid stdout/stderr migration/test line joining. Raw679 log remains unchanged; its explicit derived normalization is separate. P45-P49 candidate packets remain BLOCKED because integrated shared statement migrations/registrations were absent from historical test/browser manifests. No dependency was dropped to force acceptance. Final current-source tests/browser proof must follow remaining Finance integration.
+
+
+6 November resumed cloud checkpoint: restored public54178de after old local worktrees were absent. Fresh lockedPython3.13.17 and official checksum-verifiedPostgreSQL16.11 prepared.693 retained25PASS/1 nonexistent-label ImportError;694 corrected native test label27PASS,0.976s tests/2.201s process, source unchanged, no database used. Fresh native PMO baseline695 is running; independent Normal change factory692 planned. Held performance action remains untouched, not reconstructed or delegated. No full108 acceptance claim.
+
+
+6 November resumed PMO integration: baseline69566PASS117.684s/220.911s unchanged; fresh245migrations334tables. Independent factory69240PASS204.921s/206.890s unchanged1451sources exactly match main after integration2d92f07; fresh247migrations334tables,331business tables empty before/after. Local evidence9cdd98f. NoDB69427PASS. Django check and model-state dryrun pass; latter offline history warning retained. Browser/whole-process acceptance pending; Standard/commercial696 then separate Emergency697 next. Held performance action remains untouched.

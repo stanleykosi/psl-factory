@@ -1,4 +1,23 @@
 {
+  "controlled_change_factory_increment": {
+    "status": "in_progress",
+    "branch": "build/pmo-change",
+    "restored_base": "54178de",
+    "process_ids": [
+      "P56",
+      "P57",
+      "P58",
+      "P59",
+      "P60"
+    ],
+    "deferred_factory_connections": [
+      "P61",
+      "P62"
+    ],
+    "implementation": "Native controlled change connection; Standard keeps native catalogue controls; Emergency uses its separate native route.",
+    "evidence": "Initial8-test native debug passed; final692 pending. Historical tests are not current runtime proof.",
+    "next": "Complete source-aligned synthetic PostgreSQL verification, review, browser/operator acceptance and remaining108 connections."
+  },
   "version": "0.7",
   "meeting_ready_release": {
     "scope": "63 PMO and45 Finance;14 BaaS deferred",
@@ -11,7 +30,7 @@
   },
   "current_recovery_increment": {
     "status": "in_progress",
-    "latest_finished_test_run": 679,
+    "latest_finished_test_run": 692,
     "last_passing_connected_run": 610,
     "current_test_run": null,
     "rfp_increment": {

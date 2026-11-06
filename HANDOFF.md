@@ -1,5 +1,19 @@
 # PSL operations factory cloud handoff — 6 November 2026
 
+## Current integrated PMO checkpoint
+
+Independent controlled-change feature9bdb394 is integrated as2d92f07; local evidence9cdd98f. Final692:40PASS,204.921s tests/206.890s process, source unchanged. All1451 manifest files match main exactly. Fresh247 migrations/334 tables,331 non-bookkeeping tables empty before and after tests. Native restored baseline695:66PASS,117.684s tests/220.911s process, unchanged source; fresh245/334 schema. NoDB694:27PASS. Preserved693 bad-label error is not a pass.
+
+Normal work now connects exact human decisions, reviewed documents, receipts, execution evidence and signatures, with reviewed recovery fixes. Supported cloud-browser verification is active on this frozen checkpoint. Full Standard/conditional commercial proof is next in isolated branch (696), then separate native Emergency P61/P62 (697). No browser or whole-process acceptance claimed yet. Held performance work remains untouched and blocks full108 completion.
+
+## Resume here: restored public baseline
+
+This is a new cloud checkout restored from public54178de, not the former localf0dadb6 integration. Earlier local worktrees, isolated checkpoints and new cloud-run evidence are absent at their saved paths; historical paragraphs below must not be treated as current running services or recoverable files. Main remote05590af and source-only sign backupf5298e0 were reverified. Do not import the incomplete sign branch as a runnable dependency.
+
+The prior performance correction/regression remains restricted. Do not retry, delegate, reconstruct or route around that action. Continue independent PMO work only; full milestone acceptance remains blocked on the unresolved held gate. Current independent branchbuild/pmo-change in ../psl-pmo-change implements native change factory connection without importing absent Finance/sign helpers. Reserve workflows0064_factory_change and documents0021_factory_change only if needed. These are a distinct migration branch, not substitutes for the absent performance migrations. Future approved integration requires explicit graph reconciliation. Final692 is reserved for PMO change. Parent baseline695 is running. Runs693/694 retain failed-label and corrected27PASS evidence. Next unreserved696.
+
+Python: .venv313/bin/python. PostgreSQL binaries: /tmp/psl-postgres16/bin. Each command has an isolated process/network namespace: start/test/stop an owned synthetic cluster in one exec, TCP only with unix_socket_directories empty. Do not touch operational data. All new runtime evidence stays local. Source-only backups must preserve the old public docs/test-evidence tree and never push local historical commits containing new evidence.
+
 ## Authority and scope
 
 The user resumed implementation and explicitly selected the cloud computer. Continue the connected63 PMO+45 Finance(108) milestone; preserve all122 IDs/13 families and14 deferred BaaS IDs. No deployment, live provider activation, external connections, actual HOD appointments or invented accounting policy. Native Django/PostgreSQL services, human decisions and receipts remain authoritative. Nothing has been pushed.
@@ -73,3 +87,8 @@ The validator now permits existing zero-byte runtime package files only when the
 ## 6 November: current-authority hardening blocker
 
 Independent isolated PostgreSQL reproduction confirmed the new convention predicate can return true and permit direct Publication insertion after its distinct reviewer loses finance.review, while base/source reviews remain valid. Native service checks correctly refuse it. Newly introduced v1 statement contract/source guard scope is being checked and hardened with the same current-authority predicate, preserving historical migration bytes. Conversion680 stays frozen as diagnostic regression; corrected683 will validate the hardening. Performance67458PASS/2ERROR exposed one test import and a real ACT10 finding=None transition; focused corrections5PASS and broad681 active. No database NOT NULL guard weakened. No deployment or formal process promotion.
+
+
+## Independent controlled-change worktree
+
+build/pmo-change starts at restored54178de. New definition pmo-change/v1 and migrations workflows0064_factory_change/documents0021_factory_change connect existing native change services; no absent Finance/sign schema and no held performance operation is involved. Initial debug8PASS; extended13-case debug and final692 pending. Preserve failed diagnostics. Parent coordinates final integration/backups and migration graph reconciliation. Read docs/runbooks/controlled-change-factory.md for exact scope and limitations. Current runtime uses main .venv313 and independently compiled /tmp/psl-postgres16 binaries against a separate synthetic cluster; do not assume older runtime evidence is present.

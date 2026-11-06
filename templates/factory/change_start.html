@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Coordinate a controlled change</h1><p>Select a logged native change. Human assessments, approvals and signatures remain required.</p>
+<form method="get"><input type="hidden" name="definition" value="pmo-change/v1">{{ form.case.as_field_group }}<button>Select project</button></form>
+{% if case %}<p><a href="{% url 'changes' case.pk %}">Log or inspect native change requests</a></p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start controlled change work</button></form>{% endif %}
+{% endblock %}

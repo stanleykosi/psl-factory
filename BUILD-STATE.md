@@ -1,5 +1,19 @@
 # PSL operations factory build state — 6 November 2026
 
+## Current integrated PMO checkpoint
+
+Independent controlled-change feature9bdb394 is integrated as2d92f07; local evidence9cdd98f. Final692:40PASS,204.921s tests/206.890s process, source unchanged. All1451 manifest files match main exactly. Fresh247 migrations/334 tables,331 non-bookkeeping tables empty before and after tests. Native restored baseline695:66PASS,117.684s tests/220.911s process, unchanged source; fresh245/334 schema. NoDB694:27PASS. Preserved693 bad-label error is not a pass.
+
+Normal work now connects exact human decisions, reviewed documents, receipts, execution evidence and signatures, with reviewed recovery fixes. Supported cloud-browser verification is active on this frozen checkpoint. Full Standard/conditional commercial proof is next in isolated branch (696), then separate native Emergency P61/P62 (697). No browser or whole-process acceptance claimed yet. Held performance work remains untouched and blocks full108 completion.
+
+## Current resumption checkpoint
+
+The previous cloud code worktrees were absent when the user requested continuation. This checkout was freshly restored from verified public working branch54178de. Historical cloud-only commits/evidence and running previews are not assumed recoverable or active. Public main remains05590af; separate source-only sign backupf5298e0 intentionally lacks its performance predecessors and is not runnable.
+
+Independent PMO Normal change factory work is now active on this runnable baseline. The previously restricted performance correction/regression remains held: do not retry, delegate, reconstruct or route around it. Therefore the complete108-workflow milestone remains blocked even while independent work progresses. No owner-policy decision can substitute for that unfinished engineering gate.
+
+Fresh runtime: Python3.13.17, exact14 locked packages, PostgreSQL16.11 compiled from the official SHA256-verified source. NoDB acceptance/coverage run694:27PASS/2.201s process, source unchanged. Run693 retained25PASS/1ImportError from a nonexistent coverage test label; corrected label only. Fresh PMO native baseline695 is running; not a result yet. New change factory692 is reserved. No live integration, deployment or main merge.
+
 Cloud continuation is active at the user's request. Source was checked out from GitHub commit05590af; no deployment, live provider, external connection or original desktop database was used. Local integration branch:build/cloud-milestone. Public source/test backup verified at fbfb3a737f340d4b2ac518605f20ff0da6887d99 on origin/build/cloud-milestone; main unchanged. New cloud-run evidence remains local and is excluded from public backup. See PUBLIC-BACKUP.md.
 
 Release scope remains63 PMO+45 Finance(108), with all122 IDs/13 families and14 deferred BaaS identities preserved. Full108 internal gate NOT_MET; no new whole-process acceptance is claimed.
@@ -29,3 +43,8 @@ A separate current-template browser cohort now verifies returned-document recove
 ## Next
 
 Integrate only passing isolated changes, run source-aligned Finance/shared regressions and P47 branch, then update coverage with bounded evidence. Finalize source-aligned whole-process proof packaging without promoting unsupported scope. Remaining Finance engineering includes typed statement/equity bindings, explicit convention-conversion contracts and budget/performance factory connections; real owner values stay separate deferred slots. See HANDOFF.md and immutable run records. Historical665/664 failures and evidence remain unchanged.
+
+
+## Independent PMO continuation from restored54178de
+
+Controlled-change factory implementation is isolated on build/pmo-change. It connects native Normal P56-P60 intake selection, human assessments/authorization/execution, scoped investigation/drafting, exact controlled notice/go-live review and recipient delivery, actual signature closure and source/effect recovery. Standard uses existing native controls. Emergency P61/P62 is explicitly identified but not routed through ordinary authorization. See docs/runbooks/controlled-change-factory.md. Initial8-test native debug passed; final source-aligned692 is pending. No new whole-process acceptance, live activation, deployment or public runtime evidence. Historical tests elsewhere in this file remain historical, not proof for this restored runtime.
