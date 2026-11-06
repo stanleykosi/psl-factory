@@ -1,0 +1,36 @@
+setUpClass (tests.test_cold_recovery.ColdRecoveryTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (tests.test_cold_recovery.ColdRecoveryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 59, in setUpClass
+    archive = cls.child('source', cls.value, cls.source, cold=False)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 25, in child
+    raise AssertionError(f'{stage} failed\n{result.stdout}\n{result.stderr}')
+AssertionError: source failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 226, in <module>
+    result=source()
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 59, in source
+    attachment = original.attach(a,c.pk,'old-source','Synthetic cold recovery attachment',b'cold-source-file-bytes')
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\application_recovery.py", line 49, in attach
+    require(actor, case, 'recovery.attachment')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+
+----------------------------------------------------------------------
+Ran 0 tests in 36.314s
+
+FAILED (errors=1)
+Found 4 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

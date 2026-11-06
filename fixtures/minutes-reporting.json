@@ -1,0 +1,14 @@
+{
+  "classification": "Synthetic engineering scenarios; no operational calendar, approver or deadline policy assigned",
+  "executable_fixture": "tests/meeting_helpers.py",
+  "scenarios": [
+    {"name":"formal_minutes", "path":"meeting source/revision -> decisions and owned actions -> cited minutes -> PMO Lead exact-version review -> internal recipient receipt"},
+    {"name":"unknown_commitment", "expected":"owner/deadline remain unknown; no zero, invented person or automatic late classification"},
+    {"name":"source_changes", "expected":"action/meeting changes hold older queued documents; revised sources require a new reviewed document version"},
+    {"name":"working_calendar", "expected":"configured weekdays, holidays, anchors and units determine a stored deadline with exact policy IDs"},
+    {"name":"independent_scheduling", "expected":"calendar-day report cadence needs only timezone and that reporting profile; action/holiday rules remain independent"},
+    {"name":"recurring_preparation", "expected":"atomic PostgreSQL occurrence/cursor produces one draft and human wait, never automatic publication"},
+    {"name":"clock_lifecycle", "expected":"missing/invalid/stale/revoked/expired values hold dependent clocks only; absolute capture/manual reporting continue"},
+    {"name":"agent_proposal", "expected":"exact source quotes only, owner/deadline unassigned; separate human commands required"}
+  ]
+}

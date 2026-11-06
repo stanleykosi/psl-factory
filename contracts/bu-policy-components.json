@@ -1,0 +1,186 @@
+{
+  "classification": "Supplemental engineering interfaces, not real authority or new D groups",
+  "components": [
+    {
+      "id": "F21.allocation_rules",
+      "parent_decision_id": "BU",
+      "schema_ref": "schema:psl/policy-component/F21.allocation_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F44.source_rules",
+      "parent_decision_id": "BU",
+      "schema_ref": "schema:psl/policy-component/F44.source_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F44.attribution_rules",
+      "parent_decision_id": "BU",
+      "schema_ref": "schema:psl/policy-component/F44.attribution_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "BU.review_authority",
+      "parent_decision_id": "BU",
+      "schema_ref": "schema:psl/policy-component/BU.review_authority/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "BU.disclosure_rules",
+      "parent_decision_id": "BU",
+      "schema_ref": "schema:psl/policy-component/BU.disclosure_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": []
+}

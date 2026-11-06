@@ -1,0 +1,10 @@
+{
+  "classification": "Engineering synthetic example, not an appointment, operational criterion or acceptance",
+  "rules": {
+    "package_ids": [],
+    "recipient_id": null,
+    "acceptor_id": null,
+    "independent_acceptance": true,
+    "freshness_seconds": 3600
+  }
+}

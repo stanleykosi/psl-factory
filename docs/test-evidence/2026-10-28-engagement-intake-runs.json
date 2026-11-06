@@ -1,0 +1,33 @@
+{
+  "classification": "Actual overlapping synthetic runs; no operational acceptance claim",
+  "runs": [
+    {
+      "run": 308,
+      "tests": 7,
+      "unittest_seconds": 124.42,
+      "process_seconds": 136.725,
+      "returncode": 0
+    },
+    {
+      "run": 309,
+      "tests": 10,
+      "unittest_seconds": 251.01,
+      "process_seconds": 262.09,
+      "returncode": 0
+    },
+    {
+      "run": 310,
+      "tests": 4,
+      "unittest_seconds": 86.242,
+      "process_seconds": 95.321,
+      "returncode": 0
+    },
+    {
+      "run": 311,
+      "tests": 10,
+      "unittest_seconds": 216.173,
+      "process_seconds": 224.292,
+      "returncode": 0
+    }
+  ]
+}

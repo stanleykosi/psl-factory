@@ -1,0 +1,34 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying agents.0002_evidenceextraction_evidenceextractionreceipt_and_more... OK
+test_actual_ui_commands_capture_review_send_result_and_private_post_controls (tests.test_agent_data.AgentDataTests.test_actual_ui_commands_capture_review_send_result_and_private_post_controls) ... ok
+test_append_only_sql_and_job_intent_guards (tests.test_agent_data.AgentDataTests.test_append_only_sql_and_job_intent_guards) ... ok
+test_current_permissions_checked_before_send_and_private_read (tests.test_agent_data.AgentDataTests.test_current_permissions_checked_before_send_and_private_read) ... ok
+test_missing_policy_allows_capture_but_holds_egress (tests.test_agent_data.AgentDataTests.test_missing_policy_allows_capture_but_holds_egress) ... ok
+test_no_ready_provider_or_projection_review_no_send (tests.test_agent_data.AgentDataTests.test_no_ready_provider_or_projection_review_no_send) ... ok
+test_policy_rejects_role_source_process_tools_and_unknown_values (tests.test_agent_data.AgentDataTests.test_policy_rejects_role_source_process_tools_and_unknown_values) ... ok
+test_private_input_excluded_from_generic_reader_and_agent (tests.test_agent_data.AgentDataTests.test_private_input_excluded_from_generic_reader_and_agent) ... ok
+test_review_expiry_and_budget_are_explicit (tests.test_agent_data.AgentDataTests.test_review_expiry_and_budget_are_explicit) ... ok
+test_reviewed_authenticated_projection_and_independent_correction (tests.test_agent_data.AgentDataTests.test_reviewed_authenticated_projection_and_independent_correction) ... ok
+test_source_policy_and_provider_changes_invalidate_reserved_send (tests.test_agent_data.AgentDataTests.test_source_policy_and_provider_changes_invalidate_reserved_send) ... ok
+test_source_projection_rejects_raw_domains_wrong_case_and_nonquotes (tests.test_agent_data.AgentDataTests.test_source_projection_rejects_raw_domains_wrong_case_and_nonquotes) ... ok
+test_strict_outputs_and_no_business_effects (tests.test_agent_data.AgentDataTests.test_strict_outputs_and_no_business_effects) ... ok
+test_unknown_response_reconciles_after_sender_revocation_and_exhaustion (tests.test_agent_data.AgentDataTests.test_unknown_response_reconciles_after_sender_revocation_and_exhaustion) ... ok
+test_valid_receipt_preserved_but_acceptance_stales_after_policy_replacement (tests.test_agent_data.AgentDataTests.test_valid_receipt_preserved_but_acceptance_stales_after_policy_replacement) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 72.331s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying agents.0003_boundary_guards... OK
+System check identified no issues (0 silenced).

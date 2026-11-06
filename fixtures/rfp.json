@@ -1,0 +1,52 @@
+{
+  "fixture_scope": "synthetic_test",
+  "note": "Example interfaces only. These roles, recipients and destination do not appoint operational authority or establish an external submission channel.",
+  "decision_matrix": {
+    "rfp": {
+      "assignment_roles": [
+        "CEO"
+      ],
+      "outcome_roles": [
+        "Client"
+      ]
+    },
+    "rules": [
+      {
+        "role": "PMO Lead",
+        "actions": [
+          "return",
+          "reject"
+        ]
+      },
+      {
+        "role": "Engineering Lead",
+        "actions": [
+          "return",
+          "reject"
+        ]
+      }
+    ]
+  },
+  "route_interface": {
+    "kind": "rfp_submission",
+    "key": "client_bid",
+    "method": "internal_recipient_inbox",
+    "destination_ref": "synthetic:rfp-inbox",
+    "recipient_ids": [
+      1
+    ],
+    "sender_roles": [
+      "PM"
+    ]
+  },
+  "mapping_interface": [
+    {
+      "key": "R1",
+      "evidence_id": 1,
+      "response": "Replace with an actual cited response",
+      "disposition": "clarification"
+    }
+  ],
+  "public_terms_evidence_kind": "rfp_commercial_terms",
+  "public_terms_note": "Explicit authored client quotation/terms; no internal costing body is projected and no price is inferred."
+}

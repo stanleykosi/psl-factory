@@ -1,0 +1,32 @@
+Using existing test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+test_archive_intake_read_uses_the_viewer_not_the_unavailable_starter (test_starter_read_projection.StarterReadProjectionTests.test_archive_intake_read_uses_the_viewer_not_the_unavailable_starter) ... ERROR
+
+======================================================================
+ERROR: test_archive_intake_read_uses_the_viewer_not_the_unavailable_starter (test_starter_read_projection.StarterReadProjectionTests.test_archive_intake_read_uses_the_viewer_not_the_unavailable_starter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\recovery-projection-tests\test_starter_read_projection.py", line 26, in test_archive_intake_read_uses_the_viewer_not_the_unavailable_starter
+    archive.source(work, f.actor)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_archive.py", line 51, in source
+    for action in ['delivery.read','evidence.add','factory.start' if audit.action=='factory.archive_intake' else 'factory.manage']:require(e.created_by,work.case,action)
+                                                                                                                                   ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+----------------------------------------------------------------------
+Ran 1 test in 14.159s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

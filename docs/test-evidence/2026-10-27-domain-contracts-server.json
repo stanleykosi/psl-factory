@@ -1,0 +1,21 @@
+{
+  "pid": 40736,
+  "path": "C:\\Python313\\python.exe",
+  "start_utc": "2026-10-27T14:28:36.6501550Z",
+  "session_id": 26315,
+  "listener": "127.0.0.1:8000",
+  "previous_verified_owned_pid": 1056,
+  "runtime_references": {
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1",
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo"
+  },
+  "operational_acceptance": false,
+  "classification": "Main source updated; fresh recovery/provider/destination deployment remains unconfigured",
+  "smoke_statuses": {
+    "operations/": 302,
+    "integrations/": 302,
+    "validation/protection/": 302,
+    "application-recovery/": 302
+  },
+  "smoke_classification": "Unauthenticated login redirects only; authenticated contract UI evidence is synthetic PostgreSQL clients"
+}

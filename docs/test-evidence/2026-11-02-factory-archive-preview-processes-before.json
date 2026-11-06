@@ -1,0 +1,38 @@
+[
+  {
+    "path": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-02T07:53:53.3057346Z",
+    "id": 24292,
+    "port": 8000
+  },
+  {
+    "path": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-02T07:53:55.3068269Z",
+    "id": 26556,
+    "port": 8003
+  },
+  {
+    "path": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-02T07:53:57.9067349Z",
+    "id": 23428,
+    "port": 8004
+  },
+  {
+    "path": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-02T07:54:00.1391528Z",
+    "id": 19680,
+    "port": 8005
+  },
+  {
+    "path": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-02T07:54:04.3739519Z",
+    "id": 26076,
+    "port": 8006
+  },
+  {
+    "path": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-02T07:54:07.3109069Z",
+    "id": 10844,
+    "port": 8007
+  }
+]

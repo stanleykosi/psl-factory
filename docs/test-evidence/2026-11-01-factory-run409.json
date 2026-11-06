@@ -1,0 +1,25 @@
+{
+  "run": 409,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_planning.FactoryPlanningTests",
+    "tests.test_factory_planning.FactoryPlanningConcurrencyTests",
+    "tests.test_planning.PlanningTests",
+    "tests.test_planning.PlanningConcurrencyTests",
+    "tests.test_approvals.ApprovalTests",
+    "tests.test_approval_workers.ApprovalConcurrencyTests",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T19:08:25.857640+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run409.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 467.858
+}

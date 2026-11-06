@@ -1,0 +1,15 @@
+{
+  "records": "PASS",
+  "current": "verified",
+  "next": "BUILD-PRIVATE-PROTECTION-READINESS",
+  "backlog_items": 45,
+  "source_files": 842,
+  "app_test_fixture_unchanged_after_218": true,
+  "preserved_main_tables": 266,
+  "all_122_partial": true,
+  "next_run": 219,
+  "server_session": 39315,
+  "unauthenticated_route_redirect": "sign-in",
+  "tests_running": false,
+  "initial_records_probe": "Incorrect integer case URL returned404; corrected to recorded actual UUID route, no application change."
+}

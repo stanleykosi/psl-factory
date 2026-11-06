@@ -1,0 +1,22 @@
+{
+  "classification": "Unset v2 operator protection interface; no real source inventory, recovery objectives or policy defaults installed",
+  "rules": {
+    "projection": "portable_case_metadata_v1",
+    "max_records": null,
+    "required_proofs": [
+      "export",
+      "backup",
+      "restore"
+    ],
+    "freshness_seconds": null,
+    "rpo_seconds": null,
+    "rto_seconds": null,
+    "backup_adapter": "sealed_local_metadata_v1",
+    "restore_adapter": "isolated_postgres_metadata_v1",
+    "restore_target": "isolated_metadata_db_v1",
+    "lease_seconds": null,
+    "max_attempts": null,
+    "private_readiness_packet_ids": [],
+    "private_disclosure": "accepted_metadata_only"
+  }
+}

@@ -1,0 +1,10 @@
+test_original_process_fields_and_all_release_deferred_bindings_are_retained (tests.test_factory_coverage.FactoryCoverageTests.test_original_process_fields_and_all_release_deferred_bindings_are_retained) ... ok
+test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes (tests.test_factory_coverage.FactoryCoverageTests.test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.168s
+
+OK
+Found 2 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

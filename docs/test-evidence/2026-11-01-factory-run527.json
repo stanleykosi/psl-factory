@@ -1,0 +1,20 @@
+{
+  "run": 527,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_fresh_review_shows_only_verdicts_allowed_by_current_finance_rule",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T23:37:56.412387+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run527.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 17.11
+}

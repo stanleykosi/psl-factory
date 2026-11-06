@@ -1,0 +1,28 @@
+{
+  "database": "psl_factory_hypercare_review_bd3de529db8e",
+  "case": "dd8ea178-18ec-4364-939c-7b859599a7d2",
+  "actor": "human",
+  "work": 492,
+  "dossier": 214,
+  "synthetic": true,
+  "receipt": 669,
+  "version": 1652,
+  "pm_signature": 99819,
+  "client_signature": 99820,
+  "fixture": "New test-only-password actor; native release/report review/publication/signatures are explicit synthetic service fixtures",
+  "scope": "Read-only review presentation; no browser acceptance or qualification claim",
+  "source_run": 437,
+  "screenshot": "docs/test-evidence/2026-11-01-factory-hypercare-report-review.jpg",
+  "rendered_sections": [
+    "Executive summary",
+    "Scope",
+    "Risks",
+    "Status",
+    "Next steps"
+  ],
+  "full_signature_bodies_reviewed": true,
+  "browser_decision_submitted": false,
+  "qualification_claimed": false,
+  "original_verified_cohort_untouched": true,
+  "raw_payload_no_longer_primary_review": true
+}

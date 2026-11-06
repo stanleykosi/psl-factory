@@ -1,0 +1,25 @@
+Using existing test database for alias 'default'...
+
+E.................
+======================================================================
+ERROR: test_adapter_success_without_receipt_does_not_confirm (tests.test_support_release.SupportReleaseTests.test_adapter_success_without_receipt_does_not_confirm)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_release.py", line 85, in test_adapter_success_without_receipt_does_not_confirm
+    worker.run_once(f['case'].pk,FalseSuccess());j.refresh_from_db();self.assertEqual(j.status,'held');self.assertFalse(d.Receipt.objects.exists());d.operate(f['actor'],f['case'].pk,j.pk,'retry','Retry known absent local effect');worker.run_once(f['case'].pk);j.refresh_from_db();self.assertEqual(j.status,'confirmed')
+                                                                                                                                                    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_release.py", line 93, in operate
+    event(a,c,'agent.data.support_response_operator',job=j.pk,action=action,reason=reason);bump(c);return j
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: event() got multiple values for argument 'action'
+
+----------------------------------------------------------------------
+Ran 18 tests in 186.228s
+
+FAILED (errors=1)
+Preserving test database for alias 'default'...
+
+Found 18 test(s).
+System check identified no issues (0 silenced).

@@ -1,0 +1,51 @@
+{
+  "classification": "Actual final post-migration checks on final application source.",
+  "commands": [
+    ".venv/Scripts/python.exe manage.py check",
+    ".venv/Scripts/python.exe manage.py makemigrations --check --dry-run",
+    ".venv/Scripts/python.exe -m compileall -q apps adapters config tests",
+    ".venv/Scripts/python.exe -m pip check"
+  ],
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "f8c1d4",
+        "wall_time_seconds": 4.1635574,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "System check identified no issues (0 silenced).\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "0d086f",
+        "wall_time_seconds": 5.3947535,
+        "exit_code": 0,
+        "original_token_count": 6,
+        "output": "No changes detected\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "2ee5a6",
+        "wall_time_seconds": 2.2150945,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "2e8f99",
+        "wall_time_seconds": 4.1923124,
+        "exit_code": 0,
+        "original_token_count": 8,
+        "output": "No broken requirements found.\r\n"
+      }
+    }
+  ]
+}

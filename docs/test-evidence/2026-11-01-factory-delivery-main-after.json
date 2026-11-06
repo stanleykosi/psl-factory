@@ -1,0 +1,10 @@
+{
+  "phase": "after",
+  "main_rowsets_unchanged": 329,
+  "old_guard_definitions_preserved_except_reviewed_factory_function": true,
+  "old_migration_sources_unchanged": 210,
+  "source_snapshots_unchanged": true,
+  "main_factory_work": 0,
+  "owner_values_installed": false,
+  "forward_migration": "workflows0042_factory_delivery"
+}

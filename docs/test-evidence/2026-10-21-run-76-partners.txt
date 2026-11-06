@@ -1,0 +1,30 @@
+Using existing test database for alias 'default'...
+
+.............E..........
+======================================================================
+ERROR: test_onboarding_followup_uses_exact_event_and_granted_owner (tests.test_partners.PartnerTests.test_onboarding_followup_uses_exact_event_and_granted_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_partners.py", line 57, in test_onboarding_followup_uses_exact_event_and_granted_owner
+    with self.assertRaises(PermissionDenied):domain.followup(self.a,self.c.pk,r.pk,'stage:'+str(s.pk),self.fin.pk,timezone.now(),'PM',e.pk,'Exact delayed stage',rev(self.c))
+                                             ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\partner_operations.py", line 153, in followup
+    item=create_action(actor,case.pk,'PARTNER:'+str(r.pk)+':'+source_key,'Partner '+r.reference+' '+source_key,owner_id,due_at,evidence_id,reason,None)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\meetings.py", line 64, in create_action
+    owner=scoped_person(case,owner_id,'action.own');evidence=subject(case,evidence_id)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\meetings.py", line 22, in scoped_person
+    raise ValidationError('Person lacks this case participation/ownership grant')
+django.core.exceptions.ValidationError: ['Person lacks this case participation/ownership grant']
+
+----------------------------------------------------------------------
+Ran 24 tests in 44.458s
+
+FAILED (errors=1)
+Preserving test database for alias 'default'...
+
+Found 24 test(s).
+System check identified no issues (0 silenced).

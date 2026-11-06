@@ -1,0 +1,41 @@
+{
+  "runs": [
+    {
+      "run": 320,
+      "tests": 25,
+      "unittest_seconds": 244.69,
+      "process_seconds": 249.933,
+      "returncode": 0
+    },
+    {
+      "run": 321,
+      "tests": 14,
+      "unittest_seconds": 248.936,
+      "process_seconds": 255.689,
+      "returncode": 0
+    },
+    {
+      "run": 322,
+      "tests": 29,
+      "unittest_seconds": 219.56,
+      "process_seconds": 226.259,
+      "returncode": 1
+    },
+    {
+      "run": 323,
+      "tests": 35,
+      "unittest_seconds": 137.706,
+      "process_seconds": 143.306,
+      "returncode": 0
+    }
+  ],
+  "measurement": {
+    "synthetic_cases": 301,
+    "granted_cases": 101,
+    "pages": 2,
+    "page_size": 50,
+    "queries": 4,
+    "seconds": 0.0174,
+    "deployment_slo_claim": false
+  }
+}

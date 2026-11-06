@@ -1,0 +1,30 @@
+{
+  "runs": {
+    "229": {
+      "path": "docs/test-evidence/2026-10-24-run-229-private-file-baseline.txt",
+      "tests": 2,
+      "seconds": 338.555,
+      "result": "OK"
+    },
+    "230": {
+      "path": "docs/test-evidence/2026-10-24-run-230-private-file-readiness.txt",
+      "tests": 13,
+      "seconds": 1228.882,
+      "result": "OK"
+    },
+    "231": {
+      "path": "docs/test-evidence/2026-10-24-run-231-private-file-final.txt",
+      "tests": 5,
+      "seconds": 1101.944,
+      "result": "OK"
+    },
+    "232": {
+      "path": "docs/test-evidence/2026-10-24-run-232-private-file-connected.txt",
+      "tests": 98,
+      "seconds": 1187.071,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "real_provider_or_owner_operational_acceptance": false
+}

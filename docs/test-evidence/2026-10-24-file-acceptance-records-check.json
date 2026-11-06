@@ -1,0 +1,21 @@
+{
+  "records_consistent": true,
+  "verified_increment": "BUILD-PRIVATE-FILE-ACCEPTANCE",
+  "proposed_next": "BUILD-ACCEPTED-PROTECTION-OPERATIONS",
+  "all_processes_partial": 122,
+  "source_fingerprints": 879,
+  "next_run": 239,
+  "actual_runs": [
+    233,
+    234,
+    235,
+    236,
+    237,
+    238
+  ],
+  "failed234_retained": true,
+  "failed237_retained": true,
+  "runtime_source_unchanged_after234": true,
+  "main_tables_preserved": 269,
+  "real_provider_operational_acceptance": false
+}

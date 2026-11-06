@@ -1,0 +1,22 @@
+{
+  "system": {
+    "exit_code": 0,
+    "stdout": "System check identified no issues (0 silenced).\n",
+    "stderr": ""
+  },
+  "migration_drift": {
+    "exit_code": 0,
+    "stdout": "No changes detected\n",
+    "stderr": ""
+  },
+  "compile": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "dependencies": {
+    "exit_code": 0,
+    "stdout": "No broken requirements found.\n",
+    "stderr": ""
+  }
+}

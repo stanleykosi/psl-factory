@@ -1,0 +1,80 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 27 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0008_impact_correction_effects...test_actual_correction_and_delivery_inherit_lineage_without_financial_payloads (tests.test_correction_impact.CorrectionImpactTests.test_actual_correction_and_delivery_inherit_lineage_without_financial_payloads) ... ok
+test_correction_ui_csrf_capture_review_agent_and_closed_ten_adapter_sql_contract (tests.test_correction_impact.CorrectionImpactTests.test_correction_ui_csrf_capture_review_agent_and_closed_ten_adapter_sql_contract) ... ERROR
+test_lost_reply_keeps_debt_and_reconciles_after_policy_change_without_resending (tests.test_correction_impact.CorrectionImpactTests.test_lost_reply_keeps_debt_and_reconciles_after_policy_change_without_resending) ... ERROR
+test_new_native_review_invalidates_assessment_and_finance_access_is_rechecked (tests.test_correction_impact.CorrectionImpactTests.test_new_native_review_invalidates_assessment_and_finance_access_is_rechecked) ... ERROR
+test_unknown_without_receipt_is_separate_and_cannot_be_accepted_as_delivery (tests.test_correction_impact.CorrectionImpactTests.test_unknown_without_receipt_is_separate_and_cannot_be_accepted_as_delivery) ... ok
+test_actual_invoice_effect_and_committed_receipt_survive_review_without_reissue (tests.test_policy_impact.DomainImpactTests.test_actual_invoice_effect_and_committed_receipt_survive_review_without_reissue) ... ok
+test_actual_pmo_action_and_schedule_pins_and_rearming_changes_observed_head (tests.test_policy_impact.DomainImpactTests.test_actual_pmo_action_and_schedule_pins_and_rearming_changes_observed_head) ... ok
+test_baas_event_and_report_adapters_use_real_flow_and_indirect_head_pins (tests.test_policy_impact.DomainImpactTests.test_baas_event_and_report_adapters_use_real_flow_and_indirect_head_pins) ... ok
+test_finance_billing_uses_actual_typed_pins_and_requires_rebuilt_snapshot (tests.test_policy_impact.DomainImpactTests.test_finance_billing_uses_actual_typed_pins_and_requires_rebuilt_snapshot) ... ok
+test_finance_run_adapter_matches_actual_mapping_preview (tests.test_policy_impact.DomainImpactTests.test_finance_run_adapter_matches_actual_mapping_preview) ... ok
+test_private_response_pending_unknown_and_receipt_are_not_replayed (tests.test_policy_impact.DomainImpactTests.test_private_response_pending_unknown_and_receipt_are_not_replayed) ... ok
+test_actual_domain_head_change_blocks_accept_then_allows_recorded_rejection (tests.test_policy_impact.PolicyImpactTests.test_actual_domain_head_change_blocks_accept_then_allows_recorded_rejection) ... ok
+test_actual_pmo_decisions_are_observed_and_acceptance_cannot_copy_approval (tests.test_policy_impact.PolicyImpactTests.test_actual_pmo_decisions_are_observed_and_acceptance_cannot_copy_approval) ... ok
+test_archived_accepted_history_cannot_supply_fresh_authority (tests.test_policy_impact.PolicyImpactTests.test_archived_accepted_history_cannot_supply_fresh_authority) ... ok
+test_current_case_policy_authorization_precedes_record_existence_lookup (tests.test_policy_impact.PolicyImpactTests.test_current_case_policy_authorization_precedes_record_existence_lookup) ... ok
+test_history_sql_guards_and_current_reviewer_authority (tests.test_policy_impact.PolicyImpactTests.test_history_sql_guards_and_current_reviewer_authority) ... ok
+test_new_current_human_decision_changes_head_before_signature (tests.test_policy_impact.PolicyImpactTests.test_new_current_human_decision_changes_head_before_signature) ... ok
+test_paged_projection_is_actor_configuration_bound_and_cannot_hide_truncation (tests.test_policy_impact.PolicyImpactTests.test_paged_projection_is_actor_configuration_bound_and_cannot_hide_truncation) ... ok
+test_revoked_author_cannot_supply_current_acceptance_and_unrelated_capture_continues (tests.test_policy_impact.PolicyImpactTests.test_revoked_author_cannot_supply_current_acceptance_and_unrelated_capture_continues) ... ok
+test_snapshot_budget_holds_capture_but_paged_investigation_still_works (tests.test_policy_impact.PolicyImpactTests.test_snapshot_budget_holds_capture_but_paged_investigation_still_works) ... ok
+test_source_and_domain_permissions_are_current_and_no_cross_case_ids (tests.test_policy_impact.PolicyImpactTests.test_source_and_domain_permissions_are_current_and_no_cross_case_ids) ... ok
+test_stale_policy_evidence_case_and_unsupported_adapter_are_held (tests.test_policy_impact.PolicyImpactTests.test_stale_policy_evidence_case_and_unsupported_adapter_are_held) ... ok
+test_ui_csrf_agent_and_limited_metadata (tests.test_policy_impact.PolicyImpactTests.test_ui_csrf_agent_and_limited_metadata) ... ok
+test_actual_csrf_ui_capture_export_agent_and_no_get_writes (tests.test_pilot_preflight.PilotTests.test_actual_csrf_ui_capture_export_agent_and_no_get_writes) ... ok
+test_native_correction_job_lock_holds_capture_without_deadlock_or_effect (tests.test_correction_impact.CorrectionImpactConcurrencyTests.test_native_correction_job_lock_holds_capture_without_deadlock_or_effect) ... ERROR
+test_duplicate_capture_and_competing_review_are_serialized (tests.test_policy_impact.ImpactConcurrencyTests.test_duplicate_capture_and_competing_review_are_serialized) ... ok
+test_effect_lock_conflict_holds_observation_without_case_job_deadlock (tests.test_policy_impact.ImpactConcurrencyTests.test_effect_lock_conflict_holds_observation_without_case_job_deadlock) ... ok
+
+======================================================================
+ERROR: test_correction_ui_csrf_capture_review_agent_and_closed_ten_adapter_sql_contract (tests.test_correction_impact.CorrectionImpactTests.test_correction_ui_csrf_capture_review_agent_and_closed_ten_adapter_sql_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_correction_impact.py", line 115, in test_correction_ui_csrf_capture_review_agent_and_closed_ten_adapter_sql_contract
+    result=client.post(url,{'previous':old.pk,'successor':new.pk,'adapters':[KEY],'evidence':e['policy_decision'].pk,'reason':'Review exact correction metadata','csrfmiddlewaretoken':client.cookies['csrftoken'].value})
+                                                                                             ~^^^^^^^^^^^^^^^^^^^
+KeyError: 'policy_decision'
+
+======================================================================
+ERROR: test_lost_reply_keeps_debt_and_reconciles_after_policy_change_without_resending (tests.test_correction_impact.CorrectionImpactTests.test_lost_reply_keeps_debt_and_reconciles_after_policy_change_without_resending)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_correction_impact.py", line 70, in test_lost_reply_keeps_debt_and_reconciles_after_policy_change_without_resending
+    row=impact.capture(a,c.pk,old.pk,new.pk,[KEY],e['policy_decision'].pk,'Observe exact committed correction, preserve canonical debt')
+                                                  ~^^^^^^^^^^^^^^^^^^^
+KeyError: 'policy_decision'
+
+======================================================================
+ERROR: test_new_native_review_invalidates_assessment_and_finance_access_is_rechecked (tests.test_correction_impact.CorrectionImpactTests.test_new_native_review_invalidates_assessment_and_finance_access_is_rechecked)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_correction_impact.py", line 100, in test_new_native_review_invalidates_assessment_and_finance_access_is_rechecked
+    row=impact.capture(a,c.pk,old.pk,new.pk,[KEY],e['policy_decision'].pk,'Review reserved correction against successor')
+                                                  ~^^^^^^^^^^^^^^^^^^^
+KeyError: 'policy_decision'
+
+======================================================================
+ERROR: test_native_correction_job_lock_holds_capture_without_deadlock_or_effect (tests.test_correction_impact.CorrectionImpactConcurrencyTests.test_native_correction_job_lock_holds_capture_without_deadlock_or_effect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_correction_impact.py", line 147, in test_native_correction_job_lock_holds_capture_without_deadlock_or_effect
+    with self.assertRaises(ValidationError):impact.capture(a,c.pk,old.pk,new.pk,[KEY],e['policy_decision'].pk,'Do not block a correction worker')
+                                                                                      ~^^^^^^^^^^^^^^^^^^^
+KeyError: 'policy_decision'
+
+----------------------------------------------------------------------
+Ran 27 tests in 140.561s
+
+FAILED (errors=4)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

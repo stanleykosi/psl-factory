@@ -1,0 +1,37 @@
+{
+  "production_migrations": {
+    "chunk_id": "ffa0b9",
+    "wall_time_seconds": 10.0033434,
+    "original_token_count": 61,
+    "output": "Operations to perform:\r\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\r\nRunning migrations:\r\n  Applying pmo.0036_costingoracle_costingrule_costingreview_and_more... OK\n  Applying pmo.0037_costing_guards... OK\n",
+    "exit_code": 0
+  },
+  "system": {
+    "chunk_id": "a3b157",
+    "wall_time_seconds": 3.0705365000000002,
+    "exit_code": 0,
+    "original_token_count": 13,
+    "output": "System check identified no issues (0 silenced).\r\n"
+  },
+  "migration_drift": {
+    "chunk_id": "578ea5",
+    "wall_time_seconds": 4.5333517,
+    "exit_code": 0,
+    "original_token_count": 6,
+    "output": "No changes detected\r\n"
+  },
+  "compile": {
+    "chunk_id": "c128bf",
+    "wall_time_seconds": 2.0258898,
+    "exit_code": 0,
+    "original_token_count": 0,
+    "output": ""
+  },
+  "dependencies": {
+    "chunk_id": "c0eb81",
+    "wall_time_seconds": 2.0093496,
+    "exit_code": 0,
+    "original_token_count": 8,
+    "output": "No broken requirements found.\r\n"
+  }
+}

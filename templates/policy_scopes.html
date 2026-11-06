@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% block content %}
+<a href="{% url 'policy' case.pk %}">Business rule settings</a><h1>Explicit policy scopes</h1>
+<p>Sources are versioned within an explicit authority case. Organization sources may be deliberately applied within that tenant and classification. Project, contract and service sources retain their exact case. No default or scope precedence is inferred. Source publication grants no business role.</p>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+<section class="workflow-panel"><h2>Create a source version</h2><p>First save and validate a configuration in this case. A source configuration remains frozen and is activated through this scope lifecycle.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="create">{{ source_form.as_p }}<button>Create scoped draft</button></form>
+</section><section class="workflow-panel"><h2>Apply a selected source</h2><p>Target owner decision evidence and current source read rights are required. The result is a local draft; validate and activate it in Business rule settings. Cross-case applications explicitly bind every declared contextual path. Original versions and decisions remain unchanged.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="apply">{{ apply_form.as_p }}<button>Create target-local draft</button></form>
+</section><section class="workflow-panel"><h2>Source versions</h2><p>Latest 100 source records in this authority case.</p>
+{% for s in report.sources %}<section><h3>#{{ s.id }} · {{ s.kind }} · {{ s.ref }} · revision {{ s.revision }}</h3><p>{{ s.component }} · {{ s.state }} · runtime {{ s.health }}</p><p>Contextual paths: {{ s.binding_paths }}</p><p>Local affected configurations: {{ s.applications }}</p><form method="post">{% csrf_token %}<input type="hidden" name="source" value="{{ s.id }}"><button name="action" value="validated">Validate source</button><button name="action" value="active">Publish source</button><button name="action" value="revoked">Revoke source</button></form></section>{% empty %}<p>No scoped sources.</p>{% endfor %}
+</section><section class="workflow-panel"><h2>Applied origins</h2>{% for a in report.applications %}<p>Local configuration #{{ a.configuration }} · source #{{ a.source }} · {{ a.status }}</p>{% empty %}<p>No applied sources.</p>{% endfor %}
+<a href="{% url 'policy_scope_investigation' case.pk %}">Investigate policy origins and held applications</a>
+<p><a href="{% url 'policy_impact' case.pk %}">Domain-specific policy impact and reviewed reassessment</a></p>
+</section>{% endblock %}

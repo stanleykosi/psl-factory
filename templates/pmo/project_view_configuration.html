@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Report sharing</h1><p>Draft explicit audience, field-group, disclosure-principal and source-age criteria. Normal policy validation and activation remain on the project configuration screen. Drafting does not grant access or approve the project.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Save criteria draft</button></form><details><summary>Configuration guide</summary><pre>{{ schema }}</pre></details>
+{% endblock %}

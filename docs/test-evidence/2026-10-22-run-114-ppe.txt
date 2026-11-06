@@ -1,0 +1,50 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+test_adapter_duplicate_json_and_shared_sql_guards (tests.test_ppe.PPETests.test_adapter_duplicate_json_and_shared_sql_guards) ... ok
+test_addition_disposal_and_reclassification_events_need_full_reconciliation (tests.test_ppe.PPETests.test_addition_disposal_and_reclassification_events_need_full_reconciliation) ... ok
+test_f07_e01_unknown_life_and_classification_hold_only_dependent_rows (tests.test_ppe.PPETests.test_f07_e01_unknown_life_and_classification_hold_only_dependent_rows) ... ok
+test_f07_e02_preserves_march_label_until_independent_basis_decision (tests.test_ppe.PPETests.test_f07_e02_preserves_march_label_until_independent_basis_decision) ... ok
+test_f07_n01_explicit_synthetic_oracle_and_reviewed_finance_note (tests.test_ppe.PPETests.test_f07_n01_explicit_synthetic_oracle_and_reviewed_finance_note) ... ok
+test_human_ui_csrf_json_reports_agent_and_legacy_schedule_isolation (tests.test_ppe.PPETests.test_human_ui_csrf_json_reports_agent_and_legacy_schedule_isolation) ... ok
+test_independent_human_authority_and_report_access_are_required (tests.test_ppe.PPETests.test_independent_human_authority_and_report_access_are_required) ... ERROR
+test_policy_oracle_numeric_and_unknown_validation (tests.test_ppe.PPETests.test_policy_oracle_numeric_and_unknown_validation) ... ok
+test_prior_opening_roll_forward_and_missing_prior_hold (tests.test_ppe.PPETests.test_prior_opening_roll_forward_and_missing_prior_hold) ... ok
+test_register_schema_duplicates_unknown_authority_and_scope (tests.test_ppe.PPETests.test_register_schema_duplicates_unknown_authority_and_scope) ... ok
+test_source_capture_survives_missing_rules_and_authority (tests.test_ppe.PPETests.test_source_capture_survives_missing_rules_and_authority) ... ok
+test_source_correction_policy_review_and_actor_grant_invalidate_reports (tests.test_ppe.PPETests.test_source_correction_policy_review_and_actor_grant_invalidate_reports) ... ok
+test_source_staleness_unknown_controls_and_ledger_mismatch_hold (tests.test_ppe.PPETests.test_source_staleness_unknown_controls_and_ledger_mismatch_hold) ... ok
+test_unsupported_method_has_explicit_engineering_hold (tests.test_ppe.PPETests.test_unsupported_method_has_explicit_engineering_hold) ... ok
+
+======================================================================
+ERROR: test_independent_human_authority_and_report_access_are_required (tests.test_ppe.PPETests.test_independent_human_authority_and_report_access_are_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_ppe.py", line 66, in test_independent_human_authority_and_report_access_are_required
+    with self.assertRaises(PermissionDenied):LocalPPEReportAdapter().read(f['reviewer'],w)
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\ppe.py", line 19, in read
+    ppe.locked(actor,work.case_id,'ppe.report');ppe.current(work);r=ppe.approved(work,'schedule')
+                                                ~~~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\ppe.py", line 56, in current
+    if w.kind=='ppe_schedule' and snapshot(w.actor,w.case,w.payload,w.parent,depth+1)!=w.snapshot:raise ValidationError('PPE register/prior/policy/review/basis/ledger changed; rebuild')
+                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['PPE register/prior/policy/review/basis/ledger changed; rebuild']
+
+----------------------------------------------------------------------
+Ran 14 tests in 78.574s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying finance.0037_remove_schedulework_schedule_work_parent_kind_and_more... OK
+System check identified no issues (0 silenced).

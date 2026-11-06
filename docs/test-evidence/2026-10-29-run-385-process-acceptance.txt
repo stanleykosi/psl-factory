@@ -1,0 +1,79 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_allocation_matches_actual_capacity_precision_and_exact_retry_identity (tests.test_cash_guards.CashGuardTests.test_allocation_matches_actual_capacity_precision_and_exact_retry_identity) ... ok
+test_cash_storage_limit_holds_verification_before_effect_without_losing_report (tests.test_cash_guards.CashGuardTests.test_cash_storage_limit_holds_verification_before_effect_without_losing_report) ... ERROR
+test_current_policy_and_reporter_separation_hold_only_verification_not_capture (tests.test_cash_guards.CashGuardTests.test_current_policy_and_reporter_separation_hold_only_verification_not_capture) ... ok
+test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash (tests.test_cash_guards.CashGuardTests.test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash) ... ok
+test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls (tests.test_cash_guards.CashGuardTests.test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls) ... ok
+test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt (tests.test_cash_guards.CashGuardTests.test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt) ... ok
+test_applied_credit_delivery_is_independent_and_private_projection (tests.test_financial_corrections.FinancialCorrectionTests.test_applied_credit_delivery_is_independent_and_private_projection) ... ok
+test_cash_change_before_note_reservation_stales_exact_review (tests.test_financial_corrections.FinancialCorrectionTests.test_cash_change_before_note_reservation_stales_exact_review) ... ok
+test_changed_method_after_review_holds_effect_without_rewriting_note (tests.test_financial_corrections.FinancialCorrectionTests.test_changed_method_after_review_holds_effect_without_rewriting_note) ... ok
+test_corrected_cash_preserves_global_identity_and_never_copies_old_allocations (tests.test_financial_corrections.FinancialCorrectionTests.test_corrected_cash_preserves_global_identity_and_never_copies_old_allocations) ... ok
+test_correction_policy_ui_retains_draft_then_validates_typed_version (tests.test_financial_corrections.FinancialCorrectionTests.test_correction_policy_ui_retains_draft_then_validates_typed_version) ... ok
+test_correction_postgresql_guards_reject_direct_history_mutation (tests.test_financial_corrections.FinancialCorrectionTests.test_correction_postgresql_guards_reject_direct_history_mutation) ... ok
+test_credit_debit_void_adjust_existing_canonical_obligation (tests.test_financial_corrections.FinancialCorrectionTests.test_credit_debit_void_adjust_existing_canonical_obligation) ... ok
+test_credit_never_exceeds_face_and_unknown_amount_stays_unknown (tests.test_financial_corrections.FinancialCorrectionTests.test_credit_never_exceeds_face_and_unknown_amount_stays_unknown) ... ok
+test_credit_reverses_live_allocations_without_reducing_verified_cash (tests.test_financial_corrections.FinancialCorrectionTests.test_credit_reverses_live_allocations_without_reducing_verified_cash) ... ok
+test_full_correction_staff_ui_calls_real_services_and_preserves_one_debt (tests.test_financial_corrections.FinancialCorrectionTests.test_full_correction_staff_ui_calls_real_services_and_preserves_one_debt) ... ok
+test_holding_allocation_policy_never_implicitly_unmatches_cash (tests.test_financial_corrections.FinancialCorrectionTests.test_holding_allocation_policy_never_implicitly_unmatches_cash) ... ok
+test_invoice_correction_remains_available_after_original_preparer_grant_withdrawal (tests.test_financial_corrections.FinancialCorrectionTests.test_invoice_correction_remains_available_after_original_preparer_grant_withdrawal) ... ok
+test_multiple_corrected_generations_sum_each_gross_less_reversal_once (tests.test_financial_corrections.FinancialCorrectionTests.test_multiple_corrected_generations_sum_each_gross_less_reversal_once) ... ok
+test_no_reversal_permission_rolls_back_credit_and_allocations (tests.test_financial_corrections.FinancialCorrectionTests.test_no_reversal_permission_rolls_back_credit_and_allocations) ... ok
+test_note_capture_survives_missing_policy_but_effect_is_held (tests.test_financial_corrections.FinancialCorrectionTests.test_note_capture_survives_missing_policy_but_effect_is_held) ... ok
+test_only_one_accepted_successor_per_parent_and_old_parent_cannot_branch (tests.test_financial_corrections.FinancialCorrectionTests.test_only_one_accepted_successor_per_parent_and_old_parent_cannot_branch) ... ok
+test_only_one_unresolved_note_can_reserve_against_an_obligation (tests.test_financial_corrections.FinancialCorrectionTests.test_only_one_unresolved_note_can_reserve_against_an_obligation) ... ok
+test_pending_and_unknown_note_never_erase_proven_debt (tests.test_financial_corrections.FinancialCorrectionTests.test_pending_and_unknown_note_never_erase_proven_debt) ... ok
+test_returned_review_and_case_admin_cannot_authorize_credit (tests.test_financial_corrections.FinancialCorrectionTests.test_returned_review_and_case_admin_cannot_authorize_credit) ... ok
+test_successor_after_full_reversal_counts_only_new_verified_lot (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_after_full_reversal_counts_only_new_verified_lot) ... ok
+test_successor_agent_cites_original_and_corrected_sources_without_effect_tools (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_agent_cites_original_and_corrected_sources_without_effect_tools) ... ok
+test_successor_does_not_change_customer_currency_or_transaction_identity (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_does_not_change_customer_currency_or_transaction_identity) ... ok
+test_successor_review_checks_current_source_precision_before_approval (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_review_checks_current_source_precision_before_approval) ... ok
+test_successor_source_policy_change_stales_review_and_preserves_capture (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_source_policy_change_stales_review_and_preserves_capture) ... ok
+test_successor_unknown_or_mismatched_verification_cannot_create_cash (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_unknown_or_mismatched_verification_cannot_create_cash) ... ok
+test_successor_unmatched_policy_explicitly_clears_assignment_without_allocating (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_unmatched_policy_explicitly_clears_assignment_without_allocating) ... ok
+test_timeout_after_applied_note_reconciles_before_revoked_executor (tests.test_financial_corrections.FinancialCorrectionTests.test_timeout_after_applied_note_reconciles_before_revoked_executor) ... ok
+test_void_frees_cash_closes_only_same_obligation_and_is_terminal (tests.test_financial_corrections.FinancialCorrectionTests.test_void_frees_cash_closes_only_same_obligation_and_is_terminal) ... ok
+test_wrong_note_dimensions_reference_and_schema_cannot_grant_authority (tests.test_financial_corrections.FinancialCorrectionTests.test_wrong_note_dimensions_reference_and_schema_cannot_grant_authority) ... ok
+test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks (tests.test_cash_guards.CashAutocommitGuardTests.test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks) ... ok
+test_competing_note_reservations_do_not_accept_two_changes_on_one_snapshot (tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_competing_note_reservations_do_not_accept_two_changes_on_one_snapshot) ... ok
+test_competing_successor_branches_accept_only_one_new_cash_lot (tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_competing_successor_branches_accept_only_one_new_cash_lot) ... ok
+test_older_correction_fence_cannot_dispatch_after_reclaim (tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_older_correction_fence_cannot_dispatch_after_reclaim) ... ok
+test_separate_os_worker_reconciles_correction_after_lost_lease_and_revocation (tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_separate_os_worker_reconciles_correction_after_lost_lease_and_revocation) ... ok
+
+======================================================================
+ERROR: test_cash_storage_limit_holds_verification_before_effect_without_losing_report (tests.test_cash_guards.CashGuardTests.test_cash_storage_limit_holds_verification_before_effect_without_losing_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cash_guards.py", line 122, in test_cash_storage_limit_holds_verification_before_effect_without_losing_report
+    r,_=receipt(self.a,self.c,amount='1234567890123456789012345.00',ref='oversized-known-cash',verify=False)
+        ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\settlement_helpers.py", line 37, in receipt
+    report=evidence(a,c,'cash_report',json.dumps(value));r=cash.report(a,c.pk,report.pk,rev(c))
+                                                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\cash.py", line 58, in report
+    case=lock_case(actor,case_id,'finance.cash.record',expected);e=subject(case,evidence_id,'cash_report');value=parse(e.body)
+                                                                                                                 ~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\cash_statements.py", line 18, in parse
+    validate(SCHEMA,value)
+    ~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'1234567890123456789012345.00' is not valid under any of the given schemas"]
+
+----------------------------------------------------------------------
+Ran 40 tests in 238.829s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 40 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

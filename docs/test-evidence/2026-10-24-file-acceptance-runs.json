@@ -1,0 +1,43 @@
+{
+  "runs": {
+    "233": {
+      "path": "docs/test-evidence/2026-10-24-run-233-file-acceptance-baseline.txt",
+      "tests": 2,
+      "seconds": 554.436,
+      "result": "OK"
+    },
+    "234": {
+      "path": "docs/test-evidence/2026-10-24-run-234-file-acceptance-focused.txt",
+      "tests": 15,
+      "seconds": 1894.034,
+      "result": "FAILED (errors=2)"
+    },
+    "235": {
+      "path": "docs/test-evidence/2026-10-24-run-235-file-acceptance-corrected.txt",
+      "tests": 2,
+      "seconds": 721.57,
+      "result": "OK"
+    },
+    "236": {
+      "path": "docs/test-evidence/2026-10-24-run-236-file-acceptance-sql.txt",
+      "tests": 1,
+      "seconds": 168.507,
+      "result": "OK"
+    },
+    "237": {
+      "path": "docs/test-evidence/2026-10-24-run-237-file-acceptance-connected.txt",
+      "tests": 130,
+      "seconds": 14583.88,
+      "result": "FAILED (errors=8)"
+    },
+    "238": {
+      "path": "docs/test-evidence/2026-10-24-run-238-file-acceptance-restore-clock.txt",
+      "tests": 14,
+      "seconds": 3141.809,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "next_run": 239,
+  "real_provider_or_owner_operational_acceptance": false
+}

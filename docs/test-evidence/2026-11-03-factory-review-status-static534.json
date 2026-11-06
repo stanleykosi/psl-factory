@@ -1,0 +1,58 @@
+{
+  "source_run": 534,
+  "parent_checkpoint": 530,
+  "changed_paths": [
+    "apps/workflows/factory_views.py",
+    "templates/factory/detail.html",
+    "tests/test_factory_review_authority.py"
+  ],
+  "changed_view_functions": [
+    "presentation",
+    "index"
+  ],
+  "all_other_view_bytes_reconstruct_parent": true,
+  "only_template_change": "Current permitted advance action label",
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "presentation_only": true,
+  "native_commands_permissions_policies_agents_adapters_models_migrations_unchanged": true,
+  "operational_owner_values_added": false,
+  "dependencies_added": []
+}

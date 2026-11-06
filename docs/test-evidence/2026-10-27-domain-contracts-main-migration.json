@@ -1,0 +1,7 @@
+{
+  "applied": [
+    "workflows.0028_domain_contracts",
+    "workflows.0029_domain_contract_guards"
+  ],
+  "actual_people_grants_policy_or_business_effects_installed": false
+}

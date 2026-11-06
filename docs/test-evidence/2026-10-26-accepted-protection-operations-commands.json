@@ -1,0 +1,141 @@
+{
+  "classification": "Actual invoked commands; outcomes parsed separately from full retained logs. No unfinished run marked passed.",
+  "commands": [
+    {
+      "run": 239,
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "manage.py",
+        "test",
+        "tests.test_file_acceptance.FileAcceptanceTests.test_exact_backup_evidence_three_owner_decisions_and_original_source_independence",
+        "tests.test_file_acceptance.FileAcceptanceTests.test_explicit_v2_restore_criteria_retain_restore_snapshot_shape",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs/test-evidence/2026-10-26-run-239-accepted-protection-baseline.txt"
+    },
+    {
+      "run": 240,
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_connected_file_acceptance_export_backup_isolated_restore_and_independent_review",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_raw_sql_case_scope_cycle_effect_lineage_and_closed_fields",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs/test-evidence/2026-10-26-run-240-accepted-protection-focused.txt"
+    },
+    {
+      "run": 241,
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_operations",
+        "tests.test_accepted_protection_concurrency",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs/test-evidence/2026-10-26-run-241-accepted-protection-complete.txt"
+    },
+    {
+      "run": 242,
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_agent_holds_superseded_plan_and_does_not_cache_authority_across_commands",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_missing_and_corrupt_actual_backup_hold_new_restore_despite_cached_artifact",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_af13_operator_job_cannot_masquerade_as_old_native_or_public_receipt_inventory",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_live_agent_http_selected_inventory_policy_draft_and_generic_privacy",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_source_revocation_denies_cached_download_plan_inventory_ui_and_agent",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_original_private_grants_required_for_configuration_and_expired_source_holds_new_effect",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_export_backup_restore_and_independent_protection_review",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_http_selected_packet_plan_policy_ui_and_historical_artifact_download",
+        "tests.test_operator_recovery",
+        "tests.test_operator_workers",
+        "tests.test_operator_bridges",
+        "tests.test_application",
+        "tests.test_accepted_protection_concurrency",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs/test-evidence/2026-10-26-run-242-accepted-protection-connected.txt"
+    },
+    {
+      "run": 243,
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_operations",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_export_backup_restore_and_independent_protection_review",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_http_selected_packet_plan_policy_ui_and_historical_artifact_download",
+        "tests.test_private_file_readiness.PrivateFileReadinessTests.test_exact_backup_not_found_and_database_export_found_closed_scope",
+        "tests.test_private_file_readiness.PrivateFileReadinessTests.test_v2_file_inventory_preserves_finance_source_and_requires_affected_restore_reassessment",
+        "tests.test_readiness",
+        "tests.test_readiness_workers",
+        "tests.test_readiness_bridges",
+        "tests.test_operator_recovery",
+        "tests.test_operator_workers",
+        "tests.test_operator_bridges",
+        "tests.test_application",
+        "tests.test_accepted_protection_concurrency",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs/test-evidence/2026-10-26-run-243-accepted-protection-boundaries.txt"
+    },
+    {
+      "run": 244,
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "manage.py",
+        "test",
+        "tests.test_private_file_readiness.PrivateFileReadinessTests.test_exact_backup_not_found_and_database_export_found_closed_scope",
+        "tests.test_private_file_readiness.PrivateFileReadinessTests.test_v2_file_inventory_preserves_finance_source_and_requires_affected_restore_reassessment",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs/test-evidence/2026-10-26-run-244-accepted-protection-legacy-contract.txt"
+    }
+  ],
+  "main_migration": {
+    "argv": [
+      ".venv/Scripts/python.exe",
+      "manage.py",
+      "migrate",
+      "--noinput"
+    ],
+    "returncode": 0,
+    "log": "docs/test-evidence/2026-10-26-accepted-protection-operations-main-migrations.txt",
+    "invocations": 2,
+    "schemas_applied": [
+      "0015_accepted_protection_operations",
+      "0016_accepted_protection_boundaries"
+    ]
+  },
+  "failed_elapsed_time_evidence": {
+    "run": 241,
+    "requested_wait_ms": 45000,
+    "observed_wait_seconds": 23668.9987,
+    "source_readiness_expired": true,
+    "runtime_limits_or_evidence_changed": false
+  }
+}

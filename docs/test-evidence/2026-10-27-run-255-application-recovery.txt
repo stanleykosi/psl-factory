@@ -1,0 +1,44 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_capture_missing_policy_typed_validation_ui_agent_and_private_scope (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_capture_missing_policy_typed_validation_ui_agent_and_private_scope) ... ok
+test_policy_lifecycle_runtime_identity_and_sql_immutability (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_policy_lifecycle_runtime_identity_and_sql_immutability) ... ok
+test_real_archive_isolated_restore_human_review_and_physical_counterexamples (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples) ... FAIL
+test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation) ... FAIL
+
+======================================================================
+FAIL: test_real_archive_isolated_restore_human_review_and_physical_counterexamples (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_application_recovery.py", line 171, in test_real_archive_isolated_restore_human_review_and_physical_counterexamples
+    restored = self.effect('restore')
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_application_recovery.py", line 89, in effect
+    self.assertEqual(job.status, 'confirmed', job.error)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'held' != 'confirmed'
+- held
++ confirmed
+ : native_recovery_held
+
+======================================================================
+FAIL: test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_application_recovery.py", line 275, in test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation
+    with self.assertRaises(RuntimeError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: RuntimeError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 77.141s
+
+FAILED (failures=2)
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

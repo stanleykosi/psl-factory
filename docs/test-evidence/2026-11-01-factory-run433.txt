@@ -1,0 +1,41 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_event_rejects_future_naive_private_stale_and_revoked_requests (tests.test_factory_hypercare.FactoryHypercareTests.test_actual_event_rejects_future_naive_private_stale_and_revoked_requests) ... ok
+test_actual_release_ui_remains_available_before_execution_and_stability_configuration (tests.test_factory_hypercare.FactoryHypercareTests.test_actual_release_ui_remains_available_before_execution_and_stability_configuration) ... ok
+test_agent_waits_for_actual_release_then_assesses_and_verifies_qualified_observations (tests.test_factory_hypercare.FactoryHypercareTests.test_agent_waits_for_actual_release_then_assesses_and_verifies_qualified_observations) ... ok
+test_cancel_during_planning_retains_attempt_without_native_assessment (tests.test_factory_hypercare.FactoryHypercareTests.test_cancel_during_planning_retains_attempt_without_native_assessment) ... ok
+test_configured_elapsed_period_and_metric_units_remain_native_qualification_controls (tests.test_factory_hypercare.FactoryHypercareTests.test_configured_elapsed_period_and_metric_units_remain_native_qualification_controls) ... ok
+test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled (tests.test_factory_hypercare.FactoryHypercareTests.test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled) ... ok
+test_missing_business_criterion_holds_only_assessment_and_resumes_after_reviewed_configuration (tests.test_factory_hypercare.FactoryHypercareTests.test_missing_business_criterion_holds_only_assessment_and_resumes_after_reviewed_configuration) ... ok
+test_new_form_keeps_one_candidate_allowance_and_unregistered_approval_is_rejected (tests.test_factory_hypercare.FactoryHypercareTests.test_new_form_keeps_one_candidate_allowance_and_unregistered_approval_is_rejected) ... ok
+test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue (tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue) ... ERROR
+
+======================================================================
+ERROR: test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue (tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_hypercare.py", line 104, in test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue
+    f.source('requirements',evidence=private)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_delivery.py", line 51, in source
+    s=capture_source(self.actor,self.case.pk,self.d.pk,kind,'owned:'+kind,(evidence or self.e['requirements']).pk,payload or {},rev(self.case))
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\delivery.py", line 79, in capture_source
+    raise ValidationError('Choose an owned source kind and bounded external reference')
+django.core.exceptions.ValidationError: ['Choose an owned source kind and bounded external reference']
+
+----------------------------------------------------------------------
+Ran 9 tests in 271.119s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

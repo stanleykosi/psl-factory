@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% block content %}<a href="{% url 'pilot_contract' case.pk contract.pk %}">Selected pilot</a><h1>Connected operation and deployment bindings</h1>
+<p>Select the intended human and exact operation inputs. Shared action checks evaluate current evidence, sequence, grants, authority and revision without executing a transition. The ordinary form captures one intent; the service supports up to 20. Other operations remain explicitly uncovered.</p>
+<p>Expected fingerprints are engineering inputs for independent review. Deployment-owned role identities and separate environment credentials must match; this screen installs neither. Storage/retention/monitoring revisions are declarations, not verified operational evidence.</p>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Save immutable connected bindings</button></form>{% endblock %}

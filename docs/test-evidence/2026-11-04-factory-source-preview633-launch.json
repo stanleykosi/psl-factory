@@ -1,0 +1,10 @@
+{
+  "status": "PENDING",
+  "other_processes_stopped": false,
+  "source_run": 633,
+  "launcher_pid": 18676,
+  "fixture_source_run": 619,
+  "submitted_utc": "2026-11-04T19:59:02.9896878Z",
+  "port": 8024,
+  "database": "psl_factory_source_ui_c484d169d676"
+}

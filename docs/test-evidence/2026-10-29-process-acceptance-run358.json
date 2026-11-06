@@ -1,0 +1,18 @@
+{
+  "run": 358,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_native_validation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-358-process-acceptance.txt",
+  "started_at": "2026-10-29T11:38:19.057582+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 212.31
+}

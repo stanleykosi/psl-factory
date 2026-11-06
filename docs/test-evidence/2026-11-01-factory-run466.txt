@@ -1,0 +1,35 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved (tests.test_factory_intake.FactoryIntakeTests.test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved) ... ok
+test_current_same_project_grants_drive_discovery_and_no_cross_project_union (tests.test_factory_intake.FactoryIntakeTests.test_current_same_project_grants_drive_discovery_and_no_cross_project_union) ... FAIL
+
+======================================================================
+FAIL: test_current_same_project_grants_drive_discovery_and_no_cross_project_union (tests.test_factory_intake.FactoryIntakeTests.test_current_same_project_grants_drive_discovery_and_no_cross_project_union)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_intake.py", line 23, in test_current_same_project_grants_drive_discovery_and_no_cross_project_union
+    self.assertEqual([o['definition'] for o in intake_options(actor)],['pmo-finance/v1'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != ['pmo-finance/v1']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'pmo-finance/v1'
+
+- []
++ ['pmo-finance/v1']
+
+----------------------------------------------------------------------
+Ran 2 tests in 2.907s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

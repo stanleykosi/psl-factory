@@ -1,0 +1,22 @@
+.venv/
+.runtime/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+staticfiles/
+*.log
+# Machine state and credential material never belong in source history.
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+*.p12
+*.pfx
+*.pem
+*.key
+.pytest_cache/
+.coverage
+htmlcov/
+

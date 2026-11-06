@@ -1,0 +1,17 @@
+{
+  "bind": "127.0.0.1:8000",
+  "session": 63887,
+  "pid": 31500,
+  "process_start": "2026-10-26 21:39:12 local",
+  "process_path": "C:/Python313/python.exe",
+  "process_start_verified_separately": true,
+  "unauthenticated_status": {
+    "operations": 302,
+    "protection": 302
+  },
+  "authentication_bypassed": false,
+  "authenticated_ui_evidence": "Django test client on synthetic PostgreSQL fixtures; not a main login",
+  "operator_database_reference": "psl_drill_operator_demo",
+  "readiness_database_revision": "fixture-v1",
+  "schema": "workflows0016"
+}

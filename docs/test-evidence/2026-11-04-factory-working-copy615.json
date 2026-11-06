@@ -1,0 +1,10 @@
+{
+  "extra_source_directories": [
+    "reference",
+    "guide"
+  ],
+  "source_run": 610,
+  "working_copy": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\source615",
+  "secrets_and_runtime_data_copied": false,
+  "original_source_unchanged": true
+}

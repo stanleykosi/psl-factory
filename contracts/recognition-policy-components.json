@@ -1,0 +1,92 @@
+{
+  "classification": "Proposed supplemental F33 review interfaces, not accounting arithmetic or new D groups",
+  "components": [
+    {
+      "id": "F33.authority_rules",
+      "parent_decision_id": "F33",
+      "schema_ref": "schema:psl/policy-component/F33.authority_rules/v1",
+      "subject_scope": "Exact project case",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F33.recognition_review_rules",
+      "parent_decision_id": "F33",
+      "schema_ref": "schema:psl/policy-component/F33.recognition_review_rules/v1",
+      "subject_scope": "Exact project case",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "recognition.attest",
+      "required_components": [
+        "F33.authority_rules"
+      ]
+    },
+    {
+      "operation": "recognition.review",
+      "required_components": [
+        "F33.authority_rules",
+        "F33.recognition_review_rules"
+      ]
+    }
+  ]
+}

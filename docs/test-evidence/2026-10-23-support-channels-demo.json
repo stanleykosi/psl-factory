@@ -1,0 +1,53 @@
+{
+  "case": "62cbee2d-13c1-4117-bb40-97253e62f1e1",
+  "missing_case": "989f1a03-e0a4-43cc-8ee4-852d9885f280",
+  "principals": {
+    "actor": 57,
+    "reviewer": 58,
+    "specialist": 59
+  },
+  "missing_principals": [
+    60,
+    61,
+    62
+  ],
+  "claim": 1,
+  "receipt": 1,
+  "check": 1,
+  "attestation": 1,
+  "response_event": 17,
+  "response_time": "2026-10-23T11:26:36.219671+00:00",
+  "packet": 3,
+  "internal_job": 3,
+  "internal_delivery_not_inferred": true,
+  "channel_policy": 334,
+  "clock_policy": 335,
+  "summary": 3,
+  "metrics_before_withdrawal": {
+    "first_response_seconds": "3624.840022",
+    "resolution_seconds": null,
+    "finding": null
+  },
+  "metrics_after_withdrawal": {
+    "first_response_seconds": null,
+    "resolution_seconds": null,
+    "finding": "customer_clock_evidence_not_current"
+  },
+  "authenticated_mock_gateway_gets": 1,
+  "original_provider_mock": true,
+  "customer_message_dispatched": false,
+  "live_customer_channel_evaluated": false,
+  "financial_effect": false,
+  "viewer_read_grants": [
+    "case.read",
+    "support.read",
+    "support.private.read",
+    "support.agent.read",
+    "agent.data.read",
+    "agent.data.source",
+    "integration.read",
+    "support.response.read",
+    "support.channel.read"
+  ],
+  "runtime_endpoint_secret_registry_after_context": "empty"
+}

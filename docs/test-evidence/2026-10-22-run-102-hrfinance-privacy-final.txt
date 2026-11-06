@@ -1,0 +1,62 @@
+Found 45 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+test_F35_E01_medical_or_disciplinary_values_never_retained (tests.test_hrfinance.HRFinanceTests.test_F35_E01_medical_or_disciplinary_values_never_retained) ... ok
+test_F35_N01_minimal_exact_disclosure_snapshot_receipt (tests.test_hrfinance.HRFinanceTests.test_F35_N01_minimal_exact_disclosure_snapshot_receipt) ... ok
+test_HR_correction_successor_new_receipt_without_source_write (tests.test_hrfinance.HRFinanceTests.test_HR_correction_successor_new_receipt_without_source_write) ... ok
+test_UI_rejected_medical_export_does_not_reflect_values (tests.test_hrfinance.HRFinanceTests.test_UI_rejected_medical_export_does_not_reflect_values) ... ok
+test_UI_rejects_extra_authority_claims_and_stale_revision (tests.test_hrfinance.HRFinanceTests.test_UI_rejects_extra_authority_claims_and_stale_revision) ... ok
+test_agent_uses_metadata_only_and_cannot_expand_disclosure (tests.test_hrfinance.HRFinanceTests.test_agent_uses_metadata_only_and_cannot_expand_disclosure) ... ok
+test_capture_retry_once_and_changed_intent_rejected (tests.test_hrfinance.HRFinanceTests.test_capture_retry_once_and_changed_intent_rejected) ... ok
+test_configured_effective_end_semantics_are_explicit (tests.test_hrfinance.HRFinanceTests.test_configured_effective_end_semantics_are_explicit) ... ok
+test_cross_case_snapshot_and_source_contract_denied (tests.test_hrfinance.HRFinanceTests.test_cross_case_snapshot_and_source_contract_denied) ... ok
+test_disclosure_for_attribution_does_not_grant_project_costing (tests.test_hrfinance.HRFinanceTests.test_disclosure_for_attribution_does_not_grant_project_costing) ... ok
+test_duplicate_employees_and_ineffective_dates_rejected (tests.test_hrfinance.HRFinanceTests.test_duplicate_employees_and_ineffective_dates_rejected) ... ok
+test_exact_snapshot_retention_expiry_endpoint_holds_without_rows (tests.test_hrfinance.HRFinanceTests.test_exact_snapshot_retention_expiry_endpoint_holds_without_rows) ... ok
+test_explicit_HR_approval_required_before_capture (tests.test_hrfinance.HRFinanceTests.test_explicit_HR_approval_required_before_capture) ... ok
+test_finance_cannot_approve_disclosure_or_capture_with_role_claim (tests.test_hrfinance.HRFinanceTests.test_finance_cannot_approve_disclosure_or_capture_with_role_claim) ... ok
+test_freshness_and_future_extract_rejected_without_rows (tests.test_hrfinance.HRFinanceTests.test_freshness_and_future_extract_rejected_without_rows) ... ok
+test_huge_retention_is_invalid_without_inventing_business_default (tests.test_hrfinance.HRFinanceTests.test_huge_retention_is_invalid_without_inventing_business_default) ... ok
+test_metadata_agent_board_and_inbox_never_access_private_payload_attribute (tests.test_hrfinance.HRFinanceTests.test_metadata_agent_board_and_inbox_never_access_private_payload_attribute) ... ok
+test_missing_field_justification_rejected (tests.test_hrfinance.HRFinanceTests.test_missing_field_justification_rejected) ... ok
+test_missing_rules_hold_disclosure_not_finance_need (tests.test_hrfinance.HRFinanceTests.test_missing_rules_hold_disclosure_not_finance_need) ... ok
+test_need_and_policy_source_successors_require_new_disclosure (tests.test_hrfinance.HRFinanceTests.test_need_and_policy_source_successors_require_new_disclosure) ... ok
+test_payroll_fields_need_separate_explicit_purpose_and_HR_approval (tests.test_hrfinance.HRFinanceTests.test_payroll_fields_need_separate_explicit_purpose_and_HR_approval) ... ok
+test_policy_draft_UI_then_shared_validation_and_activation (tests.test_hrfinance.HRFinanceTests.test_policy_draft_UI_then_shared_validation_and_activation) ... ok
+test_policy_validators_reject_wrong_roles_extra_fields_and_pay_without_currency (tests.test_hrfinance.HRFinanceTests.test_policy_validators_reject_wrong_roles_extra_fields_and_pay_without_currency) ... ok
+test_private_snapshot_endpoint_and_board_never_inline_rows (tests.test_hrfinance.HRFinanceTests.test_private_snapshot_endpoint_and_board_never_inline_rows) ... ok
+test_read_grant_alone_is_not_recipient_nomination (tests.test_hrfinance.HRFinanceTests.test_read_grant_alone_is_not_recipient_nomination) ... ok
+test_requires_postgresql (tests.test_hrfinance.HRFinanceTests.test_requires_postgresql) ... ok
+test_retention_expiry_restricts_rows_preserves_metadata (tests.test_hrfinance.HRFinanceTests.test_retention_expiry_restricts_rows_preserves_metadata) ... ok
+test_revoked_Finance_recipient_grant_holds_rows (tests.test_hrfinance.HRFinanceTests.test_revoked_Finance_recipient_grant_holds_rows) ... ok
+test_revoked_HR_approval_immediately_holds_read_and_receipt (tests.test_hrfinance.HRFinanceTests.test_revoked_HR_approval_immediately_holds_read_and_receipt) ... ok
+test_revoked_actual_HR_authorizer_grant_holds_current_use (tests.test_hrfinance.HRFinanceTests.test_revoked_actual_HR_authorizer_grant_holds_current_use) ... ok
+test_revoked_policy_and_HR_grant_hold_current_use (tests.test_hrfinance.HRFinanceTests.test_revoked_policy_and_HR_grant_hold_current_use) ... ok
+test_schema_exception_message_never_contains_private_bad_value (tests.test_hrfinance.HRFinanceTests.test_schema_exception_message_never_contains_private_bad_value) ... ok
+test_schema_view_period_and_unknown_source_version_exceptions (tests.test_hrfinance.HRFinanceTests.test_schema_view_period_and_unknown_source_version_exceptions) ... ok
+test_shared_case_reader_and_admin_cannot_read_private_rows (tests.test_hrfinance.HRFinanceTests.test_shared_case_reader_and_admin_cannot_read_private_rows) ... ok
+test_source_view_evidence_revised_holds_old_disclosure (tests.test_hrfinance.HRFinanceTests.test_source_view_evidence_revised_holds_old_disclosure) ... ok
+test_sql_guards_for_all_four_private_records (tests.test_hrfinance.HRFinanceTests.test_sql_guards_for_all_four_private_records) ... ok
+test_Finance_receipt_required_before_input_binding (tests.test_hrfinance_allocation.HRFinanceAllocationTests.test_Finance_receipt_required_before_input_binding) ... ok
+test_HR_read_only_unit_inventory_cannot_invent_FTE (tests.test_hrfinance_allocation.HRFinanceAllocationTests.test_HR_read_only_unit_inventory_cannot_invent_FTE) ... ok
+test_corrected_successor_does_not_silently_restate_old_Finance_result (tests.test_hrfinance_allocation.HRFinanceAllocationTests.test_corrected_successor_does_not_silently_restate_old_Finance_result) ... ok
+test_partial_inventory_and_unknown_BU_are_not_zero (tests.test_hrfinance_allocation.HRFinanceAllocationTests.test_partial_inventory_and_unknown_BU_are_not_zero) ... ok
+test_real_HR_snapshot_to_existing_Finance_allocation_no_staff_master_copy (tests.test_hrfinance_allocation.HRFinanceAllocationTests.test_real_HR_snapshot_to_existing_Finance_allocation_no_staff_master_copy) ... ok
+test_recipient_revocation_holds_only_headcount_pool_and_invalidates_old_run (tests.test_hrfinance_allocation.HRFinanceAllocationTests.test_recipient_revocation_holds_only_headcount_pool_and_invalidates_old_run) ... ok
+test_unknown_BU_holds_headcount_pool_without_erasing_source (tests.test_hrfinance_allocation.HRFinanceAllocationTests.test_unknown_BU_holds_headcount_pool_without_erasing_source) ... ok
+test_recipient_revocation_before_read_serializes_and_blocks_rows (tests.test_hrfinance_concurrency.HRFinanceConcurrencyTests.test_recipient_revocation_before_read_serializes_and_blocks_rows) ... ok
+test_two_connections_capture_same_export_once (tests.test_hrfinance_concurrency.HRFinanceConcurrencyTests.test_two_connections_capture_same_export_once) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 72.836s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

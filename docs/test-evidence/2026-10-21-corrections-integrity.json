@@ -1,0 +1,64 @@
+{
+  "frozen_hashes": 41,
+  "process_ids": 122,
+  "families": 13,
+  "plan_rows": 122,
+  "source_titles": "exact",
+  "json_files_parsed": 58,
+  "coverage": {
+    "partial": 90,
+    "not_started": 32
+  },
+  "partial_semantic_components": 41,
+  "components_without_semantics": 16,
+  "actual_test_runs": {
+    "RUN-64": {
+      "passed": 3,
+      "seconds": 13.636
+    },
+    "RUN-65": {
+      "passed": 65,
+      "seconds": 321.306
+    },
+    "RUN-66": {
+      "passed": 219,
+      "seconds": 761.37
+    }
+  },
+  "suites_overlap": true,
+  "static_checks": {
+    "django_check": "passed",
+    "migration_drift": "none",
+    "compileall": "passed",
+    "pip_check": "passed"
+  },
+  "databases": {
+    "psl": {
+      "finance_latest": "0017_correction_immutability"
+    },
+    "test_psl": {
+      "finance_latest": "0017_correction_immutability"
+    }
+  },
+  "synthetic_demo": {
+    "case": "5a1b8ea0-d78c-4e57-9674-1deba59694d8",
+    "invoice": 2,
+    "credit": 1,
+    "adjustment_acceptance": 1,
+    "note_delivery": 1,
+    "logical_receipts": 1,
+    "historical_and_successor_lots": 2,
+    "successor_acceptance": 1,
+    "new_allocation": 3,
+    "snapshot": 2,
+    "snapshot_current": true,
+    "receivable": "17.25000000",
+    "verified_cash": "40.00000000",
+    "unallocated_cash": "30.00000000",
+    "prior_case_open": "12.25000000",
+    "controlled_document_receipts_preserved": 15,
+    "cited_agent": 25
+  },
+  "actual_external_financial_effect": false,
+  "no_product_acceptance_claim": true
+}

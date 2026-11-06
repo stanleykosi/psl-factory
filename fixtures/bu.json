@@ -1,0 +1,234 @@
+{
+  "classification": "EXPLICIT SYNTHETIC engineering examples, no actual owner or payroll policy",
+  "staff": {
+    "entity": "synthetic-company",
+    "from_period": "2026-09",
+    "to_period": "2026-09",
+    "components": [
+      "BASIC"
+    ],
+    "standard_pool_ref": "F20-STAFF-SEPT",
+    "pool_contract_evidence_id": 1,
+    "standard_method": "matched_bu",
+    "standard_weights": [
+      {
+        "bu": "BU-A",
+        "weight": "1"
+      }
+    ],
+    "rounding": {
+      "decimal_places": 2,
+      "rounding": "half_even",
+      "residual": "hold",
+      "residual_bu": null
+    },
+    "historical_treatment": "reviewed_replacement",
+    "oracles": [
+      {
+        "amount": "100",
+        "weights": [
+          {
+            "bu": "BU-A",
+            "weight": "70"
+          },
+          {
+            "bu": "BU-B",
+            "weight": "30"
+          }
+        ],
+        "expected": {
+          "BU-A": "70.00",
+          "BU-B": "30.00"
+        },
+        "residual": "0"
+      },
+      {
+        "amount": null,
+        "weights": [
+          {
+            "bu": "BU-A",
+            "weight": "1"
+          }
+        ],
+        "expected": null,
+        "residual": null
+      }
+    ]
+  },
+  "source": {
+    "entity": "synthetic-company",
+    "from_period": "2026-09",
+    "to_period": "2026-09",
+    "currency": "TEST",
+    "source": "SYNTHETIC-EVENTS",
+    "owner_id": 1,
+    "reader_ids": [
+      1
+    ],
+    "source_contract_evidence_id": 1,
+    "design_decision_evidence_id": 1,
+    "max_age_seconds": 86400,
+    "retention_seconds": 604800,
+    "retention_mode": "restrict_after_expiry",
+    "closed_periods": [],
+    "closed_period_treatment": "hold",
+    "company_comparison": "declared_control_only",
+    "source_write": false
+  },
+  "mapping": {
+    "entity": "synthetic-company",
+    "from_period": "2026-09",
+    "to_period": "2026-09",
+    "mappings": [
+      {
+        "tag": "DIRECT-A",
+        "treatment": "direct",
+        "bu": "BU-A",
+        "pool": null,
+        "weights": []
+      },
+      {
+        "tag": "SHARED",
+        "treatment": "shared",
+        "bu": null,
+        "pool": "SHARED-POOL",
+        "weights": [
+          {
+            "bu": "BU-A",
+            "weight": "70"
+          },
+          {
+            "bu": "BU-B",
+            "weight": "30"
+          }
+        ]
+      },
+      {
+        "tag": "COMPANY",
+        "treatment": "company",
+        "bu": null,
+        "pool": null,
+        "weights": []
+      }
+    ],
+    "conflicting_tags": "hold",
+    "unknown_tags": "hold",
+    "rounding": {
+      "decimal_places": 2,
+      "rounding": "half_even",
+      "residual": "hold",
+      "residual_bu": null
+    },
+    "historical_treatment": "reviewed_replacement",
+    "oracles": [
+      {
+        "amount": "100",
+        "weights": [
+          {
+            "bu": "BU-A",
+            "weight": "70"
+          },
+          {
+            "bu": "BU-B",
+            "weight": "30"
+          }
+        ],
+        "expected": {
+          "BU-A": "70.00",
+          "BU-B": "30.00"
+        },
+        "residual": "0"
+      },
+      {
+        "amount": null,
+        "weights": [
+          {
+            "bu": "BU-A",
+            "weight": "1"
+          }
+        ],
+        "expected": null,
+        "residual": null
+      }
+    ]
+  },
+  "authority": {
+    "human_only": true,
+    "independent_reviewer": true,
+    "assignments": [
+      {
+        "user_id": 1,
+        "role": "Finance",
+        "purposes": [
+          "rule",
+          "staff",
+          "source",
+          "event",
+          "historical"
+        ]
+      },
+      {
+        "user_id": 2,
+        "role": "Finance",
+        "purposes": [
+          "publish"
+        ]
+      }
+    ]
+  },
+  "disclosure": {
+    "recipient_ids": [
+      1
+    ],
+    "minimum_staff": 1,
+    "small_groups": "hold_all_publication",
+    "destination": "synthetic-bu-report",
+    "disclosure": "aggregate_only"
+  },
+  "exception": {
+    "employee_id": "E900",
+    "component": "BASIC",
+    "entity": "synthetic-company",
+    "period": "2026-09",
+    "standard_pool_ref": "F20-STAFF-SEPT",
+    "weights": [
+      {
+        "bu": "BU-A",
+        "weight": "70"
+      },
+      {
+        "bu": "BU-B",
+        "weight": "30"
+      }
+    ],
+    "rationale_evidence_id": 1
+  },
+  "export": {
+    "source": "SYNTHETIC-EVENTS",
+    "source_version": "events-v1",
+    "entity": "synthetic-company",
+    "period": "2026-09",
+    "currency": "TEST",
+    "unit": "major_currency",
+    "extracted_at": "2026-10-22T00:00:00+00:00",
+    "completeness": "complete",
+    "control_total": "100",
+    "rows": [
+      {
+        "event_id": "E1",
+        "amount": "100",
+        "tags": [
+          "DIRECT-A"
+        ]
+      }
+    ]
+  },
+  "readiness_scenarios": [
+    "absent",
+    "invalid",
+    "synthetic_active",
+    "stale",
+    "revoked",
+    "expired"
+  ]
+}

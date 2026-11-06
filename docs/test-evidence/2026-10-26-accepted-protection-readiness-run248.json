@@ -1,0 +1,18 @@
+{
+  "run": 248,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_accepted_protection_readiness_concurrency",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-26-run-248-accepted-protection-readiness.txt",
+  "started_at": "2026-10-26T23:13:54.310743+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 3.575
+}

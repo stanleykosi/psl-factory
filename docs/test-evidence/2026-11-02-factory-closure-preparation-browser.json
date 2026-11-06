@@ -1,0 +1,201 @@
+{
+  "classification": "Synthetic native closure prerequisite selection and actual durable UI investigation; not autonomous closure, real model or independent-human UAT",
+  "database": "psl_closure_preparation_ui_165a58bb0435",
+  "case": "731b37e7-9380-4d9d-a404-78c55c077c70",
+  "dossier": 335,
+  "runtime": 471,
+  "fixture": "tests.test_delivery.DeliveryFixture.setup_delivery/closing; human/test-only-password; all source criteria and identities synthetic",
+  "actor_id": 15615,
+  "agent_run_ids": [
+    3120,
+    3121
+  ],
+  "first": {
+    "as_of": "2026-11-02T12:16:13.535169+00:00",
+    "checks": [
+      {
+        "key": "context",
+        "title": "Current project scope",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          335
+        ]
+      },
+      {
+        "key": "go_live",
+        "title": "Go-live acceptance",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2052
+        ]
+      },
+      {
+        "key": "hypercare",
+        "title": "Release stability",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2053
+        ]
+      },
+      {
+        "key": "archive",
+        "title": "Project archive",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2054
+        ]
+      },
+      {
+        "key": "handover",
+        "title": "Support handover",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2055
+        ]
+      },
+      {
+        "key": "retrospective",
+        "title": "Retrospective",
+        "status": "unknown",
+        "summary": "Select the current record of an actual post-release retrospective",
+        "references": []
+      },
+      {
+        "key": "finance",
+        "title": "Finance notification coverage",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2056
+        ]
+      },
+      {
+        "key": "report",
+        "title": "PM closure report",
+        "status": "unknown",
+        "summary": "Select the PM closure report evidence",
+        "references": []
+      }
+    ],
+    "selected": {
+      "retrospective_id": null,
+      "report_evidence_id": null
+    },
+    "debt_waived": false,
+    "closure_approved": false,
+    "ready_to_prepare": false,
+    "deployment_authorized": false
+  },
+  "current": {
+    "as_of": "2026-11-02T12:17:27.573243+00:00",
+    "checks": [
+      {
+        "key": "context",
+        "title": "Current project scope",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          335
+        ]
+      },
+      {
+        "key": "go_live",
+        "title": "Go-live acceptance",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2052
+        ]
+      },
+      {
+        "key": "hypercare",
+        "title": "Release stability",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2053
+        ]
+      },
+      {
+        "key": "archive",
+        "title": "Project archive",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2054
+        ]
+      },
+      {
+        "key": "handover",
+        "title": "Support handover",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2055
+        ]
+      },
+      {
+        "key": "retrospective",
+        "title": "Retrospective",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          664
+        ]
+      },
+      {
+        "key": "finance",
+        "title": "Finance notification coverage",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          2056
+        ]
+      },
+      {
+        "key": "report",
+        "title": "PM closure report",
+        "status": "current",
+        "summary": "Current recorded evidence is available",
+        "references": [
+          103386
+        ]
+      }
+    ],
+    "selected": {
+      "retrospective_id": 664,
+      "report_evidence_id": 103386
+    },
+    "debt_waived": false,
+    "closure_approved": false,
+    "ready_to_prepare": true,
+    "deployment_authorized": false
+  },
+  "closure_decisions": 0,
+  "recorded_closure": 0,
+  "closure_documents": 0,
+  "invoices": 0,
+  "actual_browser_actions": [
+    "Existing synthetic login",
+    "Unknown selected inputs and independent current Finance/archive/handover checks",
+    "Ask native agent to investigate unknown inputs",
+    "Select exact actual retrospective and PM report by native controls",
+    "Check evidence via GET",
+    "Ask agent to investigate selected evidence",
+    "Current readiness and timestamped recorded findings",
+    "Keyboard and narrow-screen layout/no page overflow"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-11-02-factory-closure-preparation-unknown-runtime471.jpg",
+    "docs/test-evidence/2026-11-02-factory-closure-preparation-ready-runtime471.jpg",
+    "docs/test-evidence/2026-11-02-factory-closure-preparation-narrow-runtime471.jpg"
+  ],
+  "real_model_evaluation": false,
+  "independent_human_UAT": false,
+  "business_acceptance_granted": false
+}

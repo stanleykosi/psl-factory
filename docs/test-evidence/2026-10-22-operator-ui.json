@@ -1,0 +1,24 @@
+{
+  "browser": "2",
+  "tab": "2",
+  "viewer": "studio-demo",
+  "case": "dac26d43-2d6e-42e3-bab9-fdf883937162",
+  "unconfigured_case": "946ba077-dc0b-4f83-859e-33e91ad5b596",
+  "read_only": true,
+  "source_plan_status": 403,
+  "artifact_status": 403,
+  "confirmed_jobs_show_no_active_lease": true,
+  "current_review_visible": true,
+  "held_and_superseded_assessments_visible": true,
+  "missing_policy_capture_visible": true,
+  "full_database_restore_claimed": false,
+  "native_scope": "portable case metadata only",
+  "server_session": 35745,
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-operator-board.png",
+    "docs/test-evidence/2026-10-22-operator-history.png",
+    "docs/test-evidence/2026-10-22-operator-missing.png",
+    "docs/test-evidence/2026-10-22-operator-source-denied.png"
+  ],
+  "handoff_marked": true
+}

@@ -1,0 +1,142 @@
+{
+  "case": "109a9540-d890-406d-9eb4-302a90563f50",
+  "principals": {
+    "actor": 10,
+    "reviewer": 12,
+    "recipient": 11
+  },
+  "parent_run": 11,
+  "income_versions": [
+    1,
+    2,
+    3
+  ],
+  "totals": [
+    "100",
+    "120",
+    "125"
+  ],
+  "adjustment_links": [
+    1,
+    2
+  ],
+  "adjustments": [
+    1,
+    2
+  ],
+  "adjustment_mapping": 12,
+  "duplicate_held": 4,
+  "inventories": [
+    5,
+    6
+  ],
+  "AF13_package": 3,
+  "agent": 43,
+  "report": {
+    "work_id": 3,
+    "sha256": "12dd59e3726e2734c8f690a6011a25afdac821b16d2fe9faeaec209262d74dbc",
+    "review_id": 3,
+    "result": {
+      "findings": [],
+      "parent_run_id": 11,
+      "report_line": "revenue",
+      "rows": [
+        {
+          "key": "a",
+          "relationship": "disaggregation",
+          "amount": "60",
+          "unit": "major_currency",
+          "source_accounts": [],
+          "evidence_id": 284,
+          "duplicate_state": "already_represented",
+          "duplicate_resolution_evidence_id": null,
+          "adjustment_lines": []
+        },
+        {
+          "key": "b",
+          "relationship": "disaggregation",
+          "amount": "40",
+          "unit": "major_currency",
+          "source_accounts": [],
+          "evidence_id": 284,
+          "duplicate_state": "already_represented",
+          "duplicate_resolution_evidence_id": null,
+          "adjustment_lines": []
+        },
+        {
+          "key": "supplement",
+          "relationship": "additive",
+          "amount": "25",
+          "unit": "major_currency",
+          "source_accounts": [],
+          "evidence_id": 284,
+          "duplicate_state": "separately_justified",
+          "duplicate_resolution_evidence_id": null,
+          "adjustment_lines": [
+            {
+              "account": "sales",
+              "amount": "25"
+            }
+          ]
+        }
+      ],
+      "ledger_posted": false,
+      "source_written": false,
+      "status": "ready",
+      "parent_amount": "100",
+      "converted_parent": "100",
+      "factor": "1",
+      "child_total": "100",
+      "child_residual": "0",
+      "additive_total": "25",
+      "reclassification_total": "0",
+      "adjusted_total": "125",
+      "target_unit": "major_currency"
+    },
+    "native_workbook_verified": false,
+    "ledger_posted": false
+  },
+  "inventory_report": {
+    "work_id": 6,
+    "sha256": "27c4200cd4773f3ea9992866c9451b36256c752bf5a97ba18599357d9d7d124b",
+    "review_id": 5,
+    "result": {
+      "status": "ready",
+      "findings": [
+        "workbook_coverage_partial",
+        "monthly_performance_decision_pending"
+      ],
+      "schedules": [
+        {
+          "key": "equity",
+          "included": true,
+          "gaps": [],
+          "acceptance_level": "definition"
+        },
+        {
+          "key": "intercompany",
+          "included": false,
+          "gaps": [
+            "Counterparty matching and elimination policy absent",
+            "actual_owner_missing",
+            "formula_definition_missing",
+            "owner_validation_package_missing",
+            "source_links_missing"
+          ],
+          "acceptance_level": null
+        }
+      ],
+      "missing_required": [],
+      "monthly_performance": "undecided",
+      "coverage": "partial",
+      "complete_inventory": false,
+      "native_workbook_verified": false,
+      "ledger_posted": false
+    },
+    "native_workbook_verified": false,
+    "ledger_posted": false
+  },
+  "source_native_verified": false,
+  "provider_evaluation": "local deterministic only",
+  "ledger_posted": false
+}

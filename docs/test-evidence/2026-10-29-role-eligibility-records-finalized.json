@@ -1,0 +1,47 @@
+{
+  "status": "APPLIED",
+  "runs": [
+    {
+      "run": 367,
+      "tests": 9,
+      "unittest_seconds": 14.624,
+      "process_seconds": 19.817,
+      "returncode": 1
+    },
+    {
+      "run": 368,
+      "tests": 56,
+      "unittest_seconds": 191.16,
+      "process_seconds": 195.946,
+      "returncode": 1
+    },
+    {
+      "run": 369,
+      "tests": 60,
+      "unittest_seconds": 265.289,
+      "process_seconds": 271.015,
+      "returncode": 1
+    },
+    {
+      "run": 370,
+      "tests": 10,
+      "unittest_seconds": 153.786,
+      "process_seconds": 158.523,
+      "returncode": 0
+    }
+  ],
+  "main_preservation": {
+    "prior_main_rowsets_preserved": 326,
+    "prior_migration_files_preserved": 197,
+    "functions": 79,
+    "triggers": 363,
+    "constraints": 1719,
+    "all_schema_definitions_unchanged": true,
+    "main_test_definitions_identical": true,
+    "owner_values_installed": false,
+    "live_pilot_performed": false
+  },
+  "full_product_complete": false,
+  "owner_values_installed": false,
+  "next_step": "Remaining engineering: additional declared native operation/variant guards (9of92 currently share native preview guards; other operations are NOT_EVALUATED), concrete indirect/private input/report and other receipt consumers beyond16 declared impact adapters, and source/target contracts requiring verified implementation details. Keep auditing actual services and source bindings; unknown coverage is not completion. Owner nominations/eligibility/financial/calendar/audience values remain deferred and separate. Actual vendor/source access/contracts, production identity/keys/SSO/monitoring, business oracles and supervised Security/load/UAT are operational inputs/evidence, not claims established by these tests. All122 acceptance rows remain partial; no full-product/no-code-gaps or live-pilot claim."
+}

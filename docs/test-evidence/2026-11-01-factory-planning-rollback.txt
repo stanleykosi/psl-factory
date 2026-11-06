@@ -1,0 +1,40 @@
+Synthetic current planning handoff created; no external effects
+Operations to perform:
+  Target specific migration: 0039_factory_business_identity, from workflows
+Running migrations:
+  Rendering model states... DONE
+  Unapplying workflows.0040_factory_planning...Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\manage.py", line 7, in <module>
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 111, in wrapper
+    res = handle_func(*args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\commands\migrate.py", line 353, in handle
+    post_migrate_state = executor.migrate(
+        targets,
+    ...<3 lines>...
+        fake_initial=fake_initial,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 141, in migrate
+    state = self._migrate_all_backwards(plan, full_plan, fake=fake)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 219, in _migrate_all_backwards
+    self.unapply_migration(states[migration], migration, fake=fake)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 282, in unapply_migration
+    state = migration.unapply(state, schema_editor)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\migration.py", line 159, in unapply
+    raise IrreversibleError(
+        "Operation %s in %s is not reversible" % (operation, self)
+    )
+django.db.migrations.exceptions.IrreversibleError: Operation <RunSQL "\nCREATE OR REPLACE FUNCTION psl_factory_identity() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN\n IF TG_OP='DELETE' THEN RAISE EXCEPTION 'Factory history cannot be deleted'; END IF;\n IF TG_OP='UPDATE' THEN\n  IF (NEW.case_id,NEW.actor_id,NEW.key,NEW.definition,NEW.request,NEW.request_hash,NEW.created_at)\n    IS DISTINCT FROM (OLD.case_id,OLD.actor_id,OLD.key,OLD.definition,OLD.request,OLD.request_hash,OLD.created_at)\n    OR NEW.budget_used<OLD.budget_used OR NEW.fence<OLD.fence OR NEW.revision<OLD.revision\n    OR (OLD.budget_used>0 AND NEW.budget_limit<>OLD.budget_limit)\n  THEN RAISE EXCEPTION 'Immutable factory identity and monotonic shared budget required'; END IF;\n  IF OLD.source_head_id IS NOT NULL AND NEW.source_head_id IS DISTINCT FROM OLD.source_head_id\n   AND (NEW.source_head_id IS NULL OR NOT EXISTS(SELECT 1 FROM core_evidence n JOIN core_evidence o ON o.id=OLD.source_head_id\n    WHERE n.id=NEW.source_head_id AND n.version>o.version))\n  THEN RAISE EXCEPTION 'Forward planning source successor required'; END IF;\n END IF;\n IF NEW.definition NOT IN ('pmo-finance/v1','planning/v1') THEN RAISE EXCEPTION 'Closed factory definition required'; END IF;\n IF (NEW.invoice_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM finance_invoice i WHERE i.id=NEW.invoice_id AND i.case_id=NEW.case_id))\n  OR (NEW.preparation_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM finance_billingpreparation p WHERE p.id=NEW.preparation_id AND p.case_id=NEW.case_id))\n  OR (NEW.policy_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM policy_configuration p WHERE p.id=NEW.policy_id AND p.case_id=NEW.case_id\n    AND p.component=CASE WHEN NEW.definition='planning/v1' THEN 'OPS.factory_planning_execution' ELSE 'OPS.factory_execution' END))\n THEN RAISE EXCEPTION 'Same-case native factory references required'; END IF;\n IF NEW.definition='pmo-finance/v1' AND NEW.source_head_id IS NOT NULL THEN RAISE EXCEPTION 'Invoice work cannot carry a planning head'; END IF;\n IF NEW.definition='planning/v1' THEN\n  IF NEW.invoice_id IS NOT NULL OR NEW.preparation_id IS NOT NULL OR NOT EXISTS(\n    SELECT 1 FROM core_evidence e JOIN core_audit a ON a.case_id=e.case_id AND a.actor_id=e.created_by_id\n    WHERE e.id=NEW.source_head_id AND e.case_id=NEW.case_id AND e.kind='planning_packet'\n    AND a.action='planning.recorded' AND a.data=jsonb_build_object('kind','packet','evidence_id',e.id,'sha256',e.sha256)\n    AND e.body::jsonb->'engagement_id'=NEW.request->'engagement')\n  THEN RAISE EXCEPTION 'Native same-engagement planning packet required'; END IF;\n END IF;\n IF NEW.status='verified' THEN\n  IF NEW.definition='pmo-finance/v1' AND NOT EXISTS(\n    SELECT 1 FROM finance_invoiceissue i JOIN finance_invoicedelivery d ON d.invoice_id=i.invoice_id\n    JOIN finance_invoice n ON n.id=i.invoice_id WHERE n.id=NEW.invoice_id AND n.case_id=NEW.case_id AND i.sha256=n.sha256 AND i.payload=n.payload)\n  THEN RAISE EXCEPTION 'Native invoice receipts required; agent completion is not verification'; END IF;\n  IF NEW.definition='planning/v1' AND NOT EXISTS(\n    SELECT 1 FROM pmo_deliverysource s JOIN pmo_deliverydossier d ON d.id=s.dossier_id JOIN core_evidence e ON e.id=s.evidence_id\n    JOIN core_audit a ON a.case_id=e.case_id AND a.actor_id=e.created_by_id\n    WHERE d.case_id=NEW.case_id AND e.case_id=NEW.case_id AND e.kind='planning_readiness' AND s.kind='scope_baseline'\n    AND e.body::jsonb->>'packet_id'=NEW.source_head_id::text AND e.body::jsonb->'inputs'->>'candidate_id'=d.candidate_id::text\n    AND s.external_ref='psl:planning-readiness:'||e.id::text AND a.action='planning.recorded'\n    AND a.data=jsonb_build_object('kind','ready','evidence_id',e.id,'sha256',e.sha256))\n  THEN RAISE EXCEPTION 'Native planning readiness and delivery source required'; END IF;\n END IF;\n RETURN NEW;\nEND $$;\n"> in workflows.0040_factory_planning is not reversible

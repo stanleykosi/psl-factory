@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\seed_support_release_once.py", line 33, in <module>
+    for u in [f['actor'],f['reviewer'],f['specialist'],missing['actor'],missing['reviewer'],missing['specialist']]:assert not u.has_usable_password()
+                                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

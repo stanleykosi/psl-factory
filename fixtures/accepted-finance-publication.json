@@ -1,0 +1,14 @@
+{
+  "classification": "Synthetic configuration shape; supply actual records and authorised humans before validation",
+  "rules": {
+    "handoff_ids": [],
+    "template_ids": [],
+    "fields": [],
+    "audience": null,
+    "recipient_ids": [],
+    "reviewer_id": null,
+    "publisher_id": null,
+    "independent_review": true,
+    "review_ttl_seconds": 3600
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "classification": "synthetic_fixture_only",
+  "role": "PMO Lead",
+  "principal_roles": ["PM", "PMO Lead"],
+  "delegate_own_role": "Finance",
+  "delegate_combined_roles": ["Finance", "PMO Lead"],
+  "notes": "Tests supply actual fixture user IDs and aware windows. These values are not real nominations, eligibility decisions, action grants or business approvals."
+}

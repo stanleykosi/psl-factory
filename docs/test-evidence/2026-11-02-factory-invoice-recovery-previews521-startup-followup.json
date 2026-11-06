@@ -1,0 +1,13 @@
+{
+  "source_run": 521,
+  "initial_complete_probe": "Not all original launches listening yet; raised before completion evidence",
+  "subsequent_listener_inventory": 13,
+  "subsequent_exact_identity_verification": "PASS in complete phase",
+  "launch_replayed": false,
+  "stop_replayed": false,
+  "all_prior_identities_checked_before_any_stop": true,
+  "retained8014_browser": "GET reload only; verified work/filter retained, no accessibility-tree change",
+  "legacy8002_untouched": true,
+  "isolated8015_source520_untouched": true,
+  "classification": "Local preview startup evidence, not provider or deployment acceptance"
+}

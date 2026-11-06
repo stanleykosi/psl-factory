@@ -1,0 +1,31 @@
+{
+  "run": "RUN192",
+  "source_sha256": {
+    "apps/finance/acceptance_models.py": "d39b43c44d800310835c510661f8f09816241ab3e403e93501233575305ba0b6",
+    "apps/finance/acceptance.py": "5f9e2c4cd5679bce0071e60b6079d51245f49a38ff58c3bf026f5951b7506f66",
+    "apps/finance/acceptance_views.py": "5a00abe0757a6edb4029982b2bafed8298f792c00aa6cd76f3917cc4655ace97",
+    "apps/finance/models.py": "0b16c23ed4d283e617a435f29172e013aefd0d45688f7b802813744e88b7be08",
+    "apps/finance/migrations/0046_finance_validation_handoff.py": "22c0624d9c1a5a692cf0f0cc55d3762463d0a3cf3ef9c871ac4bbb29533668bf",
+    "apps/finance/migrations/0047_finance_handoff_guards.py": "cc764a1513603774435582646bd0ecc1201a63cb3616c76120c7eb3b67245e0d",
+    "apps/documents/validation.py": "24121a20299a745df3e4c52d6d37b5a22b137a5cc9d258919c91b8328fbb2ce4",
+    "apps/documents/validation_forms.py": "257818ec1ca001c158981b1b5fec5592eb28251e0cfcbbffc694cfe581dc440b",
+    "apps/documents/validation_views.py": "c22c919062d3c2087199004388c5e8c5984eb1b227975196285ca8f57a3a61ab",
+    "apps/agents/validation.py": "0ae0adae84d2d988cb4d8530e464c7ce6f1ded48dc10c36429506a4c878168a5",
+    "apps/agents/finance_acceptance.py": "a720b8a751bb548ae571d7988df16a7c175560eff05d91ae52d72940c56ff1f4",
+    "apps/policy/ledger_validators.py": "c4df9a9eb45bb6a600c8694b87e9879d8a3b0fc17d4a8e34bf9bcd3a2a5942c7",
+    "adapters/finance_acceptance.py": "2ee6acb4d4b239cd0a2f92195378ff8b5403208287cde38564daaf3907691878",
+    "contracts/ledger-policy-components.json": "24345ff6948f3c64ec3729e2d5d3ba813752b4d17f06b9b71f64764b3c8d441c",
+    "fixtures/finance-acceptance.json": "81153f3739750eac86dbb1e6488f3e5118575a658a89e2bd289f4e608bcc4a68",
+    "templates/finance/acceptance.html": "a5f1fe03f9c3434c60e1a8b7c1513daad23edc1a12e3f0e89b6d3e101691ccdf",
+    "templates/finance/ledger_agents.html": "6f1a78cc096c62c5748094b4648c65bafa9f640228059285e00e5662794c1423",
+    "templates/documents/validation.html": "0a266866ef1ed4b158702664872b5a1414db7292265b02e9f0b8e3477f4fa61a",
+    "config/urls.py": "00ac3837749cf379293bdaee2d2528a608d8def37c0b3b70288a7bcc8e1c2725",
+    "apps/core/management/commands/seed_demo.py": "fd55e4ee76050d5eb76e2291be1be53e25ecd25df25d4af07df80eef22ee2f05",
+    "tests/finance_acceptance_helpers.py": "f2191b11bc5bb6ad987c56129b2239cfbb955b631aff5607d5a223bcadcd9a3f",
+    "tests/test_finance_acceptance.py": "eacdb7b7c7ec8d2c58b5d9d8edadb88470cced7a4a4d5cf13ff1b28b8c6543ae",
+    "tests/test_application.py": "0afec4789426d9daa397c1b3ae7b3d48adb89706083d9d000d183010cf13caa3",
+    "apps/finance/acceptance_evaluation.py": "1cd7da10b9665b0ef99c940ab9027f2115c28df3f50dd2a21f60f12b223ea5b1",
+    "tests/test_finance_acceptance_concurrency.py": "5e510a93faeccd293cebb3f4c6b40f776a85bd0b1e103b23b5e71a1ae2eef1c6"
+  },
+  "interrupted_run191_completed_result": false
+}

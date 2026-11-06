@@ -1,0 +1,60 @@
+Found 27 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0030_payrollrequest_payrollinput_payrollrun_payrollreview_and_more... OK
+  Applying finance.0031_payroll_guards... OK
+System check identified no issues (0 silenced).
+test_F16_E01_overlap_held_without_summing_or_name_dedup (tests.test_payroll.PayrollTests.test_F16_E01_overlap_held_without_summing_or_name_dedup) ... ok
+test_F17_E01_duplicate_HR_source_holds_matching_no_HR_write (tests.test_payroll.PayrollTests.test_F17_E01_duplicate_HR_source_holds_matching_no_HR_write) ... ok
+test_F17_N01_and_F18_N01_reviewed_current_aggregate_250 (tests.test_payroll.PayrollTests.test_F17_N01_and_F18_N01_reviewed_current_aggregate_250) ... ok
+test_F18_E01_source_v2_invalidates_old_report_without_overwrite (tests.test_payroll.PayrollTests.test_F18_E01_source_v2_invalidates_old_report_without_overwrite) ... ok
+test_HR_purpose_scope_not_inherited_from_an_attribution_view (tests.test_payroll.PayrollTests.test_HR_purpose_scope_not_inherited_from_an_attribution_view) ... ok
+test_PostgreSQL_and_F16_N01_exact_controls_and_provenance (tests.test_payroll.PayrollTests.test_PostgreSQL_and_F16_N01_exact_controls_and_provenance) ... ok
+test_SQL_history_guards (tests.test_payroll.PayrollTests.test_SQL_history_guards) ... ok
+test_UI_capture_rejection_never_reflects_bad_source_values (tests.test_payroll.PayrollTests.test_UI_capture_rejection_never_reflects_bad_source_values) ... ok
+test_duplicate_source_and_extra_medical_fields_rejected_without_retention (tests.test_payroll.PayrollTests.test_duplicate_source_and_extra_medical_fields_rejected_without_retention) ... ok
+test_explicit_provider_precedence_preserves_intentional_difference (tests.test_payroll.PayrollTests.test_explicit_provider_precedence_preserves_intentional_difference) ... ok
+test_explicit_sum_is_not_implicit_union (tests.test_payroll.PayrollTests.test_explicit_sum_is_not_implicit_union) ... ok
+test_metadata_UI_and_agent_never_load_private_payloads (tests.test_payroll.PayrollTests.test_metadata_UI_and_agent_never_load_private_payloads) ... ok
+test_midperiod_membership_holds_without_invented_proration (tests.test_payroll.PayrollTests.test_midperiod_membership_holds_without_invented_proration) ... ok
+test_missing_HR_membership_routes_a_real_correction_reference (tests.test_payroll.PayrollTests.test_missing_HR_membership_routes_a_real_correction_reference) ... ok
+test_missing_merge_holds_values_only_and_missing_authority_does_not_stop_capture (tests.test_payroll.PayrollTests.test_missing_merge_holds_values_only_and_missing_authority_does_not_stop_capture) ... ok
+test_no_store_endpoints_check_exact_case_and_reader (tests.test_payroll.PayrollTests.test_no_store_endpoints_check_exact_case_and_reader) ... ok
+test_policy_and_retention_revocation_hold_current_read_and_report (tests.test_payroll.PayrollTests.test_policy_and_retention_revocation_hold_current_read_and_report) ... ok
+test_raw_rows_and_salary_values_are_private_to_named_readers (tests.test_payroll.PayrollTests.test_raw_rows_and_salary_values_are_private_to_named_readers) ... ok
+test_recipient_grant_revocation_and_HR_approval_revocation_hold_use (tests.test_payroll.PayrollTests.test_recipient_grant_revocation_and_HR_approval_revocation_hold_use) ... ok
+test_review_is_bound_to_exact_version_and_requires_source_acceptance (tests.test_payroll.PayrollTests.test_review_is_bound_to_exact_version_and_requires_source_acceptance) ... ok
+test_small_group_hold_blocks_all_publication_and_eligible_total (tests.test_payroll.PayrollTests.test_small_group_hold_blocks_all_publication_and_eligible_total) ... ok
+test_source_and_working_idempotency_rejects_changed_intent (tests.test_payroll.PayrollTests.test_source_and_working_idempotency_rejects_changed_intent) ... ok
+test_source_control_mismatch_preserves_source_and_prevents_review (tests.test_payroll.PayrollTests.test_source_control_mismatch_preserves_source_and_prevents_review) ... ok
+test_source_owner_and_admin_claims_do_not_grant_capture_or_review (tests.test_payroll.PayrollTests.test_source_owner_and_admin_claims_do_not_grant_capture_or_review) ... ok
+test_unknown_amount_and_control_total_are_not_zero (tests.test_payroll.PayrollTests.test_unknown_amount_and_control_total_are_not_zero) ... ok
+test_validators_require_actual_authority_and_exact_numerical_oracles (tests.test_payroll.PayrollTests.test_validators_require_actual_authority_and_exact_numerical_oracles) ... ok
+test_wrong_period_currency_provider_and_stale_extract_rejected (tests.test_payroll.PayrollTests.test_wrong_period_currency_provider_and_stale_extract_rejected) ... ERROR
+
+======================================================================
+ERROR: test_wrong_period_currency_provider_and_stale_extract_rejected (tests.test_payroll.PayrollTests.test_wrong_period_currency_provider_and_stale_extract_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payroll.py", line 62, in test_wrong_period_currency_provider_and_stale_extract_rejected
+    for key,value in [('period','2026-10'),('currency','NGN'),('provider','OTHER'),('extracted_at',(timezone.now()-timedelta(days=2)).isoformat())]:self.assertFalse(capture(f,1,'bad-'+key,**{key:value}).metadata['accepted'])
+                                                                                                                                                                     ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\payroll_helpers.py", line 53, in capture
+    def capture(f,index,key=None,**updates):return domain.capture(f['owner'],f['case'].pk,f['request'].pk,f['config']['exports'][index]['provider'],key or 'input-'+str(index),body(f,index,**updates),rev(f['case']))
+                                                                                                                                                                               ~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\payroll_helpers.py", line 52, in body
+    v=json.loads(json.dumps(f['config']['exports'][index]));v.update(extracted_at=(timezone.now()-timedelta(seconds=1)).isoformat(),**updates);return json.dumps(v)
+                                                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict.update() got multiple values for keyword argument 'extracted_at'
+
+----------------------------------------------------------------------
+Ran 27 tests in 140.980s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...

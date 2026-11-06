@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+test_replacement_prepares_and_delivers_only_after_independent_native_review (test_bound_accounts.BoundAccountingTests.test_replacement_prepares_and_delivers_only_after_independent_native_review) ... FAIL
+
+======================================================================
+FAIL: test_replacement_prepares_and_delivers_only_after_independent_native_review (test_bound_accounts.BoundAccountingTests.test_replacement_prepares_and_delivers_only_after_independent_native_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\recovery-accounting-tests\test_bound_accounts.py", line 45, in test_replacement_prepares_and_delivers_only_after_independent_native_review
+    self.assertEqual(work.status, 'verified', work.finding)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'blocked' != 'verified'
+- blocked
++ verified
+ : Publisher must have a current explicitly configured Finance report role
+
+----------------------------------------------------------------------
+Ran 1 test in 132.055s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

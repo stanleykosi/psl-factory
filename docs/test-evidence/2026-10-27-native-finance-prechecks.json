@@ -1,0 +1,13 @@
+{
+  "applied": false,
+  "preserved_main_rowsets": 294,
+  "preserved_migration_files": 161,
+  "frozen_sources": 41,
+  "interfaces": 111,
+  "processes_partial": 122,
+  "families": 13,
+  "functions": 61,
+  "triggers": 318,
+  "constraints": 1553,
+  "actual_principals_or_policy_installed": false
+}

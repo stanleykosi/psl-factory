@@ -1,0 +1,23 @@
+{
+  "run": 455,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_handover.FactoryHandoverTests.test_current_recipient_policy_successor_requires_fresh_package_even_with_unchanged_sources",
+    "tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access",
+    "tests.test_factory_handover.FactoryHandoverTests.test_current_publisher_revocation_before_send_holds_original_job_and_source_edits",
+    "tests.test_factory_handover.FactoryHandoverTests.test_configuration_refuses_handover_approval_private_sources_and_ungranted_publisher",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T10:18:38.543256+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run455.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 271.61
+}

@@ -1,0 +1,22 @@
+{
+  "case": "0ddb0771-16c2-4b2e-bb3d-5ac0580fccaa",
+  "principals": {
+    "preparer": 18,
+    "reviewer": 19,
+    "specialist": 20
+  },
+  "AF13_package": 5,
+  "pending": 4,
+  "specialist_result": 1,
+  "resolved_report": 1,
+  "current_report": 2,
+  "unlinked_intake": 3,
+  "agent": 46,
+  "unconfigured_case": "7c7505fc-eedb-4f77-a652-972a3db94d72",
+  "merged_source": "4f768fcd-8799-4839-bb11-f64f702069d4",
+  "canonical_target": "9b873627-d9d1-466c-868d-880bfad9279d",
+  "merge": 1,
+  "native_channel_verified": false,
+  "financial_execution_authorized": false,
+  "mode": "supplied references and synthetic owner-reviewed definition"
+}

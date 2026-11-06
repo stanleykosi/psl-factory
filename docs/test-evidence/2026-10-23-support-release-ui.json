@@ -1,0 +1,11 @@
+{
+ "browser": "2", "tab": "2", "viewer": "studio-demo",
+ "workbench": "http://127.0.0.1:8000/cases/8307c942-d4e9-4d3d-b728-f4e1b2352fb7/support/responses/",
+ "observed": ["ACTIVE configuration 306", "packet 1 / draft 3", "human release by actor 49", "job confirmed / receipt 1 internal_storage_only", "current release authority no", "customer delivery unverified and response clock unattested", "read-only workbench with no mutation forms"],
+ "recipient_receipt_as_viewer": "403 Forbidden",
+ "missing_policy_case": "eec44a22-5e96-414d-89b8-7fa154d989c6",
+ "missing_policy_observed": "MISSING / no packets / read-only workbench",
+ "screenshots": ["2026-10-23-support-release-workbench.png", "2026-10-23-support-release-policy-missing.png"],
+ "native_customer_channel_tested": false, "real_model_evaluated": false,
+ "tab_marked_handoff": true
+}

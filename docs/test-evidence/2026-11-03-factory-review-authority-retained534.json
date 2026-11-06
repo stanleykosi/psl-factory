@@ -1,0 +1,13 @@
+{
+  "source_run": 534,
+  "prior_fixture_source": 509,
+  "work": 1,
+  "task": 2,
+  "rowsets_unchanged": 329,
+  "legacy_recorded_authority_current": true,
+  "task_context_backfilled": false,
+  "native_review_and_receipts_unchanged": true,
+  "budget_used": 1200,
+  "budget_limit": 20000,
+  "classification": "Current-code read-only compatibility of recorded legacy routing facts, no command replay"
+}

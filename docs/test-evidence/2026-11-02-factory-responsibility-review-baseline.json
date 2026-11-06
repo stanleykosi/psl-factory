@@ -1,0 +1,33 @@
+{
+  "parent": "docs/test-evidence/2026-11-02-factory-checkpoint511-source-manifest.json",
+  "verified_parent_files": 2739,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "requirements": [
+    "REQ-16",
+    "REQ-20",
+    "REQ-24",
+    "REQ-25"
+  ],
+  "observed_browser_gap": "Responsibility history stores exact IDs in a secondary reference disclosure but lacks named assignment summaries; entering configuration from work loses direct selected-work/filter return context.",
+  "classification": "KEEP native policies, grants, routing, HumanTask/TaskEvent, InvoiceReview, effects, receipts and migrations; EXTEND authorised read-only presentation and navigation only",
+  "paths": [
+    "apps/workflows/factory_views.py:ResponsibilityForm/responsibility_configuration/presentation",
+    "templates/factory/responsibility.html",
+    "templates/factory/responsibility_wait.html"
+  ],
+  "proposal": "Show named same-workspace nominations with explicit unknown/current-access states and per-version lifecycle. Carry only validated same-case visible Finance work identity and bounded queue/search through draft/transition redirects and generated return links; no arbitrary redirect destination.",
+  "compatibility": "No business rule, migration, dependency, default owner, principal grant, policy value or effect changes. Preserve accepted fixture and all previous evidence.",
+  "tests": [
+    "Actual native policy lifecycle through HTTP retaining selected work/queue/search",
+    "Named current and historical/unknown/revoked-access displays without cross-workspace identity disclosure",
+    "Foreign/denied/stopped work context, hostile return URL and CSRF handling",
+    "Retained browser readback, keyboard and narrow viewport; no command replay"
+  ],
+  "authority": "User consolidation request/operator console requirements and actual accepted browser509 observations; engineering presentation, not a source business-policy change",
+  "owner_values_deferred": true,
+  "full_product_complete": false
+}

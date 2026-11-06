@@ -1,0 +1,82 @@
+{
+  "classification": "PASS for this bounded synthetic browser journey; not complete process/release acceptance",
+  "fixture": {
+    "database": "psl_factory_ui_026a98f9ab47",
+    "case": "941ef28b-a39f-408a-9849-681117df33b9",
+    "work": 134,
+    "actor": "factory-maker",
+    "fixture": "tests.factory_helpers.fixture(missing=True)",
+    "synthetic": true,
+    "receipt_directory": "docs/test-evidence/2026-11-01-factory-ui-b-remote"
+  },
+  "source_before_restart": "docs/test-evidence/2026-11-01-factory-run404-source.json",
+  "source_after_restart": "docs/test-evidence/2026-11-01-factory-run405-source.json",
+  "native_facts": {
+    "same_work": 134,
+    "review_count": 1,
+    "issue_count": 1,
+    "delivery_count": 1,
+    "cash_count": 0,
+    "remote_files": 2,
+    "budget_used": 1400,
+    "lifetime_allowance": 20000,
+    "new_profile_cap": 40000,
+    "reservation_at_adoption": 600,
+    "bound_profile": 56234,
+    "job_attempts": {
+      "issue": 4,
+      "deliver": 1
+    }
+  },
+  "observed_journey": [
+    "Keyboard queue search; filter retained into detail",
+    "Unclaimed information task appears in Unassigned",
+    "Reasoned claim release and current eligible reclaim",
+    "Requested source supplied; agent wakes same work and prepares draft",
+    "Exact source bodies/versions inspected",
+    "Native evidence capture for explicit synthetic profile decision",
+    "Configuration draft/validate/activate through UI",
+    "Changed profile hides old decision controls",
+    "Reviewed adoption retains same identity and spent/lifetime allowance",
+    "Old task returned; fresh packet claimed and exact Finance review recorded",
+    "Queued job retains exact profile/executor binding",
+    "Mock accepts before native receipt and loses response",
+    "Temporary absence stays unknown without model polling or new remote file",
+    "Explicit lookup recovers original effect",
+    "Native delivery and receipt verification",
+    "Verified queue retains search; no action owner"
+  ],
+  "viewport_evidence": {
+    "mobile_decision_pre_profile": {
+      "width": 390,
+      "document_width": 375,
+      "focused_control": "Approve exact packet"
+    },
+    "current_decision_capture": {
+      "width": 1280,
+      "document_width": 1265,
+      "note": "Configuration tab was selected; this capture is desktop, not mobile"
+    },
+    "mobile_dispatch_recovery_verified": {
+      "width": 390,
+      "document_width": 375,
+      "selected_tab": "6"
+    },
+    "override_reset": true
+  },
+  "browser_tool_faults": "Two CDP focus-emulation timeouts occurred after key submission. Current DOM/native state was inspected before any next action; no duplicate submission was made.",
+  "screenshots": {
+    "docs/test-evidence/2026-11-01-factory-browser-b-current-decision.png": "0d2ce73bdd58029413000be9828cdb7f4b845db34a5dcf3e323eb062eaf047b0",
+    "docs/test-evidence/2026-11-01-factory-browser-b-mobile-decision.png": "537c7ea0094798bae85d51f4dcc29afba976d71fc5d2306e017e7663c861e1bd",
+    "docs/test-evidence/2026-11-01-factory-browser-b-mobile-unknown.png": "8aa994f6f06731dcd6a3f1cec02508b01fe09f53d152ed5865a3af5c11d7a473",
+    "docs/test-evidence/2026-11-01-factory-browser-b-mobile-verified.png": "f0c3a5242e21cf2f605c5d9f7a772e3a1f9c172a0558426ab5c743fe7c7dea75",
+    "docs/test-evidence/2026-11-01-factory-browser-b-profile-hold.png": "2f4ce1c07f3937f9d1ad21e8249b8954b1a922f61f37ece9b4126500cffe29b9",
+    "docs/test-evidence/2026-11-01-factory-browser-b-unassigned.png": "5dd8e4cf7bcd6537ba911750ccc4bdc9eb2f5df72645a879c5efbc0959f9d2a0",
+    "docs/test-evidence/2026-11-01-factory-browser-b-verified.png": "3b0587db5061d79f192fe5566641bb2124662eaa6937ec7db0900103f8f8541e"
+  },
+  "role_scope": "Explicit synthetic fixture grants and allow-preparer-review policy; no real identity, independent-human UAT or live authority claim",
+  "model_evaluation": "NOT_EVALUATED",
+  "live_integration": "NOT_EVALUATED",
+  "uat": "NOT_EVALUATED",
+  "production_authorization": "NOT_EVALUATED"
+}

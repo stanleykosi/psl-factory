@@ -1,0 +1,12 @@
+{
+  "classification": "Read-only prior archive outcome after current-handover integrity refresh; not a P37 browser acceptance",
+  "runtime": 452,
+  "url": "http://127.0.0.1:8008/work/570/?queue=verified&q=Final%20project%20evidence",
+  "work": 570,
+  "current_index": 1532,
+  "budget_used": 900,
+  "budget_limit": 20000,
+  "query_context_retained": true,
+  "actions_replayed": false,
+  "recorded_at": "2026-11-02T09:52:33.402Z"
+}

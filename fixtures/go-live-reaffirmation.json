@@ -1,0 +1,6 @@
+{
+  "classification": "SYNTHETIC owner-decision example only; not an operational grant or default",
+  "rules": [
+    {"role": "PM", "actions": ["reaffirm_go_live"]}
+  ]
+}

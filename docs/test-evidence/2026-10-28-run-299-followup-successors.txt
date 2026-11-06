@@ -1,0 +1,71 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0058_native_successor_metadata_guard...test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_capture_policy_review_ui_agent_revocation_and_sql_history (tests.test_followup_successors.FollowupSuccessorTests.test_capture_policy_review_ui_agent_revocation_and_sql_history) ... ok
+test_duplicate_ownership_scope_policy_successor_and_decline (tests.test_followup_successors.FollowupSuccessorTests.test_duplicate_ownership_scope_policy_successor_and_decline) ... ERROR
+test_normal_generation_replacement_unknown_receipt_and_successor (tests.test_followup_successors.FollowupSuccessorTests.test_normal_generation_replacement_unknown_receipt_and_successor) ... ok
+setUpClass (tests.test_followup_successor_recovery.FollowupSuccessorRecoveryTests) ... ERROR
+test_native_receipt_current_source_authority_bounds_and_revocation (tests.test_finance_readback.FinanceReadbackAdapterTests.test_native_receipt_current_source_authority_bounds_and_revocation) ... ok
+test_stale_current_capture_is_described_as_history (tests.test_finance_readback_advice.FinanceReadbackAdviceTests.test_stale_current_capture_is_described_as_history) ... ok
+test_unknown_is_not_a_failed_effect_and_current_is_not_execution (tests.test_finance_readback_advice.FinanceReadbackAdviceTests.test_unknown_is_not_a_failed_effect_and_current_is_not_execution) ... ok
+
+======================================================================
+ERROR: test_duplicate_ownership_scope_policy_successor_and_decline (tests.test_followup_successors.FollowupSuccessorTests.test_duplicate_ownership_scope_policy_successor_and_decline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_followup_successors.py", line 81, in test_duplicate_ownership_scope_policy_successor_and_decline
+    prep=prepare(a,c,second,u=usage(a,c,second));invoice=draft(a,c,prep,reference='INV-DIFFERENT');approve(a,c,invoice,{'invoice_review':e})
+                                                         ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\settlement_helpers.py", line 29, in draft
+    return invoices.draft(a,c.pk,p.pk,reference,timezone.localdate()-timedelta(days=1),rev(c))
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\invoices.py", line 32, in draft
+    prep=exact(case,BillingPreparation,preparation_id);ensure_current(prep)
+                                                       ~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\billing.py", line 157, in ensure_current
+    if record.result['status']!='prepared':raise ValidationError(record.result['findings'])
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Line 2: customer/service/contract differs from coverage', 'Line 2: previously captured transaction; reconcile correction before pricing']
+
+======================================================================
+ERROR: setUpClass (tests.test_followup_successor_recovery.FollowupSuccessorRecoveryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 40, in setUpClass
+    cls.value.update(cls.child('provider_seed',cls.value))
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_invoice_recovery.py", line 11, in child
+    return super().child(stage,v,cold)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 23, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: provider_seed failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 159, in _get_module_details
+  File "<frozen importlib._bootstrap_external>", line 1160, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1090, in source_to_code
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 289
+    try:barrier.wait(timeout=30);return readback.probe(a,c.pk,v['packet'],v['readback_key'],include_successors=v.get('include_successors',False)).pk
+IndentationError: unexpected indent
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 230.670s
+
+FAILED (errors=2)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

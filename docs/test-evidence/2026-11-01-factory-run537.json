@@ -1,0 +1,21 @@
+{
+  "run": 537,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_preserves_claim_history_when_retiring_obsolete_wait",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T01:13:57.966072+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run537.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 44.602
+}

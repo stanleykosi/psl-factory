@@ -1,0 +1,13 @@
+{
+  "source_run": 552,
+  "narrow": {
+    "documentWidth": 375,
+    "height": 844,
+    "mainWidth": 374.6666870117187,
+    "scrollWidth": 375,
+    "width": 390
+  },
+  "verified_narrow_visual": "2026-11-03-factory-delegation-browser552-verified-narrow-recheck.jpg",
+  "note": "First same-call post-resize narrow capture contained a transitional scaled canvas. A later native screenshot after settled layout is the visual reference. Original artifacts retained; main document widths were checked independently. Screenshot bytes are JPEG despite historical .png extensions.",
+  "viewport_reset": true
+}

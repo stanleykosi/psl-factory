@@ -1,0 +1,26 @@
+{
+  "classification": "Engineering configuration guide; unset authority and operational values are not defaults",
+  "operator_component": "OPS.operator_rules",
+  "native_route": {"family": "ledgerdata", "actions": ["retry"]},
+  "operator_principals": [],
+  "protection_component": "OPS.protection_rules",
+  "rpo_seconds": null,
+  "rto_seconds": null,
+  "adapter_component": "INT.adapter_readiness",
+  "contract": {
+    "kind": "adapter",
+    "family": "ledgerdata",
+    "implementation": "internal_postgres_session_v1",
+    "target_key": "internal:ledgerdata",
+    "credential_ref": "runtime:postgres",
+    "credential_revision": null,
+    "principal_ref": null,
+    "contract_version": "psl.internal-receipts/v1",
+    "model_id": null,
+    "capabilities": ["health", "receipt_lookup"],
+    "data_scope": "public_canary_and_scoped_receipt_metadata_only"
+  },
+  "provider_readiness_separately_required": true,
+  "private_body_exported": false,
+  "business_jobs_reenacted": false
+}

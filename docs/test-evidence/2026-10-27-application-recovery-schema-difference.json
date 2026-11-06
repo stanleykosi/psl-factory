@@ -1,0 +1,41 @@
+[
+  {
+    "part": 0,
+    "source_only": [],
+    "target_only": []
+  },
+  {
+    "part": 1,
+    "source_only": [
+      "[\"finance_financehandoffdecision\", \"finance_handoff_phase\", \"CHECK (((phase)::text = ANY ((ARRAY['receive'::character varying, 'validate'::character varying, 'accept'::character varying])::text[])))\"]",
+      "[\"finance_financehandoffdecision\", \"finance_handoff_verdict\", \"CHECK (((verdict)::text = ANY ((ARRAY['confirm'::character varying, 'return'::character varying, 'withdraw'::character varying])::text[])))\"]",
+      "[\"pmo_deliveryrecord\", \"delivery_known_record_kind\", \"CHECK (((kind)::text = ANY ((ARRAY['planning_decision'::character varying, 'kickoff'::character varying, 'progress'::character varying, 'glpi_request'::character varying, 'release_ready'::character varying, 'release_outcome'::character varying, 'go_live'::character varying, 'hypercare'::character varying, 'archive'::character varying, 'handover'::character varying, 'finance_confirmation'::character varying, 'closure_decision'::character varying, 'closure'::character varying])::text[])))\"]"
+    ],
+    "target_only": [
+      "[\"finance_financehandoffdecision\", \"finance_handoff_phase\", \"CHECK (((phase)::text = ANY (ARRAY[('receive'::character varying)::text, ('validate'::character varying)::text, ('accept'::character varying)::text])))\"]",
+      "[\"finance_financehandoffdecision\", \"finance_handoff_verdict\", \"CHECK (((verdict)::text = ANY (ARRAY[('confirm'::character varying)::text, ('return'::character varying)::text, ('withdraw'::character varying)::text])))\"]",
+      "[\"pmo_deliveryrecord\", \"delivery_known_record_kind\", \"CHECK (((kind)::text = ANY (ARRAY[('planning_decision'::character varying)::text, ('kickoff'::character varying)::text, ('progress'::character varying)::text, ('glpi_request'::character varying)::text, ('release_ready'::character varying)::text, ('release_outcome'::character varying)::text, ('go_live'::character varying)::text, ('hypercare'::character varying)::text, ('archive'::character varying)::text, ('handover'::character varying)::text, ('finance_confirmation'::character varying)::text, ('closure_decision'::character varying)::text, ('closure'::character varying)::text])))\"]"
+    ]
+  },
+  {
+    "part": 2,
+    "source_only": [
+      "[\"baas_correctivejob\", \"corrective_job_active_operation\", \"CREATE UNIQUE INDEX corrective_job_active_operation ON public.baas_correctivejob USING btree (tenant, operation_key) WHERE ((status)::text = ANY ((ARRAY['pending'::character varying, 'leased'::character varying, 'unknown'::character varying, 'held'::character varying, 'confirmed'::character varying])::text[]))\"]",
+      "[\"baas_correctivejob\", \"corrective_job_active_subject\", \"CREATE UNIQUE INDEX corrective_job_active_subject ON public.baas_correctivejob USING btree (tenant, subject_key) WHERE ((status)::text = ANY ((ARRAY['pending'::character varying, 'leased'::character varying, 'unknown'::character varying, 'held'::character varying, 'confirmed'::character varying])::text[]))\"]"
+    ],
+    "target_only": [
+      "[\"baas_correctivejob\", \"corrective_job_active_operation\", \"CREATE UNIQUE INDEX corrective_job_active_operation ON public.baas_correctivejob USING btree (tenant, operation_key) WHERE ((status)::text = ANY (ARRAY[('pending'::character varying)::text, ('leased'::character varying)::text, ('unknown'::character varying)::text, ('held'::character varying)::text, ('confirmed'::character varying)::text]))\"]",
+      "[\"baas_correctivejob\", \"corrective_job_active_subject\", \"CREATE UNIQUE INDEX corrective_job_active_subject ON public.baas_correctivejob USING btree (tenant, subject_key) WHERE ((status)::text = ANY (ARRAY[('pending'::character varying)::text, ('leased'::character varying)::text, ('unknown'::character varying)::text, ('held'::character varying)::text, ('confirmed'::character varying)::text]))\"]"
+    ]
+  },
+  {
+    "part": 3,
+    "source_only": [],
+    "target_only": []
+  },
+  {
+    "part": 4,
+    "source_only": [],
+    "target_only": []
+  }
+]

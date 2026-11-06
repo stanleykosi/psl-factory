@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_accepted_lost_response_is_reconciled_before_changed_terms_can_replace_invoice (tests.test_factory_invoice_recovery_priority.InvoiceRecoveryPriorityTests.test_accepted_lost_response_is_reconciled_before_changed_terms_can_replace_invoice) ... FAIL
+
+======================================================================
+FAIL: test_accepted_lost_response_is_reconciled_before_changed_terms_can_replace_invoice (tests.test_factory_invoice_recovery_priority.InvoiceRecoveryPriorityTests.test_accepted_lost_response_is_reconciled_before_changed_terms_can_replace_invoice)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_invoice_recovery_priority.py", line 24, in test_accepted_lost_response_is_reconciled_before_changed_terms_can_replace_invoice
+    self.assertEqual(w.invoice_id,original.pk,'Original uncertain effect must be reconciled before replacing the invoice head')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1021 != 1020 : Original uncertain effect must be reconciled before replacing the invoice head
+
+----------------------------------------------------------------------
+Ran 1 test in 14.087s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,5 @@
+Operations to perform:
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Running migrations:
+  Applying finance.0052_private_readiness_packet... OK
+  Applying finance.0053_private_readiness_guards... OK

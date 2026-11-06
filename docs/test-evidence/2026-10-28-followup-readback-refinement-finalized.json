@@ -1,0 +1,18 @@
+{
+  "status": "APPLIED",
+  "connected_test_run": 293,
+  "final_test_run": 295,
+  "source_fingerprints": 1075,
+  "runtime_sha256": "f0b5724d095fde0b568861c3f6ca4efff438b231d9bb75fee0c2c077d27aa2c5",
+  "coverage_only_after_final_tests": [
+    "contracts/implementation-coverage.json"
+  ],
+  "app_files_changed_since_connected": [
+    "adapters/finance_followup_readback.py",
+    "apps/agents/finance_readback.py"
+  ],
+  "next_run": 296,
+  "processes_partial": 122,
+  "interfaces": 114,
+  "backlog_items": 58
+}

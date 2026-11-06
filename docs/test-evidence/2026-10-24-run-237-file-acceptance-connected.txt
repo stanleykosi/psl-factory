@@ -1,0 +1,817 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_acceptance_criteria_supersession_requires_new_acceptance_only (tests.test_evidence_validation.EvidenceValidationTests.test_acceptance_criteria_supersession_requires_new_acceptance_only) ... ok
+test_actual_report_cannot_define_or_replace_expected_output (tests.test_evidence_validation.EvidenceValidationTests.test_actual_report_cannot_define_or_replace_expected_output) ... ok
+test_bounded_agent_cites_conflicts_and_never_creates_owner_approval (tests.test_evidence_validation.EvidenceValidationTests.test_bounded_agent_cites_conflicts_and_never_creates_owner_approval) ... ok
+test_capture_and_owned_gap_followup_continue_without_owner_configuration (tests.test_evidence_validation.EvidenceValidationTests.test_capture_and_owned_gap_followup_continue_without_owner_configuration) ... ok
+test_changed_example_or_selected_policy_requires_new_package_and_reviews (tests.test_evidence_validation.EvidenceValidationTests.test_changed_example_or_selected_policy_requires_new_package_and_reviews) ... ok
+test_changed_expectation_review_invalidates_old_result_comparisons (tests.test_evidence_validation.EvidenceValidationTests.test_changed_expectation_review_invalidates_old_result_comparisons) ... ok
+test_connected_meaning_expectations_comparison_acceptance_and_scoped_report (tests.test_evidence_validation.EvidenceValidationTests.test_connected_meaning_expectations_comparison_acceptance_and_scoped_report) ... ok
+test_cross_case_evidence_and_actor_scopes_are_rejected (tests.test_evidence_validation.EvidenceValidationTests.test_cross_case_evidence_and_actor_scopes_are_rejected) ... ok
+test_definition_acceptance_does_not_claim_implementation_or_native_acceptance (tests.test_evidence_validation.EvidenceValidationTests.test_definition_acceptance_does_not_claim_implementation_or_native_acceptance) ... ok
+test_exact_quote_scope_and_allowlisted_pack_source_boundaries (tests.test_evidence_validation.EvidenceValidationTests.test_exact_quote_scope_and_allowlisted_pack_source_boundaries) ... ok
+test_gap_followup_is_unique_and_postgresql_guarded (tests.test_evidence_validation.EvidenceValidationTests.test_gap_followup_is_unique_and_postgresql_guarded) ... ok
+test_human_only_and_source_date_validation (tests.test_evidence_validation.EvidenceValidationTests.test_human_only_and_source_date_validation) ... ok
+test_idempotent_review_and_replay_receipts_reject_changed_intent (tests.test_evidence_validation.EvidenceValidationTests.test_idempotent_review_and_replay_receipts_reject_changed_intent) ... ok
+test_independent_expected_output_author_cannot_approve_own_examples (tests.test_evidence_validation.EvidenceValidationTests.test_independent_expected_output_author_cannot_approve_own_examples) ... ok
+test_missing_acceptance_policy_holds_only_acceptance (tests.test_evidence_validation.EvidenceValidationTests.test_missing_acceptance_policy_holds_only_acceptance) ... ok
+test_non_support_document_cannot_satisfy_support_sop_reference (tests.test_evidence_validation.EvidenceValidationTests.test_non_support_document_cannot_satisfy_support_sop_reference) ... ok
+test_normal_and_exception_examples_are_required_for_each_process (tests.test_evidence_validation.EvidenceValidationTests.test_normal_and_exception_examples_are_required_for_each_process) ... ok
+test_policy_schemas_reject_ambiguous_owner_and_fake_process (tests.test_evidence_validation.EvidenceValidationTests.test_policy_schemas_reject_ambiguous_owner_and_fake_process) ... ok
+test_postgresql_guards_protect_all_validation_history (tests.test_evidence_validation.EvidenceValidationTests.test_postgresql_guards_protect_all_validation_history) ... ok
+test_receipt_stated_document_owner_and_admin_flag_grant_no_review_authority (tests.test_evidence_validation.EvidenceValidationTests.test_receipt_stated_document_owner_and_admin_flag_grant_no_review_authority) ... ok
+test_reported_external_results_never_establish_native_execution_proof (tests.test_evidence_validation.EvidenceValidationTests.test_reported_external_results_never_establish_native_execution_proof) ... ok
+test_revised_package_historical_report_is_not_current_acceptance (tests.test_evidence_validation.EvidenceValidationTests.test_revised_package_historical_report_is_not_current_acceptance) ... ok
+test_revocation_and_current_case_action_grants_are_rechecked (tests.test_evidence_validation.EvidenceValidationTests.test_revocation_and_current_case_action_grants_are_rechecked) ... ok
+test_sop_lost_owner_grant_returns_policy_hold_without_blocking_capture_ui (tests.test_evidence_validation.EvidenceValidationTests.test_sop_lost_owner_grant_returns_policy_hold_without_blocking_capture_ui) ... ok
+test_source_revision_stales_reviews_and_preserves_original_clauses (tests.test_evidence_validation.EvidenceValidationTests.test_source_revision_stales_reviews_and_preserves_original_clauses) ... ok
+test_staff_ui_and_json_report_use_record_permissions (tests.test_evidence_validation.EvidenceValidationTests.test_staff_ui_and_json_report_use_record_permissions) ... ok
+test_support_sop_reference_requires_current_exact_meaning_review (tests.test_evidence_validation.EvidenceValidationTests.test_support_sop_reference_requires_current_exact_meaning_review) ... ok
+test_ui_posts_source_and_rejects_extra_approval_claims_and_stale_commands (tests.test_evidence_validation.EvidenceValidationTests.test_ui_posts_source_and_rejects_extra_approval_claims_and_stale_commands) ... ok
+test_unknown_source_version_date_and_owner_remain_unknown (tests.test_evidence_validation.EvidenceValidationTests.test_unknown_source_version_date_and_owner_remain_unknown) ... ok
+test_unresolved_gap_and_missing_selected_rule_hold_acceptance_only (tests.test_evidence_validation.EvidenceValidationTests.test_unresolved_gap_and_missing_selected_rule_hold_acceptance_only) ... ok
+test_support_case_uses_service_scope_and_explicit_support_process_user_roles (tests.test_evidence_validation.ValidationSupportScopeTests.test_support_case_uses_service_scope_and_explicit_support_process_user_roles) ... ok
+test_typed_policy_ui_drafts_valid_service_scope_without_automatic_activation (tests.test_evidence_validation.ValidationSupportScopeTests.test_typed_policy_ui_drafts_valid_service_scope_without_automatic_activation) ... ok
+test_af13_acceptance_revocation_invalidates_handoff_current_use (tests.test_finance_acceptance.FinanceAcceptanceTests.test_af13_acceptance_revocation_invalidates_handoff_current_use) ... ok
+test_full_receipt_validation_af13_reviews_and_independent_handoff_acceptance (tests.test_finance_acceptance.FinanceAcceptanceTests.test_full_receipt_validation_af13_reviews_and_independent_handoff_acceptance) ... ok
+test_historical_foreign_source_grant_loss_denies_handoff_and_acceptance_export (tests.test_finance_acceptance.FinanceAcceptanceTests.test_historical_foreign_source_grant_loss_denies_handoff_and_acceptance_export) ... ok
+test_intent_idempotence_sql_immutability_and_wrong_actor_lineage (tests.test_finance_acceptance.FinanceAcceptanceTests.test_intent_idempotence_sql_immutability_and_wrong_actor_lineage) ... ok
+test_missing_routing_holds_only_handoff_not_original_finance_or_af13 (tests.test_finance_acceptance.FinanceAcceptanceTests.test_missing_routing_holds_only_handoff_not_original_finance_or_af13) ... ok
+test_operational_level_cannot_be_accepted_from_private_draft_or_receipt (tests.test_finance_acceptance.FinanceAcceptanceTests.test_operational_level_cannot_be_accepted_from_private_draft_or_receipt) ... ok
+test_package_revision_requires_routing_and_explicit_successor_not_automatic_retarget (tests.test_finance_acceptance.FinanceAcceptanceTests.test_package_revision_requires_routing_and_explicit_successor_not_automatic_retarget) ... ok
+test_policy_replacement_revocation_and_ttl_hold_current_not_history (tests.test_finance_acceptance.FinanceAcceptanceTests.test_policy_replacement_revocation_and_ttl_hold_current_not_history) ... ok
+test_private_agent_is_bounded_no_decisions_or_generic_output_and_generic_agent_omits_binding (tests.test_finance_acceptance.FinanceAcceptanceTests.test_private_agent_is_bounded_no_decisions_or_generic_output_and_generic_agent_omits_binding) ... ok
+test_private_revocation_denies_cached_handoff_package_form_report_and_ui (tests.test_finance_acceptance.FinanceAcceptanceTests.test_private_revocation_denies_cached_handoff_package_form_report_and_ui) ... ok
+test_provider_binding_teardown_and_result_review_withdrawal_hold_current_acceptance (tests.test_finance_acceptance.FinanceAcceptanceTests.test_provider_binding_teardown_and_result_review_withdrawal_hold_current_acceptance) ... ok
+test_real_http_prepare_receive_validate_af13_accept_and_export_no_store (tests.test_finance_acceptance.FinanceAcceptanceTests.test_real_http_prepare_receive_validate_af13_accept_and_export_no_store) ... ok
+test_receipt_is_not_validation_and_native_binding_stales_prior_af13_reviews (tests.test_finance_acceptance.FinanceAcceptanceTests.test_receipt_is_not_validation_and_native_binding_stales_prior_af13_reviews) ... ok
+test_receive_withdrawal_invalidates_validation_af13_and_acceptance_without_erasure (tests.test_finance_acceptance.FinanceAcceptanceTests.test_receive_withdrawal_invalidates_validation_af13_and_acceptance_without_erasure) ... ok
+test_routing_reassignment_cannot_grant_new_people_old_record_decision_rights (tests.test_finance_acceptance.FinanceAcceptanceTests.test_routing_reassignment_cannot_grant_new_people_old_record_decision_rights) ... ok
+test_routing_revocation_and_recipient_role_change_invalidate_new_request (tests.test_finance_acceptance.FinanceAcceptanceTests.test_routing_revocation_and_recipient_role_change_invalidate_new_request) ... ok
+test_source_revision_requires_explicit_single_handoff_successor_and_new_decisions (tests.test_finance_acceptance.FinanceAcceptanceTests.test_source_revision_requires_explicit_single_handoff_successor_and_new_decisions) ... ok
+test_typed_routing_inventory_principals_grants_and_independence (tests.test_finance_acceptance.FinanceAcceptanceTests.test_typed_routing_inventory_principals_grants_and_independence) ... ok
+test_wrong_principals_cannot_receive_validate_or_accept (tests.test_finance_acceptance.FinanceAcceptanceTests.test_wrong_principals_cannot_receive_validate_or_accept) ... ok
+test_committed_receipt_change_invalidates_old_packet_and_found_successor_is_accepted (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_committed_receipt_change_invalidates_old_packet_and_found_successor_is_accepted) ... ok
+test_fresh_package_cannot_reuse_original_handoff_or_bind_after_owner_review (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_fresh_package_cannot_reuse_original_handoff_or_bind_after_owner_review) ... ok
+test_generic_agent_timeline_omit_private_proof_and_live_agent_has_no_effect_tools (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_generic_agent_timeline_omit_private_proof_and_live_agent_has_no_effect_tools) ... ok
+test_http_owner_decisions_policy_draft_and_private_exports (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_http_owner_decisions_policy_draft_and_private_exports) ... ok
+test_http_typed_agent_preparation_and_revoked_form_inventory (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_http_typed_agent_preparation_and_revoked_form_inventory) ... ok
+test_missing_private_policy_holds_approvals_not_preparation_or_return (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_missing_private_policy_holds_approvals_not_preparation_or_return) ... ok
+test_new_probe_or_transport_withdrawal_requires_new_packet_and_explicit_successor (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_new_probe_or_transport_withdrawal_requires_new_packet_and_explicit_successor) ... ok
+test_packet_database_immutability_and_case_lineage (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_packet_database_immutability_and_case_lineage) ... ok
+test_packet_expiry_and_transport_error_hold_current_without_erasing_history (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_packet_expiry_and_transport_error_hold_current_without_erasing_history) ... ok
+test_policy_validates_exact_scope_inventory_and_private_owner_grants (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_policy_validates_exact_scope_inventory_and_private_owner_grants) ... ok
+test_receipt_requirement_and_policy_revocation_are_narrow_holds (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_receipt_requirement_and_policy_revocation_are_narrow_holds) ... ok
+test_revoked_source_denies_cached_reports_generic_export_and_historical_review_retry (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_revoked_source_denies_cached_reports_generic_export_and_historical_review_retry) ... ok
+test_selected_synthetic_implementation_needs_independent_tester_and_all_af13_scope (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_selected_synthetic_implementation_needs_independent_tester_and_all_af13_scope) ... ok
+test_separate_human_reviews_and_closed_accepted_metadata_export (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_separate_human_reviews_and_closed_accepted_metadata_export) ... ok
+test_transport_reviewer_cannot_self_accept_and_new_negative_owner_decision_never_falls_back (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_transport_reviewer_cannot_self_accept_and_new_negative_owner_decision_never_falls_back) ... ok
+test_acceptance_policy_supersession_revocation_and_fresh_packet_expiry (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_acceptance_policy_supersession_revocation_and_fresh_packet_expiry) ... ok
+test_acceptor_cannot_be_packet_or_transport_preparer_or_reviewer (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_acceptor_cannot_be_packet_or_transport_preparer_or_reviewer) ... ok
+test_capture_and_configured_negative_decisions_before_missing_acceptance_criteria (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_capture_and_configured_negative_decisions_before_missing_acceptance_criteria) ... ok
+test_closed_native_packet_three_human_reviews_export_and_source_policy_independence (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_closed_native_packet_three_human_reviews_export_and_source_policy_independence) ... ok
+test_database_immutable_exact_lineage_fresh_scope_and_bidirectional_source_cycles (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_database_immutable_exact_lineage_fresh_scope_and_bidirectional_source_cycles) ... ok
+test_http_review_form_requires_granted_actions_and_limits_decision_types (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_http_review_form_requires_granted_actions_and_limits_decision_types) ... ok
+test_owner_withdrawal_retains_history_without_revoking_original_source_acceptance (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_owner_withdrawal_retains_history_without_revoking_original_source_acceptance) ... ERROR
+test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants) ... ERROR
+test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review) ... ERROR
+test_revoked_source_denies_cached_reports_exports_reviews_revisions_and_ui_choices (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_revoked_source_denies_cached_reports_exports_reviews_revisions_and_ui_choices) ... ERROR
+test_selected_four_process_synthetic_acceptance_keeps_independent_tester_and_source_policy (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_selected_four_process_synthetic_acceptance_keeps_independent_tester_and_source_policy) ... ERROR
+test_successor_needs_fresh_package_explicit_parent_and_new_owner_reviews (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_successor_needs_fresh_package_explicit_parent_and_new_owner_reviews) ... ERROR
+test_transport_withdrawal_and_policy_changes_hold_current_use_but_allow_negative_owner_decision (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_transport_withdrawal_and_policy_changes_hold_current_use_but_allow_negative_owner_decision) ... ERROR
+test_z_actual_receipt_change_requires_fresh_assessment_packet_and_found_criteria (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_z_actual_receipt_change_requires_fresh_assessment_packet_and_found_criteria) ... ERROR
+test_admin_flag_does_not_grant_record_access (tests.test_application.ApplicationTests.test_admin_flag_does_not_grant_record_access) ... ok
+test_agent_rejects_uncited_output_and_cross_scope_read (tests.test_application.ApplicationTests.test_agent_rejects_uncited_output_and_cross_scope_read) ... ok
+test_agent_source_instructions_are_cited_data_only (tests.test_application.ApplicationTests.test_agent_source_instructions_are_cited_data_only) ... ok
+test_all_122_original_ids_visible_in_coverage (tests.test_application.ApplicationTests.test_all_122_original_ids_visible_in_coverage) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_cost_revision_cannot_reuse_decisions (tests.test_application.ApplicationTests.test_cost_revision_cannot_reuse_decisions) ... ok
+test_cross_case_evidence_cannot_form_baseline (tests.test_application.ApplicationTests.test_cross_case_evidence_cannot_form_baseline) ... ok
+test_csrf_and_template_escaping (tests.test_application.ApplicationTests.test_csrf_and_template_escaping) ... ok
+test_database_blocks_history_rewrites_even_via_queryset (tests.test_application.ApplicationTests.test_database_blocks_history_rewrites_even_via_queryset) ... ok
+test_duplicate_milestone_has_one_outbox_intent (tests.test_application.ApplicationTests.test_duplicate_milestone_has_one_outbox_intent) ... ok
+test_expired_worker_cannot_finish_after_reclaim (tests.test_application.ApplicationTests.test_expired_worker_cannot_finish_after_reclaim) ... ok
+test_human_costing_order_and_separate_review (tests.test_application.ApplicationTests.test_human_costing_order_and_separate_review) ... ok
+test_lookup_failure_does_not_dispatch (tests.test_application.ApplicationTests.test_lookup_failure_does_not_dispatch) ... ok
+test_no_signature_before_plan_and_cost_decisions (tests.test_application.ApplicationTests.test_no_signature_before_plan_and_cost_decisions) ... ok
+test_policy_expiry_invalid_timezone_and_synthetic_isolation (tests.test_application.ApplicationTests.test_policy_expiry_invalid_timezone_and_synthetic_isolation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+test_policy_partial_activation_stale_revoke_and_version_history (tests.test_application.ApplicationTests.test_policy_partial_activation_stale_revoke_and_version_history) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_requires_postgresql (tests.test_application.ApplicationTests.test_requires_postgresql) ... ok
+test_reserved_effect_payload_and_confirmed_receipt_are_immutable (tests.test_application.ApplicationTests.test_reserved_effect_payload_and_confirmed_receipt_are_immutable) ... ok
+test_review_binds_exact_version_and_does_not_review_next_revision (tests.test_application.ApplicationTests.test_review_binds_exact_version_and_does_not_review_next_revision) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_stale_command_has_no_mutation (tests.test_application.ApplicationTests.test_stale_command_has_no_mutation) ... ok
+test_superseded_role_policy_can_be_reapproved_without_rewriting_history (tests.test_application.ApplicationTests.test_superseded_role_policy_can_be_reapproved_without_rewriting_history) ... ok
+test_support_response_resolution_reopen_preserve_history (tests.test_application.ApplicationTests.test_support_response_resolution_reopen_preserve_history) ... ok
+test_unknown_external_result_is_reconciled_without_resend (tests.test_application.ApplicationTests.test_unknown_external_result_is_reconciled_without_resend) ... ok
+test_worker_rechecks_revoked_grant (tests.test_application.ApplicationTests.test_worker_rechecks_revoked_grant) ... ok
+test_department_route_recovery_delegates_to_source_service (tests.test_operator_workers.OperatorApprovalBridgeTests.test_department_route_recovery_delegates_to_source_service) ... ok
+test_pending_handoff_cancel_and_held_retry_use_real_source_controls (tests.test_operator_workers.OperatorSourceRecoveryTests.test_pending_handoff_cancel_and_held_retry_use_real_source_controls) ... ok
+test_scoped_inventory_and_recovery_need_source_permission (tests.test_operator_workers.OperatorSourceRecoveryTests.test_scoped_inventory_and_recovery_need_source_permission) ... ok
+test_unknown_finance_handoff_cannot_be_cancelled_and_reconciles_once (tests.test_operator_workers.OperatorSourceRecoveryTests.test_unknown_finance_handoff_cannot_be_cancelled_and_reconciles_once) ... ok
+test_controlled_publication_recovery_retains_review_and_no_receipt (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_controlled_publication_recovery_retains_review_and_no_receipt) ... ok
+test_engineering_handoff_recovery_cannot_apply_credit (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_engineering_handoff_recovery_cannot_apply_credit) ... ok
+test_invoice_recovery_retains_finance_review_and_no_issuance (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_invoice_recovery_retains_finance_review_and_no_issuance) ... ok
+test_partner_handoff_recovery_cannot_import_usage (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_partner_handoff_recovery_cannot_import_usage) ... ok
+test_connected_calculation_cost_approvals_signature_and_af13 (tests.test_costing.CostingTests.test_connected_calculation_cost_approvals_signature_and_af13) ... ok
+test_agents_and_generic_readers_cannot_repackage_private_costing (tests.test_costing.CostingTests.test_agents_and_generic_readers_cannot_repackage_private_costing) ... ok
+test_connected_inventory_reports_owner_independent_review_and_af13_binding (tests.test_migration_readiness.MigrationReadinessTests.test_connected_inventory_reports_owner_independent_review_and_af13_binding) ... ok
+test_source_receipt_cannot_be_repackaged_as_general_af13_source (tests.test_migration_readiness.MigrationReadinessTests.test_source_receipt_cannot_be_repackaged_as_general_af13_source) ... ok
+test_grant_revocation_before_acceptance_serializes_and_holds_decision (tests.test_validation_concurrency.ValidationConcurrencyTests.test_grant_revocation_before_acceptance_serializes_and_holds_decision) ... ok
+test_two_connections_record_one_owner_decision_for_same_operation (tests.test_validation_concurrency.ValidationConcurrencyTests.test_two_connections_record_one_owner_decision_for_same_operation) ... ok
+test_staff_handoff_survives_worker_process_exit_and_restart (tests.test_application.WorkerConcurrencyTests.test_staff_handoff_survives_worker_process_exit_and_restart) ... ok
+test_two_workers_claim_one_intent_once (tests.test_application.WorkerConcurrencyTests.test_two_workers_claim_one_intent_once) ... ok
+test_lookup_unavailable_never_dispatches (tests.test_operator_workers.OperatorConcurrencyTests.test_lookup_unavailable_never_dispatches) ... ok
+test_old_fence_cannot_write_after_reclaim (tests.test_operator_workers.OperatorConcurrencyTests.test_old_fence_cannot_write_after_reclaim) ... ok
+test_revocation_commits_before_native_effect (tests.test_operator_workers.OperatorConcurrencyTests.test_revocation_commits_before_native_effect) ... ok
+test_separate_process_reconciles_actual_isolated_receipt_after_revocation (tests.test_operator_workers.OperatorConcurrencyTests.test_separate_process_reconciles_actual_isolated_receipt_after_revocation) ... ok
+test_simultaneous_first_export_and_competing_workers (tests.test_operator_workers.OperatorConcurrencyTests.test_simultaneous_first_export_and_competing_workers) ... ok
+test_simultaneous_first_receipt_has_one_claim (tests.test_operator_workers.OperatorConcurrencyTests.test_simultaneous_first_receipt_has_one_claim) ... ok
+
+======================================================================
+ERROR: test_owner_withdrawal_retains_history_without_revoking_original_source_acceptance (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_owner_withdrawal_retains_history_without_revoking_original_source_acceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 64, in test_owner_withdrawal_retains_history_without_revoking_original_source_acceptance
+    f=self.ready();af.review(f['acceptor'],f['case'].pk,f['protection_package'].pk,'acceptance','revoke','withdraw-owner',f['protection_owner_evidence'].pk,'Withdraw this selected owner acceptance',None)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 37, in ready
+    f=self.f;f['protection_owner_policy']=owners(f);f['protection_policy']=configure(f);f['protection_reviews']=reviews(f);return f
+                                                                                                                ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 228, in review
+    pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 184, in review_inputs
+    protection=protection_pins(p,actor,kind)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 95, in review_pins
+    value=current(b,a)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in current
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+                                                                                  ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 83, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\protection_acceptance.py", line 18, in read
+    native.check(actor,assessment.contract);review=r.review_current(assessment);rows=[];receipt=None
+                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 178, in current_assessment
+    readable(r.actor,r.contract.case,True);require(r.actor,r.contract.case,'integration.assess');pins,result=snapshot(r.contract)
+                                                                                                             ~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 11, in call
+    if _scope.get() is not None:return function(*args,**kwargs)
+                                       ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+======================================================================
+ERROR: test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 53, in test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants
+    other=r.assess(f['actor'],f['case'].pk,f['private_contract'].pk,'different-bound-assessment')
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 172, in assess
+    c=locked(a,case_id,'integration.assess',expected);readable(a,c,True);r=contract_for(c,contract_id);contract_access(a,r);validate(KEY,key);pins,result=snapshot(r);old=IntegrationAssessment.objects.filter(contract=r,operation_key=key).first()
+                                                                                                                                                          ~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+======================================================================
+ERROR: test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 109, in test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review
+    f=self.ready();before=AgentRun.objects.count();self.assertTrue(agent.investigate(f['actor'],f['case'].pk)['findings']);self.assertEqual(AgentRun.objects.count(),before)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 37, in ready
+    f=self.f;f['protection_owner_policy']=owners(f);f['protection_policy']=configure(f);f['protection_reviews']=reviews(f);return f
+                                                                                                                ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 228, in review
+    pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 184, in review_inputs
+    protection=protection_pins(p,actor,kind)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 95, in review_pins
+    value=current(b,a)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in current
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+                                                                                  ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 83, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\protection_acceptance.py", line 18, in read
+    native.check(actor,assessment.contract);review=r.review_current(assessment);rows=[];receipt=None
+                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 178, in current_assessment
+    readable(r.actor,r.contract.case,True);require(r.actor,r.contract.case,'integration.assess');pins,result=snapshot(r.contract)
+                                                                                                             ~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 11, in call
+    if _scope.get() is not None:return function(*args,**kwargs)
+                                       ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+======================================================================
+ERROR: test_revoked_source_denies_cached_reports_exports_reviews_revisions_and_ui_choices (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_revoked_source_denies_cached_reports_exports_reviews_revisions_and_ui_choices)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 70, in test_revoked_source_denies_cached_reports_exports_reviews_revisions_and_ui_choices
+    f=self.ready();self.client.force_login(f['actor']);url=reverse('protection_acceptance_report',args=[f['case'].pk,f['protection_packet'].pk]);self.assertEqual(self.client.get(url).status_code,200)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 37, in ready
+    f=self.f;f['protection_owner_policy']=owners(f);f['protection_policy']=configure(f);f['protection_reviews']=reviews(f);return f
+                                                                                                                ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 228, in review
+    pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 184, in review_inputs
+    protection=protection_pins(p,actor,kind)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 95, in review_pins
+    value=current(b,a)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in current
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+                                                                                  ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 83, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\protection_acceptance.py", line 18, in read
+    native.check(actor,assessment.contract);review=r.review_current(assessment);rows=[];receipt=None
+                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 178, in current_assessment
+    readable(r.actor,r.contract.case,True);require(r.actor,r.contract.case,'integration.assess');pins,result=snapshot(r.contract)
+                                                                                                             ~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 11, in call
+    if _scope.get() is not None:return function(*args,**kwargs)
+                                       ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+======================================================================
+ERROR: test_selected_four_process_synthetic_acceptance_keeps_independent_tester_and_source_policy (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_selected_four_process_synthetic_acceptance_keeps_independent_tester_and_source_policy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 149, in test_selected_four_process_synthetic_acceptance_keeps_independent_tester_and_source_policy
+    p=package(f,'implementation-package',dict(f['package'].payload,process_ids=ids,source_ids=[src.pk],example_ids=[e.pk for e in examples],level='synthetic_implementation',role_list=['Finance','Process owners'],manual_fallback='Hold uncertain effects and inspect original receipts',rollout_plan='Synthetic scope only',migration_plan='No production migration claimed',support_owner_id=f['actor'].pk));prepare(f,'implementation-packet');owners(f);configure(f)
+                                                                                                                                                                                                                                                                                                                                                                                                                 ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 13, in prepare
+    f['protection_packet']=d.prepare(f['actor'],f['case'].pk,f['private_assessment'].pk,f['protection_package'].pk,reference,predecessor)
+                           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 42, in prepare
+    value={'package':p.pk,'package_sha256':p.sha256,'evidence':Adapter().read(a,assessment)}
+                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\protection_acceptance.py", line 18, in read
+    native.check(actor,assessment.contract);review=r.review_current(assessment);rows=[];receipt=None
+                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 178, in current_assessment
+    readable(r.actor,r.contract.case,True);require(r.actor,r.contract.case,'integration.assess');pins,result=snapshot(r.contract)
+                                                                                                             ~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 11, in call
+    if _scope.get() is not None:return function(*args,**kwargs)
+                                       ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+======================================================================
+ERROR: test_successor_needs_fresh_package_explicit_parent_and_new_owner_reviews (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_successor_needs_fresh_package_explicit_parent_and_new_owner_reviews)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 91, in test_successor_needs_fresh_package_explicit_parent_and_new_owner_reviews
+    f=self.ready();old=f['protection_packet'];package(f,'successor-package')
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 37, in ready
+    f=self.f;f['protection_owner_policy']=owners(f);f['protection_policy']=configure(f);f['protection_reviews']=reviews(f);return f
+                                                                                                                ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 228, in review
+    pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 184, in review_inputs
+    protection=protection_pins(p,actor,kind)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 95, in review_pins
+    value=current(b,a)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in current
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+                                                                                  ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 83, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\protection_acceptance.py", line 18, in read
+    native.check(actor,assessment.contract);review=r.review_current(assessment);rows=[];receipt=None
+                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 178, in current_assessment
+    readable(r.actor,r.contract.case,True);require(r.actor,r.contract.case,'integration.assess');pins,result=snapshot(r.contract)
+                                                                                                             ~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 11, in call
+    if _scope.get() is not None:return function(*args,**kwargs)
+                                       ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+======================================================================
+ERROR: test_transport_withdrawal_and_policy_changes_hold_current_use_but_allow_negative_owner_decision (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_transport_withdrawal_and_policy_changes_hold_current_use_but_allow_negative_owner_decision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 78, in test_transport_withdrawal_and_policy_changes_hold_current_use_but_allow_negative_owner_decision
+    f=self.ready();r.review(f['reviewer'],f['case'].pk,f['private_assessment'].pk,'withdraw','transport-withdraw',f['private_review_evidence'].pk)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 37, in ready
+    f=self.f;f['protection_owner_policy']=owners(f);f['protection_policy']=configure(f);f['protection_reviews']=reviews(f);return f
+                                                                                                                ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 228, in review
+    pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 184, in review_inputs
+    protection=protection_pins(p,actor,kind)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 95, in review_pins
+    value=current(b,a)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in current
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+                                                                                  ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 83, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\protection_acceptance.py", line 18, in read
+    native.check(actor,assessment.contract);review=r.review_current(assessment);rows=[];receipt=None
+                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 178, in current_assessment
+    readable(r.actor,r.contract.case,True);require(r.actor,r.contract.case,'integration.assess');pins,result=snapshot(r.contract)
+                                                                                                             ~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 11, in call
+    if _scope.get() is not None:return function(*args,**kwargs)
+                                       ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+======================================================================
+ERROR: test_z_actual_receipt_change_requires_fresh_assessment_packet_and_found_criteria (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_z_actual_receipt_change_requires_fresh_assessment_packet_and_found_criteria)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 164, in test_z_actual_receipt_change_requires_fresh_assessment_packet_and_found_criteria
+    f=self.ready();old=f['protection_packet'];lease=ow.claim();value=ow.dispatch(*lease,NativeMetadataProtectionAdapter());ow.finish(*lease,'confirmed',value)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_protection_acceptance.py", line 37, in ready
+    f=self.f;f['protection_owner_policy']=owners(f);f['protection_policy']=configure(f);f['protection_reviews']=reviews(f);return f
+                                                                                                                ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 228, in review
+    pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 184, in review_inputs
+    protection=protection_pins(p,actor,kind)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 95, in review_pins
+    value=current(b,a)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in current
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+                                                                                  ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 83, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\protection_acceptance.py", line 18, in read
+    native.check(actor,assessment.contract);review=r.review_current(assessment);rows=[];receipt=None
+                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 178, in current_assessment
+    readable(r.actor,r.contract.case,True);require(r.actor,r.contract.case,'integration.assess');pins,result=snapshot(r.contract)
+                                                                                                             ~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 161, in snapshot
+    findings.extend(private_findings(r,head))
+                    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_protection_readiness.py", line 68, in findings
+    Adapter().current(head.actor,b.job)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_protection_readiness.py", line 24, in current
+    current_plan(job.plan);private.current(actor,job.plan,job.intent['manifest'])
+                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\private_readiness_operations.py", line 62, in current
+    if Adapter().capture(a,p.case,row['packet'])!=row:raise ValidationError('Private acceptance changed; preserve sealed history and prepare a new export')
+       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness_operations.py", line 15, in capture
+    b=self.packet(c,pk);self.access(a,b);value=source.export(a,c.pk,pk)
+                                               ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 11, in call
+    if _scope.get() is not None:return function(*args,**kwargs)
+                                       ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 124, in export
+    package_access(a,b.package);pins=current(b,a);acceptance=af.approved_review(b.package,'acceptance')
+                                     ~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in current
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 68, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_readiness',b.pk,a.pk),lambda:_current(b,a))
+                                                                                 ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\readiness_acceptance.py", line 74, in _current
+    value={'package':b.package_id,'package_sha256':b.package.sha256,'evidence':Adapter().read(a,b.assessment)}
+                                                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\private_readiness.py", line 19, in read
+    review=r.review_current(assessment)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 181, in review_current
+    current_assessment(r);rr=IntegrationReview.objects.filter(assessment=r).select_related('actor').order_by('-pk').first()
+    ~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 179, in current_assessment
+    if IntegrationAssessment.objects.filter(contract=r.contract,pk__gt=r.pk).exists() or r.snapshot!=pins or r.result!=result or not result['capability_ready']:raise ValidationError('Current readiness reassessment required')
+                                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Current readiness reassessment required']
+
+----------------------------------------------------------------------
+Ran 130 tests in 14583.880s
+
+FAILED (errors=8)
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 130 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

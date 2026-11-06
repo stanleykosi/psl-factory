@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_latest_unsent_document_does_not_hide_consumed_acceptance_sources (tests.test_factory_current_heads.FactoryCurrentHeadTests.test_latest_unsent_document_does_not_hide_consumed_acceptance_sources) ... ok
+test_long_lived_native_history_qualifies_current_observations_but_never_falls_back_after_successor (tests.test_factory_current_heads.FactoryCurrentHeadTests.test_long_lived_native_history_qualifies_current_observations_but_never_falls_back_after_successor) ... ok
+test_readiness_factory_uses_current_heads_with_native_controls_after_long_history (tests.test_factory_current_heads.FactoryCurrentHeadTests.test_readiness_factory_uses_current_heads_with_native_controls_after_long_history) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 175.450s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

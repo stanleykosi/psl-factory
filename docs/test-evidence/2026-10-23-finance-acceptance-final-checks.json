@@ -1,0 +1,57 @@
+{
+  "system": {
+    "command": [
+      "manage.py",
+      "check"
+    ],
+    "exit_code": 0,
+    "stdout": "System check identified no issues (0 silenced).\n",
+    "stderr": ""
+  },
+  "migration_drift": {
+    "command": [
+      "manage.py",
+      "makemigrations",
+      "--check",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "No changes detected\n",
+    "stderr": ""
+  },
+  "compile": {
+    "command": [
+      "-m",
+      "compileall",
+      "-q",
+      "apps",
+      "adapters",
+      "config",
+      "tests"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "dependencies": {
+    "command": [
+      "-m",
+      "pip",
+      "check"
+    ],
+    "exit_code": 0,
+    "stdout": "No broken requirements found.\n",
+    "stderr": ""
+  },
+  "compile_after_test_only_expiry_refinement": {
+    "command": [
+      "-m",
+      "compileall",
+      "-q",
+      "tests"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

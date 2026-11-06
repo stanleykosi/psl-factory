@@ -1,0 +1,36 @@
+{
+  "version": "0.7",
+  "kind": "DOCUMENTATION_AND_SCHEMA_CHECKS_ONLY",
+  "original_process_ids": 122,
+  "departments": {
+    "BaaS": 14,
+    "Finance": 45,
+    "PMO": 63
+  },
+  "workflow_families": 13,
+  "original_register_fields": "UNCHANGED",
+  "all_process_module_UI_agent_human_contract_test_mappings": "PASS",
+  "source_files_hash_verified": 41,
+  "current_binding_overrides_applied": [
+    "P20",
+    "P21",
+    "P25",
+    "P26",
+    "P63"
+  ],
+  "decision_groups": 14,
+  "resolved": [
+    "D02"
+  ],
+  "open_parent_groups": 13,
+  "supplemental_process_slots": [
+    "P14-Q01"
+  ],
+  "independent_policy_components": 57,
+  "policy_schema": "VALID_JSON_SCHEMA_2020_12",
+  "synthetic_component_schema_positive_and_wrong_ref_negative_checks": 57,
+  "generated_markdown_links": "PASS",
+  "application_implementation": "NOT_PERFORMED",
+  "application_tests_run": 0,
+  "independent_review": "PASS_DOCUMENTATION_ONLY"
+}

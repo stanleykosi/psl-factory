@@ -1,0 +1,28 @@
+{
+  "run": 560,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_routing",
+    "tests.test_factory_responsibility_review",
+    "tests.test_factory_delegation.FactoryDelegationTests.test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts",
+    "tests.test_factory_delegation.FactoryDelegationTests.test_unknown_review_mode_is_a_typed_configuration_hold_with_invoice_drafting_available",
+    "tests.test_factory_delegation.FactoryDelegationTests.test_structured_configuration_preserves_other_delegations_and_needs_human_activation",
+    "tests.test_factory_delegation.FactoryDelegationTests.test_source_access_and_stale_replacement_cannot_copy_or_erase_other_rules",
+    "tests.test_role_guard.RoleGuardTests.test_typed_delegation_ui_drafts_without_activation_and_boolean_false_binding_is_valid",
+    "tests.test_role_guard.RoleGuardTests.test_scoped_delegation_origin_revocation_denies_dependent_metadata_without_holding_direct_nomination",
+    "tests.test_settlement.SettlementTests.test_generation_review_issuance_delivery_are_separate_real_facts",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T15:21:50.154515+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run560.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 214.681
+}

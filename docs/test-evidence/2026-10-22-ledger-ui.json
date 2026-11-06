@@ -1,0 +1,25 @@
+{
+  "browser": "iab",
+  "browser_id": "2",
+  "tab_id": "2",
+  "case": "be737719-4094-4985-b30d-d2c2ac7f20c2",
+  "principal": "studio-demo",
+  "workbench_url": "http://127.0.0.1:8000/cases/be737719-4094-4985-b30d-d2c2ac7f20c2/finance/ledger/",
+  "visually_inspected": [
+    "policy readiness labels",
+    "same-source duplicates remain held despite found observations",
+    "corrected QB-302 reference and historical QB-301",
+    "uncertain TX-002 retains unknown target",
+    "TX-001 -> QB-101 current Finance-reviewed reference",
+    "incumbent user/posting/treatment evidence references",
+    "read-only principal sees no mutation forms"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-ledger-workbench.png",
+    "docs/test-evidence/2026-10-22-ledger-lineage.png"
+  ],
+  "native_quickbooks_verified": false,
+  "posting_performed": false,
+  "server_session": 94209,
+  "note": "Initial browser 404 came from previous --noreload server; restarted current application. Final workbench and history visually verified."
+}

@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_planning_ui_and_profile_are_available_without_finance_grant (tests.test_factory_planning.FactoryPlanningTests.test_planning_ui_and_profile_are_available_without_finance_grant) ... ok
+test_stale_lease_cannot_finalize_another_attempt (tests.test_factory_controls.FactoryControlTests.test_stale_lease_cannot_finalize_another_attempt) ... ok
+test_late_answer_cannot_finalize_or_fail_the_new_workers_claim (tests.test_factory_worker_expiry.FactoryWorkerExpiryTests.test_late_answer_cannot_finalize_or_fail_the_new_workers_claim) ... ok
+test_late_unknown_response_cannot_park_the_new_workers_claim (tests.test_factory_worker_expiry.FactoryWorkerExpiryTests.test_late_unknown_response_cannot_park_the_new_workers_claim) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 49.718s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

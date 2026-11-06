@@ -1,0 +1,26 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0054_restore_go_live_reaffirmation_guard...test_current_source_successor_keeps_old_delivery_and_requires_new_review_and_new_signature_evidence (tests.test_factory_go_live.FactoryGoLiveTests.test_current_source_successor_keeps_old_delivery_and_requires_new_review_and_new_signature_evidence) ... ok
+test_post_signoff_reaffirmation_needs_explicit_versioned_authority_and_never_duplicates_anchor (tests.test_factory_go_live.FactoryGoLiveTests.test_post_signoff_reaffirmation_needs_explicit_versioned_authority_and_never_duplicates_anchor) ... ok
+test_signature_attestation_is_exact_human_command_not_a_model_tool_or_forged_verified_flag (tests.test_factory_go_live.FactoryGoLiveTests.test_signature_attestation_is_exact_human_command_not_a_model_tool_or_forged_verified_flag) ... ok
+test_replacement_prepares_and_delivers_only_after_independent_native_review (tests.test_factory_execution_accounting.BoundAccountingTests.test_replacement_prepares_and_delivers_only_after_independent_native_review) ... ok
+test_governed_synthetic_case_exercises_the_same_native_investigator (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_governed_synthetic_case_exercises_the_same_native_investigator) ... ok
+test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance) ... ok
+test_native_investigation_permission_cannot_fall_back_to_generic_extraction (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_native_investigation_permission_cannot_fall_back_to_generic_extraction) ... ok
+test_current_native_source_successor_does_not_borrow_the_starter_access (tests.test_factory_execution_source_projection.StarterSuccessorProjectionTests.test_current_native_source_successor_does_not_borrow_the_starter_access) ... ok
+test_manager_keeps_source_controls_but_cannot_advance_an_unavailable_worker (tests.test_factory_execution_owner_ui.MissingWorkerActionTests.test_manager_keeps_source_controls_but_cannot_advance_an_unavailable_worker) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 485.907s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

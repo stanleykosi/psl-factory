@@ -1,0 +1,36 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue (tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue) ... ERROR
+
+======================================================================
+ERROR: test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue (tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_hypercare.py", line 114, in test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue
+    f.source('technical_design',evidence=private)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_delivery.py", line 51, in source
+    s=capture_source(self.actor,self.case.pk,self.d.pk,kind,'owned:'+kind,(evidence or self.e['requirements']).pk,payload or {},rev(self.case))
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\delivery.py", line 81, in capture_source
+    s=DeliverySource.objects.create(dossier=d,kind=kind,external_ref=external_ref,evidence=subject(case,evidence_id),payload=payload,actor=actor)
+                                                                                           ~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+----------------------------------------------------------------------
+Ran 1 test in 4.563s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

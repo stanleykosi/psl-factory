@@ -1,0 +1,11 @@
+{
+  "broad_regression": 498,
+  "display_test_run": 500,
+  "changed_paths": [
+    "apps/workflows/factory_views.py",
+    "tests/test_factory_go_live.py"
+  ],
+  "exact_prior_bytes_reconstructed_and_verified": true,
+  "delta": "Three go-live presentation predicates exclude cancellation; test checks Cancelled while native human review remains independently open",
+  "native_business_services_migrations_policies_templates_unchanged": true
+}

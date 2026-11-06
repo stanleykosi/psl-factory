@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying baas.0016_complaint_summaries... OK
+  Applying baas.0017_complaint_summary_guards...test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_capture_before_criteria_agent_draft_reviewed_projection_ui_privacy_and_revocation (tests.test_complaint_summaries.ComplaintSummaryTests.test_capture_before_criteria_agent_draft_reviewed_projection_ui_privacy_and_revocation) ... ok
+test_period_boundaries_missing_sources_metrics_and_source_successor_hold (tests.test_complaint_summaries.ComplaintSummaryTests.test_period_boundaries_missing_sources_metrics_and_source_successor_hold) ... ok
+test_scope_configuration_independence_budget_and_cross_proof_guards (tests.test_complaint_summaries.ComplaintSummaryTests.test_scope_configuration_independence_budget_and_cross_proof_guards) ... ok
+test_two_connections_converge_on_one_draft (tests.test_complaint_summaries.ComplaintSummaryTests.test_two_connections_converge_on_one_draft) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 138.996s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

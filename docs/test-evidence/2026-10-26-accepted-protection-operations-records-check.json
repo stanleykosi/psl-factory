@@ -1,0 +1,21 @@
+{
+  "records_consistent": true,
+  "current_item": "verified",
+  "next_item": "not_started",
+  "source_files": 887,
+  "changed_since_current_runtime_tests": [
+    "contracts/implementation-coverage.json",
+    "tests/test_private_file_readiness.py"
+  ],
+  "application_fixture_migration_changes_after243": false,
+  "whole_127_run_claimed_passed": false,
+  "final_runtime_scenarios_passed243": 126,
+  "legacy_affected_rerun244": {
+    "tests": 2,
+    "seconds": 570.237,
+    "result": "OK"
+  },
+  "all_processes_remain_partial": true,
+  "main_preserved_tables": 269,
+  "real_provider_or_operational_acceptance_claimed": false
+}

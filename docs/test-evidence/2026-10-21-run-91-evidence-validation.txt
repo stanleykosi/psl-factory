@@ -1,0 +1,38 @@
+Found 20 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying documents.0005_validationexample_validationpackage_and_more... OK
+  Applying documents.0006_validation_immutability... OK
+System check identified no issues (0 silenced).
+test_actual_report_cannot_define_or_replace_expected_output (tests.test_evidence_validation.EvidenceValidationTests.test_actual_report_cannot_define_or_replace_expected_output) ... ok
+test_bounded_agent_cites_conflicts_and_never_creates_owner_approval (tests.test_evidence_validation.EvidenceValidationTests.test_bounded_agent_cites_conflicts_and_never_creates_owner_approval) ... ok
+test_capture_and_owned_gap_followup_continue_without_owner_configuration (tests.test_evidence_validation.EvidenceValidationTests.test_capture_and_owned_gap_followup_continue_without_owner_configuration) ... ok
+test_changed_example_or_selected_policy_requires_new_package_and_reviews (tests.test_evidence_validation.EvidenceValidationTests.test_changed_example_or_selected_policy_requires_new_package_and_reviews) ... ok
+test_changed_expectation_review_invalidates_old_result_comparisons (tests.test_evidence_validation.EvidenceValidationTests.test_changed_expectation_review_invalidates_old_result_comparisons) ... ok
+test_connected_meaning_expectations_comparison_acceptance_and_scoped_report (tests.test_evidence_validation.EvidenceValidationTests.test_connected_meaning_expectations_comparison_acceptance_and_scoped_report) ... ok
+test_cross_case_evidence_and_actor_scopes_are_rejected (tests.test_evidence_validation.EvidenceValidationTests.test_cross_case_evidence_and_actor_scopes_are_rejected) ... ok
+test_definition_acceptance_does_not_claim_implementation_or_native_acceptance (tests.test_evidence_validation.EvidenceValidationTests.test_definition_acceptance_does_not_claim_implementation_or_native_acceptance) ... ok
+test_exact_quote_scope_and_allowlisted_pack_source_boundaries (tests.test_evidence_validation.EvidenceValidationTests.test_exact_quote_scope_and_allowlisted_pack_source_boundaries) ... ok
+test_idempotent_review_and_replay_receipts_reject_changed_intent (tests.test_evidence_validation.EvidenceValidationTests.test_idempotent_review_and_replay_receipts_reject_changed_intent) ... ok
+test_normal_and_exception_examples_are_required_for_each_process (tests.test_evidence_validation.EvidenceValidationTests.test_normal_and_exception_examples_are_required_for_each_process) ... ok
+test_policy_schemas_reject_ambiguous_owner_and_fake_process (tests.test_evidence_validation.EvidenceValidationTests.test_policy_schemas_reject_ambiguous_owner_and_fake_process) ... ok
+test_postgresql_guards_protect_all_validation_history (tests.test_evidence_validation.EvidenceValidationTests.test_postgresql_guards_protect_all_validation_history) ... ok
+test_receipt_stated_document_owner_and_admin_flag_grant_no_review_authority (tests.test_evidence_validation.EvidenceValidationTests.test_receipt_stated_document_owner_and_admin_flag_grant_no_review_authority) ... ok
+test_reported_external_results_never_establish_native_execution_proof (tests.test_evidence_validation.EvidenceValidationTests.test_reported_external_results_never_establish_native_execution_proof) ... ok
+test_revocation_and_current_case_action_grants_are_rechecked (tests.test_evidence_validation.EvidenceValidationTests.test_revocation_and_current_case_action_grants_are_rechecked) ... ok
+test_source_revision_stales_reviews_and_preserves_original_clauses (tests.test_evidence_validation.EvidenceValidationTests.test_source_revision_stales_reviews_and_preserves_original_clauses) ... ok
+test_staff_ui_and_json_report_use_record_permissions (tests.test_evidence_validation.EvidenceValidationTests.test_staff_ui_and_json_report_use_record_permissions) ... ok
+test_support_sop_reference_requires_current_exact_meaning_review (tests.test_evidence_validation.EvidenceValidationTests.test_support_sop_reference_requires_current_exact_meaning_review) ... ok
+test_unresolved_gap_and_missing_selected_rule_hold_acceptance_only (tests.test_evidence_validation.EvidenceValidationTests.test_unresolved_gap_and_missing_selected_rule_hold_acceptance_only) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 55.544s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

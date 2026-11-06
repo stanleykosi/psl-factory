@@ -1,0 +1,11 @@
+{
+  "classification": "Explicit synthetic test selection; actual case/principal IDs injected by tests. No appointment, real provider evidence or live pilot acceptance.",
+  "base": {
+    "format": "psl.pilot-contract/v1",
+    "read_only": true,
+    "process_ids": ["P01"],
+    "operations": ["payment_exception.prepare_track"],
+    "integrations": [],
+    "jobs": []
+  }
+}

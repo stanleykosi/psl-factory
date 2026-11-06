@@ -1,0 +1,26 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue (tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue) ... ok
+test_recorded_release_without_prior_readiness_stays_a_source_owned_exception (tests.test_factory_hypercare.FactoryHypercareTests.test_recorded_release_without_prior_readiness_stays_a_source_owned_exception) ... ok
+test_source_successor_removes_current_outcome_and_reassessment_keeps_history_and_allowance (tests.test_factory_hypercare.FactoryHypercareTests.test_source_successor_removes_current_outcome_and_reassessment_keeps_history_and_allowance) ... ok
+test_superseded_accepted_document_invalidates_readback_without_erasing_acceptance (tests.test_factory_hypercare.FactoryHypercareTests.test_superseded_accepted_document_invalidates_readback_without_erasing_acceptance) ... ok
+test_technical_policy_refuses_business_authority_invalid_allowance_and_private_source_requirements (tests.test_factory_hypercare.FactoryHypercareTests.test_technical_policy_refuses_business_authority_invalid_allowance_and_private_source_requirements) ... ok
+test_unknown_and_negative_observations_are_recorded_without_false_qualification (tests.test_factory_hypercare.FactoryHypercareTests.test_unknown_and_negative_observations_are_recorded_without_false_qualification) ... ok
+test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled (tests.test_factory_hypercare.FactoryHypercareTests.test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled) ... ok
+test_actual_event_race_preserves_one_native_record (tests.test_factory_hypercare.FactoryHypercareConcurrencyTests.test_actual_event_race_preserves_one_native_record) ... ok
+test_real_process_exit_rolls_back_assessment_and_recovers_without_resetting_allowance (tests.test_factory_hypercare.FactoryHypercareConcurrencyTests.test_real_process_exit_rolls_back_assessment_and_recovers_without_resetting_allowance) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 475.459s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

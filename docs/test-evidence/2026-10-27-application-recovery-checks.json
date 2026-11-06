@@ -1,0 +1,51 @@
+{
+  "classification": "Actual checks; tool response wall times are per call, not aggregate process durations.",
+  "commands": [
+    ".venv/Scripts/python.exe manage.py check",
+    ".venv/Scripts/python.exe manage.py makemigrations --check --dry-run",
+    ".venv/Scripts/python.exe -m compileall -q apps adapters config tests",
+    ".venv/Scripts/python.exe -m pip check"
+  ],
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "a5f2a1",
+        "wall_time_seconds": 0.0000152,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "System check identified no issues (0 silenced).\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "991a83",
+        "wall_time_seconds": 0.0000141,
+        "exit_code": 0,
+        "original_token_count": 6,
+        "output": "No changes detected\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "5dfd90",
+        "wall_time_seconds": 8.1907468,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "93b738",
+        "wall_time_seconds": 0.0000119,
+        "exit_code": 0,
+        "original_token_count": 8,
+        "output": "No broken requirements found.\r\n"
+      }
+    }
+  ]
+}

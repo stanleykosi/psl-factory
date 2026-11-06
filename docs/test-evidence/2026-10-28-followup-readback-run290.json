@@ -1,0 +1,19 @@
+{
+  "run": 290,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+    "tests.test_invoice_variants.InvoiceVariantTests.test_canonical_receipt_successor_generation_and_two_connection_intake",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-290-followup-readback.txt",
+  "started_at": "2026-10-28T08:27:14.780759+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 49.801
+}

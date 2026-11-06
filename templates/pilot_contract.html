@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% block content %}<a href="{% url 'pilot_preflight' case.pk %}">Pilot selection</a><h1>Pilot contract v{{ contract.version }}</h1>
+<p>Current authorized projection. Saving a pack records an observation, not live acceptance. No jobs will be run.</p>
+<p><a href="{% url 'pilot_bindings' case.pk contract.pk %}">Connected operation and deployment bindings</a></p>
+{% if current.bindings.binding %}<p><a href="{% url 'pilot_binding' case.pk current.bindings.binding %}">Inspect action checks and service status</a></p>{% endif %}
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+<form method="post">{% csrf_token %}<button>Capture read-only evidence pack</button></form>
+<section class="workflow-panel"><h2>Selected policies and runtime holds</h2>{% for p in current.policies %}<p>{{ p.operation }} · required business rules satisfied: {{ p.policy_ready }} · action check: {{ p.domain_runtime_guards }}</p><ul>{% for check in p.native_checks %}<li>Participant #{{ check.user_id }}: {{ check.state }}</li>{% endfor %}{% for r in p.dependencies %}<li>{{ r.component }}: {{ r.status }} · configuration #{{ r.configuration|default_if_none:'unknown' }}</li>{% empty %}<li>No registered required business rules. Domain runtime guards still apply.</li>{% endfor %}</ul>{% endfor %}
+</section><section class="workflow-panel"><h2>Participants</h2>{% for p in current.participants %}<p>#{{ p.user_id }} · active: {{ p.active }} · missing selected grants: {{ p.missing }}</p>{% endfor %}
+</section><section class="workflow-panel"><h2>Integration and job evidence</h2><pre>{{ current.integrations }}</pre><pre>{{ current.jobs }}</pre>
+</section><section class="workflow-panel"><h2>Team-managed owner decisions and verification results</h2><pre>{{ current.human_acceptance }}</pre><p>These are existing AF13 decisions about their exact source/example scope. A pilot pack does not copy their authority or establish a supervised live run.</p>
+</section><section class="workflow-panel"><h2>Technical findings and unknowns</h2><pre>{{ current.technical }}</pre><ul>{% for x in current.coverage.unknown %}<li>{{ x }}</li>{% endfor %}</ul>
+</section><section class="workflow-panel"><h2>Recorded packs</h2>{% for r in records %}<p><a href="{% url 'pilot_observation' case.pk r.pk %}">Observation #{{ r.pk }}</a></p>{% empty %}<p>No packs.</p>{% endfor %}</section>{% endblock %}

@@ -1,0 +1,51 @@
+{
+  "source_run": 520,
+  "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+  "before": {
+    "invoice": 1118,
+    "job": 1401,
+    "operation_key": "invoice:1118:issue:g1",
+    "intent": {
+      "review": 1057,
+      "sha256": "d02ba3905a1af73557471b26192430d53944dfbe13d2f299d2c0f2dfa015f916",
+      "adapter": {
+        "issuer_roles": [
+          "Finance"
+        ],
+        "recipient_id": 16135,
+        "payable_basis": "gross_including_tax",
+        "implementation": "internal_invoice_register_v1",
+        "require_due_date": true,
+        "allow_partial_usage": true
+      },
+      "identity": {
+        "on_unknown": "reconcile_first",
+        "cancellation": "sticky_before_effect",
+        "max_attempts": 3,
+        "lease_seconds": 30,
+        "implementation": "single_obligation_v1"
+      },
+      "policies": {
+        "D08.adapter_contract_ref": 68700,
+        "D08.duplicate_correction_rules": 68701
+      },
+      "issuer_role": "Finance",
+      "issuer_authority": {
+        "D05.role_principal_assignments": 68698
+      },
+      "factory_execution": {
+        "work": 1043,
+        "schema": "factory-invoice-execution/v1",
+        "profile": 68708,
+        "executor": 16135
+      }
+    },
+    "budget_used": 800,
+    "budget_limit": 20000,
+    "remote_file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\factory-invoice-recovery-mock-receipts\\f9381aebac4bf5830230f6f8fa3e64bc25fad712e33b7c8584bf417312159975.json",
+    "remote_hash": "a33b3b1dfe019e5f09a52d85a564add312a1013928eefc8253490e07faef8168"
+  },
+  "configured_synthetic_amount": "43.00",
+  "change_method": "Native fixture policy service, not a browser policy lifecycle claim",
+  "main_changed": false
+}

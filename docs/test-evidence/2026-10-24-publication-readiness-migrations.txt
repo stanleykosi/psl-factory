@@ -1,0 +1,3 @@
+Migrations for 'finance':
+  apps\finance\migrations\0050_publication_readiness.py
+    + Create model FinancePublicationReadiness

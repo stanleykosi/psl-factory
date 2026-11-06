@@ -1,0 +1,47 @@
+Using existing test database for alias 'default'...
+
+E
+======================================================================
+ERROR: setUpClass (tests.test_support_channels.SupportChannelTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_channels.py", line 27, in setUpClass
+    try:super().setUpClass()
+        ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\testcases.py", line 1430, in setUpClass
+    cls.setUpTestData()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_channels.py", line 34, in setUpTestData
+    def setUpTestData(cls):cls.f=fixture()
+                                 ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_channel_helpers.py", line 18, in fixture
+    f['channel_policy']=policy(f,RECEIPTS,f['channel_rules'])
+                        ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_helpers.py", line 19, in policy
+    p=draft_support_policy(f['actor'],f['case'].pk,key,value,f['e']['policy_decision'].pk,timezone.now()-timedelta(seconds=1));transition(f['actor'],p.pk,'validated');transition(f['actor'],p.pk,'active');return p
+                                                                                                                               ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 242, in transition
+    validate_envelope(case, config.envelope)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 111, in validate_envelope
+    validate_channel(envelope['component_id'],target,case,runtime=runtime)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\support_channel_validators.py", line 21, in validate_reference
+    v=typed(target,*SCHEMAS[component])
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\document_validators.py", line 13, in typed
+    validate(schema,target.content)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+Found 17 test(s).
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+System check identified no issues (0 silenced).
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'fixture-channel/v1' does not match '^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$'"]
+
+----------------------------------------------------------------------
+Ran 0 tests in 15.483s
+
+FAILED (errors=1)
+Preserving test database for alias 'default'...
+

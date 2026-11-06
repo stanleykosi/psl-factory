@@ -1,0 +1,71 @@
+{
+  "status": "PASS",
+  "classification": "Bounded primary stale Finance review state, current queues and existing-command action label",
+  "parent_checkpoint": 530,
+  "source_run": 534,
+  "browser_source_run": 533,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "passing_runs": {
+    "532": {
+      "tests": 8,
+      "unittest_seconds": 97.58,
+      "process_seconds": 111.146
+    },
+    "533": {
+      "tests": 24,
+      "unittest_seconds": 231.098,
+      "process_seconds": 236.434
+    },
+    "534": {
+      "tests": 39,
+      "unittest_seconds": 244.36,
+      "process_seconds": 249.541
+    }
+  },
+  "retained_failed_runs": [
+    531
+  ],
+  "tested_scope": [
+    "Explicit review update reason and next action",
+    "No invented current decision owner",
+    "Exceptions/attention/unassigned routing; stale wait excluded from Decisions",
+    "No-execute account, valid unrelated rules, active work lease, original pending/unknown effect, cancellation and verified history precedence",
+    "Actual browser existing agent reroute with original context retained and fresh unclaimed human wait"
+  ],
+  "presentation_only": true,
+  "native_commands_permissions_policies_agents_adapters_models_migrations_unchanged": true,
+  "main_rowsets_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "retained_cohorts_rowsets_unchanged_each": 329,
+  "preview_source_run": 534,
+  "refreshed_preview_count": 15,
+  "separate_new_preview": {
+    "port": 8017,
+    "source_run": 533,
+    "same_application_bytes": true
+  },
+  "operational_owner_values_added": false,
+  "migrations_added": [],
+  "dependencies_added": [],
+  "browser": "Native synthetic seeded stale wait and actual browser read/replan; no browser claim/configuration/approval/publication or real-provider/UAT proof",
+  "policy_slots": "Existing typed interfaces; owner values deferred",
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "active_factory_restore": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "next_hypothesis": "Reproduce whether restoring earlier valid Finance rule content leaves an obsolete coordination wait open after verification",
+  "evidence": [
+    "docs/test-evidence/2026-11-03-factory-review-status-acceptance.json",
+    "docs/test-evidence/2026-11-03-factory-review-status-static534.json",
+    "docs/test-evidence/2026-11-03-factory-review-status-browser533.json",
+    "docs/test-evidence/2026-11-02-factory-routing-main-after-review-status-ui534.json",
+    "docs/test-evidence/2026-11-03-factory-review-authority-recovery534-after.json",
+    "docs/test-evidence/2026-11-03-factory-review-status-authority534-after.json",
+    "docs/test-evidence/2026-11-03-factory-review-status-previews534-after.json"
+  ]
+}

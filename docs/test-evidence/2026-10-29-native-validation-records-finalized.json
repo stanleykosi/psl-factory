@@ -1,0 +1,89 @@
+{
+  "status": "APPLIED",
+  "runs": [
+    {
+      "run": 354,
+      "tests": 6,
+      "unittest_seconds": 40.584,
+      "process_seconds": 46.131,
+      "returncode": 1
+    },
+    {
+      "run": 355,
+      "tests": 6,
+      "unittest_seconds": 67.969,
+      "process_seconds": 73.43,
+      "returncode": 0
+    },
+    {
+      "run": 356,
+      "tests": 76,
+      "unittest_seconds": 552.945,
+      "process_seconds": 558.053,
+      "returncode": 1
+    },
+    {
+      "run": 357,
+      "tests": 11,
+      "unittest_seconds": 183.221,
+      "process_seconds": 187.992,
+      "returncode": 1
+    },
+    {
+      "run": 358,
+      "tests": 15,
+      "unittest_seconds": 206.857,
+      "process_seconds": 212.31,
+      "returncode": 1
+    },
+    {
+      "run": 359,
+      "tests": 19,
+      "unittest_seconds": 482.98,
+      "process_seconds": 488.166,
+      "returncode": 0
+    },
+    {
+      "run": 360,
+      "tests": 93,
+      "unittest_seconds": 4486.216,
+      "process_seconds": 4491.138,
+      "returncode": 0
+    },
+    {
+      "run": 361,
+      "tests": 1,
+      "unittest_seconds": 9.87,
+      "process_seconds": 17.117,
+      "returncode": 1
+    },
+    {
+      "run": 362,
+      "tests": 20,
+      "unittest_seconds": 290.916,
+      "process_seconds": 297.071,
+      "returncode": 1
+    },
+    {
+      "run": 363,
+      "tests": 19,
+      "unittest_seconds": 417.053,
+      "process_seconds": 422.672,
+      "returncode": 0
+    }
+  ],
+  "main_preservation": {
+    "prior_main_rowsets_preserved": 326,
+    "prior_migration_files_preserved": 192,
+    "functions": 79,
+    "triggers": 363,
+    "constraints": 1719,
+    "changed_definition": "psl_pilot_guard forward v2; added native evaluation insert guard",
+    "main_test_definitions_identical": true,
+    "owner_values_installed": false,
+    "live_pilot_performed": false
+  },
+  "full_product_complete": false,
+  "owner_values_installed": false,
+  "next_step": "Remaining code: controlled-document/private Finance/payroll/HR/BU policy-impact contracts, additional declared native operation/variant guards and concrete unresolved domain/adapter contracts. Owner values remain deferred. Real source/vendor credentials and contracts, production identities/SSO/monitoring, business oracles and supervised Security/load/UAT evidence are separate inputs and validation work. All122 process acceptance rows remain partial; full-product/no-code-gaps completion is not claimed."
+}

@@ -1,0 +1,21 @@
+{
+  "run": 388,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_cash_guards",
+    "tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_competing_successor_branches_accept_only_one_new_cash_lot",
+    "tests.test_settlement_workers.SettlementWorkerTests.test_competing_allocations_share_both_capacities",
+    "tests.test_pilot_bindings.NativeGuardTests",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-388-process-acceptance.txt",
+  "started_at": "2026-10-29T16:33:13.203166+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 148.632
+}

@@ -1,0 +1,53 @@
+Found 26 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0026_progresspacket_recognitionrecord_and_more... OK
+  Applying finance.0027_recognition_guards... OK
+System check identified no issues (0 silenced).
+test_F33_E01_cash_alone_retains_unknown_and_gap (tests.test_recognition.RecognitionTests.test_F33_E01_cash_alone_retains_unknown_and_gap) ... ok
+test_F33_E02_estimate_and_cash_no_policy_no_revenue (tests.test_recognition.RecognitionTests.test_F33_E02_estimate_and_cash_no_policy_no_revenue) ... ok
+test_F33_N01_connected_packet_receipt_review_no_accounting (tests.test_recognition.RecognitionTests.test_F33_N01_connected_packet_receipt_review_no_accounting) ... ok
+test_admin_and_role_text_do_not_grant_finance_authority (tests.test_recognition.RecognitionTests.test_admin_and_role_text_do_not_grant_finance_authority) ... ok
+test_cash_cannot_be_classified_as_completion (tests.test_recognition.RecognitionTests.test_cash_cannot_be_classified_as_completion) ... ok
+test_cross_case_sources_and_packet_denied (tests.test_recognition.RecognitionTests.test_cross_case_sources_and_packet_denied) ... FAIL
+test_exact_retry_once_changed_intent_denied (tests.test_recognition.RecognitionTests.test_exact_retry_once_changed_intent_denied) ... ok
+test_gaps_conflicts_prevent_completed_review_but_allow_return (tests.test_recognition.RecognitionTests.test_gaps_conflicts_prevent_completed_review_but_allow_return) ... ok
+test_historical_retry_after_policy_revocation_no_new_effect (tests.test_recognition.RecognitionTests.test_historical_retry_after_policy_revocation_no_new_effect) ... ok
+test_invalid_future_date_and_unknown_fields (tests.test_recognition.RecognitionTests.test_invalid_future_date_and_unknown_fields) ... ok
+test_missing_authority_only_holds_attestation (tests.test_recognition.RecognitionTests.test_missing_authority_only_holds_attestation) ... ok
+test_new_packet_requires_new_attestation_and_review (tests.test_recognition.RecognitionTests.test_new_packet_requires_new_attestation_and_review) ... ok
+test_policy_document_successor_invalidates_rule (tests.test_recognition.RecognitionTests.test_policy_document_successor_invalidates_rule) ... ok
+test_policy_revocation_and_successor_invalidate_review (tests.test_recognition.RecognitionTests.test_policy_revocation_and_successor_invalidate_review) ... ok
+test_receipt_does_not_need_recognition_policy (tests.test_recognition.RecognitionTests.test_receipt_does_not_need_recognition_policy) ... ok
+test_request_requires_attestation_receipt_requires_request (tests.test_recognition.RecognitionTests.test_request_requires_attestation_receipt_requires_request) ... ok
+test_review_requires_receipt_and_decision_reference (tests.test_recognition.RecognitionTests.test_review_requires_receipt_and_decision_reference) ... ok
+test_revoked_attesting_grant_holds_finance_review (tests.test_recognition.RecognitionTests.test_revoked_attesting_grant_holds_finance_review) ... ok
+test_scoped_agent_cites_categories_drafts_questions_never_approves (tests.test_recognition.RecognitionTests.test_scoped_agent_cites_categories_drafts_questions_never_approves) ... ok
+test_source_successor_invalidates_use_preserves_receipt (tests.test_recognition.RecognitionTests.test_source_successor_invalidates_use_preserves_receipt) ... ok
+test_sql_update_delete_guards (tests.test_recognition.RecognitionTests.test_sql_update_delete_guards) ... ok
+test_ui_and_whitelisted_report_no_raw_source (tests.test_recognition.RecognitionTests.test_ui_and_whitelisted_report_no_raw_source) ... ok
+test_ui_rejects_claim_fields_and_stale_revision (tests.test_recognition.RecognitionTests.test_ui_rejects_claim_fields_and_stale_revision) ... ok
+test_validator_actual_pm_finance_human_and_no_formula (tests.test_recognition.RecognitionTests.test_validator_actual_pm_finance_human_and_no_formula) ... ok
+test_grant_revocation_before_acceptance_serializes_and_holds_decision (tests.test_recognition_concurrency.RecognitionConcurrencyTests.test_grant_revocation_before_acceptance_serializes_and_holds_decision) ... ok
+test_two_connections_record_one_owner_decision_for_same_operation (tests.test_recognition_concurrency.RecognitionConcurrencyTests.test_two_connections_record_one_owner_decision_for_same_operation) ... ok
+
+======================================================================
+FAIL: test_cross_case_sources_and_packet_denied (tests.test_recognition.RecognitionTests.test_cross_case_sources_and_packet_denied)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_recognition.py", line 95, in test_cross_case_sources_and_packet_denied
+    self.client.force_login(f['finance']);self.assertEqual(self.client.get(reverse('recognition_export',args=[c.pk,f['packet'].pk])).status_code,403)
+                                          ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 404 != 403
+
+----------------------------------------------------------------------
+Ran 26 tests in 36.229s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...

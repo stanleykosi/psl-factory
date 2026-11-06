@@ -1,0 +1,18 @@
+{
+  "run": 266,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_application_recovery",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-266-application-recovery.txt",
+  "started_at": "2026-10-27T11:22:37.103457+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 185.033
+}

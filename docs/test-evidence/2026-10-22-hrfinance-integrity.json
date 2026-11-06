@@ -1,0 +1,206 @@
+{
+  "verified_at": "2026-10-22T00:58:13.714111+00:00",
+  "frozen_source_hashes": 41,
+  "processes": 122,
+  "families": 13,
+  "exact_titles_and_plan_preserved": true,
+  "statuses": {
+    "partial": 111,
+    "not_started": 11
+  },
+  "original_catalogue": {
+    "total": 57,
+    "consolidated_D_components": 56,
+    "P14_supplement_in_original_catalogue": true,
+    "partial_semantics": 53
+  },
+  "runtime_catalogue": {
+    "total": 63,
+    "partial_semantics": 59,
+    "new_AF13_supplements": 2,
+    "new_F33_supplements": 2,
+    "new_F35_supplements": 2,
+    "missing": [
+      "D03.invoice_release_control_refs",
+      "D03.verified_billing_statement",
+      "D11.migration_evidence_rules",
+      "P14-Q01.commercial_costing_rule_oracle"
+    ]
+  },
+  "json_files_parsed": 80,
+  "databases": {
+    "psl": {
+      "migrations": {
+        "pmo": "0033_rfp_immutability",
+        "baas": "0005_partner_guards",
+        "finance": "0029_hrfinance_guards",
+        "documents": "0006_validation_immutability"
+      },
+      "new_append_only_guards": 6,
+      "version_operation_uniqueness_constraints": 6,
+      "F33_append_only_guards": 2,
+      "F33_uniqueness_constraints": 2,
+      "F35_append_only_guards": 4,
+      "F35_uniqueness_constraints": 4
+    },
+    "test_psl": {
+      "migrations": {
+        "pmo": "0033_rfp_immutability",
+        "baas": "0005_partner_guards",
+        "finance": "0029_hrfinance_guards",
+        "documents": "0006_validation_immutability"
+      },
+      "new_append_only_guards": 6,
+      "version_operation_uniqueness_constraints": 6,
+      "F33_append_only_guards": 2,
+      "F33_uniqueness_constraints": 2,
+      "F35_append_only_guards": 4,
+      "F35_uniqueness_constraints": 4
+    }
+  },
+  "existing_receivables_unchanged": {
+    "5a1b8ea0-d78c-4e57-9674-1deba59694d8": "17.25000000",
+    "f9f2896e-0f20-4103-97ff-0363ca50df3b": "12.25000000",
+    "adbac2f4-886a-4f8e-a6d5-bfa3642a4cbe": "22.25000000"
+  },
+  "controlled_document_receipts_preserved": 16,
+  "partner_meter_claims_preserved": 3,
+  "prior_D13_window_naturally_expired": true,
+  "synthetic_AF13": {
+    "case": "769c5f59-1348-451b-9e11-f0bb853085b7",
+    "collection_package": 1,
+    "actual_gaps_open": 3,
+    "synthetic_package": 2,
+    "meaning_review": 1,
+    "expectations_review": 2,
+    "acceptance_review": 3,
+    "supplied_result_comparisons": [
+      1,
+      2
+    ],
+    "followup": 1,
+    "shared_action": 8,
+    "agent": 33,
+    "policies": {
+      "AF13.owner_validation_rules": 140,
+      "AF13.acceptance_rules": 141,
+      "D09.support_sop_ref": 142
+    },
+    "acceptance_report": {
+      "review": 3,
+      "verdict": "approve",
+      "package": 2,
+      "sha256": "8d4cc25a18b7b24fdebd897764a575df17b74d702a2531da1a0ae6867ce4611a",
+      "status": {
+        "package": 2,
+        "level": "synthetic_implementation",
+        "scope": [
+          "B13",
+          "P13",
+          "P15"
+        ],
+        "holds": [],
+        "reviews": {
+          "meaning": {
+            "latest": 1,
+            "verdict": "approve",
+            "use_status": "current_approved"
+          },
+          "expectations": {
+            "latest": 2,
+            "verdict": "approve",
+            "use_status": "current_approved"
+          },
+          "acceptance": {
+            "latest": 3,
+            "verdict": "approve",
+            "use_status": "current_approved"
+          }
+        },
+        "production_authorized": false,
+        "policy_activated": false
+      },
+      "requested_record_is_current": true,
+      "reported_evidence_only": true,
+      "deployment_authorized": false,
+      "whole_product_accepted": false
+    }
+  },
+  "runs": {
+    "99": {
+      "tests": 61,
+      "seconds": 91.81,
+      "result": "FAILED (2 sanitised-code failures)",
+      "log": "docs/test-evidence/2026-10-22-run-99-hrfinance.txt"
+    },
+    "100": {
+      "tests": 139,
+      "seconds": 211.202,
+      "result": "FAILED (1 precision assertion)",
+      "log": "docs/test-evidence/2026-10-22-run-100-hrfinance-connected.txt"
+    },
+    "101": {
+      "tests": 44,
+      "seconds": 55.371,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-22-run-101-hrfinance-final.txt"
+    },
+    "102": {
+      "tests": 45,
+      "seconds": 72.836,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-22-run-102-hrfinance-privacy-final.txt"
+    }
+  },
+  "suite_counts_overlap": true,
+  "real_owner_acceptance": false,
+  "underlying_workflow_execution_by_comparator": false,
+  "native_integration_evidence": false,
+  "real_provider_evaluation": false,
+  "operational_authority_installed": false,
+  "synthetic_F33": {
+    "case": "2ea0e4ca-21cb-44f8-b4af-bcb2892d60fa",
+    "packet": 1,
+    "review": 8,
+    "PM_principal": 2,
+    "Finance_principal": 3,
+    "current_chain": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "historical_chain": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "agent": 36,
+    "recognised_amount": null,
+    "accounting_posted": false
+  },
+  "synthetic_F35": {
+    "case": "a58f8997-f5dc-4f52-aded-9779c73f0c33",
+    "need": 1,
+    "contract": 1,
+    "HR_principal": 4,
+    "Finance_principal": 5,
+    "approval": 1,
+    "old_snapshot": 1,
+    "rejected_snapshot": 2,
+    "current_snapshot": 3,
+    "correction": 3,
+    "response": 4,
+    "current_receipt": 5,
+    "basis_policies": [
+      150,
+      151
+    ],
+    "agent": 38,
+    "metadata_viewer_rows_denied": true,
+    "row_values_in_shared_evidence_or_audit": false,
+    "source_write": false,
+    "native_authenticity_verified": false
+  }
+}

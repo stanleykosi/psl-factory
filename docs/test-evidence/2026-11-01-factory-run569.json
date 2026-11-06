@@ -1,0 +1,20 @@
+{
+  "run": 569,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_accounting.AccountingRecoveryTests.test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T18:07:47.803948+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run569.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 11.383
+}

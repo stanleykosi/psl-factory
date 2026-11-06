@@ -1,0 +1,24 @@
+{
+  "browser": "in-app browser2/tab3 ledgerTab/ledgerFs",
+  "principal": "existing studio-demo session; seven scoped read/source grants on only the two new cases",
+  "final_server": 60557,
+  "observed": [
+    "Private Finance projections and drafts rendered",
+    "Native F01 policy ACTIVE; projection10 bound to lineage14/policy397",
+    "Exact projection exposes only TX-001/QB-101/sync-1 selected fields, supplied classification, no native authentication or posting",
+    "Immutable human draft v1/v2 and separate stored reviews visible",
+    "Current approval no after authenticated fixture endpoint/secret registry removed; historical inspection remains available",
+    "Current-approved evidence reuse link is distinct from historical inspection; owner/action/approval enforced in PostgreSQL/HTTP tests",
+    "Native workbench read-only for scoped viewer",
+    "Missing F01.agent_projection policy case renders MISSING/no projections/drafts",
+    "Original Finance verification/review/conflict policies ACTIVE and normal lineage15 current reviewed yes despite missing projection rule"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-23-ledger-agents-workbench.png",
+    "docs/test-evidence/2026-10-23-ledger-agents-missing-policy.png",
+    "docs/test-evidence/2026-10-23-ledger-agents-normal-verification.png"
+  ],
+  "browser_mutations": false,
+  "classification": "Real rendered UI and persisted synthetic domain records; provider approval demonstrated only inside authenticated loopback fixture; no real provider/QuickBooks/owner acceptance",
+  "handoff": "tab3 marked on native Finance workbench"
+}

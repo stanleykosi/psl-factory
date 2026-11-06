@@ -1,0 +1,21 @@
+{
+  "run": 295,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_finance_readback_advice",
+    "tests.test_finance_readback.FinanceReadbackAdapterTests",
+    "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-295-followup-readback.txt",
+  "started_at": "2026-10-28T09:24:28.945460+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 88.279
+}

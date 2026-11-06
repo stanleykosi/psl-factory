@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\seed_support_clock_successors_once.py", line 29, in <module>
+    f=fixture('clock-successors-demo');c=f['case'];initial=attest(f,remote);historical=support.SupportCase.objects.get(case=c).first_response_at;events=list(support.SupportEvent.objects.filter(case=c).values())
+                                                           ~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 16, in attest
+    r=reviewed(f,remote);f['event']=channel.attest(f['actor'],f['case'].pk,r.pk,f['e']['support_response'].pk);return r
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_channel_helpers.py", line 35, in reviewed
+    receipt=verify(f,remote,key);d.review(f['reviewer'],f['case'].pk,receipt.pk,'confirm');return receipt
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_channel_helpers.py", line 29, in verify
+    if 'claim' not in f:claim(f)
+                        ~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_channel_helpers.py", line 23, in claim
+    r=d.capture(f['actor'],f['case'].pk,f['release_job'].packet_id,key,external,'v1');f['claim']=r;return r
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_channel.py", line 53, in capture
+    if old.case_id!=c.pk or old.reference!=reference or old.payload!=value or old.packet_id!=p.pk:raise ValidationError('Conflicting channel receipt identity; preserve original and investigate')
+                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Conflicting channel receipt identity; preserve original and investigate']

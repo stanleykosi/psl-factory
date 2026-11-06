@@ -1,0 +1,3363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:psl:v05:billing-command",
+  "title": "PSL billing workflow command specification",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "schedule.record"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "schedule": {
+              "type": "object",
+              "properties": {
+                "schedule_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contract_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contract_version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "currency": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{3}$",
+                  "minLength": 3,
+                  "maxLength": 3
+                },
+                "contract_value": {
+                  "$ref": "#/$defs/Money"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/Stage"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "effective_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "approval_evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "schedule_id",
+                "contract_ref",
+                "contract_version",
+                "currency",
+                "contract_value",
+                "stages",
+                "effective_at",
+                "approval_evidence_refs"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schedule"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "milestone.complete"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "milestone": {
+              "type": "object",
+              "properties": {
+                "milestone_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "project_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "schedule_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "stage_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "completed_at": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "milestone_id",
+                "project_ref",
+                "schedule_ref",
+                "stage_id",
+                "completed_at",
+                "evidence_refs"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "milestone"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "milestone.revise"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "milestone_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "milestone_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "requested_transition": {
+              "type": "string",
+              "enum": [
+                "dispute",
+                "supersede_with_replacement"
+              ]
+            },
+            "replacement_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "milestone_ref",
+            "milestone_version",
+            "requested_transition",
+            "replacement_evidence_refs",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "invoice.prepare"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "invoice": {
+              "type": "object",
+              "properties": {
+                "invoice_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "obligation_key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "corrects_invoice_ref": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "contract_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "schedule_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "stage_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "milestone_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "amount": {
+                  "$ref": "#/$defs/Money"
+                },
+                "document_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "invoice_id",
+                "obligation_key",
+                "corrects_invoice_ref",
+                "contract_ref",
+                "schedule_ref",
+                "stage_id",
+                "milestone_version_ref",
+                "amount",
+                "document_version_ref",
+                "evidence_refs"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "invoice"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "invoice.issue"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "invoice_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "invoice_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "destination_ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "invoice_ref",
+            "invoice_version",
+            "destination_ref"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "invoice.reconcile"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "operation_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "external_observation_ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "operation_ref",
+            "external_observation_ref"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "invoice.delivery_record"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "invoice_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "invoice_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "attempt_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifact_hash": {
+              "type": "string",
+              "minLength": 1
+            },
+            "destination_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "delivery_evidence_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "delivery_state": {
+              "type": "string",
+              "enum": [
+                "delivered",
+                "failed",
+                "outcome_unknown"
+              ]
+            }
+          },
+          "required": [
+            "invoice_ref",
+            "invoice_version",
+            "attempt_id",
+            "artifact_hash",
+            "destination_ref",
+            "delivery_evidence_ref",
+            "delivery_state"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "receipt.record"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "receipt": {
+              "type": "object",
+              "properties": {
+                "receipt_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "customer_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contract_ref": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "amount": {
+                  "$ref": "#/$defs/Money"
+                },
+                "received_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "source_system_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "external_transaction_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "receipt_id",
+                "customer_ref",
+                "contract_ref",
+                "amount",
+                "received_at",
+                "source_system_ref",
+                "external_transaction_ref"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "receipt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "receipt.verify"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "receipt_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "receipt_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "receipt_ref",
+            "receipt_version",
+            "evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "receipt.assign"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "receipt_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "receipt_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "contract_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "assignment_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "receipt_ref",
+            "receipt_version",
+            "contract_ref",
+            "assignment_evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "allocation.apply"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "allocation": {
+              "type": "object",
+              "properties": {
+                "allocation_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "receipt_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "receipt_version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "invoice_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contract_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "amount": {
+                  "$ref": "#/$defs/Money"
+                },
+                "policy_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "allocation_id",
+                "receipt_ref",
+                "receipt_version",
+                "invoice_ref",
+                "contract_ref",
+                "amount",
+                "policy_ref",
+                "evidence_refs"
+              ],
+              "additionalProperties": false
+            },
+            "invoice_expected_version": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "allocation",
+            "invoice_expected_version"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "adjustment.record"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "adjustment": {
+              "type": "object",
+              "properties": {
+                "adjustment_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "credit_note",
+                    "debit_note",
+                    "receipt_reversal",
+                    "allocation_reversal"
+                  ]
+                },
+                "subject_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "amount": {
+                  "$ref": "#/$defs/Money"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "authority_evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "external_document_ref": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "adjustment_id",
+                "kind",
+                "subject_ref",
+                "amount",
+                "reason",
+                "authority_evidence_refs",
+                "external_document_ref"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "adjustment"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "allocation.reverse"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "allocation_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "allocation_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "allocation_ref",
+            "allocation_version",
+            "reason",
+            "evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "balance.compute"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "contract_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_versions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "as_of": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "computation_rule_ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "contract_ref",
+            "source_versions",
+            "as_of",
+            "computation_rule_ref"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "deployment.assess"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "contract_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_versions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "as_of": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "policy_ref": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "contract_ref",
+            "source_versions",
+            "as_of",
+            "policy_ref"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "schedule.revise"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "schedule_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected_schedule_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "replacement_schedule": {
+              "type": "object",
+              "properties": {
+                "schedule_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contract_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contract_version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "currency": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{3}$",
+                  "minLength": 3,
+                  "maxLength": 3
+                },
+                "contract_value": {
+                  "$ref": "#/$defs/Money"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/Stage"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "effective_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "approval_evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "schedule_id",
+                "contract_ref",
+                "contract_version",
+                "currency",
+                "contract_value",
+                "stages",
+                "effective_at",
+                "approval_evidence_refs"
+              ],
+              "additionalProperties": false
+            },
+            "amendment_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "schedule_ref",
+            "expected_schedule_version",
+            "replacement_schedule",
+            "amendment_evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "schedule.cancel"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "schedule_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected_schedule_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "authority_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "schedule_ref",
+            "expected_schedule_version",
+            "reason",
+            "authority_evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "invoice.cancel"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "invoice_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "invoice_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "invoice_ref",
+            "invoice_version",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "invoice.correct"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "invoice_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "invoice_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "authorized_adjustment_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "replacement_document_ref": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correction_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "invoice_ref",
+            "invoice_version",
+            "authorized_adjustment_ref",
+            "replacement_document_ref",
+            "correction_evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "receipt.reject"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "receipt_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "receipt_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rejection_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "receipt_ref",
+            "receipt_version",
+            "reason",
+            "rejection_evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "receipt.correct"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "receipt_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "receipt_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "corrected_amount": {
+              "$ref": "#/$defs/Money"
+            },
+            "corrected_received_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "correction_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "receipt_ref",
+            "receipt_version",
+            "corrected_amount",
+            "corrected_received_at",
+            "reason",
+            "correction_evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "const": "milestone.resolve"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "milestone_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "milestone_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "resolution": {
+              "type": "string",
+              "enum": [
+                "reinstate_complete",
+                "supersede"
+              ]
+            },
+            "resolution_evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "milestone_ref",
+            "milestone_version",
+            "resolution",
+            "resolution_evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tenant_id",
+        "case_id",
+        "command_id",
+        "expected_version",
+        "operation_key",
+        "principal_ref",
+        "grant_ref",
+        "policy_ref",
+        "issued_at",
+        "evidence_refs",
+        "action",
+        "payload"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "Money": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "basis_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "amount",
+        "currency",
+        "basis_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Stage": {
+      "type": "object",
+      "properties": {
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "signed_sow",
+            "uat",
+            "completion"
+          ]
+        },
+        "trigger_rule_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_terms_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "stage_id",
+        "kind",
+        "trigger_rule_ref",
+        "amount",
+        "due_terms_ref",
+        "contract_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Schedule": {
+      "type": "object",
+      "properties": {
+        "schedule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "contract_value": {
+          "$ref": "#/$defs/Money"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "configuration_incomplete",
+            "active",
+            "superseded",
+            "cancelled"
+          ]
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approval_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schedule_id",
+        "version",
+        "contract_ref",
+        "contract_version",
+        "currency",
+        "contract_value",
+        "stages",
+        "state",
+        "effective_at",
+        "approval_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Milestone": {
+      "type": "object",
+      "properties": {
+        "milestone_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "evidence_pending",
+            "complete",
+            "disputed",
+            "superseded"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pmo_actor_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "milestone_id",
+        "project_ref",
+        "schedule_ref",
+        "stage_id",
+        "state",
+        "version",
+        "completed_at",
+        "pmo_actor_ref",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Invoice": {
+      "type": "object",
+      "properties": {
+        "invoice_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obligation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corrects_invoice_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_state": {
+          "type": "string",
+          "enum": [
+            "none",
+            "pending",
+            "applied",
+            "outcome_unknown"
+          ]
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "milestone_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "document_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready",
+            "issuance_pending",
+            "issued",
+            "outcome_unknown",
+            "superseded",
+            "voided"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "external_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delivery_state": {
+          "type": "string",
+          "enum": [
+            "not_sent",
+            "pending",
+            "delivered",
+            "failed",
+            "outcome_unknown"
+          ]
+        },
+        "settlement_state": {
+          "type": "string",
+          "enum": [
+            "unpaid",
+            "partially_settled",
+            "settled",
+            "adjustment_review"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "invoice_id",
+        "obligation_key",
+        "corrects_invoice_ref",
+        "correction_state",
+        "contract_ref",
+        "schedule_ref",
+        "stage_id",
+        "milestone_version_ref",
+        "amount",
+        "document_version_ref",
+        "state",
+        "version",
+        "external_ref",
+        "delivery_state",
+        "settlement_state",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Receipt": {
+      "type": "object",
+      "properties": {
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cash_lot_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_of_version": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "customer_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verification_state": {
+          "type": "string",
+          "enum": [
+            "reported",
+            "verification_pending",
+            "verified",
+            "rejected",
+            "reversed"
+          ]
+        },
+        "allocation_state": {
+          "type": "string",
+          "enum": [
+            "unallocated",
+            "partially_allocated",
+            "fully_allocated"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_system_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external_transaction_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verification_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "receipt_id",
+        "cash_lot_ref",
+        "correction_of_version",
+        "customer_ref",
+        "contract_ref",
+        "amount",
+        "received_at",
+        "verification_state",
+        "allocation_state",
+        "version",
+        "source_system_ref",
+        "external_transaction_ref",
+        "verification_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Allocation": {
+      "type": "object",
+      "properties": {
+        "allocation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "invoice_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "applied",
+            "reversed"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "finance_actor_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reversal_of": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "allocation_id",
+        "receipt_ref",
+        "receipt_version",
+        "invoice_ref",
+        "contract_ref",
+        "amount",
+        "state",
+        "version",
+        "finance_actor_ref",
+        "policy_ref",
+        "reversal_of",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Adjustment": {
+      "type": "object",
+      "properties": {
+        "adjustment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "credit_note",
+            "debit_note",
+            "receipt_reversal",
+            "allocation_reversal"
+          ]
+        },
+        "subject_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "authorized",
+            "applied",
+            "rejected"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authority_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "external_document_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "adjustment_id",
+        "kind",
+        "subject_ref",
+        "amount",
+        "reason",
+        "state",
+        "version",
+        "authority_evidence_refs",
+        "external_document_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Assessment": {
+      "type": "object",
+      "properties": {
+        "assessment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "policy_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "qualifying_paid": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "threshold_percent": {
+          "const": "80"
+        },
+        "expectation_status": {
+          "type": "string",
+          "enum": [
+            "below_expectation",
+            "meets_expectation",
+            "unknown"
+          ]
+        },
+        "deployment_policy_status": {
+          "type": "string",
+          "enum": [
+            "unresolved",
+            "configured_block",
+            "configured_exception",
+            "configured_advisory"
+          ]
+        },
+        "release_authorized": {
+          "const": false
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "assessment_id",
+        "contract_ref",
+        "as_of",
+        "source_versions",
+        "policy_ref",
+        "qualifying_paid",
+        "denominator",
+        "threshold_percent",
+        "expectation_status",
+        "deployment_policy_status",
+        "release_authorized",
+        "gaps"
+      ],
+      "additionalProperties": false
+    },
+    "Balance": {
+      "type": "object",
+      "properties": {
+        "snapshot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "issued_invoice_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_credit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_debit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cash_allocated_to_invoices": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_receivable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verified_cash_assigned_to_contract": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unallocated_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_value": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "remaining_contract_cash_target": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "excess_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "computation_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "valid",
+            "blocked_missing_data",
+            "requires_adjustment_review"
+          ]
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "contract_ref",
+        "as_of",
+        "currency",
+        "source_versions",
+        "issued_invoice_total",
+        "invoice_credit_total",
+        "invoice_debit_total",
+        "cash_allocated_to_invoices",
+        "invoice_receivable",
+        "verified_cash_assigned_to_contract",
+        "unallocated_contract_cash",
+        "contract_value",
+        "remaining_contract_cash_target",
+        "excess_contract_cash",
+        "computation_rule_ref",
+        "status"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<div class="page-heading"><div><h1>Prepare management accounts</h1><p class="lede">Carry a controlled trial balance through native preparation, Finance decisions and a reviewed aggregate report.</p></div></div>
+<section class="card">{% if workspace_field %}<form method="get"><input type="hidden" name="definition" value="{{ definition }}"><label for="accounting-workspace">Workspace</label>{{ workspace_field }}<button>Select workspace</button></form>{% else %}
+<h2>{{ case.title }}</h2><p>The source, adjustment inventory and report reference are recorded exactly. Starting work grants no Finance approval and posts no ledger transactions.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Start accounting preparation</button></form>
+<a href="{% url 'factory_configuration' case.pk %}?definition={{ definition }}">Review execution setup</a>{% endif %}</section>
+{% endblock %}

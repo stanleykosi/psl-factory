@@ -1,0 +1,15 @@
+{
+  "main_version": "0022_application_recovery_guards",
+  "original_main_tables_preserved": 282,
+  "original_functions_preserved": 58,
+  "functions": 58,
+  "triggers": 307,
+  "constraints": 1498,
+  "frozen_sources": 41,
+  "old_migration_sources": 154,
+  "processes_partial": 122,
+  "families": 13,
+  "interfaces": 108,
+  "supplements": 51,
+  "new_main_authority_or_policy_installed": false
+}

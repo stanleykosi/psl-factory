@@ -1,0 +1,87 @@
+{
+  "verified_at": "2026-10-21T21:27:37.406309+00:00",
+  "frozen_source_hashes": 41,
+  "processes": 122,
+  "families": 13,
+  "statuses": {
+    "partial": 106,
+    "not_started": 16
+  },
+  "exact_source_titles_preserved": true,
+  "all_id_plan_rows": 122,
+  "json_files_parsed": 67,
+  "semantic_components_partial": 52,
+  "semantic_components_none": [
+    "D03.invoice_release_control_refs",
+    "D03.verified_billing_statement",
+    "D04.iana_timezone",
+    "D09.support_sop_ref",
+    "D11.migration_evidence_rules"
+  ],
+  "supplemental_costing_oracle": "unimplemented; separate from original57",
+  "databases": {
+    "psl": {
+      "migrations": {
+        "finance": "0025_payment_immutability",
+        "pmo": "0033_rfp_immutability",
+        "baas": "0005_partner_guards"
+      },
+      "payment_append_only_guards": 4
+    },
+    "test_psl": {
+      "migrations": {
+        "finance": "0025_payment_immutability",
+        "pmo": "0033_rfp_immutability",
+        "baas": "0005_partner_guards"
+      },
+      "payment_append_only_guards": 4
+    }
+  },
+  "existing_receivables_unchanged": {
+    "5a1b8ea0-d78c-4e57-9674-1deba59694d8": "17.25000000",
+    "f9f2896e-0f20-4103-97ff-0363ca50df3b": "12.25000000"
+  },
+  "controlled_document_receipts": 16,
+  "synthetic_d13": {
+    "case": "adbac2f4-886a-4f8e-a6d5-bfa3642a4cbe",
+    "assessment": 2,
+    "request": 2,
+    "decision": 1,
+    "reservation": 1,
+    "denominator": "32.25000000",
+    "funds": "10.00000000",
+    "open_debt": "22.25000000",
+    "policy_ids": {
+      "D13.human_authority_role_ref": 133,
+      "D13.human_principal_refs": 134,
+      "D13.delegation_evidence_refs": 135,
+      "D13.validity_revocation_reassessment_rules": 138,
+      "D13.payment_denominator_rule_ref": 136,
+      "D13.qualifying_funds_rule_ref": 137
+    }
+  },
+  "runs": {
+    "87": {
+      "tests": 24,
+      "seconds": 67.996,
+      "result": "OK",
+      "log": "docs\\test-evidence\\2026-10-21-run-87-payments.txt"
+    },
+    "88": {
+      "tests": 173,
+      "seconds": 640.264,
+      "result": "OK",
+      "log": "docs\\test-evidence\\2026-10-21-run-88-connected.txt"
+    },
+    "90": {
+      "tests": 27,
+      "seconds": 109.867,
+      "result": "OK",
+      "log": "docs\\test-evidence\\2026-10-21-run-90-payment-final.txt"
+    }
+  },
+  "suite_counts_overlap": true,
+  "native_integration_evidence": false,
+  "real_provider_evaluation": false,
+  "operational_authority_installed": false
+}

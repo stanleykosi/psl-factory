@@ -1,0 +1,37 @@
+[
+  {
+    "id": "CTRL-FB-01",
+    "status": "Proposed shared control, not independently approved PSL policy",
+    "definition": "Evidence and identity: preserve source ID, entity/client/project where applicable, period/as-of time, file/version, rule version and actor. Unknown is not zero. A source fact, inherited review observation, proposed design and owner decision are distinct. Case/document IDs do not by themselves prove business approval."
+  },
+  {
+    "id": "CTRL-FB-02",
+    "status": "Proposed shared control, not independently approved PSL policy",
+    "definition": "Authority: approval binds to the exact object, payload and version and to a named permitted next action. The reviewed Finance/BaaS material does not establish a universal approval/delegation matrix. Owner decisions remain blocked until the actual authority is supplied. A receipt, report or status is not permission to post, credit, invoice, pay, recognise revenue, accept a contract or contact a customer."
+  },
+  {
+    "id": "CTRL-FB-03",
+    "status": "Proposed shared control, not independently approved PSL policy",
+    "definition": "Revision: retain original inputs and reviewed outputs. New source/rule/payload versions invalidate affected proposed approvals and dependent draft results; reviewed historical outputs are superseded or restated only under an owner-approved treatment. Never rewrite history to hide a discrepancy."
+  },
+  {
+    "id": "CTRL-FB-04",
+    "status": "Proposed shared control, not independently approved PSL policy",
+    "definition": "Access and disclosure: apply minimum source and record/field/audience permissions before retrieval, calculation, export, logs or AI context. Staff/payroll, executive allocation, customer evidence and cash material have separate restricted boundaries. A shared ID or hub does not imply universal access."
+  },
+  {
+    "id": "CTRL-FB-05",
+    "status": "Proposed shared control, not independently approved PSL policy",
+    "definition": "Recovery and replay: separate business validation failures from infrastructure failure. Record attempt/result references; check incumbent destination state on an uncertain effect before retry. Reprocessing a report cannot emit a credit, invoice, payment or publication. Preserve a manual incumbent route and operator-visible unresolved exceptions."
+  },
+  {
+    "id": "CTRL-FB-06",
+    "status": "Proposed shared control, not independently approved PSL policy",
+    "definition": "No inferred financial policy: formulas, ratios, taxes, currencies, sign conventions, rounding, tolerances, recognition, useful lives and delegation limits require the accountable owner and actual source artefacts. Synthetic numeric examples apply only to explicitly stated test fixtures and are not PSL policy."
+  },
+  {
+    "id": "CTRL-FB-07",
+    "status": "Proposed shared control, not independently approved PSL policy",
+    "definition": "Test and scope: the mock catalogue specifies expected observable behaviour, not executed tests. Dated 15 October V1 scope is inherited planning, not authority to build now. AI is a later proposal outside that V1 baseline. Documentation completeness is separate from primary evidence, owner approval, implementation and test readiness."
+  }
+]

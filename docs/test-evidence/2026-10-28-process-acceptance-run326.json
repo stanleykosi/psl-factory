@@ -1,0 +1,21 @@
+{
+  "run": 326,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_project_view",
+    "tests.test_application",
+    "tests.test_coordination_work.CoordinationWorkTests.test_delivered_department_request_current_recipient_source_resolution_and_no_effect",
+    "tests.test_shared_workbench.SharedWorkbenchTests.test_private_finance_version_never_enters_generic_pmo_review_discovery",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-326-process-acceptance.txt",
+  "started_at": "2026-10-28T15:10:18.260792+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 170.847
+}

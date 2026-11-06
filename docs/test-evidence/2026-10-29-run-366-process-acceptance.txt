@@ -1,0 +1,26 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_partial_recipient_receipts_are_conflicts_and_never_proof_of_committed_publication (tests.test_private_policy_impact.PrivateImpactTests.test_partial_recipient_receipts_are_conflicts_and_never_proof_of_committed_publication) ... ok
+test_cross_case_current_use_locks_all_principals_in_one_global_order (tests.test_ledger_resolution_concurrency.LedgerResolutionConcurrencyTests.test_cross_case_current_use_locks_all_principals_in_one_global_order) ... ok
+test_foreign_reviewer_revocation_commits_before_report (tests.test_ledger_resolution_concurrency.LedgerResolutionConcurrencyTests.test_foreign_reviewer_revocation_commits_before_report) ... ok
+test_new_claim_commits_before_resolution_review (tests.test_ledger_resolution_concurrency.LedgerResolutionConcurrencyTests.test_new_claim_commits_before_resolution_review) ... ok
+test_overlapping_proposals_serialize_and_only_latest_can_be_confirmed (tests.test_ledger_resolution_concurrency.LedgerResolutionConcurrencyTests.test_overlapping_proposals_serialize_and_only_latest_can_be_confirmed) ... ok
+test_foreign_private_grant_revocation_commits_before_provider_send (tests.test_ledger_agent_concurrency.LedgerAgentConcurrencyTests.test_foreign_private_grant_revocation_commits_before_provider_send) ... ok
+test_two_connections_cannot_branch_human_draft_revision (tests.test_ledger_agent_concurrency.LedgerAgentConcurrencyTests.test_two_connections_cannot_branch_human_draft_revision) ... ok
+test_two_connections_same_projection_intent_make_one_binding (tests.test_ledger_agent_concurrency.LedgerAgentConcurrencyTests.test_two_connections_same_projection_intent_make_one_binding) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 301.384s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

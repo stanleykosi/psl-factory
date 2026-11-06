@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_current_recipient_discloser_source_and_policy_changes (tests.test_project_view.ProjectViewTests.test_current_recipient_discloser_source_and_policy_changes) ... ok
+test_missing_stale_and_bounded_source_semantics (tests.test_project_view.ProjectViewTests.test_missing_stale_and_bounded_source_semantics) ... ok
+test_profile_selection_never_unions_or_exposes_other_audience (tests.test_project_view.ProjectViewTests.test_profile_selection_never_unions_or_exposes_other_audience) ... ok
+test_real_source_projection_without_case_read_and_internal_agent_and_ui (tests.test_project_view.ProjectViewTests.test_real_source_projection_without_case_read_and_internal_agent_and_ui) ... ok
+test_recorded_identifiers_use_real_registered_source (tests.test_project_view.ProjectViewTests.test_recorded_identifiers_use_real_registered_source) ... ok
+test_typed_policy_validation_and_configuration_ui_csrf (tests.test_project_view.ProjectViewTests.test_typed_policy_validation_and_configuration_ui_csrf) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 11.960s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,27 @@
+{
+  "classification": "EXPLICIT SYNTHETIC data and human fixtures; native local metadata read only; no operational acceptance",
+  "case": "2d5576d8-10b7-4ff8-ba52-caa58c5fb3b1",
+  "principals": {
+    "actor": 25,
+    "owner": 26,
+    "tester": 27,
+    "acceptor": 28
+  },
+  "AF13_package": 7,
+  "plan": 1,
+  "initial_assessment": 1,
+  "held_assessment": 2,
+  "current_assessment": 3,
+  "unknown_restore_proof": 9,
+  "corrected_restore_proof": 10,
+  "bindings": [
+    1,
+    2
+  ],
+  "agent": 48,
+  "unconfigured_case": "d77a8c5d-f51e-4c35-af04-243b9d139b2a",
+  "unconfigured_plan": 2,
+  "migration_executed": false,
+  "restore_executed": false,
+  "operational_ready": false
+}

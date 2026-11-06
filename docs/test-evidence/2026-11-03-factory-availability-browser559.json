@@ -1,0 +1,44 @@
+{
+  "source_run": 559,
+  "browser": "Codex native browser",
+  "browser_id": "5",
+  "tab": "4",
+  "database": "psl_factory_availability_ui_f599e39e4e5e",
+  "work": 1580,
+  "actual_steps": [
+    "executor agent preparation",
+    "unavailable principal has no claim control",
+    "source-authorised availability configuration inspection",
+    "390px configuration layout",
+    "keyboard return to same work",
+    "separate available qualified delegate claim",
+    "source evidence inspection and exact approval",
+    "delegate cannot execute",
+    "configured executor continuation",
+    "two native mock receipts and verified output",
+    "verified queue/filter/keyboard reopen"
+  ],
+  "principal_claim_control": false,
+  "approval": {
+    "buttons": [],
+    "completed": true,
+    "executorUnavailable": true,
+    "url": "http://127.0.0.1:8021/work/1580/?queue=needs_me&q="
+  },
+  "narrow": {
+    "documentWidth": 375,
+    "scrollWidth": 375,
+    "width": 390
+  },
+  "configuration_document_width": 1265,
+  "configuration_scroll_width": 1265,
+  "get_only_rowsets_preserved": 329,
+  "viewport_reset": true,
+  "protocol_notes": [
+    "Preparation/navigation/sign-in/approval/continuation readbacks reported transient CDP frame deadlines; fresh reads established original results without any repeated business POST.",
+    "First keyboard return after viewport reset reported a focus timeout; fresh state confirmed successful return.",
+    "One concatenated DOM-text link selector did not match its accessible name; fresh AX provided the correct locator.",
+    "One final read timed out before dispatch; AX then confirmed verified receipts."
+  ],
+  "classification": "Actual native-browser human commands and agent mock execution; policy values from native synthetic fixture, not browser policy lifecycle/live provider/independent UAT/full-product acceptance"
+}

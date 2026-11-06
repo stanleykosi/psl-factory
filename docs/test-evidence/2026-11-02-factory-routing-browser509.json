@@ -1,0 +1,67 @@
+{
+  "database": "psl_factory_routing_ui_c87774ebaed7",
+  "work": 1,
+  "case": "eeadebc0-5062-4ffb-958d-6f9b92dda454",
+  "source_run": 509,
+  "state": "verified",
+  "governance_task": 1,
+  "native_review": 1,
+  "native_issue_receipts": 1,
+  "native_delivery_receipts": 1,
+  "budget_used": 1200,
+  "budget_limit": 20000,
+  "routing": {
+    "binding": {
+      "schema": "factory-finance-responsibility-binding/v1",
+      "status": "ACTIVE",
+      "configuration": 18,
+      "value": {
+        "method": "native_finance_single_review/v1",
+        "activity": "ACT10",
+        "definition": "pmo-finance/v1",
+        "process_id": "F30",
+        "policy_owner_id": 1,
+        "process_owner_id": 1,
+        "activity_owner_id": 1,
+        "governance_resolver_id": 1
+      }
+    },
+    "method": "native_finance_single_review/v1",
+    "role": "Finance",
+    "missing": [],
+    "eligible_principals": [
+      1
+    ],
+    "governance_resolver_id": 1,
+    "invoice": 1,
+    "approval_granted": false
+  },
+  "actual_ui_actions": [
+    "Agent investigation/draft/packet/ownership wait",
+    "Human claim governance",
+    "Human draft/validate/activate corrected assignments",
+    "Human recheck without approval",
+    "Agent current routing",
+    "Human exact Finance review",
+    "Agent mock issue/delivery/receipt verification"
+  ],
+  "browser_checks": {
+    "narrow_viewport_width": 390,
+    "narrow_document_width": 375,
+    "narrow_scroll_width": 375,
+    "document_overflow": false,
+    "keyboard_return_preserved_exceptions_and_search": true,
+    "verified_queue_preserved_search": true,
+    "keyboard_reopened_selected_work": true,
+    "viewport_reset": true,
+    "final_context": "/work/1/?queue=verified&q=FACTORY",
+    "tab": 18
+  },
+  "screenshots": {
+    "docs/test-evidence/2026-11-02-factory-routing-owner-needed509.png": "856fc5130043133fbfe52b59162335463afc5473073bbe924cf547a60a70b498",
+    "docs/test-evidence/2026-11-02-factory-routing-verified509.png": "d124cf21309aa44a10de0f7bee6e33f956c8a399ffdf3e3961dc09cbaffde48a",
+    "docs/test-evidence/2026-11-02-factory-routing-narrow509.png": "7a6742d23b82dc64dbfe96076129909d6b0f435b57b38bd665cac2f348cfffef"
+  },
+  "classification": "Native synthetic browser proof; one human fixture has multiple roles. Not independent UAT or real provider evaluation",
+  "operational_assignments_added": false
+}

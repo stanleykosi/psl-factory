@@ -1,0 +1,4 @@
+{
+ "classification":"EXPLICIT SYNTHETIC engineering fixture, not a Support SOP, real appointment or operational data-egress approval",
+ "rules":{"intake_ids":[],"fields":["case_type","issue_ref"],"purpose":"synthetic-support-draft","projector_id":null,"owner_id":null,"reviewer_id":null,"independent_review":true,"max_draft_chars":2000,"review_ttl_seconds":3600}
+}

@@ -1,0 +1,53 @@
+{
+  "status": "IMPLEMENTED_POSTGRES_TESTED",
+  "parent_checkpoint": 594,
+  "source_run": 598,
+  "passing_runs": {
+    "596": {
+      "tests": 14,
+      "unittest_seconds": 122.459,
+      "process_seconds": 128.807
+    },
+    "598": {
+      "tests": 13,
+      "unittest_seconds": 101.9,
+      "process_seconds": 108.282
+    }
+  },
+  "retained_failed_runs": [
+    595,
+    597
+  ],
+  "implemented": [
+    "Native exact invoice review, requested information and responsibility recheck remain available with withdrawn planning",
+    "Current native authority/role, exact routing/subject, version and cancellation guards retained",
+    "Existing personal responsibility queue/summary reused; actual two-connection recheck records one event and no Finance approval",
+    "Agent execution and invoice effects remain held; no budget reset, new model call, issue or delivery authorised by the human action"
+  ],
+  "source_delta": [
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_routing.py",
+    "apps/workflows/factory_views.py"
+  ],
+  "new_test": [
+    "tests/test_factory_human_independence.py"
+  ],
+  "migrations_added": 0,
+  "dependencies_added": 0,
+  "browser_for_this_extension": "NOT_EVALUATED",
+  "supporting_prior_native_browser": "Source593 accounting independence/internal receipt only; not mislabelled as current invoice UI proof",
+  "policy_values_added": false,
+  "real_provider": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "remaining_code": [
+    "Fresh execution-principal recovery preserving immutable starter, budgets and original receipts",
+    "Human/read projections independent of an unavailable execution principal",
+    "Fresh reviewed authority for changed original receipt bindings",
+    "Remaining108/native connections and wider staged/quorum/veto/amount-FX/background/recovery/impact controls"
+  ],
+  "evidence": [
+    "docs/test-evidence/2026-11-04-factory-human-controls-evidence.json",
+    "docs/test-evidence/2026-11-04-factory-human-controls-static598.json"
+  ]
+}

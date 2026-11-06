@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\verify_finance_acceptance.py", line 632, in <module>
+    assert integration_domain.report(viewer,case.pk,info['current_assessment'])['review_current']
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError

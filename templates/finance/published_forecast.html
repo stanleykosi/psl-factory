@@ -1,0 +1,4 @@
+<p>{{ finance.summary }}</p><p>{{ finance.status|capfirst }} · {{ finance.currency }} · as of {{ finance.as_of }}</p>
+<p>Declared accounts: {{ finance.coverage.account_count }}. Inflow coverage: {{ finance.coverage.inflows }}. Outflow coverage: {{ finance.coverage.outflows }}. Declared omissions: {{ finance.coverage.omission_count }}. Findings: {{ finance.coverage.finding_count }}.</p>
+<table><tr><th>Month</th>{% for h in finance.headers %}<th>{{ h }}</th>{% endfor %}</tr>{% for r in finance.rows %}<tr><td>{{ r.month }}</td>{% for c in r.cells %}<td>{{ c|default_if_none:'Unknown' }}</td>{% endfor %}</tr>{% endfor %}</table>
+<p>Only reviewed aggregate fields appear here. Unknown values remain unknown; this report grants no financial execution authority.</p>

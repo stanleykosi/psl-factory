@@ -1,0 +1,39 @@
+{
+  "checkpoint": 405,
+  "release": 108,
+  "deferred": 14,
+  "original_rows_preserved": 122,
+  "full_product_complete": false,
+  "passing_runs": [
+    401,
+    403,
+    404,
+    405
+  ],
+  "browser_b_native_counts": {
+    "same_work": 134,
+    "review_count": 1,
+    "issue_count": 1,
+    "delivery_count": 1,
+    "cash_count": 0,
+    "remote_files": 2,
+    "budget_used": 1400,
+    "lifetime_allowance": 20000,
+    "new_profile_cap": 40000,
+    "reservation_at_adoption": 600,
+    "bound_profile": 56234,
+    "job_attempts": {
+      "issue": 4,
+      "deliver": 1
+    }
+  },
+  "static_checks": {
+    "django": 0,
+    "migration_drift": 0,
+    "compile": 0,
+    "dependencies": 0
+  },
+  "new_dependencies": [],
+  "main_preservation": "docs/test-evidence/2026-11-01-factory-main-after.json",
+  "migration_rehearsal": "docs/test-evidence/2026-11-01-factory-migration-rehearsal.json"
+}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Project report</h1><p>Project {{ case_id }} · Audience {{ audience }}</p>
+{% if hold %}<p>View unavailable until the dependent criteria or recorded source is current: {{ hold }}</p>{% else %}
+{% if projection.synthetic %}{% endif %}
+<p>{{ projection.semantics }}</p>
+{% if can_inspect %}<p><a href="?inspect=1">Inspect permitted metadata gaps</a></p>{% endif %}
+{% for name, group in projection.groups.items %}
+<section>
+<h2>{% if name == 'identifiers' %}Project identifier history{% elif name == 'milestones' %}Recorded milestones{% elif name == 'actions' %}Recorded actions{% else %}Delivery event history{% endif %}</h2>
+{% if group.truncated %}<p>More permitted records exist in this group. This view uses the configured row limit.</p>{% endif %}
+<table><tr><th>Reference</th><th>Recorded fact</th><th>Source time</th><th>Configured age</th></tr>
+{% for item in group.items %}<tr>
+<td>{% if name == 'identifiers' %}{{ item.namespace }} / {{ item.value }}{% elif name == 'milestones' %}{{ item.name }}{% elif name == 'actions' %}{{ item.reference }}{% else %}Event #{{ item.id }} / dossier #{{ item.dossier_id }}{% endif %}</td>
+<td>{% if name == 'identifiers' %}Recorded identifier{% elif name == 'milestones' %}Completion recorded{% elif name == 'actions' %}{{ item.status }} · {{ item.owner_assigned|yesno:'Owner recorded,No owner recorded' }}<br>Recorded deadline: {{ item.due_at|default_if_none:'Unknown / not recorded' }} ({{ item.deadline_basis }}){% else %}{{ item.kind }}{% endif %}</td>
+<td>{{ item.source_at }}</td><td>{% if item.freshness == 'outside_recorded_age' %}Outside configured age{% else %}Within configured age{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="4">No recorded facts. Source coverage remains unknown.</td></tr>{% endfor %}</table>
+</section>{% endfor %}
+<p>Configuration #{{ projection.configuration_id }} · Metadata observed {{ projection.observed_at }}</p>
+{% endif %}{% endblock %}

@@ -1,0 +1,11 @@
+{
+  "prior_main_rowsets_preserved": 319,
+  "prior_migration_files_preserved": 187,
+  "tables": 321,
+  "functions": 76,
+  "triggers": 352,
+  "constraints": 1700,
+  "main_test_definitions_identical": true,
+  "new_impact_tables_empty": true,
+  "actual_owner_or_business_values_installed": false
+}

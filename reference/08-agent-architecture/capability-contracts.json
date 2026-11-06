@@ -1,0 +1,386 @@
+{
+  "version": "0.3-proposal",
+  "status": "Architecture specification only; candidate grants are not existing PSL permission",
+  "trust_rule": "Actor, tenant, grants, approval verification and current state are supplied and enforced by trusted runtime services, never accepted from an agent-written claim.",
+  "invocation": {
+    "tenant_id": "Required authenticated tenant namespace; PSL is the first policy pack, not a hard-coded global tenant.",
+    "case_id": "Stable business-case reference; may link engagement, project, transaction or report through owning records.",
+    "task_id": "Stable task identity; attempts have separate attempt_id.",
+    "process_ids": "One or more unchanged original IDs from the122-entry register.",
+    "capability_id": "Registered capability with a pinned contract version.",
+    "purpose": "Declared business purpose constrained by policy.",
+    "principal_ref": "Verified human/service identity attached by runtime.",
+    "grant_ref": "Runtime-verified, short-lived, purpose/resource/action-scoped grant; not a model-generated permission.",
+    "workflow_version": "Pinned owner-reviewed workflow definition.",
+    "policy_version": "Pinned policy version plus current revocation checks.",
+    "tool_contract_versions": "Exact allowed adapter/operation schemas and semantic versions.",
+    "model_route_version": "Approved model/provider route and reasoning/tool settings.",
+    "prompt_version": "Versioned worker instructions, controlled outside agent authority.",
+    "input_refs": "Typed immutable artifact references with hash, source version, evidence class and access label.",
+    "expected_state_version": "Concurrency precondition checked at action commit.",
+    "approval_refs": "Only when required by the real governing policy; separately verified by runtime.",
+    "allowed_operations": "Subset of registered operations granted for this invocation.",
+    "operation_key": "Stable semantic effect key; changed payload requires deliberate new operation/correction policy.",
+    "bounds": "Required positive integer max_attempts, max_task_depth, max_fan_out, max_elapsed_seconds and max_no_progress_repetitions.",
+    "completion_contract": "Required output_schema_id, nonempty success_assertions/failure_outcomes and escalation_policy_ref; gateway validates semantics.",
+    "execution_kind": "model_task or deterministic_task; model route and prompt versions mandatory for model_task.",
+    "effect_class": "read_analyze, bounded_internal_write or consequential_effect; any effect-bearing task requires operation_key."
+  },
+  "result": {
+    "status": [
+      "completed",
+      "needs_evidence",
+      "needs_human_decision",
+      "validation_failed",
+      "stale_state",
+      "permission_denied",
+      "failed_retryable",
+      "failed_terminal",
+      "effect_outcome_unknown",
+      "cancelled"
+    ],
+    "output_refs": "Typed output artifacts, each with source lineage and restrictions.",
+    "evidence_refs": "Source identifiers and exact content versions/locations supporting claims.",
+    "unknowns": "Explicit absent, conflicting or unverified facts; do not infer true zero.",
+    "proposed_actions": "Typed requests separate from observations and completed effects.",
+    "completed_effect_refs": "Only trusted gateway receipts establish execution; agent narrative is not proof.",
+    "validation_results": "Shape, semantic, authority, freshness, identity, units/period and business-rule checks.",
+    "decision_summary": "Concise inspectable rationale with citations, not hidden chain-of-thought.",
+    "audit_refs": "Correlated task/attempt/model/tool/policy/event records."
+  },
+  "artifact_types": {
+    "EvidenceRef": "source_id, content_hash, version, location, origin, evidence_class, access_label, extraction_method, redaction_status",
+    "ExtractedFactSet": "typed facts + per-fact citations + unknowns/conflicts + source versions; not policy",
+    "CasePatch": "allowlisted field operations + prior version + reason/evidence + reversible/compensating semantics",
+    "TaskPlan": "registered capability nodes + typed edges + dependencies + allowed operations + completion conditions; no new workflow transitions",
+    "DiagnosticReport": "observed discrepancy + deterministic checks/results + hypotheses labelled as such + unresolved cause + proposed next task",
+    "CalculationResult": "rule version + input hashes + units/period + deterministic result + validation evidence; model cannot supply an unapproved rule",
+    "ApprovalEvidence": "issuer/actor, prescribed decision, exact subject/version/hash, policy basis, decision time and revocation/invalidation state",
+    "HandoffEvent": "event ID, event type, stable engagement/business subject, versioned evidence, sender, recipient purpose, correction link and permitted payload",
+    "EffectReceipt": "operation key, payload hash, destination identity, accepted/confirmed/rejected/unknown state, external receipt and reconciliation evidence",
+    "ReviewableArtifact": "versioned draft, source lineage, intended audience, allowed-field projection and review state",
+    "EvaluationResult": "independent fixture/oracle version, assertions, observed outputs/effects, failure classes and reviewer disposition"
+  },
+  "semantic_invariants": [
+    "No cross-tenant case, artifact, grant, cache or tool reference.",
+    "No transition outside the pinned workflow definition.",
+    "No approval created by an agent result, confidence score or reviewer-agent agreement.",
+    "No write based only on an earlier permission check; revalidate immediately before commit.",
+    "No required source field replaced with guessed value, zero, rate or identifier.",
+    "No external publication from a general draft or internal evidence-pack operation.",
+    "No unknown-effect retry until receipt/idempotency reconciliation permits it.",
+    "No workflow/policy/tool/prompt/code modification through business-task tools.",
+    "No model-authored calculation formula treated as approved business policy.",
+    "No disclosure of retrieved content outside its allowed purpose/audience."
+  ],
+  "capability_contracts": [
+    {
+      "id": "C01",
+      "name": "Extract and reconcile evidence",
+      "roles": [
+        "A02"
+      ],
+      "input_types": [
+        "EvidenceRef[]"
+      ],
+      "output_types": [
+        "ExtractedFactSet"
+      ],
+      "candidate_operations": [
+        "evidence.read",
+        "evidence.search_within_grant",
+        "artifact.create_restricted_draft"
+      ],
+      "required_checks": [
+        "Access and source-version checks",
+        "Per-fact source citation",
+        "Conflicts and extraction uncertainty retained",
+        "Document instructions never become policy"
+      ],
+      "human_boundary": "Human resolves legally/accountingly material ambiguity; signature evidence is not certified by extraction.",
+      "failure_and_recovery": "Unparseable/redacted content becomes needs_evidence; preserve source, do not reconstruct redactions.",
+      "synthetic_acceptance": "Two sources disagree on milestone date: return both citations and conflict, not a fabricated consensus.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C02",
+      "name": "Triage and enrich an internal case",
+      "roles": [
+        "A01"
+      ],
+      "input_types": [
+        "EvidenceRef[]",
+        "CaseSnapshot"
+      ],
+      "output_types": [
+        "CasePatch",
+        "TaskPlan"
+      ],
+      "candidate_operations": [
+        "case.read",
+        "case.propose_link",
+        "case.apply_allowlisted_patch",
+        "task.create_internal"
+      ],
+      "required_checks": [
+        "Tenant/customer identity",
+        "No silent merging",
+        "Expected state version",
+        "Configured reversible field grant"
+      ],
+      "human_boundary": "Ambiguous transaction/customer link requires designated review; no corrective execution authority.",
+      "failure_and_recovery": "Stale state requires reload/re-evaluation; undo patch or append correction per configured policy.",
+      "synthetic_acceptance": "Two similarly named clients: retain distinct references and request clarification rather than merge.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C03",
+      "name": "Plan and coordinate permitted tasks",
+      "roles": [
+        "O01",
+        "A04"
+      ],
+      "input_types": [
+        "CaseSnapshot",
+        "WorkflowDefinitionRef",
+        "TaskResult[]"
+      ],
+      "output_types": [
+        "TaskPlan",
+        "TaskDispatchReceipt"
+      ],
+      "candidate_operations": [
+        "workflow.allowed_tasks",
+        "task.dispatch",
+        "task.cancel_unstarted",
+        "task.request_retry",
+        "task.create_internal"
+      ],
+      "required_checks": [
+        "Plan schema and node allowlist",
+        "Typed edge compatibility",
+        "No cycle/unbounded fan-out",
+        "Policy/state preconditions",
+        "Cancellation effect status"
+      ],
+      "human_boundary": "Cannot choose a new approver, change workflow, grant access or waive a gate.",
+      "failure_and_recovery": "No-progress bound parks case with evidence and actionable question; cancellation cannot undo confirmed effects.",
+      "synthetic_acceptance": "Plan adds an evidence-read task within allowed graph; arbitrary workflow-edit node is rejected.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C04",
+      "name": "Investigate a discrepancy",
+      "roles": [
+        "A03",
+        "A05"
+      ],
+      "input_types": [
+        "CaseSnapshot",
+        "EvidenceRef[]",
+        "CalculationResult[]"
+      ],
+      "output_types": [
+        "DiagnosticReport",
+        "TaskPlan"
+      ],
+      "candidate_operations": [
+        "evidence.read",
+        "diagnostic.compare",
+        "calculation.run_approved_rule",
+        "task.create_internal"
+      ],
+      "required_checks": [
+        "Approved rule/version",
+        "Units/sign/period alignment",
+        "No balancing plug",
+        "Read and diagnostic bounds"
+      ],
+      "human_boundary": "Accounting interpretation or adjustment remains with Finance authority; root cause may remain unknown.",
+      "failure_and_recovery": "Missing formula returns needs_evidence; do not synthesize a rule and call it validation.",
+      "synthetic_acceptance": "A2base-units versus2thousand-unit comparison yields a unit exception; no forced reconciliation.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C05",
+      "name": "Perform exact domain calculation",
+      "roles": [
+        "Deterministic domain service"
+      ],
+      "input_types": [
+        "ApprovedRuleRef",
+        "TypedDataSnapshot"
+      ],
+      "output_types": [
+        "CalculationResult"
+      ],
+      "candidate_operations": [
+        "calculation.run_approved_rule"
+      ],
+      "required_checks": [
+        "Rule approval and effective period",
+        "Typed numeric precision and units",
+        "Input completeness/duplicates",
+        "Expected invariants/tolerances from owner"
+      ],
+      "human_boundary": "No rule is supplied by model improvisation; a changed rule requires prescribed approval.",
+      "failure_and_recovery": "Invalid/missing rule or dataset blocks calculation; preserve rejected input version.",
+      "synthetic_acceptance": "Declared synthetic rule100-60+20 returns60 in one period/unit; it does not validate cash carry-forward.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C06",
+      "name": "Prepare and check approval evidence",
+      "roles": [
+        "A07",
+        "A02"
+      ],
+      "input_types": [
+        "EvidenceRef[]",
+        "RequiredPrerequisiteSet",
+        "SubjectVersion"
+      ],
+      "output_types": [
+        "PreflightReport",
+        "TaskPlan"
+      ],
+      "candidate_operations": [
+        "approval.read_verified_reference",
+        "artifact.create_restricted_draft",
+        "task.create_internal"
+      ],
+      "required_checks": [
+        "Issuer identity and authority",
+        "Exact subject/build/version",
+        "No expired/revoked/stale decision",
+        "Actual prescribed order only"
+      ],
+      "human_boundary": "A07 never approves, invents GLPI waiver or acts as client/Finance/Engineering authority.",
+      "failure_and_recovery": "Missing or conflicting evidence blocks the relevant transition and routes a permitted clarification.",
+      "synthetic_acceptance": "QA evidence forbuildv1 cannot satisfybuildv2 preflight unless approved policy explicitly permits it.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C07",
+      "name": "Dispatch an internal handoff",
+      "roles": [
+        "A04",
+        "O01"
+      ],
+      "input_types": [
+        "HandoffEvent",
+        "ApprovalEvidence[] when prescribed"
+      ],
+      "output_types": [
+        "EffectReceipt"
+      ],
+      "candidate_operations": [
+        "handoff.validate",
+        "handoff.submit_internal",
+        "handoff.query_receipt"
+      ],
+      "required_checks": [
+        "Allowed destination and payload projection",
+        "Stable operation key and payload hash",
+        "Source/evidence versions",
+        "Prescribed prerequisite and grant checks"
+      ],
+      "human_boundary": "Internal delivery is not recognition, invoice release, cash receipt or approval.",
+      "failure_and_recovery": "Timeout after submission yields effect_outcome_unknown; query destination before retry.",
+      "synthetic_acceptance": "Same milestoneevent deliveredtwice yields one receiving item where adapter dedupe is proven; otherwise duplicate/unknown is surfaced.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C08",
+      "name": "Reconcile an uncertain effect",
+      "roles": [
+        "A03",
+        "A04"
+      ],
+      "input_types": [
+        "EffectIntent",
+        "AttemptRecord[]"
+      ],
+      "output_types": [
+        "EffectReceipt",
+        "DiagnosticReport"
+      ],
+      "candidate_operations": [
+        "effect.lookup_by_operation_key",
+        "effect.compare_payload",
+        "task.request_retry"
+      ],
+      "required_checks": [
+        "Destination identity",
+        "Key/payload equivalence",
+        "Receipt authenticity",
+        "Adapter retry guarantees"
+      ],
+      "human_boundary": "No blind financial re-execution or invented success; unresolved ambiguity needs operational owner.",
+      "failure_and_recovery": "If destination cannot prove state, park and escalate; compensation uses separate authorized contract.",
+      "synthetic_acceptance": "Accepted destination receipt after sender timeout prevents a second submission.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C09",
+      "name": "Prepare audience-specific reporting",
+      "roles": [
+        "A06",
+        "A02"
+      ],
+      "input_types": [
+        "EvidenceRef[]",
+        "ApprovedDataProjection",
+        "ReportTemplateRef"
+      ],
+      "output_types": [
+        "ReviewableArtifact"
+      ],
+      "candidate_operations": [
+        "report.compose_draft",
+        "report.apply_allowed_field_projection",
+        "artifact.create_restricted_draft"
+      ],
+      "required_checks": [
+        "Source grounding",
+        "Audience field policy",
+        "Exact version",
+        "No raw payroll/internal issue leakage"
+      ],
+      "human_boundary": "Publication/release is a distinct operation requiring actual prescribed review/recipient authority.",
+      "failure_and_recovery": "Unsupported claim or audience ambiguity returns validation_failed/needs_human_decision.",
+      "synthetic_acceptance": "Client draft includes approved status but excludes internal incident discussion and restricted evidence links.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    },
+    {
+      "id": "C10",
+      "name": "Evaluate a task result",
+      "roles": [
+        "A08"
+      ],
+      "input_types": [
+        "IndependentFixtureRef",
+        "ExpectedOutcomeRef",
+        "TaskResult"
+      ],
+      "output_types": [
+        "EvaluationResult"
+      ],
+      "candidate_operations": [
+        "evaluation.run_assertions",
+        "evidence.read_within_fixture",
+        "artifact.record_evaluation"
+      ],
+      "required_checks": [
+        "Independent oracle provenance",
+        "No production data/effects",
+        "Deterministic assertions separate from modeljudgment",
+        "Reviewer cannot approve ownoutput"
+      ],
+      "human_boundary": "Evaluator cannot manufacture accounting policy or override failed authority assertions.",
+      "failure_and_recovery": "Disputed semantic score goes to adjudication; critical forbidden effect fails regardless of prosequality.",
+      "synthetic_acceptance": "Perfect summary with unauthorized cross-tenant tool call is a failed evaluation.",
+      "status": "Proposed capability; execute only under explicitly configured grants"
+    }
+  ]
+}

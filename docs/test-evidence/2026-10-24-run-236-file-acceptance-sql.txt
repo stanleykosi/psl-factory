@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_sql_closed_file_lineage_immutability_and_bidirectional_source_cycle_guards (tests.test_file_acceptance.FileAcceptanceTests.test_sql_closed_file_lineage_immutability_and_bidirectional_source_cycle_guards) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 168.507s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

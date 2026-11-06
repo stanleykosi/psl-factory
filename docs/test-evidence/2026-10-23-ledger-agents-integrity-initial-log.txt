@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\verify_ledger_agents.py", line 437, in <module>
+    value=migration_domain.report(viewer,case.pk,info['current_assessment']);assert value['documentary_readiness_reviewed'] and not value['operational_ready'] and not value['native_migration_execution_verified'] and not value['deployment_authorized']
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

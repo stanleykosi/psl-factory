@@ -1,0 +1,50 @@
+Using existing test database for alias 'default'...
+
+E...............
+======================================================================
+ERROR: test_actual_finance_role_and_source_access_required (tests.test_billing_evidence.BillingEvidenceTests.test_actual_finance_role_and_source_access_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_billing_evidence.py", line 45, in test_actual_finance_role_and_source_access_required
+    with self.assertRaises(ValidationError):d.assess(f['actor'],f['case'].pk,f['invoice'].pk,'issue')
+                                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\billing_evidence.py", line 133, in assess
+    pins,rule,findings=snapshot(i,effect)
+                       ~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\billing_evidence.py", line 119, in snapshot
+    pins,rule=rule_context(i,effect);rows=[];findings=[]
+              ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\billing_evidence.py", line 91, in rule_context
+    current(i);st=active_component(STATEMENT,i.case);ct=active_component(CONTROLS,i.case)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 300, in active_component
+    result=resolve(component,case)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 247, in resolve
+    validate_envelope(case, config.envelope, runtime=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 104, in validate_envelope
+    validate_d03(envelope['component_id'],target,case,runtime=runtime)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\d03_validators.py", line 11, in validate_reference
+    s=d.exact_source(case,v['source_id']);r=d.confirmed(s)
+                                            ~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\billing_evidence.py", line 68, in confirmed
+    if r.authority!=finance(r.actor,s.case,'d03.review'):raise ValidationError('Source-confirmation authority changed')
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\billing_evidence.py", line 28, in finance
+    readable(a,c);require(a,c,action);require(a,c,'d03.source.read');return decision_authority(a,c,'Finance')
+                                      ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+----------------------------------------------------------------------
+Ran 16 tests in 21.807s
+
+FAILED (errors=1)
+Preserving test database for alias 'default'...
+
+Found 16 test(s).
+System check identified no issues (0 silenced).

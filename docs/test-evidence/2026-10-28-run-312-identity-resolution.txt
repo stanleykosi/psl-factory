@@ -1,0 +1,146 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying pmo.0040_identity_resolution... OK
+  Applying pmo.0041_identity_resolution_guard...test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_cycles_conflicting_targets_scope_proofs_and_policy_changes (tests.test_identity_resolution.ProjectIdentityResolutionTests.test_cycles_conflicting_targets_scope_proofs_and_policy_changes) ... ok
+test_missing_policy_holds_only_resolution_current_findings_ui_and_revocation (tests.test_identity_resolution.ProjectIdentityResolutionTests.test_missing_policy_holds_only_resolution_current_findings_ui_and_revocation) ... ERROR
+test_opposite_aliases_on_two_connections_cannot_form_a_cycle (tests.test_identity_resolution.ProjectIdentityResolutionTests.test_opposite_aliases_on_two_connections_cannot_form_a_cycle) ... ok
+test_capture_before_policy_assignment_registration_alias_export_and_current_holds (tests.test_engagement_intake.EngagementIntakeTests.test_capture_before_policy_assignment_registration_alias_export_and_current_holds) ... ok
+
+======================================================================
+ERROR: test_missing_policy_holds_only_resolution_current_findings_ui_and_revocation (tests.test_identity_resolution.ProjectIdentityResolutionTests.test_missing_policy_holds_only_resolution_current_findings_ui_and_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 893, in _resolve_lookup
+    current = current[bit]
+              ~~~~~~~^^^^^
+KeyError: 'status'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 903, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'dict' object has no attribute 'status'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 909, in _resolve_lookup
+    current = current[int(bit)]
+                      ~~~^^^^^
+ValueError: invalid literal for int() with base 10: 'status'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_identity_resolution.py", line 50, in test_missing_policy_holds_only_resolution_current_findings_ui_and_revocation
+    self.assertContains(client.get(url,{'other_case':str(other.pk)}),'Finding against')
+                        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1127, in get
+    response = super().get(
+        path,
+    ...<4 lines>...
+        **extra,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 475, in get
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<4 lines>...
+        **extra,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\identity_resolution_views.py", line 59, in workbench
+    response=render(request,'pmo/identity_resolution.html',{'case':c,'other':other,'selection':selection,'form':form,'policy_form':policy,'grants':grants,'schema':json.dumps(VALUE,indent=2),'policy_status':policy_status(COMPONENT,c).status,'result':d.report(request.user,c.pk)})
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 172, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\utils.py", line 114, in instrumented_test_render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\utils.py", line 114, in instrumented_test_render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1077, in render
+    output = self.filter_expression.resolve(context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 744, in resolve
+    arg_vals.append(arg.resolve(context))
+                    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 856, in resolve
+    value = self._resolve_lookup(context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 916, in _resolve_lookup
+    raise VariableDoesNotExist(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )  # missing attribute
+    ^
+django.template.base.VariableDoesNotExist: Failed lookup for key [status] in {'id': 4, 'other_case_id': '181ab682-426d-4ee6-8169-fefee773e7a1', 'relation': 'alias', 'currently_accepted': True, 'evidence_id': 66161, 'other_evidence_id': 66163, 'access_transferred': False, 'business_records_transferred': False, 'financial_authority': False}
+
+----------------------------------------------------------------------
+Ran 5 tests in 87.710s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

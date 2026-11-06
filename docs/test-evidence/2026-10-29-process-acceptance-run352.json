@@ -1,0 +1,20 @@
+{
+  "run": 352,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_correction_impact",
+    "tests.test_policy_impact",
+    "tests.test_pilot_preflight.PilotTests.test_actual_csrf_ui_capture_export_agent_and_no_get_writes",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-352-process-acceptance.txt",
+  "started_at": "2026-10-29T09:43:30.550423+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 146.139
+}

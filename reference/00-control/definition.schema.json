@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PSL process definition collection v0.1",
+  "description": "Documentation structure, not executable business policy. Original IDs and register wording must also match register.json.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "title",
+      "classification",
+      "source_owner",
+      "family",
+      "summary",
+      "trigger",
+      "evidence",
+      "facts",
+      "proposed_design",
+      "decisions",
+      "inputs",
+      "outputs",
+      "steps",
+      "states",
+      "approvals",
+      "permissions",
+      "exceptions",
+      "handoffs",
+      "automation",
+      "tests",
+      "scope",
+      "readiness"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "classification": {
+        "type": "string"
+      },
+      "source_owner": {
+        "type": "string"
+      },
+      "family": {
+        "type": "string"
+      },
+      "summary": {
+        "type": "string"
+      },
+      "trigger": {
+        "type": "string"
+      },
+      "evidence": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "facts": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "proposed_design": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "decisions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "inputs": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "outputs": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "states": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "approvals": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "permissions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "exceptions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "handoffs": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "automation": {
+        "type": "object",
+        "required": [
+          "deterministic",
+          "human",
+          "ai_proposed"
+        ],
+        "properties": {
+          "deterministic": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "human": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ai_proposed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "tests": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "id",
+            "scenario",
+            "expected",
+            "basis"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "scenario": {
+              "type": "string"
+            },
+            "expected": {
+              "type": "string"
+            },
+            "basis": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "scope": {
+        "type": [
+          "string",
+          "object",
+          "array"
+        ]
+      },
+      "readiness": {
+        "type": [
+          "string",
+          "object",
+          "array"
+        ]
+      }
+    }
+  }
+}

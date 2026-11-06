@@ -1,0 +1,7 @@
+{
+  "listener": "  TCP    127.0.0.1:8000         0.0.0.0:0              LISTENING       29312",
+  "pid": 29312,
+  "started_utc": "2026-10-28T09:27:38.5395913Z",
+  "action": "verified_owned_server_stopped",
+  "path": "C:\\Python313\\python.exe"
+}

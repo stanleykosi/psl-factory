@@ -1,0 +1,203 @@
+[
+  {
+    "id": "D01",
+    "kind": "conflicting policy",
+    "topic": "Emergency deployment versus GLPI and Standard preapproval",
+    "source_rule_refs": [
+      "S03",
+      "S10",
+      "S12"
+    ],
+    "owner_role": "PMO, Engineering, Security and prescribed approval owners",
+    "required_evidence": "Written reconciliation of emergency authorization and general predeployment GLPI; approved Standard-change catalogue and explicit satisfied/remaining gates.",
+    "do_not_reask": "Do not infer emergency waiver or blanket preapproval.",
+    "status": "open"
+  },
+  {
+    "id": "D02",
+    "kind": "conflicting baseline sequencing",
+    "topic": "Signed SOW before Planning versus Planning inputs forming SOW basis",
+    "source_rule_refs": [
+      "S05",
+      "S08"
+    ],
+    "owner_role": "PMO and commercial/client baseline owners",
+    "required_evidence": "None for the sequence. Actual contract revisions still follow the established change/costing controls.",
+    "do_not_reask": "Known cost-changing revisions already repeat costing chain; do not ask that again.",
+    "status": "resolved_by_user",
+    "resolution": "U01 confirms detailed planning and costing before signed SOW. Do not re-ask this order."
+  },
+  {
+    "id": "D03",
+    "kind": "conflicting transcription",
+    "topic": "Prices versus signing in billing narrative",
+    "source_rule_refs": [
+      "S18"
+    ],
+    "owner_role": "Finance owner",
+    "required_evidence": "Check source recording segment or obtain written confirmation of intended statement plus actual invoice-flow release controls.",
+    "do_not_reask": "FIN P0023 says prices; VID U0079 says sign. No new signature gate assumed.",
+    "status": "open"
+  },
+  {
+    "id": "D04",
+    "kind": "absent configuration",
+    "topic": "Clock and deadline applicability",
+    "source_rule_refs": [
+      "S01",
+      "S02",
+      "S03",
+      "S16",
+      "S17",
+      "S23"
+    ],
+    "owner_role": "PMO and relevant service/agreement owners",
+    "required_evidence": "IANA timezone, clock anchors/pauses, holidays/working calendar; exact choice within1\u20132workingdays; meeting hour/report day; actual SLA notice clauses and billing dates.",
+    "do_not_reask": "Known Tuesday/weekly/monthly and24h/48h rules are already filled.",
+    "status": "open"
+  },
+  {
+    "id": "D05",
+    "kind": "absent authority configuration",
+    "topic": "Identity delegation and decision revisions",
+    "source_rule_refs": [
+      "S06",
+      "S07",
+      "S08",
+      "S09",
+      "S10",
+      "S11",
+      "S12",
+      "S27",
+      "S28",
+      "S31"
+    ],
+    "owner_role": "Prescribed approval owners and identity administrator",
+    "required_evidence": "Named role assignments, delegation/absence, dual-role eligibility, reject/return/withdraw authority and non-cost invalidation rules.",
+    "do_not_reask": "Do not request new approval gates or replace known role matrix.",
+    "status": "open"
+  },
+  {
+    "id": "D06",
+    "kind": "absent source artifacts",
+    "topic": "Native financial imports maps and exact oracles",
+    "source_rule_refs": [
+      "S19",
+      "S21",
+      "S22"
+    ],
+    "owner_role": "Finance reporting owner",
+    "required_evidence": "Redacted TB/export plus native workbooks, account/BU maps, formula lineage, unit/sign/currency/period conventions, F07/F09/F39 expected examples and missing-match behavior.",
+    "do_not_reask": "Known chain, exact F23 tie-out and narrated F25 formula are not unknown; observed cells remain narrow.",
+    "status": "open"
+  },
+  {
+    "id": "D07",
+    "kind": "withheld source rules",
+    "topic": "Payroll sources and private allocation workings",
+    "source_rule_refs": [
+      "S20"
+    ],
+    "owner_role": "Finance allocation owner and HR data owner",
+    "required_evidence": "Authorized redacted two-source samples, join/overlap semantics, effective staff/BU history, pool/ratio tables, denominator/monthly/rounding/residual examples.",
+    "do_not_reask": "Headcount applies to described other-staff pool only; Finance HR-read-only boundary is already established.",
+    "status": "open"
+  },
+  {
+    "id": "D08",
+    "kind": "absent adapter and billing configuration",
+    "topic": "Actual invoice flow pricing and correction behavior",
+    "source_rule_refs": [
+      "S18",
+      "S23"
+    ],
+    "owner_role": "Finance/Data/BaaS flow and pricing owners",
+    "required_evidence": "Flow export/environment/run evidence, exact input/output/effects, approved price effective dates/tax/tier/rounding, service billing dates, batch duplicate/correction examples and actual permissions.",
+    "do_not_reask": "Generation/posting/sending are distinct actions, not invented mandatory approval gates.",
+    "status": "open"
+  },
+  {
+    "id": "D09",
+    "kind": "absent operating procedures",
+    "topic": "Support reconciliation and financial queues",
+    "source_rule_refs": [
+      "S17",
+      "S25",
+      "S26"
+    ],
+    "owner_role": "Support/Reconciliation/Engineering owners",
+    "required_evidence": "Referenced Support SOP and Reconciliation brief; redacted settled/pending/failed/corrected examples, identifiers/cutoff, queue commands/states/access and completion evidence; onboarding stage catalogue.",
+    "do_not_reask": "Do not infer business queue semantics from infrastructure queues or grant direct credit access.",
+    "status": "open"
+  },
+  {
+    "id": "D10",
+    "kind": "absent correction and audience rules",
+    "topic": "Historical reporting and forecast controls",
+    "source_rule_refs": [
+      "S21",
+      "S23"
+    ],
+    "owner_role": "Finance and reporting audience owners",
+    "required_evidence": "Names/effective dates of added categories; approved restatement/correction treatment; forecast inclusion/opening-balance/partial-receipt rules and exact internal/group projection.",
+    "do_not_reask": "Forecast is partial, not assumed100% coverage; known annual budget method need not be rediscovered.",
+    "status": "open"
+  },
+  {
+    "id": "D11",
+    "kind": "absent integration evidence",
+    "topic": "Remaining integration and document configuration",
+    "source_rule_refs": [
+      "S05",
+      "S13",
+      "S14",
+      "S24",
+      "S29",
+      "S30"
+    ],
+    "owner_role": "PMO/Finance/repository owners",
+    "required_evidence": "Named recipients/grants and any remaining external adapter details; controlled document templates, storage/retention, migration and evidence requirements; Engineering hypercare criteria. PMO milestone ownership and absence of requested document tooling are now answered by U02/U03.",
+    "do_not_reask": "Do not ask which existing document/evidence tool to integrate or whether Finance must approve PMO milestone completion. PSL tooling is requested; PMO establishes completion.",
+    "status": "open"
+  },
+  {
+    "id": "D12",
+    "kind": "absent contract-specific billing data",
+    "topic": "Stage schedule and precise trigger evidence",
+    "status": "open",
+    "owner_role": "PMO and Finance with commercial contract owner",
+    "source_rule_refs": [
+      "U03",
+      "U04",
+      "U05"
+    ],
+    "required_evidence": "Approved contract schedule with stage amounts or percentages, currency/tax basis, due terms and rounding; exact completion-stage event; which UAT record establishes the billing trigger. Example signed agreement with invoice/receipt references.",
+    "do_not_reask": "Three stages, signed-SOW opening trigger, UAT-stage invoice and PMO milestone ownership are already supplied. No50/30/20 default."
+  },
+  {
+    "id": "D13",
+    "kind": "pending explicit clarification",
+    "topic": "Configure human payment exception authority and assessment basis",
+    "status": "open_configuration",
+    "owner_role": "PMO, Finance and existing release authority owners",
+    "source_rule_refs": [
+      "U06",
+      "U07",
+      "U08"
+    ],
+    "required_evidence": "Actual authorized human role/principals and delegation evidence when available; approved exception validity/revocation/reassessment rules; agreed payment denominator and qualifying funds basis. Do not enable exception approval before authority is configured.",
+    "do_not_reask": "Exception capability and human-only approval are confirmed. The user cannot name the role yet; keep UNCONFIGURED without blocking unrelated definition work."
+  },
+  {
+    "id": "D14",
+    "kind": "absent accounting and operational policy",
+    "topic": "Receipts allocations and adjustments",
+    "status": "open",
+    "owner_role": "Finance owner",
+    "source_rule_refs": [
+      "U05"
+    ],
+    "required_evidence": "Verification source and authorized receipt recorder; allocation priority/approval, refunds/credits/write-offs/chargebacks, correction permissions and legal/accounting document requirements. Provide approved examples including unmatched and excess payment.",
+    "do_not_reask": "Irregular partial payments and Finance responsibility are known. Technical conservation and audit rules do not decide accounting policy."
+  }
+]

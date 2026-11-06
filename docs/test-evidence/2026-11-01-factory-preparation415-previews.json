@@ -1,0 +1,20 @@
+[
+  {
+    "port": 8000,
+    "pid": 12168,
+    "executable": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-01T20:17:45.0107660Z",
+    "session": 1068,
+    "database": "psl",
+    "source": 415
+  },
+  {
+    "port": 8003,
+    "pid": 20376,
+    "executable": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-01T20:17:45.0248903Z",
+    "session": 26423,
+    "database": "psl_factory_planning_ui_780d38dc78ac",
+    "source": 415
+  }
+]

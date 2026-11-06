@@ -1,0 +1,23 @@
+{
+  "source_hashes_verified": 41,
+  "process_ids": 122,
+  "families": 13,
+  "plan_ids": 122,
+  "coverage": {
+    "partial": 88,
+    "not_started": 34
+  },
+  "source_titles": "exact",
+  "build_json": "valid",
+  "actual_test_runs": {
+    "RUN-58": {
+      "passed": 142,
+      "seconds": 441.859
+    },
+    "RUN-59": {
+      "passed": 26,
+      "seconds": 80.186
+    }
+  },
+  "test_counts_overlap": true
+}

@@ -1,0 +1,11 @@
+{
+  "immutable_source_preserved": true,
+  "integration_status": "PENDING611",
+  "original_source610_unchanged": true,
+  "working_directory": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\source615",
+  "status": "PASS12",
+  "next_working_copy": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\source616",
+  "process_seconds": 45.31,
+  "run": 615,
+  "unittest_seconds": 28.556
+}

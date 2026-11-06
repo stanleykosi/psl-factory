@@ -1,0 +1,112 @@
+{
+  "frozen_hashes": 41,
+  "process_ids": 122,
+  "families": 13,
+  "exact_title_plan_rows": 122,
+  "json_files_parsed": 65,
+  "coverage": {
+    "partial": 106,
+    "not_started": 16
+  },
+  "partial_semantic_components": 46,
+  "components_without_semantics": 11,
+  "test_runs": {
+    "RUN76": {
+      "tests": 24,
+      "seconds": 44.458,
+      "outcome": "failed_preserved"
+    },
+    "RUN77": {
+      "tests": 37,
+      "seconds": 158.683,
+      "outcome": "passed"
+    },
+    "RUN79": {
+      "tests": 154,
+      "seconds": 1102.256,
+      "outcome": "passed"
+    },
+    "RUN80": {
+      "tests": 43,
+      "seconds": 421.729,
+      "outcome": "passed"
+    },
+    "RUN81": {
+      "tests": 3,
+      "seconds": 24.989,
+      "outcome": "passed"
+    },
+    "RUN78": {
+      "outcome": "stopped_superseded",
+      "collected_or_pass_total_claimed": false,
+      "reason": "nonexistent test module and superseded sources/fixtures; incomplete raw log retained"
+    }
+  },
+  "suites_overlap": true,
+  "static_checks": {
+    "django_check": "passed",
+    "migration_drift": "none",
+    "compileall": "passed",
+    "pip_check": "passed"
+  },
+  "databases": {
+    "psl": {
+      "migrations": {
+        "finance": "0023_forecast_priority_immutability",
+        "pmo": "0033_rfp_immutability",
+        "baas": "0005_partner_guards"
+      },
+      "new_append_only_guards": 9,
+      "job_guard": true,
+      "unique_meter_claim": true
+    },
+    "test_psl": {
+      "migrations": {
+        "finance": "0023_forecast_priority_immutability",
+        "pmo": "0033_rfp_immutability",
+        "baas": "0005_partner_guards"
+      },
+      "new_append_only_guards": 9,
+      "job_guard": true,
+      "unique_meter_claim": true
+    }
+  },
+  "synthetic_demo": {
+    "case": "5c7ed1fa-c089-4a50-9d57-44a2e38fca33",
+    "current_agreement": 4,
+    "executed_source_evidence": 194,
+    "terms_decision": 3,
+    "renewal_review_intent": 4,
+    "onboarding_event": 1,
+    "owned_followups": 2,
+    "report": 1,
+    "event_count": 3,
+    "active_users": 2,
+    "review": 1,
+    "finance_job": 1,
+    "finance_receipt": 1,
+    "meter_acceptance": 1,
+    "billing_usage": 4,
+    "quantities": [
+      "1",
+      "2",
+      "3"
+    ],
+    "unique_meter_claims": 3,
+    "agent": 30,
+    "dual_role_demo": true,
+    "tests_use_separate_principals": true,
+    "source_authenticity": "supplied_synthetic_evidence_only"
+  },
+  "prior_document_receipts_preserved": 16,
+  "prior_receivables": {
+    "5a1b8ea0-d78c-4e57-9674-1deba59694d8": "17.25000000",
+    "f9f2896e-0f20-4103-97ff-0363ca50df3b": "12.25000000"
+  },
+  "actual_external_financial_effect": false,
+  "renewal_executed": false,
+  "external_notice_sent": false,
+  "onboarding_completed_by_agent": false,
+  "invoice_created": false,
+  "no_product_acceptance_claim": true
+}

@@ -1,0 +1,64 @@
+{
+  "verified_at": "2026-10-24T04:55:12.236925+00:00",
+  "frozen_sources": 41,
+  "exact_processes_titles_partial_plan_rows": 122,
+  "families": 13,
+  "policy_interfaces": 101,
+  "supplements": 44,
+  "backlog_items": 44,
+  "preserved_main_tables": 265,
+  "schemas": {
+    "psl": {
+      "migration": "0053_private_readiness_guards",
+      "immutable_and_lineage_triggers": 2,
+      "nonrecursive_handoff_trigger": 1,
+      "unique_constraints": 3
+    },
+    "test_psl": {
+      "migration": "0053_private_readiness_guards",
+      "immutable_and_lineage_triggers": 2,
+      "nonrecursive_handoff_trigger": 1,
+      "unique_constraints": 3
+    }
+  },
+  "main_new_packets": 0,
+  "main_new_private_acceptance_policies": 0,
+  "old_document_receipts": 16,
+  "pending_support_jobs": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "source_fingerprints_matched": 833,
+  "runs": {
+    "2026-10-24-run-209-readiness-acceptance-baseline.txt": {
+      "tests": 2,
+      "seconds": 87.255,
+      "result": "OK"
+    },
+    "2026-10-24-run-210-private-readiness-acceptance.txt": {
+      "tests": 11,
+      "seconds": 241.629,
+      "result": "OK"
+    },
+    "2026-10-24-run-211-private-readiness-final.txt": {
+      "tests": 16,
+      "seconds": 530.834,
+      "result": "OK"
+    },
+    "2026-10-24-run-212-private-readiness-connected.txt": {
+      "tests": 152,
+      "seconds": 1502.666,
+      "result": "OK"
+    },
+    "2026-10-24-run-213-private-readiness-implementation.txt": {
+      "tests": 1,
+      "seconds": 83.439,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "real_owner_or_operational_acceptance": false,
+  "real_provider_evaluation": false,
+  "evidence_renewed": false,
+  "unrelated_jobs_drained": false
+}

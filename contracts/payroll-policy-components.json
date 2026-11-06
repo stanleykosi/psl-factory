@@ -1,0 +1,215 @@
+{
+  "classification": "Supplemental engineering interfaces for unresolved F16/F17/F18 choices; not actual payroll policy or new D groups",
+  "components": [
+    {
+      "id": "F16.input_access_rules",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F16.input_access_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F16.merge_rules",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F16.merge_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F17.match_rules",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F17.match_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F18.reporting_rules",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F18.reporting_rules/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F18.review_authority",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F18.review_authority/v1",
+      "subject_scope": "Exact case, entity/period, source providers and explicitly authorised actors/audiences",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "payroll.capture",
+      "required_components": [
+        "F16.input_access_rules"
+      ]
+    },
+    {
+      "operation": "payroll.combine",
+      "required_components": [
+        "F16.input_access_rules",
+        "F16.merge_rules"
+      ]
+    },
+    {
+      "operation": "payroll.match",
+      "required_components": [
+        "F16.input_access_rules",
+        "F17.match_rules"
+      ]
+    },
+    {
+      "operation": "payroll.report",
+      "required_components": [
+        "F16.input_access_rules",
+        "F18.reporting_rules",
+        "F18.review_authority"
+      ]
+    }
+  ]
+}

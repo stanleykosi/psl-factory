@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0042_factory_delivery...test_agent_cannot_approve_or_authenticate_unverified_source_evidence (tests.test_factory_delivery.FactoryDeliveryTests.test_agent_cannot_approve_or_authenticate_unverified_source_evidence) ... FAIL
+
+======================================================================
+FAIL: test_agent_cannot_approve_or_authenticate_unverified_source_evidence (tests.test_factory_delivery.FactoryDeliveryTests.test_agent_cannot_approve_or_authenticate_unverified_source_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_delivery.py", line 97, in test_agent_cannot_approve_or_authenticate_unverified_source_evidence
+    self.assertEqual(f.work.status,'blocked');self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').exists())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'waiting' != 'blocked'
+- waiting
++ blocked
+
+
+----------------------------------------------------------------------
+Ran 1 test in 6.830s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

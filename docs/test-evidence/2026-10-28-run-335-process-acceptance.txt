@@ -1,0 +1,58 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0002_scopeversion_scopestate_scopeapplication...test_archived_scope_history_cannot_restore_authority (tests.test_policy_scopes.PolicyScopeTests.test_archived_scope_history_cannot_restore_authority) ... ok
+test_binding_protocol_is_finite_closed_and_scalar (tests.test_policy_scopes.PolicyScopeTests.test_binding_protocol_is_finite_closed_and_scalar) ... ok
+test_committed_uncertain_effect_reconciles_after_scope_revocation (tests.test_policy_scopes.PolicyScopeTests.test_committed_uncertain_effect_reconciles_after_scope_revocation) ... ok
+test_current_source_target_access_and_classification (tests.test_policy_scopes.PolicyScopeTests.test_current_source_target_access_and_classification) ... ok
+test_explicit_application_preserves_local_fk_and_narrow_holds (tests.test_policy_scopes.PolicyScopeTests.test_explicit_application_preserves_local_fk_and_narrow_holds) ... ok
+test_four_scope_identities_and_no_cross_case_precedence (tests.test_policy_scopes.PolicyScopeTests.test_four_scope_identities_and_no_cross_case_precedence) ... ok
+test_invalid_scope_and_unrecorded_contract_rejected (tests.test_policy_scopes.PolicyScopeTests.test_invalid_scope_and_unrecorded_contract_rejected) ... ok
+test_postgresql_immutable_history_and_edge_guards (tests.test_policy_scopes.PolicyScopeTests.test_postgresql_immutable_history_and_edge_guards) ... ok
+test_registered_reference_binding_revalidates_real_target_schema (tests.test_policy_scopes.PolicyScopeTests.test_registered_reference_binding_revalidates_real_target_schema) ... ERROR
+test_revoked_superseded_expired_and_explicit_local_successor (tests.test_policy_scopes.PolicyScopeTests.test_revoked_superseded_expired_and_explicit_local_successor) ... ok
+test_source_lifecycle_staleness_and_activation_rechecks_origin (tests.test_policy_scopes.PolicyScopeTests.test_source_lifecycle_staleness_and_activation_rechecks_origin) ... ok
+test_ui_csrf_authority_errors_and_bounded_agent (tests.test_policy_scopes.PolicyScopeTests.test_ui_csrf_authority_errors_and_bounded_agent) ... FAIL
+test_revocation_waits_for_runtime_transaction_boundary (tests.test_policy_scopes.ScopeConcurrencyTests.test_revocation_waits_for_runtime_transaction_boundary) ... ok
+test_two_applications_serialize_local_revisions (tests.test_policy_scopes.ScopeConcurrencyTests.test_two_applications_serialize_local_revisions) ... ok
+
+======================================================================
+ERROR: test_registered_reference_binding_revalidates_real_target_schema (tests.test_policy_scopes.PolicyScopeTests.test_registered_reference_binding_revalidates_real_target_schema)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_policy_scopes.py", line 122, in test_registered_reference_binding_revalidates_real_target_schema
+    src=source_version(self.a,self.s,self.se,paths=['/0/due_time'],env=env)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_policy_scopes.py", line 37, in source_version
+    transition(actor,cfg.pk,'validated')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 248, in transition
+    validate_envelope(case, config.envelope)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 34, in validate_envelope
+    raise ValidationError([f'{list(e.path)}: {e.message}' for e in errors])
+django.core.exceptions.ValidationError: ["['value']: {'sha256': '70f0f2268fc44a2692bf28f0b2ba7af16f255f7aa7b6ac51d448bf46d0ba788b', 'schema_ref': 'schema:psl/working-calendar/v1', 'artifact_ref': 'calendar', 'artifact_version': 1} is not of type 'string'"]
+
+======================================================================
+FAIL: test_ui_csrf_authority_errors_and_bounded_agent (tests.test_policy_scopes.PolicyScopeTests.test_ui_csrf_authority_errors_and_bounded_agent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_policy_scopes.py", line 164, in test_ui_csrf_authority_errors_and_bounded_agent
+    self.assertEqual(client.post(url,{'action':'create','configuration':cfg.pk,'kind':'organization','ref':self.s.tenant,'binding_paths':'[]','csrfmiddlewaretoken':token}).status_code,302)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 302
+
+----------------------------------------------------------------------
+Ran 14 tests in 67.596s
+
+FAILED (failures=1, errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

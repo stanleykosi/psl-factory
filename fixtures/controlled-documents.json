@@ -1,0 +1,20 @@
+{
+  "classification": "Synthetic test fixtures; no operational policy or real approvers",
+  "template": {
+    "document_type": "status_report",
+    "required_fields": ["executive_summary", "status"],
+    "audience_fields": {"client": ["executive_summary", "status", "next_steps"], "internal": ["executive_summary", "status", "internal_notes"]}
+  },
+  "scenarios": [
+    {"name":"missing_publication_policy", "expected":"draft and review persist; reservation reports only required D11 components"},
+    {"name":"client_projection", "expected":"internal_notes and source material never enter recipient payload"},
+    {"name":"configured_return_reject_withdraw", "expected":"only D05 matrix-authorized actions can close human waits"},
+    {"name":"configured_delegation", "expected":"finite validity and current principal/role assignment are checked at decision and delivery"},
+    {"name":"changed_policy_or_document_or_gate", "expected":"queued new effects are held; immutable receipts remain reconcilable"},
+    {"name":"timeout_after_accept", "expected":"stable-key lookup confirms one delivery without a duplicate"},
+    {"name":"synthetic_gate_source", "expected":"exact candidate, requirements hash, source owner and evidence hash must match"},
+    {"name":"unknown_critical_defects", "expected":"unknown; never zero, QA approval or release authorization"}
+  ],
+  "executable_fixture": "tests/document_helpers.py",
+  "postgresql_tests": ["tests/test_controlled_documents.py", "tests/test_pmo_gates.py"]
+}

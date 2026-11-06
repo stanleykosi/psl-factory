@@ -1,0 +1,40 @@
+{
+  "status": "APPLIED",
+  "runs": [
+    {
+      "run": 364,
+      "tests": 33,
+      "unittest_seconds": 184.354,
+      "process_seconds": 190.772,
+      "returncode": 1
+    },
+    {
+      "run": 365,
+      "tests": 8,
+      "unittest_seconds": 82.059,
+      "process_seconds": 88.777,
+      "returncode": 0
+    },
+    {
+      "run": 366,
+      "tests": 9,
+      "unittest_seconds": 301.384,
+      "process_seconds": 306.076,
+      "returncode": 0
+    }
+  ],
+  "main_preservation": {
+    "prior_main_rowsets_preserved": 326,
+    "prior_migration_files_preserved": 196,
+    "functions": 79,
+    "triggers": 363,
+    "constraints": 1719,
+    "changed_definition": "psl_policy_impact_guard forward closed private metadata contracts",
+    "main_test_definitions_identical": true,
+    "owner_values_installed": false,
+    "live_pilot_performed": false
+  },
+  "full_product_complete": false,
+  "owner_values_installed": false,
+  "next_step": "Remaining code work: typed operational role/delegation/dual-role eligibility and any unsupported emergency distinctions; additional native operation/variant guard bindings (9of92 declared operations currently have shared preview guards; other operations remain explicitly NOT_EVALUATED); concrete indirect/private input/report and other receipt consumer contracts beyond the16 declared adapters. Audit those against actual services rather than treating unknown coverage as completion. Owner policy values remain deferred. Actual vendor/source contracts/access, production identity/keys/SSO/monitoring, business oracles and supervised Security/load/UAT evidence remain separate operational inputs/validation. Full-product/no-code-gaps and live-pilot acceptance are not claimed."
+}

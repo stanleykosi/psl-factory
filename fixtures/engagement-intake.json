@@ -1,0 +1,5 @@
+{
+  "classification": "Synthetic-only policy examples; no real owners, namespace or identifier convention",
+  "assignment": {"assignment_roles": ["PMO Lead"], "allow_synthetic": true},
+  "registration": {"registration_roles": ["PMO Lead"], "namespace": "synthetic:tracker-v1", "format": "ascii_token", "max_length": 40, "case_sensitive": false, "allow_synthetic": true}
+}

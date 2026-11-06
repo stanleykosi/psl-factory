@@ -1,0 +1,18 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_verification_serializes_with_actual_claim_release_without_losing_revision (tests.test_factory_review_authority.FactoryReviewRetirementConcurrencyTests.test_verification_serializes_with_actual_claim_release_without_losing_revision) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 26.272s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

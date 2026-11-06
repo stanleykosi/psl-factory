@@ -1,0 +1,60 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 41 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0023_cold_recovery... OK
+  Applying workflows.0024_cold_recovery_guards... OK
+  Applying workflows.0025_cold_authorization_expression...test_actual_http_policy_activation_human_authorization_queue_and_live_guidance (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_actual_http_policy_activation_human_authorization_queue_and_live_guidance) ... ok
+test_capture_missing_policy_typed_validation_ui_agent_and_private_scope (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_capture_missing_policy_typed_validation_ui_agent_and_private_scope) ... ok
+test_narrow_cast_canonicalisation_preserves_real_schema_differences (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_narrow_cast_canonicalisation_preserves_real_schema_differences) ... ok
+test_policy_lifecycle_runtime_identity_and_sql_immutability (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_policy_lifecycle_runtime_identity_and_sql_immutability) ... ok
+test_admin_flag_does_not_grant_record_access (tests.test_application.ApplicationTests.test_admin_flag_does_not_grant_record_access) ... ok
+test_agent_rejects_uncited_output_and_cross_scope_read (tests.test_application.ApplicationTests.test_agent_rejects_uncited_output_and_cross_scope_read) ... ok
+test_agent_source_instructions_are_cited_data_only (tests.test_application.ApplicationTests.test_agent_source_instructions_are_cited_data_only) ... ok
+test_all_122_original_ids_visible_in_coverage (tests.test_application.ApplicationTests.test_all_122_original_ids_visible_in_coverage) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_cost_revision_cannot_reuse_decisions (tests.test_application.ApplicationTests.test_cost_revision_cannot_reuse_decisions) ... ok
+test_cross_case_evidence_cannot_form_baseline (tests.test_application.ApplicationTests.test_cross_case_evidence_cannot_form_baseline) ... ok
+test_csrf_and_template_escaping (tests.test_application.ApplicationTests.test_csrf_and_template_escaping) ... ok
+test_database_blocks_history_rewrites_even_via_queryset (tests.test_application.ApplicationTests.test_database_blocks_history_rewrites_even_via_queryset) ... ok
+test_duplicate_milestone_has_one_outbox_intent (tests.test_application.ApplicationTests.test_duplicate_milestone_has_one_outbox_intent) ... ok
+test_expired_worker_cannot_finish_after_reclaim (tests.test_application.ApplicationTests.test_expired_worker_cannot_finish_after_reclaim) ... ok
+test_human_costing_order_and_separate_review (tests.test_application.ApplicationTests.test_human_costing_order_and_separate_review) ... ok
+test_lookup_failure_does_not_dispatch (tests.test_application.ApplicationTests.test_lookup_failure_does_not_dispatch) ... ok
+test_no_signature_before_plan_and_cost_decisions (tests.test_application.ApplicationTests.test_no_signature_before_plan_and_cost_decisions) ... ok
+test_policy_expiry_invalid_timezone_and_synthetic_isolation (tests.test_application.ApplicationTests.test_policy_expiry_invalid_timezone_and_synthetic_isolation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+test_policy_partial_activation_stale_revoke_and_version_history (tests.test_application.ApplicationTests.test_policy_partial_activation_stale_revoke_and_version_history) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_requires_postgresql (tests.test_application.ApplicationTests.test_requires_postgresql) ... ok
+test_reserved_effect_payload_and_confirmed_receipt_are_immutable (tests.test_application.ApplicationTests.test_reserved_effect_payload_and_confirmed_receipt_are_immutable) ... ok
+test_review_binds_exact_version_and_does_not_review_next_revision (tests.test_application.ApplicationTests.test_review_binds_exact_version_and_does_not_review_next_revision) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_stale_command_has_no_mutation (tests.test_application.ApplicationTests.test_stale_command_has_no_mutation) ... ok
+test_superseded_role_policy_can_be_reapproved_without_rewriting_history (tests.test_application.ApplicationTests.test_superseded_role_policy_can_be_reapproved_without_rewriting_history) ... ok
+test_support_response_resolution_reopen_preserve_history (tests.test_application.ApplicationTests.test_support_response_resolution_reopen_preserve_history) ... ok
+test_unknown_external_result_is_reconciled_without_resend (tests.test_application.ApplicationTests.test_unknown_external_result_is_reconciled_without_resend) ... ok
+test_worker_rechecks_revoked_grant (tests.test_application.ApplicationTests.test_worker_rechecks_revoked_grant) ... ok
+test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation (tests.test_cold_recovery.ColdRecoveryTests.test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+test_fresh_ui_policy_scope_agent_and_sql_guards_without_source (tests.test_cold_recovery.ColdRecoveryTests.test_fresh_ui_policy_scope_agent_and_sql_guards_without_source) ... ok
+test_revoked_expired_forged_and_cross_purpose_authority (tests.test_cold_recovery.ColdRecoveryTests.test_revoked_expired_forged_and_cross_purpose_authority) ... ok
+test_concurrent_foreign_case_cannot_enter_authorized_ui_inventory (tests.test_application_recovery.NativeApplicationRecoveryTests.test_concurrent_foreign_case_cannot_enter_authorized_ui_inventory) ... ok
+test_real_archive_isolated_restore_human_review_and_physical_counterexamples (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples) ... ok
+test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation) ... ok
+test_staff_handoff_survives_worker_process_exit_and_restart (tests.test_application.WorkerConcurrencyTests.test_staff_handoff_survives_worker_process_exit_and_restart) ... ok
+test_two_workers_claim_one_intent_once (tests.test_application.WorkerConcurrencyTests.test_two_workers_claim_one_intent_once) ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 513.053s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

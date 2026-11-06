@@ -1,0 +1,7 @@
+Operations to perform:
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Running migrations:
+  Applying workflows.0047_factory_go_live... OK
+  Applying documents.0017_factory_go_live_scope... OK
+  Applying pmo.0042_go_live_reaffirmation... OK
+  Applying workflows.0048_factory_go_live_reaffirmation... OK

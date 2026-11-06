@@ -1,0 +1,19 @@
+{
+  "run": 327,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_planning",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-327-process-acceptance.txt",
+  "started_at": "2026-10-28T15:28:31.947576+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 36.103
+}

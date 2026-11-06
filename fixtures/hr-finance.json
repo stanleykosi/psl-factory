@@ -1,0 +1,106 @@
+{
+  "classification": "Synthetic shapes, not actual HR disclosure/retention/authority",
+  "authority": {
+    "human_only": true,
+    "assignments": [
+      {
+        "user_id": 1,
+        "purpose": "authorize",
+        "role": "HR"
+      },
+      {
+        "user_id": 1,
+        "purpose": "respond",
+        "role": "HR"
+      },
+      {
+        "user_id": 2,
+        "purpose": "receive",
+        "role": "Finance"
+      }
+    ]
+  },
+  "disclosure": {
+    "source_view": "synthetic-finance-view",
+    "route": "supplied_export_read_only",
+    "allowed_fields": [
+      "employee_id",
+      "bu",
+      "effective_from",
+      "effective_until"
+    ],
+    "recipient_ids": [
+      2
+    ],
+    "purposes": [
+      "bu_attribution"
+    ],
+    "from_period": "2026-10",
+    "to_period": "2026-10",
+    "max_age_seconds": 86400,
+    "retention_seconds": 604800,
+    "retention_mode": "restrict_after_expiry",
+    "correction_route": "Synthetic HR case inbox; no external send",
+    "source_evidence_id": 1,
+    "employee_key_semantics": "opaque_exact_case_sensitive",
+    "effective_until_semantics": "inclusive"
+  },
+  "need": {
+    "purpose": "bu_attribution",
+    "entity": "synthetic-company",
+    "period": "2026-10",
+    "as_of": "2026-10-22",
+    "fields": [
+      "employee_id",
+      "bu",
+      "effective_from",
+      "effective_until"
+    ],
+    "justification": {
+      "employee_id": "Deduplicate only; no names",
+      "bu": "Attribute the authorised staff inventory",
+      "effective_from": "Check actual membership start",
+      "effective_until": "Check actual membership end"
+    },
+    "recipient_ids": [
+      2
+    ]
+  },
+  "export": {
+    "view_ref": "synthetic-finance-view",
+    "source_version": "synthetic-export-v1",
+    "as_of": "2026-10-22",
+    "extracted_at": "2026-10-22T00:00:00+00:00",
+    "entity": "synthetic-company",
+    "period": "2026-10",
+    "completeness": "complete",
+    "rows": [
+      {
+        "employee_id": "private-staff-001",
+        "bu": "alpha",
+        "effective_from": "2026-01-01",
+        "effective_until": null
+      },
+      {
+        "employee_id": "private-staff-002",
+        "bu": "alpha",
+        "effective_from": "2026-01-01",
+        "effective_until": null
+      },
+      {
+        "employee_id": "private-staff-003",
+        "bu": "beta",
+        "effective_from": "2026-01-01",
+        "effective_until": null
+      }
+    ]
+  },
+  "readiness_scenarios": [
+    "absent",
+    "invalid_fields_or_authority",
+    "synthetic_active",
+    "stale_source_or_successor",
+    "revoked",
+    "expired_retention"
+  ]
+}

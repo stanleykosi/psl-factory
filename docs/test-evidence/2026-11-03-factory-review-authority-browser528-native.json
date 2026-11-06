@@ -1,0 +1,21 @@
+{
+  "source_run": 528,
+  "database": "psl_factory_review_authority_ui_f4ef78667cad",
+  "work": 1145,
+  "old_task": 1703,
+  "old_context_unchanged": true,
+  "fresh_task": 1704,
+  "native_review": 1148,
+  "native_review_packet_unchanged": true,
+  "unrelated_policy_change_preserved_review": true,
+  "invoice": 1232,
+  "native_issue_receipts": 1,
+  "native_delivery_receipts": 1,
+  "budget_used": 1300,
+  "budget_limit": 20000,
+  "mock_files": {
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\factory-review-authority-mock-receipts\\67c2f69f22d40c6da0ca5b6b2bb2147b789fb4b4a85068bac1907bc085eaaa2e.json": "57e69e5aec42b91dcbe01b015cc7cb0c9e8ea4326318389145e8ac0a23a99da7",
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\factory-review-authority-mock-receipts\\fd8c6b6e5edfdfb46915cbe28e0d5b028e5b1cd1fc9ad696fdd2fd12344d8b5e.json": "42ca8c8bc558f3c998df6a26e4da35f31fcaf1c85d4492a21942fa867baf4123"
+  },
+  "classification": "Separate synthetic native browser fixture, not real-provider or independent human UAT evidence"
+}

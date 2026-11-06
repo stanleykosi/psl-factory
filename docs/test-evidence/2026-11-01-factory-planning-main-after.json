@@ -1,0 +1,11 @@
+{
+  "phase": "after",
+  "main_rowsets_unchanged": 329,
+  "old_guard_definitions_unchanged_except_reviewed_factory_function": true,
+  "old_migration_sources_unchanged": 207,
+  "source_snapshots_unchanged": true,
+  "main_factory_records": 0,
+  "operational_owner_or_policy_installed": false,
+  "expected_forward_migration": "workflows0040_factory_planning",
+  "factory_function_sha256": "1c8c88565693e7368cdb29aaf0c5749d36456ecdcec15d8779c3f70cc2b86bc9"
+}

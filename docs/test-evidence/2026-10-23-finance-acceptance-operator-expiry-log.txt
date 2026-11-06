@@ -1,0 +1,51 @@
+{
+  "assessment": 3,
+  "snapshot_equal": true,
+  "recorded_result": {
+    "findings": [],
+    "objectives": {
+      "rpo": "unknown",
+      "rto": "unknown"
+    },
+    "operational_ready": false,
+    "documentary_complete": true,
+    "deployment_authorized": false,
+    "supplied_report_scopes": {
+      "restore": "portable_case_metadata_v1"
+    },
+    "business_jobs_reenacted": false,
+    "native_metadata_effects": {
+      "backup": true,
+      "export": true,
+      "restore": true
+    },
+    "full_database_restore_verified": false,
+    "native_metadata_drill_verified": true
+  },
+  "current_result": {
+    "documentary_complete": false,
+    "findings": [
+      "Native metadata export expired",
+      "Native metadata backup expired",
+      "Native metadata restore expired",
+      "Reported restore expired"
+    ],
+    "native_metadata_effects": {
+      "export": true,
+      "backup": true,
+      "restore": true
+    },
+    "supplied_report_scopes": {
+      "restore": "portable_case_metadata_v1"
+    },
+    "objectives": {
+      "rpo": "unknown",
+      "rto": "unknown"
+    },
+    "native_metadata_drill_verified": true,
+    "full_database_restore_verified": false,
+    "operational_ready": false,
+    "deployment_authorized": false,
+    "business_jobs_reenacted": false
+  }
+}

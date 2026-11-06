@@ -1,0 +1,33 @@
+{
+  "source_run": 606,
+  "fixture_source_run": 606,
+  "database": "psl_factory_execution_ui_009444c84974",
+  "synthetic": true,
+  "work": 1,
+  "starter_id": 1,
+  "binding_id": 1,
+  "bindings": [
+    {
+      "id": 1,
+      "principal_id": 2,
+      "reviewer_id": 1,
+      "configuration_id": 18,
+      "sequence": 1,
+      "work_revision": 2
+    }
+  ],
+  "budget_used": 300,
+  "budget_limit": 20000,
+  "status": "blocked",
+  "agent_actor_ids": [
+    2,
+    2,
+    2
+  ],
+  "invoice_jobs": 0,
+  "invoice_reviews": 0,
+  "recovery_policy_revisions": [
+    1
+  ],
+  "live_provider_evaluation": "NOT_EVALUATED"
+}

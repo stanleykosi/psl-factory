@@ -1,0 +1,9 @@
+# Ordinary case intake and technical access
+
+Engineering proposal,28 October2026. Source-backed P03/P16 engagement and formal project registration remain separate from the internal Case UUID. Planning and costing precede signature. Technical access does not appoint PMO/Finance business decision owners.
+
+First connected implementation: an explicit Django-superuser bootstrap command records immutable versioned tenant delegations for an existing account, with exact allowed actions, initial case grants, permitted kinds, synthetic/operational classification and expiration. No principal, password, default financial action or business role is installed. An authenticated creation screen selects only the account's current tenant scope, creates a workspace before a baseline exists, and records idempotent tenant/reference intake. An access screen records grants and revocations with immutable change history, current technical authority and exact case scope. Existing domain policy/independence checks remain required after technical access is granted.
+
+Subsequent connected implementation: pre-planning engagement source capture for Route A/B/C; Route A links actual reviewed RFP conversion; source-authorized PM assignment and formal identifier registration with evidence successors; bridge to current delivery registration. P03 prescribes no additional registration approval. Unknown tracker formats and actual PM owner appointments remain unconfigured rather than inferred. Case creation and initial engagement capture must work before those values exist.
+
+Acceptance requires actual PostgreSQL absent/invalid/expired/superseded/revoked authority, cross-tenant/classification/action denial, duplicate/concurrent intake, mutable grant change with immutable audit, CSRF/UI, no implicit policy/owner appointment and existing evidence/service compatibility. Models, UI and tests staged during the transport suite are proposals until installed and actually tested.

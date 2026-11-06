@@ -1,0 +1,22 @@
+{
+  "run": 329,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_planning",
+    "tests.test_application",
+    "tests.test_approvals",
+    "tests.test_delivery",
+    "tests.test_project_view",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-329-process-acceptance.txt",
+  "started_at": "2026-10-28T15:49:52.828852+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 374.734
+}

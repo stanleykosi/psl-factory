@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}<a href="{% url 'policy_scopes' case.pk %}">Policy scopes</a> · <a href="{% url 'pilot_preflight' case.pk %}">Read-only pilot preflight</a><h1>Domain policy impact and reassessment</h1>
+<p>Select an affected local policy, its currently active successor and the domains to assess. This records an engineering review; it does not activate policy, copy approvals, change money or retry jobs. Another authorized human reviews the exact observed heads.</p>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Capture current impact assessment</button></form>
+<section class="workflow-panel"><h2>Assessment history</h2><p>Latest 100 local assessments; each detail rechecks source and domain access.</p>{% for r in records %}<p><a href="{% url 'policy_impact_assessment' case.pk r.pk %}">#{{ r.pk }} · policy #{{ r.previous_id }} → #{{ r.successor_id }}</a></p>{% empty %}<p>No assessments.</p>{% endfor %}
+</section><section class="workflow-panel"><h2>Coverage limits</h2>{% for area in uncovered %}<p>{{ area }}</p>{% endfor %}</section>{% endblock %}

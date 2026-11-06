@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_unknown_policy_ui_and_validator_do_not_install_authority (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_unknown_policy_ui_and_validator_do_not_install_authority) ... ok
+test_lost_response_recovers_original_receipt_and_reservation_without_another_send (tests.test_factory_planner_gateway.FactoryPlannerGatewayTests.test_lost_response_recovers_original_receipt_and_reservation_without_another_send) ... ok
+test_real_receipt_lookup_lease_prevents_another_human_transport_review (tests.test_factory_receipt_recovery_concurrency.ReceiptRecoveryContentionTests.test_real_receipt_lookup_lease_prevents_another_human_transport_review) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 53.192s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

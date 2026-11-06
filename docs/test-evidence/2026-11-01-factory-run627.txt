@@ -1,0 +1,56 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader) ... FAIL
+test_go_live_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_go_live_current_source_reader) ... FAIL
+test_handover_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_handover_current_source_reader) ... FAIL
+
+======================================================================
+FAIL: test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 78, in test_closure_current_source_reader
+    self.check_successor(module, f, 'report_evidence_id', 'closure_report')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 57, in check_successor
+    self.assertTrue(row['intake_current'], row)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'dossier': <DeliveryDossier: #502 · delivery-build>, 'data': {'dossier_id': 502, 'inputs': {'report_evidence_id': 136964, 'retrospective_id': 948, 'template_id': 1881}, 'protocol': 'factory-closure-intake/v1'}, 'report': {'as_of': '2026-11-04T19:17:50.762807+00:00', 'checks': [{'key': 'context', 'title': 'Current project scope', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [502]}, {'key': 'go_live', 'title': 'Go-live acceptance', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3284]}, {'key': 'hypercare', 'title': 'Release stability', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3285]}, {'key': 'archive', 'title': 'Project archive', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3286]}, {'key': 'handover', 'title': 'Support handover', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3287]}, {'key': 'retrospective', 'title': 'Retrospective', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [948]}, {'key': 'finance', 'title': 'Finance notification coverage', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3288]}, {'key': 'report', 'title': 'PM closure report', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [136964]}], 'ready_to_prepare': True, 'selected': {'retrospective_id': 948, 'report_evidence_id': 136964}, 'recorded_closure_id': None, 'closure_approved': False, 'debt_waived': False, 'deployment_authorized': False}, 'document': None, 'decision': None, 'closure': None, 'finding': 'This record/action has no active grant', 'intake_current': False, 'readiness_changed': False, 'pending_review': False, 'reviewer_names': [], 'decision_names': ['human'], 'can_review': False, 'review_verdicts': [], 'verdicts': [], 'can_correct': True, 'can_restart': False, 'can_settle': False, 'next_options': [], 'next_action': 'Review current closure evidence and prescribed decisions'}
+
+======================================================================
+FAIL: test_go_live_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_go_live_current_source_reader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 84, in test_go_live_current_source_reader
+    self.check_successor(module, f, 'rollback', module.KINDS['rollback'])
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 57, in check_successor
+    self.assertTrue(row['intake_current'], row)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'dossier': <DeliveryDossier: #503 · delivery-build>, 'data': {'dossier_id': 503, 'inputs': {'checklist': 136975, 'incident_reporting': 136976, 'rollback': 136979, 'template_id': 1882}, 'protocol': 'factory-go-live-intake/v1'}, 'report': {'as_of': '2026-11-04T19:17:56.207300+00:00', 'checks': [{'key': 'context', 'title': 'Project scope', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [503]}, {'key': 'release', 'title': 'Actual release', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3293]}, {'key': 'template', 'title': 'Client report template', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [1882]}, {'key': 'checklist', 'title': 'Deployment checklist', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [136975]}, {'key': 'incident_reporting', 'title': 'Incident reporting', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [136976]}, {'key': 'rollback', 'title': 'Rollback plan', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [136979]}], 'ready_to_prepare': True, 'selected': {'checklist': 136975, 'incident_reporting': 136976, 'rollback': 136979}, 'template_id': 1882, 'sign_off_inferred': False, 'deployment_authorized': False, 'financial_release_granted': False}, 'document': None, 'publication': None, 'receipts': [], 'delivery_complete': False, 'jobs': [], 'acceptance': None, 'previous_acceptance': None, 'finding': 'This record/action has no active grant', 'readiness_changed': False, 'intake_current': False, 'pending_review': False, 'review_names': ['human'], 'pm_names': ['human'], 'review_verdicts': [], 'can_accept': False, 'can_correct': True, 'can_restart': False, 'can_settle': False, 'next_options': [], 'next_action': 'This record/action has no active grant'}
+
+======================================================================
+FAIL: test_handover_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_handover_current_source_reader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 72, in test_handover_current_source_reader
+    self.check_successor(module, f, 'support_document', 'support_document')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 59, in check_successor
+    self.assertNotIn('no active grant', row['finding'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'no active grant' unexpectedly found in 'This record/action has no active grant'
+
+----------------------------------------------------------------------
+Ran 3 tests in 26.289s
+
+FAILED (failures=3)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

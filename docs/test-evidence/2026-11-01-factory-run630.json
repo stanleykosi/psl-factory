@@ -1,0 +1,23 @@
+{
+  "run": 630,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_execution_source_projection",
+    "tests.test_factory_handover.FactoryHandoverTests.test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt",
+    "tests.test_factory_closure.FactoryClosureTests.test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T19:21:25.404742+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run630.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 336.402
+}

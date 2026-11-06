@@ -1,0 +1,42 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 21 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0062_rfp_historical_outcome...test_actual_outcome_recording_survives_incomplete_retained_submission_proof (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_actual_outcome_recording_survives_incomplete_retained_submission_proof) ... ok
+test_bounded_display_prefix_keeps_complete_inventory_digest_and_selected_version (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_bounded_display_prefix_keeps_complete_inventory_digest_and_selected_version) ... ok
+test_current_owner_can_convert_exact_submission_after_historical_staff_turnover (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_current_owner_can_convert_exact_submission_after_historical_staff_turnover) ... ok
+test_latest_uncertainty_and_current_outcome_authority_still_hold_conversion (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_latest_uncertainty_and_current_outcome_authority_still_hold_conversion) ... ok
+test_missing_or_changed_submission_claims_cannot_pass_historical_verification (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_missing_or_changed_submission_claims_cannot_pass_historical_verification) ... ok
+test_multiple_submissions_hold_conversion_until_current_owner_explicitly_selects (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_multiple_submissions_hold_conversion_until_current_owner_explicitly_selects) ... ok
+test_newer_unsent_draft_does_not_replace_the_actual_submitted_offer (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_newer_unsent_draft_does_not_replace_the_actual_submitted_offer) ... ok
+test_positive_delivered_receipts_must_be_recorded_before_conversion_but_reservation_is_not_submission (tests.test_rfp_historical_outcome.HistoricalRFPOutcomeTests.test_positive_delivered_receipts_must_be_recorded_before_conversion_but_reservation_is_not_submission) ... ok
+test_native_draft_validation_keeps_owner_grants_and_authority_unchanged (tests.test_rfp_outcome_policy.RFPOutcomePolicyLifecycleTests.test_native_draft_validation_keeps_owner_grants_and_authority_unchanged) ... ok
+test_actual_submitted_offer_verifies_after_unsent_draft_and_old_grant_withdrawal (tests.test_factory_rfp_historical_outcome.FactoryRFPHistoricalOutcomeTests.test_actual_submitted_offer_verifies_after_unsent_draft_and_old_grant_withdrawal) ... ok
+test_nullable_settings_lifecycle_invalid_stale_and_denied_controls (tests.test_factory_rfp_outcome_console.FactoryRFPOutcomeConsoleTests.test_nullable_settings_lifecycle_invalid_stale_and_denied_controls) ... ok
+test_outcome_form_explicitly_targets_each_actual_submission_without_a_method (tests.test_factory_rfp_outcome_console.FactoryRFPOutcomeConsoleTests.test_outcome_form_explicitly_targets_each_actual_submission_without_a_method) ... ok
+test_human_reviews_survive_changed_profile_and_operator_adopts_only_current_authority (tests.test_factory_rfp_operator_recovery.FactoryRFPOperatorRecoveryTests.test_human_reviews_survive_changed_profile_and_operator_adopts_only_current_authority) ... ok
+test_unknown_actual_deadline_preserves_review_and_surfaces_source_follow_up (tests.test_factory_rfp_operator_recovery.FactoryRFPOperatorRecoveryTests.test_unknown_actual_deadline_preserves_review_and_surfaces_source_follow_up) ... ok
+test_unknown_publisher_holds_only_reservation_without_failed_send_or_budget_churn (tests.test_factory_rfp_operator_recovery.FactoryRFPOperatorRecoveryTests.test_unknown_publisher_holds_only_reservation_without_failed_send_or_budget_churn) ... ok
+test_canceled_unsent_response_requires_fresh_outward_review_before_new_delivery (tests.test_factory_rfp_canceled_publication.FactoryRFPCanceledPublicationTests.test_canceled_unsent_response_requires_fresh_outward_review_before_new_delivery) ... FAIL
+
+======================================================================
+FAIL: test_canceled_unsent_response_requires_fresh_outward_review_before_new_delivery (tests.test_factory_rfp_canceled_publication.FactoryRFPCanceledPublicationTests.test_canceled_unsent_response_requires_fresh_outward_review_before_new_delivery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_rfp_canceled_publication.py", line 83, in test_canceled_unsent_response_requires_fresh_outward_review_before_new_delivery
+    self.assertTrue(factory.run_once(work.pk));work.refresh_from_db()
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 16 tests in 749.525s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

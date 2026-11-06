@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_lost_response_cancellation_reconciles_original_delivery_without_inferred_signoff_or_new_send (tests.test_factory_go_live.FactoryGoLiveTests.test_lost_response_cancellation_reconciles_original_delivery_without_inferred_signoff_or_new_send) ... ok
+test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package (tests.test_factory_go_live.FactoryGoLiveTests.test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package) ... FAIL
+
+======================================================================
+FAIL: test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package (tests.test_factory_go_live.FactoryGoLiveTests.test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_go_live.py", line 332, in test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package
+    factory.run_until_wait(f.work.pk);new_report=go_live.document(f.work);self.assertNotEqual(new_report.pk,old_report.pk)
+                                                                          ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2000 == 2000
+
+----------------------------------------------------------------------
+Ran 2 tests in 58.686s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

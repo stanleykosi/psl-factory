@@ -1,0 +1,19 @@
+{
+  "classification": "synthetic_test_only; worker limits are a fixture, no real owner or approval supplied",
+  "definition": "rfp-response/v1",
+  "max_steps": 60,
+  "max_tokens": 30000,
+  "tokens_per_call": 100,
+  "max_children": 30,
+  "max_depth": 3,
+  "lease_seconds": 30,
+  "max_age_seconds": 86400,
+  "required_evidence_kinds": ["rfp_intake"],
+  "information_resolver_id": null,
+  "executor_id": null,
+  "review_role": null,
+  "provider": "synthetic_factory_v1",
+  "enabled": true,
+  "template_id": null,
+  "route_key": null
+}

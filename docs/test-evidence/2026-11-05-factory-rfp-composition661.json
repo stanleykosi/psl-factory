@@ -1,0 +1,13 @@
+{
+  "source_run": 661,
+  "observed_at_utc": "2026-11-05T13:46:48.696616+00:00",
+  "prior_work_guards_byte_identical": true,
+  "prior_publication_guards_byte_identical": true,
+  "only_additions": "Closed RFP scope, source provenance, exact native outcome/receipt predicates",
+  "sha256": {
+    "old_work": "8e93c5923b70e37540c3f2cbc5f3658e431b3d5a084e57af5c7951aad149819b",
+    "new_work": "3a0091ec33ea81aca56660e32efce973686ae65f8cf84e483cc85ab64d00a08e",
+    "old_publication": "399c9a557b40db651eb23240bd5576a9192298ff74283538dcd2d4e3c38e5693",
+    "new_publication": "06df9f2766a0bc9ced0d0c1c498254b8e9808dcb24149bbe9ad4394100f829d6"
+  }
+}

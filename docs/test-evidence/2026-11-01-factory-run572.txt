@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker (tests.test_factory_accounting.AccountingOperatorTests.test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker) ... ok
+test_native_source_review_outside_console_reuses_the_same_decision_and_retires_wait (tests.test_factory_accounting.AccountingOperatorTests.test_native_source_review_outside_console_reuses_the_same_decision_and_retires_wait) ... ok
+test_two_postgresql_connections_cannot_claim_the_same_task_revision_twice (tests.test_factory_accounting.AccountingConcurrencyTests.test_two_postgresql_connections_cannot_claim_the_same_task_revision_twice) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 30.211s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

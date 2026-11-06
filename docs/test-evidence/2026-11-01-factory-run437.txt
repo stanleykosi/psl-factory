@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled (tests.test_factory_hypercare.FactoryHypercareTests.test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled) ... ok
+test_missing_business_criterion_holds_only_assessment_and_resumes_after_reviewed_configuration (tests.test_factory_hypercare.FactoryHypercareTests.test_missing_business_criterion_holds_only_assessment_and_resumes_after_reviewed_configuration) ... ok
+test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue (tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 106.780s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

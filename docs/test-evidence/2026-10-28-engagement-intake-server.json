@@ -1,0 +1,13 @@
+{
+  "url": "http://127.0.0.1:8000",
+  "previous_verified_pid": 51692,
+  "path": "C:\\Python313\\python.exe",
+  "started_utc": "2026-10-28T12:19:09.7416335Z",
+  "session_id": 54301,
+  "pid": 37804,
+  "unauthenticated_smoke": {
+    "status": 302,
+    "location": "/accounts/login/?next=/",
+    "authenticated_ui_proven": "synthetic PostgreSQL clients only"
+  }
+}

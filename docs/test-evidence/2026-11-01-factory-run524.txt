@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_changed_relevant_rule_refuses_claim_of_previously_routed_task (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_changed_relevant_rule_refuses_claim_of_previously_routed_task) ... ok
+test_changed_rule_after_claim_disables_ui_and_requires_fresh_routing (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_changed_rule_after_claim_disables_ui_and_requires_fresh_routing) ... ok
+test_obsolete_native_approval_does_not_auto_complete_or_block_fresh_review (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_obsolete_native_approval_does_not_auto_complete_or_block_fresh_review) ... ok
+test_unrelated_decision_namespace_preserves_claim_and_native_approval (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_unrelated_decision_namespace_preserves_claim_and_native_approval) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 71.438s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_allocation_matches_actual_capacity_precision_and_exact_retry_identity (tests.test_cash_guards.CashGuardTests.test_allocation_matches_actual_capacity_precision_and_exact_retry_identity) ... ok
+test_current_policy_and_reporter_separation_hold_only_verification_not_capture (tests.test_cash_guards.CashGuardTests.test_current_policy_and_reporter_separation_hold_only_verification_not_capture) ... ok
+test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash (tests.test_cash_guards.CashGuardTests.test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash) ... ok
+test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls (tests.test_cash_guards.CashGuardTests.test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls) ... ok
+test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt (tests.test_cash_guards.CashGuardTests.test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt) ... ok
+test_successor_after_full_reversal_counts_only_new_verified_lot (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_after_full_reversal_counts_only_new_verified_lot) ... ok
+test_successor_unmatched_policy_explicitly_clears_assignment_without_allocating (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_unmatched_policy_explicitly_clears_assignment_without_allocating) ... ok
+test_successor_unknown_or_mismatched_verification_cannot_create_cash (tests.test_financial_corrections.FinancialCorrectionTests.test_successor_unknown_or_mismatched_verification_cannot_create_cash) ... ok
+test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks (tests.test_cash_guards.CashAutocommitGuardTests.test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks) ... ok
+test_competing_successor_branches_accept_only_one_new_cash_lot (tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_competing_successor_branches_accept_only_one_new_cash_lot) ... ok
+test_competing_allocations_share_both_capacities (tests.test_settlement_workers.SettlementWorkerTests.test_competing_allocations_share_both_capacities) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 97.824s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 11 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

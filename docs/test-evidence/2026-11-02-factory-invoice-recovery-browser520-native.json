@@ -1,0 +1,18 @@
+{
+  "source_run": 520,
+  "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+  "work": 1043,
+  "status": "blocked",
+  "finding": "['Issued invoice requires its native correction workflow; do not regenerate the obligation']",
+  "original_invoice": 1118,
+  "original_job": 1401,
+  "original_intent_unchanged": true,
+  "native_issue_receipts": 1,
+  "native_delivery_receipts": 0,
+  "remote_files": 1,
+  "remote_bytes_unchanged": true,
+  "replacement_invoices": 0,
+  "budget_used": 900,
+  "budget_limit": 20000,
+  "classification": "Native synthetic mock recovery; not real-provider or independent UAT evidence"
+}

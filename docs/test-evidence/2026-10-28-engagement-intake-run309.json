@@ -1,0 +1,21 @@
+{
+  "run": 309,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_engagement_intake",
+    "tests.test_product_intake",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "tests.test_delivery.DeliveryTests.test_connected_planning_release_hypercare_archive_handover_finance_head_closure",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-309-engagement-intake.txt",
+  "started_at": "2026-10-28T12:04:34.547435+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 262.09
+}

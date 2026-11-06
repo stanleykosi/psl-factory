@@ -1,0 +1,76 @@
+{
+  "classification": "Synthetic browser integration proof; not independent-human UAT, full process, native workbook or live customer-channel acceptance",
+  "context": {
+    "database": "psl_factory_commercial_ui_adfb2436259a",
+    "case": "0e2eddd6-c566-4975-82e1-d2038bef6e8f",
+    "actor": "human",
+    "work": 323,
+    "head": 96601,
+    "profile": 58996,
+    "synthetic": true,
+    "fixture": "tests.test_factory_commercial.setup; new synthetic principal created with tests.helpers.setup_case fixture password; distinct independent calculator owner fixtures",
+    "environment": "isolated mock/internal publication; not live customer channel"
+  },
+  "source_snapshot": "docs/test-evidence/2026-11-01-factory-run421-source.json",
+  "source_sha256": "bbbf968db8fee763d8192a9440ded2b2c4c4157e157f3ca574024b8147f33830",
+  "journey": [
+    "Authenticated new isolated fixture",
+    "Primary queue to stable work detail",
+    "Keyboard execution through investigation, deterministic calculation and proposal",
+    "Four fixture native roles decided exact proposal in required cost-chain order with separate quality decision",
+    "Agent drafted exact client scope/timeline",
+    "Inspected actual payload and recorded native version review",
+    "Agent reserved and delivered only selected internal publication",
+    "Native receipt verification",
+    "Verified queue, keyboard search and preserved queue/search context"
+  ],
+  "fixture_limits": [
+    "One synthetic PMO principal holds four explicitly configured commercial roles; not independent-human role testing",
+    "Calculator owner and independent oracle owner are distinct fixture principals, confirmed during setup, not through this browser journey",
+    "Intake/profile were created through tested fixture services before browser interaction",
+    "Exceptional transport/rework/concurrency are PostgreSQL tests, not claimed as this browser journey"
+  ],
+  "actual_output": {
+    "verified": true,
+    "verification_scope": "declared_costing_and_reviewed_commercial_submission",
+    "head": 96601,
+    "costing_run": 129,
+    "commercial_revision": 373,
+    "document_version": 1560,
+    "publication": 1059,
+    "receipt_ids": [
+      609
+    ],
+    "native_workbook_verified": false,
+    "signed_baseline_adopted": false,
+    "invoice_created": false,
+    "environment": "synthetic_internal_receipt"
+  },
+  "native_commercial_decisions": 4,
+  "native_document_reviews": 1,
+  "publications": 1,
+  "recipient_receipts": 1,
+  "budget_used": 700,
+  "original_budget_limit": 20000,
+  "invoice_count": 0,
+  "signed_adoptions": 0,
+  "parallel_factory_review_tasks": 0,
+  "narrow_viewport": {
+    "width": 390,
+    "height": 844,
+    "document_width": 375,
+    "client_width": 375,
+    "horizontal_document_overflow": false
+  },
+  "keyboard": "Native Return submission exercised for processing, decisions and search",
+  "viewport_reset": true,
+  "screenshots": {
+    "docs/test-evidence/2026-11-01-factory-commercial-decisions.jpg": "3e83b961e04d7b41ea912e797aae8113a7225dc5ea361cef2205bbf7f61864ce",
+    "docs/test-evidence/2026-11-01-factory-commercial-review.jpg": "fd7fa527e83f5a868bf29afa83963e1557b4f23c0a1bf86a13e78e09fa5f735f",
+    "docs/test-evidence/2026-11-01-factory-commercial-verified-desktop.jpg": "4bca55696883d786951ab790bfdd1ba009437d79cacdac938cc7e8c7b8056f8b",
+    "docs/test-evidence/2026-11-01-factory-commercial-verified-narrow.jpg": "272e63510907e16d4b6d8e48a334f988448293c03ff9799463e0eccd9f2865a6",
+    "docs/test-evidence/2026-11-01-factory-commercial-narrow-context.jpg": "190d73bbc9542b60608e164d9d2f53b004e05f96d61cd4fd9f90a8ea4d9d01d6"
+  },
+  "live_provider": false,
+  "main_data_changed": false
+}

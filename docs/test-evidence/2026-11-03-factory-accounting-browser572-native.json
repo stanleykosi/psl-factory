@@ -1,0 +1,23 @@
+{
+  "source_run": 572,
+  "database": "psl_factory_accounting_ui_08cf999821ca",
+  "work": 1,
+  "verification": {
+    "verified": true,
+    "source": 1,
+    "run": 3,
+    "binding": 1,
+    "publication": 1,
+    "document_version": 1,
+    "receipt_ids": [
+      1
+    ],
+    "ledger_posted": false
+  },
+  "native_output_review": 7,
+  "budget_used": 1100,
+  "budget_limit": 30000,
+  "pbt": "609.99",
+  "bu_pbt_difference": "0.00",
+  "classification": "Actual native browser commands with synthetic fixture; real internal recipient inbox, no live external integration/provider or independent UAT"
+}

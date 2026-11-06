@@ -1,0 +1,13 @@
+# Exact approval source-read administration
+
+Technical tenant-access/v2 extends v1 with a closed action family: exact `approval.source.read:<system-key>` strings. Declare each literal in `allowed_actions`. Wildcards, whitespace, unknown families, oversized keys and dynamic `initial_actions` are rejected. Version1 continues accepting fixed registered actions; it does not gain this new family implicitly. No user, expiry, source key or grant is installed by the build.
+
+Use **Technical tenant delegation** as a current Django bootstrap administrator to record the explicit version for an existing delegate. Use that delegate's ordinary **Record action access administration** on the target case to grant the selected literal to an existing active account. Current same-tenant authority, case read, exact classification and the target project's current P02 route for that exact system are required. Configuring a route grants no access by itself. Granting source read grants no department ownership, approval role, native API credential or financial/release authority.
+
+Source roles and owner contracts are configured separately in P02/D05. Their current checks remain mandatory for observations and consumption. The exact Product Owner role is now representable for the UAT Product Owner route as well as P25 scope; explicit legacy Product mappings remain supported without changing any installed assignments.
+
+Revocation requires current technical delegation but can proceed after a source route is withdrawn and while the subject account is inactive. Re-enabling/granting still requires an active account. A bootstrap administrator may record an explicitly disabled delegation version for an inactive account without reactivating it. Existing grant and delegation history stays immutable. Delegation expiry/supersession controls future administration; revoke established record grants explicitly.
+
+The forward identity0004 migration changes only the existing technical-history SQL function's accepted format predicate from v1 to v1/v2. Every other predicate, trigger and constraint remains identical. Applied migrations are immutable; future repairs must be forward migrations. Main migration appends one migration-history row and installs no business/identity data.
+
+PostgreSQL tests exercise real private P02 receipt endpoints and CSRF-protected grant UI, v1 compatibility, literal bounds, unconfigured source/case/tenant/classification denial, inactive revocation, immutable SQL history, and actual planning readiness whose producer source access is granted/revoked through v2. All sources/people/criteria in those tests are synthetic; actual operator decisions and native-provider acceptance remain later inputs.

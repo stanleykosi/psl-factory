@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<h1>Connected PostgreSQL and attachment recovery</h1>
+<p>{{ case|workspace_name }} · <a href="{% url 'operations' case.id %}">Operator workbench</a> · <a href="{% url 'policy' case.id %}">Versioned configuration lifecycle</a></p>
+<p>This database-wide archive requires explicit authority on every source case and a separately provisioned runtime principal. It contains application data and an exact managed attachment inventory. Sessions and active grants are omitted; principals are recovered inactive with unusable passwords.</p>
+<p>Only empty isolated targets are supported. Normal application startup on a recovered target is prohibited. External repositories and operational deployment acceptance require separate evidence.</p>
+<p>Independent recovery criteria: <strong>{{ policy_status }}</strong>. Missing criteria hold dependent authorization and effects; plans and managed attachments can still be captured.</p>
+<details><summary>Typed recovery criteria schema</summary><pre>{{ value_schema }}</pre></details>
+<section class="workflow-panel"><h2>Managed attachment inventory</h2>
+<p>Use every listed ID in the configured attachment inventory. The archive checks the complete source database inventory again at capture.</p>
+<table><thead><tr><th>ID</th><th>Source case</th><th>Label</th><th>Source reference</th><th>Bytes</th><th>SHA-256</th></tr></thead><tbody>{% for attachment in attachments %}<tr><td>{{ attachment.id }}</td><td>{{ attachment.case.title }}</td><td>{{ attachment.label }}</td><td>{{ attachment.source_ref }}</td><td>{{ attachment.size }}</td><td>{{ attachment.sha256 }}</td></tr>{% empty %}<tr><td colspan="6">No managed attachments registered.</td></tr>{% endfor %}</tbody></table>
+{% for action,label,form in commands %}<section><h2>{{ label }}</h2><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button>{{ label }}</button></form></section>{% endfor %}
+</section><section class="workflow-panel"><h2>Plans</h2><ul>{% for plan in plans %}<li><a href="{% url 'application_recovery_report' case.id plan.id %}">{{ plan.reference }} v{{ plan.version }} · #{{ plan.id }}</a></li>{% empty %}<li>No connected plans captured.</li>{% endfor %}</ul>
+</section><section class="workflow-panel"><h2>Durable intents</h2><table><thead><tr><th>ID</th><th>Kind</th><th>Status</th><th>Attempts</th></tr></thead><tbody>{% for job in jobs %}<tr><td>{{ job.id }}</td><td>{{ job.kind }}</td><td>{{ job.status }}</td><td>{{ job.attempts }}</td></tr>{% empty %}<tr><td colspan="4">No effects queued.</td></tr>{% endfor %}</tbody></table>
+</section>{% endblock %}

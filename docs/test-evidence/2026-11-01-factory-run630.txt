@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader) ... ok
+test_go_live_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_go_live_current_source_reader) ... ok
+test_handover_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_handover_current_source_reader) ... ok
+test_current_native_source_successor_does_not_borrow_the_starter_access (tests.test_factory_execution_source_projection.StarterSuccessorProjectionTests.test_current_native_source_successor_does_not_borrow_the_starter_access) ... ok
+test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt (tests.test_factory_handover.FactoryHandoverTests.test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt) ... ok
+test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure (tests.test_factory_closure.FactoryClosureTests.test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure) ... ok
+test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance (tests.test_factory_go_live.FactoryGoLiveTests.test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 330.768s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

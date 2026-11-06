@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_capture_before_missing_rules_unknowns_only_hold_readiness_and_generic_text_has_no_provenance (tests.test_planning.PlanningTests.test_capture_before_missing_rules_unknowns_only_hold_readiness_and_generic_text_has_no_provenance) ... ok
+test_current_source_owner_and_contract_withdrawal_hold_without_deleting_history (tests.test_planning.PlanningTests.test_current_source_owner_and_contract_withdrawal_hold_without_deleting_history) ... ok
+test_distinct_sessions_current_meeting_versions_contacts_and_questions_are_enforced (tests.test_planning.PlanningTests.test_distinct_sessions_current_meeting_versions_contacts_and_questions_are_enforced) ... ok
+test_pre_signature_packet_separate_source_decisions_real_delivery_planning_bridge (tests.test_planning.PlanningTests.test_pre_signature_packet_separate_source_decisions_real_delivery_planning_bridge) ... ok
+test_signed_comparison_is_configured_current_human_control_and_does_not_change_contract (tests.test_planning.PlanningTests.test_signed_comparison_is_configured_current_human_control_and_does_not_change_contract) ... ok
+test_ui_capture_agent_and_csrf_use_actual_services (tests.test_planning.PlanningTests.test_ui_capture_agent_and_csrf_use_actual_services) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 30.174s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

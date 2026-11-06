@@ -1,0 +1,23 @@
+{
+  "classification": "Synthetic examples only; no operational policy values, assignments or decisions",
+  "capture": {
+    "prd_id": null, "scope_id": null, "engineering_estimate_id": null, "security_estimate_id": null,
+    "stakeholders": [
+      {"team":"Engineering","contact_id":null,"evidence_id":null},
+      {"team":"QA","contact_id":null,"evidence_id":null},
+      {"team":"Infra","contact_id":null,"evidence_id":null},
+      {"team":"Security","contact_id":null,"evidence_id":null}
+    ],
+    "questions": []
+  },
+  "criteria": {
+    "blocking_question_states": ["unresolved", "deferred"],
+    "require_named_contacts": [],
+    "allowed_action_states": ["completed", "cancelled"],
+    "alignment_max_age_seconds": 86400,
+    "comparison_reviewer_id": null,
+    "comparison_reviewer_role": null,
+    "independent_comparison": true,
+    "allow_synthetic": true
+  }
+}

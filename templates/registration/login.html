@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block content %}
+<div class="login-layout"><div class="login-intro">
+<div class="brand"><span class="brand-mark">p<span></span></span><span>PSL<span class="brand-subtitle">Product Studio</span></span></div>
+<p class="eyebrow">PSL OPERATIONS FACTORY</p><h1>Requests in.<br>Work moves.<br>Results verified.</h1>
+<p>Agents carry out scoped work. Your team makes the decisions that need human authority, resolves exceptions and checks the outcome.</p>
+</div><section class="login-card"><p class="eyebrow">WELCOME BACK</p><h2>Sign in to your workspace</h2><p>Use your team account to continue.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}<button class="button primary">Sign in {% include 'ui/icon.html' with icon='arrow' %}</button></form>
+</section></div>{% endblock %}

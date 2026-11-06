@@ -1,0 +1,92 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 37 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0007_pilot_runtime_startup_identity...test_closed_binding_validator_and_foreign_sources (tests.test_pilot_bindings.NativeGuardTests.test_closed_binding_validator_and_foreign_sources) ... ok
+test_csrf_ui_binding_selection_review_web_observation_and_agent (tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent) ... ok
+test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage) ... ok
+test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates (tests.test_pilot_bindings.NativeGuardTests.test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates) ... ok
+test_missing_revoked_authority_and_observer_rights_are_distinct (tests.test_pilot_bindings.NativeGuardTests.test_missing_revoked_authority_and_observer_rights_are_distinct) ... ok
+test_sequence_signature_and_milestone_guards_use_actual_native_services (tests.test_pilot_bindings.NativeGuardTests.test_sequence_signature_and_milestone_guards_use_actual_native_services) ... ok
+test_shared_guard_matches_actual_decision_and_does_not_write_domain_records (tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records) ... ok
+test_sql_history_identity_and_self_review_guards (tests.test_pilot_bindings.NativeGuardTests.test_sql_history_identity_and_self_review_guards) ... ok
+test_actual_native_receipts_same_process_is_insufficient (tests.test_pilot_bindings.RuntimeBindingTests.test_actual_native_receipts_same_process_is_insufficient) ... ok
+test_all_sixteen_native_worker_entrypoints_support_observe_only (tests.test_pilot_bindings.RuntimeBindingTests.test_all_sixteen_native_worker_entrypoints_support_observe_only) ... ok
+test_expired_rotated_revoked_and_bad_signatures_never_use_older_success (tests.test_pilot_bindings.RuntimeBindingTests.test_expired_rotated_revoked_and_bad_signatures_never_use_older_success) ... ok
+test_no_role_alias_secret_installation_or_cross_family_claim (tests.test_pilot_bindings.RuntimeBindingTests.test_no_role_alias_secret_installation_or_cross_family_claim) ... ok
+test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads (tests.test_pilot_bindings.RuntimeBindingTests.test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads) ... ERROR
+test_startup_build_pin_rejects_changed_source_and_legacy_receipts (tests.test_pilot_bindings.RuntimeBindingTests.test_startup_build_pin_rejects_changed_source_and_legacy_receipts) ... ok
+test_correction_apply_and_note_delivery_preserve_native_controls (tests.test_pilot_domain_guards.FinanceGuardTests.test_correction_apply_and_note_delivery_preserve_native_controls) ... ok
+test_issue_and_delivery_use_actual_native_review_reservation_and_receipts (tests.test_pilot_domain_guards.FinanceGuardTests.test_issue_and_delivery_use_actual_native_review_reservation_and_receipts) ... ok
+test_private_release_reuses_current_human_authority_and_packet_guards (tests.test_pilot_domain_guards.PrivateBaaSGuardTests.test_private_release_reuses_current_human_authority_and_packet_guards) ... ok
+test_actual_readiness_health_review_and_revision_change_without_probe_or_write (tests.test_pilot_preflight.NativePilotTests.test_actual_readiness_health_review_and_revision_change_without_probe_or_write) ... ok
+test_actual_unknown_handoff_receipt_head_is_observed_without_replay (tests.test_pilot_preflight.NativePilotTests.test_actual_unknown_handoff_receipt_head_is_observed_without_replay) ... ok
+test_current_scoped_policy_source_rights_are_required_to_export (tests.test_pilot_preflight.NativePilotTests.test_current_scoped_policy_source_rights_are_required_to_export) ... ok
+test_foreign_integration_and_domain_job_denied (tests.test_pilot_preflight.NativePilotTests.test_foreign_integration_and_domain_job_denied) ... ok
+test_private_response_job_access_is_native_and_export_rechecks_it (tests.test_pilot_preflight.NativePilotTests.test_private_response_job_access_is_native_and_export_rechecks_it) ... ok
+test_selected_protection_proof_metadata_never_claims_native_restore (tests.test_pilot_preflight.NativePilotTests.test_selected_protection_proof_metadata_never_claims_native_restore) ... ok
+test_synthetic_provider_evaluation_is_classified_without_new_network_calls (tests.test_pilot_preflight.NativePilotTests.test_synthetic_provider_evaluation_is_classified_without_new_network_calls) ... ok
+test_actual_csrf_ui_capture_export_agent_and_no_get_writes (tests.test_pilot_preflight.PilotTests.test_actual_csrf_ui_capture_export_agent_and_no_get_writes) ... ok
+test_author_revocation_source_changes_contract_successors_and_expiry (tests.test_pilot_preflight.PilotTests.test_author_revocation_source_changes_contract_successors_and_expiry) ... ok
+test_case_lookup_boundary_and_foreign_participants (tests.test_pilot_preflight.PilotTests.test_case_lookup_boundary_and_foreign_participants) ... ok
+test_current_participant_grants_and_inactive_users_are_holds (tests.test_pilot_preflight.PilotTests.test_current_participant_grants_and_inactive_users_are_holds) ... ok
+test_inactive_archived_style_actor_cannot_read_history_or_regain_authority (tests.test_pilot_preflight.PilotTests.test_inactive_archived_style_actor_cannot_read_history_or_regain_authority) ... ok
+test_only_selected_dependencies_and_policy_heads_invalidate (tests.test_pilot_preflight.PilotTests.test_only_selected_dependencies_and_policy_heads_invalidate) ... ok
+test_postgresql_history_and_identity_guards (tests.test_pilot_preflight.PilotTests.test_postgresql_history_and_identity_guards) ... ok
+test_selected_read_only_pack_idempotence_unknowns_and_no_business_writes (tests.test_pilot_preflight.PilotTests.test_selected_read_only_pack_idempotence_unknowns_and_no_business_writes) ... ok
+test_technical_findings_are_observed_and_redacted (tests.test_pilot_preflight.PilotTests.test_technical_findings_are_observed_and_redacted) ... ok
+test_typed_validator_rejects_unknowns_effects_duplicates_and_budgets (tests.test_pilot_preflight.PilotTests.test_typed_validator_rejects_unknowns_effects_duplicates_and_budgets) ... ok
+test_independent_actual_worker_process_observes_without_claiming_pending_work (tests.test_pilot_bindings.NativeProcessTests.test_independent_actual_worker_process_observes_without_claiming_pending_work) ... ok
+test_concurrent_captures_deduplicate_and_successors_require_explicit_head (tests.test_pilot_preflight.PilotConcurrencyTests.test_concurrent_captures_deduplicate_and_successors_require_explicit_head) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+
+======================================================================
+ERROR: test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads (tests.test_pilot_bindings.RuntimeBindingTests.test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 103, in _execute
+    return self.cursor.execute(sql)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.ObjectInUse: cannot CREATE INDEX "policy_pilotruntimereceipt" because it has pending trigger events
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_pilot_bindings.py", line 166, in test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads
+    with connection.cursor() as cursor:cursor.execute('CREATE INDEX psl_pilot_fixture_index ON policy_pilotruntimereceipt(created_at)')
+                                       ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 103, in _execute
+    return self.cursor.execute(sql)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.OperationalError: cannot CREATE INDEX "policy_pilotruntimereceipt" because it has pending trigger events
+
+----------------------------------------------------------------------
+Ran 37 tests in 571.788s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

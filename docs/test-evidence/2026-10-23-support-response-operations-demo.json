@@ -1,0 +1,88 @@
+{
+  "case": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+  "principals": {
+    "actor": 54,
+    "reviewer": 55,
+    "specialist": 56
+  },
+  "packet": 2,
+  "job": 2,
+  "receipt": 2,
+  "contract": 8,
+  "assessment": 10,
+  "review": 9,
+  "inventory": 3,
+  "response_attempts": 2,
+  "initial_unready_hold": true,
+  "retry_preserved_attempt_budget": true,
+  "receipt_classification": "internal_storage_only",
+  "private_guidance": {
+    "family": "supportresponse",
+    "jobs": [
+      {
+        "job": 2,
+        "status": "confirmed",
+        "question": "Preserve the stored internal receipt; customer delivery and response time still require separate evidence.",
+        "source_url": "/cases/3bed19d8-6453-4a66-9f6f-8ed7b8349540/support/responses/"
+      }
+    ],
+    "readiness": "reviewed",
+    "recovery_executed": false,
+    "source_body_read": false,
+    "customer_delivery_verified": false,
+    "response_clock_attested": false,
+    "persisted_in_generic_agent_run": false
+  },
+  "metadata": {
+    "schema": "portable_case_metadata_v1",
+    "case_id": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+    "evidence": [],
+    "jobs": [
+      {
+        "family": "supportresponse",
+        "id": 2,
+        "status": "confirmed",
+        "fence": 2,
+        "attempts": 2,
+        "lease_until": null
+      }
+    ],
+    "source_grants": [
+      "agent.data.read",
+      "agent.data.source",
+      "approval.read",
+      "baas.read",
+      "case.read",
+      "document.read",
+      "finance.read",
+      "ops.read",
+      "partner.read",
+      "support.private.read",
+      "support.read",
+      "support.response.read",
+      "workflow.read"
+    ],
+    "omitted_families": [],
+    "evidence_bodies_included": false,
+    "credentials_included": false,
+    "business_jobs_reenacted": false
+  },
+  "viewer_read_grants": [
+    "case.read",
+    "support.read",
+    "support.private.read",
+    "support.agent.read",
+    "agent.data.read",
+    "agent.data.source",
+    "integration.read",
+    "integration.source.read",
+    "support.response.read",
+    "ops.read",
+    "ops.artifact.read"
+  ],
+  "customer_delivery_verified": false,
+  "response_clock_attested": false,
+  "financial_effect": false,
+  "real_model_evaluated": false,
+  "runtime_provider_registry_after_context": "empty"
+}

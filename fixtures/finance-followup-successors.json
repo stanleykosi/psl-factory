@@ -1,0 +1,11 @@
+{
+  "classification": "Synthetic example only; principals must be supplied explicitly. No installed approver or financial rule.",
+  "template": {
+    "relations": ["intent_generation", "legal_correction"],
+    "reviewer_id": null,
+    "reviewer_role": "PM",
+    "evidence_kinds": ["integration_contract", "financial_correction_review"],
+    "valid_seconds": 3600,
+    "allow_synthetic": true
+  }
+}

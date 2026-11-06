@@ -1,0 +1,27 @@
+{
+  "verified_at": "2026-10-23T23:23:28.607773+00:00",
+  "changed_after_full_audit": [
+    "apps/finance/accepted_document_views.py",
+    "tests/test_accepted_publication.py"
+  ],
+  "domain_policy_adapter_worker_sources_unchanged": true,
+  "http_guards": "malformed template JSON holds without mutation; unknown report/case returns404",
+  "run202": {
+    "tests": 1,
+    "seconds": 95.699,
+    "result": "OK",
+    "log": "docs/test-evidence/2026-10-23-run-202-accepted-publication-http-edges.txt"
+  },
+  "main_native_binding_handoff_decision_counts": [
+    0,
+    0,
+    0
+  ],
+  "controlled_document_receipts_preserved": 16,
+  "pending_support_jobs": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "old_source_manifest": "docs/test-evidence/2026-10-23-accepted-publication-pre-http-source-manifest.json",
+  "new_source_manifest": "docs/test-evidence/2026-10-23-accepted-publication-final-source-manifest.json"
+}

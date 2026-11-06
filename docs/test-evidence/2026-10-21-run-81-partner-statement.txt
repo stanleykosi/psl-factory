@@ -1,0 +1,21 @@
+RUN81 final presentation: exact pinned historical metric definition/cutoff, Finance privacy/read grants and real-service staff workflow. No changed receipt payload or authority.
+Found 3 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+test_private_finance_inbox_requires_current_receive_and_finance_read (tests.test_partners.PartnerTests.test_private_finance_inbox_requires_current_receive_and_finance_read) ... ok
+test_receipt_metric_statement_uses_pinned_historical_policy (tests.test_partners.PartnerTests.test_receipt_metric_statement_uses_pinned_historical_policy) ... ok
+test_staff_review_handoff_and_finance_import_forms (tests.test_partners.PartnerTests.test_staff_review_handoff_and_finance_import_forms) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 24.989s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

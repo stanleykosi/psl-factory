@@ -1,0 +1,10 @@
+{
+  "source": "Isolated synthetic invoice recovery browser",
+  "id": 29356,
+  "schema": "workflows0049/documents0017/pmo0042",
+  "runtime": 520,
+  "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+  "start_utc": "2026-11-02T22:36:35.5366013Z",
+  "port": 8015,
+  "path": "C:\\Python313\\python.exe"
+}

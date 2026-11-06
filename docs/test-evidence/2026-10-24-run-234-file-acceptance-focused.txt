@@ -1,0 +1,90 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+test_acceptor_independent_of_packet_transport_and_expectations (tests.test_file_acceptance.FileAcceptanceTests.test_acceptor_independent_of_packet_transport_and_expectations) ... ok
+test_exact_backup_evidence_three_owner_decisions_and_original_source_independence (tests.test_file_acceptance.FileAcceptanceTests.test_exact_backup_evidence_three_owner_decisions_and_original_source_independence) ... ok
+test_explicit_prepare_kind_and_fresh_package_preserve_historical_restore_api (tests.test_file_acceptance.FileAcceptanceTests.test_explicit_prepare_kind_and_fresh_package_preserve_historical_restore_api) ... ok
+test_explicit_v2_restore_criteria_retain_restore_snapshot_shape (tests.test_file_acceptance.FileAcceptanceTests.test_explicit_v2_restore_criteria_retain_restore_snapshot_shape) ... ok
+test_export_kind_found_sql_artifact_requires_its_own_packet_and_criteria (tests.test_file_acceptance.FileAcceptanceTests.test_export_kind_found_sql_artifact_requires_its_own_packet_and_criteria) ... ok
+test_live_agent_generic_omissions_and_actual_http_typed_file_prepare_policy_and_review (tests.test_file_acceptance.FileAcceptanceTests.test_live_agent_generic_omissions_and_actual_http_typed_file_prepare_policy_and_review) ... ok
+test_missing_criteria_holds_only_positive_owner_use_and_keeps_negative_decision (tests.test_file_acceptance.FileAcceptanceTests.test_missing_criteria_holds_only_positive_owner_use_and_keeps_negative_decision) ... ok
+test_owner_withdrawal_and_criteria_revision_revocation_expiry_preserve_history (tests.test_file_acceptance.FileAcceptanceTests.test_owner_withdrawal_and_criteria_revision_revocation_expiry_preserve_history) ... ERROR
+test_selected_four_process_synthetic_evidence_needs_comparisons_and_independent_tester (tests.test_file_acceptance.FileAcceptanceTests.test_selected_four_process_synthetic_evidence_needs_comparisons_and_independent_tester) ... ok
+test_sql_closed_file_lineage_immutability_and_bidirectional_source_cycle_guards (tests.test_file_acceptance.FileAcceptanceTests.test_sql_closed_file_lineage_immutability_and_bidirectional_source_cycle_guards) ... ok
+test_successor_requires_explicit_parent_fresh_package_and_new_owner_reviews (tests.test_file_acceptance.FileAcceptanceTests.test_successor_requires_explicit_parent_fresh_package_and_new_owner_reviews) ... ok
+test_transport_withdrawal_and_source_grant_revocation_deny_cached_and_idempotent_paths (tests.test_file_acceptance.FileAcceptanceTests.test_transport_withdrawal_and_source_grant_revocation_deny_cached_and_idempotent_paths) ... ok
+test_v1_rejects_file_inventory_and_v2_validates_exact_kind_scope_and_principals (tests.test_file_acceptance.FileAcceptanceTests.test_v1_rejects_file_inventory_and_v2_validates_exact_kind_scope_and_principals) ... ok
+test_z_actual_backup_found_change_new_packet_and_corrupt_missing_bytes_hold_current (tests.test_file_acceptance.FileAcceptanceTests.test_z_actual_backup_found_change_new_packet_and_corrupt_missing_bytes_hold_current) ... ok
+test_actual_file_duplicate_packet_review_fresh_process_and_foreign_revocation (tests.test_file_acceptance_concurrency.FileAcceptanceConcurrencyTests.test_actual_file_duplicate_packet_review_fresh_process_and_foreign_revocation) ... ERROR
+
+======================================================================
+ERROR: test_owner_withdrawal_and_criteria_revision_revocation_expiry_preserve_history (tests.test_file_acceptance.FileAcceptanceTests.test_owner_withdrawal_and_criteria_revision_revocation_expiry_preserve_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_file_acceptance.py", line 73, in test_owner_withdrawal_and_criteria_revision_revocation_expiry_preserve_history
+    p=configure(f,rules(f,freshness_seconds=300));reviews(f,'fresh-review')
+                                                  ~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 228, in review
+    pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 184, in review_inputs
+    protection=protection_pins(p,actor,kind)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 95, in review_pins
+    value=current(b,a)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in current
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 28, in confirmed
+    if key not in value['confirmed']:value['confirmed'][key]=read()
+                                                             ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 77, in <lambda>
+    return evaluation.confirmed(b.case_id,('private_protection',b.pk,a.pk),lambda:_current(b,a))
+                                                                                  ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\protection_acceptance.py", line 88, in _current
+    if not 0<=(timezone.now()-b.created_at).total_seconds()<=rules['freshness_seconds']:raise ValidationError('Private protection packet expired')
+                                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Private protection packet expired']
+
+======================================================================
+ERROR: test_actual_file_duplicate_packet_review_fresh_process_and_foreign_revocation (tests.test_file_acceptance_concurrency.FileAcceptanceConcurrencyTests.test_actual_file_duplicate_packet_review_fresh_process_and_foreign_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_file_acceptance_concurrency.py", line 37, in test_actual_file_duplicate_packet_review_fresh_process_and_foreign_revocation
+    self.assertEqual(ids[0],ids[1]);self.assertEqual(f['protection_package'].reviews.count(),1);reviews(f,'file-race')
+                                                                                                ~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\protection_acceptance_helpers.py", line 36, in reviews
+    out.append(af.review(a,f['case'].pk,f['protection_package'].pk,kind,'approve',key+'-'+kind,f['protection_owner_evidence'].pk,'Explicit synthetic protection evidence '+kind,None))
+               ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 224, in review
+    if (old.actor_id,old.kind,old.verdict,old.evidence_id,old.reason)!=(actor.pk,kind,verdict,e.pk,reason):raise ValidationError('Review key conflicts with previous intent')
+                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Review key conflicts with previous intent']
+
+----------------------------------------------------------------------
+Ran 15 tests in 1894.034s
+
+FAILED (errors=2)
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying documents.0011_native_file_acceptance... OK
+System check identified no issues (0 silenced).

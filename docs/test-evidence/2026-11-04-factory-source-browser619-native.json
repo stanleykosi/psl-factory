@@ -1,0 +1,23 @@
+{
+  "source_run": 619,
+  "database": "psl_factory_source_ui_c484d169d676",
+  "case": "3ed70794-014d-45ad-b6ea-88a4399eb744",
+  "work": 2,
+  "starter_id": 5,
+  "old_head": 38,
+  "current_head": 40,
+  "current_head_author": 3,
+  "viewer_id": 3,
+  "intake_current": true,
+  "can_correct": true,
+  "can_advance": false,
+  "budget_used": 0,
+  "budget_limit": 0,
+  "visible_work_ids": [
+    2
+  ],
+  "agent_runs": 0,
+  "archive_indexes": 0,
+  "starter_read_grant_active": false,
+  "scope": "Source-owned successor only; no archive, support acceptance, closure or external file verification claimed"
+}

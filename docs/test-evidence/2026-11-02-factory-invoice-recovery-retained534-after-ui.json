@@ -1,0 +1,18 @@
+{
+  "source_run": 534,
+  "database": "psl_factory_routing_ui_c87774ebaed7",
+  "work": 1,
+  "status": "verified",
+  "rowsets_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "native_review_current": 1,
+  "owned_confirmed_jobs": [
+    1,
+    2
+  ],
+  "budget_used": 1200,
+  "budget_limit": 20000,
+  "commands_replayed": false,
+  "prior_fixture_source": 509,
+  "classification": "Current-source read-only native review/owned-receipt proof; historical cohort preserved"
+}

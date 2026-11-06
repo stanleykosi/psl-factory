@@ -1,0 +1,13 @@
+{
+  "status": "APPLIED",
+  "source_fingerprints": 1071,
+  "runtime_sha256": "6a1ddc46f352013e7da4205bc0d06dfa820cf26c65653ea3806c25bc986d845d",
+  "final_test_run": 293,
+  "coverage_only_changes_after_tests": [
+    "contracts/implementation-coverage.json"
+  ],
+  "next_run": 294,
+  "backlog_items": 58,
+  "processes_partial": 122,
+  "interfaces": 114
+}

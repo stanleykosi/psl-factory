@@ -1,0 +1,9 @@
+# Proposed next: authenticated Finance follow-up request transport
+
+Engineering proposal, not implemented behavior or a source-backed business policy. Source-owned successor lineage and opt-in native readback do not authenticate the original manual companion intake.
+
+Connect the exact physically published inert invoice/correction companion to a separately configured current source inbox. Define a reviewed internal protocol, destination/provider/credential identity, exact case/invoice/correction and disclosure envelope, operation key and authenticated acknowledgement. Preserve original publication/request hashes. Source identity and purpose grants must be fresh; archived grants and source prose cannot authorize intake or decisions. Use versioned typed criteria, validation/configuration UI, synthetic fixtures and actual PostgreSQL tests.
+
+Use a durable receipt-first adapter path: UNKNOWN stays unresolved; repeat the exact request/key after lookup, never invent failure, change scope or duplicate source requests. Conflicting evidence or destination/credential rotation holds only dependent delivery. Source intake acknowledgement remains separate from current owner disposition, independently reviewed successor lineage, financial receipts and financial execution authority. Agents investigate/draft within typed boundaries; humans retain source decisions and ordinary Finance approvals/reconciliation/release controls.
+
+First inspect existing internal authenticated gateways and durable worker/recovery contracts to reuse working facilities. Do not add a parallel orchestration framework or another recursive AF13 acceptance chain. Cross-identifier mappings, public/vendor protocols, real credentials/owners and operational security/load/UAT remain separate engineering and deployment evidence.

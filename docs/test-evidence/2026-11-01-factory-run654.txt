@@ -1,0 +1,32 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_changed_inputs_hold_queued_publication (tests.test_rfp.RFPTests.test_changed_inputs_hold_queued_publication) ... ok
+test_completed_agent_cites_actual_outcome_and_loss_lessons (tests.test_rfp.RFPTests.test_completed_agent_cites_actual_outcome_and_loss_lessons) ... ok
+test_configuring_outcome_later_does_not_require_resubmission (tests.test_rfp.RFPTests.test_configuring_outcome_later_does_not_require_resubmission) ... ok
+test_distinct_review_principals_and_revoked_engineering_review (tests.test_rfp.RFPTests.test_distinct_review_principals_and_revoked_engineering_review) ... ok
+test_factory_execution_profile_validates_unknowns_limits_and_native_references (tests.test_rfp.RFPTests.test_factory_execution_profile_validates_unknowns_limits_and_native_references) ... 
+  test_factory_execution_profile_validates_unknowns_limits_and_native_references (tests.test_rfp.RFPTests.test_factory_execution_profile_validates_unknowns_limits_and_native_references) (changed={'definition': 'rfp-response/v1', 'max_steps': 60, 'max_tokens': 1, 'tokens_per_call': 100, 'max_children': 30, 'max_depth': 3, 'lease_seconds': 30, 'max_age_seconds': 86400, 'required_evidence_kinds': ['rfp_intake'], 'information_resolver_id': None, 'executor_id': None, 'review_role': None, 'provider': 'synthetic_factory_v1', 'enabled': True, 'template_id': None, 'route_key': None}) ... FAIL
+
+======================================================================
+FAIL: test_factory_execution_profile_validates_unknowns_limits_and_native_references (tests.test_rfp.RFPTests.test_factory_execution_profile_validates_unknowns_limits_and_native_references) (changed={'definition': 'rfp-response/v1', 'max_steps': 60, 'max_tokens': 1, 'tokens_per_call': 100, 'max_children': 30, 'max_depth': 3, 'lease_seconds': 30, 'max_age_seconds': 86400, 'required_evidence_kinds': ['rfp_intake'], 'information_resolver_id': None, 'executor_id': None, 'review_role': None, 'provider': 'synthetic_factory_v1', 'enabled': True, 'template_id': None, 'route_key': None})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 135, in test_factory_execution_profile_validates_unknowns_limits_and_native_references
+    with self.subTest(changed=changed),self.assertRaises(ValidationError):
+                                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 5 tests in 103.667s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 29 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

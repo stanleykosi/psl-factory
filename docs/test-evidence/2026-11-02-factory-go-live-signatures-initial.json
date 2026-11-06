@@ -1,0 +1,19 @@
+{
+  "classification": "Supplied synthetic external signature evidence for later actual UI attestation; not a native sign-off or cryptographic verification",
+  "database": "psl_factory_go_live_ui_d7cbfe7f08a6",
+  "work": 1,
+  "document_version": 1,
+  "payload_sha256": "9c61f488ba6b680908a16d76e175845d114b22ccdf9f35e6287d80fe9b1b507b",
+  "publication": 1,
+  "receipt_ids": [
+    1
+  ],
+  "previous_acceptance": null,
+  "signature_ids": {
+    "PM": 16,
+    "Client": 17
+  },
+  "native_signoff_created": false,
+  "external_authenticity_verified": false,
+  "independent_human_UAT": false
+}

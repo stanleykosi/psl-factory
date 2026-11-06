@@ -1,0 +1,14 @@
+{
+  "classification": "owned local development server; no main seed or operational acceptance",
+  "pid": 23976,
+  "path": "C:\\Python313\\python.exe",
+  "url": "http://127.0.0.1:8000",
+  "listener": "  TCP    127.0.0.1:8000         0.0.0.0:0              LISTENING       23976",
+  "session_id": 74056,
+  "started_utc": "2026-10-28T10:43:00.1640180Z",
+  "unauthenticated_smoke": {
+    "status": 302,
+    "location": "/accounts/login/?next=/",
+    "authenticated_ui_proven": "synthetic PostgreSQL clients only"
+  }
+}

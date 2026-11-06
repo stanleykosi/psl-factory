@@ -1,0 +1,479 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_aggregate_budget_stops_another_call_including_retry (tests.test_factory_controls.FactoryControlTests.test_aggregate_budget_stops_another_call_including_retry) ... ok
+test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect (tests.test_factory_controls.FactoryControlTests.test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect) ... ok
+test_eventual_absence_parks_without_model_poll_or_duplicate_publication (tests.test_factory_controls.FactoryControlTests.test_eventual_absence_parks_without_model_poll_or_duplicate_publication) ... ok
+test_existing_finance_screen_review_is_observed_as_the_same_decision (tests.test_factory_controls.FactoryControlTests.test_existing_finance_screen_review_is_observed_as_the_same_decision) ... ok
+test_missing_resolver_does_not_create_fictional_owner (tests.test_factory_controls.FactoryControlTests.test_missing_resolver_does_not_create_fictional_owner) ... ok
+test_new_form_key_cannot_create_another_business_budget (tests.test_factory_controls.FactoryControlTests.test_new_form_key_cannot_create_another_business_budget) ... ok
+test_reconciliation_activity_does_not_write_a_financial_draft (tests.test_factory_controls.FactoryControlTests.test_reconciliation_activity_does_not_write_a_financial_draft) ... ok
+test_returned_packet_reworks_changed_terms_without_rewriting_history (tests.test_factory_controls.FactoryControlTests.test_returned_packet_reworks_changed_terms_without_rewriting_history) ... ok
+test_source_successor_invalidates_exact_review_without_editing_old_task (tests.test_factory_controls.FactoryControlTests.test_source_successor_invalidates_exact_review_without_editing_old_task) ... ok
+test_stale_lease_cannot_finalize_another_attempt (tests.test_factory_controls.FactoryControlTests.test_stale_lease_cannot_finalize_another_attempt) ... ok
+test_unsupported_citation_cannot_become_a_native_result (tests.test_factory_controls.FactoryControlTests.test_unsupported_citation_cannot_become_a_native_result) ... ok
+test_malformed_workspace_identity_is_a_form_error (tests.test_factory_console.FactoryConsoleTests.test_malformed_workspace_identity_is_a_form_error) ... ERROR
+test_profile_screen_uses_native_lifecycle_and_caps_not_default_values (tests.test_factory_console.FactoryConsoleTests.test_profile_screen_uses_native_lifecycle_and_caps_not_default_values) ... ok
+test_queue_case_agent_information_review_receipts_and_return_context (tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context) ... ok
+test_source_and_work_grants_are_rechecked_on_get_and_direct_posts (tests.test_factory_console.FactoryConsoleTests.test_source_and_work_grants_are_rechecked_on_get_and_direct_posts) ... ok
+test_stale_command_preserves_work_and_reports_refresh (tests.test_factory_console.FactoryConsoleTests.test_stale_command_preserves_work_and_reports_refresh) ... ok
+test_agent_match_suggestions_are_individual_alternatives_and_never_execute (tests.test_settlement.SettlementTests.test_agent_match_suggestions_are_individual_alternatives_and_never_execute) ... ok
+test_allocation_reversal_preserves_cash_and_full_reversal_later_does_not_double_reverse (tests.test_settlement.SettlementTests.test_allocation_reversal_preserves_cash_and_full_reversal_later_does_not_double_reverse) ... ok
+test_both_capacities_precision_and_operation_identity_are_enforced (tests.test_settlement.SettlementTests.test_both_capacities_precision_and_operation_identity_are_enforced) ... ok
+test_bounded_agent_cites_cash_and_review_sources_without_execution_tools (tests.test_settlement.SettlementTests.test_bounded_agent_cites_cash_and_review_sources_without_execution_tools) ... ok
+test_cancel_is_sticky_and_does_not_cancel_a_proven_obligation (tests.test_settlement.SettlementTests.test_cancel_is_sticky_and_does_not_cancel_a_proven_obligation) ... ok
+test_cash_before_invoice_unmatched_assignment_and_partial_allocation (tests.test_settlement.SettlementTests.test_cash_before_invoice_unmatched_assignment_and_partial_allocation) ... ok
+test_cash_sql_history_guards_cover_amounts_and_source_identity (tests.test_settlement.SettlementTests.test_cash_sql_history_guards_cover_amounts_and_source_identity) ... ok
+test_configured_due_terms_and_usage_completeness_hold_only_issuance (tests.test_settlement.SettlementTests.test_configured_due_terms_and_usage_completeness_hold_only_issuance) ... FAIL
+test_configured_independent_provenance_locator_is_required_but_not_bank_authenticity (tests.test_settlement.SettlementTests.test_configured_independent_provenance_locator_is_required_but_not_bank_authenticity) ... ok
+test_configured_separation_and_admin_flags_never_manufacture_human_authority (tests.test_settlement.SettlementTests.test_configured_separation_and_admin_flags_never_manufacture_human_authority) ... ok
+test_cross_case_and_stale_revision_are_denied (tests.test_settlement.SettlementTests.test_cross_case_and_stale_revision_are_denied) ... ok
+test_duplicate_receipt_identity_is_idempotent_changed_amount_is_investigation (tests.test_settlement.SettlementTests.test_duplicate_receipt_identity_is_idempotent_changed_amount_is_investigation) ... ok
+test_full_cash_staff_path_calls_real_services_including_full_reversal (tests.test_settlement.SettlementTests.test_full_cash_staff_path_calls_real_services_including_full_reversal) ... ok
+test_full_lot_reversal_reopens_debt_and_subtracts_cash_exactly_once (tests.test_settlement.SettlementTests.test_full_lot_reversal_reopens_debt_and_subtracts_cash_exactly_once) ... ok
+test_generation_review_issuance_delivery_are_separate_real_facts (tests.test_settlement.SettlementTests.test_generation_review_issuance_delivery_are_separate_real_facts) ... ok
+test_invoice_policy_draft_ui_uses_versioned_semantic_lifecycle (tests.test_settlement.SettlementTests.test_invoice_policy_draft_ui_uses_versioned_semantic_lifecycle) ... ok
+test_missing_correction_policy_does_not_block_receipt_capture_or_independent_snapshot (tests.test_settlement.SettlementTests.test_missing_correction_policy_does_not_block_receipt_capture_or_independent_snapshot) ... ok
+test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash (tests.test_settlement.SettlementTests.test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash) ... ERROR
+test_mixed_currency_cannot_allocate_and_snapshot_keeps_dimensions_separate (tests.test_settlement.SettlementTests.test_mixed_currency_cannot_allocate_and_snapshot_keeps_dimensions_separate) ... ok
+test_multiple_receipts_settle_one_invoice_and_excess_stays_unallocated (tests.test_settlement.SettlementTests.test_multiple_receipts_settle_one_invoice_and_excess_stays_unallocated) ... ok
+test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt (tests.test_settlement.SettlementTests.test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt) ... ok
+test_one_receipt_can_settle_multiple_invoices_without_creating_cash (tests.test_settlement.SettlementTests.test_one_receipt_can_settle_multiple_invoices_without_creating_cash) ... ok
+test_policy_semantics_reject_unknown_effects_and_bad_reversal_shapes (tests.test_settlement.SettlementTests.test_policy_semantics_reject_unknown_effects_and_bad_reversal_shapes) ... ok
+test_postgresql_guards_protect_history_and_reserved_intent (tests.test_settlement.SettlementTests.test_postgresql_guards_protect_history_and_reserved_intent) ... ok
+test_reassignment_reverses_existing_allocations_atomically_before_contract_move (tests.test_settlement.SettlementTests.test_reassignment_reverses_existing_allocations_atomically_before_contract_move) ... ok
+test_reassignment_without_correction_policy_rolls_back_all_allocations_and_ownership (tests.test_settlement.SettlementTests.test_reassignment_without_correction_policy_rolls_back_all_allocations_and_ownership) ... ok
+test_receivable_as_of_and_scope_are_not_caller_subsets_or_invented_zeros (tests.test_settlement.SettlementTests.test_receivable_as_of_and_scope_are_not_caller_subsets_or_invented_zeros) ... ok
+test_recipient_revocation_holds_delivery_but_never_removes_issued_debt (tests.test_settlement.SettlementTests.test_recipient_revocation_holds_delivery_but_never_removes_issued_debt) ... ok
+test_reported_unknown_and_unverified_cash_never_settle_debt (tests.test_settlement.SettlementTests.test_reported_unknown_and_unverified_cash_never_settle_debt) ... ok
+test_returned_review_holds_worker_then_explicit_intent_replacement_resumes (tests.test_settlement.SettlementTests.test_returned_review_holds_worker_then_explicit_intent_replacement_resumes) ... ok
+test_source_policy_revocation_holds_verification_without_erasing_historical_cash (tests.test_settlement.SettlementTests.test_source_policy_revocation_holds_verification_without_erasing_historical_cash) ... ok
+test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection (tests.test_settlement.SettlementTests.test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection) ... ok
+test_transaction_identity_cannot_create_duplicate_cash_in_another_case (tests.test_settlement.SettlementTests.test_transaction_identity_cannot_create_duplicate_cash_in_another_case) ... ok
+test_unknown_after_accept_reconciles_before_later_grant_revocation (tests.test_settlement.SettlementTests.test_unknown_after_accept_reconciles_before_later_grant_revocation) ... ok
+test_unknown_without_acceptance_has_bounded_reconciliation_and_no_blind_operator_retry (tests.test_settlement.SettlementTests.test_unknown_without_acceptance_has_bounded_reconciliation_and_no_blind_operator_retry) ... ok
+test_wide_exact_decimal_statement_is_not_rounded_by_default_decimal_context (tests.test_settlement.SettlementTests.test_wide_exact_decimal_statement_is_not_rounded_by_default_decimal_context) ... ok
+test_completion_is_its_own_configured_handoff_and_precision_is_not_rounded_away (tests.test_billing.BillingTests.test_completion_is_its_own_configured_handoff_and_precision_is_not_rounded_away) ... ok
+test_cross_case_and_admin_do_not_grant_authority (tests.test_billing.BillingTests.test_cross_case_and_admin_do_not_grant_authority) ... ok
+test_current_agent_cites_oracle_and_has_no_approval_or_effect_tools (tests.test_billing.BillingTests.test_current_agent_cites_oracle_and_has_no_approval_or_effect_tools) ... ok
+test_decimal_rounding_is_explicit_and_no_implicit_fx (tests.test_billing.BillingTests.test_decimal_rounding_is_explicit_and_no_implicit_fx) ... ok
+test_duplicate_source_and_transaction_corrections_never_silently_bill (tests.test_billing.BillingTests.test_duplicate_source_and_transaction_corrections_never_silently_bill) ... ok
+test_exact_pricing_lineage_idempotence_and_no_financial_effect (tests.test_billing.BillingTests.test_exact_pricing_lineage_idempotence_and_no_financial_effect) ... ok
+test_expected_period_inventory_never_turns_missing_usage_into_zero_or_billed (tests.test_billing.BillingTests.test_expected_period_inventory_never_turns_missing_usage_into_zero_or_billed) ... ok
+test_expired_policy_holds_only_preparation_and_keeps_capture_available (tests.test_billing.BillingTests.test_expired_policy_holds_only_preparation_and_keeps_capture_available) ... ok
+test_invoice_preparer_grant_withdrawal_invalidates_pending_use (tests.test_billing.BillingTests.test_invoice_preparer_grant_withdrawal_invalidates_pending_use) ... ok
+test_malformed_and_mixed_scope_usage_and_negative_quantities_hold (tests.test_billing.BillingTests.test_malformed_and_mixed_scope_usage_and_negative_quantities_hold) ... ok
+test_missing_policy_holds_calculation_but_capture_and_agent_work (tests.test_billing.BillingTests.test_missing_policy_holds_calculation_but_capture_and_agent_work) ... ok
+test_newer_price_policy_requires_new_preparation_preserving_original (tests.test_billing.BillingTests.test_newer_price_policy_requires_new_preparation_preserving_original) ... ok
+test_opening_stage_does_not_depend_on_other_predicates_or_contract_total (tests.test_billing.BillingTests.test_opening_stage_does_not_depend_on_other_predicates_or_contract_total) ... ok
+test_oracle_evidence_matching_but_incorrect_arithmetic_is_rejected (tests.test_billing.BillingTests.test_oracle_evidence_matching_but_incorrect_arithmetic_is_rejected) ... ok
+test_overlapping_prices_and_wrong_contract_reference_fail (tests.test_billing.BillingTests.test_overlapping_prices_and_wrong_contract_reference_fail) ... ok
+test_policy_and_usage_screens_call_real_services_and_keep_holds_visible (tests.test_billing.BillingTests.test_policy_and_usage_screens_call_real_services_and_keep_holds_visible) ... ok
+test_policy_oracle_tampering_and_unsupported_tier_method_fail_validation (tests.test_billing.BillingTests.test_policy_oracle_tampering_and_unsupported_tier_method_fail_validation) ... ok
+test_postgresql_append_only_guards_reject_direct_bypass (tests.test_billing.BillingTests.test_postgresql_append_only_guards_reject_direct_bypass) ... ok
+test_revoked_and_new_coverage_leave_prior_figures_immutable_and_stale (tests.test_billing.BillingTests.test_revoked_and_new_coverage_leave_prior_figures_immutable_and_stale) ... ok
+test_stage_missing_amount_or_due_date_preserves_evidence_without_default_split (tests.test_billing.BillingTests.test_stage_missing_amount_or_due_date_preserves_evidence_without_default_split) ... ok
+test_stage_uses_exact_pmo_handoff_not_uat_acceptance_or_release_guess (tests.test_billing.BillingTests.test_stage_uses_exact_pmo_handoff_not_uat_acceptance_or_release_guess) ... ok
+test_stale_revision_and_wrong_usage_selection_rejected (tests.test_billing.BillingTests.test_stale_revision_and_wrong_usage_selection_rejected) ... ok
+test_unknown_extraction_context_is_explicit_and_future_assertions_rejected (tests.test_billing.BillingTests.test_unknown_extraction_context_is_explicit_and_future_assertions_rejected) ... ok
+test_unknown_is_not_zero_and_real_zero_remains_zero (tests.test_billing.BillingTests.test_unknown_is_not_zero_and_real_zero_remains_zero) ... ok
+test_actual_finance_role_and_source_access_required (tests.test_billing_evidence.BillingEvidenceTests.test_actual_finance_role_and_source_access_required) ... ok
+test_agent_ui_and_raw_source_access_are_scoped (tests.test_billing_evidence.BillingEvidenceTests.test_agent_ui_and_raw_source_access_are_scoped) ... ok
+test_bound_evidence_does_not_replace_existing_finance_invoice_review (tests.test_billing_evidence.BillingEvidenceTests.test_bound_evidence_does_not_replace_existing_finance_invoice_review) ... ok
+test_committed_unknown_effect_reconciles_before_revoked_source_authority (tests.test_billing_evidence.BillingEvidenceTests.test_committed_unknown_effect_reconciles_before_revoked_source_authority) ... ok
+test_configuration_cannot_invent_source_prerequisites_or_dispatch_mode (tests.test_billing_evidence.BillingEvidenceTests.test_configuration_cannot_invent_source_prerequisites_or_dispatch_mode) ... ok
+test_connected_billing_source_evidence_issuance_and_separate_delivery (tests.test_billing_evidence.BillingEvidenceTests.test_connected_billing_source_evidence_issuance_and_separate_delivery) ... ok
+test_control_receipt_duplicate_and_changed_intent (tests.test_billing_evidence.BillingEvidenceTests.test_control_receipt_duplicate_and_changed_intent) ... ok
+test_debt_and_cash_allocation_survive_later_source_failure (tests.test_billing_evidence.BillingEvidenceTests.test_debt_and_cash_allocation_survive_later_source_failure) ... ok
+test_exact_invoice_flow_environment_and_control_correlation (tests.test_billing_evidence.BillingEvidenceTests.test_exact_invoice_flow_environment_and_control_correlation) ... ok
+test_invoice_without_enrolled_coverage_has_no_new_d03_gate (tests.test_billing_evidence.BillingEvidenceTests.test_invoice_without_enrolled_coverage_has_no_new_d03_gate) ... ok
+test_meeting_agent_cannot_read_restricted_evidence (tests.test_billing_evidence.BillingEvidenceTests.test_meeting_agent_cannot_read_restricted_evidence) ... ok
+test_missing_controls_and_native_contract_modes_are_explicit (tests.test_billing_evidence.BillingEvidenceTests.test_missing_controls_and_native_contract_modes_are_explicit) ... ok
+test_missing_d03_holds_only_enrolled_dispatch_not_pricing_or_draft (tests.test_billing_evidence.BillingEvidenceTests.test_missing_d03_holds_only_enrolled_dispatch_not_pricing_or_draft) ... ok
+test_policy_validators_reject_duplicate_effect_and_wrong_flow (tests.test_billing_evidence.BillingEvidenceTests.test_policy_validators_reject_duplicate_effect_and_wrong_flow) ... ok
+test_read_only_forms_and_posts (tests.test_billing_evidence.BillingEvidenceTests.test_read_only_forms_and_posts) ... ok
+test_scoped_control_history_and_generic_source_repackaging (tests.test_billing_evidence.BillingEvidenceTests.test_scoped_control_history_and_generic_source_repackaging) ... ok
+test_signature_interpretation_never_infers_an_extra_signature_gate (tests.test_billing_evidence.BillingEvidenceTests.test_signature_interpretation_never_infers_an_extra_signature_gate) ... ok
+test_source_correction_withdrawal_and_raw_duplicate_preserve_history (tests.test_billing_evidence.BillingEvidenceTests.test_source_correction_withdrawal_and_raw_duplicate_preserve_history) ... ok
+test_source_quote_and_source_clock_are_exact (tests.test_billing_evidence.BillingEvidenceTests.test_source_quote_and_source_clock_are_exact) ... ok
+test_sql_guards_protect_all_six_models (tests.test_billing_evidence.BillingEvidenceTests.test_sql_guards_protect_all_six_models) ... ok
+test_unknown_and_later_source_unavailability_hold_queued_dispatch (tests.test_billing_evidence.BillingEvidenceTests.test_unknown_and_later_source_unavailability_hold_queued_dispatch) ... ok
+test_unknown_before_effect_recovers_with_explicit_intent_replacement (tests.test_billing_evidence.BillingEvidenceTests.test_unknown_before_effect_recovers_with_explicit_intent_replacement) ... ok
+test_unknown_source_requirements_are_not_confirmed_empty (tests.test_billing_evidence.BillingEvidenceTests.test_unknown_source_requirements_are_not_confirmed_empty) ... ok
+test_unresolved_source_cannot_activate_verified_statement (tests.test_billing_evidence.BillingEvidenceTests.test_unresolved_source_cannot_activate_verified_statement) ... ok
+test_agent_has_cited_draft_and_independent_check_but_no_approval (tests.test_controlled_documents.ControlledDocumentTests.test_agent_has_cited_draft_and_independent_check_but_no_approval) ... ok
+test_agent_rejects_forged_citation_or_authority_and_rechecks_grant (tests.test_controlled_documents.ControlledDocumentTests.test_agent_rejects_forged_citation_or_authority_and_rechecks_grant) ... ok
+test_changed_pmo_baseline_holds_old_document (tests.test_controlled_documents.ControlledDocumentTests.test_changed_pmo_baseline_holds_old_document) ... ok
+test_changed_policy_snapshot_holds_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_changed_policy_snapshot_holds_delivery) ... ok
+test_client_template_cannot_configure_internal_note_leak (tests.test_controlled_documents.ControlledDocumentTests.test_client_template_cannot_configure_internal_note_leak) ... ok
+test_database_protects_document_history_and_task_identity (tests.test_controlled_documents.ControlledDocumentTests.test_database_protects_document_history_and_task_identity) ... ok
+test_delegation_is_explicit_scoped_and_rechecked_at_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_delegation_is_explicit_scoped_and_rechecked_at_delivery) ... ok
+test_drafting_and_review_continue_without_publication_configuration (tests.test_controlled_documents.ControlledDocumentTests.test_drafting_and_review_continue_without_publication_configuration) ... ok
+test_duplicate_publication_and_stale_requests_do_not_mutate (tests.test_controlled_documents.ControlledDocumentTests.test_duplicate_publication_and_stale_requests_do_not_mutate) ... ok
+test_expired_fence_cannot_deliver_or_finalize (tests.test_controlled_documents.ControlledDocumentTests.test_expired_fence_cannot_deliver_or_finalize) ... ok
+test_held_transport_retry_revalidates_and_records_operator_rationale (tests.test_controlled_documents.ControlledDocumentTests.test_held_transport_retry_revalidates_and_records_operator_rationale) ... ok
+test_internal_template_can_explicitly_avoid_an_invented_pmo_lead_gate (tests.test_controlled_documents.ControlledDocumentTests.test_internal_template_can_explicitly_avoid_an_invented_pmo_lead_gate) ... ok
+test_invalid_policy_artifacts_are_rejected (tests.test_controlled_documents.ControlledDocumentTests.test_invalid_policy_artifacts_are_rejected) ... ok
+test_lookups_fail_closed_and_operator_can_retry_or_cancel (tests.test_controlled_documents.ControlledDocumentTests.test_lookups_fail_closed_and_operator_can_retry_or_cancel) ... ok
+test_missing_sections_and_citations_hold_only_review_request (tests.test_controlled_documents.ControlledDocumentTests.test_missing_sections_and_citations_hold_only_review_request) ... ok
+test_new_revision_obsoletes_open_wait_and_held_publication (tests.test_controlled_documents.ControlledDocumentTests.test_new_revision_obsoletes_open_wait_and_held_publication) ... ok
+test_publication_independent_from_hypercare_and_payment_policy (tests.test_controlled_documents.ControlledDocumentTests.test_publication_independent_from_hypercare_and_payment_policy) ... ok
+test_receipt_access_is_rechecked_after_delivery_and_revocation (tests.test_controlled_documents.ControlledDocumentTests.test_receipt_access_is_rechecked_after_delivery_and_revocation) ... ok
+test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case (tests.test_controlled_documents.ControlledDocumentTests.test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case) ... ok
+test_reject_and_withdraw_are_configured_distinct_terminal_events (tests.test_controlled_documents.ControlledDocumentTests.test_reject_and_withdraw_are_configured_distinct_terminal_events) ... ok
+test_return_needs_configured_authority_then_revision_gets_new_review (tests.test_controlled_documents.ControlledDocumentTests.test_return_needs_configured_authority_then_revision_gets_new_review) ... ok
+test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox (tests.test_controlled_documents.ControlledDocumentTests.test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox) ... ok
+test_staff_draft_review_publication_and_recipient_projection (tests.test_controlled_documents.ControlledDocumentTests.test_staff_draft_review_publication_and_recipient_projection) ... FAIL
+test_timeout_after_accept_is_reconciled_before_revoked_authority (tests.test_controlled_documents.ControlledDocumentTests.test_timeout_after_accept_is_reconciled_before_revoked_authority) ... ok
+test_two_workers_share_one_current_claim (tests.test_factory_controls.FactoryConcurrencyTests.test_two_workers_share_one_current_claim) ... ok
+test_competing_allocations_share_both_capacities (tests.test_settlement_workers.SettlementWorkerTests.test_competing_allocations_share_both_capacities) ... ok
+test_competing_full_reversals_remove_cash_only_once (tests.test_settlement_workers.SettlementWorkerTests.test_competing_full_reversals_remove_cash_only_once) ... ok
+test_cross_case_concurrent_report_reserves_one_tenant_transaction (tests.test_settlement_workers.SettlementWorkerTests.test_cross_case_concurrent_report_reserves_one_tenant_transaction) ... ok
+test_old_fence_cannot_deliver_after_reclaim (tests.test_settlement_workers.SettlementWorkerTests.test_old_fence_cannot_deliver_after_reclaim) ... ok
+test_separate_os_worker_reconciles_accepted_invoice_after_lost_lease_and_revocation (tests.test_settlement_workers.SettlementWorkerTests.test_separate_os_worker_reconciles_accepted_invoice_after_lost_lease_and_revocation) ... ok
+test_canonical_receipt_successor_generation_and_two_connection_intake (tests.test_invoice_variants.InvoiceVariantTests.test_canonical_receipt_successor_generation_and_two_connection_intake) ... ok
+test_exact_four_variants_credit_debit_void_and_negative_receipts (tests.test_invoice_variants.InvoiceVariantTests.test_exact_four_variants_credit_debit_void_and_negative_receipts) ... ok
+test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent (tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent) ... ok
+test_10_exact_native_receipts_unknown_conflict_mapping_and_ui (tests.test_native_finance.NativeFinanceTests.test_10_exact_native_receipts_unknown_conflict_mapping_and_ui) ... FAIL
+test_11_native_scope_guards_rotation_expiry_and_revocation (tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation) ... FAIL
+test_12_reviewed_publication_crash_and_fresh_reconciliation (tests.test_native_finance.NativeFinanceTests.test_12_reviewed_publication_crash_and_fresh_reconciliation) ... FAIL
+test_archived_four_variants_published_handoff_and_current_source_owner (tests.test_native_invoice_recovery.NativeInvoiceRecoveryTests.test_archived_four_variants_published_handoff_and_current_source_owner) ... ok
+test_competing_preparations_return_one_semantic_record (tests.test_billing_concurrency.BillingConcurrencyTests.test_competing_preparations_return_one_semantic_record) ... ok
+test_competing_usage_capture_cannot_duplicate_same_content (tests.test_billing_concurrency.BillingConcurrencyTests.test_competing_usage_capture_cannot_duplicate_same_content) ... ok
+test_publication_worker_recovers_after_separate_process_exit (tests.test_controlled_documents.PublicationProcessTests.test_publication_worker_recovers_after_separate_process_exit) ... ok
+test_two_actual_connections_claim_one_publication_once (tests.test_controlled_documents.PublicationProcessTests.test_two_actual_connections_claim_one_publication_once) ... ok
+test_action_assignment_and_document_review_are_source_owned_and_read_only (tests.test_shared_workbench.SharedWorkbenchTests.test_action_assignment_and_document_review_are_source_owned_and_read_only) ... ok
+test_document_review_authority_revocation_does_not_close_or_reassign_task (tests.test_shared_workbench.SharedWorkbenchTests.test_document_review_authority_revocation_does_not_close_or_reassign_task) ... ok
+test_financial_intent_metadata_does_not_retry_or_issue (tests.test_shared_workbench.SharedWorkbenchTests.test_financial_intent_metadata_does_not_retry_or_issue) ... ok
+test_private_finance_version_never_enters_generic_pmo_review_discovery (tests.test_shared_workbench.SharedWorkbenchTests.test_private_finance_version_never_enters_generic_pmo_review_discovery) ... ok
+test_project_references_require_current_engagement_read_and_case_read (tests.test_shared_workbench.SharedWorkbenchTests.test_project_references_require_current_engagement_read_and_case_read) ... ok
+test_search_scope_keyset_cursor_binding_active_user_and_escaping (tests.test_shared_workbench.SharedWorkbenchTests.test_search_scope_keyset_cursor_binding_active_user_and_escaping) ... ok
+test_summary_review_requires_configured_reviewer_source_scope_and_current_version (tests.test_shared_workbench.SharedWorkbenchTests.test_summary_review_requires_configured_reviewer_source_scope_and_current_version) ... ok
+test_support_ownership_uses_latest_event_and_closed_cases_disappear (tests.test_shared_workbench.SharedWorkbenchTests.test_support_ownership_uses_latest_event_and_closed_cases_disappear) ... ok
+
+======================================================================
+ERROR: test_malformed_workspace_identity_is_a_form_error (tests.test_factory_console.FactoryConsoleTests.test_malformed_workspace_identity_is_a_form_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_console.py", line 12, in test_malformed_workspace_identity_is_a_form_error
+    response=client.get(reverse('factory_start'),{'case':'not-a-uuid'})
+                        ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'factory_start' not found. 'factory_start' is not a valid view function or pattern name.
+
+======================================================================
+ERROR: test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash (tests.test_settlement.SettlementTests.test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_settlement.py", line 32, in test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash
+    i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e)
+                                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\settlement_helpers.py", line 30, in approve
+    def approve(a,c,i,e):return invoices.review(a,c.pk,i.pk,'Finance','approve',e['invoice_review'].pk,'Synthetic exact invoice reviewed',rev(c))
+                                ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\invoices.py", line 59, in review
+    record=InvoiceReview.objects.create(invoice=i,role=role,verdict=verdict,authority=authority,publication_packet=review_packet(i),evidence=subject(case,evidence_id,'invoice_review'),note=reason,actor=actor)
+                                                                                                                   ~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\invoices.py", line 75, in review_packet
+    policies,adapter,identity=adapter_config(invoice.case)
+                              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\invoices.py", line 26, in adapter_config
+    configs=[active_component(k,case) for k in ['D08.adapter_contract_ref','D08.duplicate_correction_rules']]
+             ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 328, in active_component
+    raise PolicyHold([result])
+apps.policy.services.PolicyHold: ['D08.adapter_contract_ref: REVOKED ']
+
+======================================================================
+FAIL: test_configured_due_terms_and_usage_completeness_hold_only_issuance (tests.test_settlement.SettlementTests.test_configured_due_terms_and_usage_completeness_hold_only_issuance)
+----------------------------------------------------------------------
+django.core.exceptions.ValidationError: ['Publication target, destination, policy or evidence changed; fresh exact-packet review required']
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_settlement.py", line 166, in test_configured_due_terms_and_usage_completeness_hold_only_issuance
+    with self.assertRaisesMessage(ValidationError,'incomplete usage'):invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
+         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+AssertionError: 'incomplete usage' not found in "['Publication target, destination, policy or evidence changed; fresh exact-packet review required']"
+
+======================================================================
+FAIL: test_staff_draft_review_publication_and_recipient_projection (tests.test_controlled_documents.ControlledDocumentTests.test_staff_draft_review_publication_and_recipient_projection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_controlled_documents.py", line 51, in test_staff_draft_review_publication_and_recipient_projection
+    self.assertContains(response,'Synthetic demonstration')
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : Couldn't find 'Synthetic demonstration' in the following response
+b'<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fbfaf8"><title>PSL Product Studio</title><link rel="stylesheet" href="/static/studio.css?v=2"></head>\n<body class=""><a class="skip-link" href="#main-content">Skip to content</a>\n<aside class="app-sidebar" aria-label="Main navigation">\n<a class="brand" href="/"><span class="brand-mark" aria-hidden="true">p<span></span></span><span>PSL<span class="brand-subtitle">Product Studio</span></span></a>\n<form class="mobile-signout" action="/accounts/logout/" method="post"><input type="hidden" name="csrfmiddlewaretoken" value="T99M0gJkJ12piRphc6YeJOhkaaoc1AduKXbsQI153cEFoifCNZTNKZNAdbSmVSB6"><button class="icon-button" aria-label="Sign out" title="Sign out"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M13 8l4 4-4 4M9 12h12"/></svg>\n</button></form>\n<p class="nav-caption">OPERATIONS FACTORY</p><nav class="primary-nav">\n<a href="/" ><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M9 5V3h6v2M8 11l2 2 5-5M8 17h8"/></svg>\nWork queue</a>\n<a href="/work/" ><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M9 5V3h6v2M8 11l2 2 5-5M8 17h8"/></svg>\nMy work</a>\n<a href="/?queue=exceptions"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v17h17M9 15v-4M14 15V6M19 15v-7"/></svg>\nExceptions</a>\n<a href="/?queue=verified"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>\nVerified outcomes</a>\n<a href="/workspaces/"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>\nWorkspaces</a>\n<details class="reference-navigation"><summary>Workspace tools</summary>\n<a href="/?kind=project" ><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h5l3 3h6a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>\nProjects</a>\n<a href="/?kind=support" ><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-3-5"/></svg>\nCustomers</a>\n<a href="/?area=finance" ><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v17h17M9 15v-4M14 15V6M19 15v-7"/></svg>\nFinance</a>\n<a href="/documents/inbox/"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>\nDocuments</a>\n<a href="/project-views/"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v17h17M9 15v-4M14 15V6M19 15v-7"/></svg>\nProject reports</a></details></nav>\n<div class="sidebar-bottom"><a href="/intake/" class="sidebar-create"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>\nNew workspace</a>\n<div class="account"><span class="avatar">R</span><div><strong>recipient</strong><span>My account</span></div><form action="/accounts/logout/" method="post"><input type="hidden" name="csrfmiddlewaretoken" value="T99M0gJkJ12piRphc6YeJOhkaaoc1AduKXbsQI153cEFoifCNZTNKZNAdbSmVSB6"><button class="icon-button" aria-label="Sign out" title="Sign out"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M13 8l4 4-4 4M9 12h12"/></svg>\n</button></form></div></div></aside>\n<div class="app-frame"><header class="app-topbar"><div class="breadcrumb"><span class="topbar-brand">Product Studio</span><span>/</span><strong>Documents</strong></div><a class="topbar-search" href="/workspaces/#workspace-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>\n<span>Find a workspace</span></a></header>\n<main id="main-content" class="page-content"><div class="messages" role="status"><p>Document work recorded. Delivery runs through the publication worker.</p><p>Document work recorded. Delivery runs through the publication worker.</p><p>Document work recorded. Delivery runs through the publication worker.</p><p>Document work recorded. Delivery runs through the publication worker.</p></div><div class="page-heading"><div><p class="eyebrow">SHARED WITH YOU</p><h1>Documents</h1><p class="lede">Published documents your team has shared with you.</p></div><a class="button secondary" href="/work/">Open my reviews <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>\n</a></div><section><div class="document-heading"><h2>Delivery report</h2><time>01 Nov 2026</time></div><h3>Executive summary</h3><p style="white-space:pre-wrap">Delivery is progressing.</p><h3>Status</h3><p style="white-space:pre-wrap">In progress</p><details><summary>Document details</summary><p>Received Nov. 1, 2026, 5:55 p.m. \xc2\xb7 Reference 591</p><small>5c56d97107064ceb35dc6e5ac6c715bc3af3a137b74ab3c32436493d6f33a223</small><p>Sample data</p></details></section></main>\n<footer class="app-footer"><span>PSL Product Studio</span></footer></div></body></html>\n'
+
+======================================================================
+FAIL: test_10_exact_native_receipts_unknown_conflict_mapping_and_ui (tests.test_native_finance.NativeFinanceTests.test_10_exact_native_receipts_unknown_conflict_mapping_and_ui)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 50, in test_10_exact_native_receipts_unknown_conflict_mapping_and_ui
+    _,r=self.scenario('controls');self.assertEqual(r['outcomes'],['present','conflict','unknown']);self.assertTrue(r['native'])
+        ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 47, in scenario
+    return v,self.child(stage,v)
+             ~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 23, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: controls failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 408, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 100, in controls
+    check.assertEqual(len(p.payload['inventory']['families']),15)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\unittest\case.py", line 907, in assertEqual
+    assertion_func(first, second, msg=msg)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\unittest\case.py", line 900, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 16 != 15
+
+
+======================================================================
+FAIL: test_11_native_scope_guards_rotation_expiry_and_revocation (tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 53, in test_11_native_scope_guards_rotation_expiry_and_revocation
+    _,r=self.scenario('negatives');self.assertTrue(r['sql_guards']);self.assertTrue(r['scope_held']);self.assertTrue(r['quarantine_held'])
+        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 47, in scenario
+    return v,self.child(stage,v)
+             ~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 23, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: negatives failed
+
+Not Found: /cases/994518a5-93ac-4cf8-a530-2b931ca92c0b/native-finance/2/
+Internal Server Error: /cases/0ad18ac5-87c2-4f88-a5b2-abb41fb8ed6f/native-finance/
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance_views.py", line 100, in workbench
+    response=render(request,'workflows/native_finance.html',{'case':c,'commands':fs,'schema':json.dumps(VALUE,indent=2),'policy_status':resolve(COMPONENT,c).status,
+        'mappings':mappings.order_by('-pk')[:30],'observations':d.Observation.objects.filter(mapping__in=mappings).order_by('-pk')[:50],
+    ...<2 lines>...
+        'readbacks':readback.Observation.objects.filter(packet__mapping__in=mappings).order_by('-pk')[:50],
+        'readback_reviews':readback.Review.objects.filter(observation__packet__mapping__in=mappings).order_by('-pk')[:50]})
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 172, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'work_inbox' not found. 'work_inbox' is not a valid view function or pattern name.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 408, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 155, in negatives
+    client=Client();client.force_login(a);response=client.get(reverse('native_finance',args=[c.pk]))
+                                                   ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1127, in get
+    response = super().get(
+        path,
+    ...<4 lines>...
+        **extra,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 475, in get
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<4 lines>...
+        **extra,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance_views.py", line 100, in workbench
+    response=render(request,'workflows/native_finance.html',{'case':c,'commands':fs,'schema':json.dumps(VALUE,indent=2),'policy_status':resolve(COMPONENT,c).status,
+        'mappings':mappings.order_by('-pk')[:30],'observations':d.Observation.objects.filter(mapping__in=mappings).order_by('-pk')[:50],
+    ...<2 lines>...
+        'readbacks':readback.Observation.objects.filter(packet__mapping__in=mappings).order_by('-pk')[:50],
+        'readback_reviews':readback.Review.objects.filter(observation__packet__mapping__in=mappings).order_by('-pk')[:50]})
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 172, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'work_inbox' not found. 'work_inbox' is not a valid view function or pattern name.
+
+
+======================================================================
+FAIL: test_12_reviewed_publication_crash_and_fresh_reconciliation (tests.test_native_finance.NativeFinanceTests.test_12_reviewed_publication_crash_and_fresh_reconciliation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 56, in test_12_reviewed_publication_crash_and_fresh_reconciliation
+    v,r=self.scenario('publication');v.update(r)
+        ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 47, in scenario
+    return v,self.child(stage,v)
+             ~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 23, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: publication failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 408, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 160, in publication
+    a,b,c,p,e,values,dest,domain_rules=fixture();m=mapping(a,c,p,e);approved_mapping(a,b,c,m)
+                                                   ~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 94, in mapping
+    return d.capture(a,c.pk,p.pk,'mapping-'+str(index),rows[index]['effect_key'],'fixture-finance',e.pk)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance.py", line 70, in capture
+    access(actor,p.case,'capture',family=family);require(actor,p.case,'reconstitution.domain.'+family+'.verify')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance.py", line 23, in access
+    else:require(actor,case,'finance.read' if family=='invoice' else 'finance.handoff.read')
+         ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+
+----------------------------------------------------------------------
+Ran 149 tests in 1689.208s
+
+FAILED (failures=5, errors=2)
+Preserving test database for alias 'default' ('test_psl')...
+Found 149 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

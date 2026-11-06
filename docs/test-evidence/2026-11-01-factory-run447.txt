@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart (tests.test_factory_archive.FactoryArchiveTests.test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart) ... ok
+test_stop_settlement_waits_for_an_active_lease_then_preserves_original_work (tests.test_factory_archive.FactoryArchiveTests.test_stop_settlement_waits_for_an_active_lease_then_preserves_original_work) ... FAIL
+
+======================================================================
+FAIL: test_stop_settlement_waits_for_an_active_lease_then_preserves_original_work (tests.test_factory_archive.FactoryArchiveTests.test_stop_settlement_waits_for_an_active_lease_then_preserves_original_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_archive.py", line 73, in test_stop_settlement_waits_for_an_active_lease_then_preserves_original_work
+    self.assertTrue(archive.projection(f.actor,f.work)['can_settle'])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 2 tests in 6.445s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

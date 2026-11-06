@@ -1,0 +1,261 @@
+{
+  "classification": "Synthetic proposed flow and clock examples, not actual Support SOP or SLA",
+  "intake": {
+    "channels": [
+      "teams",
+      "whatsapp"
+    ],
+    "case_types": [
+      "transaction_issue"
+    ],
+    "identity_method": "exact_customer_transaction_issue_v1"
+  },
+  "flow": {
+    "specification_evidence_id": 1,
+    "validation_mode": "support_reviewed_definition",
+    "validation_package_id": null,
+    "migration_mode": "new_cases_only",
+    "legacy_state_map": {
+      "open": "received",
+      "resolved": "resolved"
+    },
+    "initial": "received",
+    "states": [
+      {
+        "key": "received",
+        "meaning": "received"
+      },
+      {
+        "key": "investigating",
+        "meaning": "investigating"
+      },
+      {
+        "key": "specialist_pending",
+        "meaning": "specialist_pending"
+      },
+      {
+        "key": "resolved",
+        "meaning": "resolved"
+      },
+      {
+        "key": "unresolved",
+        "meaning": "unresolved"
+      },
+      {
+        "key": "cancelled",
+        "meaning": "cancelled"
+      },
+      {
+        "key": "merged",
+        "meaning": "merged"
+      }
+    ],
+    "edges": [
+      {
+        "action": "investigate",
+        "from": "received",
+        "to": "investigating",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": null
+      },
+      {
+        "action": "await_specialist",
+        "from": "investigating",
+        "to": "specialist_pending",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": "backend_reference"
+      },
+      {
+        "action": "resolve",
+        "from": "specialist_pending",
+        "to": "resolved",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": true,
+        "specialist_kind": null
+      },
+      {
+        "action": "resolve",
+        "from": "investigating",
+        "to": "resolved",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": null
+      },
+      {
+        "action": "reopen",
+        "from": "resolved",
+        "to": "investigating",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": null
+      },
+      {
+        "action": "cancel",
+        "from": "received",
+        "to": "cancelled",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": null
+      },
+      {
+        "action": "mark_unresolved",
+        "from": "received",
+        "to": "unresolved",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": null
+      },
+      {
+        "action": "resume",
+        "from": "unresolved",
+        "to": "investigating",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": null
+      },
+      {
+        "action": "resume",
+        "from": "specialist_pending",
+        "to": "investigating",
+        "evidence_kind": "support_transition",
+        "require_specialist_result": false,
+        "specialist_kind": null
+      }
+    ],
+    "merge_enabled": true,
+    "examples": [
+      {
+        "scenario": "normal",
+        "actions": [
+          "investigate",
+          "await_specialist",
+          "resolve"
+        ],
+        "expected_state": "resolved",
+        "specialist_result_present": true,
+        "expected_hold": false
+      },
+      {
+        "scenario": "specialist",
+        "actions": [
+          "investigate",
+          "await_specialist",
+          "resolve"
+        ],
+        "expected_state": "specialist_pending",
+        "specialist_result_present": false,
+        "expected_hold": true
+      },
+      {
+        "scenario": "duplicate",
+        "actions": [],
+        "expected_state": "received",
+        "specialist_result_present": false,
+        "expected_hold": false
+      },
+      {
+        "scenario": "reopened",
+        "actions": [
+          "investigate",
+          "await_specialist",
+          "resolve",
+          "reopen"
+        ],
+        "expected_state": "investigating",
+        "specialist_result_present": true,
+        "expected_hold": false
+      },
+      {
+        "scenario": "unresolved",
+        "actions": [
+          "mark_unresolved"
+        ],
+        "expected_state": "unresolved",
+        "specialist_result_present": false,
+        "expected_hold": false
+      }
+    ],
+    "merge_source_states": [
+      "received",
+      "investigating",
+      "unresolved"
+    ],
+    "merge_target_states": [
+      "received",
+      "investigating",
+      "specialist_pending",
+      "unresolved"
+    ]
+  },
+  "authority": {
+    "independent_review": true,
+    "assignments": [
+      {
+        "user_id": 1,
+        "role": "Support",
+        "purposes": [
+          "triage",
+          "transition",
+          "merge"
+        ]
+      },
+      {
+        "user_id": 2,
+        "role": "Support",
+        "purposes": [
+          "flow",
+          "summary",
+          "merge"
+        ]
+      },
+      {
+        "user_id": 3,
+        "role": "Engineering",
+        "purposes": [
+          "specialist"
+        ]
+      }
+    ]
+  },
+  "metrics": {
+    "implementation": "elapsed_seconds_v1",
+    "bot_acknowledgement_qualifies": false,
+    "reopen_basis": "undefined",
+    "oracles": [
+      {
+        "receipt": "2026-10-01T09:00:00+00:00",
+        "response": "2026-10-01T09:15:00+00:00",
+        "resolution": null,
+        "reopened": null,
+        "expected": {
+          "first_response_seconds": "900.0",
+          "resolution_seconds": null,
+          "finding": null
+        }
+      },
+      {
+        "receipt": "2026-10-01T09:00:00+00:00",
+        "response": "2026-10-01T08:59:00+00:00",
+        "resolution": null,
+        "reopened": null,
+        "expected": {
+          "first_response_seconds": null,
+          "resolution_seconds": null,
+          "finding": "invalid_event_order"
+        }
+      }
+    ]
+  },
+  "message": {
+    "channel": "teams",
+    "message_ref": "MSG-1",
+    "customer_ref": "CUSTOMER-1",
+    "transaction_ref": "TX-1",
+    "issue_ref": "ISSUE-1",
+    "case_type": "transaction_issue",
+    "received_at": "2026-10-01T09:00:00+00:00",
+    "content_reference": "supplied-message-1"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "classification": "EXPLICIT SYNTHETIC sources, Finance principals and internal invoice effects; no native Power Automate or real-owner verification",
+  "case": "b31cbc2a-5678-42b3-ad7b-77de732d33fd",
+  "principals": {
+    "actor": 31,
+    "owner": 32
+  },
+  "invoice": 5,
+  "amount": "32.25",
+  "coverage": 7,
+  "statement": 3,
+  "flow": 4,
+  "initial_assessment": 4,
+  "held_assessment": 5,
+  "current_issue_assessment": 6,
+  "current_delivery_assessment": 7,
+  "bindings": [
+    3,
+    4,
+    5
+  ],
+  "unavailable_receipt": 5,
+  "corrected_receipt": 6,
+  "issue_job": 10,
+  "delivery_job": 11,
+  "agent": 49,
+  "unconfigured_case": "504d1f92-c9fd-4906-b54d-fe5494da87ed",
+  "unconfigured_source": 5,
+  "native_flow_verified": false,
+  "posted": false,
+  "deployment_authorized": false
+}

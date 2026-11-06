@@ -1,0 +1,22 @@
+{
+  "run": 414,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_agent_source_visibility.AgentSourceVisibilityTests",
+    "tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path",
+    "tests.test_factory_planning.FactoryPlanningTests.test_private_projection_is_not_generic_evidence_or_timeline",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T20:04:28.644650+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run414.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 7.918
+}

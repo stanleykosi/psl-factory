@@ -1,0 +1,30 @@
+{
+  "status": "BOUNDED_IMPLEMENTATION_VERIFIED",
+  "source_run": 650,
+  "scope": "Release readiness and hypercare source-authority recovery; whole-process acceptance remains separate",
+  "behavior": "Explicit same-intent human instruction creates new evidence/audit, retains original starter/source/spending, waits for uncertain original receipts and active leases, then uses separately reviewed worker",
+  "tests": {
+    "646": "3PASS/81.497s unittest/90.051s process; actual source recovery to native readiness/qualification",
+    "647": "FAIL1/6.194s/12.014s; unavailable Continue reproduced and fixed",
+    "648": "5PASS/27.013s/33.355s; stale/private/bool/access, privacy, no retrospective release, independent actual-event UI",
+    "649": "2PASS/44.822s/56.819s; original receipt prerequisite and actual two-backend one-instruction contention",
+    "650": "4PASS/117.329s/126.043s; authority/validity separation and native source-successor rework"
+  },
+  "preservation": "2026-11-04-factory-intake-authority-preservation650-after.json",
+  "retained_application_databases": 13,
+  "rowsets_preserved_per_database": 333,
+  "indexes_preserved_per_database": 1572,
+  "only_schema_change": "Exact instruction predicate in complete psl_factory_identity and one framework migration row",
+  "schema": "workflows0059/documents0018",
+  "fresh_proof": "2026-11-04-factory-receipt-fresh650-result.json",
+  "fresh_migrations_passed": 238,
+  "seeded_business_rows": 0,
+  "application_readback": "2026-11-04-factory-source-browser650-native.json",
+  "get_preservation": "2026-11-04-factory-source-browser650-get-after.json",
+  "native_browser650": "UNAVAILABLE; no successful native reload or screenshot claimed",
+  "static_checks": ["manage.py check PASS", "makemigrations --check --dry-run PASS/no changes"],
+  "owner_policy_values_added": false,
+  "external_services_activated": false,
+  "full108_internal_handoff_gate": "NOT_MET",
+  "next": "RFP P45-P49 native connected factory intake, review, controlled submission and won/lost conversion"
+}

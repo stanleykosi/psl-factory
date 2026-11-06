@@ -1,0 +1,25 @@
+{
+  "run": 502,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone",
+    "tests.test_factory_closure.FactoryClosureTests.test_stopped_native_head_decision_wait_does_not_own_or_reactivate_cancelled_work",
+    "tests.test_factory_closure.FactoryClosureTests.test_stopped_native_quality_review_remains_independent_without_false_active_owner",
+    "tests.test_factory_controls.FactoryControlTests.test_cancellation_while_model_is_running_closes_without_a_financial_effect",
+    "tests.test_factory_controls.FactoryControlTests.test_stop_after_exact_invoice_delivery_keeps_finance_followup_distinct_from_verification",
+    "tests.test_factory_controls.FactoryControlTests.test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T18:17:27.117019+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run502.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 125.432
+}

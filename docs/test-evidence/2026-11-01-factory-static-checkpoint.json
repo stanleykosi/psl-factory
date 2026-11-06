@@ -1,0 +1,12 @@
+{
+  "classification": "Static checks during RUN400 source freeze; not final consolidation acceptance",
+  "source_snapshot": "docs/test-evidence/2026-11-01-factory-run400-source.json",
+  "checks": [
+    {"command": ".venv/Scripts/python.exe manage.py check", "exit_code": 0, "result": "System check identified no issues (0 silenced)."},
+    {"command": ".venv/Scripts/python.exe manage.py makemigrations --check --dry-run", "exit_code": 0, "result": "No changes detected"},
+    {"command": ".venv/Scripts/python.exe -m pip check", "exit_code": 0, "result": "No broken requirements found."},
+    {"command": ".venv/Scripts/python.exe -m compileall -q apps adapters config tests", "exit_code": 0, "result": "Completed without syntax errors"}
+  ],
+  "database_mutations": false,
+  "remaining": "RUN400 failures and subsequently identified recovery/display gaps require correction and renewed validation"
+}

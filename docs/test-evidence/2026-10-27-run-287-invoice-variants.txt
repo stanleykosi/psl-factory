@@ -1,0 +1,9 @@
+test_archived_four_variants_published_handoff_and_current_source_owner (tests.test_native_invoice_recovery.NativeInvoiceRecoveryTests.test_archived_four_variants_published_handoff_and_current_source_owner) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 747.470s
+
+OK
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

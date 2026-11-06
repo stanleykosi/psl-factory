@@ -1,0 +1,9 @@
+{
+ "classification":"EXPLICIT SYNTHETIC rules only. Actual case IDs/principals must be supplied; no real appointments or policy values inferred.",
+ "rules":{
+  "contract_id":null,"evidence_ids":[],"process_ids":["P34"],"purpose":"synthetic-progress-summary",
+  "sender_id":null,"sender_role":"PM","reviewer_id":null,"reviewer_role":"PMO","independent_review":true,
+  "max_input_chars":2000,"max_output_chars":4000,"max_requests":3,"review_ttl_seconds":3600,
+  "lease_seconds":30,"max_attempts":3,"tools":[],"data_scope":"reviewed_exact_quotes_v1"
+ }
+}

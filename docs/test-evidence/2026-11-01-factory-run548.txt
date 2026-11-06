@@ -1,0 +1,33 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_currency_mismatch_does_not_infer_conversion_or_grant_generic_role_authority (tests.test_factory_delegation.FactoryDelegationTests.test_currency_mismatch_does_not_infer_conversion_or_grant_generic_role_authority) ... ok
+test_delegation_does_not_bypass_acting_preparer_separation_of_duties (tests.test_factory_delegation.FactoryDelegationTests.test_delegation_does_not_bypass_acting_preparer_separation_of_duties) ... ok
+test_exact_limit_boundary_and_two_matching_rules_are_deterministic (tests.test_factory_delegation.FactoryDelegationTests.test_exact_limit_boundary_and_two_matching_rules_are_deterministic) ... ok
+test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery (tests.test_factory_delegation.FactoryDelegationTests.test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery) ... FAIL
+
+======================================================================
+FAIL: test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery (tests.test_factory_delegation.FactoryDelegationTests.test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_delegation.py", line 225, in test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery
+    job.refresh_from_db();self.assertEqual(job.status,'confirmed')
+                          ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'unknown' != 'confirmed'
+- unknown
++ confirmed
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 113.775s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 11 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

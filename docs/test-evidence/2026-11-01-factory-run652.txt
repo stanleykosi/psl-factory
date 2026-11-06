@@ -1,0 +1,49 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_changed_inputs_hold_queued_publication (tests.test_rfp.RFPTests.test_changed_inputs_hold_queued_publication) ... ok
+test_completed_agent_cites_actual_outcome_and_loss_lessons (tests.test_rfp.RFPTests.test_completed_agent_cites_actual_outcome_and_loss_lessons) ... ok
+test_configuring_outcome_later_does_not_require_resubmission (tests.test_rfp.RFPTests.test_configuring_outcome_later_does_not_require_resubmission) ... ok
+test_distinct_review_principals_and_revoked_engineering_review (tests.test_rfp.RFPTests.test_distinct_review_principals_and_revoked_engineering_review) ... ok
+test_legacy_commercial_and_baseline_cannot_bypass_rfp (tests.test_rfp.RFPTests.test_legacy_commercial_and_baseline_cannot_bypass_rfp) ... ok
+test_lost_archive_requires_lessons_and_preserves_sources (tests.test_rfp.RFPTests.test_lost_archive_requires_lessons_and_preserves_sources) ... ok
+test_matrix_cross_case_duplicate_and_unknown_rejected (tests.test_rfp.RFPTests.test_matrix_cross_case_duplicate_and_unknown_rejected) ... ok
+test_outcome_currentness_prevents_old_win_conversion (tests.test_rfp.RFPTests.test_outcome_currentness_prevents_old_win_conversion) ... ok
+test_pending_unknown_future_and_wrong_case_never_convert (tests.test_rfp.RFPTests.test_pending_unknown_future_and_wrong_case_never_convert) ... ok
+test_policy_validation_and_missing_independent_authority (tests.test_rfp.RFPTests.test_policy_validation_and_missing_independent_authority) ... ok
+test_postgres_immutable_history_and_stale_revision (tests.test_rfp.RFPTests.test_postgres_immutable_history_and_stale_revision) ... ok
+test_public_terms_are_explicit_and_internal_costing_is_not_a_quote (tests.test_rfp.RFPTests.test_public_terms_are_explicit_and_internal_costing_is_not_a_quote) ... ok
+test_receipt_capture_is_actual_idempotent_and_preserves_history (tests.test_rfp.RFPTests.test_receipt_capture_is_actual_idempotent_and_preserves_history) ... ok
+test_return_requires_new_response_and_all_fresh_decisions (tests.test_rfp.RFPTests.test_return_requires_new_response_and_all_fresh_decisions) ... ok
+test_reviews_precede_ordered_costing_and_outward_review (tests.test_rfp.RFPTests.test_reviews_precede_ordered_costing_and_outward_review) ... ok
+test_rfp_histories_invalidate_report_manifest (tests.test_rfp.RFPTests.test_rfp_histories_invalidate_report_manifest) ... ok
+test_rfp_period_report_survives_json_roundtrip_review_and_delivery (tests.test_rfp.RFPTests.test_rfp_period_report_survives_json_roundtrip_review_and_delivery) ... ok
+test_rfp_template_cannot_remove_the_required_final_client_document_review (tests.test_rfp.RFPTests.test_rfp_template_cannot_remove_the_required_final_client_document_review) ... ok
+test_route_keys_and_recipients_validated (tests.test_rfp.RFPTests.test_route_keys_and_recipients_validated) ... ok
+test_route_policy_change_holds_queued_publication (tests.test_rfp.RFPTests.test_route_policy_change_holds_queued_publication) ... ok
+test_scoped_access_and_revocation_not_admin_flags (tests.test_rfp.RFPTests.test_scoped_access_and_revocation_not_admin_flags) ... ok
+test_sender_revocation_holds_effect (tests.test_rfp.RFPTests.test_sender_revocation_holds_effect) ... ok
+test_stated_past_deadline_never_dispatches_or_backdates (tests.test_rfp.RFPTests.test_stated_past_deadline_never_dispatches_or_backdates) ... FAIL
+
+======================================================================
+FAIL: test_stated_past_deadline_never_dispatches_or_backdates (tests.test_rfp.RFPTests.test_stated_past_deadline_never_dispatches_or_backdates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 212, in test_stated_past_deadline_never_dispatches_or_backdates
+    self.assertTrue(preflight(d))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+----------------------------------------------------------------------
+Ran 23 tests in 281.686s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 28 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

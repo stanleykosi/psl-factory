@@ -1,0 +1,2770 @@
+{
+  "version": "0.7",
+  "status": "Engineering interface proposal; no actual policy values assigned",
+  "configuration_envelope": {
+    "required": [
+      "slot_id",
+      "subject_scope",
+      "schema_version",
+      "policy_revision",
+      "lifecycle",
+      "effective_from",
+      "evidence_refs",
+      "human_decision_ref",
+      "implementation_id",
+      "implementation_version",
+      "parameters"
+    ],
+    "lifecycle": [
+      "draft",
+      "validated",
+      "active",
+      "superseded",
+      "revoked"
+    ],
+    "resolution_results": [
+      "ACTIVE",
+      "MISSING",
+      "INVALID",
+      "EXPIRED",
+      "REVOKED"
+    ],
+    "note": "Use trusted registered implementation schemas to validate nested parameter objects/arrays and contextual semantics before activation. Optional effective_until is explicit. No arbitrary executable formulas or secrets."
+  },
+  "slots": [
+    {
+      "id": "D01",
+      "topic": "Emergency deployment versus GLPI and Standard preapproval",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "change_type_catalogue": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "emergency_glpi_relationship": {
+            "type": "string",
+            "minLength": 1
+          },
+          "satisfied_gate_map": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Emergency/Standard production dispatch and inferred GLPI waivers",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Written reconciliation of emergency authorization and general predeployment GLPI; approved Standard-change catalogue and explicit satisfied/remaining gates.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D01.change_type_catalogue",
+        "D01.emergency_glpi_relationship",
+        "D01.satisfied_gate_map"
+      ]
+    },
+    {
+      "id": "D03",
+      "topic": "Prices versus signing in billing narrative",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "verified_billing_statement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invoice_release_control_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Inferred invoice-release signature gate or actual unknown flow behavior",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Check source recording segment or obtain written confirmation of intended statement plus actual invoice-flow release controls.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D03.verified_billing_statement",
+        "D03.invoice_release_control_refs"
+      ]
+    },
+    {
+      "id": "D04",
+      "topic": "Clock and deadline applicability",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "iana_timezone": {
+            "type": "string",
+            "minLength": 1
+          },
+          "working_calendar_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clock_anchor_pause_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "deadline_parameters": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Production schedules/overdue/SLA determinations dependent on missing clock/calendar config",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "IANA timezone, clock anchors/pauses, holidays/working calendar; exact choice within1–2workingdays; meeting hour/report day; actual SLA notice clauses and billing dates.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D04.iana_timezone",
+        "D04.working_calendar_ref",
+        "D04.clock_anchor_pause_rules",
+        "D04.deadline_parameters"
+      ]
+    },
+    {
+      "id": "D05",
+      "topic": "Identity delegation and decision revisions",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "role_principal_assignments": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "delegation_rules": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "decision_action_matrix": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "revision_invalidation_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Real approvals/delegation/reject/return authority and ambiguous approval reuse",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Named role assignments, delegation/absence, dual-role eligibility, reject/return/withdraw authority and non-cost invalidation rules.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D05.role_principal_assignments",
+        "D05.delegation_rules",
+        "D05.decision_action_matrix",
+        "D05.revision_invalidation_rules"
+      ]
+    },
+    {
+      "id": "D06",
+      "topic": "Native financial imports maps and exact oracles",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "source_schema_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "account_bu_maps": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "unit_sign_currency_period": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "rule_oracle_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Unverified import mappings, financial formulas and purported reconciliation success",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Redacted TB/export plus native workbooks, account/BU maps, formula lineage, unit/sign/currency/period conventions, F07/F09/F39 expected examples and missing-match behavior.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D06.source_schema_ref",
+        "D06.account_bu_maps",
+        "D06.unit_sign_currency_period",
+        "D06.rule_oracle_refs"
+      ]
+    },
+    {
+      "id": "D07",
+      "topic": "Payroll sources and private allocation workings",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "authorized_input_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "join_overlap_rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effective_membership_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allocation_pool_rules": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "rounding_residual_rule_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Real payroll joins/allocation/rounding/residual treatment",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Authorized redacted two-source samples, join/overlap semantics, effective staff/BU history, pool/ratio tables, denominator/monthly/rounding/residual examples.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D07.authorized_input_refs",
+        "D07.join_overlap_rule_id",
+        "D07.effective_membership_ref",
+        "D07.allocation_pool_rules",
+        "D07.rounding_residual_rule_id"
+      ]
+    },
+    {
+      "id": "D08",
+      "topic": "Actual invoice flow pricing and correction behavior",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "adapter_contract_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effective_price_rule_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "tax_tier_rounding_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "billing_calendar": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "duplicate_correction_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Live invoice adapter actions/pricing/tax/tier/rounding/correction behavior",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Flow export/environment/run evidence, exact input/output/effects, approved price effective dates/tax/tier/rounding, service billing dates, batch duplicate/correction examples and actual permissions.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D08.adapter_contract_ref",
+        "D08.effective_price_rule_refs",
+        "D08.tax_tier_rounding_rules",
+        "D08.billing_calendar",
+        "D08.duplicate_correction_rules"
+      ]
+    },
+    {
+      "id": "D09",
+      "topic": "Support reconciliation and financial queues",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "support_sop_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reconciliation_contract_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "queue_state_command_map": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "onboarding_stage_catalogue": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Business queue writes, financial corrections and unsupported operational transitions",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Referenced Support SOP and Reconciliation brief; redacted settled/pending/failed/corrected examples, identifiers/cutoff, queue commands/states/access and completion evidence; onboarding stage catalogue.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D09.support_sop_ref",
+        "D09.reconciliation_contract_ref",
+        "D09.queue_state_command_map",
+        "D09.onboarding_stage_catalogue"
+      ]
+    },
+    {
+      "id": "D10",
+      "topic": "Historical reporting and forecast controls",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "report_category_effective_dates": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "restatement_rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "forecast_inclusion_rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "audience_projection_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Unapproved historical restatement, forecast inclusion and disclosure projections",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Names/effective dates of added categories; approved restatement/correction treatment; forecast inclusion/opening-balance/partial-receipt rules and exact internal/group projection.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D10.report_category_effective_dates",
+        "D10.restatement_rule_id",
+        "D10.forecast_inclusion_rule_id",
+        "D10.audience_projection_rules"
+      ]
+    },
+    {
+      "id": "D11",
+      "topic": "Remaining integration and document configuration",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "recipient_grant_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "adapter_configuration_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "template_storage_retention_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "migration_evidence_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "hypercare_criteria_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Unconfigured real recipients/adapters/templates/retention/migration and hypercare interpretation",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Named recipients/grants and any remaining external adapter details; controlled document templates, storage/retention, migration and evidence requirements; Engineering hypercare criteria. PMO milestone ownership and absence of requested document tooling are now answered by U02/U03.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D11.recipient_grant_refs",
+        "D11.adapter_configuration_refs",
+        "D11.template_storage_retention_rules",
+        "D11.migration_evidence_rules",
+        "D11.hypercare_criteria_ref"
+      ]
+    },
+    {
+      "id": "D12",
+      "topic": "Stage schedule and precise trigger evidence",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "contract_version_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "currency_amount_basis": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "stage_terms": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "uat_billing_predicate_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "completion_billing_predicate_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Stage invoice issuance without contract amount/tax/due terms or exact UAT/completion trigger",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Approved contract schedule with stage amounts or percentages, currency/tax basis, due terms and rounding; exact completion-stage event; which UAT record establishes the billing trigger. Example signed agreement with invoice/receipt references.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D12.contract_version_ref",
+        "D12.currency_amount_basis",
+        "D12.stage_terms",
+        "D12.uat_billing_predicate_ref",
+        "D12.completion_billing_predicate_ref"
+      ]
+    },
+    {
+      "id": "D13",
+      "topic": "Configure human payment exception authority and assessment basis",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "human_authority_role_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "human_principal_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "delegation_evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "validity_revocation_reassessment_rules": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          },
+          "payment_denominator_rule_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "qualifying_funds_rule_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Payment percentage decision without basis; exception approval/payment waiver/deployment authorization while authority unconfigured",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Actual authorized human role/principals and delegation evidence when available; approved exception validity/revocation/reassessment rules; agreed payment denominator and qualifying funds basis. Do not enable exception approval before authority is configured.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D13.human_authority_role_ref",
+        "D13.human_principal_refs",
+        "D13.delegation_evidence_refs",
+        "D13.validity_revocation_reassessment_rules",
+        "D13.payment_denominator_rule_ref",
+        "D13.qualifying_funds_rule_ref"
+      ]
+    },
+    {
+      "id": "D14",
+      "topic": "Receipts allocations and adjustments",
+      "classification": "proposed typed interface for source-recorded gap; values undecided",
+      "current_operational_status": "UNCONFIGURED",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_verification_source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recorder_authority_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allocation_rule_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "adjustment_correction_rule_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          },
+          "legal_document_requirements": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        },
+        "additionalProperties": false
+      },
+      "validation_requirements": [
+        "Validate nested domain records against referenced command/record schema or versioned implementation schema; object/array shape alone is not sufficient.",
+        "Validate source evidence, actual domain authority, subject/effective scope, units, versions and required independent oracle cases.",
+        "D13 authority must identify authenticated humans; no agent or administrative-role default.",
+        "Synthetic configurations remain isolated and never operational fallback."
+      ],
+      "narrow_runtime_hold": "Actual receipt verification/allocation/adjustment/refund/write-off effects without approved policy/grants",
+      "build_now": [
+        "Configuration UI/history/validation",
+        "Domain service interface and dependent workflow",
+        "Synthetic configured/unconfigured tests",
+        "Adapter/data/evidence contracts",
+        "Missing-key operational status and continuation of independent actions"
+      ],
+      "required_business_evidence": "Verification source and authorized receipt recorder; allocation priority/approval, refunds/credits/write-offs/chargebacks, correction permissions and legal/accounting document requirements. Provide approved examples including unmatched and excess payment.",
+      "activation_semantics": "No parent-group activation. Validate/activate only the independently scoped component required by the requested operation.",
+      "component_ids": [
+        "D14.receipt_verification_source_ref",
+        "D14.recorder_authority_ref",
+        "D14.allocation_rule_ref",
+        "D14.adjustment_correction_rule_refs",
+        "D14.legal_document_requirements"
+      ]
+    }
+  ],
+  "immutable_product_invariants": [
+    "PMO owns milestone completion; Finance owns invoicing/receipts.",
+    "Planning/costing precede signed SOW.",
+    "Payment exceptions require humans; they do not waive debt or replace independent release controls.",
+    "Model output and imported source text do not establish authority."
+  ],
+  "implementation_note": "Configuration selects registered implementations and versioned validated artifacts. Missing formulas, golden oracles or API contracts may require additional engineering/evidence; the interface makes those additions local, not magic scalar settings.",
+  "components": [
+    {
+      "id": "D01.change_type_catalogue",
+      "parent_decision_id": "D01",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D01.change_type_catalogue/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D01.emergency_glpi_relationship",
+      "parent_decision_id": "D01",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D01.emergency_glpi_relationship/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D01.satisfied_gate_map",
+      "parent_decision_id": "D01",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D01.satisfied_gate_map/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D03.verified_billing_statement",
+      "parent_decision_id": "D03",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D03.verified_billing_statement/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D03.invoice_release_control_refs",
+      "parent_decision_id": "D03",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D03.invoice_release_control_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D04.iana_timezone",
+      "parent_decision_id": "D04",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D04.iana_timezone/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D04.working_calendar_ref",
+      "parent_decision_id": "D04",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D04.working_calendar_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D04.clock_anchor_pause_rules",
+      "parent_decision_id": "D04",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D04.clock_anchor_pause_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D04.deadline_parameters",
+      "parent_decision_id": "D04",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D04.deadline_parameters/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D05.role_principal_assignments",
+      "parent_decision_id": "D05",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D05.role_principal_assignments/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D05.delegation_rules",
+      "parent_decision_id": "D05",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D05.delegation_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D05.decision_action_matrix",
+      "parent_decision_id": "D05",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D05.decision_action_matrix/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D05.revision_invalidation_rules",
+      "parent_decision_id": "D05",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D05.revision_invalidation_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D06.source_schema_ref",
+      "parent_decision_id": "D06",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D06.source_schema_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D06.account_bu_maps",
+      "parent_decision_id": "D06",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D06.account_bu_maps/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D06.unit_sign_currency_period",
+      "parent_decision_id": "D06",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D06.unit_sign_currency_period/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D06.rule_oracle_refs",
+      "parent_decision_id": "D06",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D06.rule_oracle_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D07.authorized_input_refs",
+      "parent_decision_id": "D07",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D07.authorized_input_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D07.join_overlap_rule_id",
+      "parent_decision_id": "D07",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D07.join_overlap_rule_id/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D07.effective_membership_ref",
+      "parent_decision_id": "D07",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D07.effective_membership_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D07.allocation_pool_rules",
+      "parent_decision_id": "D07",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D07.allocation_pool_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D07.rounding_residual_rule_id",
+      "parent_decision_id": "D07",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D07.rounding_residual_rule_id/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D08.adapter_contract_ref",
+      "parent_decision_id": "D08",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D08.adapter_contract_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D08.effective_price_rule_refs",
+      "parent_decision_id": "D08",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D08.effective_price_rule_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D08.tax_tier_rounding_rules",
+      "parent_decision_id": "D08",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D08.tax_tier_rounding_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D08.billing_calendar",
+      "parent_decision_id": "D08",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D08.billing_calendar/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D08.duplicate_correction_rules",
+      "parent_decision_id": "D08",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D08.duplicate_correction_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D09.support_sop_ref",
+      "parent_decision_id": "D09",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D09.support_sop_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D09.reconciliation_contract_ref",
+      "parent_decision_id": "D09",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D09.reconciliation_contract_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D09.queue_state_command_map",
+      "parent_decision_id": "D09",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D09.queue_state_command_map/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D09.onboarding_stage_catalogue",
+      "parent_decision_id": "D09",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D09.onboarding_stage_catalogue/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D10.report_category_effective_dates",
+      "parent_decision_id": "D10",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D10.report_category_effective_dates/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D10.restatement_rule_id",
+      "parent_decision_id": "D10",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D10.restatement_rule_id/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D10.forecast_inclusion_rule_id",
+      "parent_decision_id": "D10",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D10.forecast_inclusion_rule_id/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D10.audience_projection_rules",
+      "parent_decision_id": "D10",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D10.audience_projection_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D11.recipient_grant_refs",
+      "parent_decision_id": "D11",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D11.recipient_grant_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D11.adapter_configuration_refs",
+      "parent_decision_id": "D11",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D11.adapter_configuration_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D11.template_storage_retention_rules",
+      "parent_decision_id": "D11",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D11.template_storage_retention_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D11.migration_evidence_rules",
+      "parent_decision_id": "D11",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D11.migration_evidence_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D11.hypercare_criteria_ref",
+      "parent_decision_id": "D11",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D11.hypercare_criteria_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D12.contract_version_ref",
+      "parent_decision_id": "D12",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D12.contract_version_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D12.currency_amount_basis",
+      "parent_decision_id": "D12",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D12.currency_amount_basis/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D12.stage_terms",
+      "parent_decision_id": "D12",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D12.stage_terms/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D12.uat_billing_predicate_ref",
+      "parent_decision_id": "D12",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D12.uat_billing_predicate_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D12.completion_billing_predicate_ref",
+      "parent_decision_id": "D12",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D12.completion_billing_predicate_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D13.human_authority_role_ref",
+      "parent_decision_id": "D13",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D13.human_authority_role_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D13.human_principal_refs",
+      "parent_decision_id": "D13",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D13.human_principal_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D13.delegation_evidence_refs",
+      "parent_decision_id": "D13",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D13.delegation_evidence_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D13.validity_revocation_reassessment_rules",
+      "parent_decision_id": "D13",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "schema_ref": "schema:psl/policy-component/D13.validity_revocation_reassessment_rules/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D13.payment_denominator_rule_ref",
+      "parent_decision_id": "D13",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D13.payment_denominator_rule_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D13.qualifying_funds_rule_ref",
+      "parent_decision_id": "D13",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D13.qualifying_funds_rule_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D14.receipt_verification_source_ref",
+      "parent_decision_id": "D14",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D14.receipt_verification_source_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D14.recorder_authority_ref",
+      "parent_decision_id": "D14",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D14.recorder_authority_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D14.allocation_rule_ref",
+      "parent_decision_id": "D14",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schema_ref": "schema:psl/policy-component/D14.allocation_rule_ref/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D14.adjustment_correction_rule_refs",
+      "parent_decision_id": "D14",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D14.adjustment_correction_rule_refs/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "D14.legal_document_requirements",
+      "parent_decision_id": "D14",
+      "subject_scope": "Narrowest actual organization/project/contract/service/stage scope; no global fallback to another stage.",
+      "value_schema": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+      },
+      "schema_ref": "schema:psl/policy-component/D14.legal_document_requirements/v1",
+      "implementation_contract": "Registered implementation ID/version and reviewed implementation reference required; validate any referenced artifact contents and source authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED"
+    },
+    {
+      "id": "P14-Q01.commercial_costing_rule_oracle",
+      "parent_decision_id": "P14-Q01",
+      "classification": "Supplemental process-level evidence slot, not a new consolidated D-group or approved formula",
+      "subject_scope": "Exact commercial costing rule/version and applicable project/contract basis",
+      "schema_ref": "schema:psl/policy-component/P14-Q01.commercial_costing_rule_oracle/v1",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "schema_ref",
+          "artifact_ref",
+          "artifact_version",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+      },
+      "implementation_contract": "Registered deterministic commercial costing implementation/version; approved calculator/formula lineage, rates, units, margin/tax/currency/rounding/override evidence and independent golden examples. Engineering may remain until these are known.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "source_refs": [
+        "reference/03-definitions/PMO.json#P14",
+        "reference/01-sources/PSL_PMO_Review_and_Architecture_Decision_2026-10-15.md#3.1",
+        "P14/Q01"
+      ]
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "payment.assess",
+      "required_components": [
+        "D13.payment_denominator_rule_ref",
+        "D13.qualifying_funds_rule_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "payment_exception.decide",
+      "required_components": [
+        "D13.human_authority_role_ref",
+        "D13.human_principal_refs",
+        "D13.delegation_evidence_refs",
+        "D13.validity_revocation_reassessment_rules"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "payment_exception.prepare_track",
+      "required_components": [],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "invoice.prepare.signed_sow",
+      "required_components": [
+        "D12.contract_version_ref",
+        "D12.currency_amount_basis",
+        "D12.stage_terms"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "invoice.prepare.uat",
+      "required_components": [
+        "D12.contract_version_ref",
+        "D12.currency_amount_basis",
+        "D12.stage_terms",
+        "D12.uat_billing_predicate_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "invoice.prepare.completion",
+      "required_components": [
+        "D12.contract_version_ref",
+        "D12.currency_amount_basis",
+        "D12.stage_terms",
+        "D12.completion_billing_predicate_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "document.publish",
+      "required_components": [
+        "D11.recipient_grant_refs",
+        "D11.template_storage_retention_rules"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "hypercare.evaluate",
+      "required_components": [
+        "D11.hypercare_criteria_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "adapter.dispatch",
+      "required_components": [
+        "D11.adapter_configuration_refs"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "migration.validate",
+      "required_components": [
+        "D11.migration_evidence_rules"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "workflow.clock.evaluate",
+      "required_components": [
+        "D04.iana_timezone",
+        "D04.working_calendar_ref",
+        "D04.clock_anchor_pause_rules",
+        "D04.deadline_parameters"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "role.decision.evaluate",
+      "required_components": [
+        "D05.role_principal_assignments",
+        "D05.delegation_rules",
+        "D05.decision_action_matrix"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "decision.reuse_after_revision",
+      "required_components": [
+        "D05.revision_invalidation_rules"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "financial_import.validate",
+      "required_components": [
+        "D06.source_schema_ref",
+        "D06.unit_sign_currency_period"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "financial_report.calculate",
+      "required_components": [
+        "D06.account_bu_maps",
+        "D06.unit_sign_currency_period",
+        "D06.rule_oracle_refs"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "payroll.import_join",
+      "required_components": [
+        "D07.authorized_input_refs",
+        "D07.join_overlap_rule_id",
+        "D07.effective_membership_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "payroll.allocate",
+      "required_components": [
+        "D07.allocation_pool_rules",
+        "D07.rounding_residual_rule_id",
+        "D07.effective_membership_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "invoice.price",
+      "required_components": [
+        "D08.effective_price_rule_refs",
+        "D08.tax_tier_rounding_rules"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "invoice.adapter_effect",
+      "required_components": [
+        "D08.adapter_contract_ref",
+        "D08.duplicate_correction_rules"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "invoice.schedule",
+      "required_components": [
+        "D08.billing_calendar"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "support.transition",
+      "required_components": [
+        "D09.support_sop_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "reconciliation.evaluate",
+      "required_components": [
+        "D09.reconciliation_contract_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "corrective_request.route",
+      "required_components": [
+        "D09.queue_state_command_map"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "onboarding.transition",
+      "required_components": [
+        "D09.onboarding_stage_catalogue"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "report.category_apply",
+      "required_components": [
+        "D10.report_category_effective_dates"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "report.restate",
+      "required_components": [
+        "D10.restatement_rule_id"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "forecast.calculate",
+      "required_components": [
+        "D10.forecast_inclusion_rule_id"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "report.project_audience",
+      "required_components": [
+        "D10.audience_projection_rules"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "receipt.verify",
+      "required_components": [
+        "D14.receipt_verification_source_ref",
+        "D14.recorder_authority_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "receipt.allocate",
+      "required_components": [
+        "D14.allocation_rule_ref"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "financial.correct",
+      "required_components": [
+        "D14.adjustment_correction_rule_refs",
+        "D14.legal_document_requirements"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "change.preapproval_evaluate",
+      "required_components": [
+        "D01.change_type_catalogue",
+        "D01.satisfied_gate_map"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "emergency.release_evaluate",
+      "required_components": [
+        "D01.emergency_glpi_relationship",
+        "D01.satisfied_gate_map"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "billing.release_control_evaluate",
+      "required_components": [
+        "D03.verified_billing_statement",
+        "D03.invoice_release_control_refs"
+      ],
+      "interpretation": "Additional known source guards/actor/current evidence still apply. Resolve only these policy components for this operation; do not demand every field of the parent decision."
+    },
+    {
+      "operation": "commercial_cost.calculate",
+      "required_components": [
+        "P14-Q01.commercial_costing_rule_oracle"
+      ],
+      "interpretation": "Applies to real calculated costing, not artifact capture, human review infrastructure or handoff. No guessed rates/formulas."
+    }
+  ],
+  "stage_resolution": "D12.stage_terms resolves within exact contract+stage scope. Signed-SOW terms do not require UAT/completion amounts/predicates. Schedule can remain partially configured; only the selected stage action checks its required terms.",
+  "supplemental_process_slots": [
+    {
+      "id": "P14-Q01",
+      "purpose": "Commercial calculator/rule/oracle evidence not exhausted by consolidated D groups",
+      "component_ids": [
+        "P14-Q01.commercial_costing_rule_oracle"
+      ]
+    }
+  ]
+}

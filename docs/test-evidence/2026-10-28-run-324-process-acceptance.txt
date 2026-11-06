@@ -1,0 +1,34 @@
+Using existing test database for alias 'default' ('test_psl')...
+setUpClass (tests.test_project_view.ProjectViewTests) ... ERROR
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+
+======================================================================
+ERROR: setUpClass (tests.test_project_view.ProjectViewTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_project_view.py", line 32, in setUpTestData
+    complete_milestone(cls.a,cls.c.pk,'Recorded <script>milestone</script>',cls.e['plan'].pk,rev(cls.c))
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 103, in complete_milestone
+    evidence = subject(case, evidence_id, 'completion')
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 14, in subject
+    raise ValidationError('Evidence must match this case and required kind')
+django.core.exceptions.ValidationError: ['Evidence must match this case and required kind']
+
+----------------------------------------------------------------------
+Ran 1 test in 5.936s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

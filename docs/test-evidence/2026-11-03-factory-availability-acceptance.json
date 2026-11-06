@@ -1,0 +1,89 @@
+{
+  "status": "PASS",
+  "classification": "Bounded explicit reviewer availability/absence through existing scoped delegation, Finance approval and receipt chain",
+  "parent_checkpoint": 554,
+  "source_run": 561,
+  "browser_source_run": 559,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "passing_runs": {
+    "556": {
+      "tests": 1,
+      "unittest_seconds": 43.065,
+      "process_seconds": 48.73
+    },
+    "559": {
+      "tests": 13,
+      "unittest_seconds": 338.81,
+      "process_seconds": 345.677
+    },
+    "560": {
+      "tests": 25,
+      "unittest_seconds": 208.329,
+      "process_seconds": 214.681
+    },
+    "561": {
+      "tests": 2,
+      "unittest_seconds": 26.658,
+      "process_seconds": 32.609
+    }
+  },
+  "retained_failed_runs": [
+    555,
+    557,
+    558
+  ],
+  "tested_scope": [
+    "Independent typed finite available/unavailable/unknown windows and explicit v3 opt-in",
+    "Absent principal excluded; only available currently qualified native delegate can claim and decide",
+    "Missing source, unknown mode/status and actual expiry hold dependent review/dispatch after useful preparation",
+    "Closed types, same-workspace people, nonoverlap and half-open adjacent window semantics",
+    "Owner UI preserves other windows, stale source/exact replacement and separate native activation",
+    "Every historical availability/delegation version and lifecycle request checks its own private source access",
+    "Availability changes retire stale review context without rewriting history; protected resolver recheck remains explicit",
+    "Actual PostgreSQL decision/withdrawal contention; native approval history retained after withdrawal",
+    "Original accepted uncertain effect reconciles after revocation without resend or new delivery",
+    "Actual native-browser agent preparation, separate delegate approval/executor continuation, two verified mock receipts, narrow/keyboard/GET preservation"
+  ],
+  "engineering_design": "Supplemental independently versioned availability plus responsibility v3, not a source-defined live calendar or substitute appointment",
+  "operational_policy_slots": [
+    "Actual windows/statuses",
+    "Whether availability is required",
+    "Actual qualified delegates and owners"
+  ],
+  "screenshots": {
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-claimed.jpg": "99ea63d18f95b0a0b768ebb965dc269eb6f6d0e1f50f3e6328b6d7d54a55eb33",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-configuration-narrow.jpg": "bda0cd55abbefc9f9c2b42164a66812eecc66890354cdfa395753b85e459b1bb",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-configuration.jpg": "41ea6bfe941a4380e17a925eb5d6ef5d12487e58e8ce96da791a3c193347a46e",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-verified-narrow.jpg": "64f171e8df9a86463a7e2e73dc140753004c8711883e5f6cd404cfea41b2d667",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-verified.jpg": "ed97977f2f80dddf0cb3dff41b8f92336b825133a360d50c167f622328447979"
+  },
+  "mock_files": {
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-availability-mock-receipts/0302a3c31997f9748c770ded14396c016ec395fbd23dbd1c530e223b0115f5f9.json": "26af5e5b91551110ad09802d2b0362f9867e9ffb627569a3243169be469b3071",
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-availability-mock-receipts/600a0e476c177f9c3338ececd3863c888466ebb2d82d752b2afeccf9423e3f46.json": "4763d1f17bf5d445ce978f17ce3d35f15228595a467bcc63259c9adfa03c2ce2"
+  },
+  "prior_mock_files_unchanged": 11,
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "remaining_code": [
+    "Accounting preparation has native services but no registered factory definition",
+    "Factory provider path currently restricts execution to synthetic cases; governed provider integration remains code work",
+    "Wider stages/quorum/veto/aggregation-FX and remaining108 release/shared background/recovery/impact integration"
+  ],
+  "evidence": [
+    "docs/test-evidence/2026-11-03-factory-availability-acceptance.json",
+    "docs/test-evidence/2026-11-03-factory-availability-baseline.json",
+    "docs/test-evidence/2026-11-03-factory-availability-static559.json",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559.json",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-native.json",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-before.json",
+    "docs/test-evidence/2026-11-03-factory-availability-browser559-after.json",
+    "docs/test-evidence/2026-11-03-factory-review-retirement-preservation559.json",
+    "docs/test-evidence/2026-11-03-factory-availability-preview559-identity.json"
+  ]
+}

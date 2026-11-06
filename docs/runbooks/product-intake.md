@@ -1,0 +1,15 @@
+# Ordinary case intake
+
+Engineering technical access, separate from PMO/Finance business authority. No account, policy, owner, key or delegation is installed by migrations.
+
+An authorized deployment administrator first creates existing Django accounts through the chosen identity lifecycle. A current Django superuser can record a version of technical tenant delegation at `/tenant-access/`, or run `python manage.py provision_tenant_access --actor <existing-superuser> --subject <existing-account> --tenant <exact-tenant> --config <reviewed-json-file> --expires <timezone-aware-ISO-time> --reason <evidence-backed-reason>`. The CLI is a trusted-host administrative tool; the actor argument is not remote authentication. `--disable` records a disabled successor. No passwords are printed or changed.
+
+The version1 closed JSON value includes format `psl.tenant-access/v1`, explicit create_cases/manage_access booleans, permitted project/support kinds, allowed_actions, initial_actions and synthetic/operational classification. Only registered record actions are accepted; initial_actions must be a subset of allowed_actions. Case creation requires explicit initial case.read. There is no automatic broad-access preset. `/tenant-access/` displays the full schema and immutable version history. Actual tenant/account/action lists are operational inputs; do not copy synthetic test identities into production.
+
+At `/intake/`, a currently delegated account selects an exact tenant, reference, title and case kind. It receives only the declared initial record grants. The reference is tenant-unique and idempotent for the same creator and payload. A conflicting reference does not merge cases. The Case UUID is internal; creation does not issue a formal project identifier, assign a PM or sign a baseline. Existing evidence capture works before those later steps.
+
+At `/cases/<case-uuid>/access/`, an account with current manage_access delegation and case.read may grant/revoke only delegated actions for an existing active account, with a reason. All changes are immutable history. Expiry/disabling of technical delegation stops its case-creation/administration powers; already recorded individual case grants remain separate facts and are revoked explicitly. Business roles, policy decisions, approvals, independence and financial calculations still use their existing domain services and configurations.
+
+`/cases/<case-uuid>/intake-investigation/` provides bounded A01 triage with currently visible same-tenant duplicate-title candidate IDs and next steps. It neither merges records nor grants authority. Duplicate candidates are suggestions for human investigation, not established identity matches.
+
+PostgreSQL tests cover the actual UI/services, CSRF, scope/classification, current authority/successors/expiry, exact initial grants, concurrent idempotency, immutable SQL history and continued evidence capture. Real SSO onboarding, actual administrator legitimacy and operational owner configuration remain deployment inputs, not synthetic test claims. P03/P16 engagement/PM/formal-ID completion is a subsequent connected increment.

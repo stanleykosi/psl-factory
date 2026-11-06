@@ -1,0 +1,2043 @@
+{
+  "verified_at": "2026-10-23T17:06:57.713734+00:00",
+  "frozen_source_hashes": 41,
+  "processes": 122,
+  "families": 13,
+  "exact_titles_and_plan_preserved": true,
+  "statuses": {
+    "partial": 122
+  },
+  "original_catalogue": {
+    "total": 57,
+    "consolidated_D_components": 56,
+    "P14_supplement_in_original_catalogue": true,
+    "partial_semantics": 57
+  },
+  "runtime_catalogue": {
+    "original": 57,
+    "original_supported": 57,
+    "runtime": 98,
+    "runtime_supported": 98,
+    "supplemental": 41,
+    "missing": []
+  },
+  "json_files_parsed": 186,
+  "databases": {
+    "psl": {
+      "migrations": {
+        "pmo": "0037_costing_guards",
+        "baas": "0015_support_clock_successor_guards",
+        "finance": "0043_ledger_resolution_guards",
+        "documents": "0008_migration_readiness_guards"
+      },
+      "new_append_only_guards": 6,
+      "version_operation_uniqueness_constraints": 6,
+      "F33_append_only_guards": 2,
+      "F33_uniqueness_constraints": 2,
+      "F35_append_only_guards": 4,
+      "F35_uniqueness_constraints": 4,
+      "payroll_append_only_guards": 7,
+      "payroll_named_constraints": 9,
+      "payroll_followup_unique": 1,
+      "BU_append_only_guards": 5,
+      "BU_uniqueness_constraints": 7,
+      "schedule_append_only_guards": 3,
+      "schedule_unique_constraints": 4,
+      "schedule_parent_check": 1,
+      "ledger_append_only_guards": 3,
+      "support_append_only_guards": 7,
+      "support_explicit_unique_constraints": 2,
+      "approval_append_only_guards": 6,
+      "approval_immutable_intent_guard": 1,
+      "approval_named_unique_constraints": 3,
+      "migration_append_only_guards": 6,
+      "migration_named_unique_constraints": 4,
+      "d03_append_only_guards": 6,
+      "d03_named_unique_constraints": 4,
+      "costing_append_only_guards": 6,
+      "costing_named_unique_constraints": 5,
+      "operator_append_only_guards": 6,
+      "operator_named_unique_constraints": 6,
+      "operator_immutable_intent_guard": true,
+      "readiness_append_only_guards": 5,
+      "readiness_named_unique_constraints": 6,
+      "readiness_intent_guard": true,
+      "private_extraction_guards": {
+        "immutable_tables": 4,
+        "intent_guard": true,
+        "named_unique_constraints": 2,
+        "one_receipt_per_job": true,
+        "migration": "0003_boundary_guards"
+      },
+      "support_native_private_guards": {
+        "migration": "0009_support_agent_guards",
+        "immutable_tables": 3,
+        "named_unique_constraints": 2,
+        "one_binding_per_projection": true
+      },
+      "support_response_guards": {
+        "migration": "0011_support_response_guards",
+        "immutable_tables": 3,
+        "job_intent_guard": true,
+        "unique_packet_intent": true,
+        "unique_receipt_job_and_operation": true
+      },
+      "support_channel_guards": {
+        "migration": "0015_support_clock_successor_guards",
+        "immutable_tables": 4,
+        "job_intent_guard": true,
+        "named_unique_indexes": 3,
+        "one_attestation_per_receipt_and_event": true
+      }
+    },
+    "test_psl": {
+      "migrations": {
+        "pmo": "0037_costing_guards",
+        "baas": "0015_support_clock_successor_guards",
+        "finance": "0043_ledger_resolution_guards",
+        "documents": "0008_migration_readiness_guards"
+      },
+      "new_append_only_guards": 6,
+      "version_operation_uniqueness_constraints": 6,
+      "F33_append_only_guards": 2,
+      "F33_uniqueness_constraints": 2,
+      "F35_append_only_guards": 4,
+      "F35_uniqueness_constraints": 4,
+      "payroll_append_only_guards": 7,
+      "payroll_named_constraints": 9,
+      "payroll_followup_unique": 1,
+      "BU_append_only_guards": 5,
+      "BU_uniqueness_constraints": 7,
+      "schedule_append_only_guards": 3,
+      "schedule_unique_constraints": 4,
+      "schedule_parent_check": 1,
+      "ledger_append_only_guards": 3,
+      "support_append_only_guards": 7,
+      "support_explicit_unique_constraints": 2,
+      "approval_append_only_guards": 6,
+      "approval_immutable_intent_guard": 1,
+      "approval_named_unique_constraints": 3,
+      "migration_append_only_guards": 6,
+      "migration_named_unique_constraints": 4,
+      "d03_append_only_guards": 6,
+      "d03_named_unique_constraints": 4,
+      "costing_append_only_guards": 6,
+      "costing_named_unique_constraints": 5,
+      "operator_append_only_guards": 6,
+      "operator_named_unique_constraints": 6,
+      "operator_immutable_intent_guard": true,
+      "readiness_append_only_guards": 5,
+      "readiness_named_unique_constraints": 6,
+      "readiness_intent_guard": true,
+      "private_extraction_guards": {
+        "immutable_tables": 4,
+        "intent_guard": true,
+        "named_unique_constraints": 2,
+        "one_receipt_per_job": true,
+        "migration": "0003_boundary_guards"
+      },
+      "support_native_private_guards": {
+        "migration": "0009_support_agent_guards",
+        "immutable_tables": 3,
+        "named_unique_constraints": 2,
+        "one_binding_per_projection": true
+      },
+      "support_response_guards": {
+        "migration": "0011_support_response_guards",
+        "immutable_tables": 3,
+        "job_intent_guard": true,
+        "unique_packet_intent": true,
+        "unique_receipt_job_and_operation": true
+      },
+      "support_channel_guards": {
+        "migration": "0015_support_clock_successor_guards",
+        "immutable_tables": 4,
+        "job_intent_guard": true,
+        "named_unique_indexes": 3,
+        "one_attestation_per_receipt_and_event": true
+      }
+    }
+  },
+  "existing_receivables_unchanged": {
+    "5a1b8ea0-d78c-4e57-9674-1deba59694d8": "17.25000000",
+    "f9f2896e-0f20-4103-97ff-0363ca50df3b": "12.25000000",
+    "adbac2f4-886a-4f8e-a6d5-bfa3642a4cbe": "22.25000000"
+  },
+  "controlled_document_receipts_preserved": 16,
+  "partner_meter_claims_preserved": 3,
+  "prior_D13_window_naturally_expired": true,
+  "synthetic_AF13": {
+    "case": "769c5f59-1348-451b-9e11-f0bb853085b7",
+    "collection_package": 1,
+    "actual_gaps_open": 3,
+    "synthetic_package": 2,
+    "meaning_review": 1,
+    "expectations_review": 2,
+    "acceptance_review": 3,
+    "supplied_result_comparisons": [
+      1,
+      2
+    ],
+    "followup": 1,
+    "shared_action": 8,
+    "agent": 33,
+    "policies": {
+      "AF13.owner_validation_rules": 140,
+      "AF13.acceptance_rules": 141,
+      "D09.support_sop_ref": 142
+    },
+    "acceptance_report": {
+      "review": 3,
+      "verdict": "approve",
+      "package": 2,
+      "sha256": "8d4cc25a18b7b24fdebd897764a575df17b74d702a2531da1a0ae6867ce4611a",
+      "status": {
+        "costing_readiness": {
+          "status": "not_bound",
+          "native_workbook_verified": false
+        },
+        "migration_readiness": {
+          "status": "not_bound",
+          "operational_ready": false
+        },
+        "package": 2,
+        "level": "synthetic_implementation",
+        "scope": [
+          "B13",
+          "P13",
+          "P15"
+        ],
+        "holds": [],
+        "reviews": {
+          "meaning": {
+            "latest": 1,
+            "verdict": "approve",
+            "use_status": "current_approved"
+          },
+          "expectations": {
+            "latest": 2,
+            "verdict": "approve",
+            "use_status": "current_approved"
+          },
+          "acceptance": {
+            "latest": 3,
+            "verdict": "approve",
+            "use_status": "current_approved"
+          }
+        },
+        "production_authorized": false,
+        "policy_activated": false
+      },
+      "requested_record_is_current": true,
+      "reported_evidence_only": true,
+      "deployment_authorized": false,
+      "whole_product_accepted": false
+    }
+  },
+  "runs": {
+    "179": {
+      "tests": 7,
+      "seconds": 127.742,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-179-ledger-resolution-baseline.txt"
+    },
+    "180": {
+      "tests": 25,
+      "seconds": 129.577,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-180-ledger-resolution.txt"
+    },
+    "181": {
+      "tests": 115,
+      "seconds": 574.324,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-181-ledger-resolution-connected.txt"
+    },
+    "182": {
+      "tests": 53,
+      "seconds": 272.047,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-182-ledger-resolution-final.txt"
+    }
+  },
+  "suite_counts_overlap": true,
+  "real_owner_acceptance": false,
+  "underlying_workflow_execution_by_comparator": false,
+  "native_integration_evidence": false,
+  "real_provider_evaluation": false,
+  "operational_authority_installed": false,
+  "synthetic_F33": {
+    "case": "2ea0e4ca-21cb-44f8-b4af-bcb2892d60fa",
+    "packet": 1,
+    "review": 8,
+    "PM_principal": 2,
+    "Finance_principal": 3,
+    "current_chain": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "historical_chain": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "agent": 36,
+    "recognised_amount": null,
+    "accounting_posted": false
+  },
+  "synthetic_F35": {
+    "case": "a58f8997-f5dc-4f52-aded-9779c73f0c33",
+    "need": 1,
+    "contract": 1,
+    "HR_principal": 4,
+    "Finance_principal": 5,
+    "approval": 1,
+    "old_snapshot": 1,
+    "rejected_snapshot": 2,
+    "current_snapshot": 3,
+    "correction": 3,
+    "response": 4,
+    "current_receipt": 5,
+    "basis_policies": [
+      150,
+      151
+    ],
+    "agent": 38,
+    "metadata_viewer_rows_denied": true,
+    "row_values_in_shared_evidence_or_audit": false,
+    "source_write": false,
+    "native_authenticity_verified": false
+  },
+  "synthetic_payroll": {
+    "case": "c06ea65e-0846-42e3-b524-455b72cf4443",
+    "principals": {
+      "owner": 6,
+      "preparer": 7,
+      "reviewer": 8,
+      "manager": 9
+    },
+    "request": 1,
+    "initial_chain": [
+      1,
+      2,
+      3,
+      1
+    ],
+    "corrected_chain": [
+      4,
+      5,
+      6,
+      2
+    ],
+    "current_inputs": [
+      1,
+      3
+    ],
+    "rejected_input": 4,
+    "hr_snapshot": 4,
+    "hr_contract": 2,
+    "policies": {
+      "F16.input_access_rules": 153,
+      "F16.merge_rules": 154,
+      "F17.match_rules": 155,
+      "F18.reporting_rules": 156,
+      "F18.review_authority": 157
+    },
+    "agent": 39,
+    "receipt": 1,
+    "report": {
+      "unit": "major_currency",
+      "by_bu": {
+        "BU-A": "300.00"
+      },
+      "entity": "synthetic-company",
+      "period": "2026-09",
+      "currency": "TEST",
+      "disclosure": "aggregate_only",
+      "hr_written": false,
+      "source_run": 6,
+      "destination": "synthetic-bu-staff-cost-report",
+      "ledger_posted": false,
+      "eligible_total": "300.00",
+      "report_version": 2
+    },
+    "native_source_authenticity": false
+  },
+  "synthetic_BU": {
+    "case": "c06ea65e-0846-42e3-b524-455b72cf4443",
+    "principals": {
+      "preparer": 7,
+      "reviewer": 8,
+      "manager": 9
+    },
+    "payroll_match": 5,
+    "initial_staff": [
+      1,
+      2,
+      1
+    ],
+    "corrected_staff": [
+      3,
+      4,
+      2
+    ],
+    "initial_event": [
+      5,
+      6,
+      3
+    ],
+    "corrected_event": [
+      7,
+      8,
+      4
+    ],
+    "rejected_source": 9,
+    "held_missing_rule": 10,
+    "agent": 42,
+    "receipts": [
+      1,
+      2
+    ],
+    "policies": {
+      "F21.allocation_rules": 160,
+      "F44.source_rules": 161,
+      "F44.attribution_rules": 162,
+      "BU.review_authority": 163,
+      "BU.disclosure_rules": 164
+    },
+    "staff_report": {
+      "unit": "major_currency",
+      "by_bu": {
+        "BU-A": "260.00",
+        "BU-B": "40.00"
+      },
+      "entity": "synthetic-company",
+      "period": "2026-09",
+      "coverage": "selected_supplied_population_only",
+      "currency": "TEST",
+      "residual": "0.00",
+      "conserved": true,
+      "disclosure": "aggregate_only",
+      "destination": "synthetic-bu-report",
+      "source_work": 4,
+      "company_only": "0",
+      "ledger_posted": false,
+      "source_written": false,
+      "allocated_total": "300.00",
+      "company_source_total": "300",
+      "native_authenticity_verified": false
+    },
+    "event_report": {
+      "unit": "major_currency",
+      "by_bu": {
+        "BU-A": "84.00",
+        "BU-B": "36.00"
+      },
+      "entity": "synthetic-company",
+      "period": "2026-09",
+      "coverage": "selected_supplied_population_only",
+      "currency": "TEST",
+      "residual": "0.00",
+      "conserved": true,
+      "disclosure": "aggregate_only",
+      "destination": "synthetic-bu-report",
+      "source_work": 8,
+      "company_only": "0",
+      "ledger_posted": false,
+      "source_written": false,
+      "allocated_total": "120.00",
+      "company_source_total": "120",
+      "native_authenticity_verified": false
+    },
+    "native_source_authenticity": false,
+    "historical_agent": 40,
+    "pre_inventory_agent": 41
+  },
+  "synthetic_schedules": {
+    "case": "109a9540-d890-406d-9eb4-302a90563f50",
+    "principals": {
+      "actor": 10,
+      "reviewer": 12,
+      "recipient": 11
+    },
+    "parent_run": 11,
+    "income_versions": [
+      1,
+      2,
+      3
+    ],
+    "totals": [
+      "100",
+      "120",
+      "125"
+    ],
+    "adjustment_links": [
+      1,
+      2
+    ],
+    "adjustments": [
+      1,
+      2
+    ],
+    "adjustment_mapping": 12,
+    "duplicate_held": 4,
+    "inventories": [
+      5,
+      6
+    ],
+    "AF13_package": 3,
+    "agent": 43,
+    "report": {
+      "work_id": 3,
+      "sha256": "12dd59e3726e2734c8f690a6011a25afdac821b16d2fe9faeaec209262d74dbc",
+      "review_id": 3,
+      "result": {
+        "findings": [],
+        "parent_run_id": 11,
+        "report_line": "revenue",
+        "rows": [
+          {
+            "key": "a",
+            "relationship": "disaggregation",
+            "amount": "60",
+            "unit": "major_currency",
+            "source_accounts": [],
+            "evidence_id": 284,
+            "duplicate_state": "already_represented",
+            "duplicate_resolution_evidence_id": null,
+            "adjustment_lines": []
+          },
+          {
+            "key": "b",
+            "relationship": "disaggregation",
+            "amount": "40",
+            "unit": "major_currency",
+            "source_accounts": [],
+            "evidence_id": 284,
+            "duplicate_state": "already_represented",
+            "duplicate_resolution_evidence_id": null,
+            "adjustment_lines": []
+          },
+          {
+            "key": "supplement",
+            "relationship": "additive",
+            "amount": "25",
+            "unit": "major_currency",
+            "source_accounts": [],
+            "evidence_id": 284,
+            "duplicate_state": "separately_justified",
+            "duplicate_resolution_evidence_id": null,
+            "adjustment_lines": [
+              {
+                "account": "sales",
+                "amount": "25"
+              }
+            ]
+          }
+        ],
+        "ledger_posted": false,
+        "source_written": false,
+        "status": "ready",
+        "parent_amount": "100",
+        "converted_parent": "100",
+        "factor": "1",
+        "child_total": "100",
+        "child_residual": "0",
+        "additive_total": "25",
+        "reclassification_total": "0",
+        "adjusted_total": "125",
+        "target_unit": "major_currency"
+      },
+      "native_workbook_verified": false,
+      "ledger_posted": false
+    },
+    "inventory_report": {
+      "work_id": 6,
+      "sha256": "27c4200cd4773f3ea9992866c9451b36256c752bf5a97ba18599357d9d7d124b",
+      "review_id": 5,
+      "result": {
+        "status": "ready",
+        "findings": [
+          "workbook_coverage_partial",
+          "monthly_performance_decision_pending"
+        ],
+        "schedules": [
+          {
+            "key": "equity",
+            "included": true,
+            "gaps": [],
+            "acceptance_level": "definition"
+          },
+          {
+            "key": "intercompany",
+            "included": false,
+            "gaps": [
+              "Counterparty matching and elimination policy absent",
+              "actual_owner_missing",
+              "formula_definition_missing",
+              "owner_validation_package_missing",
+              "source_links_missing"
+            ],
+            "acceptance_level": null
+          }
+        ],
+        "missing_required": [],
+        "monthly_performance": "undecided",
+        "coverage": "partial",
+        "complete_inventory": false,
+        "native_workbook_verified": false,
+        "ledger_posted": false
+      },
+      "native_workbook_verified": false,
+      "ledger_posted": false
+    },
+    "source_native_verified": false,
+    "provider_evaluation": "local deterministic only",
+    "ledger_posted": false
+  },
+  "synthetic_PPE": {
+    "case": "65272f3a-a207-42e1-9763-5c85774ac0e4",
+    "principals": {
+      "actor": 13,
+      "reviewer": 15,
+      "recipient": 14
+    },
+    "initial_register": 7,
+    "ambiguous_register": 8,
+    "held_date_schedule": 9,
+    "initial_schedule": 10,
+    "corrected_register": 11,
+    "corrected_schedule": 12,
+    "unknown_register": 13,
+    "unknown_schedule": 14,
+    "AF13_package": 4,
+    "Finance_mapping": 13,
+    "agent": 44,
+    "report": {
+      "work_id": 12,
+      "review_id": 12,
+      "sha256": "b0a4345b645b80ddb21404f2dbed60680dab82978fa501a1d2b36ac9d5eaf556",
+      "result": {
+        "status": "ready",
+        "findings": [],
+        "rows": [
+          {
+            "asset_id": "A1",
+            "category": "equipment",
+            "closing_cost": "1000",
+            "charge": "50.00",
+            "closing_accumulated": "500.00",
+            "book_value": "500.00",
+            "event_refs": [],
+            "findings": []
+          }
+        ],
+        "totals": {
+          "cost": "1000",
+          "accumulated": "500.00",
+          "book_value": "500.00",
+          "charge": "50.00"
+        },
+        "scope": {
+          "entity": "synthetic-company",
+          "currency": "NGN",
+          "unit": "major_currency",
+          "period_start": "2026-10-01",
+          "period_end": "2026-10-20",
+          "label_as_of": "2026-03-31"
+        },
+        "coverage": "selected_supplied_population",
+        "native_source_verified": false,
+        "ledger_posted": false
+      },
+      "native_source_verified": false,
+      "ledger_posted": false
+    },
+    "native_verified": false,
+    "ledger_posted": false
+  },
+  "final_checks": {
+    "system": {
+      "chunk_id": "eb54dc",
+      "wall_time_seconds": 8.3312927,
+      "exit_code": 0,
+      "original_token_count": 13,
+      "output": "System check identified no issues (0 silenced).\r\n"
+    },
+    "migration_drift": {
+      "chunk_id": "2fc706",
+      "wall_time_seconds": 2.02e-05,
+      "exit_code": 0,
+      "original_token_count": 6,
+      "output": "No changes detected\r\n"
+    },
+    "compile": {
+      "chunk_id": "a32d43",
+      "wall_time_seconds": 4.1160843,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "dependencies": {
+      "chunk_id": "bdf329",
+      "wall_time_seconds": 3.5920543,
+      "exit_code": 0,
+      "original_token_count": 8,
+      "output": "No broken requirements found.\r\n"
+    }
+  },
+  "browser_evidence": {
+    "browser": "2",
+    "tab": "2",
+    "viewer": "studio-demo",
+    "case": "746214a4-8481-43b7-86de-c2aa8cc37567",
+    "unconfigured_case": "66ee32ca-6392-47da-bf7a-019a06b8fc92",
+    "read_only": true,
+    "source_contract_status": 403,
+    "native_assessment_current_review_visible": true,
+    "supplied_outage_and_superseded_assessments_visible": true,
+    "provider_recorded_ready_but_current_unavailable_visible": true,
+    "missing_policy_contract_and_report_capture_visible": true,
+    "credential_values_displayed": false,
+    "private_business_source_transmitted": false,
+    "real_model_evaluation_claimed": false,
+    "server_session": 74577,
+    "screenshots": [
+      "docs/test-evidence/2026-10-22-readiness-board.png",
+      "docs/test-evidence/2026-10-22-readiness-history.png",
+      "docs/test-evidence/2026-10-22-readiness-evidence.png",
+      "docs/test-evidence/2026-10-22-readiness-missing.png",
+      "docs/test-evidence/2026-10-22-readiness-source-denied.png"
+    ],
+    "handoff_marked": true
+  },
+  "synthetic_ledger": {
+    "case": "be737719-4094-4985-b30d-d2c2ac7f20c2",
+    "principals": {
+      "preparer": 16,
+      "reviewer": 17
+    },
+    "normal": 1,
+    "uncertain": 2,
+    "recovered": 3,
+    "corrected_versions": [
+      4,
+      5
+    ],
+    "duplicate_versions": [
+      6,
+      7
+    ],
+    "agent": 45,
+    "mode": "supplied_read_only",
+    "native_verified": false,
+    "posting_performed": false
+  },
+  "synthetic_support": {
+    "case": "0ddb0771-16c2-4b2e-bb3d-5ac0580fccaa",
+    "principals": {
+      "preparer": 18,
+      "reviewer": 19,
+      "specialist": 20
+    },
+    "AF13_package": 5,
+    "pending": 4,
+    "specialist_result": 1,
+    "resolved_report": 1,
+    "current_report": 2,
+    "unlinked_intake": 3,
+    "agent": 46,
+    "unconfigured_case": "7c7505fc-eedb-4f77-a652-972a3db94d72",
+    "merged_source": "4f768fcd-8799-4839-bb11-f64f702069d4",
+    "canonical_target": "9b873627-d9d1-466c-868d-880bfad9279d",
+    "merge": 1,
+    "native_channel_verified": false,
+    "financial_execution_authorized": false,
+    "mode": "supplied references and synthetic owner-reviewed definition"
+  },
+  "backlog": {
+    "items": 38,
+    "dependencies_resolved": true
+  },
+  "synthetic_approvals": {
+    "classification": "EXPLICIT SYNTHETIC walkthrough; no real owner acceptance or native authenticity",
+    "case": "d6ea5933-7a3f-4a13-ab84-c7dcee8b2504",
+    "principals": {
+      "coordinator": 21,
+      "department_owner": 22
+    },
+    "failed_request": 1,
+    "failed_receipt": 1,
+    "original_observation": 1,
+    "access_failure": 2,
+    "held_packet": 22,
+    "original_binding": 1,
+    "recovered_request": 2,
+    "recovered_receipt": 2,
+    "recovered_observations": [
+      3,
+      4,
+      5
+    ],
+    "current_binding": 3,
+    "route_jobs": [
+      1,
+      2
+    ],
+    "agent": 47,
+    "unconfigured_case": "2d93282d-d455-4309-b5d0-f31cc7b61da3",
+    "unconfigured_request": 3,
+    "unconfigured_principals": [
+      23,
+      24
+    ],
+    "financial_execution": false,
+    "native_verified": false
+  },
+  "synthetic_migration": {
+    "classification": "EXPLICIT SYNTHETIC data and human fixtures; native local metadata read only; no operational acceptance",
+    "case": "2d5576d8-10b7-4ff8-ba52-caa58c5fb3b1",
+    "principals": {
+      "actor": 25,
+      "owner": 26,
+      "tester": 27,
+      "acceptor": 28
+    },
+    "AF13_package": 7,
+    "plan": 1,
+    "initial_assessment": 1,
+    "held_assessment": 2,
+    "current_assessment": 3,
+    "unknown_restore_proof": 9,
+    "corrected_restore_proof": 10,
+    "bindings": [
+      1,
+      2
+    ],
+    "agent": 48,
+    "unconfigured_case": "d77a8c5d-f51e-4c35-af04-243b9d139b2a",
+    "unconfigured_plan": 2,
+    "migration_executed": false,
+    "restore_executed": false,
+    "operational_ready": false
+  },
+  "synthetic_billing_evidence": {
+    "classification": "EXPLICIT SYNTHETIC sources, Finance principals and internal invoice effects; no native Power Automate or real-owner verification",
+    "case": "b31cbc2a-5678-42b3-ad7b-77de732d33fd",
+    "principals": {
+      "actor": 31,
+      "owner": 32
+    },
+    "invoice": 5,
+    "amount": "32.25",
+    "coverage": 7,
+    "statement": 3,
+    "flow": 4,
+    "initial_assessment": 4,
+    "held_assessment": 5,
+    "current_issue_assessment": 6,
+    "current_delivery_assessment": 7,
+    "bindings": [
+      3,
+      4,
+      5
+    ],
+    "unavailable_receipt": 5,
+    "corrected_receipt": 6,
+    "issue_job": 10,
+    "delivery_job": 11,
+    "agent": 49,
+    "unconfigured_case": "504d1f92-c9fd-4906-b54d-fe5494da87ed",
+    "unconfigured_source": 5,
+    "native_flow_verified": false,
+    "posted": false,
+    "deployment_authorized": false
+  },
+  "new_synthetic_receivable": "32.25000000",
+  "synthetic_costing": {
+    "classification": "EXPLICIT SYNTHETIC declared calculator/independent examples and principals; actual local decimal calculation, no native workbook or real owner acceptance",
+    "case": "3ac70625-2594-4014-a2f5-0db0d05a7e25",
+    "principals": {
+      "actor": 33,
+      "owner": 34,
+      "tester": 35
+    },
+    "rule": 1,
+    "mismatch_oracle": 2,
+    "corrected_oracle": 3,
+    "initial_run": 1,
+    "current_run": 2,
+    "unknown_run": 3,
+    "cost_bindings": [
+      1,
+      2
+    ],
+    "signed_costing": 484,
+    "AF13_package": 9,
+    "AF13_binding": 2,
+    "held_agent": 50,
+    "agent": 51,
+    "unconfigured_case": "20f89ec5-bceb-4b49-9d42-071cf73d76f5",
+    "unconfigured_rule": 2,
+    "native_workbook_verified": false,
+    "acceptance_granted": false,
+    "invoice_created": false,
+    "archived_AF13_package": 8,
+    "archived_AF13_binding": 1,
+    "final_agent": 52
+  },
+  "local_declared_graph_executed": true,
+  "synthetic_operator": {
+    "classification": "EXPLICIT SYNTHETIC principals/policy/evidence; actual local metadata export/file copy/separate PostgreSQL insertion and readback; no full-database restore or real-owner acceptance",
+    "case": "dac26d43-2d6e-42e3-bab9-fdf883937162",
+    "principals": {
+      "actor": 36,
+      "reviewer": 37
+    },
+    "plan": 1,
+    "inventory": 1,
+    "native_artifacts": [
+      1,
+      2,
+      3
+    ],
+    "native_jobs": [
+      1,
+      2,
+      3
+    ],
+    "initial_assessment": 1,
+    "held_assessment": 2,
+    "current_assessment": 3,
+    "reviews": [
+      1,
+      2
+    ],
+    "unavailable_report": 1,
+    "corrected_report": 2,
+    "held_agent": 53,
+    "agent": 54,
+    "drill_database": "psl_drill_operator_demo",
+    "unconfigured_case": "946ba077-dc0b-4f83-859e-33e91ad5b596",
+    "unconfigured_plan": 2,
+    "unconfigured_report": 3,
+    "native_metadata_drill_verified": true,
+    "full_database_restore_verified": false,
+    "business_jobs_reenacted": false,
+    "operational_ready": false
+  },
+  "native_metadata_integration_evidence": true,
+  "full_database_restore_verified": false,
+  "business_jobs_reenacted": false,
+  "operational_ready": false,
+  "synthetic_readiness": {
+    "classification": "EXPLICIT SYNTHETIC principals/rules/reports; actual local PostgreSQL session/receipt probes and source Finance handoff; authenticated HTTP mock provider canaries, no real-model evaluation/private egress/operational acceptance",
+    "case": "746214a4-8481-43b7-86de-c2aa8cc37567",
+    "principals": {
+      "actor": 38,
+      "reviewer": 39
+    },
+    "native_contract": 1,
+    "native_health_observations": [
+      1,
+      4
+    ],
+    "native_receipt_observations": [
+      2,
+      5
+    ],
+    "source_job": 4,
+    "source_receipt": "3",
+    "initial_assessment": 1,
+    "held_assessment": 2,
+    "current_assessment": 3,
+    "native_reviews": [
+      1,
+      2
+    ],
+    "supplied_outage": 3,
+    "provider_contract": 2,
+    "provider_assessment": 5,
+    "provider_review": 4,
+    "provider_observations": [
+      6,
+      7,
+      8
+    ],
+    "provider_current_ready": false,
+    "provider_mock_executions": 2,
+    "held_agent": 55,
+    "agent": 56,
+    "unconfigured_case": "66ee32ca-6392-47da-bf7a-019a06b8fc92",
+    "unconfigured_contract": 3,
+    "unconfigured_report": 9,
+    "preexisting_handoffs": [
+      {
+        "id": 1,
+        "state_sha256": "52b3e8cb2ecc00924f06468dda1064190d549849668930ae6fe060b4edf77239"
+      },
+      {
+        "id": 2,
+        "state_sha256": "c8a25b6c6154002393f77a40e0d9e60e555178cb46552783efa2f7cfeeb59baa"
+      },
+      {
+        "id": 3,
+        "state_sha256": "d034248dcf7ae8e56eeaf3ec78083aaee035d12eb7159e152a148d54a0e10209"
+      }
+    ],
+    "native_source_handoff_confirmed": true,
+    "real_model_evaluated": false,
+    "private_source_sent": false,
+    "operational_ready": false
+  },
+  "native_database_session_evidence": true,
+  "authenticated_mock_provider_evidence": true,
+  "underlying_model_execution_independently_verified": false,
+  "private_browser_evidence": {
+    "classification": "Browser verification of synthetic local case, no operational acceptance",
+    "case": "4c72630b-b3e1-43f5-9d6e-1aca29cfc30c",
+    "viewer": "studio-demo",
+    "read_only": true,
+    "private_source_hidden": true,
+    "protected_result_status": 403,
+    "policy_status": "ACTIVE revision1; independent sender/provider controls still required",
+    "job_statuses": [
+      "confirmed",
+      "confirmed"
+    ],
+    "source_body_and_result_body_visible": false,
+    "screenshots": [
+      "docs/test-evidence/agent-data-read-only.png",
+      "docs/test-evidence/agent-data-result-403.png"
+    ],
+    "server_exec": 90969,
+    "browser": 2,
+    "tab": 2
+  },
+  "synthetic_private_extraction": {
+    "classification": "EXPLICIT SYNTHETIC authenticated loopback mock gateway; not a real model or approved operational egress",
+    "case": "4c72630b-b3e1-43f5-9d6e-1aca29cfc30c",
+    "principals": {
+      "sender": 40,
+      "reviewer": 41
+    },
+    "contract": 4,
+    "policy": 284,
+    "input": 545,
+    "projection": 1,
+    "projection_review": 1,
+    "jobs": [
+      1,
+      2
+    ],
+    "receipts": [
+      1,
+      2
+    ],
+    "correction": 1,
+    "private_executions": 2,
+    "excluded_text_sent": false,
+    "tools_executed": false,
+    "lost_response_recovered_after_sender_revocation": true,
+    "recorded_human_acceptance": true,
+    "current_acceptance_after_revocation_and_registry_removal": false,
+    "raw_provider_output_in_generic_agent_runs": false,
+    "real_model_evaluated": false,
+    "business_effects": false,
+    "old_handoff_states": [
+      {
+        "id": 1,
+        "state_sha256": "52b3e8cb2ecc00924f06468dda1064190d549849668930ae6fe060b4edf77239"
+      },
+      {
+        "id": 2,
+        "state_sha256": "c8a25b6c6154002393f77a40e0d9e60e555178cb46552783efa2f7cfeeb59baa"
+      },
+      {
+        "id": 3,
+        "state_sha256": "d034248dcf7ae8e56eeaf3ec78083aaee035d12eb7159e152a148d54a0e10209"
+      },
+      {
+        "id": 4,
+        "state_sha256": "7df1a5baf3b2dfbe6244e98556f31b10aefe0e9d3bfcdb276fada09521becc5e"
+      }
+    ],
+    "mock_registry_removed": true,
+    "source_permission_revoked": true
+  },
+  "natural_expiry_holds": [
+    {
+      "dependency": "F35 snapshot3 current use",
+      "expected_current_hold": [
+        "HR source snapshot stale"
+      ],
+      "history_preserved": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "D07.effective_membership_ref",
+      "configuration": 150,
+      "expected_current_hold": "HR source snapshot stale",
+      "history_preserved": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "D07.authorized_input_refs",
+      "configuration": 151,
+      "expected_current_hold": "HR source snapshot stale",
+      "history_preserved": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "F35 allocation basis3",
+      "expected_current_hold": [
+        "HR source snapshot stale"
+      ],
+      "history_preserved": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "F18 payroll publication",
+      "expected_current_hold": [
+        "Payroll input freshness/retained access expired"
+      ],
+      "history_preserved": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "F21 corrected staff report",
+      "expected_current_hold": [
+        "Payroll input freshness/retained access expired"
+      ],
+      "history_preserved": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "F44 corrected event report",
+      "expected_current_hold": [
+        "Source rejected/stale"
+      ],
+      "history_preserved": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "F07 PPE corrected schedule12",
+      "expected_current_hold": [
+        "PPE current calculation/freshness differs; preserve history and rebuild"
+      ],
+      "exact_only_change": "source_stale",
+      "history_preserved": true,
+      "hash_and_snapshot_unchanged": true,
+      "current_report_available": false,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "P02 owner observation5/gate binding3",
+      "expected_current_hold": [
+        "Source observation expired; no checkbox fallback"
+      ],
+      "history_preserved": true,
+      "policy_authority_payload_hash_unchanged": true,
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "dependency": "B14 receipt3/review4/correction1/review1/report4",
+      "expected_current_hold": [
+        "Channel review expired"
+      ],
+      "current_metric_unknown": true,
+      "historical_event_time_and_report_hash_preserved": true,
+      "authority_snapshot_and_receipt_unchanged": true,
+      "refreshed_or_reauthorised": false
+    }
+  ],
+  "synthetic_support_native": {
+    "classification": "EXPLICIT SYNTHETIC B14 local supplied-record projection and authenticated mock; no actual channel/model/owner acceptance",
+    "case": "9e4b0061-a3d2-4bbe-9036-337e1fd5de48",
+    "principals": {
+      "projector_owner": 42,
+      "reviewer": 43,
+      "specialist": 44
+    },
+    "native_policy": 290,
+    "intake": 7,
+    "source_binding": 1,
+    "projection": 2,
+    "source_evidence": 556,
+    "receipt": 3,
+    "draft": 1,
+    "revision": 2,
+    "draft_review": 2,
+    "recovery_job": 4,
+    "private_executions": 2,
+    "fields": [
+      "case_type",
+      "issue_ref"
+    ],
+    "content_reference_fetched": false,
+    "excluded_fields_sent": false,
+    "native_channel_verified": false,
+    "real_model_evaluated": false,
+    "recorded_draft_approval": true,
+    "current_approval_after_revocation_flow_change_registry_removal": false,
+    "first_response_unchanged": true,
+    "draft_auto_changed_state": false,
+    "manual_investigation_event": 11,
+    "source_permission_revoked": true,
+    "generic_agent_output_created": false,
+    "responses_sent": 0,
+    "financial_effects": false,
+    "old_handoff_states": [
+      {
+        "id": 1,
+        "state_sha256": "52b3e8cb2ecc00924f06468dda1064190d549849668930ae6fe060b4edf77239"
+      },
+      {
+        "id": 2,
+        "state_sha256": "c8a25b6c6154002393f77a40e0d9e60e555178cb46552783efa2f7cfeeb59baa"
+      },
+      {
+        "id": 3,
+        "state_sha256": "d034248dcf7ae8e56eeaf3ec78083aaee035d12eb7159e152a148d54a0e10209"
+      },
+      {
+        "id": 4,
+        "state_sha256": "7df1a5baf3b2dfbe6244e98556f31b10aefe0e9d3bfcdb276fada09521becc5e"
+      }
+    ],
+    "missing_case": "1a627fa5-0706-4083-bb34-39c986b27ee7",
+    "missing_intake": 8,
+    "missing_principals": [
+      45,
+      46,
+      47
+    ],
+    "mock_registry_removed": true
+  },
+  "support_native_browser": {
+    "classification": "Browser verification of explicit synthetic B14 data, not actual owner/channel/model acceptance",
+    "case": "9e4b0061-a3d2-4bbe-9036-337e1fd5de48",
+    "missing_case": "1a627fa5-0706-4083-bb34-39c986b27ee7",
+    "viewer": "studio-demo",
+    "read_only": true,
+    "private_reader": true,
+    "human_revision_visible": true,
+    "historical_current_approval_distinguished": true,
+    "current_approved": false,
+    "unsent": true,
+    "policy_status": "ACTIVE revision1",
+    "missing_policy_status": "MISSING",
+    "screenshots": [
+      "docs/test-evidence/support-agent-workbench.png",
+      "docs/test-evidence/support-agent-policy-missing.png"
+    ],
+    "server_exec": 12787,
+    "browser": 2,
+    "tab": 2
+  },
+  "synthetic_support_release": {
+    "case": "8307c942-d4e9-4d3d-b728-f4e1b2352fb7",
+    "missing_case": "eec44a22-5e96-414d-89b8-7fa154d989c6",
+    "principals": {
+      "actor": 48,
+      "reviewer": 49,
+      "specialist": 50
+    },
+    "missing_principals": [
+      51,
+      52,
+      53
+    ],
+    "release_policy": 306,
+    "draft": 3,
+    "packet": 1,
+    "decision": 1,
+    "job": 1,
+    "receipt": 1,
+    "payload_fields": [
+      "body",
+      "issue_ref"
+    ],
+    "mock_provider_requests": 1,
+    "receipt_classification": "internal_storage_only",
+    "receipt_recovered_after_release_revocation": true,
+    "customer_delivery_verified": false,
+    "response_clock_attested": false,
+    "financial_effect": false,
+    "viewer_read_grants": [
+      "case.read",
+      "support.read",
+      "support.private.read",
+      "support.agent.read",
+      "agent.data.read",
+      "agent.data.source",
+      "integration.read",
+      "support.response.read"
+    ],
+    "runtime_provider_registry_after_context": "empty",
+    "fixture_hygiene": "One-shot final assertion identified helper-created usable synthetic passwords; targeted completion disabled all six new fixture accounts. Existing users untouched."
+  },
+  "support_release_browser": {
+    "browser": "2",
+    "tab": "2",
+    "viewer": "studio-demo",
+    "workbench": "http://127.0.0.1:8000/cases/8307c942-d4e9-4d3d-b728-f4e1b2352fb7/support/responses/",
+    "observed": [
+      "ACTIVE configuration 306",
+      "packet 1 / draft 3",
+      "human release by actor 49",
+      "job confirmed / receipt 1 internal_storage_only",
+      "current release authority no",
+      "customer delivery unverified and response clock unattested",
+      "read-only workbench with no mutation forms"
+    ],
+    "recipient_receipt_as_viewer": "403 Forbidden",
+    "missing_policy_case": "eec44a22-5e96-414d-89b8-7fa154d989c6",
+    "missing_policy_observed": "MISSING / no packets / read-only workbench",
+    "screenshots": [
+      "2026-10-23-support-release-workbench.png",
+      "2026-10-23-support-release-policy-missing.png"
+    ],
+    "native_customer_channel_tested": false,
+    "real_model_evaluated": false,
+    "tab_marked_handoff": true
+  },
+  "previous_release_runs": {
+    "165": {
+      "tests": 18,
+      "seconds": 186.228,
+      "result": "FAILED (errors=1)",
+      "log": "docs/test-evidence/2026-10-23-run-165-support-release.txt"
+    },
+    "166": {
+      "tests": 55,
+      "seconds": 331.567,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-166-support-release-connected.txt"
+    }
+  },
+  "synthetic_support_response_operations": {
+    "case": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+    "principals": {
+      "actor": 54,
+      "reviewer": 55,
+      "specialist": 56
+    },
+    "packet": 2,
+    "job": 2,
+    "receipt": 2,
+    "contract": 8,
+    "assessment": 10,
+    "review": 9,
+    "inventory": 3,
+    "response_attempts": 2,
+    "initial_unready_hold": true,
+    "retry_preserved_attempt_budget": true,
+    "receipt_classification": "internal_storage_only",
+    "private_guidance": {
+      "family": "supportresponse",
+      "jobs": [
+        {
+          "job": 2,
+          "status": "confirmed",
+          "question": "Preserve the stored internal receipt; customer delivery and response time still require separate evidence.",
+          "source_url": "/cases/3bed19d8-6453-4a66-9f6f-8ed7b8349540/support/responses/"
+        }
+      ],
+      "readiness": "reviewed",
+      "recovery_executed": false,
+      "source_body_read": false,
+      "customer_delivery_verified": false,
+      "response_clock_attested": false,
+      "persisted_in_generic_agent_run": false
+    },
+    "metadata": {
+      "schema": "portable_case_metadata_v1",
+      "case_id": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+      "evidence": [],
+      "jobs": [
+        {
+          "family": "supportresponse",
+          "id": 2,
+          "status": "confirmed",
+          "fence": 2,
+          "attempts": 2,
+          "lease_until": null
+        }
+      ],
+      "source_grants": [
+        "agent.data.read",
+        "agent.data.source",
+        "approval.read",
+        "baas.read",
+        "case.read",
+        "document.read",
+        "finance.read",
+        "ops.read",
+        "partner.read",
+        "support.private.read",
+        "support.read",
+        "support.response.read",
+        "workflow.read"
+      ],
+      "omitted_families": [],
+      "evidence_bodies_included": false,
+      "credentials_included": false,
+      "business_jobs_reenacted": false
+    },
+    "viewer_read_grants": [
+      "case.read",
+      "support.read",
+      "support.private.read",
+      "support.agent.read",
+      "agent.data.read",
+      "agent.data.source",
+      "integration.read",
+      "integration.source.read",
+      "support.response.read",
+      "ops.read",
+      "ops.artifact.read"
+    ],
+    "customer_delivery_verified": false,
+    "response_clock_attested": false,
+    "financial_effect": false,
+    "real_model_evaluated": false,
+    "runtime_provider_registry_after_context": "empty"
+  },
+  "private_operator_family": {
+    "name": "supportresponse",
+    "routes": 9,
+    "complete_native_source_grants_pinned": true,
+    "response_payloads_exported": false,
+    "business_jobs_replayed": false
+  },
+  "support_response_operations_browser": {
+    "browser": "2",
+    "tab": "2",
+    "viewer": "studio-demo",
+    "case": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+    "operator_observed": [
+      "ACTIVE OPS.operator_rules and OPS.protection_rules",
+      "supportresponse job2 confirmed, attempts/fence2/2",
+      "scoped source controls link",
+      "inventory3 historical metadata",
+      "read-only access/no recovery forms"
+    ],
+    "readiness_observed": [
+      "native contract8/enrollment7",
+      "health and receipt observations18/19 passed/native_database_session",
+      "assessment10 currently ready and reviewed",
+      "synthetic provider history separately labelled and currently held after registry removal",
+      "read-only access/no mutation forms"
+    ],
+    "live_private_diagnostics_as_viewer": "403 without agent.operations",
+    "screenshots": [
+      "2026-10-23-support-response-operations-workbench.png",
+      "2026-10-23-support-response-operations-readiness.png"
+    ],
+    "tab_marked_handoff": true,
+    "native_customer_channel_verified": false,
+    "real_model_evaluated": false
+  },
+  "previous_operations_runs": {
+    "167": {
+      "tests": 16,
+      "seconds": 88.538,
+      "result": "FAILED (failures=1)",
+      "log": "docs/test-evidence/2026-10-23-run-167-support-response-operations.txt"
+    },
+    "168": {
+      "tests": 136,
+      "seconds": 670.221,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-168-support-response-operations-connected.txt"
+    }
+  },
+  "synthetic_previous_operations": {
+    "case": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+    "principals": {
+      "actor": 54,
+      "reviewer": 55,
+      "specialist": 56
+    },
+    "packet": 2,
+    "job": 2,
+    "receipt": 2,
+    "contract": 8,
+    "assessment": 10,
+    "review": 9,
+    "inventory": 3,
+    "response_attempts": 2,
+    "initial_unready_hold": true,
+    "retry_preserved_attempt_budget": true,
+    "receipt_classification": "internal_storage_only",
+    "private_guidance": {
+      "family": "supportresponse",
+      "jobs": [
+        {
+          "job": 2,
+          "status": "confirmed",
+          "question": "Preserve the stored internal receipt; customer delivery and response time still require separate evidence.",
+          "source_url": "/cases/3bed19d8-6453-4a66-9f6f-8ed7b8349540/support/responses/"
+        }
+      ],
+      "readiness": "reviewed",
+      "recovery_executed": false,
+      "source_body_read": false,
+      "customer_delivery_verified": false,
+      "response_clock_attested": false,
+      "persisted_in_generic_agent_run": false
+    },
+    "metadata": {
+      "schema": "portable_case_metadata_v1",
+      "case_id": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+      "evidence": [],
+      "jobs": [
+        {
+          "family": "supportresponse",
+          "id": 2,
+          "status": "confirmed",
+          "fence": 2,
+          "attempts": 2,
+          "lease_until": null
+        }
+      ],
+      "source_grants": [
+        "agent.data.read",
+        "agent.data.source",
+        "approval.read",
+        "baas.read",
+        "case.read",
+        "document.read",
+        "finance.read",
+        "ops.read",
+        "partner.read",
+        "support.private.read",
+        "support.read",
+        "support.response.read",
+        "workflow.read"
+      ],
+      "omitted_families": [],
+      "evidence_bodies_included": false,
+      "credentials_included": false,
+      "business_jobs_reenacted": false
+    },
+    "viewer_read_grants": [
+      "case.read",
+      "support.read",
+      "support.private.read",
+      "support.agent.read",
+      "agent.data.read",
+      "agent.data.source",
+      "integration.read",
+      "integration.source.read",
+      "support.response.read",
+      "ops.read",
+      "ops.artifact.read"
+    ],
+    "customer_delivery_verified": false,
+    "response_clock_attested": false,
+    "financial_effect": false,
+    "real_model_evaluated": false,
+    "runtime_provider_registry_after_context": "empty"
+  },
+  "synthetic_support_channel": {
+    "case": "62cbee2d-13c1-4117-bb40-97253e62f1e1",
+    "missing_case": "989f1a03-e0a4-43cc-8ee4-852d9885f280",
+    "principals": {
+      "actor": 57,
+      "reviewer": 58,
+      "specialist": 59
+    },
+    "missing_principals": [
+      60,
+      61,
+      62
+    ],
+    "claim": 1,
+    "receipt": 1,
+    "check": 1,
+    "attestation": 1,
+    "response_event": 17,
+    "response_time": "2026-10-23T11:26:36.219671+00:00",
+    "packet": 3,
+    "internal_job": 3,
+    "internal_delivery_not_inferred": true,
+    "channel_policy": 334,
+    "clock_policy": 335,
+    "summary": 3,
+    "metrics_before_withdrawal": {
+      "first_response_seconds": "3624.840022",
+      "resolution_seconds": null,
+      "finding": null
+    },
+    "metrics_after_withdrawal": {
+      "first_response_seconds": null,
+      "resolution_seconds": null,
+      "finding": "customer_clock_evidence_not_current"
+    },
+    "authenticated_mock_gateway_gets": 1,
+    "original_provider_mock": true,
+    "customer_message_dispatched": false,
+    "live_customer_channel_evaluated": false,
+    "financial_effect": false,
+    "viewer_read_grants": [
+      "case.read",
+      "support.read",
+      "support.private.read",
+      "support.agent.read",
+      "agent.data.read",
+      "agent.data.source",
+      "integration.read",
+      "support.response.read",
+      "support.channel.read"
+    ],
+    "runtime_endpoint_secret_registry_after_context": "empty"
+  },
+  "support_channel_browser": {
+    "browser": "2",
+    "tab": "2",
+    "viewer": "studio-demo",
+    "case": "62cbee2d-13c1-4117-bb40-97253e62f1e1",
+    "observed": [
+      "B14.channel_receipts and B14.channel_clock ACTIVE",
+      "clock enrollment yes/manual bypass held",
+      "private protocol evidence625",
+      "claim1/packet3/check1 confirmed",
+      "synthetic_authenticated_http/protocol verified/current reviewed delivery no",
+      "human confirm decision1 and withdraw decision2 by reviewer58",
+      "historical human attestation1/ordered response event17 preserved",
+      "read-only/no mutation forms"
+    ],
+    "missing_case": "989f1a03-e0a4-43cc-8ee4-852d9885f280",
+    "missing_observed": [
+      "both new policies MISSING",
+      "clock enrollment no",
+      "private source contract640 captured",
+      "no claims/read-only workbench"
+    ],
+    "guidance_without_agent_operations": "403 Forbidden",
+    "screenshots": [
+      "2026-10-23-support-channels-workbench.png",
+      "2026-10-23-support-channels-policy-missing.png",
+      "2026-10-23-support-channels-review-history.png"
+    ],
+    "tab_marked_handoff": true,
+    "native_vendor_customer_channel_tested": false,
+    "real_model_evaluated": false
+  },
+  "previous_channel_runs": {
+    "169": {
+      "tests": 0,
+      "seconds": 15.483,
+      "result": "FAILED (errors=1)",
+      "log": "docs/test-evidence/2026-10-23-run-169-support-channels.txt"
+    },
+    "170": {
+      "tests": 17,
+      "seconds": 53.679,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-170-support-channels.txt"
+    },
+    "171": {
+      "tests": 132,
+      "seconds": 873.529,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-171-support-channels-connected.txt"
+    },
+    "172": {
+      "tests": 23,
+      "seconds": 186.533,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-172-support-channels-final.txt"
+    }
+  },
+  "synthetic_clock_successors": {
+    "synthetic_only": true,
+    "case": "6beec8aa-76d2-4066-a21d-2de65545b4a8",
+    "principals": {
+      "actor": 66,
+      "reviewer": 67,
+      "specialist": 68
+    },
+    "initial_claim": 2,
+    "successor_claim": 3,
+    "initial_receipt": 2,
+    "new_check": 3,
+    "new_receipt": 3,
+    "original_attestation": 2,
+    "original_event": 21,
+    "historical_first_response_at": "2026-10-23T13:56:07.781475+00:00",
+    "correction": 1,
+    "correction_review": 1,
+    "projection": {
+      "correction": 1,
+      "version": 1,
+      "review": 1,
+      "time": "2026-10-23T13:56:19.161504+00:00",
+      "finding": null
+    },
+    "metrics": {
+      "first_response_seconds": "3660.715981",
+      "resolution_seconds": null,
+      "finding": null
+    },
+    "report": 4,
+    "report_period_end": "2026-10-23T13:56:19.161504+00:00",
+    "native_contract": 13,
+    "readiness_assessment": 15,
+    "inventory": 4,
+    "internal_job_pending": 6,
+    "gateway_gets": 2,
+    "gateway_classification": "synthetic_authenticated_http",
+    "customer_message_dispatched": false,
+    "live_customer_channel_evaluated": false,
+    "real_model_evaluated": false,
+    "events_rewritten": false,
+    "viewer_read_grants": [
+      "case.read",
+      "support.read",
+      "support.private.read",
+      "support.agent.read",
+      "agent.data.read",
+      "agent.data.source",
+      "integration.read",
+      "support.response.read",
+      "support.channel.read",
+      "ops.read"
+    ],
+    "private_guidance": {
+      "current_clock": {
+        "correction": 1,
+        "version": 1,
+        "review": 1,
+        "time": "2026-10-23T13:56:19.161504+00:00",
+        "finding": null
+      },
+      "correction_question": "Prepare an explicit source revision/new verification and human correction successor when review, source or policy changes; never rewrite ordered events or attest automatically.",
+      "operator_checks": [
+        {
+          "job": 2,
+          "status": "confirmed",
+          "question": "Reconcile unknown reads with the scoped worker; retry/cancel only through configured native recovery and original budget."
+        },
+        {
+          "job": 3,
+          "status": "confirmed",
+          "question": "Reconcile unknown reads with the scoped worker; retry/cancel only through configured native recovery and original budget."
+        }
+      ],
+      "claims": [
+        {
+          "claim": 3,
+          "status": "confirmed",
+          "reviewed_delivery": true,
+          "question": "A configured human may attest the exact delivery time through original Support controls; late times need correction and duplicate message clocks are forbidden."
+        },
+        {
+          "claim": 2,
+          "status": "confirmed",
+          "reviewed_delivery": false,
+          "question": "Inspect delivered/human status, release window and independent review history. Withdrawn, retracted or expired proof cannot support a current clock."
+        }
+      ],
+      "policy_status": {
+        "B14.channel_receipts": "ACTIVE",
+        "B14.channel_clock": "ACTIVE",
+        "B14.clock_corrections": "ACTIVE"
+      },
+      "clock_applied": false,
+      "message_sent": false,
+      "generic_agent_history_written": false
+    },
+    "missing_case": "8196d698-16b3-4e5b-ae28-cee8da1fc354",
+    "missing_principals": [
+      69,
+      70,
+      71
+    ]
+  },
+  "clock_successor_guards": {
+    "both_databases": true,
+    "new_immutable_tables": 2,
+    "source_and_correction_lineage_triggers": 2,
+    "source_version_unique_index": true,
+    "private_operator_families": [
+      "supportchannel",
+      "supportresponse"
+    ],
+    "operator_routes": 9
+  },
+  "clock_successor_browser": {
+    "browser": "2",
+    "tab": "1",
+    "viewer": "studio-demo",
+    "case": "6beec8aa-76d2-4066-a21d-2de65545b4a8",
+    "observed": [
+      "All three channel/clock/correction policies ACTIVE",
+      "Source claim2 v1 and claim3 v2 single lineage",
+      "Old receipt historical/noncurrent; v2 independently reviewed",
+      "Original attestation2/event21 and historical first_response_at retained",
+      "Reviewed correction1/review1 current projection explicitly separate",
+      "supportchannel checks2/3 confirmed in shared operations, internal response job6 pending",
+      "Native local health/receipt assessment15 current and independently reviewed; no operational acceptance",
+      "Read-only viewer/no mutation forms"
+    ],
+    "missing_case": "8196d698-16b3-4e5b-ae28-cee8da1fc354",
+    "missing_observed": [
+      "Receipt/clock policies ACTIVE and correction MISSING",
+      "Private evidence visible/no correction history"
+    ],
+    "guidance_without_agent_operations": "403 Forbidden",
+    "screenshots": [
+      "2026-10-23-support-clock-successors-projection.png",
+      "2026-10-23-support-clock-successors-operations.png",
+      "2026-10-23-support-clock-successors-readiness.png",
+      "2026-10-23-support-clock-successors-policy-missing.png"
+    ],
+    "tab_marked_handoff": true,
+    "native_vendor_customer_channel_tested": false,
+    "real_model_evaluated": false
+  },
+  "previous_clock_runs": {
+    "174": {
+      "tests": 23,
+      "seconds": 155.527,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-174-support-clock-baseline.txt"
+    },
+    "175": {
+      "tests": 31,
+      "seconds": 161.977,
+      "result": "FAILED (failures=1, errors=17)",
+      "log": "docs/test-evidence/2026-10-23-run-175-support-clock-successors.txt"
+    },
+    "176": {
+      "tests": 22,
+      "seconds": 247.266,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-176-support-clock-corrections.txt"
+    },
+    "177": {
+      "tests": 226,
+      "seconds": 1318.159,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-177-support-clock-connected.txt"
+    },
+    "178": {
+      "tests": 35,
+      "seconds": 575.598,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-23-run-178-support-clock-final.txt"
+    }
+  },
+  "synthetic_ledger_resolution": {
+    "case": "2841db53-7970-4aee-92a8-75108eaea14f",
+    "missing_case": "9051bf2d-30cd-439e-81ab-1486f7ddab57",
+    "principals": [
+      72,
+      73,
+      74,
+      75
+    ],
+    "viewer_read_grants": [
+      "case.read",
+      "finance.read",
+      "ledger.read"
+    ],
+    "aliases": [
+      8,
+      9
+    ],
+    "initial_resolution": 1,
+    "initial_resolution_review": 1,
+    "initial_report": {
+      "lineage_id": 8,
+      "source": {
+        "realm": "synthetic-realm",
+        "entity": "synthetic-company",
+        "outcome": "reported_posted",
+        "provider": "quickbooks",
+        "provenance": [],
+        "source_reference": "TX-001",
+        "target_reference": "QB-101",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "posting_evidence_id": 698,
+        "treatment_evidence_id": 698,
+        "incumbent_user_reference": "synthetic-finance-user"
+      },
+      "check_id": 10,
+      "review_id": 5,
+      "incumbent": {
+        "realm": "synthetic-realm",
+        "state": "found",
+        "entity": "synthetic-company",
+        "provider": "quickbooks",
+        "observed_at": "2026-10-23T16:45:35.703385+00:00",
+        "source_reference": "TX-001",
+        "target_reference": "QB-101",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "incumbent_version": "sync-1",
+        "treatment_evidence_id": 698
+      },
+      "verification_mode": "supplied_read_only",
+      "native_authenticity_verified": false,
+      "posting_performed": false
+    },
+    "corrected_lineage": 10,
+    "retained_lineage": 11,
+    "resolution": 2,
+    "resolution_review": 2,
+    "corrected_report": {
+      "lineage_id": 10,
+      "source": {
+        "realm": "synthetic-realm",
+        "entity": "synthetic-company",
+        "outcome": "reported_posted",
+        "provider": "quickbooks",
+        "provenance": [],
+        "source_reference": "TX-001",
+        "target_reference": "QB-102",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "posting_evidence_id": 698,
+        "treatment_evidence_id": 698,
+        "incumbent_user_reference": "synthetic-finance-user"
+      },
+      "check_id": 15,
+      "review_id": 6,
+      "incumbent": {
+        "realm": "synthetic-realm",
+        "state": "found",
+        "entity": "synthetic-company",
+        "provider": "quickbooks",
+        "observed_at": "2026-10-23T16:45:42.033903+00:00",
+        "source_reference": "TX-001",
+        "target_reference": "QB-102",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "incumbent_version": "sync-1",
+        "treatment_evidence_id": 698
+      },
+      "verification_mode": "supplied_read_only",
+      "native_authenticity_verified": false,
+      "posting_performed": false
+    },
+    "retained_report": {
+      "lineage_id": 11,
+      "source": {
+        "realm": "synthetic-realm",
+        "entity": "synthetic-company",
+        "outcome": "reported_posted",
+        "provider": "quickbooks",
+        "provenance": [],
+        "source_reference": "TX-002",
+        "target_reference": "QB-101",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "posting_evidence_id": 698,
+        "treatment_evidence_id": 698,
+        "incumbent_user_reference": "synthetic-finance-user"
+      },
+      "check_id": 16,
+      "review_id": 7,
+      "incumbent": {
+        "realm": "synthetic-realm",
+        "state": "found",
+        "entity": "synthetic-company",
+        "provider": "quickbooks",
+        "observed_at": "2026-10-23T16:45:47.237777+00:00",
+        "source_reference": "TX-002",
+        "target_reference": "QB-101",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "incumbent_version": "sync-1",
+        "treatment_evidence_id": 698
+      },
+      "verification_mode": "supplied_read_only",
+      "native_authenticity_verified": false,
+      "posting_performed": false
+    },
+    "unknown_lineage": 12,
+    "unknown_check": 17,
+    "agent": 57,
+    "missing_policy_normal_lineage": 13,
+    "missing_policy_normal_report": {
+      "lineage_id": 13,
+      "source": {
+        "realm": "synthetic-realm",
+        "entity": "synthetic-company",
+        "outcome": "reported_posted",
+        "provider": "quickbooks",
+        "provenance": [],
+        "source_reference": "TX-001",
+        "target_reference": "QB-101",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "posting_evidence_id": 717,
+        "treatment_evidence_id": 717,
+        "incumbent_user_reference": "synthetic-finance-user"
+      },
+      "check_id": 18,
+      "review_id": 8,
+      "incumbent": {
+        "realm": "synthetic-realm",
+        "state": "found",
+        "entity": "synthetic-company",
+        "provider": "quickbooks",
+        "observed_at": "2026-10-23T16:45:54.218971+00:00",
+        "source_reference": "TX-001",
+        "target_reference": "QB-101",
+        "transaction_date": "2026-10-01",
+        "accounting_period": "2026-10",
+        "incumbent_version": "sync-1",
+        "treatment_evidence_id": 717
+      },
+      "verification_mode": "supplied_read_only",
+      "native_authenticity_verified": false,
+      "posting_performed": false
+    },
+    "mode": "supplied_read_only",
+    "native_verified": false,
+    "posting_performed": false,
+    "old_history_reauthorised": false
+  },
+  "ledger_resolution_browser": {
+    "browser": "in-app browser 2/tab3",
+    "principal": "studio-demo; existing session; exact case.read/finance.read/ledger.read only",
+    "workbench": "http://127.0.0.1:8000/cases/2841db53-7970-4aee-92a8-75108eaea14f/finance/ledger/",
+    "observed": [
+      "F01 verification/review/conflict rules ACTIVE",
+      "TX-001 corrected QB-102 current reviewed yes",
+      "TX-002 retained QB-101 current reviewed yes",
+      "TX-003 unknown current reviewed no",
+      "Resolution2 reference_correction current independently reviewed yes",
+      "Resolution1 duplicate_alias preserved; current independently reviewed no",
+      "Original claims8/9 retired; claim10 selected; claim11 retained",
+      "No mutation commands available to scoped viewer",
+      "Missing-policy case conflict_rules MISSING; original verification/review ACTIVE; normal TX-001 current reviewed yes"
+    ],
+    "screenshots": [
+      "docs/test-evidence/2026-10-23-ledger-resolution-workbench.png",
+      "docs/test-evidence/2026-10-23-ledger-resolution-dispositions.png",
+      "docs/test-evidence/2026-10-23-ledger-resolution-missing-policy.png"
+    ],
+    "browser_mutations": false,
+    "test_classification": "Synthetic persisted evidence and real rendered server UI; no native vendor or owner acceptance",
+    "handoff": "ledgerTab and ledgerFs; tab3 marked for handoff"
+  },
+  "ledger_resolution_guards": {
+    "both_databases": true,
+    "immutable_tables": 3,
+    "lineage_and_exact_member_triggers": 2,
+    "named_version_member_constraints": 2,
+    "separate_process_persisted_report_reuse": true,
+    "native_authenticity_verified": false,
+    "posting_performed": false
+  }
+}

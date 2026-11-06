@@ -1,0 +1,17 @@
+{
+  "parent_checkpoint": 554,
+  "verified_files": 3091,
+  "manifest_sha256": "34b5464fa01493d51874400ef79354fcfaa1bfce022ea8c6086cab904c3231ea",
+  "source_backed_facts": ["PMO completes milestones and Finance owns invoice review/issuance", "Appointments and action permissions remain independent of routing", "The component design ROUTE-05 requires valid delegation or approved reassignment for absence"],
+  "observed_implementation": "Native scoped delegation and finite qualification are tested. Factory v2 has no explicit available/unavailable/unknown reviewer record or absence-window check.",
+  "engineering_proposal": "Independent versioned scoped availability records, explicit responsibility v3 opt-in, native actor revalidation and protected configuration UI. Existing qualified delegation supplies authority; availability never grants a role or permission.",
+  "process_ids": ["P34", "F29", "F30"],
+  "keep": ["Native InvoiceReview as sole approval ledger", "Original receipt-first recovery", "Existing v1/v2 direct/delegated behavior", "PostgreSQL locks and immutable policy history"],
+  "extend": ["Typed supplemental policy registry and reference validation", "Native invoice review authority", "ACT10 routing and current task snapshots", "Invoice responsibilities UI and agent findings"],
+  "intake": "Completed PMO evidence and exact native invoice packet",
+  "output": "Current available authorised reviewer decision followed by verified native invoice/delivery receipts",
+  "human_decisions": ["Owner evidences, validates and activates scoped availability/mode", "Eligible reviewer claims and decides exact packet", "Configured resolver handles unavailable or unknown authority"],
+  "recovery": "Preserve history; stale authority requires rerouting; original uncertain effects reconcile before new dispatch",
+  "policy_slots": ["Actual availability windows/statuses", "Actual decision owners and delegates", "Whether availability must be checked"],
+  "not_claimed": ["Full decision stages/quorum/veto", "Aggregation or FX", "Whole-process or full-product acceptance", "Real provider/UAT proof"]
+}

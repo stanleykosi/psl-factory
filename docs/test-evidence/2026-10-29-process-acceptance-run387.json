@@ -1,0 +1,18 @@
+{
+  "run": 387,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_cash_guards.CashGuardTests.test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-387-process-acceptance.txt",
+  "started_at": "2026-10-29T16:32:18.623931+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 12.088
+}

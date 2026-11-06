@@ -1,0 +1,91 @@
+{
+  "source_run": 593,
+  "parent_checkpoint": 576,
+  "changed_paths": [
+    "adapters/readiness.py",
+    "apps/core/templatetags/studio_ui.py",
+    "apps/pmo/approval_routing.py",
+    "apps/policy/agent_data_validators.py",
+    "apps/policy/factory_accounting_validators.py",
+    "apps/policy/factory_validators.py",
+    "apps/policy/operator_drafts.py",
+    "apps/policy/operator_validators.py",
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_accounting.py",
+    "apps/workflows/factory_accounting_views.py",
+    "apps/workflows/factory_planning.py",
+    "apps/workflows/factory_views.py",
+    "apps/workflows/models.py",
+    "config/urls.py",
+    "contracts/operator-policy-components.json",
+    "templates/base.html",
+    "templates/factory/accounting_detail.html",
+    "templates/factory/configuration.html",
+    "tests/finance_analysis_helpers.py",
+    "tests/readiness_helpers.py",
+    "tests/test_factory_planning.py"
+  ],
+  "added_paths": [
+    "adapters/factory_planner.py",
+    "adapters/factory_planner_contracts.py",
+    "apps/agents/factory_coordinator.py",
+    "apps/policy/factory_coordinator_validators.py",
+    "apps/policy/factory_provider_profiles.py",
+    "apps/workflows/factory_coordinator_views.py",
+    "apps/workflows/factory_planning_models.py",
+    "apps/workflows/migrations/0051_factory_planning_receipt.py",
+    "fixtures/factory-coordinator.json",
+    "templates/factory/coordinator_configuration.html",
+    "templates/factory/coordinator_status.html",
+    "tests/factory_coordinator_helpers.py",
+    "tests/test_factory_coordinator.py",
+    "tests/test_factory_coordinator_recovery.py",
+    "tests/test_factory_coordinator_review.py",
+    "tests/test_factory_planner_boundaries.py",
+    "tests/test_factory_planner_gateway.py",
+    "tests/test_factory_worker_expiry.py"
+  ],
+  "native_finance_money_and_document_delivery_bytes_unchanged": true,
+  "approval_worker_only_adds_explicit_lookup_only_option": true,
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "live_provider_activated": false,
+  "owner_values_added": false
+}

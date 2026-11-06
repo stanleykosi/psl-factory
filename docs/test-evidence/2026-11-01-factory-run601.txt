@@ -1,0 +1,22 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0052_factory_execution_binding...test_binding_preserves_the_original_starter_and_grants_and_budget (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_binding_preserves_the_original_starter_and_grants_and_budget) ... ok
+test_database_preserves_binding_and_starter_identity_and_refuses_pointer_reset (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_database_preserves_binding_and_starter_identity_and_refuses_pointer_reset) ... ok
+test_withdrawn_binding_never_falls_back_to_the_original_starter (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_withdrawn_binding_never_falls_back_to_the_original_starter) ... ok
+test_ambiguous_rules_timezone_and_unqualified_nominees_are_rejected (tests.test_factory_recovery_policy.FactoryRecoveryPolicyTests.test_ambiguous_rules_timezone_and_unqualified_nominees_are_rejected) ... ok
+test_unknown_settings_have_native_lifecycle_without_appointing_anyone (tests.test_factory_recovery_policy.FactoryRecoveryPolicyTests.test_unknown_settings_have_native_lifecycle_without_appointing_anyone) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 7.019s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

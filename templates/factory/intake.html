@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'home' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Return to work queue</a>
+<div class="page-heading"><div><p class="eyebrow">NEW WORK</p><h1>What needs to move forward?</h1><p class="lede">Choose the intended output, then select the project and its current evidence.</p></div></div>
+<section class="factory-intake-options" aria-label="Available work">
+{% for option in options %}<a class="card factory-intake-option" href="{% url 'factory_create' %}?definition={{ option.definition|urlencode }}"><h2>{{ option.title }}</h2><p>{{ option.description }}</p><span>Choose project →</span></a>
+{% empty %}<div class="empty-state"><h2>No new work is available for this account</h2><p>Starting work requires the relevant permissions on a project. You can still return to your current work queue.</p></div>{% endfor %}
+</section>
+{% endblock %}

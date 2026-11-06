@@ -1,0 +1,19 @@
+{
+  "parent_checkpoint": 562,
+  "verified_files": 3148,
+  "manifest_sha256": "5dbb83a6a98d51c45f3fa6baaa70181a1432fdd97f9b5ce6ac6f215e8c550820",
+  "source_backed_facts": ["Finance owns accounting preparation, BU allocation and financial review", "The original process map retains all122 IDs/13 families and108 in-scope PMO/Finance processes", "Unknown financial values are not zero; policy, source and output reviews remain native Finance decisions"],
+  "observed_implementation": "Native FinancialImport/FinanceSource, mapping/allocation/formula FinanceRun, FinanceReview, investigate_finance and FinanceDocumentBinding/publication services exist with tests. factory_definitions has nine production lines and no accounting definition.",
+  "engineering_proposal": "A connected accounting preparation line in the existing FactoryWork coordinator, referencing native source/calculation/review/document records. No duplicate calculation, approval or workflow engine.",
+  "process_scope": ["F03", "F04", "F09", "F14", "F15", "F19", "F20", "F22", "F23"],
+  "intake": "Exact same-case controlled trial-balance FinanceSource and explicit supplemental-adjustment inventory",
+  "stations": ["Source/lineage investigation", "Required native source/rule decisions", "Mapping", "Configured BU allocation", "Formula preview and investigation", "Exact Finance output review", "Controlled aggregate report publication", "Native recipient receipt verification"],
+  "agent_work": "Scoped evidence/lineage investigation and configured internal preparation through native typed services; no financial approval or ledger posting",
+  "human_decisions": ["Required source/rule/adjustment Finance reviews", "Current output review", "Source-owned document/audience/recipient configuration and exception recovery"],
+  "downstream_output": "Reviewed aggregate Finance report and exact native controlled-publication recipient receipts",
+  "keep": ["Native FinanceSource/FinanceRun/FinanceReview", "Native document projection/privacy and receipt workers", "Current role/action checks", "Shared durable coordinator budgets/fences/tasks/history", "Original uncertain effects before new report versions"],
+  "extend": ["Closed factory definitions and typed policy profile", "Domain adapter and native coordinator dispatch", "Human task UI and production console", "PostgreSQL source/receipt identity guards", "Mock-tested recovery and build records"],
+  "policy_slots": ["Actual report template/audience/recipient scope", "Allocation scope and metrics", "Review authority/owners and execution profile"],
+  "not_claimed": ["QuickBooks authenticity or live extraction", "Real workbook oracle equivalence", "Full coverage of all management-account/BU processes", "Live AI/provider readiness", "Full product completion"],
+  "separate_observed_code_gap": "factory.profile permits only synthetic cases and SyntheticFactoryCoordinator; governed provider reuse remains internal code work, not only key setup."
+}

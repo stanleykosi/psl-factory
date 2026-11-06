@@ -1,0 +1,5 @@
+Operations to perform:
+  Target specific migration: 0031_native_finance_guards, from workflows
+Running migrations:
+  Applying workflows.0030_native_finance... OK
+  Applying workflows.0031_native_finance_guards... OK

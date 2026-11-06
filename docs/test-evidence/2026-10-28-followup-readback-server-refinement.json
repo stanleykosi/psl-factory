@@ -1,0 +1,14 @@
+{
+  "path": "C:\\Python313\\python.exe",
+  "pid": 29312,
+  "started_utc": "2026-10-28T09:27:38.5395913Z",
+  "login_status": 302,
+  "location": "/accounts/login/?next=/",
+  "session_id": 31180,
+  "host": "127.0.0.1",
+  "port": 8000,
+  "authenticated_operational_smoke": false,
+  "previous_owned_server_absent": false,
+  "previous_owned_server_pid": 3736,
+  "classification": "Owned development server; unauthenticated main smoke only"
+}

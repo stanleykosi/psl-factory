@@ -1,0 +1,7 @@
+{
+  "stopped_at": "2026-10-29T19:43:22.210610+00:00",
+  "pid": 16796,
+  "identity_verified": true,
+  "listener_8000_absent": true,
+  "reason": "User requested stopping the preview until later inspection"
+}

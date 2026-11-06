@@ -1,0 +1,94 @@
+{
+  "frozen_hashes": 41,
+  "process_ids": 122,
+  "families": 13,
+  "exact_title_plan_rows": 122,
+  "json_files_parsed": 63,
+  "coverage": {
+    "partial": 102,
+    "not_started": 20
+  },
+  "partial_semantic_components": 44,
+  "components_without_semantics": 13,
+  "test_runs": {
+    "RUN72": {
+      "tests": 3,
+      "seconds": 6.531,
+      "outcome": "passed",
+      "failures": 0,
+      "skips": 0
+    },
+    "RUN73": {
+      "tests": 26,
+      "seconds": 121.579,
+      "outcome": "passed",
+      "failures": 0,
+      "skips": 0
+    },
+    "RUN74": {
+      "tests": 126,
+      "seconds": 841.541,
+      "outcome": "passed",
+      "failures": 0,
+      "skips": 0
+    },
+    "RUN75": {
+      "tests": 2,
+      "seconds": 14.394,
+      "outcome": "passed",
+      "failures": 0,
+      "skips": 0
+    }
+  },
+  "suites_overlap": true,
+  "static_checks": {
+    "django_check": "passed",
+    "migration_drift": "none",
+    "compileall": "passed",
+    "pip_check": "passed"
+  },
+  "databases": {
+    "psl": {
+      "migrations": {
+        "finance": "0023_forecast_priority_immutability",
+        "pmo": "0033_rfp_immutability",
+        "baas": "0003_reconciliation_guards"
+      },
+      "new_append_only_guards": 8,
+      "job_guard": true,
+      "tenant_reservation_indexes": true
+    },
+    "test_psl": {
+      "migrations": {
+        "finance": "0023_forecast_priority_immutability",
+        "pmo": "0033_rfp_immutability",
+        "baas": "0003_reconciliation_guards"
+      },
+      "new_append_only_guards": 8,
+      "job_guard": true,
+      "tenant_reservation_indexes": true
+    }
+  },
+  "synthetic_demo": {
+    "case": "aec6f182-7a3b-4d66-b27d-1f93256d9c85",
+    "investigation": 1,
+    "request": 1,
+    "decision": 1,
+    "job": 1,
+    "engineering_delivery_receipt": 1,
+    "supplied_outcome": 1,
+    "terminal_attestation": 1,
+    "agent": 28,
+    "source_authenticity": "synthetic_supplied_and_human_attested_only",
+    "dual_role_single_login_demo": true,
+    "tests_use_distinct_engineer_and_verifier": true
+  },
+  "existing_document_receipts_preserved": 16,
+  "existing_receivables": {
+    "5a1b8ea0-d78c-4e57-9674-1deba59694d8": "17.25000000",
+    "f9f2896e-0f20-4103-97ff-0363ca50df3b": "12.25000000"
+  },
+  "actual_external_financial_effect": false,
+  "business_queue_mutated": false,
+  "no_product_acceptance_claim": true
+}

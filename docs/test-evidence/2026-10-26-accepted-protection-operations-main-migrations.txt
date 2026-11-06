@@ -1,0 +1,8 @@
+Operations to perform:
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Running migrations:
+  Applying workflows.0015_accepted_protection_operations... OK
+Operations to perform:
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Running migrations:
+  Applying workflows.0016_accepted_protection_boundaries... OK

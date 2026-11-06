@@ -1,0 +1,20 @@
+{
+  "run": 364,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_private_policy_impact",
+    "tests.test_policy_impact",
+    "tests.test_correction_impact",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-364-process-acceptance.txt",
+  "started_at": "2026-10-29T13:27:39.766556+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 190.772
+}

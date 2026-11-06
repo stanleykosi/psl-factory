@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_unknown_policy_ui_and_validator_do_not_install_authority (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_unknown_policy_ui_and_validator_do_not_install_authority) ... ok
+test_database_refuses_a_forged_choice_and_current_access_controls_lookup (tests.test_factory_planner_gateway.FactoryPlannerGuardTests.test_database_refuses_a_forged_choice_and_current_access_controls_lookup) ... ok
+test_forbidden_choice_is_rejected_without_raw_output_or_business_action (tests.test_factory_planner_gateway.FactoryPlannerGuardTests.test_forbidden_choice_is_rejected_without_raw_output_or_business_action) ... ok
+test_no_receipt_cannot_dispatch_business_work (tests.test_factory_planner_gateway.FactoryPlannerGuardTests.test_no_receipt_cannot_dispatch_business_work) ... ok
+test_operator_ui_recovers_receipt_after_policy_withdrawal_without_new_authority (tests.test_factory_planner_gateway.FactoryPlannerGuardTests.test_operator_ui_recovers_receipt_after_policy_withdrawal_without_new_authority) ... ok
+test_original_process_fields_and_all_release_deferred_bindings_are_retained (tests.test_factory_coverage.FactoryCoverageTests.test_original_process_fields_and_all_release_deferred_bindings_are_retained) ... ok
+test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes (tests.test_factory_coverage.FactoryCoverageTests.test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 88.099s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

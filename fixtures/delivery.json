@@ -1,0 +1,37 @@
+{
+  "fixture_scope": "synthetic_test",
+  "note": "Synthetic demonstration only; zero waiting period is not operational hypercare policy.",
+  "hypercare_criteria": {
+    "clock": "elapsed_hours_since_release",
+    "minimum_hours": 0,
+    "confirmation_owners": [
+      "Engineering",
+      "Infrastructure"
+    ],
+    "metrics": [
+      {
+        "key": "errors",
+        "unit": "count",
+        "owner": "Engineering",
+        "operator": "lte",
+        "threshold": 0
+      },
+      {
+        "key": "availability",
+        "unit": "percent",
+        "owner": "Infrastructure",
+        "operator": "gte",
+        "threshold": 99
+      }
+    ],
+    "financial_controls": "independent"
+  },
+  "closure_inventory": {
+    "required_kinds": [
+      "technical_document",
+      "test_results",
+      "project_artifact"
+    ],
+    "archive_mode": "immutable_local_manifest"
+  }
+}

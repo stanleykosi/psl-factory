@@ -1,0 +1,25 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_changed_assignment_invalidates_claim_and_exact_approval_without_erasing_history (tests.test_factory_routing.FactoryRoutingTests.test_changed_assignment_invalidates_claim_and_exact_approval_without_erasing_history) ... ok
+test_governance_recheck_is_not_approval_and_native_review_reaches_receipts (tests.test_factory_routing.FactoryRoutingTests.test_governance_recheck_is_not_approval_and_native_review_reaches_receipts) ... ok
+test_governance_task_identity_is_immutable_and_stop_removes_controls (tests.test_factory_routing.FactoryRoutingTests.test_governance_task_identity_is_immutable_and_stop_removes_controls) ... ok
+test_idle_configuration_hold_can_be_stopped_without_worker_or_owner_values (tests.test_factory_routing.FactoryRoutingTests.test_idle_configuration_hold_can_be_stopped_without_worker_or_owner_values) ... ok
+test_nominations_do_not_grant_native_review_and_revoked_governance_cannot_recheck (tests.test_factory_routing.FactoryRoutingTests.test_nominations_do_not_grant_native_review_and_revoked_governance_cannot_recheck) ... ok
+test_policy_ui_and_validator_reject_cross_scope_bool_float_and_unimplemented_methods (tests.test_factory_routing.FactoryRoutingTests.test_policy_ui_and_validator_reject_cross_scope_bool_float_and_unimplemented_methods) ... ok
+test_positive_lost_response_is_reconciled_after_owner_revocation_without_resend (tests.test_factory_routing.FactoryRoutingTests.test_positive_lost_response_is_reconciled_after_owner_revocation_without_resend) ... ok
+test_unknown_owners_allow_useful_draft_but_no_direct_review_or_dispatch (tests.test_factory_routing.FactoryRoutingTests.test_unknown_owners_allow_useful_draft_but_no_direct_review_or_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 77.829s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,73 @@
+{
+  "source_run": 552,
+  "parent_checkpoint": 542,
+  "changed_paths": [
+    "apps/finance/analysis.py",
+    "apps/finance/invoices.py",
+    "apps/finance/settlement_forms.py",
+    "apps/finance/settlement_views.py",
+    "apps/policy/delegation_validators.py",
+    "apps/policy/factory_routing_validators.py",
+    "apps/policy/operator_drafts.py",
+    "apps/policy/role_assignments.py",
+    "apps/policy/role_forms.py",
+    "apps/policy/services.py",
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_routing.py",
+    "apps/workflows/factory_views.py",
+    "templates/factory/detail.html",
+    "templates/factory/responsibility.html"
+  ],
+  "added_paths": [
+    "fixtures/factory-finance-delegation.json",
+    "templates/factory/invoice_delegation_configuration.html",
+    "tests/test_factory_delegation.py"
+  ],
+  "all_other_factory_command_bytes_reconstruct_parent": true,
+  "all_other_invoice_command_bytes_reconstruct_parent": true,
+  "native_receipt_worker_adapters_models_migrations_dependencies_unchanged": true,
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "policy_versions_added": [
+    "decision-delegation/v3",
+    "factory-finance-responsibility/v2"
+  ],
+  "operational_business_values_added": false
+}

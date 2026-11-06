@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_execute_grant_does_not_allow_nonowner_to_advance_another_operators_work (tests.test_factory_planner_boundaries.FactoryPlannerBoundaryTests.test_execute_grant_does_not_allow_nonowner_to_advance_another_operators_work) ... ok
+test_planning_contract_cannot_validate_private_extraction_policy (tests.test_factory_planner_boundaries.FactoryPlannerBoundaryTests.test_planning_contract_cannot_validate_private_extraction_policy) ... ok
+test_recovered_plan_is_retired_when_current_native_context_has_changed (tests.test_factory_planner_boundaries.FactoryPlannerBoundaryTests.test_recovered_plan_is_retired_when_current_native_context_has_changed) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 43.548s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

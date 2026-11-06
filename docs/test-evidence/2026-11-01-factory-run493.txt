@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_missing_client_recipient_retains_reviewed_draft_then_publishes_same_version_after_configuration (tests.test_factory_go_live.FactoryGoLiveTests.test_missing_client_recipient_retains_reviewed_draft_then_publishes_same_version_after_configuration) ... ok
+test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone (tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone) ... FAIL
+
+======================================================================
+FAIL: test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone (tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_go_live.py", line 238, in test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone
+    f.work.refresh_from_db();self.assertNotEqual(f.work.source_head_id,first_head);self.assertEqual(f.work.budget_limit,20000)
+                                                                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 20000
+
+----------------------------------------------------------------------
+Ran 2 tests in 26.699s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

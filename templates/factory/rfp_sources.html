@@ -1,0 +1,22 @@
+{{ source_form.as_p }}
+<h3>Requirement coverage</h3><p>Add a cited requirement and the proposed response. Leave unused rows empty. A correction creates new evidence and preserves the earlier wording.</p>
+{{ mappings.management_form }}{{ mappings.non_form_errors }}
+<div id="rfp-requirement-rows">{% for mapping in mappings %}<fieldset><legend>Requirement {{ forloop.counter }}</legend>{{ mapping.as_p }}</fieldset>{% endfor %}</div>
+<template id="rfp-requirement-template"><fieldset><legend>Additional requirement</legend>{{ mappings.empty_form.as_p }}</fieldset></template>
+<button type="button" class="secondary" id="rfp-add-requirement">Add a requirement</button>
+<script>
+(() => {
+  const button = document.getElementById('rfp-add-requirement');
+  const total = document.getElementById('id_requirements-TOTAL_FORMS');
+  const template = document.getElementById('rfp-requirement-template');
+  const rows = document.getElementById('rfp-requirement-rows');
+  if (!button || !total || !template || !rows) return;
+  button.addEventListener('click', () => {
+    const count = Number(total.value);
+    if (!Number.isInteger(count) || count >= 100) return;
+    rows.insertAdjacentHTML('beforeend', template.innerHTML.replaceAll('__prefix__', String(count)));
+    total.value = String(count + 1);
+    button.disabled = count + 1 >= 100;
+  });
+})();
+</script>

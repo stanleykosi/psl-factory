@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_closed_native_packet_three_human_reviews_export_and_source_policy_independence (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_closed_native_packet_three_human_reviews_export_and_source_policy_independence) ... ok
+test_http_review_form_requires_granted_actions_and_limits_decision_types (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_http_review_form_requires_granted_actions_and_limits_decision_types) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 338.555s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

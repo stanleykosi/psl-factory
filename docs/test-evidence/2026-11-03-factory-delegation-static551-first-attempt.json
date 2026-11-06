@@ -1,0 +1,8 @@
+{
+  "status": "FAILED_HELPER",
+  "source_run": 551,
+  "classification": "Static verification helper failure, not an application test result",
+  "reason": "Byte reconstruction expected LF for an inserted block in a CRLF source file. No static acceptance artifact was emitted.",
+  "retained_helper": "docs/test-evidence/2026-11-03-factory-delegation-static551-first-attempt.py",
+  "correction": "Match each replacement using the existing source line ending; still require exact reconstruction of parent hashes."
+}

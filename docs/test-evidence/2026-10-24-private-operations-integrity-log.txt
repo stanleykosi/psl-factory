@@ -1,0 +1,77 @@
+{
+  "verified_at": "2026-10-24T06:26:21.582138+00:00",
+  "frozen_sources": 41,
+  "exact_processes_titles_partial_plan_rows": 122,
+  "families": 13,
+  "policy_interfaces": 101,
+  "supplements": 44,
+  "backlog_items": 45,
+  "preserved_main_tables": 266,
+  "schemas": {
+    "psl": {
+      "workflow_migration": "0009_private_readiness_guard_precedence",
+      "finance_migration": "0053_private_readiness_guards",
+      "private_lineage_triggers": 3,
+      "original_immutable_guards": 2,
+      "original_intent_guard": 1
+    },
+    "test_psl": {
+      "workflow_migration": "0009_private_readiness_guard_precedence",
+      "finance_migration": "0053_private_readiness_guards",
+      "private_lineage_triggers": 3,
+      "original_immutable_guards": 2,
+      "original_intent_guard": 1
+    }
+  },
+  "identical_guard_function_hashes": {
+    "psl": {
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143"
+    },
+    "test_psl": {
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143"
+    }
+  },
+  "main_private_operator_plans_jobs_artifacts_and_v2_policies": 0,
+  "main_new_packets": 0,
+  "main_new_private_acceptance_policies": 0,
+  "old_document_receipts": 16,
+  "pending_support_jobs": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "source_fingerprints_matched": 842,
+  "runs": {
+    "2026-10-24-run-214-private-operations-baseline.txt": {
+      "tests": 2,
+      "seconds": 95.752,
+      "result": "OK"
+    },
+    "2026-10-24-run-215-private-readiness-operations.txt": {
+      "tests": 0,
+      "seconds": 72.394,
+      "result": "FAILED (errors=1); inspect retained log"
+    },
+    "2026-10-24-run-216-private-readiness-operations-corrected.txt": {
+      "tests": 10,
+      "seconds": 316.761,
+      "result": "FAILED (errors=1); inspect retained log"
+    },
+    "2026-10-24-run-217-private-operations-final.txt": {
+      "tests": 15,
+      "seconds": 897.572,
+      "result": "OK"
+    },
+    "2026-10-24-run-218-private-operations-connected.txt": {
+      "tests": 103,
+      "seconds": 887.835,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "real_owner_or_operational_acceptance": false,
+  "real_provider_evaluation": false,
+  "evidence_renewed": false,
+  "unrelated_jobs_drained": false
+}

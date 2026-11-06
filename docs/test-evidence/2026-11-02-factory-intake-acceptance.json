@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "requirements": [
+    "REQ-13",
+    "REQ-14",
+    "REQ-21"
+  ],
+  "passing_runs": [
+    467,
+    468
+  ],
+  "retained_fixture_failure_runs": [
+    466
+  ],
+  "behavior": "Single queue start action; outcome chooser uses current same-project grants and existing native forms; queue/search retained on return; GET-only/no-store",
+  "paths": [
+    "apps/workflows/factory_views.py",
+    "templates/factory/queue.html",
+    "templates/factory/intake.html",
+    "static/studio.css",
+    "tests/test_factory_intake.py"
+  ],
+  "browser": {
+    "role": "Existing synthetic fixture human with current scoped grants",
+    "database": "psl_factory_handover_ui_8a327205ea9a",
+    "runtime": 468,
+    "port": 8009,
+    "actions": [
+      "Keyboard queue→Start work",
+      "Desktop outcome layout",
+      "Narrow390-request/document375 with no page overflow",
+      "Keyboard Support choice→existing form",
+      "Back→return queue retains verified/search context"
+    ],
+    "screenshots": [
+      "docs/test-evidence/2026-11-02-factory-intake-desktop-runtime468.jpg",
+      "docs/test-evidence/2026-11-02-factory-intake-narrow-runtime468.jpg"
+    ],
+    "viewport_restored": true,
+    "business_actions_replayed": false,
+    "retained_work": 615,
+    "retained_publications": 2,
+    "retained_allowance": [
+      1300,
+      20000
+    ]
+  },
+  "main_rowsets_preserved": 329,
+  "main_test_guards_match": true,
+  "schema_changed": false,
+  "dependencies_added": [],
+  "new_business_policy_values": false,
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false
+}

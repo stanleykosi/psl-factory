@@ -1,0 +1,19 @@
+{
+  "run": 376,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_role_guard.RoleGuardTests.test_scoped_delegation_origin_revocation_denies_dependent_metadata_without_holding_direct_nomination",
+    "tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-376-process-acceptance.txt",
+  "started_at": "2026-10-29T15:24:56.291110+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 160.498
+}

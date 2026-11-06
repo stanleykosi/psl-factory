@@ -1,0 +1,21 @@
+{
+  "run": 520,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_settlement.SettlementTests.test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt",
+    "tests.test_factory_invoice_recovery_priority.InvoiceRecoveryPriorityTests",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T22:33:45.684853+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run520.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 91.706
+}

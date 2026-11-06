@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_connected_planning_release_hypercare_archive_handover_finance_head_closure (tests.test_delivery.DeliveryTests.test_connected_planning_release_hypercare_archive_handover_finance_head_closure) ... ok
+test_capture_before_policy_assignment_registration_alias_export_and_current_holds (tests.test_engagement_intake.EngagementIntakeTests.test_capture_before_policy_assignment_registration_alias_export_and_current_holds) ... ok
+test_pre_signature_delivery_registration_bridge_preserves_owned_source_verification (tests.test_engagement_intake.EngagementIntakeTests.test_pre_signature_delivery_registration_bridge_preserves_owned_source_verification) ... ok
+test_route_a_requires_and_links_actual_reviewed_won_rfp_conversion (tests.test_engagement_intake.EngagementIntakeTests.test_route_a_requires_and_links_actual_reviewed_won_rfp_conversion) ... ok
+test_route_source_config_scope_normalization_and_identity_conflicts (tests.test_engagement_intake.EngagementIntakeTests.test_route_source_config_scope_normalization_and_identity_conflicts) ... ok
+test_two_connections_converge_on_registration (tests.test_engagement_intake.EngagementIntakeTests.test_two_connections_converge_on_registration) ... ok
+test_configuration_intake_access_ui_and_immutable_history (tests.test_product_intake.ProductIntakeTests.test_configuration_intake_access_ui_and_immutable_history) ... ok
+test_current_tenant_classification_action_and_successor_limits (tests.test_product_intake.ProductIntakeTests.test_current_tenant_classification_action_and_successor_limits) ... ok
+test_two_connections_converge_without_duplicate_initial_grants (tests.test_product_intake.ProductIntakeTests.test_two_connections_converge_without_duplicate_initial_grants) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 251.010s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,19 @@
+{
+  "source_run": 533,
+  "database": "psl_factory_review_status_ui_82525e1a8333",
+  "work": 1253,
+  "old_task": 1797,
+  "old_context_unchanged": true,
+  "fresh_task": 1798,
+  "fresh_task_current": true,
+  "fresh_task_unclaimed": true,
+  "invoice": 1302,
+  "budget_before": 500,
+  "budget_after": 700,
+  "budget_limit": 20000,
+  "native_approvals": 0,
+  "native_jobs": 0,
+  "native_receipts": 0,
+  "mock_files": 0,
+  "classification": "Native seeded stale wait; actual browser read and scoped agent rerouting, no browser claim/policy/approval/publication proof"
+}

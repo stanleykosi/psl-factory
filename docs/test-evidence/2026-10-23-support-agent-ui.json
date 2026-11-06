@@ -1,0 +1,21 @@
+{
+  "classification": "Browser verification of explicit synthetic B14 data, not actual owner/channel/model acceptance",
+  "case": "9e4b0061-a3d2-4bbe-9036-337e1fd5de48",
+  "missing_case": "1a627fa5-0706-4083-bb34-39c986b27ee7",
+  "viewer": "studio-demo",
+  "read_only": true,
+  "private_reader": true,
+  "human_revision_visible": true,
+  "historical_current_approval_distinguished": true,
+  "current_approved": false,
+  "unsent": true,
+  "policy_status": "ACTIVE revision1",
+  "missing_policy_status": "MISSING",
+  "screenshots": [
+    "docs/test-evidence/support-agent-workbench.png",
+    "docs/test-evidence/support-agent-policy-missing.png"
+  ],
+  "server_exec": 12787,
+  "browser": 2,
+  "tab": 2
+}

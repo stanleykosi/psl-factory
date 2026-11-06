@@ -1,0 +1,189 @@
+Found 17 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0024_paymentassessment_paymentexception_paymentdecision_and_more... OK
+  Applying finance.0025_payment_immutability... OK
+System check identified no issues (0 silenced).
+test_agent_cites_sources_and_drafts_without_creating_approval (tests.test_payments.PaymentTests.test_agent_cites_sources_and_drafts_without_creating_approval) ... FAIL
+test_assessment_and_human_authority_are_independent_configuration_paths (tests.test_payments.PaymentTests.test_assessment_and_human_authority_are_independent_configuration_paths) ... FAIL
+test_assigned_verified_cash_is_distinct_from_allocated_cash (tests.test_payments.PaymentTests.test_assigned_verified_cash_is_distinct_from_allocated_cash) ... ERROR
+test_current_principal_grants_and_policy_revocation_hold_use (tests.test_payments.PaymentTests.test_current_principal_grants_and_policy_revocation_hold_use) ... ERROR
+test_exception_approval_does_not_require_or_override_independent_glpi_gate (tests.test_payments.PaymentTests.test_exception_approval_does_not_require_or_override_independent_glpi_gate) ... ERROR
+test_expiry_duration_and_return_reject_transitions (tests.test_payments.PaymentTests.test_expiry_duration_and_return_reject_transitions) ... ok
+test_human_decision_can_be_recorded_with_unknown_basis_but_release_use_holds (tests.test_payments.PaymentTests.test_human_decision_can_be_recorded_with_unknown_basis_but_release_use_holds) ... ok
+test_human_exception_preserves_debt_and_independent_control_manifest (tests.test_payments.PaymentTests.test_human_exception_preserves_debt_and_independent_control_manifest) ... ERROR
+test_meeting_expectation_needs_no_exception_authority (tests.test_payments.PaymentTests.test_meeting_expectation_needs_no_exception_authority) ... FAIL
+test_missing_basis_is_unknown_and_request_tracking_has_no_approval_default (tests.test_payments.PaymentTests.test_missing_basis_is_unknown_and_request_tracking_has_no_approval_default) ... ok
+test_new_cash_allocation_invalidates_snapshot_approval_and_reservation (tests.test_payments.PaymentTests.test_new_cash_allocation_invalidates_snapshot_approval_and_reservation) ... ERROR
+test_postgresql_guards_preserve_assessment_request_decision_reservation (tests.test_payments.PaymentTests.test_postgresql_guards_preserve_assessment_request_decision_reservation) ... ERROR
+test_request_idempotency_bound_identity_and_wrong_scope (tests.test_payments.PaymentTests.test_request_idempotency_bound_identity_and_wrong_scope) ... ok
+test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt (tests.test_payments.PaymentTests.test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt) ... ERROR
+test_self_approval_and_admin_flag_do_not_grant_authority (tests.test_payments.PaymentTests.test_self_approval_and_admin_flag_do_not_grant_authority) ... ok
+test_server_rendered_ui_and_post_use_real_services (tests.test_payments.PaymentTests.test_server_rendered_ui_and_post_use_real_services) ... ok
+test_typed_policy_invalid_targets_and_scope_are_rejected (tests.test_payments.PaymentTests.test_typed_policy_invalid_targets_and_scope_are_rejected) ... ok
+
+======================================================================
+ERROR: test_assigned_verified_cash_is_distinct_from_allocated_cash (tests.test_payments.PaymentTests.test_assigned_verified_cash_is_distinct_from_allocated_cash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 87, in test_assigned_verified_cash_is_distinct_from_allocated_cash
+    self.config();r=self.assess();self.assertEqual(Decimal(r.result['qualifying_funds']),10)
+                                                   ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: conversion from NoneType to Decimal is not supported
+
+======================================================================
+ERROR: test_current_principal_grants_and_policy_revocation_hold_use (tests.test_payments.PaymentTests.test_current_principal_grants_and_policy_revocation_hold_use)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 110, in test_current_principal_grants_and_policy_revocation_hold_use
+    with self.assertRaises(PermissionDenied):self.reserve(r,q)
+                                             ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 46, in reserve
+    def reserve(self,r,q=None,key='reserve-1'):return domain.reserve(self.actor,self.case.pk,r.pk,key,rev(self.case),q.pk if q else None)
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 188, in reserve
+    manifest,decision=combined(actor,r,request_id)
+                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 167, in combined
+    if r.result['status']=='UNKNOWN':raise ValidationError('Payment basis remains UNKNOWN; configure/reconcile and reassess before release use')
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Payment basis remains UNKNOWN; configure/reconcile and reassess before release use']
+
+======================================================================
+ERROR: test_exception_approval_does_not_require_or_override_independent_glpi_gate (tests.test_payments.PaymentTests.test_exception_approval_does_not_require_or_override_independent_glpi_gate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 76, in test_exception_approval_does_not_require_or_override_independent_glpi_gate
+    self.config();record_gate(self.actor,self.case.pk,self.candidate.pk,GLPI_GATES[0],'GLPI-001',self.e['requirements'].pk,rev(self.case))
+                  ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\gates.py", line 38, in record_gate
+    raise ValidationError('This exact gate source was already captured')
+django.core.exceptions.ValidationError: ['This exact gate source was already captured']
+
+======================================================================
+ERROR: test_human_exception_preserves_debt_and_independent_control_manifest (tests.test_payments.PaymentTests.test_human_exception_preserves_debt_and_independent_control_manifest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 69, in test_human_exception_preserves_debt_and_independent_control_manifest
+    reservation=self.reserve(r,q);self.assertEqual(reservation.decision_id,d.pk)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 46, in reserve
+    def reserve(self,r,q=None,key='reserve-1'):return domain.reserve(self.actor,self.case.pk,r.pk,key,rev(self.case),q.pk if q else None)
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 188, in reserve
+    manifest,decision=combined(actor,r,request_id)
+                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 167, in combined
+    if r.result['status']=='UNKNOWN':raise ValidationError('Payment basis remains UNKNOWN; configure/reconcile and reassess before release use')
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Payment basis remains UNKNOWN; configure/reconcile and reassess before release use']
+
+======================================================================
+ERROR: test_new_cash_allocation_invalidates_snapshot_approval_and_reservation (tests.test_payments.PaymentTests.test_new_cash_allocation_invalidates_snapshot_approval_and_reservation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 93, in test_new_cash_allocation_invalidates_snapshot_approval_and_reservation
+    self.config();r=self.assess();q=self.request(r);self.decide(q);reservation=self.reserve(r,q)
+                                                                               ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 46, in reserve
+    def reserve(self,r,q=None,key='reserve-1'):return domain.reserve(self.actor,self.case.pk,r.pk,key,rev(self.case),q.pk if q else None)
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 188, in reserve
+    manifest,decision=combined(actor,r,request_id)
+                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 167, in combined
+    if r.result['status']=='UNKNOWN':raise ValidationError('Payment basis remains UNKNOWN; configure/reconcile and reassess before release use')
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Payment basis remains UNKNOWN; configure/reconcile and reassess before release use']
+
+======================================================================
+ERROR: test_postgresql_guards_preserve_assessment_request_decision_reservation (tests.test_payments.PaymentTests.test_postgresql_guards_preserve_assessment_request_decision_reservation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 142, in test_postgresql_guards_preserve_assessment_request_decision_reservation
+    self.config();r=self.assess();q=self.request(r);d=self.decide(q);reservation=self.reserve(r,q)
+                                                                                 ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 46, in reserve
+    def reserve(self,r,q=None,key='reserve-1'):return domain.reserve(self.actor,self.case.pk,r.pk,key,rev(self.case),q.pk if q else None)
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 188, in reserve
+    manifest,decision=combined(actor,r,request_id)
+                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 167, in combined
+    if r.result['status']=='UNKNOWN':raise ValidationError('Payment basis remains UNKNOWN; configure/reconcile and reassess before release use')
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Payment basis remains UNKNOWN; configure/reconcile and reassess before release use']
+
+======================================================================
+ERROR: test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt (tests.test_payments.PaymentTests.test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 100, in test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt
+    self.config();r=self.assess();q=self.request(r);self.decide(q);reservation=self.reserve(r,q)
+                                                                               ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 46, in reserve
+    def reserve(self,r,q=None,key='reserve-1'):return domain.reserve(self.actor,self.case.pk,r.pk,key,rev(self.case),q.pk if q else None)
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 188, in reserve
+    manifest,decision=combined(actor,r,request_id)
+                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\payments.py", line 167, in combined
+    if r.result['status']=='UNKNOWN':raise ValidationError('Payment basis remains UNKNOWN; configure/reconcile and reassess before release use')
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Payment basis remains UNKNOWN; configure/reconcile and reassess before release use']
+
+======================================================================
+FAIL: test_agent_cites_sources_and_drafts_without_creating_approval (tests.test_payments.PaymentTests.test_agent_cites_sources_and_drafts_without_creating_approval)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 150, in test_agent_cites_sources_and_drafts_without_creating_approval
+    self.assertTrue(run.result['citations']);self.assertTrue(run.result['drafts']);self.assertFalse(run.result['deployment_dispatched'])
+                                             ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_assessment_and_human_authority_are_independent_configuration_paths (tests.test_payments.PaymentTests.test_assessment_and_human_authority_are_independent_configuration_paths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 57, in test_assessment_and_human_authority_are_independent_configuration_paths
+    self.config(components=[DENOMINATOR,FUNDS]);r=self.assess();self.assertEqual(r.result['status'],'BELOW_EXPECTATION')
+                                                                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'UNKNOWN' != 'BELOW_EXPECTATION'
+- UNKNOWN
++ BELOW_EXPECTATION
+
+
+======================================================================
+FAIL: test_meeting_expectation_needs_no_exception_authority (tests.test_payments.PaymentTests.test_meeting_expectation_needs_no_exception_authority)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 83, in test_meeting_expectation_needs_no_exception_authority
+    r=self.assess();self.assertEqual(r.result['status'],'MEETS_EXPECTATION')
+                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'UNKNOWN' != 'MEETS_EXPECTATION'
+- UNKNOWN
++ MEETS_EXPECTATION
+
+
+----------------------------------------------------------------------
+Ran 17 tests in 18.756s
+
+FAILED (failures=3, errors=7)
+Preserving test database for alias 'default' ('test_psl')...

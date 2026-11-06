@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "source_run": 503,
+  "parent_checkpoint": 501,
+  "process_ids": [
+    "P33",
+    "P39",
+    "F30"
+  ],
+  "requirement_ids": [
+    "REQ-16",
+    "REQ-20",
+    "REQ-24"
+  ],
+  "paths": [
+    "apps/workflows/factory_views.py",
+    "tests/test_factory_closure.py",
+    "tests/test_factory_controls.py",
+    "tests/test_factory_go_live.py"
+  ],
+  "tested_scope": "Shared final cancelled owner/blocker/next-action/capability precedence; native go-live/closure Head and quality waits retained, actual Finance delivered effects remain follow-up; independent human withdrawal and native fresh-instruction authority preserved",
+  "passing_runs": [
+    502,
+    503
+  ],
+  "main_unchanged_rowsets": 329,
+  "main_unchanged_indexes": 1550,
+  "main_users_policies_grants_business_data_unchanged": true,
+  "schema_or_policy_changes": [],
+  "dependencies_added": [],
+  "operational_owner_values_added": false,
+  "browser_work": 1,
+  "browser_database": "psl_factory_terminal_ui_4eb1bdeb4ddb",
+  "native_review_remains_open": true,
+  "provisioning_note": "Parent provisioner was stopped during fresh-database migration before fixture seeding; exact identity/no-listener evidence retained.329 main fingerprints confirm no user/policy/grant/business changes. Corrected fixture re-execs with target selected before Django import and verifies empty migration plan/database identity.",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "evidence": [
+    "docs/test-evidence/2026-11-02-factory-terminal-state-baseline.json",
+    "docs/test-evidence/2026-11-02-factory-terminal-static503.json",
+    "docs/test-evidence/2026-11-02-factory-terminal-browser503.json",
+    "docs/test-evidence/2026-11-02-factory-terminal-main-preservation-after-browser.json",
+    "docs/test-evidence/2026-11-02-factory-terminal-provision-interruption.json",
+    "docs/test-evidence/2026-11-02-factory-go-live-refresh503-after.json"
+  ]
+}

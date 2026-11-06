@@ -1,0 +1,63 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_binding_ui_typed_validation_sql_foreign_sources_and_valid_control (tests.test_clock_guard.ClockGuardTests.test_binding_ui_typed_validation_sql_foreign_sources_and_valid_control) ... ok
+test_elapsed_needs_only_used_policies_and_preview_has_no_effects_or_private_body (tests.test_clock_guard.ClockGuardTests.test_elapsed_needs_only_used_policies_and_preview_has_no_effects_or_private_body) ... ok
+test_exact_original_meeting_and_assignment_survive_meeting_correction_and_anchor_change (tests.test_clock_guard.ClockGuardTests.test_exact_original_meeting_and_assignment_survive_meeting_correction_and_anchor_change) ... ok
+test_legacy_exact_selected_anchor_can_be_reassessed_but_new_anchor_is_not_invented (tests.test_clock_guard.ClockGuardTests.test_legacy_exact_selected_anchor_can_be_reassessed_but_new_anchor_is_not_invented) ... ok
+test_observer_current_rights_are_checked_before_subject_lookup (tests.test_clock_guard.ClockGuardTests.test_observer_current_rights_are_checked_before_subject_lookup) ... ok
+test_pause_extension_stays_stored_while_preview_is_base_only_and_terminal_or_stale_is_held (tests.test_clock_guard.ClockGuardTests.test_pause_extension_stays_stored_while_preview_is_base_only_and_terminal_or_stale_is_held) ... ok
+test_reviewed_evidence_and_agent_cannot_adopt_deadline_and_action_drift_stales_pack (tests.test_clock_guard.ClockGuardTests.test_reviewed_evidence_and_agent_cannot_adopt_deadline_and_action_drift_stales_pack) ... ok
+test_working_calendar_and_revocation_hold_only_calculation (tests.test_clock_guard.ClockGuardTests.test_working_calendar_and_revocation_hold_only_calculation) ... ok
+setUpClass (tests.test_cold_recovery.ColdRecoveryTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (tests.test_cold_recovery.ColdRecoveryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 61, in setUpClass
+    archive = cls.child('source', cls.value, cls.source, cold=False)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 26, in child
+    raise AssertionError(f'{stage} failed\n{result.stdout}\n{result.stderr}')
+AssertionError: source failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 474, in <module>
+    if stage=='source':result=source()
+                              ~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 164, in source
+    pilot_bindings.review(b,scope.pk,binding.pk,'accept','Exact clock input history; no restored authority or deadline adoption')
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\pilot_bindings.py", line 43, in review
+    for g in b.payload['guards']:pilot_guards.check(actor,c,g)
+                                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\pilot_guards.py", line 63, in check
+    clock_observer(observer,case,selection['arguments']['action_state_id'])
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\clock_guard.py", line 47, in observer
+    state=readable(actor,case,state_id)
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\clock_guard.py", line 13, in readable
+    for action in ['case.read','meeting.read']:require(actor,case,action)
+                                               ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 112.951s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

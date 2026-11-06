@@ -1,0 +1,65 @@
+{
+  "source_run": 509,
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "changed_paths": [
+    "apps/finance/invoices.py",
+    "apps/policy/operator_validators.py",
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_views.py",
+    "config/urls.py",
+    "contracts/operator-policy-components.json",
+    "templates/factory/detail.html",
+    "tests/factory_helpers.py",
+    "tests/test_application.py"
+  ],
+  "added_paths": [
+    "apps/policy/factory_routing_validators.py",
+    "apps/workflows/factory_routing.py",
+    "apps/workflows/migrations/0049_factory_governance_task.py",
+    "templates/factory/responsibility.html",
+    "templates/factory/responsibility_wait.html",
+    "tests/test_factory_routing.py"
+  ],
+  "previous_migrations_unchanged": true,
+  "dependencies_added": [],
+  "new_migration_immutable_since_run": 505,
+  "operational_assignments_added": false
+}

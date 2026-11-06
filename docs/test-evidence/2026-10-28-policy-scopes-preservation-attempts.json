@@ -1,0 +1,19 @@
+{
+  "first_attempt": {
+    "returncode": 1,
+    "result": "table-set assertion rejected an incomplete migration state",
+    "cause": "audit invoked before asynchronous main migration process completed",
+    "business_mutation_by_audit": false,
+    "receipt_written": false
+  },
+  "migration_process_completion": {
+    "session_id": 75709,
+    "returncode": 0,
+    "applied": ["policy0002", "policy0003"]
+  },
+  "second_attempt": {
+    "returncode": 0,
+    "result": "all prior main rowsets and applied migration sources preserved; main/test definitions match",
+    "receipt": "docs/test-evidence/2026-10-28-policy-scopes-preservation.json"
+  }
+}

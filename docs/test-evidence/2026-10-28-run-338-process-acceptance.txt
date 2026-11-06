@@ -1,0 +1,32 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0004_impactassessment_impactreview...test_actual_pmo_action_and_schedule_pins_and_rearming_changes_observed_head (tests.test_policy_impact.DomainImpactTests.test_actual_pmo_action_and_schedule_pins_and_rearming_changes_observed_head) ... ok
+test_baas_event_and_report_adapters_use_real_flow_and_indirect_head_pins (tests.test_policy_impact.DomainImpactTests.test_baas_event_and_report_adapters_use_real_flow_and_indirect_head_pins) ... ok
+test_finance_billing_uses_actual_typed_pins_and_requires_rebuilt_snapshot (tests.test_policy_impact.DomainImpactTests.test_finance_billing_uses_actual_typed_pins_and_requires_rebuilt_snapshot) ... ok
+test_finance_run_adapter_matches_actual_mapping_preview (tests.test_policy_impact.DomainImpactTests.test_finance_run_adapter_matches_actual_mapping_preview) ... ok
+test_private_response_pending_unknown_and_receipt_are_not_replayed (tests.test_policy_impact.DomainImpactTests.test_private_response_pending_unknown_and_receipt_are_not_replayed) ... ok
+test_actual_domain_head_change_blocks_accept_then_allows_recorded_rejection (tests.test_policy_impact.PolicyImpactTests.test_actual_domain_head_change_blocks_accept_then_allows_recorded_rejection) ... ok
+test_actual_pmo_decisions_are_observed_and_acceptance_cannot_copy_approval (tests.test_policy_impact.PolicyImpactTests.test_actual_pmo_decisions_are_observed_and_acceptance_cannot_copy_approval) ... ok
+test_history_sql_guards_and_current_reviewer_authority (tests.test_policy_impact.PolicyImpactTests.test_history_sql_guards_and_current_reviewer_authority) ... ok
+test_paged_projection_is_actor_configuration_bound_and_cannot_hide_truncation (tests.test_policy_impact.PolicyImpactTests.test_paged_projection_is_actor_configuration_bound_and_cannot_hide_truncation) ... ok
+test_revoked_author_cannot_supply_current_acceptance_and_unrelated_capture_continues (tests.test_policy_impact.PolicyImpactTests.test_revoked_author_cannot_supply_current_acceptance_and_unrelated_capture_continues) ... ok
+test_snapshot_budget_holds_capture_but_paged_investigation_still_works (tests.test_policy_impact.PolicyImpactTests.test_snapshot_budget_holds_capture_but_paged_investigation_still_works) ... ok
+test_source_and_domain_permissions_are_current_and_no_cross_case_ids (tests.test_policy_impact.PolicyImpactTests.test_source_and_domain_permissions_are_current_and_no_cross_case_ids) ... ok
+test_stale_policy_evidence_case_and_unsupported_adapter_are_held (tests.test_policy_impact.PolicyImpactTests.test_stale_policy_evidence_case_and_unsupported_adapter_are_held) ... ok
+test_ui_csrf_agent_and_limited_metadata (tests.test_policy_impact.PolicyImpactTests.test_ui_csrf_agent_and_limited_metadata) ... ok
+test_duplicate_capture_and_competing_review_are_serialized (tests.test_policy_impact.ImpactConcurrencyTests.test_duplicate_capture_and_competing_review_are_serialized) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 78.520s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,24 @@
+{
+  "started_at": "2026-10-27T04:53:04.2224093+01:00",
+  "pid": 22760,
+  "noreload": true,
+  "path": "C:\\Python313\\python.exe",
+  "session_id": 19929,
+  "address": "127.0.0.1:8000",
+  "smoke_statuses": {
+    "operations": 302,
+    "integrations": 302,
+    "protection": 302
+  },
+  "login_redirects": {
+    "operations": "/accounts/login/?next=/cases/5b533c39-910f-412c-9290-44ee69f0c9c9/operations/",
+    "integrations": "/accounts/login/?next=/cases/5b533c39-910f-412c-9290-44ee69f0c9c9/integrations/",
+    "protection": "/accounts/login/?next=/cases/5b533c39-910f-412c-9290-44ee69f0c9c9/validation/protection/"
+  },
+  "classification": "Owned local server on final source; unauthenticated login redirect smoke only. Authenticated UI evidence uses actual synthetic test clients.",
+  "runtime_references": {
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo",
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1"
+  },
+  "operational_acceptance": false
+}

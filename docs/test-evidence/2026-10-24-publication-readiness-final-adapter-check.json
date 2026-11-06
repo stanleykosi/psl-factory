@@ -1,0 +1,13 @@
+{
+  "verified_at": "2026-10-24T01:29:22.484675+00:00",
+  "changed_after_connected_suite_and_full_audit": [
+    "adapters/finance_publication_readiness.py",
+    "tests/test_publication_readiness_concurrency.py"
+  ],
+  "domain_policy_ui_worker_sources_unchanged": true,
+  "runtime_adapter_final_positive_lifecycle": "RUN207 passed its lifecycle test; suite retained FAILED for ineffective ACL test setup",
+  "real_postgresql_denial_and_temporary_role_cleanup": "RUN208 passed; no psl_test_receipt_* roles remain",
+  "main_native_readiness_bindings": 0,
+  "main_v2_policy_versions": 0,
+  "no_new_real_appointments": true
+}

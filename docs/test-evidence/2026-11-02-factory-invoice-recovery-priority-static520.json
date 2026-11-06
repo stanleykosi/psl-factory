@@ -1,0 +1,67 @@
+{
+  "source_run": 520,
+  "parent": 513,
+  "changed_paths": [
+    "apps/finance/invoice_delivery.py",
+    "apps/finance/invoices.py",
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_views.py",
+    "tests/test_factory_recovery.py"
+  ],
+  "added_paths": [
+    "tests/factory_invoice_receipt_crash.py",
+    "tests/test_factory_invoice_recovery_priority.py"
+  ],
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "native_behavior_changes": [
+    "Receipt-only original-job worker mode",
+    "Owned job selection and expiry observation",
+    "Recovery before preparation/review",
+    "No current executor requirement for prior receipt observation",
+    "Configured factory source age at new-send boundary",
+    "Unresolved other-invoice issuance hold"
+  ],
+  "presentation_only": false,
+  "migrations_unchanged": true,
+  "policy_values_unchanged": true,
+  "dependencies_added": [],
+  "original_jobs_approvals_receipts_budgets_not_reset": true
+}

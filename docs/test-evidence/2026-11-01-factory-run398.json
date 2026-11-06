@@ -1,0 +1,23 @@
+{
+  "run": 398,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_flow",
+    "tests.test_factory_controls",
+    "tests.test_factory_console",
+    "tests.test_ui_layout",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T16:33:30.432787+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run398.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 99.134
+}

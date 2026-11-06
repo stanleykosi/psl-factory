@@ -1,0 +1,1 @@
+{"case": "3bed19d8-6453-4a66-9f6f-8ed7b8349540", "principals": {"actor": 54, "reviewer": 55, "specialist": 56}, "packet": 2, "job": 2, "receipt": 2, "contract": 8, "assessment": 10, "review": 9, "inventory": 3, "response_attempts": 2}

@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved (tests.test_factory_intake.FactoryIntakeTests.test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved) ... ok
+test_current_same_project_grants_drive_discovery_and_no_cross_project_union (tests.test_factory_intake.FactoryIntakeTests.test_current_same_project_grants_drive_discovery_and_no_cross_project_union) ... ok
+test_queue_has_one_context_preserving_start_action_and_chooser_reuses_native_forms (tests.test_factory_intake.FactoryIntakeTests.test_queue_has_one_context_preserving_start_action_and_chooser_reuses_native_forms) ... ok
+test_malformed_workspace_identity_is_a_form_error (tests.test_factory_console.FactoryConsoleTests.test_malformed_workspace_identity_is_a_form_error) ... ok
+test_profile_adoption_and_claim_release_use_current_backend_authority (tests.test_factory_console.FactoryConsoleTests.test_profile_adoption_and_claim_release_use_current_backend_authority) ... ok
+test_profile_screen_uses_native_lifecycle_and_caps_not_default_values (tests.test_factory_console.FactoryConsoleTests.test_profile_screen_uses_native_lifecycle_and_caps_not_default_values) ... ok
+test_queue_case_agent_information_review_receipts_and_return_context (tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context) ... ok
+test_source_and_work_grants_are_rechecked_on_get_and_direct_posts (tests.test_factory_console.FactoryConsoleTests.test_source_and_work_grants_are_rechecked_on_get_and_direct_posts) ... ok
+test_stale_command_preserves_work_and_reports_refresh (tests.test_factory_console.FactoryConsoleTests.test_stale_command_preserves_work_and_reports_refresh) ... ok
+test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition (tests.test_factory_console.FactoryConsoleTests.test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 39.709s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

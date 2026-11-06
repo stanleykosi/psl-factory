@@ -1,0 +1,18 @@
+{
+  "classification": "Unset owner/deployment inputs; not an operational appointment",
+  "schema_ref": "schema:psl/private-protection-readiness/v2",
+  "rules": {
+    "probe_user_id": null,
+    "probe_role": null,
+    "reviewer_id": null,
+    "reviewer_role": null,
+    "independent_review": true,
+    "freshness_seconds": null,
+    "require_receipt_probe": true,
+    "allow_synthetic_target": false,
+    "lease_seconds": null,
+    "max_attempts": null,
+    "private_protection_job_ids": [],
+    "private_file_job_ids": []
+  }
+}

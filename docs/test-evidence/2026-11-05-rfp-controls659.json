@@ -1,0 +1,26 @@
+{
+  "status": "BOUNDED_CONTROLS_VERIFIED_FACTORY_CONNECTION_INCOMPLETE",
+  "source_run": 659,
+  "process_ids": ["P45", "P46", "P47", "P48", "P49"],
+  "implemented": ["Deadline-dependent reservation/dispatch/retry separate from document review", "Mandatory final outward RFP review", "Typed nullable execution profile and structured existing settings UI", "Native same-workspace template, route and current-principal validation", "Queued deadline hold and committed-receipt recovery without resend"],
+  "passing_runs": {
+    "653": {"tests": 3, "unittest_seconds": 62.784, "process_seconds": 73.872},
+    "658": {"tests": 6, "unittest_seconds": 135.646, "process_seconds": 147.976},
+    "659": {"tests": 6, "unittest_seconds": 86.753, "process_seconds": 98.341}
+  },
+  "overlapping_suites_not_unique_coverage": true,
+  "retained_failed_runs": [652, 654, 655, 656, 657],
+  "actual_bug_fixed": "657 PostgreSQL missing JSON key excluded templates using native default-required review",
+  "internal_services": "Real Django domain services and PostgreSQL; no internal workflow mock",
+  "external_effect": "Synthetic internal recipient inbox and explicit timeout-after-commit fault",
+  "deadline_boundary": "Controlled domain clock; no production authority or lease backdating",
+  "contention": "658 actual two-backend once-only RFP disposition",
+  "static": "2026-11-05-rfp-static659.json",
+  "new_model_migrations": false,
+  "retained_application_databases_replayed": false,
+  "native_browser_verified": false,
+  "live_provider_or_external_connection_tested": false,
+  "remaining_engineering": ["Factory RFP closed intake and SQL identity", "Coordinator and ACT tool/process integration", "Primary work/decision console", "Publication scope binding", "Connected rework/authority/uncertain-effect recovery and verification"],
+  "owner_slots": "Actual assignment/review/outcome authority, executor, route and template selections remain deferred; fixtures confer no grants",
+  "full_108_internal_gate": "NOT_MET"
+}

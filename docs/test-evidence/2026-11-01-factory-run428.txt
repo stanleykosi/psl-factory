@@ -1,0 +1,59 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_release_without_prior_readiness_cannot_be_retroactively_prepared (tests.test_factory_delivery.FactoryDeliveryTests.test_actual_release_without_prior_readiness_cannot_be_retroactively_prepared) ... ok
+test_agent_cannot_approve_or_authenticate_unverified_source_evidence (tests.test_factory_delivery.FactoryDeliveryTests.test_agent_cannot_approve_or_authenticate_unverified_source_evidence) ... ok
+test_agent_waits_for_native_gates_then_prepares_and_verifies_readiness (tests.test_factory_delivery.FactoryDeliveryTests.test_agent_waits_for_native_gates_then_prepares_and_verifies_readiness) ... ok
+test_cancellation_while_planning_retains_attempt_without_preparing_readiness (tests.test_factory_delivery.FactoryDeliveryTests.test_cancellation_while_planning_retains_attempt_without_preparing_readiness) ... ok
+test_capture_before_policy_and_missing_approver_do_not_invent_decisions (tests.test_factory_delivery.FactoryDeliveryTests.test_capture_before_policy_and_missing_approver_do_not_invent_decisions) ... ok
+test_changed_gate_requires_reviewed_reassessment_and_fresh_native_request (tests.test_factory_delivery.FactoryDeliveryTests.test_changed_gate_requires_reviewed_reassessment_and_fresh_native_request) ... ok
+test_delivery_reader_never_receives_private_source_bodies_or_agent_history (tests.test_factory_delivery.FactoryDeliveryTests.test_delivery_reader_never_receives_private_source_bodies_or_agent_history) ... ok
+test_idempotent_intake_forged_source_and_false_completion_guards (tests.test_factory_delivery.FactoryDeliveryTests.test_idempotent_intake_forged_source_and_false_completion_guards) ... ok
+test_native_planning_decision_is_available_in_primary_ui_without_finance (tests.test_factory_delivery.FactoryDeliveryTests.test_native_planning_decision_is_available_in_primary_ui_without_finance) ... ok
+test_only_configured_decision_verdicts_appear_and_native_return_never_approves (tests.test_factory_delivery.FactoryDeliveryTests.test_only_configured_decision_verdicts_appear_and_native_return_never_approves) ... ERROR
+
+======================================================================
+ERROR: test_only_configured_decision_verdicts_appear_and_native_return_never_approves (tests.test_factory_delivery.FactoryDeliveryTests.test_only_configured_decision_verdicts_appear_and_native_return_never_approves)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_delivery.py", line 59, in test_only_configured_decision_verdicts_appear_and_native_return_never_approves
+    artifact(f.actor,f.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':['approve','return','reject']}]},f.e['policy_decision'])
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\document_helpers.py", line 16, in artifact
+    return activate(actor,case,component,value,evidence)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\helpers.py", line 36, in activate
+    transition(actor,config.pk,'validated'); transition(actor,config.pk,'active')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 247, in transition
+    validate_envelope(case, config.envelope)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 173, in validate_envelope
+    validate_reference(envelope['component_id'],target,case,runtime=runtime)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\document_validators.py", line 59, in validate_reference
+    typed(target,'schema:psl/decision-actions/v7' if v7 else 'schema:psl/decision-actions/v6' if v6 else 'schema:psl/decision-actions/v5' if v5 else 'schema:psl/decision-actions/v4' if v4 else 'schema:psl/decision-actions/v3' if v3 else 'schema:psl/decision-actions/v2' if v2 else 'schema:psl/decision-actions/v1',
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        {'type':'object','minProperties':1,'properties':props,'required':[] if v2 else ['rules'],'additionalProperties':False})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\document_validators.py", line 13, in typed
+    validate(schema,target.content)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'approve' is not one of ['return', 'reject', 'withdraw', 'reopen']"]
+
+----------------------------------------------------------------------
+Ran 10 tests in 132.957s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 25 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

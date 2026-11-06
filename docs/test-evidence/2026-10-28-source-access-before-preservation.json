@@ -1,0 +1,8 @@
+{
+  "phase": "before",
+  "main_rowsets_unchanged": 316,
+  "old_migration_files_preserved": 184,
+  "only_expected_function_difference": "psl_technical_intake_guard",
+  "main_migration_pending": true,
+  "owner_values_installed": false
+}

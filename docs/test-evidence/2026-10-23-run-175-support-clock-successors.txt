@@ -1,0 +1,333 @@
+Using existing test database for alias 'default'...
+
+F.EEEE.EEEEEEEEEE.E..........EE
+======================================================================
+ERROR: test_correction_key_idempotence_conflict_and_narrow_allowed_mode (tests.test_support_clock_corrections.ClockCorrectionTests.test_correction_key_idempotence_conflict_and_narrow_allowed_mode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 129, in test_correction_key_idempotence_conflict_and_narrow_allowed_mode
+    first=propose(f,receipt=r);self.assertEqual(propose(f,receipt=r).pk,first.pk)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_correction_withdrawal_is_explicit_reviewed_and_never_falls_back (tests.test_support_clock_corrections.ClockCorrectionTests.test_correction_withdrawal_is_explicit_reviewed_and_never_falls_back)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 77, in test_correction_withdrawal_is_explicit_reviewed_and_never_falls_back
+    first=propose(f,receipt=r);confirm(f,first);withdraw=propose(f,'withdraw',None,'withdraw',first.pk);self.assertIsNone(support.metrics(f['case'])['first_response_seconds']);confirm(f,withdraw)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_independent_reviewer_cannot_be_proposer_or_claim_author (tests.test_support_clock_corrections.ClockCorrectionTests.test_independent_reviewer_cannot_be_proposer_or_claim_author)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 71, in test_independent_reviewer_cannot_be_proposer_or_claim_author
+    correction=propose(f,receipt=r)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_late_delivery_reconciles_metric_without_backdating_a_support_event (tests.test_support_clock_corrections.ClockCorrectionTests.test_late_delivery_reconciles_metric_without_backdating_a_support_event)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 54, in test_late_delivery_reconciles_metric_without_backdating_a_support_event
+    events=list(support.SupportEvent.objects.values());correction=propose(f,'late',r);confirm(f,correction)
+                                                                  ~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_new_pending_correction_supersedes_prior_projection_and_requires_latest_predecessor (tests.test_support_clock_corrections.ClockCorrectionTests.test_new_pending_correction_supersedes_prior_projection_and_requires_latest_predecessor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 89, in test_new_pending_correction_supersedes_prior_projection_and_requires_latest_predecessor
+    first=propose(f,receipt=r);confirm(f,first);second=propose(f,receipt=r,key='second',predecessor=first.pk)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_original_respond_and_manual_clock_bypass_stay_guarded_after_correction (tests.test_support_clock_corrections.ClockCorrectionTests.test_original_respond_and_manual_clock_bypass_stay_guarded_after_correction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 137, in test_original_respond_and_manual_clock_bypass_stay_guarded_after_correction
+    correction=propose(f,receipt=r);confirm(f,correction)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_policy_change_revoke_and_authority_revoke_make_current_projection_unknown (tests.test_support_clock_corrections.ClockCorrectionTests.test_policy_change_revoke_and_authority_revoke_make_current_projection_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 96, in test_policy_change_revoke_and_authority_revoke_make_current_projection_unknown
+    correction=propose(f,receipt=r);confirm(f,correction);transition(f['actor'],f['correction_policy'].pk,'revoked')
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_private_evidence_agents_and_public_history_never_apply_or_leak_corrections (tests.test_support_clock_corrections.ClockCorrectionTests.test_private_evidence_agents_and_public_history_never_apply_or_leak_corrections)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 149, in test_private_evidence_agents_and_public_history_never_apply_or_leak_corrections
+    correction=propose(f,receipt=r);before=AgentRun.objects.count()
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_renewed_receipt_review_needs_reviewed_clock_revalidation_and_preserves_events (tests.test_support_clock_corrections.ClockCorrectionTests.test_renewed_receipt_review_needs_reviewed_clock_revalidation_and_preserves_events)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 38, in test_renewed_receipt_review_needs_reviewed_clock_revalidation_and_preserves_events
+    correction=propose(f,receipt=r);self.assertEqual(support.metrics(f['case'])['finding'],'clock_correction_not_current');confirm(f,correction)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_revalidation_cannot_change_time_and_old_immutable_check_key_cannot_retarget (tests.test_support_clock_corrections.ClockCorrectionTests.test_revalidation_cannot_change_time_and_old_immutable_check_key_cannot_retarget)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 116, in test_revalidation_cannot_change_time_and_old_immutable_check_key_cannot_retarget
+    correction=propose(f,'replace',r);confirm(f,correction)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_source_and_correction_review_expiry_hold_without_mutation (tests.test_support_clock_corrections.ClockCorrectionTests.test_source_and_correction_review_expiry_hold_without_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 103, in test_source_and_correction_review_expiry_hold_without_mutation
+    correction=propose(f,receipt=r);confirm(f,correction)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_source_revision_new_authenticated_observation_then_reviewed_replacement (tests.test_support_clock_corrections.ClockCorrectionTests.test_source_revision_new_authenticated_observation_then_reviewed_replacement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 43, in test_source_revision_new_authenticated_observation_then_reviewed_replacement
+    old=attest(f,remote);old_claim=f['claim'];original=old.payload.copy();new=successor(f)
+                                                                              ~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 25, in successor
+    r=d.successor(f['actor'],f['case'].pk,(old or f['claim']).pk,key,version,f['e']['agent_private_channel_successor'].pk);f['claim']=r;return r
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 22, in successor
+    validate(KEY,reference);validate(KEY,receipt_version);old=d.claim_for(c,predecessor_id);e=subject(c,evidence_id,'agent_private_channel_successor')
+                                                                                              ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_source_successor_is_idempotent_no_branch_same_version_or_cross_case (tests.test_support_clock_corrections.ClockCorrectionTests.test_source_successor_is_idempotent_no_branch_same_version_or_cross_case)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 107, in test_source_successor_is_idempotent_no_branch_same_version_or_cross_case
+    f=self.f;claim(f);old=f['claim'];new=successor(f);self.assertEqual(successor(f,old=old).pk,new.pk)
+                                         ~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 25, in successor
+    r=d.successor(f['actor'],f['case'].pk,(old or f['claim']).pk,key,version,f['e']['agent_private_channel_successor'].pk);f['claim']=r;return r
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 22, in successor
+    validate(KEY,reference);validate(KEY,receipt_version);old=d.claim_for(c,predecessor_id);e=subject(c,evidence_id,'agent_private_channel_successor')
+                                                                                              ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_sql_guards_preserve_corrections_reviews_and_source_identity (tests.test_support_clock_corrections.ClockCorrectionTests.test_sql_guards_preserve_corrections_reviews_and_source_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 155, in test_sql_guards_preserve_corrections_reviews_and_source_identity
+    correction=propose(f,receipt=r);review=confirm(f,correction);new=successor(f)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_withdrawn_correction_review_holds_current_metric_and_stales_summary (tests.test_support_clock_corrections.ClockCorrectionTests.test_withdrawn_correction_review_holds_current_metric_and_stales_summary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 82, in test_withdrawn_correction_review_holds_current_metric_and_stales_summary
+    correction=propose(f,receipt=r);confirm(f,correction);summary=report(f);support.read_report(f['actor'],f['case'].pk,summary.pk);confirm(f,correction,'withdraw')
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_ordered_source_revocation_prevents_human_correction_review (tests.test_support_clock_concurrency.ClockConcurrencyTests.test_ordered_source_revocation_prevents_human_correction_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_concurrency.py", line 30, in test_ordered_source_revocation_prevents_human_correction_review
+    f=self.f;r=propose(f,'withdraw');locked=Event();proceed=Event()
+               ~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\support_clock_helpers.py", line 19, in propose
+    return d.propose(f['actor'],f['case'].pk,mode,receipt.pk if receipt else None,key,predecessor,f['e']['agent_private_clock_correction'].pk,'Explicit synthetic human correction reason')
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 76, in propose
+    e=subject(c,evidence_id,'agent_private_clock_correction');r=d.Receipt.objects.filter(pk=receipt_id,job__claim__case=c).first() if receipt_id is not None else None
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+ERROR: test_source_successor_and_competing_clock_proposals_have_single_lineage (tests.test_support_clock_concurrency.ClockConcurrencyTests.test_source_successor_and_competing_clock_proposals_have_single_lineage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_concurrency.py", line 24, in test_source_successor_and_competing_clock_proposals_have_single_lineage
+    ids=self.parallel(lambda _:d.successor(f['actor'],f['case'].pk,old.pk,'same','v2',f['e']['agent_private_channel_successor'].pk).pk);self.assertEqual(ids[0],ids[1])
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_concurrency.py", line 21, in parallel
+    with ThreadPoolExecutor(max_workers=2) as pool:return list(pool.map(run,[0,1]))
+                                                          ~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ~~~~~~~~~~^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_concurrency.py", line 19, in run
+    try:return fn(n)
+               ~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_concurrency.py", line 24, in <lambda>
+    ids=self.parallel(lambda _:d.successor(f['actor'],f['case'].pk,old.pk,'same','v2',f['e']['agent_private_channel_successor'].pk).pk);self.assertEqual(ids[0],ids[1])
+                               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\baas\support_clock_corrections.py", line 22, in successor
+    validate(KEY,reference);validate(KEY,receipt_version);old=d.claim_for(c,predecessor_id);e=subject(c,evidence_id,'agent_private_channel_successor')
+                                                                                              ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 16, in subject
+    raise ValidationError('Private agent source evidence requires its scoped data interface')
+django.core.exceptions.ValidationError: ['Private agent source evidence requires its scoped data interface']
+
+======================================================================
+FAIL: test_actual_staff_successor_and_correction_forms_and_read_only_grants (tests.test_support_clock_corrections.ClockCorrectionTests.test_actual_staff_successor_and_correction_forms_and_read_only_grants)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_support_clock_corrections.py", line 143, in test_actual_staff_successor_and_correction_forms_and_read_only_grants
+    self.client.force_login(f['actor']);url=reverse('support_channels',args=[f['case'].pk]);response=self.client.post(url,{'action':'correct','revision':rev(f['case']),'mode':'revalidate','receipt':r.pk,'reference':'ui','predecessor':'','evidence':f['e']['agent_private_clock_correction'].pk,'reason':'Human requests exact-time revalidation'});self.assertEqual(response.status_code,302);row=d.latest(f['case']);self.assertIsNotNone(row)
+                                                                                                                                                                                                                                                                                                                                                                                                                           ~~~~~~~~~~~~~~~~~~~~^^^^^
+AssertionError: unexpectedly None
+
+----------------------------------------------------------------------
+Ran 31 tests in 161.977s
+
+FAILED (failures=1, errors=17)
+Preserving test database for alias 'default'...
+
+Found 31 test(s).
+System check identified no issues (0 silenced).

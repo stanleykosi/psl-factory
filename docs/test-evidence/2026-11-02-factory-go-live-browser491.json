@@ -1,0 +1,29 @@
+{
+  "source_runtime": 491,
+  "browser": "in-app browser2/tab16",
+  "database": "psl_factory_go_live_ui_d7cbfe7f08a6",
+  "work": 1,
+  "classification": "Synthetic PostgreSQL native-service journey with mock publication, fixture PM/PMO Lead and distinct publisher; not independent-human UAT",
+  "actions": [
+    "Unknown nullable intake investigated by actual ACT04 without document or sign-off",
+    "Human selected actual template1/checklist10/incident11/rollback12",
+    "Agent prepared client report1 and native human review; human PMO Lead approved exact report",
+    "Configured distinct publisher delivered exact mock receipt1; no acceptance inferred",
+    "Human PM supplied signature references16/17 through exact report/receipt form; agent verified native anchor6",
+    "Human selected prepared unreviewed rollback alternative14 with explicit reason",
+    "Agent prepared fresh report2; native human review approved; exact mock receipt2",
+    "Human PM explicitly reaffirmed prior native head with new distinct signatures19/20; agent verified successor7",
+    "Downstream hypercare intake prefilled exact case/dossier1; no new downstream work submitted",
+    "Narrow390x844: document375px, no horizontal overflow",
+    "Keyboard Enter on return link preserves queue=active&q=Go-live; verified-view link preserves search and shows verified work1"
+  ],
+  "screenshots": {
+    "docs/test-evidence/2026-11-02-factory-go-live-verified491.png": "f96a85ded2af52259d05d2e292f74dd553bef9a6e8023b0dd6a6bfc6940db8f2",
+    "docs/test-evidence/2026-11-02-factory-go-live-narrow491.png": "ad7d47a7d35f5a4921fbb0c77898877b620fbcd3c998a43c907a51871d4df066"
+  },
+  "native_readback": "docs/test-evidence/2026-11-02-factory-go-live-readback491.json",
+  "browser_interruption": "After captures/navigation, control timed out during desktop reset/retained-tab marking; fresh binding also timed out. No POST retried.",
+  "real_model_evaluation": false,
+  "external_authenticity_verified": false,
+  "operational_values_added": false
+}

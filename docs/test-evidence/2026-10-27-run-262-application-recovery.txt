@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_http_policy_activation_human_authorization_queue_and_live_guidance (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_actual_http_policy_activation_human_authorization_queue_and_live_guidance) ... ok
+test_capture_missing_policy_typed_validation_ui_agent_and_private_scope (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_capture_missing_policy_typed_validation_ui_agent_and_private_scope) ... ok
+test_narrow_cast_canonicalisation_preserves_real_schema_differences (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_narrow_cast_canonicalisation_preserves_real_schema_differences) ... ok
+test_policy_lifecycle_runtime_identity_and_sql_immutability (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_policy_lifecycle_runtime_identity_and_sql_immutability) ... ok
+test_real_archive_isolated_restore_human_review_and_physical_counterexamples (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples) ... ok
+test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 183.912s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

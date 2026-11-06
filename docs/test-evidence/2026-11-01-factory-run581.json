@@ -1,0 +1,20 @@
+{
+  "run": 581,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_planner_gateway.FactoryPlannerGatewayTests.test_lost_response_recovers_original_receipt_and_reservation_without_another_send",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T10:42:09.874521+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run581.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 18.474
+}

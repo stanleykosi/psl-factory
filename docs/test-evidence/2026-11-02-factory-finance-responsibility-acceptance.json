@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "classification": "Bounded native synthetic single Finance review accountability routing; not full routing or whole-process acceptance",
+  "source_run": 509,
+  "parent_checkpoint": 504,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "activity_ids": [
+    "ACT09",
+    "ACT10",
+    "ACT11",
+    "ACT12",
+    "ACT13"
+  ],
+  "requirement_ids": [
+    "REQ-09",
+    "REQ-10",
+    "REQ-11",
+    "REQ-16",
+    "REQ-20",
+    "REQ-24",
+    "REQ-25"
+  ],
+  "tested_scope": "Useful draft before ownership configuration; typed nullable accountability nominations; deterministic native Finance eligibility; governed native wait/recheck with no approval; changed exact-packet invalidation; direct native/UI/agent parity; actual two-connection recheck and existing claim/cancellation/process recovery; lookup-first positive receipt after revocation; immutable history and original allowance",
+  "passing_runs": [
+    508,
+    509,
+    510
+  ],
+  "policy_interface": "OPS.factory_finance_responsibility/v1",
+  "technical_interfaces": 134,
+  "migrations": [
+    "workflows0049_factory_governance_task"
+  ],
+  "dependencies_added": [],
+  "main_preserved_rowsets": 329,
+  "main_preserved_indexes": 1550,
+  "retained_migrated_databases": 11,
+  "preview_startup": "Initial40-second probe exceeded; all12 original launches subsequently verified by exact process/listener identities, no second stop or launch.8014 is a separate isolated fixture.",
+  "operational_owner_values_added": false,
+  "native_approval_authority": "InvoiceReview; responsibility nomination/recheck grants no business role or approval",
+  "P02_boundary": "Source-owned observations and contract consent remain separate; no PSL QA/UAT/Engineering/client approval invented",
+  "retained_current_readback": {
+    "PASS": 7,
+    "BLOCKED": {
+      "planning": "Actual meeting evidence exceeds configured freshness; historical acceptance preserved, no clock/policy change"
+    }
+  },
+  "full_routing_scenarios": "PARTIAL/NOT_EVALUATED beyond the bounded single-review path",
+  "remaining_code": [
+    "Delegation/absence",
+    "Thresholds/FX/aggregation",
+    "Sequential/parallel/quorum/veto/expiry",
+    "Governed unknown-case extension",
+    "Other native domain routing",
+    "Coordinator/provider/callback/background progression",
+    "Active-factory restore/fresh-authority resume",
+    "Policy impact consumers and remaining108 process paths"
+  ],
+  "policy_slots": [
+    "Actual process/activity/policy owner nominations",
+    "Actual governance resolver",
+    "Business-approved routing/delegation/SoD/threshold/FX/stage/expiry rules"
+  ],
+  "full_process_acceptance": "NOT_EVALUATED",
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-02-factory-routing-baseline.json",
+    "docs/test-evidence/2026-11-02-factory-routing-static509.json",
+    "docs/test-evidence/2026-11-02-factory-routing-browser509.json",
+    "docs/test-evidence/2026-11-02-factory-routing-governance-no-approval509.json",
+    "docs/test-evidence/2026-11-02-factory-routing-main-after.json",
+    "docs/test-evidence/2026-11-02-factory-routing-previews509-after.json",
+    "docs/test-evidence/2026-11-02-factory-routing-retained-planning-expiry.json"
+  ]
+}

@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_canceled_unsent_response_requires_fresh_outward_review_before_new_delivery (tests.test_factory_rfp_canceled_publication.FactoryRFPCanceledPublicationTests.test_canceled_unsent_response_requires_fresh_outward_review_before_new_delivery) ... ok
+test_preexisting_reviewed_native_response_is_reused_without_duplicate_decisions_or_document (tests.test_factory_rfp_canceled_publication.FactoryRFPCanceledPublicationTests.test_preexisting_reviewed_native_response_is_reused_without_duplicate_decisions_or_document) ... ok
+test_returned_outward_document_waits_for_fresh_instruction_and_new_final_review (tests.test_factory_rfp_canceled_publication.FactoryRFPCanceledPublicationTests.test_returned_outward_document_waits_for_fresh_instruction_and_new_final_review) ... ok
+test_structured_intake_primary_decisions_and_customer_outcome_keep_one_native_chain (tests.test_factory_rfp_console_flow.FactoryRFPConsoleFlowTests.test_structured_intake_primary_decisions_and_customer_outcome_keep_one_native_chain) ... ok
+test_closed_schema_rejects_unknown_fields_unrecognised_methods_and_malformed_values (tests.test_rfp_outcome_policy.RFPOutcomePolicyShapeTests.test_closed_schema_rejects_unknown_fields_unrecognised_methods_and_malformed_values) ... ok
+test_nullable_fixture_and_explicit_method_validate_without_implicit_selection (tests.test_rfp_outcome_policy.RFPOutcomePolicyShapeTests.test_nullable_fixture_and_explicit_method_validate_without_implicit_selection) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 578.937s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

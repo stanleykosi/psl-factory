@@ -1,0 +1,5 @@
+Operations to perform:
+  Target specific migration: 0015_factory_publication_scope, from documents
+Running migrations:
+  Applying workflows.0041_factory_commercial... OK
+  Applying documents.0015_factory_publication_scope... OK

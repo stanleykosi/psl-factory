@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_missing_department_policy_retains_requests_and_holds_only_delivery (tests.test_factory_planning.FactoryPlanningTests.test_missing_department_policy_retains_requests_and_holds_only_delivery) ... ok
+test_successor_packet_keeps_business_identity_and_spent_allowance (tests.test_factory_planning.FactoryPlanningTests.test_successor_packet_keeps_business_identity_and_spent_allowance) ... ok
+test_connected_owner_wait_then_current_readiness_and_delivery_handoff (tests.test_factory_planning.FactoryPlanningTests.test_connected_owner_wait_then_current_readiness_and_delivery_handoff) ... ok
+test_verified_handoff_detects_changed_sources_and_requires_reviewed_reassessment (tests.test_factory_planning.FactoryPlanningTests.test_verified_handoff_detects_changed_sources_and_requires_reviewed_reassessment) ... ok
+test_original_process_fields_and_all_release_deferred_bindings_are_retained (tests.test_factory_coverage.FactoryCoverageTests.test_original_process_fields_and_all_release_deferred_bindings_are_retained) ... ok
+test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes (tests.test_factory_coverage.FactoryCoverageTests.test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 111.454s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

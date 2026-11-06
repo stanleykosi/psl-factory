@@ -1,0 +1,36 @@
+{
+  "verified_at": "2026-10-23T16:50:56.955414+00:00",
+  "observation": 5,
+  "receipt": 2,
+  "request": 2,
+  "error": [
+    "Source observation expired; no checkbox fallback"
+  ],
+  "age_seconds": 86863.779987,
+  "configured_max_age_seconds": 86400,
+  "observed_at": "2026-10-22T16:43:13.175406+00:00",
+  "payload": {
+    "system": "synthetic-qa",
+    "outcome": "available",
+    "decision": "accepted",
+    "receipt_id": 2,
+    "observed_at": "2026-10-22T16:43:13.175406+00:00",
+    "external_ref": "synthetic-restored-QA",
+    "payload_sha256": "08d86e63c0cf17bcad62fabb2853d8797046ca6f85369757e429f3b6ef86760b",
+    "source_version": "v1"
+  },
+  "snapshot": {
+    "contract_review": 1,
+    "P02.owner_routes": 235,
+    "source_authority": {
+      "D05.role_principal_assignments": 234
+    },
+    "P02.evidence_contracts": 236
+  },
+  "evidence_sha256": "5f42ccef223ffcb0e257a9deb99f743cafff75af959d3c93b2c464038b1d2145",
+  "receipt_sha256": "08d86e63c0cf17bcad62fabb2853d8797046ca6f85369757e429f3b6ef86760b",
+  "policy_authority_pins_unchanged": true,
+  "history_preserved": true,
+  "refreshed_or_reauthorised": false,
+  "current_visibility": "unavailable"
+}

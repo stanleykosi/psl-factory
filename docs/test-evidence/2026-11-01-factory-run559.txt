@@ -1,0 +1,31 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_absence_after_approval_holds_new_issuance_but_retains_native_history (tests.test_factory_availability.FactoryAvailabilityTests.test_absence_after_approval_holds_new_issuance_but_retains_native_history) ... ok
+test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts (tests.test_factory_availability.FactoryAvailabilityTests.test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts) ... ok
+test_availability_change_after_claim_requires_current_routing_without_history_rewrite (tests.test_factory_availability.FactoryAvailabilityTests.test_availability_change_after_claim_requires_current_routing_without_history_rewrite) ... ok
+test_available_record_does_not_appoint_a_reviewer_or_replace_a_revoked_delegation (tests.test_factory_availability.FactoryAvailabilityTests.test_available_record_does_not_appoint_a_reviewer_or_replace_a_revoked_delegation) ... ok
+test_each_historical_availability_and_delegation_version_requires_its_own_origin_access (tests.test_factory_availability.FactoryAvailabilityTests.test_each_historical_availability_and_delegation_version_requires_its_own_origin_access) ... ok
+test_invalid_overlap_timezone_types_and_foreign_people_cannot_replace_active_windows (tests.test_factory_availability.FactoryAvailabilityTests.test_invalid_overlap_timezone_types_and_foreign_people_cannot_replace_active_windows) ... ok
+test_legacy_form_post_cannot_silently_remove_required_availability (tests.test_factory_availability.FactoryAvailabilityTests.test_legacy_form_post_cannot_silently_remove_required_availability) ... ok
+test_original_receipt_reconciles_after_availability_revocation_without_new_delivery (tests.test_factory_availability.FactoryAvailabilityTests.test_original_receipt_reconciles_after_availability_revocation_without_new_delivery) ... ok
+test_real_availability_expiry_blocks_dispatch_without_backdating_or_clock_mocks (tests.test_factory_availability.FactoryAvailabilityTests.test_real_availability_expiry_blocks_dispatch_without_backdating_or_clock_mocks) ... Found 13 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+Actual availability expiry wait until 2026-11-03T15:19:33.213742+00:00
+ok
+test_scoped_owner_form_preserves_other_windows_and_requires_activation (tests.test_factory_availability.FactoryAvailabilityTests.test_scoped_owner_form_preserves_other_windows_and_requires_activation) ... ok
+test_stale_sources_and_lost_private_source_access_cannot_copy_or_transition_windows (tests.test_factory_availability.FactoryAvailabilityTests.test_stale_sources_and_lost_private_source_access_cannot_copy_or_transition_windows) ... ok
+test_unknown_windows_or_mode_hold_review_after_useful_preparation (tests.test_factory_availability.FactoryAvailabilityTests.test_unknown_windows_or_mode_hold_review_after_useful_preparation) ... ok
+test_review_and_availability_withdrawal_serialize_before_dispatch (tests.test_factory_availability.FactoryAvailabilityConcurrencyTests.test_review_and_availability_withdrawal_serialize_before_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 338.810s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

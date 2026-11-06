@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+  File "preservation_audit_accepted_publication", line 901, in <module>
+AssertionError

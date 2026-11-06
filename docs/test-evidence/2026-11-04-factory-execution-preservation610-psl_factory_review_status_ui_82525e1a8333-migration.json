@@ -1,0 +1,6 @@
+{
+  "database": "psl_factory_review_status_ui_82525e1a8333",
+  "returncode": 0,
+  "stdout": "Operations to perform:\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\nRunning migrations:\n  Applying workflows.0052_factory_execution_binding... OK\n  Applying workflows.0053_factory_execution_rule_scope... OK\n",
+  "stderr": ""
+}

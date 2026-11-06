@@ -1,0 +1,5 @@
+{
+  "classification": "Synthetic-only examples; actual Support membership, reviewer and audience values are unconfigured",
+  "scope": {"membership":"linked_receipt_half_open_v1","max_cases":10,"max_references":100,"missing_source_behavior":"omit_with_reason","merged_case_behavior":"omit_with_reason","allowed_fields":["meaning","reopened","source_references","metrics","unlinked_intake_count"],"allow_synthetic":true},
+  "review_template": {"reviewer_id":null,"reviewer_role":"Support","independent_review":true,"audiences":[{"key":"internal-reviewed","recipient_ids":[],"fields":["meaning","reopened"]}],"allow_synthetic":true}
+}

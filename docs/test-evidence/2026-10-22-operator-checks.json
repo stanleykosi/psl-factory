@@ -1,0 +1,30 @@
+{
+  "system": {
+    "chunk_id": "e90eb7",
+    "wall_time_seconds": 4.7274891,
+    "exit_code": 0,
+    "original_token_count": 13,
+    "output": "System check identified no issues (0 silenced).\r\n"
+  },
+  "migration_drift": {
+    "chunk_id": "c4de6e",
+    "wall_time_seconds": 5.6801719,
+    "exit_code": 0,
+    "original_token_count": 6,
+    "output": "No changes detected\r\n"
+  },
+  "compile": {
+    "chunk_id": "f0f472",
+    "wall_time_seconds": 2.2497437,
+    "exit_code": 0,
+    "original_token_count": 0,
+    "output": ""
+  },
+  "dependencies": {
+    "chunk_id": "05cd65",
+    "wall_time_seconds": 2.5068378,
+    "exit_code": 0,
+    "original_token_count": 8,
+    "output": "No broken requirements found.\r\n"
+  }
+}

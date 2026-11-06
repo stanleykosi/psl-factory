@@ -1,0 +1,18 @@
+[
+  {
+    "id": "U07",
+    "source_message_id": "Sentinel_cf2e9c2d23c881918e40d8b6eebc5506",
+    "quote": "for this an exception can be given",
+    "classification": "Explicit user clarification",
+    "rule": "An approved exception can permit deployment below the stated80% payment expectation.",
+    "limit": "No financial debt waiver, approver role or release-control bypass specified."
+  },
+  {
+    "id": "U08",
+    "source_message_id": "Sentinel_17e84655ed6c8191875c4d8e3bd2116e",
+    "quote": "it has to be a human but for now i can't tell",
+    "classification": "Explicit user clarification",
+    "rule": "The approver must be human; the user cannot identify the role yet.",
+    "limit": "Authority remains UNCONFIGURED; do not invent CEO, Finance, PMO or agent authority."
+  }
+]

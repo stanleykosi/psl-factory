@@ -1,0 +1,19 @@
+{% if result.findings %}<p><strong>Recorded findings:</strong> {{ result.findings|join:', ' }}</p>{% endif %}
+{% if kind == 'income' %}
+<p>Note line <strong>{{ result.report_line }}</strong> / target unit {{ result.target_unit|default:'not configured' }}. Signed source values are preserved.</p>
+<table><caption>Parent and adjustment reconciliation</caption><thead><tr><th scope="col">Measure</th><th scope="col">Amount</th><th scope="col">Treatment</th></tr></thead><tbody>
+<tr><th scope="row">Linked parent</th><td>{{ result.parent_amount|default_if_none:'Unknown' }}</td><td>Exact Finance note version</td></tr>
+<tr><th scope="row">Converted parent</th><td>{{ result.converted_parent|default_if_none:'Unknown' }}</td><td>Single configured factor {{ result.factor|default:'not configured' }}</td></tr>
+<tr><th scope="row">Child breakdown</th><td>{{ result.child_total|default_if_none:'Not supplied or unknown' }}</td><td>Explains the parent; never adds income</td></tr>
+<tr><th scope="row">Child residual</th><td>{{ result.child_residual|default_if_none:'Not supplied or unknown' }}</td><td>Compared with configured tolerance</td></tr>
+<tr><th scope="row">Reclassification</th><td>{{ result.reclassification_total|default_if_none:'Unknown' }}</td><td>Must net to zero</td></tr>
+<tr><th scope="row">Separate supplements</th><td>{{ result.additive_total|default_if_none:'Unknown' }}</td><td>Require justification and exact human review</td></tr>
+<tr><th scope="row">Explained total</th><td><strong>{{ result.adjusted_total|default_if_none:'Unknown' }}</strong></td><td>Converted parent plus permitted adjustments</td></tr>
+</tbody></table>
+<table><caption>Manual detail and evidence</caption><thead><tr><th scope="col">Stable line</th><th scope="col">Relationship</th><th scope="col">Amount / unit</th><th scope="col">Duplicate assessment</th><th scope="col">Evidence</th></tr></thead><tbody>{% for row in result.rows %}<tr><th scope="row">{{ row.key }}</th><td>{{ row.relationship }}</td><td>{{ row.amount|default_if_none:'Unknown' }} / {{ row.unit }}</td><td>{{ row.duplicate_state }}{% if row.duplicate_resolution_evidence_id %}; resolution #{{ row.duplicate_resolution_evidence_id }}{% endif %}</td><td>#{{ row.evidence_id }}</td></tr>{% endfor %}</tbody></table>
+{% else %}
+<p>Declared workbook coverage: <strong>{{ result.coverage }}</strong>. Monthly performance: <strong>{{ result.monthly_performance }}</strong>. Connected workbook verification: unavailable (imported local evidence).</p>
+{% if result.missing_required %}<p>Required schedules absent: {{ result.missing_required|join:', ' }}</p>{% endif %}
+<p>{% if result.complete_inventory %}The declared local inventory has no recorded completeness gaps. Connected execution remains unverified.{% else %}The inventory has exclusions or unresolved completeness decisions. Review covers this selected register only.{% endif %}</p>
+<table><caption>Schedule inclusion and evidence gaps</caption><thead><tr><th scope="col">Schedule</th><th scope="col">Disposition</th><th scope="col">Accepted evidence level</th><th scope="col">Remaining gaps</th></tr></thead><tbody>{% for row in result.schedules %}<tr><th scope="row">{{ row.key }}</th><td>{% if row.included %}Included in selected scope{% else %}Excluded pending evidence{% endif %}</td><td>{{ row.acceptance_level|default:'Not accepted' }}</td><td>{{ row.gaps|join:'; '|default:'None recorded' }}</td></tr>{% endfor %}</tbody></table>
+{% endif %}

@@ -1,0 +1,35 @@
+[
+  {
+    "status": "fulfilled",
+    "value": {
+      "session_id": 47163,
+      "chunk_id": "048aca",
+      "wall_time_seconds": 0.0000157,
+      "exit_code": 0,
+      "original_token_count": 13,
+      "output": "System check identified no issues (0 silenced).\r\n"
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "session_id": 69117,
+      "chunk_id": "8722f3",
+      "wall_time_seconds": 0.0000129,
+      "exit_code": 0,
+      "original_token_count": 6,
+      "output": "No changes detected\r\n"
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "session_id": 79871,
+      "chunk_id": "cb71d1",
+      "wall_time_seconds": 0.0000303,
+      "exit_code": 0,
+      "original_token_count": 8,
+      "output": "No broken requirements found.\r\n"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "status": "PASS",
+  "classification": "Bounded configured financial delegation through the sole native InvoiceReview and receipt chain",
+  "parent_checkpoint": 542,
+  "source_run": 553,
+  "browser_source_run": 552,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "passing_runs": {
+    "544": {
+      "tests": 2,
+      "unittest_seconds": 10.247,
+      "process_seconds": 22.308
+    },
+    "546": {
+      "tests": 1,
+      "unittest_seconds": 56.313,
+      "process_seconds": 66.982
+    },
+    "547": {
+      "tests": 7,
+      "unittest_seconds": 152.649,
+      "process_seconds": 165.022
+    },
+    "550": {
+      "tests": 1,
+      "unittest_seconds": 39.852,
+      "process_seconds": 48.392
+    },
+    "552": {
+      "tests": 13,
+      "unittest_seconds": 425.568,
+      "process_seconds": 434.745
+    },
+    "553": {
+      "tests": 97,
+      "unittest_seconds": 1044.901,
+      "process_seconds": 1053.819
+    }
+  },
+  "retained_failed_runs": [
+    543,
+    545,
+    548,
+    549,
+    551
+  ],
+  "tested_scope": [
+    "Typed scoped delegation v3 and explicit factory responsibility mode v2; old direct/document rules retained",
+    "Exact project, permitted verdict, inclusive gross limit, currency, finite authority and qualification windows",
+    "Unknown financial fields hold only dependent review; no inferred FX or generic role grant",
+    "Native acting-reviewer SoD, current claims, exact packet and source-owned authority revalidation",
+    "Source-authorised configuration UI, stale replacement protection, other-record preservation and human activation",
+    "Actual clock expiry and PostgreSQL review/revocation contention block later dispatch",
+    "Original uncertain effect stays unknown with wrong provider; correct original provider receipt can reconcile after revocation",
+    "Actual Codex native browser agent preparation, separate delegate claim/approval, executor handoff and two mock receipts",
+    "Desktop/narrow layout, filtered verified queue, keyboard return and GET-only 329-table preservation"
+  ],
+  "source_business_facts": "Existing source authority, human accountability and original Finance/PMO boundaries retained; no actual PSL cap or delegate supplied",
+  "engineering_design": "Versioned bounded invoice delegation and explicit routing mode, reconciled with ROUTE05/06/07/12/13/15 and amount/currency subsets",
+  "not_implemented_here": [
+    "Cross-domain decision routing",
+    "Absence substitution",
+    "Sequential/parallel/quorum/veto stages",
+    "Aggregation and FX rules",
+    "Remaining release process paths and shared coordinator/provider/background/active-restore/impact gaps"
+  ],
+  "operational_policy_slots": [
+    "Actual principals/delegates and eligible bundles",
+    "Permitted invoice decisions and currency/amount limits",
+    "Authority and qualification dates",
+    "Owner-selected direct/delegated review mode"
+  ],
+  "screenshots": {
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-approved.png": "fd6ae15c9f3e35daf57af284c870321a1de1904fbeb84477ef63d3a672980221",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-claimed.png": "63c9471833588f2663aaa7089218df02e1dfb6da0364fbdb3ea56d589159ae81",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-configuration-narrow.png": "00846571c12f0c9cf43c40d4946200486dbc534fc32c405800769d9cb090ec3b",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-configuration.png": "6e77f327f1a0773be12638e5d504cf8968793f26a11376a00fd06363f80d75e5",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-verified-narrow.png": "74e214a723181663ea8e0ebb468844a8a042bf927760696ce6aaf64e0c879d35",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-verified.png": "375bc82a88b919139e3272e3d60db503cac3eacdae0668f07aeb7f8df49b241f",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-verified-narrow-recheck.jpg": "5591fb40a5731de2c49ec3bf95073d8b81e73119fef3cf5d74b5a4006cf96e51",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-verified-desktop.jpg": "f261b6182bddb22b31950eb5060df6591273d654897e6ab07b0413f6ad98bc4c"
+  },
+  "mock_files": {
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-delegation-mock-receipts/7016b23465781454b661fea5c27911d323f1bc4956a9639992d03ee8111ad1be.json": "ec669fd333fa05e6a1c9bb1100d730719aef87e1c2f6c96575a1b2dd327701d4",
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-delegation-mock-receipts/9a23f02ce7a40e3c1c538d2ffdc6f7913d236afbad4915d604a947e273799147.json": "0cf3c2e4dab572835faf24755e71c5cc28f18a0dd1b888f6cca86a36cdb6f479"
+  },
+  "prior_mock_files_unchanged": 9,
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-03-factory-delegation-acceptance.json",
+    "docs/test-evidence/2026-11-03-factory-delegation-static552.json",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552.json",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-native.json",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-before.json",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-after.json",
+    "docs/test-evidence/2026-11-03-factory-review-retirement-preservation552.json",
+    "docs/test-evidence/2026-11-03-factory-delegation-preview552-identity.json",
+    "docs/test-evidence/2026-11-03-factory-delegation-browser552-screenshot-followup.json"
+  ]
+}

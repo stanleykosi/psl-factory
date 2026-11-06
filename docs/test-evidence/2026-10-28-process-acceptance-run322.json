@@ -1,0 +1,20 @@
+{
+  "run": 322,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_coordination_work.CoordinationWorkTests.test_rfp_assignment_current_owner_deadline_and_intake_successor",
+    "tests.test_shared_workbench.SharedWorkbenchTests.test_action_assignment_and_document_review_are_source_owned_and_read_only",
+    "tests.test_rfp",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-322-process-acceptance.txt",
+  "started_at": "2026-10-28T14:53:54.464195+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 226.259
+}

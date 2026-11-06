@@ -1,0 +1,28 @@
+{
+  "unchanged_prior_guards": {
+    "functions": 56,
+    "triggers": 301,
+    "constraints": 1478
+  },
+  "main_test_identical": {
+    "functions": 58,
+    "triggers": 307,
+    "constraints": 1498
+  },
+  "new_triggers": [
+    "workflows_applicationrecoveryplan/app_recovery_plan_immutable",
+    "workflows_applicationrecoveryreview/app_recovery_review_immutable",
+    "workflows_recoveryattachment/app_recovery_attachment_immutable",
+    "workflows_applicationrecoveryplan/app_recovery_plan_lineage",
+    "workflows_applicationrecoveryreview/app_recovery_review_lineage",
+    "workflows_applicationrecoveryjob/app_recovery_job_lineage"
+  ],
+  "new_main_rows": 0,
+  "new_main_policies": 0,
+  "processes": 122,
+  "partial": 122,
+  "families": 13,
+  "policy_interfaces": 107,
+  "supplements": 50,
+  "backlog_items": 52
+}

@@ -1,0 +1,25 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_bu_work_and_upstream_payroll_policy_lineage_are_declared_metadata (tests.test_private_policy_impact.PrivateImpactTests.test_bu_work_and_upstream_payroll_policy_lineage_are_declared_metadata) ... ok
+test_hr_disclosure_metadata_does_not_read_staff_snapshot (tests.test_private_policy_impact.PrivateImpactTests.test_hr_disclosure_metadata_does_not_read_staff_snapshot) ... ok
+test_ledger_projection_rechecks_all_historical_private_participants_before_projection (tests.test_private_policy_impact.PrivateImpactTests.test_ledger_projection_rechecks_all_historical_private_participants_before_projection) ... ok
+test_payroll_rule_change_is_inspectable_without_staff_values_and_current_grants_apply (tests.test_private_policy_impact.PrivateImpactTests.test_payroll_rule_change_is_inspectable_without_staff_values_and_current_grants_apply) ... ok
+test_reviewed_private_draft_uses_source_permissions_in_http_and_agent_reads (tests.test_private_policy_impact.PrivateImpactTests.test_reviewed_private_draft_uses_source_permissions_in_http_and_agent_reads) ... ok
+test_verified_publication_receipts_remain_distinct_from_new_audience_authority (tests.test_private_policy_impact.PrivateImpactTests.test_verified_publication_receipts_remain_distinct_from_new_audience_authority) ... ok
+test_correction_ui_csrf_capture_review_agent_and_closed_current_adapter_sql_contract (tests.test_correction_impact.CorrectionImpactTests.test_correction_ui_csrf_capture_review_agent_and_closed_current_adapter_sql_contract) ... ok
+test_busy_native_publication_job_holds_assessment_without_wait_or_effect (tests.test_private_policy_impact.PrivateImpactConcurrencyTests.test_busy_native_publication_job_holds_assessment_without_wait_or_effect) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 82.059s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

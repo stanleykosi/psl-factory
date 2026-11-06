@@ -1,0 +1,49 @@
+{
+  "classification": "Synthetic shapes only; actual scoped IDs and owner policy required",
+  "authority": {
+    "human_only": true,
+    "assignments": [
+      {
+        "user_id": 1,
+        "purpose": "attest",
+        "role": "PM"
+      },
+      {
+        "user_id": 2,
+        "purpose": "review",
+        "role": "Finance"
+      }
+    ]
+  },
+  "review": {
+    "policy_evidence_id": 1,
+    "required_categories": [
+      "price",
+      "completion"
+    ],
+    "independent_reviewer": true,
+    "decision_reference_required": true,
+    "accounting_execution": "external_human_decision_only"
+  },
+  "packet": {
+    "period_start": "2026-10-01",
+    "period_end": "2026-10-31",
+    "as_of": "2026-10-22",
+    "statement": "PM estimate 50 percent; amount unknown",
+    "access_context": "Manual fallback; PMO tool inaccessible",
+    "contact_context": "Contact nominated PM through authorised internal route",
+    "facts": [
+      {
+        "category": "estimate",
+        "evidence_id": 1,
+        "description": "Dated PM estimate, not acceptance"
+      }
+    ],
+    "source_ids": [],
+    "milestone_ids": [],
+    "gaps": [
+      "Acceptance evidence missing"
+    ],
+    "conflicts": []
+  }
+}

@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+test_connected_file_acceptance_export_backup_isolated_restore_and_independent_review (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_connected_file_acceptance_export_backup_isolated_restore_and_independent_review) ... ok
+test_raw_sql_case_scope_cycle_effect_lineage_and_closed_fields (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_raw_sql_case_scope_cycle_effect_lineage_and_closed_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 1072.691s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying workflows.0015_accepted_protection_operations... OK
+System check identified no issues (0 silenced).

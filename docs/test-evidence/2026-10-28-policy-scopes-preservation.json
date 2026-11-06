@@ -1,0 +1,19 @@
+{
+  "old_main_rowsets_preserved": 316,
+  "old_migration_files_preserved": 185,
+  "new_empty_tables": [
+    "policy_scopeapplication",
+    "policy_scopestate",
+    "policy_scopeversion"
+  ],
+  "allowed_metadata_append": [
+    "migration history",
+    "three model content types",
+    "model permissions"
+  ],
+  "functions": 75,
+  "triggers": 348,
+  "constraints": 1689,
+  "main_test_definitions_identical": true,
+  "business_data_installed": false
+}

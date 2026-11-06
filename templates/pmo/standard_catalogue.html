@@ -1,0 +1,26 @@
+<section><h2>Standard catalogue and human preapproval</h2>
+<p>This implemented Q04 interface is an engineering proposal for owner configuration. Product/Engineering scope decisions can be covered by explicit recorded preapproval. Client/timeline decisions, the costing chain and production release controls remain independent. Procedure matching is a PM attestation with evidence.</p>
+{% if standard_error %}<p role="status">{{ standard_error }}</p>{% endif %}
+<p>Active component versions: {{ standard_policies }}</p>
+{% for key,e in standard_entries.items %}<details><summary>{{ key }} · {{ e.module }}</summary><p>Procedure evidence #{{ e.procedure_evidence_id }} · {{ e.procedure_sha256 }}</p><p>Required exact impact: {{ e.expected_impact }}</p></details>{% endfor %}
+<p>Configured satisfied gates: {{ standard_gates }}</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="standard_approve"><input type="hidden" name="revision" value="{{ case.revision }}">
+<label>Catalogue key <select name="catalogue_key" required>{% for key in standard_entries %}<option>{{ key }}</option>{% endfor %}</select></label>
+<label>Human role <select name="role"><option>Product</option><option>Engineering</option></select></label>
+<label>Verdict <select name="verdict"><option value="approve">Approve</option><option value="return">Return (configured authority)</option><option value="reject">Reject (configured authority)</option></select></label>
+<label>Preapproval evidence <select name="evidence" required>{% for e in evidence %}{% if e.kind == 'change_preapproval' %}<option value="{{ e.pk }}">{{ e }}</option>{% endif %}{% endfor %}</select></label>
+<label>Rationale <textarea name="note" required maxlength="4000" rows="2"></textarea></label><button>Record human catalogue decision</button></form>
+{% for p in preapprovals %}<p>#{{ p.pk }} · {{ p.catalogue_key }} · {{ p.role }} · {{ p.verdict }} · {{ p.actor }} · {{ p.created_at }} · {{ p.note }}</p>{% endfor %}
+<details><summary>Draft Standard policy components</summary><p>Drafting stores new immutable references. Validate and activate separately in <a href="{% url 'policy' case.pk %}">policy configuration</a>. A whole component version replaces its previous value.</p>
+<p>Catalogue entry schema: key, module, procedure_evidence_id, procedure_sha256, expected_impact (cost_impact, timeline_impact, client_facing: explicit booleans), production_gate: "independent_release_controls". Use actual case evidence IDs and hashes. No wildcard conditions or inferred no-impact values.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="standard_policy"><input type="hidden" name="revision" value="{{ case.revision }}">{{ standard_policy_form.as_p }}<button>Save new component draft</button></form></details>
+</section>
+<section><h2>Standard procedure applicability and investigation history</h2>
+{% for b in standard_bindings %}<p>Match #{{ b.pk }} · change version #{{ b.version_id }} · {{ b.catalogue_key }} · {{ b.actor }} · source #{{ b.evidence_id }} · {{ b.note }}</p>{% endfor %}
+{% for r in standard_runs %}<details><summary>Investigation #{{ r.pk }} · {{ r.created_at }}</summary>
+<p>Change version #{{ r.result.version_id }} · cited evidence: {{ r.result.source_evidence_ids|join:', ' }}</p>
+{% if r.result.findings %}<ul>{% for finding in r.result.findings %}<li>{{ finding }}</li>{% endfor %}</ul>{% else %}<p>Current procedure, impact conditions and recorded human authority match.</p>{% endif %}
+<p>Covered owner decisions: {{ r.result.covered_roles|join:', '|default:'None' }}. Per-request owner roles: {{ r.result.remaining_roles|join:', '|default:'None' }}.</p>
+{% if r.result.snapshot %}<p>Procedure evidence #{{ r.result.snapshot.procedure_evidence_id }} · match #{{ r.result.snapshot.binding_id }} · human preapproval records {{ r.result.snapshot.preapproval_ids|join:', ' }}</p>{% endif %}
+<p>{{ r.result.next_work }}</p><p>This investigation grants no approval or deployment authority. Remote procedure authenticity has not been verified.</p>
+</details>{% endfor %}</section>

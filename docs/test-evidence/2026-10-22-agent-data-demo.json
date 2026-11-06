@@ -1,0 +1,51 @@
+{
+  "classification": "EXPLICIT SYNTHETIC authenticated loopback mock gateway; not a real model or approved operational egress",
+  "case": "4c72630b-b3e1-43f5-9d6e-1aca29cfc30c",
+  "principals": {
+    "sender": 40,
+    "reviewer": 41
+  },
+  "contract": 4,
+  "policy": 284,
+  "input": 545,
+  "projection": 1,
+  "projection_review": 1,
+  "jobs": [
+    1,
+    2
+  ],
+  "receipts": [
+    1,
+    2
+  ],
+  "correction": 1,
+  "private_executions": 2,
+  "excluded_text_sent": false,
+  "tools_executed": false,
+  "lost_response_recovered_after_sender_revocation": true,
+  "recorded_human_acceptance": true,
+  "current_acceptance_after_revocation_and_registry_removal": false,
+  "raw_provider_output_in_generic_agent_runs": false,
+  "real_model_evaluated": false,
+  "business_effects": false,
+  "old_handoff_states": [
+    {
+      "id": 1,
+      "state_sha256": "52b3e8cb2ecc00924f06468dda1064190d549849668930ae6fe060b4edf77239"
+    },
+    {
+      "id": 2,
+      "state_sha256": "c8a25b6c6154002393f77a40e0d9e60e555178cb46552783efa2f7cfeeb59baa"
+    },
+    {
+      "id": 3,
+      "state_sha256": "d034248dcf7ae8e56eeaf3ec78083aaee035d12eb7159e152a148d54a0e10209"
+    },
+    {
+      "id": 4,
+      "state_sha256": "7df1a5baf3b2dfbe6244e98556f31b10aefe0e9d3bfcdb276fada09521becc5e"
+    }
+  ],
+  "mock_registry_removed": true,
+  "source_permission_revoked": true
+}

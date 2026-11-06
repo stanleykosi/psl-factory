@@ -1,0 +1,135 @@
+{
+  "verified_at": "2026-10-23T17:06:04.512825+00:00",
+  "case": "6beec8aa-76d2-4066-a21d-2de65545b4a8",
+  "correction": 1,
+  "correction_review": 1,
+  "channel_review": 4,
+  "review_age_seconds": 11369.705035,
+  "correction_review_age_seconds": 11358.520243,
+  "channel_review_ttl_seconds": 3600,
+  "correction_review_ttl_seconds": 3600,
+  "errors": {
+    "channel": [
+      "Channel review expired"
+    ],
+    "correction": [
+      "Channel review expired"
+    ]
+  },
+  "snapshot": {
+    "flow": {
+      "B14.authority": 360,
+      "B14.flow_rules": 359
+    },
+    "time": "2026-10-23T13:56:19.161504+00:00",
+    "links": [
+      13
+    ],
+    "policy": 368,
+    "review": 4,
+    "receipt": 3,
+    "authority": {
+      "policy": 368,
+      "authority": {
+        "role": "Support",
+        "B14.authority": 360,
+        "D05.role_principal_assignments": 357
+      }
+    },
+    "clock_policy": 367,
+    "metric_policy": 361,
+    "original_event": 21,
+    "receipt_sha256": "6b365cb677ff8526f047ed466ea76b1a08d5fb15e8f009dc96be85d8b801ae8b",
+    "projection_schema": "psl.support-clock-correction/v1",
+    "original_attestation": 2
+  },
+  "review_authority": {
+    "policy": 368,
+    "authority": {
+      "role": "Support",
+      "B14.authority": 360,
+      "D05.role_principal_assignments": 357
+    }
+  },
+  "receipt_sha256": "6b365cb677ff8526f047ed466ea76b1a08d5fb15e8f009dc96be85d8b801ae8b",
+  "projection": {
+    "correction": 1,
+    "version": 1,
+    "review": null,
+    "time": null,
+    "finding": "clock_correction_not_current"
+  },
+  "metrics": {
+    "first_response_seconds": null,
+    "resolution_seconds": null,
+    "finding": "clock_correction_not_current"
+  },
+  "report": 4,
+  "changed_report_snapshot_keys": [
+    "channel_clock_correction_state",
+    "channel_clock_metric_state"
+  ],
+  "report_sha256": "dbb7291d4c28715e57557f05231e8f38691d4b753c1c090d5f9031b521369f58",
+  "historical_first_response_at": "2026-10-23T13:56:07.781475+00:00",
+  "readiness_assessment": 15,
+  "readiness_snapshot": {
+    "contract": "de513786f9b19497ea7040510f32aa75063c1c0e5026658df6509130b56fe5e5",
+    "policy": 371,
+    "binding": {
+      "implementation": "internal_postgres_session_v1",
+      "target": "b014e159200d87309eebb9eb122431bc37d40d0e74825b447ee7796636d522a8",
+      "credential_ref": "runtime:postgres",
+      "revision": "fixture-v1",
+      "classification": "native_database_session",
+      "auth_mode": "postgres_session",
+      "credential_binding": "69f4fcf397fe4b5684fd871b090991f82a0d7d4d695c8695386b8433448900fc"
+    },
+    "heads": [
+      [
+        "health",
+        28
+      ],
+      [
+        "probe:health",
+        26,
+        "confirmed"
+      ],
+      [
+        "receipt",
+        29
+      ],
+      [
+        "probe:receipt",
+        27,
+        "confirmed"
+      ]
+    ]
+  },
+  "readiness_result": {
+    "capability_ready": true,
+    "findings": [],
+    "scope": "internal receipt readiness or public provider canary only",
+    "business_dispatch_verified": false,
+    "real_model_evaluated": false,
+    "operational_provider_canary_evaluated": false,
+    "synthetic_provider_evaluated": false,
+    "operational_ready": false,
+    "deployment_authorized": false
+  },
+  "readiness_snapshot_unchanged": true,
+  "readiness_observation_ages": [
+    {
+      "observation": 28,
+      "kind": "health",
+      "age_seconds": 11381.944415
+    },
+    {
+      "observation": 29,
+      "kind": "receipt",
+      "age_seconds": 11380.727671
+    }
+  ],
+  "readiness_freshness_seconds": 86400,
+  "history_preserved": true,
+  "refreshed_or_reauthorised": false
+}

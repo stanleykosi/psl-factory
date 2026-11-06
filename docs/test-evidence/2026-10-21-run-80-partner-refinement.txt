@@ -1,0 +1,61 @@
+RUN80 final partner sources after independent known-notice capture and additive BaaS/Data/Legal role-category refinements. No default principal appointment.
+Found 43 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+test_activity_counts_never_fill_missing_meter_quantities (tests.test_partners.PartnerTests.test_activity_counts_never_fill_missing_meter_quantities) ... ok
+test_activity_deduplicates_active_users_but_not_events_and_excludes_test_kind (tests.test_partners.PartnerTests.test_activity_deduplicates_active_users_but_not_events_and_excludes_test_kind) ... ok
+test_age_pause_resume_reentry_and_completion_evidence (tests.test_partners.PartnerTests.test_age_pause_resume_reentry_and_completion_evidence) ... ok
+test_agent_cites_facts_and_has_no_completion_notice_or_financial_tools (tests.test_partners.PartnerTests.test_agent_cites_facts_and_has_no_completion_notice_or_financial_tools) ... ok
+test_amendment_invalidates_pending_terms_and_preserves_old_decision (tests.test_partners.PartnerTests.test_amendment_invalidates_pending_terms_and_preserves_old_decision) ... ok
+test_append_only_record_and_job_intent_guards (tests.test_partners.PartnerTests.test_append_only_record_and_job_intent_guards) ... ok
+test_cross_case_evidence_and_read_revocation_hold (tests.test_partners.PartnerTests.test_cross_case_evidence_and_read_revocation_hold) ... ok
+test_direct_actions_require_partner_read_independently (tests.test_partners.PartnerTests.test_direct_actions_require_partner_read_independently) ... ok
+test_duplicate_events_wrong_period_and_unapproved_source_hold (tests.test_partners.PartnerTests.test_duplicate_events_wrong_period_and_unapproved_source_hold) ... ok
+test_expiry_day_boundary_is_explicit_versioned_policy (tests.test_partners.PartnerTests.test_expiry_day_boundary_is_explicit_versioned_policy) ... ok
+test_expiry_notice_followup_and_renewal_intent_do_not_renew_contract (tests.test_partners.PartnerTests.test_expiry_notice_followup_and_renewal_intent_do_not_renew_contract) ... ok
+test_invalid_initial_transition_and_nonchronological_history_hold (tests.test_partners.PartnerTests.test_invalid_initial_transition_and_nonchronological_history_hold) ... ok
+test_invalid_policies_and_component_schema_substitution_rejected (tests.test_partners.PartnerTests.test_invalid_policies_and_component_schema_substitution_rejected) ... ok
+test_known_notice_review_survives_unknown_expiry (tests.test_partners.PartnerTests.test_known_notice_review_survives_unknown_expiry) ... ok
+test_meter_import_connects_to_real_finance_pricing_without_issuing_invoice (tests.test_partners.PartnerTests.test_meter_import_connects_to_real_finance_pricing_without_issuing_invoice) ... ok
+test_missing_or_wrong_executed_agreement_proof_holds_validation_not_capture (tests.test_partners.PartnerTests.test_missing_or_wrong_executed_agreement_proof_holds_validation_not_capture) ... ok
+test_missing_policy_does_not_prevent_capture (tests.test_partners.PartnerTests.test_missing_policy_does_not_prevent_capture) ... ok
+test_missing_users_quantities_and_partial_coverage_remain_explicit (tests.test_partners.PartnerTests.test_missing_users_quantities_and_partial_coverage_remain_explicit) ... ok
+test_onboarding_followup_uses_exact_event_and_granted_owner (tests.test_partners.PartnerTests.test_onboarding_followup_uses_exact_event_and_granted_owner) ... ok
+test_overlapping_batch_identity_is_not_silently_counted (tests.test_partners.PartnerTests.test_overlapping_batch_identity_is_not_silently_counted) ... ok
+test_preparer_cannot_review_as_finance_without_configured_role (tests.test_partners.PartnerTests.test_preparer_cannot_review_as_finance_without_configured_role) ... ok
+test_private_finance_inbox_requires_current_receive_and_finance_read (tests.test_partners.PartnerTests.test_private_finance_inbox_requires_current_receive_and_finance_read) ... ok
+test_reported_tracker_stage_does_not_create_validated_history (tests.test_partners.PartnerTests.test_reported_tracker_stage_does_not_create_validated_history) ... ok
+test_reviewed_aggregate_handoff_and_explicit_finance_meter_import (tests.test_partners.PartnerTests.test_reviewed_aggregate_handoff_and_explicit_finance_meter_import) ... ok
+test_shared_deadline_and_finance_forecast_namespaces_can_coexist (tests.test_partners.PartnerTests.test_shared_deadline_and_finance_forecast_namespaces_can_coexist) ... ok
+test_source_owner_role_categories_still_require_explicit_actual_assignments (tests.test_partners.PartnerTests.test_source_owner_role_categories_still_require_explicit_actual_assignments) ... ok
+test_source_revision_or_withdrawn_review_holds_pending_delivery (tests.test_partners.PartnerTests.test_source_revision_or_withdrawn_review_holds_pending_delivery) ... ok
+test_staff_forms_and_typed_policy_draft_lifecycle (tests.test_partners.PartnerTests.test_staff_forms_and_typed_policy_draft_lifecycle) ... ok
+test_staff_review_handoff_and_finance_import_forms (tests.test_partners.PartnerTests.test_staff_review_handoff_and_finance_import_forms) ... ok
+test_stage_policy_change_and_revocation_hold_only_dependent_actions (tests.test_partners.PartnerTests.test_stage_policy_change_and_revocation_hold_only_dependent_actions) ... ok
+test_superuser_flag_does_not_appoint_stage_or_agreement_authority (tests.test_partners.PartnerTests.test_superuser_flag_does_not_appoint_stage_or_agreement_authority) ... ok
+test_unknown_expiry_and_uninterpreted_auto_renewal_never_invent_dates (tests.test_partners.PartnerTests.test_unknown_expiry_and_uninterpreted_auto_renewal_never_invent_dates) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_changed_policy_requires_explicit_new_intent_generation (tests.test_partner_workers.PartnerWorkerTests.test_changed_policy_requires_explicit_new_intent_generation) ... ok
+test_competing_finance_acceptances_consume_each_event_only_once (tests.test_partner_workers.PartnerWorkerTests.test_competing_finance_acceptances_consume_each_event_only_once) ... ok
+test_concurrent_reservations_return_one_job_and_receipt (tests.test_partner_workers.PartnerWorkerTests.test_concurrent_reservations_return_one_job_and_receipt) ... ok
+test_cross_case_tenant_meter_race_accepts_only_one_source_event_set (tests.test_partner_workers.PartnerWorkerTests.test_cross_case_tenant_meter_race_accepts_only_one_source_event_set) ... ok
+test_explicit_replacement_after_renewed_same_report_review_preserves_old_intent (tests.test_partner_workers.PartnerWorkerTests.test_explicit_replacement_after_renewed_same_report_review_preserves_old_intent) ... ok
+test_old_fence_cannot_deliver (tests.test_partner_workers.PartnerWorkerTests.test_old_fence_cannot_deliver) ... ok
+test_separate_worker_reconciles_actual_receipt_after_lost_lease_and_revocation (tests.test_partner_workers.PartnerWorkerTests.test_separate_worker_reconciles_actual_receipt_after_lost_lease_and_revocation) ... ok
+test_timeout_after_receipt_reconciles_without_rechecking_withdrawn_review (tests.test_partner_workers.PartnerWorkerTests.test_timeout_after_receipt_reconciles_without_rechecking_withdrawn_review) ... ok
+test_unknown_before_receipt_cannot_be_cancelled (tests.test_partner_workers.PartnerWorkerTests.test_unknown_before_receipt_cannot_be_cancelled) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 421.729s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_pm_attests_through_http_without_worker_configuration_or_publisher_privileges (tests.test_factory_go_live.FactoryGoLiveDistinctAuthorityTests.test_actual_pm_attests_through_http_without_worker_configuration_or_publisher_privileges) ... ok
+test_missing_client_recipient_retains_useful_draft_and_requests_review_of_same_version_after_configuration (tests.test_factory_go_live.FactoryGoLiveTests.test_missing_client_recipient_retains_useful_draft_and_requests_review_of_same_version_after_configuration) ... FAIL
+
+======================================================================
+FAIL: test_missing_client_recipient_retains_useful_draft_and_requests_review_of_same_version_after_configuration (tests.test_factory_go_live.FactoryGoLiveTests.test_missing_client_recipient_retains_useful_draft_and_requests_review_of_same_version_after_configuration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_go_live.py", line 222, in test_missing_client_recipient_retains_useful_draft_and_requests_review_of_same_version_after_configuration
+    self.assertFalse(HumanTask.objects.filter(version=version).exists());self.assertFalse(Publication.objects.filter(factory_work=f.work).exists())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 2 tests in 48.545s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

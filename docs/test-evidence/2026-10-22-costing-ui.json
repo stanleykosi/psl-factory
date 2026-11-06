@@ -1,0 +1,29 @@
+{
+  "classification": "Actual local browser inspection of synthetic P14 walkthrough; no operational acceptance",
+  "browser_id": "2",
+  "tab_id": "2",
+  "principal": "studio-demo",
+  "case": "3ac70625-2594-4014-a2f5-0db0d05a7e25",
+  "observed": [
+    "Original P14 structured policy ACTIVE, one rule and three oracle versions retained",
+    "Separate rule/independent evidence confirmation history; no case-cost approval inferred",
+    "Calculation3 held with unknown amount; calculation2 current; calculation1 historical and no longer usable",
+    "Viewer has no mutation forms and raw rule endpoint returns403",
+    "Unconfigured case20f89ec5-bceb-4b49-9d42-071cf73d76f5 retains pending rule2, owners/rate unknown and policy MISSING",
+    "Final AF13 package9 uses hash-only scenario examples, current meaning/expectations and local_rule_oracle_verified; acceptance pending, native workbook unverified",
+    "Superseded AF13 package8 remains visible as reassessment_required; no supplied comparator results fabricated"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-costing-workbench.png",
+    "docs/test-evidence/2026-10-22-costing-history.png",
+    "docs/test-evidence/2026-10-22-costing-source-denied.png",
+    "docs/test-evidence/2026-10-22-costing-unconfigured.png",
+    "docs/test-evidence/2026-10-22-costing-af13-current.png"
+  ],
+  "historical_screenshots": [
+    "docs/test-evidence/2026-10-22-costing-af13.png"
+  ],
+  "handoff": "approvalsTab on P14 workbench",
+  "native_workbook_verified": false,
+  "real_owner_acceptance": false
+}

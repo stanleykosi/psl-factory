@@ -1,0 +1,23 @@
+{
+  "run": 479,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_delivery_observation",
+    "tests.test_factory_intake",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T13:51:16.130111+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run479.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 74.994
+}

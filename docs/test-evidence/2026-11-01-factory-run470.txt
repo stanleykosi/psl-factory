@@ -1,0 +1,25 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_changed_finance_inventory_needs_actual_current_confirmation_without_holding_other_preparation (tests.test_closure_preparation.ClosurePreparationTests.test_changed_finance_inventory_needs_actual_current_confirmation_without_holding_other_preparation) ... ok
+test_current_native_handover_version_and_revoked_finance_authority_hold_preflight (tests.test_closure_preparation.ClosurePreparationTests.test_current_native_handover_version_and_revoked_finance_authority_hold_preflight) ... ok
+test_independent_unknown_inputs_and_agent_use_same_native_checks_without_draft_or_effect (tests.test_closure_preparation.ClosurePreparationTests.test_independent_unknown_inputs_and_agent_use_same_native_checks_without_draft_or_effect) ... ok
+test_retrospective_version_time_and_typed_foreign_sources_are_checked_independently (tests.test_closure_preparation.ClosurePreparationTests.test_retrospective_version_time_and_typed_foreign_sources_are_checked_independently) ... ok
+test_ui_agent_and_direct_posts_recheck_current_authority_and_preserve_business_records (tests.test_closure_preparation.ClosurePreparationTests.test_ui_agent_and_direct_posts_recheck_current_authority_and_preserve_business_records) ... ok
+test_connected_planning_release_hypercare_archive_handover_finance_head_closure (tests.test_delivery.DeliveryTests.test_connected_planning_release_hypercare_archive_handover_finance_head_closure) ... ok
+test_closure_and_agent_readback_hold_old_accepted_package_then_current_receipt_recovers (tests.test_factory_handover_current.HandoverCurrentDocumentTests.test_closure_and_agent_readback_hold_old_accepted_package_then_current_receipt_recovers) ... ok
+test_superseded_handover_cannot_clear_or_record_recipient_gaps_and_new_package_recovers (tests.test_factory_handover_current.HandoverCurrentDocumentTests.test_superseded_handover_cannot_clear_or_record_recipient_gaps_and_new_package_recovers) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 262.833s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

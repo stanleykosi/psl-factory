@@ -1,0 +1,14 @@
+{
+  "classification": "Synthetic source successor continuing the same browser journey; original records/receipts retained, no live authenticity",
+  "database": "psl_factory_delivery_ui_a31fd74f85e4",
+  "work": 381,
+  "case": "4528c6e7-864e-4650-b2a8-ad37a232ef1b",
+  "phase": "design",
+  "result": {
+    "source": 1219,
+    "evidence": 97816,
+    "synthetic_verification": 1178
+  },
+  "deployment_dispatched": false,
+  "existing_records_rewritten": false
+}

@@ -1,0 +1,19 @@
+{
+  "run": 378,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_clock_guard",
+    "tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-378-process-acceptance.txt",
+  "started_at": "2026-10-29T15:45:22.311708+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 133.166
+}

@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stale_review_has_clear_primary_state_action_owner_and_queue (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_stale_review_has_clear_primary_state_action_owner_and_queue) ... FAIL
+
+======================================================================
+FAIL: test_stale_review_has_clear_primary_state_action_owner_and_queue (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_stale_review_has_clear_primary_state_action_owner_and_queue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_review_authority.py", line 33, in test_stale_review_has_clear_primary_state_action_owner_and_queue
+    self.assertTrue(b'Review needs updating' in response.content,'Current review-rule mismatch needs a visible primary explanation')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : Current review-rule mismatch needs a visible primary explanation
+
+----------------------------------------------------------------------
+Ran 1 test in 8.691s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

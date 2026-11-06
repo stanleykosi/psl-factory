@@ -1,0 +1,9 @@
+test_11_native_scope_guards_rotation_expiry_and_revocation (tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 390.302s
+
+OK
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

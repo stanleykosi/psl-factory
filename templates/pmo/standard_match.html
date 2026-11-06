@@ -1,0 +1,6 @@
+{% if v.category == 'Standard' %}<details><summary>Match a catalogue procedure as PM</summary>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="standard_bind"><input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="version" value="{{ v.pk }}">
+<label>Exact catalogue entry <select name="catalogue_key" required>{% for key in standard_entries %}<option>{{ key }}</option>{% endfor %}</select></label>
+<label>Procedure applicability evidence <select name="evidence" required>{% for e in evidence %}{% if e.kind == 'change_procedure_match' %}<option value="{{ e.pk }}">{{ e }}</option>{% endif %}{% endfor %}</select></label>
+<label>Why this exact procedure applies <textarea name="note" required maxlength="4000" rows="2"></textarea></label><button>Record PM procedure match</button></form></details>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="standard_investigate"><input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="version" value="{{ v.pk }}"><button>Investigate Standard evidence and remaining gates</button></form>{% endif %}

@@ -1,0 +1,73 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0028_domain_contracts... OK
+  Applying workflows.0029_domain_contract_guards...test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_10_provider_and_destination_through_source_owned_review (tests.test_domain_contracts.DomainContractTests.test_10_provider_and_destination_through_source_owned_review) ... FAIL
+test_11_contract_guards_binding_expiry_privacy_and_revocation (tests.test_domain_contracts.DomainContractTests.test_11_contract_guards_binding_expiry_privacy_and_revocation) ... ok
+
+======================================================================
+FAIL: test_10_provider_and_destination_through_source_owned_review (tests.test_domain_contracts.DomainContractTests.test_10_provider_and_destination_through_source_owned_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_domain_contracts.py", line 28, in test_10_provider_and_destination_through_source_owned_review
+    v.update(r);proof=self.child('restart',v)
+                      ~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_domain_contracts.py", line 22, in child
+    if result.returncode:raise AssertionError(stage+' failed\n'+result.stdout+'\n'+result.stderr)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: restart failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\domain_contract_scenario.py", line 163, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\domain_contract_scenario.py", line 159, in restart
+    a=get_user_model().objects.get(pk=v['operator']);r=d.get(a,v['case'],v['contract'])
+                                                       ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\domain_contracts.py", line 18, in get
+    d.access(actor,r.plan.case,purpose)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\reconstitution.py", line 18, in access
+    cold.access(actor,case,purpose if purpose in ['read','capture','review','agent','configure'] else 'operate',locked=locked)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\cold_recovery.py", line 47, in access
+    Case.objects.select_for_update().get(pk=case.pk)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 631, in get
+    num = len(clone)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 368, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1954, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 93, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1610, in execute_sql
+    sql, params = self.as_sql()
+                  ~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 846, in as_sql
+    raise TransactionManagementError(
+        "select_for_update cannot be used outside of a transaction."
+    )
+django.db.transaction.TransactionManagementError: select_for_update cannot be used outside of a transaction.
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 475.152s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,7 @@
+{
+  "status": "APPLIED",
+  "migration0006_unchanged": true,
+  "forward_migration": "policy0007",
+  "runtime_receipt_format": "psl.pilot-runtime/v2",
+  "legacy_receipts_current": false
+}

@@ -1,0 +1,9 @@
+{
+  "acceptance": 1088,
+  "criteria": 60494,
+  "source_ids": [
+    1633,
+    1634
+  ],
+  "classification": "Explicit synthetic criteria/observations from native test fixture; no operating defaults or owner values installed"
+}

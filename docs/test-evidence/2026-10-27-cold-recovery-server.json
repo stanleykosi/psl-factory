@@ -1,0 +1,22 @@
+{
+  "pid": 37408,
+  "path": "C:\\Python313\\python.exe",
+  "start_utc": "2026-10-27T12:00:46.2039631Z",
+  "session": 7525,
+  "listener": "127.0.0.1:8000",
+  "previous_verified_owned_pid": 30424,
+  "old_stopped_after_identity_verification": true,
+  "runtime_references": {
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1",
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo"
+  },
+  "operational_acceptance": false,
+  "classification": "Updated main build; cold control deployment remains separately provisioned and unconfigured",
+  "smoke_statuses": {
+    "operations/": 302,
+    "integrations/": 302,
+    "validation/protection/": 302,
+    "application-recovery/": 302
+  },
+  "smoke_classification": "Unauthenticated login redirects only; authenticated UI proof is actual synthetic PostgreSQL tests"
+}

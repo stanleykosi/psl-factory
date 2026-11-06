@@ -1,0 +1,86 @@
+{
+  "scope": "synthetic_test_only",
+  "coverage": {
+    "reference": "usage-demo",
+    "customer": "client-example",
+    "service": "api-usage",
+    "contract": "contract-example-v1",
+    "currency": "NGN",
+    "amount_basis": "net_exclusive",
+    "from_period": "2026-10",
+    "to_period": "2027-09",
+    "completeness": "partial"
+  },
+  "csv": "transaction_id,customer,service,contract,period,unit,quantity\ntx-example-1,client-example,api-usage,contract-example-v1,2026-10,request,12\n",
+  "rule": {
+    "key": "example-rate",
+    "from_period": "2026-10",
+    "to_period": "2027-09",
+    "unit": "request",
+    "rate": "2.50",
+    "currency": "NGN",
+    "amount_basis": "net_exclusive",
+    "implementation": "quantity_times_rate_v1"
+  },
+  "arithmetic": {
+    "implementation": "net_exclusive_line_tax_v1",
+    "tax_rate": "0.075",
+    "decimal_places": 2,
+    "rounding": "half_up",
+    "oracles": [
+      {
+        "quantity": "12",
+        "rate": "2.50",
+        "net": "30.00",
+        "tax": "2.25",
+        "total": "32.25"
+      },
+      {
+        "quantity": null,
+        "rate": "2.50",
+        "net": null,
+        "tax": null,
+        "total": null
+      },
+      {
+        "quantity": "0",
+        "rate": "2.50",
+        "net": "0.00",
+        "tax": "0.00",
+        "total": "0.00"
+      }
+    ]
+  },
+  "stage_examples": {
+    "contract_value": null,
+    "decimal_places": 2,
+    "terms": [
+      {
+        "stage": "signed_sow",
+        "amount": "30.00",
+        "due_date": "2026-11-01"
+      },
+      {
+        "stage": "uat",
+        "amount": null,
+        "due_date": null
+      },
+      {
+        "stage": "completion",
+        "amount": null,
+        "due_date": null
+      }
+    ],
+    "predicates": [
+      {
+        "stage": "uat",
+        "milestone_name": "Reached contractual UAT"
+      },
+      {
+        "stage": "completion",
+        "milestone_name": "Contract completion criterion"
+      }
+    ],
+    "note": "Synthetic only. Bind actual same-case coverage and current signed Baseline signature ID/hash through services; these named stages are not actual operational criteria."
+  }
+}

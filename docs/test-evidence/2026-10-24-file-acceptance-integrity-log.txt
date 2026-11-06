@@ -1,0 +1,129 @@
+{
+  "verified_at": "2026-10-24T19:51:37.965544+00:00",
+  "old_migrations_unchanged": 145,
+  "frozen_sources": 41,
+  "exact_processes_titles_partial_plan_rows": 122,
+  "families": 13,
+  "policy_interfaces": 104,
+  "supplements": 47,
+  "backlog_items": 49,
+  "preserved_main_tables": 269,
+  "schemas": {
+    "psl": {
+      "private_file_guards": 7,
+      "private_file_uniqueness": 1,
+      "documents_migration": "0011_native_file_acceptance",
+      "protection_packet_guards": 2,
+      "protection_cycles": 2,
+      "protection_packet_uniques": 3,
+      "private_binding_uniqueness": 1,
+      "private_protection_guards": 6,
+      "workflow_migration": "0014_private_file_readiness_guards",
+      "finance_migration": "0053_private_readiness_guards",
+      "private_lineage_triggers": 3,
+      "original_immutable_guards": 2,
+      "original_intent_guard": 1
+    },
+    "test_psl": {
+      "private_file_guards": 7,
+      "private_file_uniqueness": 1,
+      "documents_migration": "0011_native_file_acceptance",
+      "protection_packet_guards": 2,
+      "protection_cycles": 2,
+      "protection_packet_uniques": 3,
+      "private_binding_uniqueness": 1,
+      "private_protection_guards": 6,
+      "workflow_migration": "0014_private_file_readiness_guards",
+      "finance_migration": "0053_private_readiness_guards",
+      "private_lineage_triggers": 3,
+      "original_immutable_guards": 2,
+      "original_intent_guard": 1
+    }
+  },
+  "identical_guard_function_hashes": {
+    "psl": {
+      "psl_no_protection_acceptance_cycle": "6a1903d96487cf8e6ea52d074904c9fdf9de0f93c6c8f252890593b70ff97d84",
+      "psl_private_file_acceptance_valid": "81e783dd369868f0fc3f21f4be1c63e3470e9fa8569de6927655d3a00acf8a00",
+      "psl_private_file_binding": "69b66a31e387390b565896ed33b17d7b2f3f9a580f02655e7a41902c9a77ecc2",
+      "psl_private_file_history_lock": "8503cc2cdc493dcd490f89bd06c3a973726c58c73b932db6bda69e3c9a4cc0bd",
+      "psl_private_file_observation": "e3d8acbb5e52c5b58e1e9f45a1e220e1e3c64deae9e72d56bea909e3489ff1d0",
+      "psl_private_file_other_binding": "04906ce526767bad96a2bb28c755c0c4f77e6f5a210f5a0504df5d31e1c61d95",
+      "psl_private_file_probe": "3e9828f22ea43f28614d96118f3fc0b909fc2b0c689d57c68ca52fc39b07b866",
+      "psl_private_protection_binding": "b8ccf4006b15f941d095698a6708bfd86a031b1f160499df9c1e930312adfa06",
+      "psl_private_protection_observation": "61448b5d3b494107e0819ebcba695c6ba38e991d370685f9d7ba2c902322b91a",
+      "psl_private_protection_prior_history": "2349835b926815ceb4eaa24b0519a26c8cac32acd102ff0a0e8383a9f3ca6c45",
+      "psl_private_protection_probe": "f142245e480453883112e8e96470894fc460bade5ca88b3bb19d2533fa774021",
+      "psl_private_protection_source": "51af88810d5f9323e37d2c2c3f19ce68a2f6247f02cddea8105896e34344c2ba",
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143",
+      "psl_protection_acceptance_packet": "574d9c870ef86aa2c7cff7acb706d2f9b50a224f9b1bf7ea8495f292079fa4c0"
+    },
+    "test_psl": {
+      "psl_no_protection_acceptance_cycle": "6a1903d96487cf8e6ea52d074904c9fdf9de0f93c6c8f252890593b70ff97d84",
+      "psl_private_file_acceptance_valid": "81e783dd369868f0fc3f21f4be1c63e3470e9fa8569de6927655d3a00acf8a00",
+      "psl_private_file_binding": "69b66a31e387390b565896ed33b17d7b2f3f9a580f02655e7a41902c9a77ecc2",
+      "psl_private_file_history_lock": "8503cc2cdc493dcd490f89bd06c3a973726c58c73b932db6bda69e3c9a4cc0bd",
+      "psl_private_file_observation": "e3d8acbb5e52c5b58e1e9f45a1e220e1e3c64deae9e72d56bea909e3489ff1d0",
+      "psl_private_file_other_binding": "04906ce526767bad96a2bb28c755c0c4f77e6f5a210f5a0504df5d31e1c61d95",
+      "psl_private_file_probe": "3e9828f22ea43f28614d96118f3fc0b909fc2b0c689d57c68ca52fc39b07b866",
+      "psl_private_protection_binding": "b8ccf4006b15f941d095698a6708bfd86a031b1f160499df9c1e930312adfa06",
+      "psl_private_protection_observation": "61448b5d3b494107e0819ebcba695c6ba38e991d370685f9d7ba2c902322b91a",
+      "psl_private_protection_prior_history": "2349835b926815ceb4eaa24b0519a26c8cac32acd102ff0a0e8383a9f3ca6c45",
+      "psl_private_protection_probe": "f142245e480453883112e8e96470894fc460bade5ca88b3bb19d2533fa774021",
+      "psl_private_protection_source": "51af88810d5f9323e37d2c2c3f19ce68a2f6247f02cddea8105896e34344c2ba",
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143",
+      "psl_protection_acceptance_packet": "574d9c870ef86aa2c7cff7acb706d2f9b50a224f9b1bf7ea8495f292079fa4c0"
+    }
+  },
+  "main_private_operator_plans_jobs_artifacts_and_v2_policies": 0,
+  "main_new_packets": 0,
+  "main_new_private_acceptance_policies": 0,
+  "old_document_receipts": 16,
+  "pending_support_jobs": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "source_fingerprints_matched": 879,
+  "runs": {
+    "2026-10-24-run-233-file-acceptance-baseline.txt": {
+      "tests": 2,
+      "seconds": 554.436,
+      "result": "OK"
+    },
+    "2026-10-24-run-234-file-acceptance-focused.txt": {
+      "tests": 15,
+      "seconds": 1894.034,
+      "result": "FAILED (errors=2)"
+    },
+    "2026-10-24-run-235-file-acceptance-corrected.txt": {
+      "tests": 2,
+      "seconds": 721.57,
+      "result": "OK"
+    },
+    "2026-10-24-run-236-file-acceptance-sql.txt": {
+      "tests": 1,
+      "seconds": 168.507,
+      "result": "OK"
+    },
+    "2026-10-24-run-237-file-acceptance-connected.txt": {
+      "tests": 130,
+      "seconds": 14583.88,
+      "result": "FAILED (errors=8)"
+    },
+    "2026-10-24-run-238-file-acceptance-restore-clock.txt": {
+      "tests": 14,
+      "seconds": 3141.809,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "private_protection_bindings_main": 0,
+  "private_file_bindings_main": 0,
+  "new_file_v2_policies_main": 0,
+  "new_file_owner_acceptance_v2_policies_main": 0,
+  "real_owner_or_operational_acceptance": false,
+  "real_provider_evaluation": false,
+  "evidence_renewed": false,
+  "unrelated_jobs_drained": false
+}

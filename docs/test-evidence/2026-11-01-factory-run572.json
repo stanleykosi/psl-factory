@@ -1,0 +1,22 @@
+{
+  "run": 572,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_accounting.AccountingConcurrencyTests",
+    "tests.test_factory_accounting.AccountingOperatorTests.test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker",
+    "tests.test_factory_accounting.AccountingOperatorTests.test_native_source_review_outside_console_reuses_the_same_decision_and_retires_wait",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T18:24:09.932166+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run572.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 35.77
+}

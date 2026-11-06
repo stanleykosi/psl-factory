@@ -1,0 +1,35 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 18 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0016_cash_operation_identity...test_allocation_matches_actual_capacity_precision_and_exact_retry_identity (tests.test_cash_guards.CashGuardTests.test_allocation_matches_actual_capacity_precision_and_exact_retry_identity) ... ok
+test_current_policy_and_reporter_separation_hold_only_verification_not_capture (tests.test_cash_guards.CashGuardTests.test_current_policy_and_reporter_separation_hold_only_verification_not_capture) ... ok
+test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry (tests.test_cash_guards.CashGuardTests.test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry) ... ok
+test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash (tests.test_cash_guards.CashGuardTests.test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash) ... ok
+test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls (tests.test_cash_guards.CashGuardTests.test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls) ... ok
+test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt (tests.test_cash_guards.CashGuardTests.test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt) ... ok
+test_closed_binding_validator_and_foreign_sources (tests.test_pilot_bindings.NativeGuardTests.test_closed_binding_validator_and_foreign_sources) ... ok
+test_csrf_ui_binding_selection_review_web_observation_and_agent (tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent) ... ok
+test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage) ... ok
+test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates (tests.test_pilot_bindings.NativeGuardTests.test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates) ... ok
+test_missing_revoked_authority_and_observer_rights_are_distinct (tests.test_pilot_bindings.NativeGuardTests.test_missing_revoked_authority_and_observer_rights_are_distinct) ... ok
+test_report_and_native_guard_enforce_case_access_before_record_lookup (tests.test_pilot_bindings.NativeGuardTests.test_report_and_native_guard_enforce_case_access_before_record_lookup) ... ok
+test_sequence_signature_and_milestone_guards_use_actual_native_services (tests.test_pilot_bindings.NativeGuardTests.test_sequence_signature_and_milestone_guards_use_actual_native_services) ... ok
+test_shared_guard_matches_actual_decision_and_does_not_write_domain_records (tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records) ... ok
+test_sql_history_identity_and_self_review_guards (tests.test_pilot_bindings.NativeGuardTests.test_sql_history_identity_and_self_review_guards) ... ok
+test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks (tests.test_cash_guards.CashAutocommitGuardTests.test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks) ... ok
+test_competing_successor_branches_accept_only_one_new_cash_lot (tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_competing_successor_branches_accept_only_one_new_cash_lot) ... ok
+test_competing_allocations_share_both_capacities (tests.test_settlement_workers.SettlementWorkerTests.test_competing_allocations_share_both_capacities) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 144.200s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

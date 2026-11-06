@@ -1,0 +1,15 @@
+{
+  "classification": "Unconfigured engineering interface; no actual inventory, principals or authority installed",
+  "component": "OPS.accepted_protection_rules",
+  "rules": {
+    "private_protection_packet_ids": [],
+    "private_disclosure": "accepted_metadata_only"
+  },
+  "states": [
+    "missing",
+    "invalid_empty_inventory",
+    "synthetic_active_exact_inventory",
+    "superseded",
+    "revoked"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "run": 591,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_flow",
+    "tests.test_factory_controls",
+    "tests.test_factory_console",
+    "tests.test_factory_intake",
+    "tests.test_factory_planning",
+    "tests.test_factory_accounting.AccountingOperatorTests",
+    "tests.test_factory_delegation",
+    "tests.test_factory_review_authority",
+    "tests.test_factory_coordinator",
+    "tests.test_factory_planner_boundaries",
+    "tests.test_factory_coordinator_recovery",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T12:07:09.900039+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run591.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 2194.822
+}

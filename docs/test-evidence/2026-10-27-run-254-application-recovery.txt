@@ -1,0 +1,48 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0021_application_recovery... OK
+  Applying workflows.0022_application_recovery_guards...test_capture_missing_policy_typed_validation_ui_agent_and_private_scope (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_capture_missing_policy_typed_validation_ui_agent_and_private_scope) ... ok
+test_policy_lifecycle_runtime_identity_and_sql_immutability (tests.test_application_recovery.ApplicationRecoveryPolicyTests.test_policy_lifecycle_runtime_identity_and_sql_immutability) ... ok
+test_real_archive_isolated_restore_human_review_and_physical_counterexamples (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples) ... ERROR
+test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation) ... ERROR
+
+======================================================================
+ERROR: test_real_archive_isolated_restore_human_review_and_physical_counterexamples (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_application_recovery.py", line 167, in test_real_archive_isolated_restore_human_review_and_physical_counterexamples
+    self.assertTrue(all(u['password'] == '!' and not u['is_active'] for u in package['users']))
+                    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_application_recovery.py", line 167, in <genexpr>
+    self.assertTrue(all(u['password'] == '!' and not u['is_active'] for u in package['users']))
+                        ~^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation (tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_application_recovery.py", line 265, in test_real_duplicate_workers_and_fresh_process_receipt_first_after_revocation
+    self.assertTrue(d.run_once())
+                    ~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\application_recovery.py", line 228, in run_once
+    receipt = native.restore(j.intent, original.intent)
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\native_application_archive.py", line 377, in restore
+    if u['password'] != '!' or u['is_active'] or u['is_staff'] or u['is_superuser']:
+       ~^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+----------------------------------------------------------------------
+Ran 4 tests in 64.597s
+
+FAILED (errors=2)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

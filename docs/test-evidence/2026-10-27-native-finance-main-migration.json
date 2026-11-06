@@ -1,0 +1,7 @@
+{
+  "applied": [
+    "workflows.0030_native_finance",
+    "workflows.0031_native_finance_guards"
+  ],
+  "actual_people_policy_credentials_provider_or_business_effects_installed": false
+}

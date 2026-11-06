@@ -1,0 +1,116 @@
+[
+  {
+    "id": "X01",
+    "specification": "Wrong role: a user without the required role attempts an approval or restricted read. Expected: denied, no state change or sensitive-data disclosure, auditable denial.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X02",
+    "specification": "Changed evidence: a previously reviewed subject is revised. Expected: earlier decision remains attached to the earlier version; handling of the revised version follows the confirmed revision policy. Do not assume every harmless edit requires every approval again.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X03",
+    "specification": "Duplicate handoff: replay an identical event. Expected: one business effect, traceable repeated attempts.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X04",
+    "specification": "Unknown outcome: a timeout follows possible destination acceptance. Expected: unresolved state and receipt reconciliation before replay, not blind duplication.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X05",
+    "specification": "Restart recovery: restart after a queued event but before confirmed receipt. Expected: recover outstanding item without losing evidence or creating a duplicate effect.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X06",
+    "specification": "Out-of-order input: milestone completion arrives before its baseline. Expected: held for reconciliation, no invented linkage or downstream accounting action.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X07",
+    "specification": "Missing mapping/rate: absent Finance rule/input. Expected: explicit exception, not zero, default rate, guessed BU or balancing plug.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X08",
+    "specification": "Restricted export: an internal report contains payroll/commercial/internal issue details. Expected: external version follows an approved allowed-field and review policy; no raw internal copy is sent.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X09",
+    "specification": "Unresolved emergency policy: an emergency change requests an assumed GLPI bypass. Expected: no invented waiver; route remains explicitly blocked pending the authority decision.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X10",
+    "specification": "Notification sink: every notification in mock mode targets an internal fake sink. Expected: zero real email, client message, invoice posting, transfer, live project update or deployment.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X11",
+    "specification": "Source drift: a source file or rule version changes. Expected: identify affected definitions/results and require deliberate revalidation; do not silently rewrite the immutable baseline.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X12",
+    "specification": "Recovery copy: extract release archive into an empty directory and recompute all manifest hashes. Expected: exact paths and bytes match; missing or changed files are reported. This is documentation recovery, not an application restore test.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X13",
+    "specification": "Unit/sign provenance: a fixture explicitly declares 2,000 base units and a divide-by-1,000 presentation mapping. Expect 2 displayed units, with source unit and mapping version retained; reject an undeclared scale change. This verifies only the supplied fixture, not a universal PSL convention. Related F05/F06/F08/F12/F15.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X14",
+    "specification": "Allocation rule absent: a staff-cost batch has no effective-dated approved allocation basis. Expect an unresolved allocation exception, not adoption of spoken sample ratios or today's headcount. Related F19\u2013F22.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X15",
+    "specification": "Period mismatch: a synthetic September report links an asset schedule labelled March without explanatory evidence. Expect a date-applicability exception for owner review, not silent relabelling. Related F07/F09/F10.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X16",
+    "specification": "Partial formula: a source contains only a truncated external budget reference or names VLOOKUP without its expression. Expect the exact formula to remain unverified; do not fabricate a link target, match mode or month multiplier. Related F03/F11/F25.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X17",
+    "specification": "Incomplete forecast population: a forecast is explicitly limited to major expected inflows. Expect a visible coverage limitation; do not mark the receivables ledger reconciled or complete. Related F36/F39/F42.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X18",
+    "specification": "Transcript conflict: machine speech suggests a sign-off while the Word passage describes prices on a report. Expect a recorded evidence conflict and owner question; no signature gate is added automatically. Related B12/F28\u2013F30.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  },
+  {
+    "id": "X19",
+    "specification": "Isolated cash formula: a fixture explicitly supplies inflow 100, outflow 60 and opening/movement input 20. The observed cell expression gives 60. This does not validate the next month's carry-forward formula, currency, opening balance or actual receivables. Keep those checks blocked pending independent owner evidence. Related F38/F39.",
+    "status": "Specified, not run",
+    "basis": "Proposed synthetic safeguard; owner validation and concrete fixture required"
+  }
+]

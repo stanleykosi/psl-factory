@@ -1,0 +1,27 @@
+{
+  "run": 434,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_recorded_release_without_prior_readiness_stays_a_source_owned_exception",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_source_successor_removes_current_outcome_and_reassessment_keeps_history_and_allowance",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_superseded_accepted_document_invalidates_readback_without_erasing_acceptance",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_technical_policy_refuses_business_authority_invalid_allowance_and_private_source_requirements",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_unknown_and_negative_observations_are_recorded_without_false_qualification",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled",
+    "tests.test_factory_hypercare.FactoryHypercareConcurrencyTests",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T23:03:44.908168+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run434.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 12.208
+}

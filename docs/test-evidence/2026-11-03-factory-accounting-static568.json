@@ -1,0 +1,69 @@
+{
+  "source_run": 568,
+  "parent_checkpoint": 562,
+  "changed_paths": [
+    "apps/documents/delivery.py",
+    "apps/policy/operator_validators.py",
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_definitions.py",
+    "apps/workflows/factory_publications.py",
+    "apps/workflows/factory_views.py",
+    "contracts/operator-policy-components.json",
+    "tests/finance_analysis_helpers.py"
+  ],
+  "added_paths": [
+    "adapters/factory_accounting.py",
+    "apps/documents/migrations/0018_factory_accounting_scope.py",
+    "apps/policy/factory_accounting_validators.py",
+    "apps/workflows/factory_accounting.py",
+    "apps/workflows/factory_accounting_views.py",
+    "apps/workflows/migrations/0050_factory_accounting.py",
+    "fixtures/factory-accounting.json",
+    "templates/factory/accounting_detail.html",
+    "templates/factory/accounting_start.html",
+    "tests/factory_accounting_helpers.py",
+    "tests/test_factory_accounting.py"
+  ],
+  "native_finance_analysis_calculations_invoices_reports_adapters_unchanged": true,
+  "document_worker_change": "Explicit receipt-only option; absent receipt stays unknown without delivery",
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "operational_policy_values_added": false
+}

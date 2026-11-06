@@ -1,0 +1,14 @@
+{
+  "format": "psl.policy-scope-examples/v1",
+  "classification": "synthetic_test_only_not_installable_owner_policy",
+  "cases": [
+    {"state": "absent", "expected": "MISSING"},
+    {"kind": "organization", "ref": "test-tenant", "value": "UTC", "component": "D04.iana_timezone", "bindings": [], "expected": "ACTIVE after explicit source and local activation"},
+    {"kind": "project", "ref": "exact source case UUID", "expected_cross_case": "INVALID"},
+    {"kind": "contract", "ref": "evidence:actual SOW ID", "expected_unrecorded": "INVALID"},
+    {"kind": "service", "ref": "exact support case UUID", "expected_project": "INVALID"},
+    {"state": "revoked", "expected": "REVOKED with no fallback"},
+    {"state": "expired", "expected": "EXPIRED with no fallback"},
+    {"state": "superseded", "expected": "INVALID until explicit reviewed successor"}
+  ]
+}

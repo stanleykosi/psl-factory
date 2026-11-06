@@ -1,0 +1,129 @@
+{
+  "status": "PASS",
+  "classification": "Bounded governed coordination and authenticated opaque planning; operational-case internal Finance preparation and original receipt recovery, not complete108 implementation",
+  "parent_checkpoint": 576,
+  "source_run": 593,
+  "passing_runs": {
+    "578": {
+      "tests": 1,
+      "unittest_seconds": 78.379,
+      "process_seconds": 85.553
+    },
+    "580": {
+      "tests": 4,
+      "unittest_seconds": 5.467,
+      "process_seconds": 10.531
+    },
+    "581": {
+      "tests": 1,
+      "unittest_seconds": 11.25,
+      "process_seconds": 18.474
+    },
+    "582": {
+      "tests": 3,
+      "unittest_seconds": 112.261,
+      "process_seconds": 119.51
+    },
+    "583": {
+      "tests": 3,
+      "unittest_seconds": 22.183,
+      "process_seconds": 28.102
+    },
+    "584": {
+      "tests": 1,
+      "unittest_seconds": 164.988,
+      "process_seconds": 170.155
+    },
+    "586": {
+      "tests": 24,
+      "unittest_seconds": 433.133,
+      "process_seconds": 442.615
+    },
+    "588": {
+      "tests": 4,
+      "unittest_seconds": 49.718,
+      "process_seconds": 58.924
+    },
+    "589": {
+      "tests": 3,
+      "unittest_seconds": 43.548,
+      "process_seconds": 50.547
+    },
+    "590": {
+      "tests": 6,
+      "unittest_seconds": 119.303,
+      "process_seconds": 130.512
+    },
+    "591": {
+      "tests": 105,
+      "unittest_seconds": 2183.063,
+      "process_seconds": 2194.822
+    },
+    "592": {
+      "tests": 10,
+      "unittest_seconds": 233.952,
+      "process_seconds": 245.64
+    },
+    "593": {
+      "tests": 8,
+      "unittest_seconds": 124.92,
+      "process_seconds": 135.578
+    }
+  },
+  "retained_failed_runs": [
+    577,
+    579,
+    585,
+    587
+  ],
+  "retained_browser_failures": [
+    "Source591 raw unknown-mode and withdrawn Finance-review screens; corrected and verified593"
+  ],
+  "implemented": [
+    "Typed nullable coordinator settings and compatible v2 provider selection with native configuration UI/lifecycle",
+    "Operational-case internal permitted-step coordination; no synthetic-provider injection into operational work",
+    "Authenticated gateway planning/independent canary over allowed activities and opaque citation handles; no private source text/tools",
+    "Original started attempt, immutable SQL-scoped receipt and no-resend lookup preserve reservation and unknown-effect truth",
+    "Actual PostgreSQL concurrency/lease expiry; stale workers cannot overwrite replacement state and authenticated receipts survive",
+    "Original invoice/department receipts recover independently of coordinator availability",
+    "Accounting human review remains native and independent of planning, with current Finance authority and exact subject checks",
+    "Shared exceptions, plain coordination hold/unreserved allowance and actual native-browser reviewed publication/receipt"
+  ],
+  "operational_policy_slots": [
+    "Actual coordination method and currently qualified principal",
+    "Compatible reviewed planning service/model/credential references and deployment registries",
+    "Owner-approved execution limits and business authority/rule values"
+  ],
+  "remaining_code": [
+    "Extend coordinator-independent human controls to invoice/shared human interfaces and audit other factory definitions",
+    "Execution-principal/fresh-authority recovery independent of immutable starter, including original receipt authority rotation",
+    "Remaining108 native factory connections and wider stages/quorum/veto/amount-FX/background/recovery/impact contracts",
+    "Binding-aware accounting receipt presentation when an existing unbound native report is reused"
+  ],
+  "engineering_design": "Opaque gateway protocol and activity coordination are engineering contracts, not source business policy or a vendor API",
+  "screenshots": {
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-approved-held.jpg": "f8d13a3631c05e1212b62c1224613a3b74872b012f51175b46928a47b17d22c5",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-configuration-narrow.jpg": "33b9915a1a37d4b1789180790e52e91d5487c1622edf963f8ffccf9e6670365c",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-desktop.jpg": "7d34272daf6e6e83359896d6d516016023d6fce17e3c4b3fa25a472a627a852b",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-independent-review.jpg": "cd496f0f6ade1170b44a67cea421e585a1238d03cece9e7fb660f50b82f6ca13",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-narrow.jpg": "875e62d24ffcf50174877607581ccda0ee06e3f8774ac36b978a2cbc5267c85f",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-review-form.jpg": "0596a633b4bb1ea9f99364210eeeab7b4cde21db5d92aa7e186483533ee289b3",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-verified.jpg": "d093f398718ab0866b5b0b8df0171b1149b61ecec29f059996df3ff058f80710"
+  },
+  "prior_mock_files_preserved": 13,
+  "retained_databases_migrated": 10,
+  "get_rowsets_preserved": 330,
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "offline_handoff_gate": "NOT_REACHED",
+  "evidence": [
+    "docs/test-evidence/2026-11-04-factory-coordinator-acceptance.json",
+    "docs/test-evidence/2026-11-04-factory-coordinator-static593.json",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593.json",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-native.json",
+    "docs/test-evidence/2026-11-04-factory-coordinator-browser593-get-after.json",
+    "docs/test-evidence/2026-11-04-factory-coordinator-preservation593-after.json"
+  ]
+}

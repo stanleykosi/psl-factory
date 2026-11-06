@@ -1,0 +1,20 @@
+{
+  "run": 271,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_cold_recovery",
+    "tests.test_application_recovery",
+    "tests.test_application",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-271-cold-recovery.txt",
+  "started_at": "2026-10-27T11:45:50.584726+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 523.716
+}

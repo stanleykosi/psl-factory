@@ -1,0 +1,134 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart (tests.test_factory_archive.FactoryArchiveTests.test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart) ... ok
+test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt (tests.test_factory_handover.FactoryHandoverTests.test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt) ... ok
+test_cancelled_expired_delivery_is_reconciled_without_send_then_settled_by_native_operator (tests.test_factory_handover.FactoryHandoverTests.test_cancelled_expired_delivery_is_reconciled_without_send_then_settled_by_native_operator) ... ok
+test_cancelled_unreceived_reservation_has_reviewed_same_source_successor (tests.test_factory_handover.FactoryHandoverTests.test_cancelled_unreceived_reservation_has_reviewed_same_source_successor) ... ok
+test_configuration_refuses_handover_approval_private_sources_and_ungranted_publisher (tests.test_factory_handover.FactoryHandoverTests.test_configuration_refuses_handover_approval_private_sources_and_ungranted_publisher) ... ok
+test_configured_native_document_review_is_exact_and_separate_from_receiving (tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving) ... ok
+test_current_owner_projection_does_not_assign_a_revoked_recipient (tests.test_factory_handover.FactoryHandoverTests.test_current_owner_projection_does_not_assign_a_revoked_recipient) ... ok
+test_current_publisher_revocation_before_send_holds_original_job_and_source_edits (tests.test_factory_handover.FactoryHandoverTests.test_current_publisher_revocation_before_send_holds_original_job_and_source_edits) ... ok
+test_current_recipient_policy_successor_requires_fresh_package_even_with_unchanged_sources (tests.test_factory_handover.FactoryHandoverTests.test_current_recipient_policy_successor_requires_fresh_package_even_with_unchanged_sources) ... ok
+test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access (tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access) ... ok
+test_exact_source_successor_and_old_receipts_are_preserved_with_one_lifetime_allowance (tests.test_factory_handover.FactoryHandoverTests.test_exact_source_successor_and_old_receipts_are_preserved_with_one_lifetime_allowance) ... ok
+test_foreign_private_typed_source_and_false_completion_guards (tests.test_factory_handover.FactoryHandoverTests.test_foreign_private_typed_source_and_false_completion_guards) ... ok
+test_held_original_retry_uses_same_publication_and_lifetime_allowance (tests.test_factory_handover.FactoryHandoverTests.test_held_original_retry_uses_same_publication_and_lifetime_allowance) ... ok
+test_lost_response_reconciles_original_receipt_even_after_cancellation_without_resending (tests.test_factory_handover.FactoryHandoverTests.test_lost_response_reconciles_original_receipt_even_after_cancellation_without_resending) ... ok
+test_missing_recipient_rule_retains_draft_then_requests_review_of_same_version_when_configured (tests.test_factory_handover.FactoryHandoverTests.test_missing_recipient_rule_retains_draft_then_requests_review_of_same_version_when_configured) ... ok
+test_superseded_document_false_publication_sql_and_reviewed_same_source_recovery (tests.test_factory_handover.FactoryHandoverTests.test_superseded_document_false_publication_sql_and_reviewed_same_source_recovery) ... ok
+test_unassigned_allowance_and_missing_sources_are_plain_and_human_wait_has_no_continue_button (tests.test_factory_handover.FactoryHandoverTests.test_unassigned_allowance_and_missing_sources_are_plain_and_human_wait_has_no_continue_button) ... ok
+test_unknown_intake_and_missing_profile_or_publisher_do_not_prevent_capture_and_correction (tests.test_factory_handover.FactoryHandoverTests.test_unknown_intake_and_missing_profile_or_publisher_do_not_prevent_capture_and_correction) ... ok
+test_closure_and_agent_readback_hold_old_accepted_package_then_current_receipt_recovers (tests.test_factory_handover_current.HandoverCurrentDocumentTests.test_closure_and_agent_readback_hold_old_accepted_package_then_current_receipt_recovers) ... ok
+test_superseded_handover_cannot_clear_or_record_recipient_gaps_and_new_package_recovers (tests.test_factory_handover_current.HandoverCurrentDocumentTests.test_superseded_handover_cannot_clear_or_record_recipient_gaps_and_new_package_recovers) ... ok
+test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head (tests.test_factory_closure.FactoryClosureDistinctAuthorityTests.test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head) ... ok
+test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure (tests.test_factory_closure.FactoryClosureTests.test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure) ... ok
+test_configured_document_review_is_native_and_head_decision_does_not_get_inferred (tests.test_factory_closure.FactoryClosureTests.test_configured_document_review_is_native_and_head_decision_does_not_get_inferred) ... ok
+test_corrected_report_requires_new_head_decision_and_preserves_native_history_and_budget (tests.test_factory_closure.FactoryClosureTests.test_corrected_report_requires_new_head_decision_and_preserves_native_history_and_budget) ... ok
+test_foreign_private_boolean_and_raw_false_verified_requests_are_rejected (tests.test_factory_closure.FactoryClosureTests.test_foreign_private_boolean_and_raw_false_verified_requests_are_rejected) ... ok
+test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect (tests.test_factory_closure.FactoryClosureTests.test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect) ... ok
+test_invalid_execution_configuration_cannot_appoint_or_expand_a_closure_operator (tests.test_factory_closure.FactoryClosureTests.test_invalid_execution_configuration_cannot_appoint_or_expand_a_closure_operator) ... ok
+test_native_quality_and_head_return_reject_rework_need_fresh_exact_reports (tests.test_factory_closure.FactoryClosureTests.test_native_quality_and_head_return_reject_rework_need_fresh_exact_reports) ... ok
+test_provider_cannot_self_approve_select_finalisation_early_or_invent_citations (tests.test_factory_closure.FactoryClosureTests.test_provider_cannot_self_approve_select_finalisation_early_or_invent_citations) ... ok
+test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers (tests.test_factory_closure.FactoryClosureTests.test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers) ... ok
+test_stop_restart_keeps_original_allowance_and_requires_new_exact_head_decision (tests.test_factory_closure.FactoryClosureTests.test_stop_restart_keeps_original_allowance_and_requires_new_exact_head_decision) ... ok
+test_stopped_native_head_decision_wait_does_not_own_or_reactivate_cancelled_work (tests.test_factory_closure.FactoryClosureTests.test_stopped_native_head_decision_wait_does_not_own_or_reactivate_cancelled_work) ... ok
+test_stopped_native_quality_review_remains_independent_without_false_active_owner (tests.test_factory_closure.FactoryClosureTests.test_stopped_native_quality_review_remains_independent_without_false_active_owner) ... ok
+test_superseded_controlled_version_holds_and_same_input_reassessment_needs_fresh_head_decision (tests.test_factory_closure.FactoryClosureTests.test_superseded_controlled_version_holds_and_same_input_reassessment_needs_fresh_head_decision) ... ok
+test_unknown_intake_and_missing_profile_capture_correct_and_continue_with_same_allowance (tests.test_factory_closure.FactoryClosureTests.test_unknown_intake_and_missing_profile_capture_correct_and_continue_with_same_allowance) ... ok
+test_actual_pm_attests_through_http_without_worker_configuration_or_publisher_privileges (tests.test_factory_go_live.FactoryGoLiveDistinctAuthorityTests.test_actual_pm_attests_through_http_without_worker_configuration_or_publisher_privileges) ... ok
+test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance (tests.test_factory_go_live.FactoryGoLiveTests.test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance) ... ok
+test_capture_before_profile_and_unknown_sources_then_configured_preparer_drafts_before_publisher (tests.test_factory_go_live.FactoryGoLiveTests.test_capture_before_profile_and_unknown_sources_then_configured_preparer_drafts_before_publisher) ... ok
+test_configuring_a_permitted_preparer_does_not_appoint_the_business_pm_role (tests.test_factory_go_live.FactoryGoLiveTests.test_configuring_a_permitted_preparer_does_not_appoint_the_business_pm_role) ... ok
+test_current_source_successor_keeps_old_delivery_and_requires_new_review_and_new_signature_evidence (tests.test_factory_go_live.FactoryGoLiveTests.test_current_source_successor_keeps_old_delivery_and_requires_new_review_and_new_signature_evidence) ... ERROR
+
+======================================================================
+ERROR: test_current_source_successor_keeps_old_delivery_and_requires_new_review_and_new_signature_evidence (tests.test_factory_go_live.FactoryGoLiveTests.test_current_source_successor_keeps_old_delivery_and_requires_new_review_and_new_signature_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.RaiseException: Observed exact native go-live acceptance, distinct actual signature evidence and source-bound client receipt required
+CONTEXT:  PL/pgSQL function psl_factory_identity() line 221 at RAISE
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_go_live.py", line 206, in test_current_source_successor_keeps_old_delivery_and_requires_new_review_and_new_signature_evidence
+    self.assertEqual(f.work.status,'waiting',f.work.finding);accept(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+                                                                       ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory.py", line 548, in run_until_wait
+    if not run_once(work_id,provider,adapter):break
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory.py", line 503, in run_once
+    work.finding=result.get('finding',result.get('waiting',''));work.observation_hash=fresh['hash'];work.revision+=1;work.save()
+                                                                                                                     ~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1138, in _save_table
+    updated = self._do_update(
+        base_qs, using, pk_val, values, update_fields, forced_update
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1203, in _do_update
+    return filtered._update(values) > 0
+           ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1288, in _update
+    return query.get_compiler(self.db).execute_sql(ROW_COUNT)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 2060, in execute_sql
+    row_count = super().execute_sql(result_type)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.ProgrammingError: Observed exact native go-live acceptance, distinct actual signature evidence and source-bound client receipt required
+CONTEXT:  PL/pgSQL function psl_factory_identity() line 221 at RAISE
+
+----------------------------------------------------------------------
+Ran 40 tests in 3863.131s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 73 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

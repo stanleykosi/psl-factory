@@ -1,0 +1,39 @@
+{
+  "classification": "EXPLICIT SYNTHETIC principals/policy/evidence; actual local metadata export/file copy/separate PostgreSQL insertion and readback; no full-database restore or real-owner acceptance",
+  "case": "dac26d43-2d6e-42e3-bab9-fdf883937162",
+  "principals": {
+    "actor": 36,
+    "reviewer": 37
+  },
+  "plan": 1,
+  "inventory": 1,
+  "native_artifacts": [
+    1,
+    2,
+    3
+  ],
+  "native_jobs": [
+    1,
+    2,
+    3
+  ],
+  "initial_assessment": 1,
+  "held_assessment": 2,
+  "current_assessment": 3,
+  "reviews": [
+    1,
+    2
+  ],
+  "unavailable_report": 1,
+  "corrected_report": 2,
+  "held_agent": 53,
+  "agent": 54,
+  "drill_database": "psl_drill_operator_demo",
+  "unconfigured_case": "946ba077-dc0b-4f83-859e-33e91ad5b596",
+  "unconfigured_plan": 2,
+  "unconfigured_report": 3,
+  "native_metadata_drill_verified": true,
+  "full_database_restore_verified": false,
+  "business_jobs_reenacted": false,
+  "operational_ready": false
+}

@@ -1,0 +1,21 @@
+{
+  "run": 321,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_coordination_work",
+    "tests.test_shared_workbench",
+    "tests.test_approvals.ApprovalTests.test_routing_is_idempotent_and_receipt_is_not_approval",
+    "tests.test_rfp.RFPTests.test_unknown_deadline_holds_only_submission",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-321-process-acceptance.txt",
+  "started_at": "2026-10-28T14:49:10.954356+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 255.689
+}

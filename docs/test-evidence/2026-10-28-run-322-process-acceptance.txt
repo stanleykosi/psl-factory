@@ -1,0 +1,56 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_changed_inputs_hold_queued_publication (tests.test_rfp.RFPTests.test_changed_inputs_hold_queued_publication) ... ok
+test_completed_agent_cites_actual_outcome_and_loss_lessons (tests.test_rfp.RFPTests.test_completed_agent_cites_actual_outcome_and_loss_lessons) ... ok
+test_configuring_outcome_later_does_not_require_resubmission (tests.test_rfp.RFPTests.test_configuring_outcome_later_does_not_require_resubmission) ... ok
+test_distinct_review_principals_and_revoked_engineering_review (tests.test_rfp.RFPTests.test_distinct_review_principals_and_revoked_engineering_review) ... ok
+test_legacy_commercial_and_baseline_cannot_bypass_rfp (tests.test_rfp.RFPTests.test_legacy_commercial_and_baseline_cannot_bypass_rfp) ... ok
+test_lost_archive_requires_lessons_and_preserves_sources (tests.test_rfp.RFPTests.test_lost_archive_requires_lessons_and_preserves_sources) ... ok
+test_matrix_cross_case_duplicate_and_unknown_rejected (tests.test_rfp.RFPTests.test_matrix_cross_case_duplicate_and_unknown_rejected) ... ok
+test_outcome_currentness_prevents_old_win_conversion (tests.test_rfp.RFPTests.test_outcome_currentness_prevents_old_win_conversion) ... ok
+test_pending_unknown_future_and_wrong_case_never_convert (tests.test_rfp.RFPTests.test_pending_unknown_future_and_wrong_case_never_convert) ... ok
+test_policy_validation_and_missing_independent_authority (tests.test_rfp.RFPTests.test_policy_validation_and_missing_independent_authority) ... ok
+test_postgres_immutable_history_and_stale_revision (tests.test_rfp.RFPTests.test_postgres_immutable_history_and_stale_revision) ... ok
+test_public_terms_are_explicit_and_internal_costing_is_not_a_quote (tests.test_rfp.RFPTests.test_public_terms_are_explicit_and_internal_costing_is_not_a_quote) ... ok
+test_receipt_capture_is_actual_idempotent_and_preserves_history (tests.test_rfp.RFPTests.test_receipt_capture_is_actual_idempotent_and_preserves_history) ... ok
+test_return_requires_new_response_and_all_fresh_decisions (tests.test_rfp.RFPTests.test_return_requires_new_response_and_all_fresh_decisions) ... ok
+test_reviews_precede_ordered_costing_and_outward_review (tests.test_rfp.RFPTests.test_reviews_precede_ordered_costing_and_outward_review) ... ok
+test_rfp_histories_invalidate_report_manifest (tests.test_rfp.RFPTests.test_rfp_histories_invalidate_report_manifest) ... ok
+test_rfp_period_report_survives_json_roundtrip_review_and_delivery (tests.test_rfp.RFPTests.test_rfp_period_report_survives_json_roundtrip_review_and_delivery) ... ok
+test_route_keys_and_recipients_validated (tests.test_rfp.RFPTests.test_route_keys_and_recipients_validated) ... ok
+test_route_policy_change_holds_queued_publication (tests.test_rfp.RFPTests.test_route_policy_change_holds_queued_publication) ... ok
+test_scoped_access_and_revocation_not_admin_flags (tests.test_rfp.RFPTests.test_scoped_access_and_revocation_not_admin_flags) ... ok
+test_sender_revocation_holds_effect (tests.test_rfp.RFPTests.test_sender_revocation_holds_effect) ... ok
+test_stated_past_deadline_never_dispatches_or_backdates (tests.test_rfp.RFPTests.test_stated_past_deadline_never_dispatches_or_backdates) ... ok
+test_ui_agent_and_policy_draft_are_connected (tests.test_rfp.RFPTests.test_ui_agent_and_policy_draft_are_connected) ... ok
+test_unbound_typed_rfp_document_cannot_publish (tests.test_rfp.RFPTests.test_unbound_typed_rfp_document_cannot_publish) ... ok
+test_unknown_deadline_holds_only_submission (tests.test_rfp.RFPTests.test_unknown_deadline_holds_only_submission) ... ok
+test_won_route_a_then_fresh_project_contract (tests.test_rfp.RFPTests.test_won_route_a_then_fresh_project_contract) ... ok
+test_rfp_assignment_current_owner_deadline_and_intake_successor (tests.test_coordination_work.CoordinationWorkTests.test_rfp_assignment_current_owner_deadline_and_intake_successor) ... FAIL
+test_action_assignment_and_document_review_are_source_owned_and_read_only (tests.test_shared_workbench.SharedWorkbenchTests.test_action_assignment_and_document_review_are_source_owned_and_read_only) ... ok
+test_two_postgres_connections_convert_once (tests.test_rfp.RFPConcurrencyTests.test_two_postgres_connections_convert_once) ... ok
+
+======================================================================
+FAIL: test_rfp_assignment_current_owner_deadline_and_intake_successor (tests.test_coordination_work.CoordinationWorkTests.test_rfp_assignment_current_owner_deadline_and_intake_successor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_coordination_work.py", line 63, in test_rfp_assignment_current_owner_deadline_and_intake_successor
+    self.assertContains(client.get(reverse('work_inbox')),'Deadline source: unknown')
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : Couldn't find 'Deadline source: unknown' in the following response
+b'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PSL Product Studio</title><link rel="stylesheet" href="/static/studio.css"></head><body><header><strong>PSL / Product Studio</strong><a href="/">Workbench</a><a href="/coverage/">Process coverage</a><a href="/documents/inbox/">Document inbox</a><form action="/accounts/logout/" method="post"><input type="hidden" name="csrfmiddlewaretoken" value="jbLNObprJ17bXgJ2ekvGCOMkrMkdntkMlbzxpci4vLjrd7CkKkg0gTdwhXpsfPDO"><span>human</span> <button>Sign out</button></form></header><main><h1>Your recorded work and eligible reviews</h1><p>Bounded current accessible recorded assignments, delivered department requests, role-eligible reviews and initiated operational work; not an exhaustive task or approval claim</p><p>Recorded assignments, role-eligible reviews and financial intents you initiated are distinct. Open the owning workflow to check current rules and take action. Recorded deadlines do not recalculate business calendars here.</p><table><tr><th>Work</th><th>Case</th><th>Reference</th><th>Recorded state</th><th>Recorded deadline</th></tr><tr><td>Assigned RFP coordination</td><td>Test engagement <span class="badge">Synthetic demonstration</span></td><td><a href="/cases/4ab0f38d-4c34-4cea-8393-91ba5378ffe4/rfp/">RFP-001</a></td><td>recorded pm assignment</td><td>Not recorded or not applicable</td></tr></table></main></body></html>\n'
+
+----------------------------------------------------------------------
+Ran 29 tests in 219.560s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 29 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

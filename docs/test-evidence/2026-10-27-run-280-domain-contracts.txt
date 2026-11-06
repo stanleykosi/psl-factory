@@ -1,0 +1,9 @@
+test_11_contract_guards_binding_expiry_privacy_and_revocation (tests.test_domain_contracts.DomainContractTests.test_11_contract_guards_binding_expiry_privacy_and_revocation) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 236.409s
+
+OK
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

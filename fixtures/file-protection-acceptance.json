@@ -1,0 +1,29 @@
+{
+  "classification": "Unset exact native file/restore owner acceptance inputs; no actual appointments",
+  "schema_ref": "schema:psl/protection-acceptance/v2",
+  "rules": {
+    "allowed_levels": [
+      "definition",
+      "synthetic_implementation"
+    ],
+    "independent_tester": true,
+    "independent_acceptor": true,
+    "private_protection": {
+      "inventory": [],
+      "freshness_seconds": null,
+      "receipt_requirement": null,
+      "independent_transport_acceptor": true
+    }
+  },
+  "owner_schema_ref": "schema:psl/protection-owner/v1",
+  "authority_rules": {
+    "human_only": true,
+    "assignments": [],
+    "allow_preparer_review": false
+  },
+  "inventory_shape": {
+    "package_id": null,
+    "assessment_id": null,
+    "native_kind": null
+  }
+}

@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader) ... ok
+test_go_live_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_go_live_current_source_reader) ... ok
+test_handover_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_handover_current_source_reader) ... ok
+test_current_native_source_successor_does_not_borrow_the_starter_access (tests.test_factory_execution_source_projection.StarterSuccessorProjectionTests.test_current_native_source_successor_does_not_borrow_the_starter_access) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 28.338s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

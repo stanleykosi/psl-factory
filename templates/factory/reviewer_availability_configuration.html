@@ -1,0 +1,13 @@
+<section class="card"><h2>Reviewer availability</h2>
+<p>Record available, unavailable or unconfirmed periods. Availability never grants permission or appoints a substitute. Only an already authorised reviewer or configured delegate may decide.</p>
+{% if reviewer_availability_form.source_available %}
+<h3>Recorded windows</h3>
+{% for record in reviewer_availability_form.current_records %}<article><h4>{{ record.name }}</h4><p>{{ record.status }} · {{ record.valid_from }} to {{ record.valid_until }}</p></article>{% empty %}<p>No availability windows are active. A gap is unconfirmed, not available.</p>{% endfor %}
+<form method="post">{% csrf_token %}{% include 'factory/responsibility_context.html' %}<input type="hidden" name="action" value="availability_draft">{{ reviewer_availability_form.as_p }}<button>Save availability draft</button></form>
+<p>Other windows are preserved. Overlapping windows need correction. A draft changes no authority until its recorded owner decision is validated and activated.</p>
+<h3>Availability history</h3>
+{% for c in availability_versions %}<article><h4>Revision {{ c.revision }} · {{ c.current_status }}</h4>
+<details><summary>Decision and configuration references</summary><pre>{{ c.envelope }}</pre></details>
+<form method="post">{% csrf_token %}{% include 'factory/responsibility_context.html' %}<input type="hidden" name="action" value="availability_transition"><input type="hidden" name="configuration" value="{{ c.pk }}">{% if c.can_validate %}<button name="state" value="validated">Validate</button>{% endif %}{% if c.can_activate %}<button name="state" value="active">Activate</button>{% endif %}{% if c.can_revoke %}<button name="state" value="revoked">Revoke</button>{% endif %}</form></article>{% empty %}<p>No availability versions recorded.</p>{% endfor %}
+{% else %}<p>Current availability source is unavailable to this account. Other responsibility settings remain available.</p>{% endif %}
+</section>

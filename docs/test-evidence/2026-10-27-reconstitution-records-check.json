@@ -1,0 +1,15 @@
+{
+  "source_fingerprints": 966,
+  "runtime_changes_since276": [
+    "contracts/implementation-coverage.json"
+  ],
+  "runtime_build_sha256": "89456d92c5324e147bfe8ab9d7fdde7ab45525180ea38976856fff9864266f4b",
+  "backlog_items": 54,
+  "policy_interfaces": 109,
+  "supplements": 52,
+  "processes_partial": 122,
+  "families": 13,
+  "server_pid": 1056,
+  "next_run": 277,
+  "actual_authority_or_policy_installed": false
+}

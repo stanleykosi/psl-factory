@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_pending_export_enrollment_checks_current_proof_then_records_sql_artifact (tests.test_private_file_readiness.PrivateFileReadinessTests.test_pending_export_enrollment_checks_current_proof_then_records_sql_artifact) ... ok
+test_http_missing_case_and_agent_action_permission (tests.test_private_file_readiness.PrivateFileReadinessTests.test_http_missing_case_and_agent_action_permission) ... ok
+test_actual_windows_file_sharing_denial_holds_current_not_history (tests.test_private_file_readiness.PrivateFileReadinessTests.test_actual_windows_file_sharing_denial_holds_current_not_history) ... ok
+test_live_agent_generic_omissions_and_actual_http_capture_and_policy (tests.test_private_file_readiness.PrivateFileReadinessTests.test_live_agent_generic_omissions_and_actual_http_capture_and_policy) ... ok
+test_duplicate_bindings_competing_probes_foreign_revocation_and_restarted_file_receipt_recovery (tests.test_private_file_concurrency.PrivateFileConcurrencyTests.test_duplicate_bindings_competing_probes_foreign_revocation_and_restarted_file_receipt_recovery) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1101.944s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,19 @@
+{
+  "classification": "Structural fixture only; real runtime identities, principals and criteria are never installed",
+  "component": "OPS.application_recovery",
+  "value": null,
+  "source_ref": null,
+  "target_ref": null,
+  "key_ref": null,
+  "principals": [],
+  "attachment_ids": [],
+  "states": [
+    "absent",
+    "invalid",
+    "synthetic_active",
+    "expired",
+    "superseded",
+    "revoked"
+  ],
+  "actual_values_installed": false
+}

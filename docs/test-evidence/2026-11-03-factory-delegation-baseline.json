@@ -1,0 +1,92 @@
+{
+  "parent_checkpoint": 542,
+  "verified_files": 3018,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "classification": "Engineering gap map/proposed next bounded increment; proposed interfaces are not PSL business policy or tested implementation",
+  "authority": "User consolidation request; design ACT10/delegation catalogue; current native services/invariants",
+  "requirements_mapping_note": "IDs denote related design requirements, not completed coverage; exact new assertions will be linked after tests",
+  "rows": [
+    {
+      "requirement_ids": [
+        "ROUTE-05",
+        "ROUTE-06",
+        "ROUTE-07",
+        "ROUTE-12"
+      ],
+      "disposition": "EXTEND",
+      "actual_paths": [
+        "apps/policy/services.py#decision_authority",
+        "apps/policy/delegation_validators.py",
+        "apps/policy/role_assignments.py#draft_delegations"
+      ],
+      "observed_fact": "Existing explicit role/time/eligibility delegation v1/v2; no typed invoice decision/action/case/currency/amount scope",
+      "proposed_design": "Add closed v3 invoice delegation scope with explicit case, decision type, verdicts, currency and maximum amount; unknown limit holds only financial delegation. Preserve legacy document behavior; scoped invoice delegation cannot become generic role authority."
+    },
+    {
+      "requirement_ids": [
+        "REQ-11",
+        "AGT10",
+        "ROUTE-01",
+        "ROUTE-03"
+      ],
+      "disposition": "EXTEND",
+      "actual_paths": [
+        "apps/policy/factory_routing_validators.py",
+        "apps/policy/operator_drafts.py",
+        "apps/workflows/factory_routing.py#evaluate",
+        "apps/workflows/factory_views.py#ResponsibilityForm"
+      ],
+      "observed_fact": "Current typed responsibility v1 has one direct native Finance review strategy",
+      "proposed_design": "Versioned v2 explicitly selects direct-only, direct-or-configured-delegate or unknown; no default operational selection. Resolve trusted current facts, expose configuration and routing explanation, hold dependent review while retaining useful drafting."
+    },
+    {
+      "requirement_ids": [
+        "AGT10",
+        "ROUTE-06",
+        "ROUTE-12",
+        "ROUTE-13"
+      ],
+      "disposition": "EXTEND",
+      "actual_paths": [
+        "apps/finance/analysis.py#review_authority",
+        "apps/finance/invoices.py#review",
+        "apps/finance/invoices.py#reviewed",
+        "apps/workflows/factory.py#decide"
+      ],
+      "observed_fact": "Invoice approval/revalidation currently require direct role authority; InvoiceReview is the sole native ledger",
+      "proposed_design": "Typed explicit delegated mode bound to trusted invoice context, actual acting reviewer SoD and native D05 scope. Record/revalidate native authority; factory resolves mode deterministically. No second approval ledger or model-selected authority."
+    },
+    {
+      "requirement_ids": [
+        "TEST-01",
+        "TEST-02",
+        "TEST-03"
+      ],
+      "disposition": "KEEP_AND_EXTEND",
+      "actual_paths": [
+        "adapters/factory_invoices.py",
+        "apps/finance/invoice_delivery.py",
+        "tests/test_role_guard.py",
+        "tests/test_factory_review_authority.py"
+      ],
+      "observed_fact": "Receipt-first uncertainty recovery and real PostgreSQL/process controls are tested",
+      "proposed_design": "Exercise actual configured delegate claim/decision/receipt chain plus unknown mode/limits, scope/currency/limit boundary, SoD, revocation/expiry, role and claim races, original unknown effect recovery and browser/configuration paths."
+    }
+  ],
+  "architecture": "KEEP Django/PostgreSQL/server rendering/native InvoiceReview/jobs/receipts/shared allowance",
+  "compatibility": "Preserve v1 direct factory profiles and v1/v2 document delegations; additive typed JSON references, no schema migration currently proposed",
+  "new_dependencies": [],
+  "business_values_added": false,
+  "policy_slots": "Actual delegation people, bounds, dates and configured strategy remain owner decisions; fixtures explicitly synthetic",
+  "remaining_not_in_this_increment": [
+    "Absence/reassignment policy",
+    "Sequential/parallel/quorum/veto approval",
+    "Aggregation/FX/risk rules",
+    "Other release processes and shared coordinator/provider/background/restore/impact code"
+  ],
+  "full_product_complete": false
+}

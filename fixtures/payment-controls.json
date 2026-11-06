@@ -1,0 +1,11 @@
+{
+  "fixture_scope": "synthetic_test",
+  "notice": "Examples only, never operational authority or an agreed payment denominator. Replace coverage_id and user_id with isolated synthetic records. The 80 percent expectation is source backed; the selected invoice/cash methods are finite engineering interfaces requiring owner selection.",
+  "D13.human_authority_role_ref": {"role": "Finance", "human_only": true},
+  "D13.human_principal_refs": [{"user_id": 1, "kind": "human"}],
+  "D13.delegation_evidence_refs": {"mode": "disabled", "delegations": []},
+  "D13.validity_revocation_reassessment_rules": {"max_validity_seconds": 3600, "allow_self_approval": false, "revocation": "current_authority", "reassessment": "any_bound_change"},
+  "D13.payment_denominator_rule_ref": {"method": "adjusted_issued_invoices", "coverage_id": 1, "scope": "complete_selected_coverage", "currency": "NGN", "amount_basis": "gross_including_tax"},
+  "D13.qualifying_funds_rule_ref": {"method": "allocated_to_selected_invoices", "coverage_id": 1, "currency": "NGN", "amount_basis": "gross_including_tax"},
+  "lifecycle_scenarios": ["absent", "invalid", "synthetic_active", "stale", "revoked"]
+}

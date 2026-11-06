@@ -1,0 +1,21 @@
+{
+  "run": 561,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_availability.FactoryAvailabilityTests.test_required_but_missing_availability_source_holds_only_review_and_native_bypass",
+    "tests.test_factory_availability.FactoryAvailabilityTests.test_adjacent_half_open_windows_do_not_overlap_or_infer_availability_from_a_gap",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T15:33:29.585826+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run561.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 32.609
+}

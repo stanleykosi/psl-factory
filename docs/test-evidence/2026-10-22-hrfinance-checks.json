@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "name": "check",
+        "chunk_id": "9cf094",
+        "wall_time_seconds": 7.2325722,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "System check identified no issues (0 silenced).\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "name": "migration_drift",
+        "chunk_id": "7ef6c0",
+        "wall_time_seconds": 7.9397479,
+        "exit_code": 0,
+        "original_token_count": 6,
+        "output": "No changes detected\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "name": "compileall",
+        "chunk_id": "411db0",
+        "wall_time_seconds": 3.8818236,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "name": "pip_check",
+        "chunk_id": "e4a752",
+        "wall_time_seconds": 4.6672098,
+        "exit_code": 0,
+        "original_token_count": 8,
+        "output": "No broken requirements found.\r\n"
+      }
+    }
+  ],
+  "boundary": "Actual local checks; no native HR/provider, production deployment or operational owner acceptance"
+}

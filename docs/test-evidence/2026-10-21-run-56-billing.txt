@@ -1,0 +1,20 @@
+Using existing test database for alias 'default'...
+
+F...............
+======================================================================
+FAIL: test_cross_case_and_admin_do_not_grant_authority (tests.test_billing.BillingTests.test_cross_case_and_admin_do_not_grant_authority)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_billing.py", line 82, in test_cross_case_and_admin_do_not_grant_authority
+    self.client.force_login(self.a);self.assertEqual(self.client.get(f'/cases/{other.pk}/finance/billing/').status_code,403)
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 404 != 403
+
+----------------------------------------------------------------------
+Ran 16 tests in 27.472s
+
+FAILED (failures=1)
+Preserving test database for alias 'default'...
+
+Found 16 test(s).
+System check identified no issues (0 silenced).

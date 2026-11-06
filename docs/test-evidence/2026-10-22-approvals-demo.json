@@ -1,0 +1,35 @@
+{
+  "classification": "EXPLICIT SYNTHETIC walkthrough; no real owner acceptance or native authenticity",
+  "case": "d6ea5933-7a3f-4a13-ab84-c7dcee8b2504",
+  "principals": {
+    "coordinator": 21,
+    "department_owner": 22
+  },
+  "failed_request": 1,
+  "failed_receipt": 1,
+  "original_observation": 1,
+  "access_failure": 2,
+  "held_packet": 22,
+  "original_binding": 1,
+  "recovered_request": 2,
+  "recovered_receipt": 2,
+  "recovered_observations": [
+    3,
+    4,
+    5
+  ],
+  "current_binding": 3,
+  "route_jobs": [
+    1,
+    2
+  ],
+  "agent": 47,
+  "unconfigured_case": "2d93282d-d455-4309-b5d0-f31cc7b61da3",
+  "unconfigured_request": 3,
+  "unconfigured_principals": [
+    23,
+    24
+  ],
+  "financial_execution": false,
+  "native_verified": false
+}

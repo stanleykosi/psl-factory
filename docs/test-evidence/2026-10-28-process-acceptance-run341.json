@@ -1,0 +1,18 @@
+{
+  "run": 341,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_policy_impact.DomainImpactTests.test_actual_invoice_effect_and_committed_receipt_survive_review_without_reissue",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-341-process-acceptance.txt",
+  "started_at": "2026-10-28T20:33:05.588099+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 8.761
+}

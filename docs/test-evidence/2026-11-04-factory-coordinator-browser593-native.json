@@ -1,0 +1,27 @@
+{
+  "source_run": 593,
+  "fixture_source_run": 591,
+  "database": "psl_factory_coordinator_ui_98ae90c203b0",
+  "work": 1,
+  "status": "verified",
+  "budget_used": 1100,
+  "budget_limit": 30000,
+  "attempts": 44,
+  "providers": [
+    "deterministic-finance-lineage-v1",
+    "deterministic-finance-source-v1",
+    "internal_permitted_step_v1"
+  ],
+  "output_approvals": 1,
+  "receipts": [
+    1
+  ],
+  "external_planning_receipts": 0,
+  "human_tasks": [
+    {
+      "kind": "factory_accounting_review",
+      "status": "completed"
+    }
+  ],
+  "classification": "Native-browser commands with synthetic policies and internal permitted-step coordination; not actual AI-provider evaluation or live external integration"
+}

@@ -1,0 +1,33 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 13 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0013_private_file_readiness... OK
+test_actual_corrupt_missing_and_conflicting_bytes_never_pass_cached_artifact (tests.test_private_file_readiness.PrivateFileReadinessTests.test_actual_corrupt_missing_and_conflicting_bytes_never_pass_cached_artifact) ... ok
+test_committed_probe_reconciles_receipt_before_revoked_authority (tests.test_private_file_readiness.PrivateFileReadinessTests.test_committed_probe_reconciles_receipt_before_revoked_authority) ... ok
+test_exact_backup_not_found_and_database_export_found_closed_scope (tests.test_private_file_readiness.PrivateFileReadinessTests.test_exact_backup_not_found_and_database_export_found_closed_scope) ... ok
+test_expiry_policy_revocation_and_budget_preservation (tests.test_private_file_readiness.PrivateFileReadinessTests.test_expiry_policy_revocation_and_budget_preservation) ... ok
+test_live_agent_generic_omissions_and_actual_http_capture_and_policy (tests.test_private_file_readiness.PrivateFileReadinessTests.test_live_agent_generic_omissions_and_actual_http_capture_and_policy) ... ok
+test_missing_policy_holds_only_file_probes_not_capture_or_other_health (tests.test_private_file_readiness.PrivateFileReadinessTests.test_missing_policy_holds_only_file_probes_not_capture_or_other_health) ... ok
+test_owner_and_transport_withdrawal_keep_history_but_hold_current_use (tests.test_private_file_readiness.PrivateFileReadinessTests.test_owner_and_transport_withdrawal_keep_history_but_hold_current_use) ... ok
+test_private_receipts_cannot_enter_public_contract_or_wrong_job (tests.test_private_file_readiness.PrivateFileReadinessTests.test_private_receipts_cannot_enter_public_contract_or_wrong_job) ... ok
+test_source_revocation_denies_cached_report_source_forms_and_live_guidance (tests.test_private_file_readiness.PrivateFileReadinessTests.test_source_revocation_denies_cached_report_source_forms_and_live_guidance) ... ok
+test_sql_immutability_lineage_closed_observation_and_no_retroactive_binding (tests.test_private_file_readiness.PrivateFileReadinessTests.test_sql_immutability_lineage_closed_observation_and_no_retroactive_binding) ... ok
+test_typed_policy_inventory_roles_private_grants_and_independence (tests.test_private_file_readiness.PrivateFileReadinessTests.test_typed_policy_inventory_roles_private_grants_and_independence) ... ok
+test_v2_file_inventory_preserves_finance_source_and_requires_affected_restore_reassessment (tests.test_private_file_readiness.PrivateFileReadinessTests.test_v2_file_inventory_preserves_finance_source_and_requires_affected_restore_reassessment) ... ok
+test_z_enrolled_actual_backup_changes_receipt_and_needs_fresh_review (tests.test_private_file_readiness.PrivateFileReadinessTests.test_z_enrolled_actual_backup_changes_receipt_and_needs_fresh_review) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1228.882s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying workflows.0014_private_file_readiness_guards... OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,83 @@
+Using existing test database for alias 'default'...
+
+..EE..E.....E
+======================================================================
+ERROR: test_lost_archive_requires_lessons_and_preserves_sources (tests.test_rfp.RFPTests.test_lost_archive_requires_lessons_and_preserves_sources)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 76, in test_lost_archive_requires_lessons_and_preserves_sources
+    a,c,e,t=self.a,self.c,self.e,self.t;v=response(a,c,e);approve(a,c,e,v);s=submit(a,c,e,t,v)
+                                                                             ~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 51, in submit
+    return rfp_documents.capture_submission(a,c.pk,d.pk,rev(c))
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in capture_submission
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in <genexpr>
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+           ^^^^^^^^^^^^^
+AttributeError: 'PublicationReceipt' object has no attribute 'received_at'
+
+======================================================================
+ERROR: test_pending_unknown_future_and_wrong_case_never_convert (tests.test_rfp.RFPTests.test_pending_unknown_future_and_wrong_case_never_convert)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 147, in test_pending_unknown_future_and_wrong_case_never_convert
+    a,c,e,t=self.a,self.c,self.e,self.t;v=response(a,c,e);approve(a,c,e,v);s=submit(a,c,e,t,v)
+                                                                             ~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 51, in submit
+    return rfp_documents.capture_submission(a,c.pk,d.pk,rev(c))
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in capture_submission
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in <genexpr>
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+           ^^^^^^^^^^^^^
+AttributeError: 'PublicationReceipt' object has no attribute 'received_at'
+
+======================================================================
+ERROR: test_receipt_capture_is_actual_idempotent_and_preserves_history (tests.test_rfp.RFPTests.test_receipt_capture_is_actual_idempotent_and_preserves_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 120, in test_receipt_capture_is_actual_idempotent_and_preserves_history
+    s=rfp_documents.capture_submission(a,c.pk,d.pk,rev(c));self.assertEqual(s.pk,rfp_documents.capture_submission(a,c.pk,d.pk,rev(c)).pk)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in capture_submission
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in <genexpr>
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+           ^^^^^^^^^^^^^
+AttributeError: 'PublicationReceipt' object has no attribute 'received_at'
+
+======================================================================
+ERROR: test_won_route_a_then_fresh_project_contract (tests.test_rfp.RFPTests.test_won_route_a_then_fresh_project_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 58, in test_won_route_a_then_fresh_project_contract
+    a,c,e,t=self.a,self.c,self.e,self.t;v=response(a,c,e);approve(a,c,e,v);s=submit(a,c,e,t,v)
+                                                                             ~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 51, in submit
+    return rfp_documents.capture_submission(a,c.pk,d.pk,rev(c))
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in capture_submission
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\rfp_documents.py", line 71, in <genexpr>
+    at=max(r.received_at for r in receipts);deadline=b.response.intake.deadline_at
+           ^^^^^^^^^^^^^
+AttributeError: 'PublicationReceipt' object has no attribute 'received_at'
+
+----------------------------------------------------------------------
+Ran 13 tests in 113.120s
+
+FAILED (errors=4)
+Preserving test database for alias 'default'...
+
+Found 13 test(s).
+System check identified no issues (0 silenced).

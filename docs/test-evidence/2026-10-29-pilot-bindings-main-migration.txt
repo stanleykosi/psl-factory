@@ -1,0 +1,6 @@
+Operations to perform:
+  Apply all migrations: policy
+Running migrations:
+  Applying policy.0006_pilot_bindings... OK
+  Applying policy.0007_pilot_runtime_startup_identity... OK
+

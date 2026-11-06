@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone (tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone) ... ok
+test_lost_response_cancellation_reconciles_original_delivery_without_inferred_signoff_or_new_send (tests.test_factory_go_live.FactoryGoLiveTests.test_lost_response_cancellation_reconciles_original_delivery_without_inferred_signoff_or_new_send) ... ok
+test_queued_publication_rechecks_current_publisher_and_retries_only_original_exact_job (tests.test_factory_go_live.FactoryGoLiveTests.test_queued_publication_rechecks_current_publisher_and_retries_only_original_exact_job) ... ok
+test_malformed_workspace_identity_is_a_form_error (tests.test_factory_console.FactoryConsoleTests.test_malformed_workspace_identity_is_a_form_error) ... ok
+test_profile_adoption_and_claim_release_use_current_backend_authority (tests.test_factory_console.FactoryConsoleTests.test_profile_adoption_and_claim_release_use_current_backend_authority) ... ok
+test_profile_screen_uses_native_lifecycle_and_caps_not_default_values (tests.test_factory_console.FactoryConsoleTests.test_profile_screen_uses_native_lifecycle_and_caps_not_default_values) ... ok
+test_queue_case_agent_information_review_receipts_and_return_context (tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context) ... ok
+test_source_and_work_grants_are_rechecked_on_get_and_direct_posts (tests.test_factory_console.FactoryConsoleTests.test_source_and_work_grants_are_rechecked_on_get_and_direct_posts) ... ok
+test_stale_command_preserves_work_and_reports_refresh (tests.test_factory_console.FactoryConsoleTests.test_stale_command_preserves_work_and_reports_refresh) ... ok
+test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition (tests.test_factory_console.FactoryConsoleTests.test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 91.912s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

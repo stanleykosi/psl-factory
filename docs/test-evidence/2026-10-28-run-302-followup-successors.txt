@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0059_native_successor_json_precedence...test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_capture_policy_review_ui_agent_revocation_and_sql_history (tests.test_followup_successors.FollowupSuccessorTests.test_capture_policy_review_ui_agent_revocation_and_sql_history) ... ok
+test_duplicate_ownership_scope_policy_successor_and_decline (tests.test_followup_successors.FollowupSuccessorTests.test_duplicate_ownership_scope_policy_successor_and_decline) ... ok
+test_normal_generation_replacement_unknown_receipt_and_successor (tests.test_followup_successors.FollowupSuccessorTests.test_normal_generation_replacement_unknown_receipt_and_successor) ... ok
+test_installed_supplement_guard_allows_metadata_and_rejects_private_or_active_payload (tests.test_finance_successor_readback.SuccessorMetadataSqlTests.test_installed_supplement_guard_allows_metadata_and_rejects_private_or_active_payload) ... ok
+test_native_current_lineage_separate_receipt_and_reviewer_revocation (tests.test_finance_successor_readback.SuccessorReadbackAdapterTests.test_native_current_lineage_separate_receipt_and_reviewer_revocation) ... ok
+test_source_owned_successor_readback_review_and_fresh_process_revocation (tests.test_followup_successor_recovery.FollowupSuccessorRecoveryTests.test_source_owned_successor_readback_review_and_fresh_process_revocation) ... ok
+test_native_receipt_current_source_authority_bounds_and_revocation (tests.test_finance_readback.FinanceReadbackAdapterTests.test_native_receipt_current_source_authority_bounds_and_revocation) ... ok
+test_stale_current_capture_is_described_as_history (tests.test_finance_readback_advice.FinanceReadbackAdviceTests.test_stale_current_capture_is_described_as_history) ... ok
+test_unknown_is_not_a_failed_effect_and_current_is_not_execution (tests.test_finance_readback_advice.FinanceReadbackAdviceTests.test_unknown_is_not_a_failed_effect_and_current_is_not_execution) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 727.392s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

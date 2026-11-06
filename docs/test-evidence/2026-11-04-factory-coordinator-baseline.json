@@ -1,0 +1,22 @@
+{
+  "classification": "Engineering baseline and proposed extension, not PSL operating policy or live-provider proof",
+  "parent_checkpoint": 576,
+  "parent_manifest_sha256": "4ca333977c67c1a3191c62ff37e3c2769b6fbbf92e4862cac608abb540238cc2",
+  "parent_files_verified": 3261,
+  "source_backed_facts": [
+    "Native factory eligibility/domain services own permissions, calculations, human decisions and effect verification",
+    "Checkpoint576 profiles and coordinator are synthetic-only",
+    "Registered-reference schema versions can evolve independently of their fixed policy-component envelope",
+    "IntegrationContract/readiness/binding/http and native immutable attempt/receipt conventions already exist",
+    "Outbox is milestone-specific and cannot be reused as a generic planner job without changing its meaning"
+  ],
+  "keep": ["Native FactoryWork/Activity/Attempt", "FinanceReview and other domain decisions", "Current grants and original effect lookup", "Shared lifetime budget", "Existing authenticated endpoint/credential registry"],
+  "extend": ["Version2 factory provider references; preserve v1 synthetic-only behavior", "Explicit nullable coordinator mode/principal/provider contract with configuration UI", "Native permitted-step mode for configured operational cases", "Authenticated opaque-metadata planning requests/receipts and uncertain-result recovery", "Explicit execution-principal recovery without rewriting the work initiator"],
+  "proposed_data_boundary": "Only eligible ACT identifiers and opaque citation handles may reach the planner; no evidence body, financial value, person/project identifier, native business tool or approval authority",
+  "current_test": 578,
+  "actual_evidence": {"577": "ERROR: supplemental coordinator interface missing; retained", "578": "Running operational-case native coordinator path; isolated PostgreSQL test fixtures only"},
+  "remaining_code": ["Authenticated planner durable request/receipt implementation", "Configuration and operator recovery UI", "Execution-principal recovery", "Wider remaining108 and shared contracts"],
+  "owner_slots_deferred": ["Mode selection", "Actual permitted principals", "Reviewed compatible provider/model/binding and credentials", "Actual execution limits and business authority"],
+  "runtime": "8022 exact575 identity verified before stop; PostgreSQL/main/all cohorts and prior receipts retained; no setup replay",
+  "full_product_complete": false
+}

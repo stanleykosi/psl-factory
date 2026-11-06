@@ -1,0 +1,11 @@
+{
+  "unittest_seconds": 7.029,
+  "integration_status": "PENDING611",
+  "working_directory": "C:/Users/USER/Desktop/psl-agent build/.runtime/source616",
+  "fixture_authority_explicit": true,
+  "run": 617,
+  "result": "FAIL1",
+  "reason": "Confirmed operational invoice calls generic extraction without a real provider",
+  "changed_fixture_sources": ".runtime/failed-source617/tests",
+  "process_seconds": 17.207
+}

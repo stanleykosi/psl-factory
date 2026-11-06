@@ -1,0 +1,10 @@
+{
+  "initial_check": "IndentationError: unexpected indent, apps/workflows/readiness.py:247",
+  "cause": "Source helper insertion also matched a nested import in private_payload_access",
+  "correction": "Removed the extra nested helper import; intended source_job import retained",
+  "system_check_after_correction": 0,
+  "new_tests_started_before_correction": false,
+  "source_changes_after_boundary_snapshot": [
+    "apps/workflows/readiness.py"
+  ]
+}

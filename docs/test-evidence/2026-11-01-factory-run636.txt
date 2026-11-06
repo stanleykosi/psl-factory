@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0056_factory_planning_recovery... OK
+  Applying workflows.0057_planning_recovery_guards...test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request) ... ERROR
+
+======================================================================
+ERROR: test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_receipt_recovery.py", line 51, in test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request
+    contract=self.rotate(f)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_receipt_recovery.py", line 29, in rotate
+    readiness_delivery.run_once(case_id=c.pk,job_id=job.pk);job.refresh_from_db();self.assertEqual(job.status,'confirmed',job.error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: run_once() got an unexpected keyword argument 'job_id'
+
+----------------------------------------------------------------------
+Ran 1 test in 8.255s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

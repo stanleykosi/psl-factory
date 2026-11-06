@@ -1,0 +1,83 @@
+{
+  "scope": "synthetic_test_only",
+  "method": {
+    "implementation": "canonical_adjustments_v1",
+    "allowed_kinds": [
+      "credit",
+      "debit",
+      "void"
+    ],
+    "decimal_places": 2,
+    "credit_allocation_conflict": "reverse_all_live_allocations",
+    "void_allocations": "reverse_all_live_allocations",
+    "void_amount": "current_adjusted_face",
+    "void_terminal": true
+  },
+  "rules": [
+    {
+      "target": "invoice_credit",
+      "implementation": "canonical_adjustment_v1",
+      "roles": [
+        "Finance"
+      ],
+      "require_distinct_preparer": false
+    },
+    {
+      "target": "invoice_debit",
+      "implementation": "canonical_adjustment_v1",
+      "roles": [
+        "Finance"
+      ],
+      "require_distinct_preparer": false
+    },
+    {
+      "target": "invoice_void",
+      "implementation": "canonical_adjustment_v1",
+      "roles": [
+        "Finance"
+      ],
+      "require_distinct_preparer": false
+    },
+    {
+      "target": "cash_successor",
+      "implementation": "successor_after_full_reversal_v1",
+      "roles": [
+        "Finance"
+      ],
+      "require_distinct_preparer": false,
+      "assignment": "preserve_current_contract"
+    }
+  ],
+  "legal": [
+    {
+      "target": "invoice_credit",
+      "evidence_kind": "invoice_credit_note",
+      "reason_required": true
+    },
+    {
+      "target": "invoice_debit",
+      "evidence_kind": "invoice_debit_note",
+      "reason_required": true
+    },
+    {
+      "target": "invoice_void",
+      "evidence_kind": "invoice_void_note",
+      "reason_required": true
+    },
+    {
+      "target": "cash_successor",
+      "evidence_kind": "cash_correction",
+      "reason_required": true
+    }
+  ],
+  "golden": {
+    "original_face": "32.25",
+    "credit": "5.00",
+    "after_credit": "27.25",
+    "debit": "3.00",
+    "after_debit": "30.25",
+    "after_void": "0.00",
+    "original_cash": "50.00",
+    "corrected_cash": "40.00"
+  }
+}

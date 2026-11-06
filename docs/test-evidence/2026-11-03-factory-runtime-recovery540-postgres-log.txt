@@ -1,0 +1,43 @@
+2026-11-03 02:47:12.592 WAT [15808] LOG:  starting PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit
+2026-11-03 02:47:12.594 WAT [15808] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-11-03 02:47:21.853 WAT [15980] LOG:  database system was shut down in recovery at 2026-11-03 02:46:32 WAT
+2026-11-03 02:47:21.857 WAT [15980] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-11-03 02:47:22.687 WAT [15980] LOG:  redo starts at 2/A79A3490
+2026-11-03 02:47:23.221 WAT [15980] LOG:  unexpected pageaddr 2/A30E6000 in WAL segment 0000000100000002000000A8, LSN 2/A80E6000, offset 942080
+2026-11-03 02:47:23.223 WAT [15980] LOG:  redo done at 2/A80E5E20 system usage: CPU: user: 0.04 s, system: 0.18 s, elapsed: 0.54 s
+2026-11-03 02:47:25.041 WAT [2572] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-11-03 02:47:25.393 WAT [2572] LOG:  checkpoint complete: wrote 652 buffers (4.0%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.224 s, sync=0.110 s, total=0.353 s; sync files=220, longest=0.013 s, average=0.001 s; distance=7434 kB, estimate=7434 kB; lsn=2/A80E6048, redo lsn=2/A80E6048
+2026-11-03 02:47:25.627 WAT [15808] LOG:  database system is ready to accept connections
+2026-11-03 02:47:26.578 WAT [760] FATAL:  role "CodexSandboxOffline" does not exist
+2026-11-03 02:52:25.926 WAT [2572] LOG:  checkpoint starting: time
+2026-11-03 02:52:34.743 WAT [8456] ERROR:  Immutable factory identity and monotonic shared budget required
+2026-11-03 02:52:34.743 WAT [8456] CONTEXT:  PL/pgSQL function psl_factory_identity() line 8 at RAISE
+2026-11-03 02:52:34.743 WAT [8456] STATEMENT:  UPDATE workflows_factorywork SET request_hash='ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' WHERE id=1385
+2026-11-03 02:52:34.746 WAT [8456] ERROR:  new row for relation "workflows_factorywork" violates check constraint "factory_shared_budget"
+2026-11-03 02:52:34.746 WAT [8456] DETAIL:  Failing row contains (1385, FACTORY-EXAMPLE, pmo-finance/v1, {"stage": "completion", "handoff": 1467, "coverage": 2547, "refe..., a46f2d91f82980899a1b18fb76ce666f42825b6d0bd8b40ad60996478ced9a0a, ready, , 1, 0, null, f, 0, 1, , 0, 2026-11-03 01:52:34.733811+00, 2026-11-03 01:52:34.733822+00, 16561, 67921d31-d92a-447b-a05b-4d2d1b524d4c, null, null, null, dbb3d0fd951563aa2a830705adde4b16cb2db1c3a8a5bfb9d2bcad8c97312844, null).
+2026-11-03 02:52:34.746 WAT [8456] STATEMENT:  UPDATE workflows_factorywork SET budget_used=1 WHERE id=1385
+2026-11-03 02:52:34.748 WAT [8456] ERROR:  Native invoice receipts required; agent completion is not verification
+2026-11-03 02:52:34.748 WAT [8456] CONTEXT:  PL/pgSQL function psl_factory_identity() line 113 at RAISE
+2026-11-03 02:52:34.748 WAT [8456] STATEMENT:  UPDATE workflows_factorywork SET status='verified' WHERE id=1385
+2026-11-03 02:56:56.361 WAT [2300] ERROR:  Human task packet and source identity are immutable
+2026-11-03 02:56:56.361 WAT [2300] CONTEXT:  PL/pgSQL function psl_factory_task_identity() line 3 at RAISE
+2026-11-03 02:56:56.361 WAT [2300] STATEMENT:  UPDATE "workflows_humantask" SET "context" = '{"work": 1417, "approval_granted": true}'::jsonb WHERE "workflows_humantask"."id" = 1929
+2026-11-03 02:57:00.574 WAT [2572] LOG:  checkpoint complete: wrote 2493 buffers (15.2%); 0 WAL file(s) added, 0 removed, 1 recycled; write=269.120 s, sync=4.131 s, total=274.649 s; sync files=5636, longest=0.035 s, average=0.001 s; distance=20861 kB, estimate=20861 kB; lsn=2/AA360AF0, redo lsn=2/A95454F8
+2026-11-03 02:57:25.612 WAT [2572] LOG:  checkpoint starting: time
+2026-11-03 02:58:46.357 WAT [2572] LOG:  checkpoint complete: wrote 556 buffers (3.4%); 0 WAL file(s) added, 0 removed, 1 recycled; write=80.557 s, sync=0.158 s, total=80.745 s; sync files=244, longest=0.037 s, average=0.001 s; distance=16180 kB, estimate=20393 kB; lsn=2/AAB15AC0, redo lsn=2/AA5127A8
+2026-11-03 03:02:25.367 WAT [2572] LOG:  checkpoint starting: time
+2026-11-03 03:04:08.135 WAT [2572] LOG:  checkpoint complete: wrote 972 buffers (5.9%); 0 WAL file(s) added, 0 removed, 1 recycled; write=102.686 s, sync=0.059 s, total=102.769 s; sync files=321, longest=0.002 s, average=0.001 s; distance=15346 kB, estimate=19888 kB; lsn=2/AB80E3E0, redo lsn=2/AB40F0F0
+2026-11-03 03:06:20.485 WAT [12564] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+	
+2026-11-03 03:06:43.919 WAT [15148] LOG:  skipping analyze of "identity_grant" --- lock not available
+2026-11-03 03:06:43.920 WAT [15148] LOG:  skipping analyze of "policy_configuration" --- lock not available
+2026-11-03 03:06:43.920 WAT [15148] LOG:  skipping analyze of "core_case" --- lock not available
+2026-11-03 03:06:43.921 WAT [15148] LOG:  skipping vacuum of "auth_permission" --- lock not available
+2026-11-03 03:06:43.921 WAT [15148] LOG:  skipping analyze of "workflows_factorywork" --- lock not available
+2026-11-03 03:06:43.922 WAT [15148] LOG:  skipping analyze of "core_evidence" --- lock not available
+2026-11-03 03:06:43.922 WAT [15148] LOG:  skipping analyze of "policy_registeredreference" --- lock not available
+2026-11-03 03:06:43.923 WAT [15148] LOG:  skipping analyze of "policy_policystate" --- lock not available
+2026-11-03 03:06:43.923 WAT [15148] LOG:  skipping analyze of "core_audit" --- lock not available
+2026-11-03 03:06:43.924 WAT [15148] LOG:  skipping analyze of "django_content_type" --- lock not available
+2026-11-03 03:07:26.036 WAT [2572] LOG:  checkpoint starting: time
+2026-11-03 03:08:10.571 WAT [2572] LOG:  checkpoint complete: wrote 344 buffers (2.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=35.947 s, sync=5.152 s, total=44.536 s; sync files=12253, longest=0.010 s, average=0.001 s; distance=22291 kB, estimate=22291 kB; lsn=2/ACACF228, redo lsn=2/AC9D40E0

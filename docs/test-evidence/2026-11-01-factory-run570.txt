@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown (tests.test_factory_accounting.AccountingOperatorTests.test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown) ... ok
+test_claim_does_not_survive_withdrawn_native_review_grant (tests.test_factory_accounting.AccountingOperatorTests.test_claim_does_not_survive_withdrawn_native_review_grant) ... ok
+test_database_refuses_verified_status_without_native_report_and_recipient_receipts (tests.test_factory_accounting.AccountingOperatorTests.test_database_refuses_verified_status_without_native_report_and_recipient_receipts) ... ok
+test_intake_requires_explicit_adjustment_inventory_and_uses_current_native_source (tests.test_factory_accounting.AccountingOperatorTests.test_intake_requires_explicit_adjustment_inventory_and_uses_current_native_source) ... ok
+test_source_rule_decisions_have_current_ui_authority_csrf_and_no_context_override (tests.test_factory_accounting.AccountingOperatorTests.test_source_rule_decisions_have_current_ui_authority_csrf_and_no_context_override) ... ok
+test_committed_delivery_recovers_original_receipts_after_execution_profile_withdrawal (tests.test_factory_accounting.AccountingRecoveryTests.test_committed_delivery_recovers_original_receipts_after_execution_profile_withdrawal) ... ok
+test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation (tests.test_factory_accounting.AccountingRecoveryTests.test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation) ... ok
+test_missing_receipt_remains_uncertain_without_a_second_delivery (tests.test_factory_accounting.AccountingRecoveryTests.test_missing_receipt_remains_uncertain_without_a_second_delivery) ... ok
+test_return_requires_explicit_source_owned_recheck_preserving_history_and_allowance (tests.test_factory_accounting.AccountingRecoveryTests.test_return_requires_explicit_source_owned_recheck_preserving_history_and_allowance) ... ok
+test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt (tests.test_factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 480.521s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

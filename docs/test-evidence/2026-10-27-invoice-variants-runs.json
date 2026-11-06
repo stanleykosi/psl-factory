@@ -1,0 +1,136 @@
+{
+  "classification": "Actual commands and retained failures; overlapping counts and synthetic upstream inputs",
+  "runs": [
+    {
+      "run": 283,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-27-run-283-native-finance.txt",
+      "started_at": "2026-10-27T16:12:24.463162+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 394.843
+    },
+    {
+      "run": 284,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_invoice_variants",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-27-run-284-invoice-variants.txt",
+      "started_at": "2026-10-27T16:35:53.670245+00:00",
+      "status": "finished",
+      "returncode": 1,
+      "elapsed_seconds": 5.062
+    },
+    {
+      "run": 285,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_invoice_variants",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-27-run-285-invoice-variants.txt",
+      "started_at": "2026-10-27T16:36:18.954897+00:00",
+      "status": "finished",
+      "returncode": 1,
+      "elapsed_seconds": 65.383
+    },
+    {
+      "run": 286,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_invoice_variants",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-27-run-286-invoice-variants.txt",
+      "started_at": "2026-10-27T16:38:09.739804+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 81.528
+    },
+    {
+      "run": 287,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_native_invoice_recovery.NativeInvoiceRecoveryTests",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-27-run-287-invoice-variants.txt",
+      "started_at": "2026-10-27T16:41:04.456191+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 750.999
+    },
+    {
+      "run": 288,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_invoice_variants",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-27-run-288-invoice-variants.txt",
+      "started_at": "2026-10-27T16:57:06.743137+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 310.729
+    },
+    {
+      "run": 289,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-27-run-289-invoice-variants.txt",
+      "started_at": "2026-10-27T17:08:19.687650+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 35.107
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<div class="page-heading"><div><h1>Review original response recovery</h1><p>The original request, provider, destination, model and spent allowance remain unchanged. This review permits receipt lookup only.</p></div><a href="{% url 'factory_receipt_recovery_configuration' case.pk %}">Review recovery settings</a></div>
+{% if attempt %}<section class="card"><form method="post">{% csrf_token %}{{ form.as_p }}<button>Record receipt recovery review</button></form></section>{% else %}<section class="card"><p>No unresolved original planning request needs recovery.</p></section>{% endif %}
+<a href="{% url 'factory_detail' work.pk %}">Back to work</a>
+{% endblock %}

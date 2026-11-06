@@ -1,0 +1,26 @@
+{
+  "verified_at": "2026-10-24T01:15:25.714092+00:00",
+  "schemas": {
+    "psl": {
+      "finance_migration": "0051_publication_readiness_guards",
+      "immutable_and_exact_lineage_triggers": 2,
+      "one_binding_per_contract": true
+    },
+    "test_psl": {
+      "finance_migration": "0051_publication_readiness_guards",
+      "immutable_and_exact_lineage_triggers": 2,
+      "one_binding_per_contract": true
+    }
+  },
+  "main_native_readiness_bindings": 0,
+  "main_native_v2_policy_versions": 0,
+  "original_document_receipts": 16,
+  "pending_support_jobs": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "real_principals_appointed": false,
+  "evidence_renewed": false,
+  "financial_or_publication_effect": false,
+  "unrelated_jobs_drained": false
+}

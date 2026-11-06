@@ -1,0 +1,33 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_acceptance_policy_supersession_revocation_and_fresh_packet_expiry (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_acceptance_policy_supersession_revocation_and_fresh_packet_expiry) ... ok
+test_acceptor_cannot_be_packet_or_transport_preparer_or_reviewer (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_acceptor_cannot_be_packet_or_transport_preparer_or_reviewer) ... ok
+test_capture_and_configured_negative_decisions_before_missing_acceptance_criteria (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_capture_and_configured_negative_decisions_before_missing_acceptance_criteria) ... ok
+test_closed_native_packet_three_human_reviews_export_and_source_policy_independence (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_closed_native_packet_three_human_reviews_export_and_source_policy_independence) ... ok
+test_database_immutable_exact_lineage_fresh_scope_and_bidirectional_source_cycles (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_database_immutable_exact_lineage_fresh_scope_and_bidirectional_source_cycles) ... ok
+test_http_review_form_requires_granted_actions_and_limits_decision_types (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_http_review_form_requires_granted_actions_and_limits_decision_types) ... ok
+test_owner_withdrawal_retains_history_without_revoking_original_source_acceptance (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_owner_withdrawal_retains_history_without_revoking_original_source_acceptance) ... ok
+test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants) ... ok
+test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review) ... ok
+test_revoked_source_denies_cached_reports_exports_reviews_revisions_and_ui_choices (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_revoked_source_denies_cached_reports_exports_reviews_revisions_and_ui_choices) ... ok
+test_selected_four_process_synthetic_acceptance_keeps_independent_tester_and_source_policy (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_selected_four_process_synthetic_acceptance_keeps_independent_tester_and_source_policy) ... ok
+test_successor_needs_fresh_package_explicit_parent_and_new_owner_reviews (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_successor_needs_fresh_package_explicit_parent_and_new_owner_reviews) ... ok
+test_transport_withdrawal_and_policy_changes_hold_current_use_but_allow_negative_owner_decision (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_transport_withdrawal_and_policy_changes_hold_current_use_but_allow_negative_owner_decision) ... ok
+test_z_actual_receipt_change_requires_fresh_assessment_packet_and_found_criteria (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_z_actual_receipt_change_requires_fresh_assessment_packet_and_found_criteria) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 3141.809s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

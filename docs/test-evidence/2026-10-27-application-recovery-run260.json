@@ -1,0 +1,21 @@
+{
+  "run": 260,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_application_recovery",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "tests.test_operator_recovery",
+    "tests.test_operator_workers",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-260-application-recovery.txt",
+  "started_at": "2026-10-27T10:32:38.891087+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 395.403
+}

@@ -1,0 +1,42 @@
+{
+  "version": "0.6",
+  "status": "proposed_documentation_not_implemented",
+  "confirmed_user_decisions": {
+    "below_80_percent_exception_possible": true,
+    "approver_must_be_human": true
+  },
+  "authority_configuration": {
+    "status": "UNCONFIGURED",
+    "authorized_role": null,
+    "authorized_principals": [],
+    "configuration_evidence_ref": null
+  },
+  "current_capabilities": [
+    "prepare_request",
+    "submit_request_under_existing_request_permission",
+    "track_request",
+    "withdraw_own_pending_request_under_existing_permission"
+  ],
+  "current_forbidden_effects": [
+    "approve_exception",
+    "mark_payment_exception_authorized",
+    "mark_payment_waived",
+    "authorize_deployment"
+  ],
+  "approval_guard": "Authenticated human AND configured authorized role/principal AND valid scope/grant AND current evidence/versions/validity; role is currently UNCONFIGURED so approval cannot succeed.",
+  "release_use_guard": "At deployment dispatch, separately validate applicable payment evidence/exception plus all independent Engineering/Security/Go-No-Go/GLPI and other release controls. Those controls are not newly imposed prerequisites to recording the human payment-exception decision.",
+  "financial_boundary": "An approved deployment payment exception would permit that specified deployment despite shortfall; it does not waive the debt, create a credit, alter receipts or write off money. No such financial waiver is authorized.",
+  "source_refs": [
+    "U07",
+    "U08"
+  ],
+  "affected_process_ids": [
+    "P30",
+    "P31",
+    "P32",
+    "P34",
+    "F34"
+  ],
+  "unrelated_definition_work": "May continue; do not block unrelated process definitions or assume payment-exception approval.",
+  "technical_defaults_status": "Proposed, not confirmed owner policy"
+}

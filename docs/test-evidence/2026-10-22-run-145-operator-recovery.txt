@@ -1,0 +1,83 @@
+Using existing test database for alias 'default'...
+
+F.F.F.....F...F..
+======================================================================
+FAIL: test_actual_native_receipt_lookup_after_lost_response_and_revocation (tests.test_operator_recovery.OperatorRecoveryTests.test_actual_native_receipt_lookup_after_lost_response_and_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_operator_recovery.py", line 40, in test_actual_native_receipt_lookup_after_lost_response_and_revocation
+    f=self.f;_,e=effect(f,'export');_,b=effect(f,'backup',e.pk);j=worker.reserve(f['actor'],f['case'].pk,f['plan'].pk,'restore',b.pk);worker.run_once(TimeoutAfterMetadataAccept());j.refresh_from_db();self.assertEqual(j.status,'unknown')
+                                                                                                                                                                                                        ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'held' != 'unknown'
+- held
++ unknown
+
+
+======================================================================
+FAIL: test_current_assessment_and_review_invalidate_after_new_unknown_report (tests.test_operator_recovery.OperatorRecoveryTests.test_current_assessment_and_review_invalidate_after_new_unknown_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_operator_recovery.py", line 57, in test_current_assessment_and_review_invalidate_after_new_unknown_report
+    f=self.f;connected(f);r=d.assess(f['actor'],f['case'].pk,f['plan'].pk,'ready');d.review(f['reviewer'],f['case'].pk,r.pk,'confirm','ready-review',f['review_evidence'].pk)
+             ~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 47, in connected
+    j,e=effect(f,'export');j,b=effect(f,'backup',e.pk);j,r=effect(f,'restore',b.pk);return e,b,r
+                                                           ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 44, in effect
+    if j.status!='confirmed':raise AssertionError('Metadata effect failed: '+j.kind+'/'+j.status+'/'+j.error)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Metadata effect failed: restore/held/Current source/authority/target controls require operator review
+
+======================================================================
+FAIL: test_independent_authority_and_admin_flags_cannot_review (tests.test_operator_recovery.OperatorRecoveryTests.test_independent_authority_and_admin_flags_cannot_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_operator_recovery.py", line 60, in test_independent_authority_and_admin_flags_cannot_review
+    f=self.f;connected(f);r=d.assess(f['actor'],f['case'].pk,f['plan'].pk,'ready')
+             ~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 47, in connected
+    j,e=effect(f,'export');j,b=effect(f,'backup',e.pk);j,r=effect(f,'restore',b.pk);return e,b,r
+                                                           ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 44, in effect
+    if j.status!='confirmed':raise AssertionError('Metadata effect failed: '+j.kind+'/'+j.status+'/'+j.error)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Metadata effect failed: restore/held/Current source/authority/target controls require operator review
+
+======================================================================
+FAIL: test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review (tests.test_operator_recovery.OperatorRecoveryTests.test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_operator_recovery.py", line 24, in test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review
+    f=self.f;e,b,r=connected(f);self.assertEqual(e.sha256,b.sha256);self.assertEqual(r.sha256,e.sha256);self.assertTrue(r.receipt['native_isolated_postgres_write']);self.assertFalse(r.receipt['full_database_restore'])
+                   ~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 47, in connected
+    j,e=effect(f,'export');j,b=effect(f,'backup',e.pk);j,r=effect(f,'restore',b.pk);return e,b,r
+                                                           ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 44, in effect
+    if j.status!='confirmed':raise AssertionError('Metadata effect failed: '+j.kind+'/'+j.status+'/'+j.error)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Metadata effect failed: restore/held/Current source/authority/target controls require operator review
+
+======================================================================
+FAIL: test_sql_history_and_reserved_intents_are_immutable (tests.test_operator_recovery.OperatorRecoveryTests.test_sql_history_and_reserved_intents_are_immutable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_operator_recovery.py", line 83, in test_sql_history_and_reserved_intents_are_immutable
+    f=self.f;snapshot(f['actor'],f['case'].pk,'sql');connected(f);proof(f);r=d.assess(f['actor'],f['case'].pk,f['plan'].pk,'sql-assess');d.review(f['reviewer'],f['case'].pk,r.pk,'confirm','sql-review',f['review_evidence'].pk)
+                                                     ~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 47, in connected
+    j,e=effect(f,'export');j,b=effect(f,'backup',e.pk);j,r=effect(f,'restore',b.pk);return e,b,r
+                               ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 44, in effect
+    if j.status!='confirmed':raise AssertionError('Metadata effect failed: '+j.kind+'/'+j.status+'/'+j.error)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Metadata effect failed: backup/held/Current source/authority/target controls require operator review
+
+----------------------------------------------------------------------
+Ran 17 tests in 11.261s
+
+FAILED (failures=5)
+Preserving test database for alias 'default'...
+
+Found 17 test(s).
+System check identified no issues (0 silenced).

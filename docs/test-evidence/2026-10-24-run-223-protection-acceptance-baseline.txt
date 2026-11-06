@@ -1,0 +1,38 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_exact_native_health_receipt_independent_review_and_restore_changes_provenance (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_exact_native_health_receipt_independent_review_and_restore_changes_provenance) ... ERROR
+test_revoked_source_denies_cached_reads_forms_and_private_guidance (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_revoked_source_denies_cached_reads_forms_and_private_guidance) ... ok
+
+======================================================================
+ERROR: test_exact_native_health_receipt_independent_review_and_restore_changes_provenance (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_exact_native_health_receipt_independent_review_and_restore_changes_provenance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_private_protection_readiness.py", line 48, in test_exact_native_health_receipt_independent_review_and_restore_changes_provenance
+    lease=ow.claim();self.assertEqual(lease[0],f['restore'].pk);value=ow.dispatch(*lease,NativeMetadataProtectionAdapter());ow.finish(*lease,'confirmed',value)
+                                                                                                                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\operator_delivery.py", line 56, in finish
+    initial=RecoveryJob.objects.select_related('plan').get(pk=pk);Case.objects.select_for_update().get(pk=initial.plan.case_id);j=RecoveryJob.objects.select_for_update().get(pk=pk);fence_check(j,fence)
+                                                                                                                                                                                     ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\operator_delivery.py", line 53, in fence_check
+    if j.status!='leased' or j.fence!=fence or j.lease_until<=timezone.now():raise ValidationError('Expired protection worker fence')
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Expired protection worker fence']
+
+----------------------------------------------------------------------
+Ran 2 tests in 472.077s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

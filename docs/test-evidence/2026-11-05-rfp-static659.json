@@ -1,0 +1,13 @@
+{
+  "observed_at_utc": "2026-11-04T23:12:32Z",
+  "local_date": "2026-11-05",
+  "source_manifest": "2026-11-01-factory-run659-source.json",
+  "checks": [
+    {"command": ".venv/Scripts/python.exe manage.py check", "returncode": 0, "output": "System check identified no issues (0 silenced)."},
+    {"command": ".venv/Scripts/python.exe manage.py makemigrations --check --dry-run", "returncode": 0, "output": "No changes detected"}
+  ],
+  "native_browser": {"tab": "7", "observed_url": "http://127.0.0.1:8024/work/2/?queue=exceptions&q=Project%20records", "status": "CONTROL_UNAVAILABLE", "reason": "browser.user is unavailable", "fresh_screenshot": false},
+  "preview_running": false,
+  "live_provider_or_integration_tested": false,
+  "full_factory_rfp_connection_complete": false
+}

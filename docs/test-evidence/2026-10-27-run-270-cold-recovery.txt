@@ -1,0 +1,43 @@
+test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation (tests.test_cold_recovery.ColdRecoveryTests.test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+test_fresh_ui_policy_scope_agent_and_sql_guards_without_source (tests.test_cold_recovery.ColdRecoveryTests.test_fresh_ui_policy_scope_agent_and_sql_guards_without_source) ... FAIL
+test_revoked_expired_forged_and_cross_purpose_authority (tests.test_cold_recovery.ColdRecoveryTests.test_revoked_expired_forged_and_cross_purpose_authority) ... ok
+
+======================================================================
+FAIL: test_fresh_ui_policy_scope_agent_and_sql_guards_without_source (tests.test_cold_recovery.ColdRecoveryTests.test_fresh_ui_policy_scope_agent_and_sql_guards_without_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 76, in test_fresh_ui_policy_scope_agent_and_sql_guards_without_source
+    _, result = self.scenario('controls')
+                ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 73, in scenario
+    return v, self.child(stage, v, self.control)
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 25, in child
+    raise AssertionError(f'{stage} failed\n{result.stdout}\n{result.stderr}')
+AssertionError: controls failed
+
+Not Found: /cases/9d2775ef-1eec-43f5-b83a-0f4742fedd58/cold-recovery/
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 233, in <module>
+    result=globals()[stage]()
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 135, in controls
+    check.assertEqual(client.get(reverse('cold_recovery',args=[foreign.pk])).status_code,403)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\unittest\case.py", line 907, in assertEqual
+    assertion_func(first, second, msg=msg)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\unittest\case.py", line 900, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 404 != 403
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 178.327s
+
+FAILED (failures=1)
+Found 4 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

@@ -1,0 +1,56 @@
+{
+  "recorded_at": "2026-10-27T03:50:55.028569+00:00",
+  "commands": [
+    {
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 4.105,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 4.966,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "tests"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.166,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 3.415,
+      "stdout": "No broken requirements found.\n",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "classification": "synthetic_test_only_not_business_policy",
+  "rules": {
+    "releaser_id": null,
+    "recipient_id": null,
+    "independent_release": true,
+    "fields": [
+      "body",
+      "issue_ref"
+    ],
+    "route": "internal_authorised_inbox_v1",
+    "receipt_meaning": "internal_storage_only",
+    "release_ttl_seconds": 3600,
+    "max_attempts": 3,
+    "lease_seconds": 30
+  }
+}

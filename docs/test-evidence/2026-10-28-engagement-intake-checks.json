@@ -1,0 +1,50 @@
+[
+  {
+    "argv": [
+      "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+      "manage.py",
+      "check"
+    ],
+    "returncode": 0,
+    "stdout": "System check identified no issues (0 silenced).\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+      "manage.py",
+      "makemigrations",
+      "--check",
+      "--dry-run"
+    ],
+    "returncode": 0,
+    "stdout": "No changes detected\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+      "-m",
+      "compileall",
+      "-q",
+      "apps",
+      "adapters",
+      "config",
+      "tests"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "returncode": 0,
+    "stdout": "No broken requirements found.\n",
+    "stderr": ""
+  }
+]

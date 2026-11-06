@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Requirements, alignment and planning sources</h1><p>Capture unknowns before owner configuration or signature. Link two distinct formal alignment sessions and separate Product Owner scope and Engineering Lead estimate source references. This coordinates evidence; connected verification, commercial/signature/Finance and release controls remain separate.</p>
+<p><a href="{% url 'meetings' case.pk %}">Formal meetings and actions</a> · <a href="{% url 'approvals' case.pk %}">Department-owned source requests</a> · <a href="{% url 'delivery' case.pk %}">Delivery planning</a></p>
+{% if ordinary %}
+<section><h2>Capture planning sources and questions</h2>
+<p>Unknown sources and contacts may remain blank. This records a new packet version; it does not approve scope, assign an action owner or calculate a deadline.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="capture_fields">
+{{ ordinary.0.as_p }}
+<h3>Delivery stakeholders</h3>{{ ordinary.1.management_form }}{{ ordinary.1.non_form_errors }}
+{% for row in ordinary.1 %}<fieldset><legend>{{ row.team.value }}</legend>{{ row.as_p }}</fieldset>{% endfor %}
+<h3>Questions and clarifications</h3>{{ ordinary.2.management_form }}{{ ordinary.2.non_form_errors }}
+{% for row in ordinary.2 %}<fieldset><legend>Question {{ forloop.counter }}</legend>{{ row.as_p }}</fieldset>{% endfor %}
+<p>Existing questions can be revised or omitted in this successor; previous versions remain in history. Adding a question row previews this form without saving a packet.</p>
+<button name="edit_rows" value="add_question">Add a question row without saving</button>
+<button>Record planning packet version</button></form></section>
+{% endif %}
+<details><summary>Current source and readiness findings</summary><pre>{{ report }}</pre></details>
+{% for command in commands %}<section><h2>{{ command.title }}</h2><form method="post">{% csrf_token %}{{ command.form.as_p }}<button>Record or inspect</button></form></section>{% endfor %}
+<details><summary>Typed capture interface</summary><pre>{{ input_schema }}</pre></details><details><summary>Typed owner criteria</summary><pre>{{ criteria_schema }}</pre></details>
+{% endblock %}

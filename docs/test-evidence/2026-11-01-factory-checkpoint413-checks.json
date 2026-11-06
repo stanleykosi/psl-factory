@@ -1,0 +1,72 @@
+{
+  "checkpoint": 413,
+  "passing_runs": [
+    409,
+    410,
+    411,
+    412,
+    413
+  ],
+  "commands": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "No broken requirements found.\n",
+      "stderr": ""
+    }
+  ],
+  "release": 108,
+  "deferred": 14,
+  "original_process_rows_preserved": 122,
+  "main_rowsets_preserved": 329,
+  "old_migrations_preserved": 207,
+  "new_migration_bytes_equal_first_test_applied": true,
+  "main_test_guards_equal": true,
+  "browser_final": "docs/test-evidence/2026-11-01-factory-planning-final.json",
+  "rollback_boundary": "docs/test-evidence/2026-11-01-factory-planning-rollback.json",
+  "new_dependencies": [],
+  "operational_owner_policy_installed": false,
+  "full_product_complete": false
+}

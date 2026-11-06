@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_exact_backup_evidence_three_owner_decisions_and_original_source_independence (tests.test_file_acceptance.FileAcceptanceTests.test_exact_backup_evidence_three_owner_decisions_and_original_source_independence) ... ok
+test_explicit_v2_restore_criteria_retain_restore_snapshot_shape (tests.test_file_acceptance.FileAcceptanceTests.test_explicit_v2_restore_criteria_retain_restore_snapshot_shape) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 929.247s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

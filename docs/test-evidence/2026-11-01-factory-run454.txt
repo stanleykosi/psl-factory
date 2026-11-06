@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0045_factory_handover... OK
+  Applying documents.0016_factory_handover_scope...test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt (tests.test_factory_handover.FactoryHandoverTests.test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt) ... ok
+test_configured_native_document_review_is_exact_and_separate_from_receiving (tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving) ... ok
+test_exact_source_successor_and_old_receipts_are_preserved_with_one_lifetime_allowance (tests.test_factory_handover.FactoryHandoverTests.test_exact_source_successor_and_old_receipts_are_preserved_with_one_lifetime_allowance) ... ok
+test_foreign_private_typed_source_and_false_completion_guards (tests.test_factory_handover.FactoryHandoverTests.test_foreign_private_typed_source_and_false_completion_guards) ... ok
+test_lost_response_reconciles_original_receipt_even_after_cancellation_without_resending (tests.test_factory_handover.FactoryHandoverTests.test_lost_response_reconciles_original_receipt_even_after_cancellation_without_resending) ... ok
+test_unknown_intake_and_missing_profile_or_publisher_do_not_prevent_capture_and_correction (tests.test_factory_handover.FactoryHandoverTests.test_unknown_intake_and_missing_profile_or_publisher_do_not_prevent_capture_and_correction) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 473.379s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

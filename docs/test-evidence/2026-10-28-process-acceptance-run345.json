@@ -1,0 +1,18 @@
+{
+  "run": 345,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_pilot_bindings",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-345-process-acceptance.txt",
+  "started_at": "2026-10-29T00:07:10.588639+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 93.977
+}

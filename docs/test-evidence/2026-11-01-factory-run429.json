@@ -1,0 +1,26 @@
+{
+  "run": 429,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_delivery.FactoryDeliveryTests.test_planning_decision_binds_rendered_case_sources_authority_and_public_evidence",
+    "tests.test_factory_delivery.FactoryDeliveryTests.test_only_configured_decision_verdicts_appear_and_native_return_never_approves",
+    "tests.test_factory_delivery.FactoryDeliveryTests.test_revoked_intake_producer_retains_operator_readback_without_execution_authority",
+    "tests.test_factory_delivery.FactoryDeliveryConcurrencyTests",
+    "tests.test_factory_console",
+    "tests.test_factory_coverage",
+    "tests.test_factory_recovery.FactoryRecoveryConcurrencyTests.test_separate_process_interruption_retains_attempt_then_recovers_same_activity",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T22:08:47.801872+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run429.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 215.516
+}

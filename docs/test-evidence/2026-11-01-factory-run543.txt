@@ -1,0 +1,14 @@
+DelegationRoleGuardTests (unittest.loader._FailedTest.DelegationRoleGuardTests) ... ERROR
+
+======================================================================
+ERROR: DelegationRoleGuardTests (unittest.loader._FailedTest.DelegationRoleGuardTests)
+----------------------------------------------------------------------
+AttributeError: module 'tests.test_role_guard' has no attribute 'DelegationRoleGuardTests'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (errors=1)
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

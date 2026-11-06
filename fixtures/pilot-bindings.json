@@ -1,0 +1,5 @@
+{
+ "classification":"Synthetic technical binding examples only. Real case/principal IDs, fingerprints and role environment credentials are injected by tests; no owner appointments.",
+ "deployment":{"ref":"synthetic-pilot","revision":"fixture-v1","web_key_ref":"fixture-web","worker_key_ref":"fixture-worker","families":["handoff"],"freshness_seconds":300},
+ "profile":{"deployment_ref":"synthetic-pilot","revision":"fixture-v1","classification":"synthetic","storage_revision":"fixture-storage-v1","retention_revision":"fixture-retention-v1","monitoring_revision":"fixture-monitor-v1"}
+}

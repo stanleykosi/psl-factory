@@ -1,0 +1,59 @@
+{
+  "classification": "Synthetic ongoing source-successor/review/assessment journey; no reset, receipt replay, live authenticity or full-process claim",
+  "source_run": 441,
+  "database": "psl_factory_hypercare_ui_ab92faf193e4",
+  "work": 479,
+  "old_assessment": 1089,
+  "old_assessment_retained": true,
+  "current_output": {
+    "head": 99438,
+    "dossier": 204,
+    "hypercare": 1090,
+    "verified": true,
+    "qualified": true,
+    "verification_scope": "synthetic_native_hypercare_qualification",
+    "deployment_authorized": false,
+    "deployment_dispatched": false,
+    "financial_release_granted": false,
+    "closure_approved": false,
+    "external_authenticity_verified": false
+  },
+  "coverage": {
+    "scope": "latest_per_kind_and_consumed_documents",
+    "complete_history": false,
+    "selected": {
+      "sources": 8,
+      "records": 7,
+      "document_bindings": 1,
+      "signals": 0
+    },
+    "retained_history": {
+      "sources": 113,
+      "records": 8,
+      "document_bindings": 1,
+      "signals": 0
+    }
+  },
+  "budget": {
+    "used": 1200,
+    "original_limit": 20000,
+    "prior_used": 800
+  },
+  "native_assessments": 2,
+  "original_release_and_go_live_retained": true,
+  "original_receipt": 656,
+  "screenshots": [
+    "docs/test-evidence/2026-11-01-factory-current-heads-review.jpg",
+    "docs/test-evidence/2026-11-01-factory-current-heads-verified.jpg"
+  ],
+  "browser_assertions": [
+    "Stale result excluded from Verified",
+    "Exception/search context retained",
+    "Eligible reviewer shown instead of No action required",
+    "Explicit human reassessment",
+    "Current8/retained113 coverage",
+    "Successor verified with same allowance"
+  ],
+  "tool_fault": "Focus-emulation timeout after successful Continue POST; AXreadback confirmed verification without replay",
+  "full_process_acceptance": "NOT_EVALUATED"
+}

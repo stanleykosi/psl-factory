@@ -1,0 +1,20 @@
+{
+  "run": 246,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_connected_sql_file_isolated_restore_review_and_exact_job_gate",
+    "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_capture_before_policy_and_invalid_inventory_principals_and_source_grants",
+    "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_sql_binding_probe_observation_immutability_and_closed_provenance",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-26-run-246-accepted-protection-readiness.txt",
+  "started_at": "2026-10-26T22:18:38.838020+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 18.832
+}

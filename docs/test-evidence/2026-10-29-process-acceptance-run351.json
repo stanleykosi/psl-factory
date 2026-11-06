@@ -1,0 +1,21 @@
+{
+  "run": 351,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records",
+    "tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent",
+    "tests.test_pilot_bindings.NativeGuardTests.test_report_and_native_guard_enforce_case_access_before_record_lookup",
+    "tests.test_pilot_preflight.PilotTests.test_actual_csrf_ui_capture_export_agent_and_no_get_writes",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-351-process-acceptance.txt",
+  "started_at": "2026-10-29T01:19:28.592730+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 69.588
+}

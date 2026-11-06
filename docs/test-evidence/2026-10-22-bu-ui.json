@@ -1,0 +1,19 @@
+{
+  "case": "c06ea65e-0846-42e3-b524-455b72cf4443",
+  "viewer": "studio-demo",
+  "verification": "CUA live browser, localhost Django",
+  "board_rendered": true,
+  "all_five_policy_readiness_states_visible": true,
+  "historical_and_current_staff_and_event_versions_visible": true,
+  "missing_rule_and_sanitised_rejected_export_holds_visible": true,
+  "private_employee_rule_references_and_payload_links_absent_for_metadata_viewer": true,
+  "no_employee_ids_amounts_or_ratios_on_board": true,
+  "report_link_returned_403": true,
+  "screenshot": "docs/test-evidence/2026-10-22-bu-board.png",
+  "screenshot_visually_inspected": true,
+  "authorised_private_and_aggregate_rendering": "Actual Django/PostgreSQL tests, no browser impersonation",
+  "native_source_authenticity": false,
+  "server_exec": 83569,
+  "final_agent": 42,
+  "inventory_bound_metadata_states_refreshed": true
+}

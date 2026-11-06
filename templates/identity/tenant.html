@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Technical tenant delegation</h1>
+<p>This configures technical case access for existing accounts. Business owners, role mappings and approvals require their separate source authority.</p>
+<p>Version 2 can delegate exact <code>approval.source.read:system-key</code> actions. Granting requires that system in the target project's current P02 routes. Wildcards and dynamic initial workspace actions are unavailable. Revocation remains available when a route is missing or the subject account is inactive.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record a configuration version</button></form>
+<details><summary>Version 1 and 2 schema</summary><pre>{{ schema }}</pre></details>
+<section class="workflow-panel"><h2>Record history</h2><table><tr><th>Tenant</th><th>Account</th><th>Version</th><th>Enabled</th><th>Expires</th><th>Reason</th></tr>{% for r in history %}<tr><td>{{ r.tenant }}</td><td>{{ r.user_id }}</td><td>{{ r.version }}</td><td>{{ r.enabled }}</td><td>{{ r.expires_at }}</td><td>{{ r.reason }}</td></tr>{% endfor %}</table></section>{% endblock %}

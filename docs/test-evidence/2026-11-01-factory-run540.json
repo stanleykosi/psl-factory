@@ -1,0 +1,26 @@
+{
+  "run": 540,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_preserves_claim_history_when_retiring_obsolete_wait",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_review_points_to_agent_continuation_not_another_decision",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_read_only_account_can_inspect_restored_approval_without_execution_control",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_approval_does_not_override_current_original_pending_job",
+    "tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_approval_keeps_unknown_executor_unassigned_without_inventing_an_owner",
+    "tests.test_factory_review_authority.FactoryReviewRetirementConcurrencyTests",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T01:48:04.461401+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run540.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 125.633
+}

@@ -1,0 +1,30 @@
+{
+  "frozen_hashes": 41,
+  "process_ids": 122,
+  "families": 13,
+  "plan_rows": 122,
+  "source_titles": "exact",
+  "coverage": {
+    "partial": 90,
+    "not_started": 32
+  },
+  "partial_semantic_components": 41,
+  "components_without_semantics": 16,
+  "actual_test_runs": {
+    "RUN-60": "0 collected: test literal SyntaxError retained; corrected",
+    "RUN-61": {
+      "passed": 24,
+      "seconds": 101.068
+    },
+    "RUN-62": {
+      "passed": 181,
+      "seconds": 575.158
+    },
+    "RUN-63": {
+      "passed": 41,
+      "seconds": 152.6
+    }
+  },
+  "suites_overlap": true,
+  "no_product_acceptance_claim": true
+}

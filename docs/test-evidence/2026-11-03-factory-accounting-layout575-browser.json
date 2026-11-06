@@ -1,0 +1,31 @@
+{
+  "source_run": 575,
+  "parent_business_browser_run": 572,
+  "parent_regression_run": 573,
+  "tab": "5",
+  "browser": "Codex native browser",
+  "work": 1,
+  "database": "psl_factory_accounting_ui_08cf999821ca",
+  "stylesheet": "/static/studio.css?v=4",
+  "narrow": {
+    "viewport": 390,
+    "document": 375,
+    "scroll": 375,
+    "heading_layout": "column",
+    "heading_width": 338.66668701171875,
+    "words_wrap_at_spaces": true
+  },
+  "desktop": {
+    "viewport": 1280,
+    "document": 1265,
+    "scroll": 1265,
+    "heading_layout": "row"
+  },
+  "native_data_mutations": false,
+  "verified_work_retained": true,
+  "followup": "574 image still used cached v3;575 changed asset version, restarted exact isolated process without data reset and verified settled CSS after reload",
+  "screenshots": [
+    "2026-11-03-factory-accounting-layout575-narrow.jpg",
+    "2026-11-03-factory-accounting-layout575-desktop.jpg"
+  ]
+}

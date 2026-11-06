@@ -1,0 +1,23 @@
+{
+  "run": 650,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_intake_authority.IntakeAuthorityTests.test_current_authority_cannot_be_relabelled_and_sql_requires_fresh_review",
+    "tests.test_factory_intake_authority.IntakeAuthorityTests.test_stale_private_and_unqualified_instructions_hold_without_worker_or_history_changes",
+    "tests.test_factory_delivery.FactoryDeliveryTests.test_changed_gate_requires_reviewed_reassessment_and_fresh_native_request",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_source_successor_removes_current_outcome_and_reassessment_keeps_history_and_allowance",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T21:49:43.373142+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run650.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 126.043
+}

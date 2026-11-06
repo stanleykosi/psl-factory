@@ -1,0 +1,48 @@
+{
+  "classification": "Final runtime source static/main preservation checks; acceptance remains scoped to actual runs/browser",
+  "source": "docs/test-evidence/2026-11-01-factory-run430-source.json",
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "main_rowsets_unchanged": 329,
+  "old_migration_sources_unchanged": 210,
+  "main_test_guards_equal": true,
+  "new_guard_bytes_equal_first_test_applied": true,
+  "main_business_or_owner_data_changed": false
+}

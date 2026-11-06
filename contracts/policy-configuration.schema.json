@@ -1,0 +1,2046 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PSL independently activated policy component version",
+  "type": "object",
+  "properties": {
+    "slot_id": {
+      "enum": [
+        "D01",
+        "D03",
+        "D04",
+        "D05",
+        "D06",
+        "D07",
+        "D08",
+        "D09",
+        "D10",
+        "D11",
+        "D12",
+        "D13",
+        "D14",
+        "P14-Q01"
+      ]
+    },
+    "subject_scope": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "organization",
+            "project",
+            "contract",
+            "service",
+            "contract_stage"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "contract_stage"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "stage_ref"
+            ]
+          }
+        }
+      ]
+    },
+    "schema_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lifecycle": {
+      "enum": [
+        "draft",
+        "validated",
+        "active",
+        "superseded",
+        "revoked"
+      ]
+    },
+    "effective_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "effective_until": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "human_decision_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "implementation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "implementation_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fixture_scope": {
+      "enum": [
+        "synthetic_test",
+        "operational"
+      ]
+    },
+    "component_id": {
+      "enum": [
+        "D01.change_type_catalogue",
+        "D01.emergency_glpi_relationship",
+        "D01.satisfied_gate_map",
+        "D03.verified_billing_statement",
+        "D03.invoice_release_control_refs",
+        "D04.iana_timezone",
+        "D04.working_calendar_ref",
+        "D04.clock_anchor_pause_rules",
+        "D04.deadline_parameters",
+        "D05.role_principal_assignments",
+        "D05.delegation_rules",
+        "D05.decision_action_matrix",
+        "D05.revision_invalidation_rules",
+        "D06.source_schema_ref",
+        "D06.account_bu_maps",
+        "D06.unit_sign_currency_period",
+        "D06.rule_oracle_refs",
+        "D07.authorized_input_refs",
+        "D07.join_overlap_rule_id",
+        "D07.effective_membership_ref",
+        "D07.allocation_pool_rules",
+        "D07.rounding_residual_rule_id",
+        "D08.adapter_contract_ref",
+        "D08.effective_price_rule_refs",
+        "D08.tax_tier_rounding_rules",
+        "D08.billing_calendar",
+        "D08.duplicate_correction_rules",
+        "D09.support_sop_ref",
+        "D09.reconciliation_contract_ref",
+        "D09.queue_state_command_map",
+        "D09.onboarding_stage_catalogue",
+        "D10.report_category_effective_dates",
+        "D10.restatement_rule_id",
+        "D10.forecast_inclusion_rule_id",
+        "D10.audience_projection_rules",
+        "D11.recipient_grant_refs",
+        "D11.adapter_configuration_refs",
+        "D11.template_storage_retention_rules",
+        "D11.migration_evidence_rules",
+        "D11.hypercare_criteria_ref",
+        "D12.contract_version_ref",
+        "D12.currency_amount_basis",
+        "D12.stage_terms",
+        "D12.uat_billing_predicate_ref",
+        "D12.completion_billing_predicate_ref",
+        "D13.human_authority_role_ref",
+        "D13.human_principal_refs",
+        "D13.delegation_evidence_refs",
+        "D13.validity_revocation_reassessment_rules",
+        "D13.payment_denominator_rule_ref",
+        "D13.qualifying_funds_rule_ref",
+        "D14.receipt_verification_source_ref",
+        "D14.recorder_authority_ref",
+        "D14.allocation_rule_ref",
+        "D14.adjustment_correction_rule_refs",
+        "D14.legal_document_requirements",
+        "P14-Q01.commercial_costing_rule_oracle"
+      ]
+    },
+    "component_schema_ref": {
+      "type": "string",
+      "pattern": "^schema:"
+    },
+    "reviewed_implementation_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "value": {}
+  },
+  "required": [
+    "slot_id",
+    "subject_scope",
+    "schema_version",
+    "policy_revision",
+    "lifecycle",
+    "effective_from",
+    "evidence_refs",
+    "human_decision_ref",
+    "implementation_id",
+    "implementation_version",
+    "value",
+    "fixture_scope",
+    "component_id",
+    "component_schema_ref",
+    "reviewed_implementation_ref"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D01.change_type_catalogue"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D01"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D01.change_type_catalogue/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D01.emergency_glpi_relationship"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D01"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D01.emergency_glpi_relationship/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D01.satisfied_gate_map"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D01"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D01.satisfied_gate_map/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D03.verified_billing_statement"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D03"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D03.verified_billing_statement/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D03.invoice_release_control_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D03"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D03.invoice_release_control_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D04.iana_timezone"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D04"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D04.iana_timezone/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D04.working_calendar_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D04"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D04.working_calendar_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D04.clock_anchor_pause_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D04"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D04.clock_anchor_pause_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D04.deadline_parameters"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D04"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D04.deadline_parameters/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D05.role_principal_assignments"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D05"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D05.role_principal_assignments/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D05.delegation_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D05"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D05.delegation_rules/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D05.decision_action_matrix"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D05"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D05.decision_action_matrix/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D05.revision_invalidation_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D05"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D05.revision_invalidation_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D06.source_schema_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D06"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D06.source_schema_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D06.account_bu_maps"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D06"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D06.account_bu_maps/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D06.unit_sign_currency_period"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D06"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D06.unit_sign_currency_period/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D06.rule_oracle_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D06"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D06.rule_oracle_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D07.authorized_input_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D07"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D07.authorized_input_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D07.join_overlap_rule_id"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D07"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D07.join_overlap_rule_id/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D07.effective_membership_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D07"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D07.effective_membership_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D07.allocation_pool_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D07"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D07.allocation_pool_rules/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D07.rounding_residual_rule_id"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D07"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D07.rounding_residual_rule_id/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D08.adapter_contract_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D08"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D08.adapter_contract_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D08.effective_price_rule_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D08"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D08.effective_price_rule_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D08.tax_tier_rounding_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D08"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D08.tax_tier_rounding_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D08.billing_calendar"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D08"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D08.billing_calendar/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D08.duplicate_correction_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D08"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D08.duplicate_correction_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D09.support_sop_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D09"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D09.support_sop_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D09.reconciliation_contract_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D09"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D09.reconciliation_contract_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D09.queue_state_command_map"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D09"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D09.queue_state_command_map/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D09.onboarding_stage_catalogue"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D09"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D09.onboarding_stage_catalogue/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D10.report_category_effective_dates"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D10"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D10.report_category_effective_dates/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D10.restatement_rule_id"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D10"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D10.restatement_rule_id/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D10.forecast_inclusion_rule_id"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D10"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D10.forecast_inclusion_rule_id/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D10.audience_projection_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D10"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D10.audience_projection_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D11.recipient_grant_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D11"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D11.recipient_grant_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D11.adapter_configuration_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D11"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D11.adapter_configuration_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D11.template_storage_retention_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D11"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D11.template_storage_retention_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D11.migration_evidence_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D11"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D11.migration_evidence_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D11.hypercare_criteria_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D11"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D11.hypercare_criteria_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D12.contract_version_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D12"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D12.contract_version_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D12.currency_amount_basis"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D12"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D12.currency_amount_basis/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D12.stage_terms"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D12"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D12.stage_terms/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D12.uat_billing_predicate_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D12"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D12.uat_billing_predicate_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D12.completion_billing_predicate_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D12"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D12.completion_billing_predicate_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D13.human_authority_role_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D13"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D13.human_authority_role_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D13.human_principal_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D13"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D13.human_principal_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D13.delegation_evidence_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D13"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D13.delegation_evidence_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D13.validity_revocation_reassessment_rules"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D13"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D13.validity_revocation_reassessment_rules/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^schema:"
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D13.payment_denominator_rule_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D13"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D13.payment_denominator_rule_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D13.qualifying_funds_rule_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D13"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D13.qualifying_funds_rule_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D14.receipt_verification_source_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D14"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D14.receipt_verification_source_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D14.recorder_authority_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D14"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D14.recorder_authority_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D14.allocation_rule_ref"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D14"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D14.allocation_rule_ref/v1"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D14.adjustment_correction_rule_refs"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D14"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D14.adjustment_correction_rule_refs/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "D14.legal_document_requirements"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "D14"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/D14.legal_document_requirements/v1"
+          },
+          "value": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Registered versioned record references; resolve and validate each target against its domain schema and access/subject scope."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_id": {
+            "const": "P14-Q01.commercial_costing_rule_oracle"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot_id": {
+            "const": "P14-Q01"
+          },
+          "component_schema_ref": {
+            "const": "schema:psl/policy-component/P14-Q01.commercial_costing_rule_oracle/v1"
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "schema_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "schema_ref",
+              "artifact_ref",
+              "artifact_version",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "description": "Reference to a versioned structured parameter artifact, validated against its registered domain schema before policy activation; not an untyped embedded map."
+          }
+        }
+      }
+    }
+  ]
+}

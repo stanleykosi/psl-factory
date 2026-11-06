@@ -1,0 +1,207 @@
+{
+  "classification": "Synthetic only: source identities, owners, amounts/rules and thresholds are not actual PSL policy",
+  "request": {
+    "entity": "synthetic-company",
+    "period": "2026-09",
+    "currency": "TEST",
+    "providers": [
+      "PAY-A",
+      "PAY-B"
+    ],
+    "purpose": "bu_staff_cost"
+  },
+  "access": {
+    "human_only": true,
+    "entity": "synthetic-company",
+    "from_period": "2026-09",
+    "to_period": "2026-09",
+    "currency": "TEST",
+    "unit": "major_currency",
+    "providers": [
+      {
+        "provider": "PAY-A",
+        "owner_id": 1,
+        "owner_role": "HR"
+      },
+      {
+        "provider": "PAY-B",
+        "owner_id": 1,
+        "owner_role": "HR"
+      }
+    ],
+    "reader_ids": [
+      2,
+      3
+    ],
+    "allowed_components": [
+      "BASIC",
+      "BONUS",
+      "ADJUSTMENT"
+    ],
+    "source_decimal_places": 2,
+    "max_age_seconds": 86400,
+    "retention_seconds": 604800,
+    "retention_mode": "restrict_after_expiry",
+    "source_contract_evidence_id": 1
+  },
+  "merge": {
+    "duplicate_within_source": "reject",
+    "adjustment_treatment": "source_revision_only",
+    "method": "disjoint_union",
+    "provider_order": [
+      "PAY-A",
+      "PAY-B"
+    ],
+    "unknown_amount": "hold",
+    "oracles": [
+      {
+        "left": "100",
+        "right": "150",
+        "expected": "100",
+        "overlap": false
+      },
+      {
+        "left": "100",
+        "right": "150",
+        "expected": null,
+        "overlap": true
+      },
+      {
+        "left": null,
+        "right": null,
+        "expected": null,
+        "overlap": false
+      }
+    ]
+  },
+  "match": {
+    "employee_key": "opaque_exact_case_sensitive",
+    "hr_purpose": "payroll_matching",
+    "membership": "whole_period_only",
+    "multiple_memberships": "hold",
+    "missing_membership": "hold",
+    "unknown_bu": "hold",
+    "hr_write": false
+  },
+  "report": {
+    "components": [
+      {
+        "component": "BASIC",
+        "coefficient": "1"
+      },
+      {
+        "component": "BONUS",
+        "coefficient": "1"
+      },
+      {
+        "component": "ADJUSTMENT",
+        "coefficient": "1"
+      }
+    ],
+    "decimal_places": 2,
+    "rounding": "half_even",
+    "minimum_employees": 2,
+    "small_groups": "hold_all_publication",
+    "recipient_ids": [
+      4
+    ],
+    "destination": "synthetic-bu-staff-cost-report",
+    "disclosure": "aggregate_only",
+    "oracles": [
+      {
+        "amounts": [
+          {
+            "component": "BASIC",
+            "amount": "100"
+          },
+          {
+            "component": "BASIC",
+            "amount": "150"
+          }
+        ],
+        "expected": "250.00"
+      },
+      {
+        "amounts": [
+          {
+            "component": "BASIC",
+            "amount": null
+          }
+        ],
+        "expected": null
+      }
+    ]
+  },
+  "authority": {
+    "human_only": true,
+    "assignments": [
+      {
+        "user_id": 3,
+        "role": "Finance",
+        "purposes": [
+          "input",
+          "combine",
+          "match",
+          "aggregate",
+          "publish"
+        ]
+      },
+      {
+        "user_id": 2,
+        "role": "Finance",
+        "purposes": [
+          "publish"
+        ]
+      }
+    ],
+    "independent_reviewer": true
+  },
+  "exports": [
+    {
+      "provider": "PAY-A",
+      "source_version": "A-v1",
+      "entity": "synthetic-company",
+      "period": "2026-09",
+      "currency": "TEST",
+      "unit": "major_currency",
+      "extracted_at": "2026-10-22T00:00:00+00:00",
+      "completeness": "complete",
+      "control_total": "100",
+      "rows": [
+        {
+          "row_ref": "A1",
+          "employee_id": "E001",
+          "component": "BASIC",
+          "amount": "100"
+        }
+      ]
+    },
+    {
+      "provider": "PAY-B",
+      "source_version": "B-v1",
+      "entity": "synthetic-company",
+      "period": "2026-09",
+      "currency": "TEST",
+      "unit": "major_currency",
+      "extracted_at": "2026-10-22T00:00:00+00:00",
+      "completeness": "complete",
+      "control_total": "150",
+      "rows": [
+        {
+          "row_ref": "B1",
+          "employee_id": "E002",
+          "component": "BASIC",
+          "amount": "150"
+        }
+      ]
+    }
+  ],
+  "readiness_scenarios": [
+    "absent",
+    "invalid_oracle_or_authority",
+    "synthetic_active",
+    "stale_source_or_policy",
+    "revoked",
+    "expired_retention"
+  ]
+}

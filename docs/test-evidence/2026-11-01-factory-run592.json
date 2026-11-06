@@ -1,0 +1,22 @@
+{
+  "run": 592,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_coordinator_review",
+    "tests.test_factory_coordinator.FactoryCoordinatorTests.test_unknown_mode_holds_only_coordination_and_cannot_inject_test_provider",
+    "tests.test_factory_accounting.AccountingOperatorTests",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T12:45:55.861332+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run592.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 245.64
+}

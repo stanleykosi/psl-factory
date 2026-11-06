@@ -1,0 +1,29 @@
+Operations to perform:
+  Target specific migration: 0027_reconstitution_guards, from workflows
+Running pre-migrate handlers for application auth
+Running pre-migrate handlers for application contenttypes
+Running pre-migrate handlers for application sessions
+Running pre-migrate handlers for application core
+Running pre-migrate handlers for application identity
+Running pre-migrate handlers for application policy
+Running pre-migrate handlers for application workflows
+Running pre-migrate handlers for application pmo
+Running pre-migrate handlers for application finance
+Running pre-migrate handlers for application baas
+Running pre-migrate handlers for application documents
+Running pre-migrate handlers for application agents
+Running migrations:
+  Applying workflows.0026_reconstitution... OK (8.554s)
+  Applying workflows.0027_reconstitution_guards... OK (0.058s)
+Running post-migrate handlers for application auth
+Running post-migrate handlers for application contenttypes
+Running post-migrate handlers for application sessions
+Running post-migrate handlers for application core
+Running post-migrate handlers for application identity
+Running post-migrate handlers for application policy
+Running post-migrate handlers for application workflows
+Running post-migrate handlers for application pmo
+Running post-migrate handlers for application finance
+Running post-migrate handlers for application baas
+Running post-migrate handlers for application documents
+Running post-migrate handlers for application agents

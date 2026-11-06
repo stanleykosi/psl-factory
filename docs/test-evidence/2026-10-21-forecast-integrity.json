@@ -1,0 +1,92 @@
+{
+  "frozen_hashes": 41,
+  "process_ids": 122,
+  "families": 13,
+  "plan_rows": 122,
+  "source_titles": "exact",
+  "json_files_parsed": 60,
+  "coverage": {
+    "partial": 98,
+    "not_started": 24
+  },
+  "partial_semantic_components": 42,
+  "components_without_semantics": 15,
+  "actual_test_runs": {
+    "RUN-67": {
+      "collected": 23,
+      "seconds": 40.098,
+      "errors": 0,
+      "passed": 23,
+      "outcome": "passed"
+    },
+    "RUN-68": {
+      "collected": 31,
+      "seconds": 76.826,
+      "errors": 0,
+      "passed": 31,
+      "outcome": "passed"
+    },
+    "RUN-69": {
+      "collected": 254,
+      "seconds": 1179.306,
+      "errors": 1,
+      "passed": 253,
+      "outcome": "failed_preserved"
+    },
+    "RUN-70": {
+      "collected": 36,
+      "seconds": 182.446,
+      "errors": 0,
+      "passed": 36,
+      "outcome": "passed"
+    },
+    "RUN-71": {
+      "collected": 6,
+      "seconds": 28.384,
+      "errors": 0,
+      "passed": 6,
+      "outcome": "passed"
+    }
+  },
+  "suites_overlap": true,
+  "static_checks": {
+    "django_check": "passed",
+    "migration_drift": "none",
+    "compileall": "passed",
+    "pip_check": "passed"
+  },
+  "databases": {
+    "psl": {
+      "finance_latest": "0023_forecast_priority_immutability",
+      "forecast_append_only_guards": 9
+    },
+    "test_psl": {
+      "finance_latest": "0023_forecast_priority_immutability",
+      "forecast_append_only_guards": 9
+    }
+  },
+  "synthetic_demo": {
+    "case": "5a1b8ea0-d78c-4e57-9674-1deba59694d8",
+    "forecast": 1,
+    "scenario": 1,
+    "review": 1,
+    "actual": 1,
+    "match": 1,
+    "priority": 2,
+    "action": 5,
+    "publication_version": 21,
+    "publication_receipt": 16,
+    "earlier_receipts_preserved": 15,
+    "period_closing": [
+      "107.25000000",
+      "107.25000000"
+    ],
+    "scope": "captured_case_and_explicit_account_inventory_only",
+    "full_business_cash_forecast": false,
+    "existing_case_receivable": "17.25000000",
+    "prior_case_receivable": "12.25000000"
+  },
+  "period_boundary_roll_forward": "real domain/PostgreSQL with controlled test calendar; no backdated production approval",
+  "actual_external_financial_effect": false,
+  "no_product_acceptance_claim": true
+}

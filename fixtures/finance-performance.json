@@ -1,0 +1,90 @@
+{
+  "scope": "synthetic_test",
+  "note": "Illustrative fiscal year, budgets, method, authority and oracles only; no PSL policy values.",
+  "method": {
+    "implementation": "explicit_periods_v1",
+    "year_key": "FY2026",
+    "entity": "synthetic-company",
+    "periods": [
+      "2026-10",
+      "2026-11",
+      "2026-12",
+      "2027-01",
+      "2027-02",
+      "2027-03",
+      "2027-04",
+      "2027-05",
+      "2027-06",
+      "2027-07",
+      "2027-08",
+      "2027-09"
+    ],
+    "bu_keys": [
+      "alpha",
+      "beta"
+    ],
+    "include_company": true,
+    "metrics": [
+      {
+        "key": "revenue",
+        "label": "Revenue",
+        "aggregation": "sum",
+        "unit": "major_currency"
+      },
+      {
+        "key": "expenses",
+        "label": "Expenses",
+        "aggregation": "sum",
+        "unit": "major_currency"
+      },
+      {
+        "key": "pbt",
+        "label": "PBT",
+        "aggregation": "sum",
+        "unit": "major_currency"
+      }
+    ],
+    "budget_method": "monthly_exact",
+    "annual_weights": [],
+    "difference": "actual_minus_comparator",
+    "ratio": "actual_over_budget",
+    "multiplier": "100",
+    "zero_denominator": "unknown",
+    "decimal_places": 2,
+    "rounding": "half_up",
+    "prior_required": false,
+    "oracle_evidence_id": 0,
+    "oracles": [
+      {
+        "key": "known",
+        "actual": "100",
+        "budget": "80",
+        "prior": "90",
+        "expected": {
+          "variance": "20",
+          "prior_variance": "10",
+          "ratio": "125"
+        }
+      },
+      {
+        "key": "zero-denominator",
+        "actual": "0",
+        "budget": "0",
+        "prior": null,
+        "expected": {
+          "variance": "0",
+          "prior_variance": null,
+          "ratio": null
+        }
+      }
+    ]
+  },
+  "csv": "entity,period,scope,bu,metric,amount,currency,unit\nsynthetic-company,2026-10,company,,revenue,900,NGN,major_currency\nsynthetic-company,2026-10,company,,expenses,400,NGN,major_currency\nsynthetic-company,2026-10,company,,pbt,500,NGN,major_currency\nsynthetic-company,2026-10,bu,alpha,revenue,900,NGN,major_currency\nsynthetic-company,2026-10,bu,alpha,expenses,150,NGN,major_currency\nsynthetic-company,2026-10,bu,alpha,pbt,750,NGN,major_currency\nsynthetic-company,2026-10,bu,beta,revenue,0,NGN,major_currency\nsynthetic-company,2026-10,bu,beta,expenses,250,NGN,major_currency\nsynthetic-company,2026-10,bu,beta,pbt,-250,NGN,major_currency\n",
+  "restatement": {
+    "implementation": "explicit_replacement_v1",
+    "written_request_required": true,
+    "preserve_original": true,
+    "allow_bu_scope_change": false,
+    "historical_selection": "current_only"
+  }
+}

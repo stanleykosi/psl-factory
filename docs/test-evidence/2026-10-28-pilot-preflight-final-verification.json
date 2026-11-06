@@ -1,0 +1,10 @@
+{
+  "manifest_fingerprints_verified": 1362,
+  "final_test_source_changes": [
+    "contracts/implementation-coverage.json"
+  ],
+  "final_run_tests": 61,
+  "unittest_seconds": 339.839,
+  "all_122_partial": true,
+  "next_run": 345
+}

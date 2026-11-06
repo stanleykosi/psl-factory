@@ -1,0 +1,25 @@
+{
+  "browser": "2",
+  "tab": "2",
+  "viewer": "studio-demo",
+  "case": "746214a4-8481-43b7-86de-c2aa8cc37567",
+  "unconfigured_case": "66ee32ca-6392-47da-bf7a-019a06b8fc92",
+  "read_only": true,
+  "source_contract_status": 403,
+  "native_assessment_current_review_visible": true,
+  "supplied_outage_and_superseded_assessments_visible": true,
+  "provider_recorded_ready_but_current_unavailable_visible": true,
+  "missing_policy_contract_and_report_capture_visible": true,
+  "credential_values_displayed": false,
+  "private_business_source_transmitted": false,
+  "real_model_evaluation_claimed": false,
+  "server_session": 74577,
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-readiness-board.png",
+    "docs/test-evidence/2026-10-22-readiness-history.png",
+    "docs/test-evidence/2026-10-22-readiness-evidence.png",
+    "docs/test-evidence/2026-10-22-readiness-missing.png",
+    "docs/test-evidence/2026-10-22-readiness-source-denied.png"
+  ],
+  "handoff_marked": true
+}

@@ -1,0 +1,18 @@
+{
+  "run": 361,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_native_validation.NativeValidationTests.test_different_successful_subject_cannot_satisfy_reviewed_example",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-361-process-acceptance.txt",
+  "started_at": "2026-10-29T13:11:41.281770+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 17.117
+}

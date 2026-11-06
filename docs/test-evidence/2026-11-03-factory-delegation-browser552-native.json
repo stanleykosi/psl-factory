@@ -1,0 +1,18 @@
+{
+  "source_run": 552,
+  "database": "psl_factory_delegation_ui_7de03a500dbf",
+  "work": 1516,
+  "native_review": 1312,
+  "delegate_id": 16749,
+  "direct_finance_role": false,
+  "native_approvals": 1,
+  "issue_receipts": 1,
+  "delivery_receipts": 1,
+  "budget_used": 1000,
+  "budget_limit": 20000,
+  "mock_files": {
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-delegation-mock-receipts/7016b23465781454b661fea5c27911d323f1bc4956a9639992d03ee8111ad1be.json": "ec669fd333fa05e6a1c9bb1100d730719aef87e1c2f6c96575a1b2dd327701d4",
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-delegation-mock-receipts/9a23f02ce7a40e3c1c538d2ffdc6f7913d236afbad4915d604a947e273799147.json": "0cf3c2e4dab572835faf24755e71c5cc28f18a0dd1b888f6cca86a36cdb6f479"
+  },
+  "classification": "Actual native browser human claim/approval and agent mock output; fixture policy, not independent UAT/live provider"
+}

@@ -1,0 +1,38 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 18 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0038_ledgercheck_ledgerdecision_ledgerlineage_and_more... OK
+test_agent_and_ui_are_scoped_typed_and_no_store (tests.test_ledger.LedgerTests.test_agent_and_ui_are_scoped_typed_and_no_store) ... ok
+test_append_only_postgresql_guards (tests.test_ledger.LedgerTests.test_append_only_postgresql_guards) ... ok
+test_corrected_posted_reference_retains_old_history (tests.test_ledger.LedgerTests.test_corrected_posted_reference_retains_old_history) ... ok
+test_cross_case_identity_and_evidence_are_scoped (tests.test_ledger.LedgerTests.test_cross_case_identity_and_evidence_are_scoped) ... ok
+test_f01_e01_duplicate_source_invalidates_previous_review (tests.test_ledger.LedgerTests.test_f01_e01_duplicate_source_invalidates_previous_review) ... ok
+test_f01_n01_tx001_qb101_lineage_no_second_post (tests.test_ledger.LedgerTests.test_f01_n01_tx001_qb101_lineage_no_second_post) ... ok
+test_future_and_expired_observations_rejected (tests.test_ledger.LedgerTests.test_future_and_expired_observations_rejected) ... ok
+test_inactive_cached_actor_and_rejected_decision (tests.test_ledger.LedgerTests.test_inactive_cached_actor_and_rejected_decision) ... ok
+test_mismatched_response_and_extra_authority_are_rejected (tests.test_ledger.LedgerTests.test_mismatched_response_and_extra_authority_are_rejected) ... ok
+test_missing_policy_holds_verification_but_source_capture_works (tests.test_ledger.LedgerTests.test_missing_policy_holds_verification_but_source_capture_works) ... ok
+test_policy_schema_and_actual_principal_validation (tests.test_ledger.LedgerTests.test_policy_schema_and_actual_principal_validation) ... ok
+test_policy_successor_invalidates_existing_decision (tests.test_ledger.LedgerTests.test_policy_successor_invalidates_existing_decision) ... ok
+test_review_is_independent_and_rechecked_on_read (tests.test_ledger.LedgerTests.test_review_is_independent_and_rechecked_on_read) ... ok
+test_same_target_different_source_held (tests.test_ledger.LedgerTests.test_same_target_different_source_held) ... ok
+test_strict_source_json_and_scoped_provenance (tests.test_ledger.LedgerTests.test_strict_source_json_and_scoped_provenance) ... ok
+test_target_mismatch_and_missing_version_are_held (tests.test_ledger.LedgerTests.test_target_mismatch_and_missing_version_are_held) ... ok
+test_uncertain_then_corrected_reference_needs_fresh_check_review (tests.test_ledger.LedgerTests.test_uncertain_then_corrected_reference_needs_fresh_check_review) ... ok
+test_unknown_notfound_multiple_are_not_retry_authority (tests.test_ledger.LedgerTests.test_unknown_notfound_multiple_are_not_retry_authority) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 51.970s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying finance.0039_ledger_append_only... OK
+System check identified no issues (0 silenced).

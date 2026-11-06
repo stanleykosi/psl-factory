@@ -1,0 +1,20 @@
+{
+  "run": 385,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_cash_guards",
+    "tests.test_financial_corrections",
+    "tests.test_financial_correction_workers",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-385-process-acceptance.txt",
+  "started_at": "2026-10-29T16:25:05.433083+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 244.435
+}

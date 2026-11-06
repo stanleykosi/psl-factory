@@ -1,0 +1,31 @@
+{
+  "run": 498,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_go_live",
+    "tests.test_delivery",
+    "tests.test_controlled_documents",
+    "tests.test_delivery_observation",
+    "tests.test_factory_intake",
+    "tests.test_factory_console",
+    "tests.test_factory_controls",
+    "tests.test_factory_coverage",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_superseded_accepted_document_invalidates_readback_without_erasing_acceptance",
+    "tests.test_factory_archive.FactoryArchiveTests.test_agent_creates_native_index_as_configured_operator_without_archive_approval_or_hypercare_gate",
+    "tests.test_factory_handover.FactoryHandoverTests.test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt",
+    "tests.test_factory_closure.FactoryClosureTests.test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T17:30:43.346599+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run498.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 1273.72
+}

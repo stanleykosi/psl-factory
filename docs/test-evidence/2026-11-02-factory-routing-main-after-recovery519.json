@@ -1,0 +1,12 @@
+{
+  "phase": "after-recovery519",
+  "old_rowsets_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "prior_migrations_unchanged": 220,
+  "new_migration_immutable_since_run": 505,
+  "guard_changes": [
+    "psl_factory_task_identity: additive factory_governance kind only; same test/main definition"
+  ],
+  "main_factory_work_count": 0,
+  "main_owner_values_users_grants_business_data_unchanged": true
+}

@@ -1,0 +1,82 @@
+{
+  "classification": "EXPLICIT SYNTHETIC operator/protection examples; no real appointments, recovery objectives or full-database proof",
+  "operator": {
+    "operators": [],
+    "routes": [
+      {
+        "family": "handoff",
+        "actions": [
+          "cancel",
+          "retry"
+        ]
+      },
+      {
+        "family": "publication",
+        "actions": [
+          "cancel",
+          "retry"
+        ]
+      },
+      {
+        "family": "invoice",
+        "actions": [
+          "cancel",
+          "retry",
+          "replace_intent"
+        ]
+      },
+      {
+        "family": "engineering",
+        "actions": [
+          "cancel",
+          "retry",
+          "replace_intent"
+        ]
+      },
+      {
+        "family": "partner",
+        "actions": [
+          "cancel",
+          "retry",
+          "replace_intent"
+        ]
+      },
+      {
+        "family": "approval",
+        "actions": [
+          "cancel",
+          "retry",
+          "replace_intent"
+        ]
+      },
+      {
+        "family": "protection",
+        "actions": [
+          "cancel",
+          "retry",
+          "replace_intent"
+        ]
+      }
+    ],
+    "reviewer_id": 1,
+    "reviewer_role": "PMO",
+    "independent_review": true
+  },
+  "protection": {
+    "projection": "portable_case_metadata_v1",
+    "max_records": 200,
+    "required_proofs": [
+      "export",
+      "backup",
+      "restore"
+    ],
+    "freshness_seconds": 86400,
+    "rpo_seconds": null,
+    "rto_seconds": null,
+    "backup_adapter": "sealed_local_metadata_v1",
+    "restore_adapter": "isolated_postgres_metadata_v1",
+    "restore_target": "isolated_metadata_db_v1",
+    "lease_seconds": 30,
+    "max_attempts": 4
+  }
+}

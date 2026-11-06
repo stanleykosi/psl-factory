@@ -1,0 +1,57 @@
+{
+  "source_run": 533,
+  "database": "psl_factory_review_status_ui_82525e1a8333",
+  "case": "b07135e7-6b5e-4a6d-87fb-bfb960c28648",
+  "work": 1253,
+  "native": {
+    "source_run": 533,
+    "database": "psl_factory_review_status_ui_82525e1a8333",
+    "work": 1253,
+    "old_task": 1797,
+    "old_context_unchanged": true,
+    "fresh_task": 1798,
+    "fresh_task_current": true,
+    "fresh_task_unclaimed": true,
+    "invoice": 1302,
+    "budget_before": 500,
+    "budget_after": 700,
+    "budget_limit": 20000,
+    "native_approvals": 0,
+    "native_jobs": 0,
+    "native_receipts": 0,
+    "mock_files": 0,
+    "classification": "Native seeded stale wait; actual browser read and scoped agent rerouting, no browser claim/policy/approval/publication proof"
+  },
+  "setup_classification": "Real native fixture services seed an old claimed review and changed rule; not original browser claim/configuration proof",
+  "actual_ui_actions": [
+    "Read explicit stale state/reason/Unassigned/action",
+    "Keyboard return preserves exceptions/FACTORY",
+    "Exceptions, attention and unassigned contain the issue; Decisions excludes it",
+    "Narrow390/document375/no overflow and viewport reset",
+    "Actual Update Finance review invokes existing scoped agent",
+    "Old context retained; current fresh human wait without approval",
+    "Exceptions empty after update; Decisions contains fresh wait; keyboard reopen"
+  ],
+  "get_only_rowsets_unchanged": 329,
+  "get_only_guard_and_index_definitions_unchanged": true,
+  "browser_checks": {
+    "tab": 21,
+    "narrow_viewport": 390,
+    "document_width": 375,
+    "scroll_width": 375,
+    "document_overflow": false,
+    "viewport_reset": true,
+    "keyboard_context_preserved": true,
+    "queue_transition_matches_current_task": true,
+    "final_url": "http://127.0.0.1:8017/work/1253/?queue=decisions&q=FACTORY"
+  },
+  "screenshots": {
+    "docs/test-evidence/2026-11-03-factory-review-status-stale533.png": "0d9160456b3cca39a61427da3127c336ce15a6ed1c8a0204fdd0bf23ae219e4f",
+    "docs/test-evidence/2026-11-03-factory-review-status-exceptions533.png": "46dcffbec4381029dad12f3bdc6ab73e889eee2d77ff22cf705ab0810e4c75c5",
+    "docs/test-evidence/2026-11-03-factory-review-status-narrow533.png": "5f1b9b6232d4af5991344c51c0c6952a65a9bee60c88883be4f6e16e65aa8301",
+    "docs/test-evidence/2026-11-03-factory-review-status-refreshed533.png": "0f08b503b081315b1ee6a3787cb04dbdd6663e8fc21681a70218876fb435d820"
+  },
+  "classification": "Native synthetic seeded stale wait and actual browser read/replan; no browser claim/configuration/approval/publication or real-provider/UAT proof",
+  "prior_cohorts_reset": false,
+  "main_mutated": false
+}

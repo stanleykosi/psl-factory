@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_different_successful_subject_cannot_satisfy_reviewed_example (tests.test_native_validation.NativeValidationTests.test_different_successful_subject_cannot_satisfy_reviewed_example) ... FAIL
+
+======================================================================
+FAIL: test_different_successful_subject_cannot_satisfy_reviewed_example (tests.test_native_validation.NativeValidationTests.test_different_successful_subject_cannot_satisfy_reviewed_example)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 81, in test_different_successful_subject_cannot_satisfy_reviewed_example
+    self.assertFalse(r.result['matches'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 9.870s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

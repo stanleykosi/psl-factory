@@ -1,0 +1,22 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_unknown_but_valid_intake_keeps_ui_investigation_available_without_draft_or_inferred_signoff (tests.test_factory_go_live.FactoryGoLiveTests.test_unknown_but_valid_intake_keeps_ui_investigation_available_without_draft_or_inferred_signoff) ... ok
+test_configuring_a_permitted_preparer_does_not_appoint_the_business_pm_role (tests.test_factory_go_live.FactoryGoLiveTests.test_configuring_a_permitted_preparer_does_not_appoint_the_business_pm_role) ... ok
+test_private_foreign_boolean_and_changed_payload_inputs_are_rejected_without_effects (tests.test_factory_go_live.FactoryGoLiveTests.test_private_foreign_boolean_and_changed_payload_inputs_are_rejected_without_effects) ... ok
+test_http_capability_checks_methods_csrf_and_source_privacy_hold_before_any_effect (tests.test_factory_go_live.FactoryGoLiveTests.test_http_capability_checks_methods_csrf_and_source_privacy_hold_before_any_effect) ... ok
+test_invalid_profiles_cannot_grant_private_sources_foreign_preparers_or_arbitrary_model_actions (tests.test_factory_go_live.FactoryGoLiveTests.test_invalid_profiles_cannot_grant_private_sources_foreign_preparers_or_arbitrary_model_actions) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 16.965s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

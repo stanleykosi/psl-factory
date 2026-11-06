@@ -1,0 +1,20 @@
+{
+  "run": 330,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_source_access",
+    "tests.test_product_intake",
+    "tests.test_planning",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-330-process-acceptance.txt",
+  "started_at": "2026-10-28T16:18:18.018749+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 108.826
+}

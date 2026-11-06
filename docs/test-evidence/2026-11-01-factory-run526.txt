@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_changed_relevant_rule_refuses_claim_of_previously_routed_task (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_changed_relevant_rule_refuses_claim_of_previously_routed_task) ... ok
+test_changed_role_configuration_requires_new_routing_without_editing_old_task (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_changed_role_configuration_requires_new_routing_without_editing_old_task) ... ok
+test_changed_rule_after_claim_disables_ui_and_requires_fresh_routing (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_changed_rule_after_claim_disables_ui_and_requires_fresh_routing) ... ok
+test_legacy_task_without_recorded_authority_is_held_and_replaced_without_backfill (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_legacy_task_without_recorded_authority_is_held_and_replaced_without_backfill) ... ok
+test_malformed_historical_authority_is_held_without_breaking_read_view (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_malformed_historical_authority_is_held_without_breaking_read_view) ... ok
+test_obsolete_native_approval_does_not_auto_complete_or_block_fresh_review (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_obsolete_native_approval_does_not_auto_complete_or_block_fresh_review) ... ok
+test_original_receipt_is_observed_before_changed_rule_requires_new_delivery_review (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_original_receipt_is_observed_before_changed_rule_requires_new_delivery_review) ... ok
+test_unrelated_decision_namespace_preserves_claim_and_native_approval (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_unrelated_decision_namespace_preserves_claim_and_native_approval) ... ok
+test_cancellation_and_approval_use_the_same_lock_order (tests.test_factory_recovery.FactoryRecoveryConcurrencyTests.test_cancellation_and_approval_use_the_same_lock_order) ... ok
+test_separate_process_interruption_retains_attempt_then_recovers_same_activity (tests.test_factory_recovery.FactoryRecoveryConcurrencyTests.test_separate_process_interruption_retains_attempt_then_recovers_same_activity) ... ok
+test_two_connections_cannot_complete_one_governance_wait_twice (tests.test_factory_routing.FactoryRoutingConcurrencyTests.test_two_connections_cannot_complete_one_governance_wait_twice) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 167.012s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 11 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

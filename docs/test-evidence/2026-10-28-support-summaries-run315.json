@@ -1,0 +1,21 @@
+{
+  "run": 315,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_complaint_summaries",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "tests.test_support_flow.SupportFlowTests.test_b14_n01_connected_specialist_flow_ownership_response_and_report",
+    "tests.test_support_flow.SupportFlowTests.test_agent_ui_and_reviewed_report_are_scoped_no_store_and_typed",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-315-support-summaries.txt",
+  "started_at": "2026-10-28T12:53:59.142940+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 215.921
+}

@@ -1,0 +1,44 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+test_actual_backup_receipt_recovery_precedes_revoked_source_and_owner_authority (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_backup_receipt_recovery_precedes_revoked_source_and_owner_authority) ... ok
+test_actual_export_backup_restore_and_independent_protection_review (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_export_backup_restore_and_independent_protection_review) ... ERROR
+test_database_exact_private_plan_and_effect_lineage (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_database_exact_private_plan_and_effect_lineage) ... ok
+test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools) ... ok
+test_http_selected_packet_plan_policy_ui_and_historical_artifact_download (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_http_selected_packet_plan_policy_ui_and_historical_artifact_download) ... ok
+test_missing_private_policy_holds_only_selected_private_effects (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_missing_private_policy_holds_only_selected_private_effects) ... ok
+test_owner_withdrawal_preserves_historical_download_but_holds_new_copy_and_current_review (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_owner_withdrawal_preserves_historical_download_but_holds_new_copy_and_current_review) ... ok
+test_policy_and_plan_validate_exact_case_inventory_and_source_principals (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_policy_and_plan_validate_exact_case_inventory_and_source_principals) ... ok
+test_private_operator_retry_and_replacement_cannot_reset_original_budget (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_private_operator_retry_and_replacement_cannot_reset_original_budget) ... ok
+test_revoked_source_denies_cached_artifact_plan_inventory_and_http_choices (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_revoked_source_denies_cached_artifact_plan_inventory_and_http_choices) ... ok
+
+======================================================================
+ERROR: test_actual_export_backup_restore_and_independent_protection_review (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_export_backup_restore_and_independent_protection_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_private_readiness_operations.py", line 41, in test_actual_export_backup_restore_and_independent_protection_review
+    self.assertEqual((storage_root()/(backup.job.operation_key+'.json')).read_bytes(),__import__('adapters.operator_protection',fromlist=['encoded']).encoded(backup.manifest))
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\pathlib\_abc.py", line 625, in read_bytes
+    with self.open(mode='rb') as f:
+         ~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\pathlib\_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\operator-artifacts\\696a41e51f5a7ebec8b13d22284e7de202ce7edf649c28c34407adb1ad907b66.json'
+
+----------------------------------------------------------------------
+Ran 10 tests in 316.761s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying workflows.0009_private_readiness_guard_precedence... OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,13 @@
+{
+  "client_port": 32378,
+  "main_or_previews_stopped": false,
+  "reason": "Profiled duplicate native reads; isolated read-observation experiment ready for implementation and fresh regression",
+  "source_manifest": "docs/test-evidence/2026-11-01-factory-run476-source.json",
+  "database": "test_psl",
+  "path": "C:\\Python313\\python.exe",
+  "run": 476,
+  "start_utc": "2026-11-02T13:11:49.6381994Z",
+  "stopped_at_utc": "2026-11-02T13:32:06.3828670Z",
+  "id": 15236,
+  "classification": "Engineering stop of slow baseline; four passed tests and unfinished fifth, not suite acceptance"
+}

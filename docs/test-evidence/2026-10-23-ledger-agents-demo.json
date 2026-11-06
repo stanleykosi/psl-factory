@@ -1,0 +1,115 @@
+{
+  "case": "5b533c39-910f-412c-9290-44ee69f0c9c9",
+  "missing_case": "a9f964e7-ee00-4a33-9a1a-b6f14b9bc6ce",
+  "principals": [
+    76,
+    77,
+    78,
+    79
+  ],
+  "viewer_read_grants": [
+    "case.read",
+    "finance.read",
+    "ledger.read",
+    "ledger.private.read",
+    "ledger.agent.read",
+    "agent.data.read",
+    "agent.data.source"
+  ],
+  "lineage": 14,
+  "missing_lineage": 15,
+  "source_binding": 1,
+  "projection": 10,
+  "projection_sha256": "fb940062df482a79e1f210a76dca7ea20ba86dd4f0c3d74dd83fd7c5eefaa41b",
+  "receipt": 12,
+  "job": 12,
+  "result_review": 10,
+  "drafts": [
+    1,
+    2
+  ],
+  "draft_review": 2,
+  "approved_evidence_in_authenticated_fixture": {
+    "schema": "psl.reviewed-finance-evidence/v1",
+    "classification": "reviewed_finance_draft_not_accounting_authority",
+    "draft": 2,
+    "version": 2,
+    "body": "Human Finance evidence note: TX-001 maps to QB-101 in supplied incumbent read evidence. No posting authority.",
+    "sha256": "99d2317cd5967a466c54c823c47f3eed13c34102638f7ea71e5b4ac31183985d",
+    "source": {
+      "owner": {
+        "policy": 397,
+        "native_authority": {
+          "D05.role_principal_assignments": 395
+        }
+      },
+      "policy": 397,
+      "source": 1,
+      "result_review": 10
+    },
+    "review": 2,
+    "provider_binding_classification": "synthetic_authenticated_http",
+    "native_authenticity_verified": false,
+    "posted": false,
+    "published": false,
+    "owner_acceptance_granted": false
+  },
+  "historical_report_after_fixture": {
+    "draft": 2,
+    "version": 2,
+    "body": "Human Finance evidence note: TX-001 maps to QB-101 in supplied incumbent read evidence. No posting authority.",
+    "owner": 76,
+    "sha256": "99d2317cd5967a466c54c823c47f3eed13c34102638f7ea71e5b4ac31183985d",
+    "lineage": {
+      "owner": {
+        "policy": 397,
+        "native_authority": {
+          "D05.role_principal_assignments": 395
+        }
+      },
+      "policy": 397,
+      "source": 1,
+      "result_review": 10
+    },
+    "review": 2,
+    "review_history": [
+      {
+        "id": 2,
+        "verdict": "approve",
+        "actor": 77,
+        "recorded_at": "2026-10-23T19:00:12.052367+00:00"
+      }
+    ],
+    "currently_approved": false,
+    "human_revision": true,
+    "parent": 1,
+    "provider_binding_classification": "synthetic_authenticated_http",
+    "real_model_evaluated": false,
+    "sent": false,
+    "ledger_posted": false,
+    "financial_effect": false
+  },
+  "provider_input": [
+    {
+      "model_id": "fixture-model",
+      "purpose": "finance-evidence-draft",
+      "process_id": "F01",
+      "data_scope": "reviewed_exact_quotes_v1",
+      "input": [
+        "TX-001",
+        "QB-101",
+        "sync-1"
+      ],
+      "tools": []
+    }
+  ],
+  "private_provider_requests": 1,
+  "native_projection_current": true,
+  "current_approval_after_runtime_fixture_removed": false,
+  "provider_binding_classification": "synthetic_authenticated_http",
+  "native_quickbooks_verified": false,
+  "real_model_evaluated": false,
+  "posting_performed": false,
+  "owner_acceptance_granted": false,
+  "old_histories_reauthorised": false
+}

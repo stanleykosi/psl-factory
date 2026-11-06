@@ -1,0 +1,340 @@
+test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation (tests.test_cold_recovery.ColdRecoveryTests.test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation) ... FAIL
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... FAIL
+test_fresh_ui_policy_scope_agent_and_sql_guards_without_source (tests.test_cold_recovery.ColdRecoveryTests.test_fresh_ui_policy_scope_agent_and_sql_guards_without_source) ... FAIL
+test_revoked_expired_forged_and_cross_purpose_authority (tests.test_cold_recovery.ColdRecoveryTests.test_revoked_expired_forged_and_cross_purpose_authority) ... ok
+
+======================================================================
+FAIL: test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation (tests.test_cold_recovery.ColdRecoveryTests.test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 82, in test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation
+    v, prepared = self.scenario('crash')
+                  ~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 73, in scenario
+    return v, self.child(stage, v, self.control)
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 25, in child
+    raise AssertionError(f'{stage} failed\n{result.stdout}\n{result.stderr}')
+AssertionError: crash failed
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.AmbiguousFunction: operator is not unique: unknown - unknown
+LINE 2: ...ctor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authoriz...
+                                                             ^
+HINT:  Could not choose a best candidate operator. You might need to add explicit type casts.
+QUERY:  NOT EXISTS(SELECT 1 FROM workflows_coldrecoveryreview r WHERE r.id::text=NEW.intent->'pin'->>'authorization_review' AND
+    r.plan_id=p.id AND r.phase='authorize' AND r.decision='approve' AND r.actor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authorization_review'))
+CONTEXT:  PL/pgSQL function psl_cold_recovery_guard() line 50 at IF
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 234, in <module>
+    result=globals()[stage]()
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 167, in crash
+    j=d.reserve(a,c.pk,p.pk)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\cold_recovery.py", line 148, in reserve
+    return Job.objects.create(plan=p, operation_key=key, actor=actor, intent=intent)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1873, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.ProgrammingError: operator is not unique: unknown - unknown
+LINE 2: ...ctor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authoriz...
+                                                             ^
+HINT:  Could not choose a best candidate operator. You might need to add explicit type casts.
+QUERY:  NOT EXISTS(SELECT 1 FROM workflows_coldrecoveryreview r WHERE r.id::text=NEW.intent->'pin'->>'authorization_review' AND
+    r.plan_id=p.id AND r.phase='authorize' AND r.decision='approve' AND r.actor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authorization_review'))
+CONTEXT:  PL/pgSQL function psl_cold_recovery_guard() line 50 at IF
+
+
+======================================================================
+FAIL: test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 90, in test_duplicate_reservations_workers_and_independent_recovered_review
+    _, result = self.scenario('concurrency')
+                ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 73, in scenario
+    return v, self.child(stage, v, self.control)
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 25, in child
+    raise AssertionError(f'{stage} failed\n{result.stdout}\n{result.stderr}')
+AssertionError: concurrency failed
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.AmbiguousFunction: operator is not unique: unknown - unknown
+LINE 2: ...ctor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authoriz...
+                                                             ^
+HINT:  Could not choose a best candidate operator. You might need to add explicit type casts.
+QUERY:  NOT EXISTS(SELECT 1 FROM workflows_coldrecoveryreview r WHERE r.id::text=NEW.intent->'pin'->>'authorization_review' AND
+    r.plan_id=p.id AND r.phase='authorize' AND r.decision='approve' AND r.actor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authorization_review'))
+CONTEXT:  PL/pgSQL function psl_cold_recovery_guard() line 50 at IF
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 234, in <module>
+    result=globals()[stage]()
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 207, in concurrency
+    with ThreadPoolExecutor(max_workers=2) as pool:ids=list(pool.map(reserve,range(2)))
+                                                       ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ~~~~~~~~~~^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 205, in reserve
+    try:return d.reserve(u,c.pk,p.pk).pk
+               ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\cold_recovery.py", line 148, in reserve
+    return Job.objects.create(plan=p, operation_key=key, actor=actor, intent=intent)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1873, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.ProgrammingError: operator is not unique: unknown - unknown
+LINE 2: ...ctor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authoriz...
+                                                             ^
+HINT:  Could not choose a best candidate operator. You might need to add explicit type casts.
+QUERY:  NOT EXISTS(SELECT 1 FROM workflows_coldrecoveryreview r WHERE r.id::text=NEW.intent->'pin'->>'authorization_review' AND
+    r.plan_id=p.id AND r.phase='authorize' AND r.decision='approve' AND r.actor_id<>NEW.actor_id AND r.pin=(NEW.intent->'pin'-'authorization_review'))
+CONTEXT:  PL/pgSQL function psl_cold_recovery_guard() line 50 at IF
+
+
+======================================================================
+FAIL: test_fresh_ui_policy_scope_agent_and_sql_guards_without_source (tests.test_cold_recovery.ColdRecoveryTests.test_fresh_ui_policy_scope_agent_and_sql_guards_without_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 76, in test_fresh_ui_policy_scope_agent_and_sql_guards_without_source
+    _, result = self.scenario('controls')
+                ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 73, in scenario
+    return v, self.child(stage, v, self.control)
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 25, in child
+    raise AssertionError(f'{stage} failed\n{result.stdout}\n{result.stderr}')
+AssertionError: controls failed
+
+Internal Server Error: /cases/8c96d079-570d-4fe1-88ac-d9070dbbb580/cold-recovery/
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\cold_recovery_views.py", line 79, in workbench
+    return render(request, 'workflows/cold_recovery.html', {'case':c, 'commands':forms_list,
+        'policy_status':resolve(COMPONENT,c).status, 'value_schema':json.dumps(VALUE,indent=2),
+        'plans':d.Plan.objects.filter(case=c).order_by('-pk')[:20], 'jobs':d.Job.objects.filter(plan__case=c).order_by('-pk')[:30]}, headers={'Cache-Control':'no-store'})
+TypeError: render() got an unexpected keyword argument 'headers'
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 234, in <module>
+    result=globals()[stage]()
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 115, in controls
+    response=client.get(url);check.assertEqual(response.status_code,200);check.assertContains(response,'MISSING');check.assertEqual(response['Cache-Control'],'no-store')
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1127, in get
+    response = super().get(
+        path,
+    ...<4 lines>...
+        **extra,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 475, in get
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<4 lines>...
+        **extra,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\cold_recovery_views.py", line 79, in workbench
+    return render(request, 'workflows/cold_recovery.html', {'case':c, 'commands':forms_list,
+        'policy_status':resolve(COMPONENT,c).status, 'value_schema':json.dumps(VALUE,indent=2),
+        'plans':d.Plan.objects.filter(case=c).order_by('-pk')[:20], 'jobs':d.Job.objects.filter(plan__case=c).order_by('-pk')[:30]}, headers={'Cache-Control':'no-store'})
+TypeError: render() got an unexpected keyword argument 'headers'
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 122.787s
+
+FAILED (failures=3)
+Found 4 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

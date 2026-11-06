@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "classification": "Bounded recorded native Finance authority comparison/replan and current-rule UI; wider routing incomplete",
+  "parent_checkpoint": 522,
+  "source_run": 529,
+  "browser_source_run": 528,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "passing_runs": {
+    "524": {
+      "tests": 4,
+      "unittest_seconds": 71.438,
+      "process_seconds": 77.094
+    },
+    "526": {
+      "tests": 11,
+      "unittest_seconds": 167.012,
+      "process_seconds": 173.443
+    },
+    "528": {
+      "tests": 16,
+      "unittest_seconds": 151.606,
+      "process_seconds": 156.511
+    },
+    "529": {
+      "tests": 79,
+      "unittest_seconds": 645.587,
+      "process_seconds": 653.11
+    }
+  },
+  "retained_failed_runs": [
+    523,
+    525,
+    527
+  ],
+  "tested_scope": [
+    "Relevant rule and role configuration versions across claim/decision/UI",
+    "Native work/case claim locking",
+    "Type-sensitive recorded authority comparison",
+    "Missing/malformed historical metadata held without backfill",
+    "Current-only native review observation and stale-task replan",
+    "Original receipt observation before fresh delivery review",
+    "Unrelated D05 namespaces preserve exact valid native approval",
+    "Only configured Finance verdicts shown; native submission still enforces authority"
+  ],
+  "native_finance_policy_adapters_migration_bytes_unchanged": true,
+  "migrations_added": [],
+  "dependencies_added": [],
+  "main_rowsets_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "retained_finance_rowsets_unchanged": 329,
+  "prior_recovery_refresh_rowsets_unchanged": 329,
+  "prior_recovery_selected_facts_retained_since": 520,
+  "historical_recorded_authority_compatible_without_backfill": true,
+  "preview_source_run": 529,
+  "refreshed_preview_count": 14,
+  "separate_new_preview": {
+    "port": 8016,
+    "source_run": 528,
+    "same_application_bytes": true
+  },
+  "browser": "Separate native synthetic mock browser proof; one fixture human has multiple roles, not independent UAT or real-provider validation",
+  "operational_owner_values_added": false,
+  "policy_slots": "Existing typed D05 Finance rule, role and responsibility interfaces; actual owner values remain deferred",
+  "remaining_ui_gap": "Stale-task controls are safe, but primary header still says Awaiting Finance until agent replans; explain changed review rules more directly in a following UI increment",
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "active_factory_restore": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-03-factory-review-authority-acceptance.json",
+    "docs/test-evidence/2026-11-03-factory-review-authority-baseline.json",
+    "docs/test-evidence/2026-11-03-factory-review-authority-static529.json",
+    "docs/test-evidence/2026-11-03-factory-review-authority-browser528.json",
+    "docs/test-evidence/2026-11-03-factory-review-authority-retained529.json",
+    "docs/test-evidence/2026-11-03-factory-review-authority-recovery529-after.json",
+    "docs/test-evidence/2026-11-02-factory-routing-main-after-authority-ui529.json",
+    "docs/test-evidence/2026-11-03-factory-review-authority-previews529-after.json"
+  ]
+}

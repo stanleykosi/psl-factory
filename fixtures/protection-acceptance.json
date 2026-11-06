@@ -1,0 +1,24 @@
+{
+  "classification": "Unset independent owner inputs; no actual appointments or operational acceptance",
+  "schema_ref": "schema:psl/protection-acceptance/v1",
+  "rules": {
+    "allowed_levels": [
+      "definition",
+      "synthetic_implementation"
+    ],
+    "independent_tester": true,
+    "independent_acceptor": true,
+    "private_protection": {
+      "inventory": [],
+      "freshness_seconds": null,
+      "receipt_requirement": null,
+      "independent_transport_acceptor": true
+    }
+  },
+  "owner_schema_ref": "schema:psl/protection-owner/v1",
+  "authority_rules": {
+    "human_only": true,
+    "assignments": [],
+    "allow_preparer_review": false
+  }
+}

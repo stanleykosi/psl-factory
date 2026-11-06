@@ -1,0 +1,8 @@
+{
+  "start_utc": "2026-11-02T18:25:56.5815371Z",
+  "migration_log": "docs/test-evidence/2026-11-02-factory-terminal-fresh-install503.txt",
+  "reason": "Stop fixture parent before ORM setup because provisioning connect cached default main connection settings; finish fresh-database migration separately and re-exec fixture with database selected before Django imports",
+  "path": "C:\\Python313\\python.exe",
+  "listening_sockets": 0,
+  "pid": 24764
+}

@@ -1,0 +1,35 @@
+{
+  "classification": "Existing product definitions and plans rewritten; no new runtime implementation",
+  "files": [
+    "AGENTS.md",
+    "BUILD-BACKLOG.json",
+    "BUILD-DECISIONS.md",
+    "BUILD-LOG.md",
+    "BUILD-STATE.md",
+    "BUILD-TESTS.md",
+    "HANDOFF.md",
+    "IMPLEMENTATION-PLAN.md",
+    "QA.md",
+    "README.md",
+    "START-HERE.md",
+    "START-PROMPT.md",
+    "contracts/implementation-coverage.json",
+    "docs/runbooks/development.md",
+    "guide/01-BASELINE-AND-PRECEDENCE.md",
+    "guide/02-ARCHITECTURE.md",
+    "guide/03-FIRST-MILESTONE.md",
+    "guide/05-PHASES.md",
+    "guide/06-PERMISSIONS-AND-AI.md",
+    "guide/07-DATA-AND-CONTRACTS.md",
+    "guide/09-QUALITY-GATES.md",
+    "guide/10-POLICY-CONFIGURATION.md",
+    "guide/11-FULL-PRODUCT.md",
+    "guide/12-ARCHITECTURE-TOPOLOGY.md",
+    "guide/PROCESS-INDEX.md"
+  ],
+  "planned_factory_items": [
+    "BUILD-FACTORY-FLOW",
+    "BUILD-FACTORY-CONSOLE",
+    "BUILD-FACTORY-CONNECTED-PROOF"
+  ]
+}

@@ -1,0 +1,44 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0050_factory_accounting... OK
+  Applying documents.0018_factory_accounting_scope...test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt (tests.test_factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt) ... ERROR
+
+======================================================================
+ERROR: test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt (tests.test_factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_accounting.py", line 22, in test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt
+    factory.run_until_wait(work.pk);work.refresh_from_db()
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory.py", line 468, in run_until_wait
+    if not run_once(work_id,provider,adapter):break
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory.py", line 450, in run_once
+    run_publication_once(adapter,case_id=work.case_id,job_id=result['publication_job'])
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\delivery.py", line 132, in run_publication_once
+    adapter.deliver(job_id,fence)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\publications.py", line 22, in deliver
+    return deliver_internal(job_id,fence)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\delivery.py", line 94, in deliver_internal
+    if scope['factory_policy_id']!=p.factory_policy_id or scope['factory_source_id']!=p.factory_source_id:raise ValidationError('Factory profile or commercial source changed before publication')
+       ~~~~~^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'factory_policy_id'
+
+----------------------------------------------------------------------
+Ran 1 test in 93.914s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

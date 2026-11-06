@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone (tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone) ... ok
+test_stopped_native_head_decision_wait_does_not_own_or_reactivate_cancelled_work (tests.test_factory_closure.FactoryClosureTests.test_stopped_native_head_decision_wait_does_not_own_or_reactivate_cancelled_work) ... ok
+test_stopped_native_quality_review_remains_independent_without_false_active_owner (tests.test_factory_closure.FactoryClosureTests.test_stopped_native_quality_review_remains_independent_without_false_active_owner) ... ok
+test_cancellation_while_model_is_running_closes_without_a_financial_effect (tests.test_factory_controls.FactoryControlTests.test_cancellation_while_model_is_running_closes_without_a_financial_effect) ... ok
+test_stop_after_exact_invoice_delivery_keeps_finance_followup_distinct_from_verification (tests.test_factory_controls.FactoryControlTests.test_stop_after_exact_invoice_delivery_keeps_finance_followup_distinct_from_verification) ... ok
+test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery (tests.test_factory_controls.FactoryControlTests.test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 119.933s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

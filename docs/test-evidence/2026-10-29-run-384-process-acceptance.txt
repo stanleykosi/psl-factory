@@ -1,0 +1,40 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_cash_storage_limit_holds_verification_before_effect_without_losing_report (tests.test_cash_guards.CashGuardTests.test_cash_storage_limit_holds_verification_before_effect_without_losing_report) ... ERROR
+
+======================================================================
+ERROR: test_cash_storage_limit_holds_verification_before_effect_without_losing_report (tests.test_cash_guards.CashGuardTests.test_cash_storage_limit_holds_verification_before_effect_without_losing_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cash_guards.py", line 122, in test_cash_storage_limit_holds_verification_before_effect_without_losing_report
+    r,_=receipt(self.a,self.c,amount='1234567890123456789012345.00',ref='oversized-known-cash',verify=False)
+        ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\settlement_helpers.py", line 37, in receipt
+    report=evidence(a,c,'cash_report',json.dumps(value));r=cash.report(a,c.pk,report.pk,rev(c))
+                                                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\cash.py", line 58, in report
+    case=lock_case(actor,case_id,'finance.cash.record',expected);e=subject(case,evidence_id,'cash_report');value=parse(e.body)
+                                                                                                                 ~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\cash_statements.py", line 18, in parse
+    validate(SCHEMA,value)
+    ~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'1234567890123456789012345.00' is not valid under any of the given schemas"]
+
+----------------------------------------------------------------------
+Ran 1 test in 2.968s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

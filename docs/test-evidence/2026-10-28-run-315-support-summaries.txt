@@ -1,0 +1,26 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_b14_n01_connected_specialist_flow_ownership_response_and_report (tests.test_support_flow.SupportFlowTests.test_b14_n01_connected_specialist_flow_ownership_response_and_report) ... ok
+test_agent_ui_and_reviewed_report_are_scoped_no_store_and_typed (tests.test_support_flow.SupportFlowTests.test_agent_ui_and_reviewed_report_are_scoped_no_store_and_typed) ... ok
+test_actual_merge_reopen_and_unknown_clock_are_explicit (tests.test_complaint_summaries.ComplaintSummaryTests.test_actual_merge_reopen_and_unknown_clock_are_explicit) ... ok
+test_capture_before_criteria_agent_draft_reviewed_projection_ui_privacy_and_revocation (tests.test_complaint_summaries.ComplaintSummaryTests.test_capture_before_criteria_agent_draft_reviewed_projection_ui_privacy_and_revocation) ... ok
+test_event_membership_and_current_audience_successor (tests.test_complaint_summaries.ComplaintSummaryTests.test_event_membership_and_current_audience_successor) ... ok
+test_period_boundaries_missing_sources_metrics_and_source_successor_hold (tests.test_complaint_summaries.ComplaintSummaryTests.test_period_boundaries_missing_sources_metrics_and_source_successor_hold) ... ok
+test_scope_configuration_independence_budget_and_cross_proof_guards (tests.test_complaint_summaries.ComplaintSummaryTests.test_scope_configuration_independence_budget_and_cross_proof_guards) ... ok
+test_two_connections_converge_on_one_draft (tests.test_complaint_summaries.ComplaintSummaryTests.test_two_connections_converge_on_one_draft) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 201.241s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

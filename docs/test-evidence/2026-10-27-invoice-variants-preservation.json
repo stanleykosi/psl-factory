@@ -1,0 +1,23 @@
+{
+  "applied": true,
+  "preserved_main_rowsets": 299,
+  "preserved_migration_files": 163,
+  "frozen_sources": 41,
+  "interfaces": 113,
+  "processes_partial": 122,
+  "families": 13,
+  "reviewed_trigger_successors": [
+    [
+      "triggers",
+      "workflows_nativefinancemapping/native_finance_mapping_guard"
+    ],
+    [
+      "triggers",
+      "workflows_nativefinancepacket/native_finance_packet_guard"
+    ]
+  ],
+  "functions": 64,
+  "triggers": 325,
+  "constraints": 1593,
+  "actual_principals_or_policy_installed": false
+}

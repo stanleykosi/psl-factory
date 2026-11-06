@@ -1,0 +1,31 @@
+{
+  "browser": "2",
+  "tab": "1",
+  "viewer": "studio-demo",
+  "case": "6beec8aa-76d2-4066-a21d-2de65545b4a8",
+  "observed": [
+    "All three channel/clock/correction policies ACTIVE",
+    "Source claim2 v1 and claim3 v2 single lineage",
+    "Old receipt historical/noncurrent; v2 independently reviewed",
+    "Original attestation2/event21 and historical first_response_at retained",
+    "Reviewed correction1/review1 current projection explicitly separate",
+    "supportchannel checks2/3 confirmed in shared operations, internal response job6 pending",
+    "Native local health/receipt assessment15 current and independently reviewed; no operational acceptance",
+    "Read-only viewer/no mutation forms"
+  ],
+  "missing_case": "8196d698-16b3-4e5b-ae28-cee8da1fc354",
+  "missing_observed": [
+    "Receipt/clock policies ACTIVE and correction MISSING",
+    "Private evidence visible/no correction history"
+  ],
+  "guidance_without_agent_operations": "403 Forbidden",
+  "screenshots": [
+    "2026-10-23-support-clock-successors-projection.png",
+    "2026-10-23-support-clock-successors-operations.png",
+    "2026-10-23-support-clock-successors-readiness.png",
+    "2026-10-23-support-clock-successors-policy-missing.png"
+  ],
+  "tab_marked_handoff": true,
+  "native_vendor_customer_channel_tested": false,
+  "real_model_evaluated": false
+}

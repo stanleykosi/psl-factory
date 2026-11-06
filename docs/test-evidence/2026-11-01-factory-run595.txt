@@ -1,0 +1,37 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_requested_information_can_be_supplied_with_planning_withdrawn (tests.test_factory_human_independence.IndependentInformationTests.test_requested_information_can_be_supplied_with_planning_withdrawn) ... ok
+test_changed_native_routing_still_invalidates_the_old_subject (tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_changed_native_routing_still_invalidates_the_old_subject) ... ok
+test_current_finance_permission_is_still_required (tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_current_finance_permission_is_still_required) ... ERROR
+
+======================================================================
+ERROR: test_current_finance_permission_is_still_required (tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_current_finance_permission_is_still_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_human_independence.py", line 42, in test_current_finance_permission_is_still_required
+    with self.assertRaises(PermissionDenied):factory.claim_task(f['actor'],self.task.pk,self.task.revision)
+                                             ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory.py", line 550, in claim_task
+    assert_review_task_current(work,t)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory.py", line 81, in assert_review_task_current
+    if not task_authority_current(work,task):raise ValidationError('STALE_AUTHORITY: Finance review routing changed; prepare a current decision task')
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['STALE_AUTHORITY: Finance review routing changed; prepare a current decision task']
+
+----------------------------------------------------------------------
+Ran 3 tests in 16.671s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

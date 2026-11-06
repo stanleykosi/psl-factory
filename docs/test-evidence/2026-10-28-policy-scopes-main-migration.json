@@ -1,0 +1,11 @@
+{
+  "returncode": 0,
+  "argv": [
+    "manage.py",
+    "migrate",
+    "policy",
+    "--noinput"
+  ],
+  "database": "psl:55432",
+  "owner_or_business_data_installation": false
+}

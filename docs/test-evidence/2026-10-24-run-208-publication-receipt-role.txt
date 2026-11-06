@@ -1,0 +1,11 @@
+Found 1 test(s).
+Using existing test database for alias 'default'...
+
+System check identified no issues (0 silenced).
+.
+----------------------------------------------------------------------
+Ran 1 test in 57.030s
+
+OK
+Preserving test database for alias 'default'...
+

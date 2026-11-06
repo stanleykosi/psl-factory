@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% block content %}
+<div class="page-heading"><div><h1>Review the project instruction</h1><p>{{ work.request.reference }}</p></div><a href="{% url 'factory_detail' work.pk %}">Back to work</a></div>
+<section class="card"><h2>Current source responsibility</h2><p>The earlier instruction's author no longer has the required project authority. Review the same project and record your fresh instruction with supporting evidence.</p><p>Earlier evidence, decisions and spent allowance remain in the history. Worker authority, release decisions, Finance controls and project closure remain separate.</p>{% if packet %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record fresh project instruction</button></form>{% else %}<p role="status">{{ finding }}</p>{% endif %}</section>
+{% endblock %}

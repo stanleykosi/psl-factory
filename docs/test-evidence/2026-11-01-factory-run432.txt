@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0043_factory_hypercare...test_actual_release_ui_remains_available_before_execution_and_stability_configuration (tests.test_factory_hypercare.FactoryHypercareTests.test_actual_release_ui_remains_available_before_execution_and_stability_configuration) ... ok
+test_agent_waits_for_actual_release_then_assesses_and_verifies_qualified_observations (tests.test_factory_hypercare.FactoryHypercareTests.test_agent_waits_for_actual_release_then_assesses_and_verifies_qualified_observations) ... ok
+test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled (tests.test_factory_hypercare.FactoryHypercareTests.test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled) ... ok
+test_missing_business_criterion_holds_only_assessment_and_resumes_after_reviewed_configuration (tests.test_factory_hypercare.FactoryHypercareTests.test_missing_business_criterion_holds_only_assessment_and_resumes_after_reviewed_configuration) ... ok
+test_new_form_keeps_one_candidate_allowance_and_unregistered_approval_is_rejected (tests.test_factory_hypercare.FactoryHypercareTests.test_new_form_keeps_one_candidate_allowance_and_unregistered_approval_is_rejected) ... ok
+test_unknown_and_negative_observations_are_recorded_without_false_qualification (tests.test_factory_hypercare.FactoryHypercareTests.test_unknown_and_negative_observations_are_recorded_without_false_qualification) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 227.282s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,22 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_authority_expiry_and_cancelled_lookup_keep_original_operation (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_actual_authority_expiry_and_cancelled_lookup_keep_original_operation) ... ok
+test_missing_receipt_redirect_withdrawal_and_independence_never_resend (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_missing_receipt_redirect_withdrawal_and_independence_never_resend) ... ok
+test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request) ... ok
+test_unknown_policy_ui_and_validator_do_not_install_authority (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_unknown_policy_ui_and_validator_do_not_install_authority) ... ok
+test_same_original_work_revision_has_one_review_and_two_distinct_backend_sessions (tests.test_factory_receipt_recovery_concurrency.ReceiptRecoveryContentionTests.test_same_original_work_revision_has_one_review_and_two_distinct_backend_sessions) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 486.071s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

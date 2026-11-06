@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}<h1>Recovery review</h1>
+<p>{{ case|workspace_name }} · <a href="{% url 'cold_recovery' case.id %}">Isolated recovery</a> · <a href="{% url 'domain_contracts' case.id %}">Receipt and destination contracts</a> · <a href="{% url 'policy' case.id %}">Versioned configuration lifecycle</a></p>
+<p>Inventory covers every registered leased job family and every explicitly authorised archived case. Only hashes and state metadata are projected. Archived receipts are historical; a missing current receipt means UNKNOWN.</p>
+<p>Fresh independent humans choose receipt-confirmed, retained quarantine, replacement-required or unresolved dispositions. A replacement needs its own team-managed approvals. No debt waiver, archived queue drain or operational activation occurs here.</p>
+<p>Independent criteria: <strong>{{ policy_status }}</strong>. Capture and investigation precede dependent criteria.</p>
+<details><summary>Typed reconstitution criteria</summary><pre>{{ schema }}</pre></details>
+{% for action,label,form in commands %}<section><h2>{{ label }}</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button>{{ label }}</button></form></section>{% endfor %}
+<section class="workflow-panel"><h2>Inventories</h2>{% for p in plans %}<section><h3><a href="{% url 'reconstitution_report' case.id p.id %}">{{ p }}</a></h3>
+<p>Destination reference: {{ p.payload.destination_ref }}. Activation remains disabled.</p>
+<table><thead><tr><th>Family</th><th>Job</th><th>Archived state</th><th>Historical receipt recorded</th><th>Exact effect key</th></tr></thead><tbody>{% for e in p.payload.inventory.effects %}<tr><td>{{ e.family }}</td><td>{{ e.job_id }}</td><td>{{ e.status }}</td><td>{{ e.historical_receipt_present }}</td><td>{{ e.effect_key }}</td></tr>{% empty %}<tr><td colspan="5">No archived leased jobs. Independent review is still required.</td></tr>{% endfor %}</tbody></table></section>{% empty %}<p>No captured inventories.</p>{% endfor %}
+</section><section class="workflow-panel"><h2>Disposition history</h2><ul>{% for d in dispositions %}<li>{{ d.plan }} · {{ d.effect_key }} · v{{ d.version }} · {{ d.verdict }}</li>{% empty %}<li>No human dispositions.</li>{% endfor %}</ul>
+</section><section class="workflow-panel"><h2>Independent review history</h2><ul>{% for r in reviews %}<li>{{ r.plan }} · {{ r.verdict }} · {{ r.created_at }}</li>{% empty %}<li>No independent packet reviews.</li>{% endfor %}</ul>
+</section><section class="workflow-panel"><h2>Durable evidence/publication jobs</h2><ul>{% for j in jobs %}<li>#{{ j.pk }} · {{ j.kind }} · {{ j.status }} · attempts {{ j.attempts }}</li>{% empty %}<li>No jobs.</li>{% endfor %}</ul></section>{% endblock %}

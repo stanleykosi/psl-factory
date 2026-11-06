@@ -1,0 +1,102 @@
+{
+  "fixture_scope": "synthetic_test",
+  "notice": "Synthetic proposed method and source contract only; no actual PSL depreciation policy, asset register, native oracle or appointment is supplied.",
+  "source": {
+    "entity": "synthetic-company",
+    "provider": "synthetic-register",
+    "max_age_seconds": 86400,
+    "currency": "NGN",
+    "unit": "major_currency",
+    "from_period": "2026-09",
+    "to_period": "2026-12",
+    "opening_mode": "reviewed_external",
+    "external_opening_period": null,
+    "ledger_comparison": "required",
+    "ledger_line": "asset",
+    "ledger_coefficient": "1",
+    "tolerance": "0",
+    "validation_requirement": "finance_reviewed_local",
+    "validation_package_id": null
+  },
+  "calculation": {
+    "rules": [
+      {
+        "category": "equipment",
+        "method": "straight_line_explicit_fraction_v1",
+        "method_evidence_id": 1,
+        "cost_basis": "closing",
+        "capitalisation_threshold": "50",
+        "below_threshold": "hold",
+        "fraction_basis": "explicit_supplied_fraction",
+        "remaining_value": "cap_at_residual",
+        "decimal_places": 2,
+        "rounding": "half_even",
+        "oracles": [
+          {
+            "cost": "1000",
+            "accumulated": "400",
+            "residual": "100",
+            "life": "9",
+            "fraction": "1",
+            "expected_charge": "100.00",
+            "expected_finding": null
+          },
+          {
+            "cost": "1000",
+            "accumulated": "400",
+            "residual": "100",
+            "life": null,
+            "fraction": "1",
+            "expected_charge": null,
+            "expected_finding": "asset_rule_inputs_unknown"
+          }
+        ]
+      }
+    ]
+  },
+  "authority": {
+    "independent_reviewer": true,
+    "assignments": [
+      {
+        "user_id": 1,
+        "role": "Finance",
+        "purposes": [
+          "register",
+          "basis",
+          "schedule"
+        ]
+      }
+    ]
+  },
+  "body": {
+    "entity": "synthetic-company",
+    "provider": "synthetic-register",
+    "currency": "NGN",
+    "unit": "major_currency",
+    "period_start": "2026-10-01",
+    "period_end": "2026-10-20",
+    "label_as_of": "2026-10-20",
+    "extracted_at": "REPLACE_WITH_ACTUAL_AWARE_EXTRACTION",
+    "completeness": "complete",
+    "opening_evidence_id": 1,
+    "assets": [
+      {
+        "asset_id": "A1",
+        "category": "equipment",
+        "capitalisation": "capitalise",
+        "classification_evidence_id": 1,
+        "opening_cost": "1000",
+        "opening_accumulated": "400",
+        "residual": "100",
+        "life": "9",
+        "fraction": "1"
+      }
+    ],
+    "events": [],
+    "closing_controls": {
+      "cost": "1000",
+      "accumulated": "500",
+      "book_value": "500"
+    }
+  }
+}

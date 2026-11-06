@@ -1,0 +1,33 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_configuration_and_context_do_not_bypass_current_permission_or_csrf (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_configuration_and_context_do_not_bypass_current_permission_or_csrf) ... ok
+test_historical_nomination_does_not_disclose_account_after_it_leaves_workspace (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_historical_nomination_does_not_disclose_account_after_it_leaves_workspace) ... ok
+test_http_draft_validate_activate_preserves_work_and_filters_with_named_versions (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_http_draft_validate_activate_preserves_work_and_filters_with_named_versions) ... ok
+test_return_destination_is_native_and_foreign_urls_are_ignored (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_return_destination_is_native_and_foreign_urls_are_ignored) ... ok
+test_revoked_nominee_access_stays_visible_without_granting_invoice_authority (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_revoked_nominee_access_stays_visible_without_granting_invoice_authority) ... ok
+test_unknown_null_draft_is_readable_and_standalone_configuration_remains_available (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_unknown_null_draft_is_readable_and_standalone_configuration_remains_available) ... ok
+test_visible_foreign_work_and_tampered_context_cannot_select_another_workspace (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_visible_foreign_work_and_tampered_context_cannot_select_another_workspace) ... ok
+test_work_detail_link_preserves_selected_decision_search_and_shows_named_owners (tests.test_factory_responsibility_review.ResponsibilityReviewTests.test_work_detail_link_preserves_selected_decision_search_and_shows_named_owners) ... ok
+test_malformed_workspace_identity_is_a_form_error (tests.test_factory_console.FactoryConsoleTests.test_malformed_workspace_identity_is_a_form_error) ... ok
+test_profile_adoption_and_claim_release_use_current_backend_authority (tests.test_factory_console.FactoryConsoleTests.test_profile_adoption_and_claim_release_use_current_backend_authority) ... ok
+test_profile_screen_uses_native_lifecycle_and_caps_not_default_values (tests.test_factory_console.FactoryConsoleTests.test_profile_screen_uses_native_lifecycle_and_caps_not_default_values) ... ok
+test_queue_case_agent_information_review_receipts_and_return_context (tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context) ... ok
+test_source_and_work_grants_are_rechecked_on_get_and_direct_posts (tests.test_factory_console.FactoryConsoleTests.test_source_and_work_grants_are_rechecked_on_get_and_direct_posts) ... ok
+test_stale_command_preserves_work_and_reports_refresh (tests.test_factory_console.FactoryConsoleTests.test_stale_command_preserves_work_and_reports_refresh) ... ok
+test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition (tests.test_factory_console.FactoryConsoleTests.test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition) ... ok
+test_policy_ui_and_validator_reject_cross_scope_bool_float_and_unimplemented_methods (tests.test_factory_routing.FactoryRoutingTests.test_policy_ui_and_validator_reject_cross_scope_bool_float_and_unimplemented_methods) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 157.845s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 16 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

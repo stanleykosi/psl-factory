@@ -1,0 +1,6 @@
+{
+  "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+  "returncode": 0,
+  "stdout": "Operations to perform:\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\nRunning migrations:\n  Applying workflows.0054_restore_go_live_reaffirmation_guard... OK\n",
+  "stderr": ""
+}

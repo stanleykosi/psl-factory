@@ -1,0 +1,26 @@
+{
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "workflows",
+    "0022_application_recovery_guards",
+    "--noinput"
+  ],
+  "verified_plan": [
+    [
+      "workflows",
+      "0021_application_recovery",
+      false
+    ],
+    [
+      "workflows",
+      "0022_application_recovery_guards",
+      false
+    ]
+  ],
+  "started_at": "2026-10-27T10:49:32.406809+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 10.42
+}

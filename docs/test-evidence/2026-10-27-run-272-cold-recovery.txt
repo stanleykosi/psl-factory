@@ -1,0 +1,13 @@
+test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation (tests.test_cold_recovery.ColdRecoveryTests.test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+test_fresh_ui_policy_scope_agent_and_sql_guards_without_source (tests.test_cold_recovery.ColdRecoveryTests.test_fresh_ui_policy_scope_agent_and_sql_guards_without_source) ... ok
+test_preexisting_people_cannot_bootstrap_fresh_control_identity (tests.test_cold_recovery.ColdRecoveryTests.test_preexisting_people_cannot_bootstrap_fresh_control_identity) ... ok
+test_revoked_expired_forged_and_cross_purpose_authority (tests.test_cold_recovery.ColdRecoveryTests.test_revoked_expired_forged_and_cross_purpose_authority) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 196.104s
+
+OK
+Found 5 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

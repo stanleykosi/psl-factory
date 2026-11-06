@@ -1,0 +1,18 @@
+{
+  "run": 277,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_reconstitution.ReconstitutionTests.test_01_ui_missing_policy_scope_agent_and_inventory",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-277-reconstitution.txt",
+  "started_at": "2026-10-27T13:59:25.945099+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 216.89
+}

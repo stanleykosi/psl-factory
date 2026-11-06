@@ -1,0 +1,33 @@
+{
+  "global_workers_started": false,
+  "previews": [
+    {
+      "port": 8000,
+      "executable": "C:\\Python313\\python.exe",
+      "pid": 4592,
+      "start_utc": "2026-11-01T21:23:15.1149784Z"
+    },
+    {
+      "port": 8003,
+      "executable": "C:\\Python313\\python.exe",
+      "pid": 18772,
+      "start_utc": "2026-11-01T21:23:16.1873510Z"
+    },
+    {
+      "port": 8004,
+      "executable": "C:\\Python313\\python.exe",
+      "pid": 1968,
+      "start_utc": "2026-11-01T21:07:35.5546605Z"
+    }
+  ],
+  "sessions": {
+    "main": 69506,
+    "commercial": 35045,
+    "planning": 11449
+  },
+  "classification": "Tested commercial source421/422 previews; legacy8002 unchanged",
+  "main_environment": {
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1",
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo"
+  }
+}

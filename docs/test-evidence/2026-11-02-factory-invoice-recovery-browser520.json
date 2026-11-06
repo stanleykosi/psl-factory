@@ -1,0 +1,53 @@
+{
+  "source_run": 520,
+  "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+  "case": "3eb4c5e4-7c70-4350-a3cf-dedd375c4026",
+  "work": 1043,
+  "actual_ui_actions": [
+    "Useful agent investigation and native invoice preparation",
+    "Human native task claim",
+    "Human exact42.00 Finance packet review",
+    "Agent mock publication accepted with lost response and delayed lookup",
+    "Human Reconcile original operation after native synthetic terms change",
+    "Agent current-source replan stops for Finance correction",
+    "Expand correction explanation",
+    "Keyboard return to exceptions/FACTORY and reopen same work"
+  ],
+  "policy_change_method": "Native synthetic fixture policy service changes42.00 to43.00; no browser policy-lifecycle claim",
+  "native": {
+    "source_run": 520,
+    "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+    "work": 1043,
+    "status": "blocked",
+    "finding": "['Issued invoice requires its native correction workflow; do not regenerate the obligation']",
+    "original_invoice": 1118,
+    "original_job": 1401,
+    "original_intent_unchanged": true,
+    "native_issue_receipts": 1,
+    "native_delivery_receipts": 0,
+    "remote_files": 1,
+    "remote_bytes_unchanged": true,
+    "replacement_invoices": 0,
+    "budget_used": 900,
+    "budget_limit": 20000,
+    "classification": "Native synthetic mock recovery; not real-provider or independent UAT evidence"
+  },
+  "screenshots": {
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-uncertain520.png": "585628a5624f171c3dbea619f80de4e806450ca72b95c5a0f12f7559fac3800e",
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-correction520.png": "b15957ea58596514a49db57e76169adde0411f004b79c380358ba3ab08cce0ec",
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-narrow520.png": "feadc781e930ebbe89d69846fc29c9fe4ee7dbe5941c30b5983de4977f7f6bc9"
+  },
+  "browser_checks": {
+    "tab": 19,
+    "narrow_viewport": 390,
+    "document_width": 375,
+    "scroll_width": 375,
+    "document_overflow": false,
+    "viewport_reset": true,
+    "keyboard_context_preserved": true,
+    "final_url": "http://127.0.0.1:8015/work/1043/?queue=exceptions&q=FACTORY"
+  },
+  "classification": "Isolated native synthetic mock evidence; one human fixture has multiple roles, not independent UAT or real-provider evaluation",
+  "previous_cohorts_reset": false,
+  "main_mutated": false
+}

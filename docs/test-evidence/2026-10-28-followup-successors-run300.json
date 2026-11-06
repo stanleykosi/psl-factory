@@ -1,0 +1,22 @@
+{
+  "run": 300,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_followup_successors",
+    "tests.test_followup_successor_recovery.FollowupSuccessorRecoveryTests",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "tests.test_finance_readback.FinanceReadbackAdapterTests",
+    "tests.test_finance_readback_advice",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-300-followup-successors.txt",
+  "started_at": "2026-10-28T10:16:56.005043+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 488.175
+}

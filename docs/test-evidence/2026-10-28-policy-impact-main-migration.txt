@@ -1,0 +1,5 @@
+Operations to perform:
+  Apply all migrations: policy
+Running migrations:
+  Applying policy.0004_impactassessment_impactreview... OK
+

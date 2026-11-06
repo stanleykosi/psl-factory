@@ -1,0 +1,7 @@
+{
+  "reason": "Correct observed derived ready label only; preserve native source successor",
+  "path": "C:\\Python313\\python.exe",
+  "listener": "  TCP    127.0.0.1:8024         0.0.0.0:0              LISTENING       11576",
+  "start_utc": "2026-11-04T18:18:53.0686967Z",
+  "id": 11576
+}

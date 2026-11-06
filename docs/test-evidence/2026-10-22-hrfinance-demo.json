@@ -1,0 +1,24 @@
+{
+  "case_id": "a58f8997-f5dc-4f52-aded-9779c73f0c33",
+  "need": 1,
+  "contract": 1,
+  "approval": 1,
+  "initial_snapshot": 1,
+  "rejected_snapshot": 2,
+  "current_snapshot": 3,
+  "correction": 3,
+  "response": 4,
+  "current_receipt": 5,
+  "basis_policies": [
+    150,
+    151
+  ],
+  "authority_policy": 148,
+  "disclosure_policy": 149,
+  "HR_principal": 4,
+  "Finance_principal": 5,
+  "agent": 37,
+  "private_rows_in_shared_evidence": false,
+  "native_source_authenticity": false,
+  "HR_source_written": false
+}

@@ -1,0 +1,118 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_agent_and_ui_are_scoped_typed_and_no_store (tests.test_ledger.LedgerTests.test_agent_and_ui_are_scoped_typed_and_no_store) ... ok
+test_append_only_postgresql_guards (tests.test_ledger.LedgerTests.test_append_only_postgresql_guards) ... ok
+test_corrected_posted_reference_retains_old_history (tests.test_ledger.LedgerTests.test_corrected_posted_reference_retains_old_history) ... ok
+test_cross_case_identity_and_evidence_are_scoped (tests.test_ledger.LedgerTests.test_cross_case_identity_and_evidence_are_scoped) ... ok
+test_f01_e01_duplicate_source_invalidates_previous_review (tests.test_ledger.LedgerTests.test_f01_e01_duplicate_source_invalidates_previous_review) ... ok
+test_f01_n01_tx001_qb101_lineage_no_second_post (tests.test_ledger.LedgerTests.test_f01_n01_tx001_qb101_lineage_no_second_post) ... ok
+test_future_and_expired_observations_rejected (tests.test_ledger.LedgerTests.test_future_and_expired_observations_rejected) ... ok
+test_inactive_cached_actor_and_rejected_decision (tests.test_ledger.LedgerTests.test_inactive_cached_actor_and_rejected_decision) ... ok
+test_mapping_and_ppe_references_are_exact_connected_records (tests.test_ledger.LedgerTests.test_mapping_and_ppe_references_are_exact_connected_records) ... ok
+test_mismatched_response_and_extra_authority_are_rejected (tests.test_ledger.LedgerTests.test_mismatched_response_and_extra_authority_are_rejected) ... ok
+test_missing_policy_holds_verification_but_source_capture_works (tests.test_ledger.LedgerTests.test_missing_policy_holds_verification_but_source_capture_works) ... ok
+test_policy_schema_and_actual_principal_validation (tests.test_ledger.LedgerTests.test_policy_schema_and_actual_principal_validation) ... ok
+test_policy_successor_invalidates_existing_decision (tests.test_ledger.LedgerTests.test_policy_successor_invalidates_existing_decision) ... ok
+test_review_is_independent_and_rechecked_on_read (tests.test_ledger.LedgerTests.test_review_is_independent_and_rechecked_on_read) ... ok
+test_same_identity_cross_case_never_grants_a_second_verified_route (tests.test_ledger.LedgerTests.test_same_identity_cross_case_never_grants_a_second_verified_route) ... ok
+test_same_target_different_source_held (tests.test_ledger.LedgerTests.test_same_target_different_source_held) ... ok
+test_strict_source_json_and_scoped_provenance (tests.test_ledger.LedgerTests.test_strict_source_json_and_scoped_provenance) ... ok
+test_target_mismatch_and_missing_version_are_held (tests.test_ledger.LedgerTests.test_target_mismatch_and_missing_version_are_held) ... ok
+test_typed_ui_capture_verify_review_and_policy_draft (tests.test_ledger.LedgerTests.test_typed_ui_capture_verify_review_and_policy_draft) ... ok
+test_uncertain_then_corrected_reference_needs_fresh_check_review (tests.test_ledger.LedgerTests.test_uncertain_then_corrected_reference_needs_fresh_check_review) ... ok
+test_unknown_notfound_multiple_are_not_retry_authority (tests.test_ledger.LedgerTests.test_unknown_notfound_multiple_are_not_retry_authority) ... ok
+test_adjustment_revision_preserves_old_and_invalidates_selected_run (tests.test_finance_analysis.FinanceAnalysisTests.test_adjustment_revision_preserves_old_and_invalidates_selected_run) ... ok
+test_basis_evidence_and_duplicates_are_validated (tests.test_finance_analysis.FinanceAnalysisTests.test_basis_evidence_and_duplicates_are_validated) ... ok
+test_connected_mapping_formula_bu_review_and_local_aggregate_delivery (tests.test_finance_analysis.FinanceAnalysisTests.test_connected_mapping_formula_bu_review_and_local_aggregate_delivery) ... ok
+test_currency_period_and_effective_mapping_conflicts_do_not_silently_convert (tests.test_finance_analysis.FinanceAnalysisTests.test_currency_period_and_effective_mapping_conflicts_do_not_silently_convert) ... ok
+test_delivered_finance_inbox_rechecks_current_finance_read (tests.test_finance_analysis.FinanceAnalysisTests.test_delivered_finance_inbox_rechecks_current_finance_read) ... ok
+test_exact_source_account_names_with_spaces_and_no_implicit_trim (tests.test_finance_analysis.FinanceAnalysisTests.test_exact_source_account_names_with_spaces_and_no_implicit_trim) ... ok
+test_exclusions_unknown_bu_and_excess_precision_are_not_dropped (tests.test_finance_analysis.FinanceAnalysisTests.test_exclusions_unknown_bu_and_excess_precision_are_not_dropped) ... ok
+test_explicit_zero_negative_and_source_sign_are_preserved (tests.test_finance_analysis.FinanceAnalysisTests.test_explicit_zero_negative_and_source_sign_are_preserved) ... ok
+test_fixed_pools_do_not_depend_on_unrelated_missing_hr_rules (tests.test_finance_analysis.FinanceAnalysisTests.test_fixed_pools_do_not_depend_on_unrelated_missing_hr_rules) ... ok
+test_formula_depth_budget_is_independent_of_configuration_order (tests.test_finance_analysis.FinanceAnalysisTests.test_formula_depth_budget_is_independent_of_configuration_order) ... ok
+test_formula_graph_cycles_and_missing_dependency_are_rejected (tests.test_finance_analysis.FinanceAnalysisTests.test_formula_graph_cycles_and_missing_dependency_are_rejected) ... ok
+test_future_actual_basis_and_duplicate_oracle_scenarios_rejected (tests.test_finance_analysis.FinanceAnalysisTests.test_future_actual_basis_and_duplicate_oracle_scenarios_rejected) ... ok
+test_invalid_overlap_double_attribution_and_rule_oracles (tests.test_finance_analysis.FinanceAnalysisTests.test_invalid_overlap_double_attribution_and_rule_oracles) ... ok
+test_later_source_or_rule_change_invalidates_queued_effect (tests.test_finance_analysis.FinanceAnalysisTests.test_later_source_or_rule_change_invalidates_queued_effect) ... ok
+test_lineage_agent_ui_and_idempotent_rebuild (tests.test_finance_analysis.FinanceAnalysisTests.test_lineage_agent_ui_and_idempotent_rebuild) ... ok
+test_malformed_typed_operation_lists_fail_validation_without_runs (tests.test_finance_analysis.FinanceAnalysisTests.test_malformed_typed_operation_lists_fail_validation_without_runs) ... ok
+test_missing_headcount_holds_only_its_pool (tests.test_finance_analysis.FinanceAnalysisTests.test_missing_headcount_holds_only_its_pool) ... ok
+test_missing_review_authority_does_not_disable_capture_or_previews (tests.test_finance_analysis.FinanceAnalysisTests.test_missing_review_authority_does_not_disable_capture_or_previews) ... ok
+test_no_default_self_review_and_real_distinct_principal (tests.test_finance_analysis.FinanceAnalysisTests.test_no_default_self_review_and_real_distinct_principal) ... ok
+test_policy_missing_invalid_expired_future_and_revoked_scope (tests.test_finance_analysis.FinanceAnalysisTests.test_policy_missing_invalid_expired_future_and_revoked_scope) ... ok
+test_postgres_immutability_of_source_run_and_import (tests.test_finance_analysis.FinanceAnalysisTests.test_postgres_immutability_of_source_run_and_import) ... ok
+test_report_publisher_role_and_domain_review_revocation_hold_delivery (tests.test_finance_analysis.FinanceAnalysisTests.test_report_publisher_role_and_domain_review_revocation_hold_delivery) ... ok
+test_reporting_adjustments_need_review_and_do_not_post (tests.test_finance_analysis.FinanceAnalysisTests.test_reporting_adjustments_need_review_and_do_not_post) ... ok
+test_rounding_residual_is_visible_conserved_and_not_waived (tests.test_finance_analysis.FinanceAnalysisTests.test_rounding_residual_is_visible_conserved_and_not_waived) ... ok
+test_scoped_action_stale_admin_and_recipient_revocation (tests.test_finance_analysis.FinanceAnalysisTests.test_scoped_action_stale_admin_and_recipient_revocation) ... ok
+test_source_convention_revision_requires_fresh_source_acceptance (tests.test_finance_analysis.FinanceAnalysisTests.test_source_convention_revision_requires_fresh_source_acceptance) ... ok
+test_source_total_controls_and_unknown_completeness_hold_certification (tests.test_finance_analysis.FinanceAnalysisTests.test_source_total_controls_and_unknown_completeness_hold_certification) ... ok
+test_unbound_finance_document_or_client_projection_cannot_publish (tests.test_finance_analysis.FinanceAnalysisTests.test_unbound_finance_document_or_client_projection_cannot_publish) ... ok
+test_unknown_is_not_zero_and_missing_accounts_have_no_iferror_default (tests.test_finance_analysis.FinanceAnalysisTests.test_unknown_is_not_zero_and_missing_accounts_have_no_iferror_default) ... ok
+test_unknown_zero_or_incomplete_basis_never_becomes_an_allocation (tests.test_finance_analysis.FinanceAnalysisTests.test_unknown_zero_or_incomplete_basis_never_becomes_an_allocation) ... ok
+test_unmapped_duplicate_and_explicit_row_handling (tests.test_finance_analysis.FinanceAnalysisTests.test_unmapped_duplicate_and_explicit_row_handling) ... ok
+test_unrelated_authority_namespace_preserves_finance_reviews (tests.test_finance_analysis.FinanceAnalysisTests.test_unrelated_authority_namespace_preserves_finance_reviews) ... ok
+test_unreviewed_rules_and_return_block_output_not_draft_computation (tests.test_finance_analysis.FinanceAnalysisTests.test_unreviewed_rules_and_return_block_output_not_draft_computation) ... ok
+test_admin_flag_does_not_grant_record_access (tests.test_application.ApplicationTests.test_admin_flag_does_not_grant_record_access) ... ok
+test_agent_rejects_uncited_output_and_cross_scope_read (tests.test_application.ApplicationTests.test_agent_rejects_uncited_output_and_cross_scope_read) ... ok
+test_agent_source_instructions_are_cited_data_only (tests.test_application.ApplicationTests.test_agent_source_instructions_are_cited_data_only) ... ok
+test_all_122_original_ids_visible_in_coverage (tests.test_application.ApplicationTests.test_all_122_original_ids_visible_in_coverage) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... FAIL
+test_cost_revision_cannot_reuse_decisions (tests.test_application.ApplicationTests.test_cost_revision_cannot_reuse_decisions) ... ok
+test_cross_case_evidence_cannot_form_baseline (tests.test_application.ApplicationTests.test_cross_case_evidence_cannot_form_baseline) ... ok
+test_csrf_and_template_escaping (tests.test_application.ApplicationTests.test_csrf_and_template_escaping) ... ok
+test_database_blocks_history_rewrites_even_via_queryset (tests.test_application.ApplicationTests.test_database_blocks_history_rewrites_even_via_queryset) ... ok
+test_duplicate_milestone_has_one_outbox_intent (tests.test_application.ApplicationTests.test_duplicate_milestone_has_one_outbox_intent) ... ok
+test_expired_worker_cannot_finish_after_reclaim (tests.test_application.ApplicationTests.test_expired_worker_cannot_finish_after_reclaim) ... ok
+test_human_costing_order_and_separate_review (tests.test_application.ApplicationTests.test_human_costing_order_and_separate_review) ... ok
+test_lookup_failure_does_not_dispatch (tests.test_application.ApplicationTests.test_lookup_failure_does_not_dispatch) ... ok
+test_no_signature_before_plan_and_cost_decisions (tests.test_application.ApplicationTests.test_no_signature_before_plan_and_cost_decisions) ... ok
+test_policy_expiry_invalid_timezone_and_synthetic_isolation (tests.test_application.ApplicationTests.test_policy_expiry_invalid_timezone_and_synthetic_isolation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+test_policy_partial_activation_stale_revoke_and_version_history (tests.test_application.ApplicationTests.test_policy_partial_activation_stale_revoke_and_version_history) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_requires_postgresql (tests.test_application.ApplicationTests.test_requires_postgresql) ... ok
+test_reserved_effect_payload_and_confirmed_receipt_are_immutable (tests.test_application.ApplicationTests.test_reserved_effect_payload_and_confirmed_receipt_are_immutable) ... ok
+test_review_binds_exact_version_and_does_not_review_next_revision (tests.test_application.ApplicationTests.test_review_binds_exact_version_and_does_not_review_next_revision) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_stale_command_has_no_mutation (tests.test_application.ApplicationTests.test_stale_command_has_no_mutation) ... ok
+test_superseded_role_policy_can_be_reapproved_without_rewriting_history (tests.test_application.ApplicationTests.test_superseded_role_policy_can_be_reapproved_without_rewriting_history) ... ok
+test_support_response_resolution_reopen_preserve_history (tests.test_application.ApplicationTests.test_support_response_resolution_reopen_preserve_history) ... ok
+test_unknown_external_result_is_reconciled_without_resend (tests.test_application.ApplicationTests.test_unknown_external_result_is_reconciled_without_resend) ... ok
+test_worker_rechecks_revoked_grant (tests.test_application.ApplicationTests.test_worker_rechecks_revoked_grant) ... ok
+test_cross_case_duplicate_claims_are_serialised_and_held (tests.test_ledger_concurrency.LedgerConcurrencyTests.test_cross_case_duplicate_claims_are_serialised_and_held) ... ok
+test_duplicate_commits_before_finance_review (tests.test_ledger_concurrency.LedgerConcurrencyTests.test_duplicate_commits_before_finance_review) ... ok
+test_reviewer_revocation_commits_before_report (tests.test_ledger_concurrency.LedgerConcurrencyTests.test_reviewer_revocation_commits_before_report) ... ok
+test_two_connections_duplicate_capture_cannot_create_verified_route (tests.test_ledger_concurrency.LedgerConcurrencyTests.test_two_connections_duplicate_capture_cannot_create_verified_route) ... ok
+test_separate_process_reconciles_receipt_after_worker_loss (tests.test_finance_analysis_workers.FinanceWorkerTests.test_separate_process_reconciles_receipt_after_worker_loss) ... ok
+test_two_postgres_connections_build_one_exact_mapping (tests.test_finance_analysis_workers.FinanceWorkerTests.test_two_postgres_connections_build_one_exact_mapping) ... ok
+test_staff_handoff_survives_worker_process_exit_and_restart (tests.test_application.WorkerConcurrencyTests.test_staff_handoff_survives_worker_process_exit_and_restart) ... ok
+test_two_workers_claim_one_intent_once (tests.test_application.WorkerConcurrencyTests.test_two_workers_claim_one_intent_once) ... ok
+
+======================================================================
+FAIL: test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_application.py", line 131, in test_all_components_accept_drafts_and_reject_invalid_activation
+    self.assertEqual(len(components()),79) # Original57 plus twenty-two supplemental interfaces including three F07 contracts.
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 81 != 79
+
+----------------------------------------------------------------------
+Ran 90 tests in 365.382s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 90 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

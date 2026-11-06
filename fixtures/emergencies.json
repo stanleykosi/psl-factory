@@ -1,0 +1,25 @@
+{
+  "fixture_scope": "synthetic_test",
+  "not_business_policy": true,
+  "relationship": {
+    "mode": "coexist",
+    "incident_lead_role": "Engineering Lead",
+    "incident_engineering_overlap": "explicit_same_person",
+    "exception_roles": [],
+    "priority_basis": "explicit_incident_p1_attestation"
+  },
+  "gate_map": {
+    "emergency": {
+      "preauthorization_roles": ["Incident Lead", "Engineering Lead"],
+      "p1_additional_roles": ["CTO"],
+      "retrospective_roles": ["Product", "Engineering Lead"],
+      "financial_controls": "independent",
+      "deployment_dispatch": "not_granted"
+    }
+  },
+  "clock_anchor": {"emergency": {"anchor": "implemented_at", "pause": "no_pause", "anchor_day": "exclude"}},
+  "deadline_parameters": {"emergency": {"retrospective_working_days": 2}},
+  "calendar": {"weekdays": [0, 1, 2, 3, 4], "holidays": [], "due_time": "17:00"},
+  "timezone": "Africa/Lagos",
+  "negative_cases": ["missing", "invalid", "future", "expired", "revoked", "superseded", "unknown_p1", "same_actor_without_explicit_overlap", "missing_glpi", "missing_exception_decision", "late_log", "missing_review", "retrospective_before_preauthorization", "late_decision", "source_changed", "authority_revoked"]
+}

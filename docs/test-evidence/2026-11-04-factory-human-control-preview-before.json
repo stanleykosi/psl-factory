@@ -1,0 +1,9 @@
+{
+  "start_utc": "2026-11-04T12:54:10.8083086Z",
+  "path": "C:\\Python313\\python.exe",
+  "listener": 8023,
+  "verified_utc": "2026-11-04T13:11:26.7523679Z",
+  "reason": "Continue shared human-control implementation after bounded checkpoint594",
+  "database": "psl_factory_coordinator_ui_98ae90c203b0",
+  "id": 18168
+}

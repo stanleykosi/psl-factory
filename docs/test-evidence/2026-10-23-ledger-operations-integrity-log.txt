@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\verify_ledger_operations.py", line 566, in <module>
+    assert protection_domain.report(viewer,case.pk,info['current_assessment'])['review_current']
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\protection.py", line 109, in report
+    for artifact in RecoveryArtifact.objects.filter(job__plan=r.plan):readable_manifest(a,c,artifact.manifest)
+                                                                      ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\operator_inventory.py", line 90, in readable_manifest
+    for action in m['source_grants']:require(a,c,action)
+                                     ~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant

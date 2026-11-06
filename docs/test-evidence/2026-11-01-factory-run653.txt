@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stated_past_deadline_never_dispatches_or_backdates (tests.test_rfp.RFPTests.test_stated_past_deadline_never_dispatches_or_backdates) ... ok
+test_unknown_deadline_holds_only_submission (tests.test_rfp.RFPTests.test_unknown_deadline_holds_only_submission) ... ok
+test_rfp_template_cannot_remove_the_required_final_client_document_review (tests.test_rfp.RFPTests.test_rfp_template_cannot_remove_the_required_final_client_document_review) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 62.784s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

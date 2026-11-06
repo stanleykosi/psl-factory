@@ -1,0 +1,111 @@
+{
+  "fixture_scope": "synthetic_test",
+  "notice": "Examples only. Replace internal IDs with isolated scoped records; these are not real owner appointments or acceptance policy.",
+  "metadata": {
+    "source_version": "1.1",
+    "source_date": "2026-10-12",
+    "owner_label": "Head of PMO (stated source owner; no principal appointment)",
+    "classification": "documented_policy",
+    "process_ids": [
+      "B13",
+      "P13",
+      "P15"
+    ],
+    "clauses": [
+      {
+        "key": "debt",
+        "quote": "A payment exception does not waive debt.",
+        "locator": "section-1",
+        "classification": "documented_policy",
+        "process_ids": [
+          "B13",
+          "P13",
+          "P15"
+        ]
+      }
+    ],
+    "document_kind": "support_sop"
+  },
+  "package": {
+    "process_ids": [
+      "B13",
+      "P13",
+      "P15"
+    ],
+    "source_ids": [
+      1
+    ],
+    "example_ids": [
+      1,
+      2
+    ],
+    "policy_components": [],
+    "purpose": "P15",
+    "level": "synthetic_implementation",
+    "gaps": [],
+    "build_ref": "synthetic-build-1",
+    "role_list": [
+      "PMO"
+    ],
+    "manual_fallback": "Retain the authorised manual route",
+    "rollout_plan": "Local synthetic evaluation only",
+    "migration_plan": "No operational migration; isolated fixture",
+    "support_owner_id": 1
+  },
+  "authority": {
+    "assignments": [
+      {
+        "user_id": 1,
+        "role": "PMO",
+        "process_ids": [
+          "B13",
+          "P13",
+          "P15"
+        ],
+        "purposes": [
+          "meaning",
+          "expectations"
+        ]
+      },
+      {
+        "user_id": 2,
+        "role": "Head of PMO",
+        "process_ids": [
+          "B13",
+          "P13",
+          "P15"
+        ],
+        "purposes": [
+          "acceptance"
+        ]
+      }
+    ],
+    "allow_preparer_review": false,
+    "human_only": true
+  },
+  "acceptance": {
+    "allowed_levels": [
+      "definition",
+      "synthetic_implementation"
+    ],
+    "independent_tester": true,
+    "independent_acceptor": true
+  },
+  "replay": {
+    "example_id": 1,
+    "actual": {
+      "permitted": true
+    },
+    "build_ref": "synthetic-build-1",
+    "run_ref": "supplied-synthetic-run-1",
+    "environment": "isolated-test",
+    "evidence_class": "synthetic_fixture"
+  },
+  "lifecycle_scenarios": [
+    "absent",
+    "invalid",
+    "synthetic_active",
+    "stale",
+    "revoked"
+  ]
+}

@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_ui_agent_and_direct_posts_recheck_current_authority_and_preserve_business_records (tests.test_closure_preparation.ClosurePreparationTests.test_ui_agent_and_direct_posts_recheck_current_authority_and_preserve_business_records) ... ok
+test_original_process_fields_and_all_release_deferred_bindings_are_retained (tests.test_factory_coverage.FactoryCoverageTests.test_original_process_fields_and_all_release_deferred_bindings_are_retained) ... ok
+test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes (tests.test_factory_coverage.FactoryCoverageTests.test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 38.303s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

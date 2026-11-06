@@ -1,0 +1,19 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_missing_recipient_rule_retains_draft_then_requests_review_of_same_version_when_configured (tests.test_factory_handover.FactoryHandoverTests.test_missing_recipient_rule_retains_draft_then_requests_review_of_same_version_when_configured) ... ok
+test_configured_native_document_review_is_exact_and_separate_from_receiving (tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 193.676s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

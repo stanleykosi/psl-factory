@@ -1,0 +1,40 @@
+{
+  "runs": {
+    "209": {
+      "tests": 2,
+      "seconds": 87.255,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-24-run-209-readiness-acceptance-baseline.txt"
+    },
+    "210": {
+      "tests": 11,
+      "seconds": 241.629,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-24-run-210-private-readiness-acceptance.txt"
+    },
+    "211": {
+      "tests": 16,
+      "seconds": 530.834,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-24-run-211-private-readiness-final.txt"
+    },
+    "212": {
+      "tests": 152,
+      "seconds": 1502.666,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-24-run-212-private-readiness-connected.txt"
+    },
+    "213": {
+      "tests": 1,
+      "seconds": 83.439,
+      "result": "OK",
+      "log": "docs/test-evidence/2026-10-24-run-213-private-readiness-implementation.txt"
+    }
+  },
+  "counts_overlap": true,
+  "application_source_unchanged_after_run_212": true,
+  "changed_files": [
+    "contracts/implementation-coverage.json",
+    "tests/test_private_readiness_acceptance.py"
+  ]
+}

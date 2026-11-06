@@ -1,0 +1,98 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 69 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0014_release_native_guards...test_actual_evaluation_matches_native_preview_without_closure_or_deployment (tests.test_release_evaluation_guards.HypercareGuardTests.test_actual_evaluation_matches_native_preview_without_closure_or_deployment) ... ok
+test_review_access_cannot_replace_native_manage_grant_and_stale_revisions_hold (tests.test_release_evaluation_guards.HypercareGuardTests.test_review_access_cannot_replace_native_manage_grant_and_stale_revisions_hold) ... ok
+test_unknown_failed_qualified_and_revoked_criteria_are_distinct (tests.test_release_evaluation_guards.HypercareGuardTests.test_unknown_failed_qualified_and_revoked_criteria_are_distinct) ... ok
+test_actual_configured_assessment_matches_preview_but_amounts_stay_private (tests.test_release_evaluation_guards.PaymentGuardTests.test_actual_configured_assessment_matches_preview_but_amounts_stay_private) ... FAIL
+test_current_observer_access_precedes_lookup_and_closed_sql_has_valid_control (tests.test_release_evaluation_guards.PaymentGuardTests.test_current_observer_access_precedes_lookup_and_closed_sql_has_valid_control) ... ok
+test_ui_review_agent_and_policy_successor_invalidate_without_business_effect (tests.test_release_evaluation_guards.PaymentGuardTests.test_ui_review_agent_and_policy_successor_invalidate_without_business_effect) ... ok
+test_unknown_basis_is_recordable_unknown_and_does_not_approve_exception_or_release (tests.test_release_evaluation_guards.PaymentGuardTests.test_unknown_basis_is_recordable_unknown_and_does_not_approve_exception_or_release) ... ok
+test_agent_cites_sources_and_drafts_without_creating_approval (tests.test_payments.PaymentTests.test_agent_cites_sources_and_drafts_without_creating_approval) ... ok
+test_agent_treats_source_instructions_as_evidence_and_recognises_current_approval (tests.test_payments.PaymentTests.test_agent_treats_source_instructions_as_evidence_and_recognises_current_approval) ... ok
+test_assessment_and_human_authority_are_independent_configuration_paths (tests.test_payments.PaymentTests.test_assessment_and_human_authority_are_independent_configuration_paths) ... ok
+test_assigned_verified_cash_is_distinct_from_allocated_cash (tests.test_payments.PaymentTests.test_assigned_verified_cash_is_distinct_from_allocated_cash) ... ok
+test_corrected_invoice_denominator_and_cash_successor_are_canonical (tests.test_payments.PaymentTests.test_corrected_invoice_denominator_and_cash_successor_are_canonical) ... ok
+test_cross_case_sources_and_stale_revision_are_rejected (tests.test_payments.PaymentTests.test_cross_case_sources_and_stale_revision_are_rejected) ... ok
+test_current_principal_grants_and_policy_revocation_hold_use (tests.test_payments.PaymentTests.test_current_principal_grants_and_policy_revocation_hold_use) ... ok
+test_exception_approval_does_not_require_or_override_independent_glpi_gate (tests.test_payments.PaymentTests.test_exception_approval_does_not_require_or_override_independent_glpi_gate) ... ok
+test_exception_cannot_be_applied_to_a_different_deployment (tests.test_payments.PaymentTests.test_exception_cannot_be_applied_to_a_different_deployment) ... ok
+test_expiry_after_approval_is_checked_at_use (tests.test_payments.PaymentTests.test_expiry_after_approval_is_checked_at_use) ... ok
+test_expiry_duration_and_return_reject_transitions (tests.test_payments.PaymentTests.test_expiry_duration_and_return_reject_transitions) ... ok
+test_explicit_human_delegation_is_scoped_and_expires (tests.test_payments.PaymentTests.test_explicit_human_delegation_is_scoped_and_expires) ... ok
+test_human_decision_can_be_recorded_with_unknown_basis_but_release_use_holds (tests.test_payments.PaymentTests.test_human_decision_can_be_recorded_with_unknown_basis_but_release_use_holds) ... ok
+test_human_exception_preserves_debt_and_independent_control_manifest (tests.test_payments.PaymentTests.test_human_exception_preserves_debt_and_independent_control_manifest) ... ok
+test_meeting_expectation_needs_no_exception_authority (tests.test_payments.PaymentTests.test_meeting_expectation_needs_no_exception_authority) ... ok
+test_missing_basis_is_unknown_and_request_tracking_has_no_approval_default (tests.test_payments.PaymentTests.test_missing_basis_is_unknown_and_request_tracking_has_no_approval_default) ... ok
+test_new_cash_allocation_invalidates_snapshot_approval_and_reservation (tests.test_payments.PaymentTests.test_new_cash_allocation_invalidates_snapshot_approval_and_reservation) ... ok
+test_partial_coverage_and_inconsistent_basis_never_become_zero (tests.test_payments.PaymentTests.test_partial_coverage_and_inconsistent_basis_never_become_zero) ... ok
+test_postgresql_guards_preserve_assessment_request_decision_reservation (tests.test_payments.PaymentTests.test_postgresql_guards_preserve_assessment_request_decision_reservation) ... ok
+test_request_idempotency_bound_identity_and_wrong_scope (tests.test_payments.PaymentTests.test_request_idempotency_bound_identity_and_wrong_scope) ... ok
+test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt (tests.test_payments.PaymentTests.test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt) ... ok
+test_self_approval_and_admin_flag_do_not_grant_authority (tests.test_payments.PaymentTests.test_self_approval_and_admin_flag_do_not_grant_authority) ... ok
+test_server_rendered_ui_and_post_use_real_services (tests.test_payments.PaymentTests.test_server_rendered_ui_and_post_use_real_services) ... ok
+test_typed_policy_invalid_targets_and_scope_are_rejected (tests.test_payments.PaymentTests.test_typed_policy_invalid_targets_and_scope_are_rejected) ... ok
+test_ui_rejects_caller_approval_claims_and_displays_unknown_waiting_state (tests.test_payments.PaymentTests.test_ui_rejects_caller_approval_claims_and_displays_unknown_waiting_state) ... ok
+test_actual_release_capture_without_readiness_preserves_exception_no_backdating (tests.test_delivery.DeliveryTests.test_actual_release_capture_without_readiness_preserves_exception_no_backdating) ... ok
+test_bad_adapter_binding_future_observation_and_wrong_recipient_are_rejected (tests.test_delivery.DeliveryTests.test_bad_adapter_binding_future_observation_and_wrong_recipient_are_rejected) ... ok
+test_complete_planning_exit_does_not_require_client_signature (tests.test_delivery.DeliveryTests.test_complete_planning_exit_does_not_require_client_signature) ... ok
+test_connected_planning_release_hypercare_archive_handover_finance_head_closure (tests.test_delivery.DeliveryTests.test_connected_planning_release_hypercare_archive_handover_finance_head_closure) ... ok
+test_engineering_finalization_exact_inventory_and_changed_policy_require_new_archive (tests.test_delivery.DeliveryTests.test_engineering_finalization_exact_inventory_and_changed_policy_require_new_archive) ... ok
+test_handover_actual_recipient_gap_and_new_finance_milestone_hold_closure (tests.test_delivery.DeliveryTests.test_handover_actual_recipient_gap_and_new_finance_milestone_hold_closure) ... ok
+test_hypercare_unknown_negative_metrics_units_and_period_are_explicit (tests.test_delivery.DeliveryTests.test_hypercare_unknown_negative_metrics_units_and_period_are_explicit) ... ok
+test_invalid_policies_reject_waivers_missing_archive_kinds_and_infinite_metrics (tests.test_delivery.DeliveryTests.test_invalid_policies_reject_waivers_missing_archive_kinds_and_infinite_metrics) ... ok
+test_later_readiness_record_does_not_authorize_an_earlier_claimed_release (tests.test_delivery.DeliveryTests.test_later_readiness_record_does_not_authorize_an_earlier_claimed_release) ... ok
+test_missing_hypercare_policy_holds_only_evaluation_not_actual_release_or_archive (tests.test_delivery.DeliveryTests.test_missing_hypercare_policy_holds_only_evaluation_not_actual_release_or_archive) ... ok
+test_missing_qa_uat_go_and_glpi_cannot_be_skipped_or_cross_request_reused (tests.test_delivery.DeliveryTests.test_missing_qa_uat_go_and_glpi_cannot_be_skipped_or_cross_request_reused) ... ok
+test_operational_source_verification_cannot_use_synthetic_adapter (tests.test_delivery.DeliveryTests.test_operational_source_verification_cannot_use_synthetic_adapter) ... ok
+test_revoked_future_expired_policy_preserves_capture_and_holds_qualification (tests.test_delivery.DeliveryTests.test_revoked_future_expired_policy_preserves_capture_and_holds_qualification) ... ok
+test_shared_reporting_freshness_binds_delivery_sources_signals_and_current_policy (tests.test_delivery.DeliveryTests.test_shared_reporting_freshness_binds_delivery_sources_signals_and_current_policy) ... ok
+test_source_change_or_verifier_revocation_holds_queued_exact_go_live (tests.test_delivery.DeliveryTests.test_source_change_or_verifier_revocation_holds_queued_exact_go_live) ... ok
+test_staff_ui_agent_policy_draft_and_cited_unknowns (tests.test_delivery.DeliveryTests.test_staff_ui_agent_policy_draft_and_cited_unknowns) ... ok
+test_unknown_inventory_not_empty_and_admin_foreign_stale_and_postgres_immutable (tests.test_delivery.DeliveryTests.test_unknown_inventory_not_empty_and_admin_foreign_stale_and_postgres_immutable) ... ok
+test_unknown_ui_and_conditional_signoffs_do_not_become_false (tests.test_delivery.DeliveryTests.test_unknown_ui_and_conditional_signoffs_do_not_become_false) ... ok
+test_closed_binding_validator_and_foreign_sources (tests.test_pilot_bindings.NativeGuardTests.test_closed_binding_validator_and_foreign_sources) ... ok
+test_csrf_ui_binding_selection_review_web_observation_and_agent (tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent) ... ok
+test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage) ... ok
+test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates (tests.test_pilot_bindings.NativeGuardTests.test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates) ... ok
+test_missing_revoked_authority_and_observer_rights_are_distinct (tests.test_pilot_bindings.NativeGuardTests.test_missing_revoked_authority_and_observer_rights_are_distinct) ... ok
+test_report_and_native_guard_enforce_case_access_before_record_lookup (tests.test_pilot_bindings.NativeGuardTests.test_report_and_native_guard_enforce_case_access_before_record_lookup) ... ok
+test_sequence_signature_and_milestone_guards_use_actual_native_services (tests.test_pilot_bindings.NativeGuardTests.test_sequence_signature_and_milestone_guards_use_actual_native_services) ... ok
+test_shared_guard_matches_actual_decision_and_does_not_write_domain_records (tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records) ... ok
+test_sql_history_identity_and_self_review_guards (tests.test_pilot_bindings.NativeGuardTests.test_sql_history_identity_and_self_review_guards) ... ok
+test_actual_native_receipts_same_process_is_insufficient (tests.test_pilot_bindings.RuntimeBindingTests.test_actual_native_receipts_same_process_is_insufficient) ... ok
+test_all_sixteen_native_worker_entrypoints_support_observe_only (tests.test_pilot_bindings.RuntimeBindingTests.test_all_sixteen_native_worker_entrypoints_support_observe_only) ... ok
+test_expired_rotated_revoked_and_bad_signatures_never_use_older_success (tests.test_pilot_bindings.RuntimeBindingTests.test_expired_rotated_revoked_and_bad_signatures_never_use_older_success) ... ok
+test_no_role_alias_secret_installation_or_cross_family_claim (tests.test_pilot_bindings.RuntimeBindingTests.test_no_role_alias_secret_installation_or_cross_family_claim) ... ok
+test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads (tests.test_pilot_bindings.RuntimeBindingTests.test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads) ... ok
+test_startup_build_pin_rejects_changed_source_and_legacy_receipts (tests.test_pilot_bindings.RuntimeBindingTests.test_startup_build_pin_rejects_changed_source_and_legacy_receipts) ... ok
+test_separate_processes_resume_hypercare_scan_without_duplicate_or_effect (tests.test_delivery.DeliveryConcurrencyTests.test_separate_processes_resume_hypercare_scan_without_duplicate_or_effect) ... ok
+test_two_connections_generate_one_due_signal_and_never_close (tests.test_delivery.DeliveryConcurrencyTests.test_two_connections_generate_one_due_signal_and_never_close) ... ok
+test_two_real_connections_record_one_actual_outcome (tests.test_delivery.DeliveryConcurrencyTests.test_two_real_connections_record_one_actual_outcome) ... ok
+test_independent_actual_worker_process_observes_without_claiming_pending_work (tests.test_pilot_bindings.NativeProcessTests.test_independent_actual_worker_process_observes_without_claiming_pending_work) ... ok
+
+======================================================================
+FAIL: test_actual_configured_assessment_matches_preview_but_amounts_stay_private (tests.test_release_evaluation_guards.PaymentGuardTests.test_actual_configured_assessment_matches_preview_but_amounts_stay_private)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_release_evaluation_guards.py", line 63, in test_actual_configured_assessment_matches_preview_but_amounts_stay_private
+    self.assertEqual(actual.result['status'],result['evaluation']['status']);self.assertEqual(actual.result['denominator'],'32.25')
+                                                                             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '32.25000000' != '32.25'
+- 32.25000000
++ 32.25
+
+
+----------------------------------------------------------------------
+Ran 69 tests in 388.154s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,28 @@
+setUpClass (tests.test_cold_recovery.ColdRecoveryTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (tests.test_cold_recovery.ColdRecoveryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 52, in setUpClass
+    archive = cls.child('source', cls.value, cls.source, cold=False)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 22, in child
+    result = subprocess.run([sys.executable, '-m', 'tests.cold_recovery_scenario', stage],
+        input=json.dumps(value), text=True, capture_output=True, env=env, timeout=300)
+  File "C:\Python313\Lib\subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\subprocess.py", line 1219, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\subprocess.py", line 1640, in _communicate
+    raise TimeoutExpired(self.args, orig_timeout)
+subprocess.TimeoutExpired: Command '['C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe', '-m', 'tests.cold_recovery_scenario', 'source']' timed out after 300 seconds
+
+----------------------------------------------------------------------
+Ran 0 tests in 305.346s
+
+FAILED (errors=1)
+Found 4 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

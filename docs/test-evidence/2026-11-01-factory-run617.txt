@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance) ... FAIL
+
+======================================================================
+FAIL: test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\tests\test_factory_operational_invoice.py", line 17, in test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance
+    self.assertEqual(work.status,'waiting',work.finding)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'blocked' != 'waiting'
+- blocked
++ waiting
+ : ['Configure an approved real provider before operational agent work']
+
+----------------------------------------------------------------------
+Ran 1 test in 7.029s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

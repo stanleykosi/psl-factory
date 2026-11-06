@@ -1,0 +1,75 @@
+Creating test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying core.0001_initial... OK
+  Applying agents.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying baas.0001_initial... OK
+  Applying policy.0001_initial... OK
+  Applying pmo.0001_initial... OK
+  Applying documents.0001_initial... OK
+  Applying core.0002_append_only_history... OK
+  Applying workflows.0001_initial... OK
+  Applying finance.0001_initial... OK
+  Applying workflows.0002_effect_identity... OK
+  Applying documents.0002_controlledreview_document_publication_publicationjob_and_more... OK
+  Applying workflows.0003_humantask_taskevent... OK
+  Applying documents.0003_immutable_controlled_documents... OK
+  Applying documents.0004_alter_publication_review... OK
+  Applying pmo.0002_remove_decision_decision_subject_role_and_more... OK
+  Applying pmo.0003_deliverycandidate_gatedocumentbinding_gaterecord_and_more... OK
+  Applying pmo.0004_immutable_gate_history... OK
+  Applying pmo.0005_gaterecord_gate_source_identity... OK
+  Applying pmo.0006_actionitem_actionstate_actionitem_current_meeting_and_more... OK
+  Applying pmo.0007_meetingactionlink_and_more... OK
+  Applying pmo.0008_immutable_minutes_actions_reports... OK
+  Applying pmo.0009_changerequest_changeversion_changerequest_current_and_more... OK
+  Applying pmo.0010_immutable_commercial_changes... OK
+  Applying finance.0002_financialimport_importvalidation_invoicepreparation_and_more... OK
+  Applying finance.0003_immutable_intake... OK
+  Applying finance.0004_signedbaselineintake... OK
+  Applying identity.0001_initial... OK
+  Applying pmo.0011_changeclosure_changedocumentbinding_and_more... OK
+  Applying pmo.0012_immutable_change_execution_intake... OK
+  Applying pmo.0013_changedocumentbinding_execution_ids... OK
+  Applying pmo.0014_issue_issuestate_issueclosureentry_issue_current_and_more... OK
+  Applying pmo.0015_immutable_issue_history... OK
+  Applying pmo.0016_escalationscancursor_escalationdecision_and_more... OK
+  Applying pmo.0017_immutable_escalations... OK
+  Applying pmo.0018_changeauthorization_preapproval_snapshot_and_more... OK
+  Applying pmo.0019_standard_history_guards... OK
+  Applying pmo.0020_emergencyauthorization_emergencyoutcome_and_more... OK
+  Applying pmo.0021_emergency_history_guards... OK
+  Applying pmo.0022_emergencyscancursor_emergencydeadlinesignal... OK
+  Applying pmo.0023_emergency_signal_guard... OK
+test_deadline_policy_change_requires_human_reaffirmation_and_preserves_history (tests.test_emergencies.EmergencyTests.test_deadline_policy_change_requires_human_reaffirmation_and_preserves_history) ... ok
+test_distinct_engineering_principal_revocation_holds_publisher_with_unchanged_access (tests.test_emergencies.EmergencyTests.test_distinct_engineering_principal_revocation_holds_publisher_with_unchanged_access) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 16.393s
+
+OK
+Destroying test database for alias 'default' ('test_psl')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

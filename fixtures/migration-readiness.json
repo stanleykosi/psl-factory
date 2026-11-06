@@ -1,0 +1,15 @@
+{
+  "classification": "EXPLICIT SYNTHETIC example; no real owners, acceptance thresholds, migration or restore execution",
+  "policy": {
+    "process_ids": ["B13", "P13", "P15"],
+    "inventory_mode": "local_evidence_manifest_v1",
+    "required_kinds": ["backup", "rollback", "reconciliation", "access", "fallback", "rollout", "execution", "restore"],
+    "proof_systems": ["synthetic-migration"],
+    "max_age_seconds": 86400,
+    "allow_owner_preparer_review": false,
+    "assignments": [
+      {"purpose": "owner", "user_id": 1, "role": "PMO"},
+      {"purpose": "independent", "user_id": 2, "role": "Head of PMO"}
+    ]
+  }
+}

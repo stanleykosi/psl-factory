@@ -1,0 +1,18 @@
+{
+  "run": 251,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_actual_bytes_missing_corrupt_and_storage_identity_changes_hold_current_proof",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-26-run-251-accepted-protection-readiness.txt",
+  "started_at": "2026-10-27T03:36:00.865903+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 877.926
+}

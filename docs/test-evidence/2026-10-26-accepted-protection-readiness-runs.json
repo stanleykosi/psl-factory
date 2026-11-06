@@ -1,0 +1,200 @@
+{
+  "classification": "Actual retained PostgreSQL/internal-service evidence; upstream/provider fixtures synthetic. No live provider/process-owner/operational acceptance inferred. Counts overlap.",
+  "counts_overlap": true,
+  "runs": [
+    {
+      "run": 245,
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_connected_file_acceptance_export_backup_isolated_restore_and_independent_review",
+        "tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_mixed_inventory_native_choices_and_raw_sql_bindings_are_rejected",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs/test-evidence/2026-10-26-run-245-accepted-protection-readiness-baseline.txt",
+      "status": "finished",
+      "returncode": 0,
+      "scope": "previous increment verified before source edits",
+      "runner_summary": {
+        "tests": 2,
+        "seconds": 1283.491,
+        "result": "OK"
+      },
+      "whole_suite_success": true,
+      "clock": "unit fixture clocks controlled where explicitly declared; existing worker/fence tests actual time"
+    },
+    {
+      "run": 246,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_connected_sql_file_isolated_restore_review_and_exact_job_gate",
+        "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_capture_before_policy_and_invalid_inventory_principals_and_source_grants",
+        "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_sql_binding_probe_observation_immutability_and_closed_provenance",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-26-run-246-accepted-protection-readiness.txt",
+      "started_at": "2026-10-26T22:18:38.838020+00:00",
+      "status": "finished",
+      "returncode": 1,
+      "elapsed_seconds": 18.832,
+      "runner_summary": {
+        "tests": 0,
+        "seconds": 9.145,
+        "result": "FAILED (errors=1)"
+      },
+      "whole_suite_success": false,
+      "stage": "setUpTestData alias failure; no test methods ran; fixed by forward0019",
+      "clock": "unit fixture clocks controlled where explicitly declared; existing worker/fence tests actual time"
+    },
+    {
+      "run": 247,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_connected_sql_file_isolated_restore_review_and_exact_job_gate",
+        "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_capture_before_policy_and_invalid_inventory_principals_and_source_grants",
+        "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_sql_binding_probe_observation_immutability_and_closed_provenance",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-26-run-247-accepted-protection-readiness.txt",
+      "started_at": "2026-10-26T22:19:28.582215+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 3117.755,
+      "runner_summary": {
+        "tests": 3,
+        "seconds": 3110.491,
+        "result": "OK"
+      },
+      "whole_suite_success": true,
+      "clock": "unit fixture clocks controlled where explicitly declared; existing worker/fence tests actual time"
+    },
+    {
+      "run": 248,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_readiness_concurrency",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-26-run-248-accepted-protection-readiness.txt",
+      "started_at": "2026-10-26T23:13:54.310743+00:00",
+      "status": "finished",
+      "returncode": 1,
+      "elapsed_seconds": 3.575,
+      "runner_summary": null,
+      "whole_suite_success": false,
+      "stage": "unapplied0020 SQL parsing failure before test methods; failed source retained",
+      "clock": "unit fixture clocks controlled where explicitly declared; existing worker/fence tests actual time"
+    },
+    {
+      "run": 249,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_readiness_concurrency",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-26-run-249-accepted-protection-readiness.txt",
+      "started_at": "2026-10-26T23:14:41.612706+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 1111.092,
+      "runner_summary": {
+        "tests": 1,
+        "seconds": 1107.014,
+        "result": "OK"
+      },
+      "whole_suite_success": true,
+      "clock": "actual clock and lease fences"
+    },
+    {
+      "run": 250,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_readiness",
+        "tests.test_accepted_protection_operations",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_export_backup_restore_and_independent_protection_review",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools",
+        "tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_http_selected_packet_plan_policy_ui_and_historical_artifact_download",
+        "tests.test_readiness",
+        "tests.test_readiness_workers",
+        "tests.test_readiness_bridges",
+        "tests.test_operator_recovery",
+        "tests.test_operator_workers",
+        "tests.test_operator_bridges",
+        "tests.test_application",
+        "tests.test_accepted_protection_concurrency",
+        "tests.test_private_file_readiness",
+        "tests.test_private_protection_readiness",
+        "tests.test_publication_readiness",
+        "tests.test_file_acceptance.FileAcceptanceTests.test_exact_backup_evidence_three_owner_decisions_and_original_source_independence",
+        "tests.test_file_acceptance.FileAcceptanceTests.test_explicit_v2_restore_criteria_retain_restore_snapshot_shape",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-26-run-250-accepted-protection-readiness.txt",
+      "started_at": "2026-10-26T23:42:49.187179+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 13931.864,
+      "runner_summary": {
+        "tests": 184,
+        "seconds": 13921.909,
+        "result": "OK"
+      },
+      "whole_suite_success": true,
+      "clock": "unit fixture clocks controlled where explicitly declared; existing worker/fence tests actual time"
+    },
+    {
+      "run": 251,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_actual_bytes_missing_corrupt_and_storage_identity_changes_hold_current_proof",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-26-run-251-accepted-protection-readiness.txt",
+      "started_at": "2026-10-27T03:36:00.865903+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 877.926,
+      "runner_summary": {
+        "tests": 1,
+        "seconds": 858.857,
+        "result": "OK"
+      },
+      "whole_suite_success": true,
+      "clock": "unit fixture clocks controlled where explicitly declared; existing worker/fence tests actual time"
+    }
+  ]
+}

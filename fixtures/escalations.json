@@ -1,0 +1,12 @@
+{
+  "scope": "synthetic_test",
+  "source_process_ids": ["P44", "P50", "P40", "P41", "P42"],
+  "known_source_facts": ["delivery timeline impact is immediate", "internal 24h severity routing; unresolved 48h to CTO", "client-dependent 24h; client escalation/de-escalation human decision before sending"],
+  "owner_configuration_example_only": {
+    "clock_anchor_pause_rules": {"issues": {"anchor": "trigger_at", "basis": "elapsed_hours", "pause": "no_pause"}},
+    "deadline_parameters": {"issues": {"acknowledgement_hours": 2, "internal_24h_routes": {"Critical": "CTO", "High": "PMO", "Medium": "PMO", "Low": "PMO"}}}
+  },
+  "business_values": "Examples are isolated fixtures, not actual owner policy or approver appointments",
+  "runtime_boundaries": ["manual source capture and client decisions do not need clock policy", "unknowns remain null", "signals never approve or send", "internal delivery requires configured actual destination-role recipient", "client decisions and controlled outward review are distinct", "source/authority changes hold queued messages"],
+  "executable_evidence": ["tests/test_escalations.py", "manage.py seed_escalations_demo", "manage.py work_escalations"]
+}

@@ -1,0 +1,12 @@
+{
+  "prior_main_rowsets_preserved": 321,
+  "prior_migration_sources_preserved": 188,
+  "tables": 323,
+  "functions": 77,
+  "triggers": 356,
+  "constraints": 1709,
+  "main_test_definitions_identical": true,
+  "new_pilot_tables_empty": true,
+  "owner_values_installed": false,
+  "live_pilot_performed": false
+}

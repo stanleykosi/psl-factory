@@ -1,0 +1,36 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_current_recipient_policy_successor_requires_fresh_package_even_with_unchanged_sources (tests.test_factory_handover.FactoryHandoverTests.test_current_recipient_policy_successor_requires_fresh_package_even_with_unchanged_sources) ... ok
+test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access (tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access) ... ok
+test_current_publisher_revocation_before_send_holds_original_job_and_source_edits (tests.test_factory_handover.FactoryHandoverTests.test_current_publisher_revocation_before_send_holds_original_job_and_source_edits) ... FAIL
+
+======================================================================
+FAIL: test_current_publisher_revocation_before_send_holds_original_job_and_source_edits (tests.test_factory_handover.FactoryHandoverTests.test_current_publisher_revocation_before_send_holds_original_job_and_source_edits)
+----------------------------------------------------------------------
+django.core.exceptions.ValidationError: ['Stale revision; refresh before retrying']
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_handover.py", line 117, in test_current_publisher_revocation_before_send_holds_original_job_and_source_edits
+    with self.assertRaisesMessage(ValidationError,'Resolve original delivery'):
+         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+AssertionError: 'Resolve original delivery' not found in "['Stale revision; refresh before retrying']"
+
+----------------------------------------------------------------------
+Ran 3 tests in 265.625s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

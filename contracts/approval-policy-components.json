@@ -1,0 +1,94 @@
+{
+  "classification": "Supplemental engineering interfaces; no default accounting policies or real appointments",
+  "components": [
+    {
+      "id": "P02.owner_routes",
+      "parent_decision_id": "P02",
+      "schema_ref": "schema:psl/policy-component/P02.owner_routes/v1",
+      "subject_scope": "Exact project prerequisite, department owner and source evidence contract",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "P02.evidence_contracts",
+      "parent_decision_id": "P02",
+      "schema_ref": "schema:psl/policy-component/P02.evidence_contracts/v1",
+      "subject_scope": "Exact project prerequisite, department owner and source evidence contract",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "approval.route",
+      "required_components": [
+        "P02.owner_routes",
+        "P02.evidence_contracts",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "approval.observe",
+      "required_components": [
+        "P02.owner_routes",
+        "P02.evidence_contracts"
+      ]
+    }
+  ]
+}

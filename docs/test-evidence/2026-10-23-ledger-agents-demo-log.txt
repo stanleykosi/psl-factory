@@ -1,0 +1,1 @@
+{"case": "5b533c39-910f-412c-9290-44ee69f0c9c9", "missing_case": "a9f964e7-ee00-4a33-9a1a-b6f14b9bc6ce", "principals": [76, 77, 78, 79], "source_binding": 1, "projection": 10, "job": 12, "receipt": 12, "drafts": [1, 2], "draft_review": 2, "current_approval_after_runtime_fixture_removed": false, "posting_performed": false}

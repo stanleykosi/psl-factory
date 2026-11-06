@@ -1,0 +1,30 @@
+{
+  "runs": {
+    "219": {
+      "path": "docs/test-evidence/2026-10-24-run-219-protection-readiness-baseline.txt",
+      "tests": 2,
+      "seconds": 222.926,
+      "result": "OK"
+    },
+    "220": {
+      "path": "docs/test-evidence/2026-10-24-run-220-private-protection-readiness.txt",
+      "tests": 11,
+      "seconds": 1000.931,
+      "result": "FAILED (failures=1)"
+    },
+    "221": {
+      "path": "docs/test-evidence/2026-10-24-run-221-private-protection-final.txt",
+      "tests": 15,
+      "seconds": 1639.255,
+      "result": "OK"
+    },
+    "222": {
+      "path": "docs/test-evidence/2026-10-24-run-222-protection-readiness-connected.txt",
+      "tests": 90,
+      "seconds": 954.828,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "real_provider_or_owner_operational_acceptance": false
+}

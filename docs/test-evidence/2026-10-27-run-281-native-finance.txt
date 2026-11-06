@@ -1,0 +1,136 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0030_native_finance... OK
+  Applying workflows.0031_native_finance_guards...test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_10_exact_native_receipts_unknown_conflict_mapping_and_ui (tests.test_native_finance.NativeFinanceTests.test_10_exact_native_receipts_unknown_conflict_mapping_and_ui) ... FAIL
+test_11_native_scope_guards_rotation_expiry_and_revocation (tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation) ... FAIL
+test_12_reviewed_publication_crash_and_fresh_reconciliation (tests.test_native_finance.NativeFinanceTests.test_12_reviewed_publication_crash_and_fresh_reconciliation) ... FAIL
+
+======================================================================
+FAIL: test_10_exact_native_receipts_unknown_conflict_mapping_and_ui (tests.test_native_finance.NativeFinanceTests.test_10_exact_native_receipts_unknown_conflict_mapping_and_ui)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 49, in test_10_exact_native_receipts_unknown_conflict_mapping_and_ui
+    _,r=self.scenario('controls');self.assertEqual(r['outcomes'],['present','conflict','unknown']);self.assertTrue(r['native'])
+        ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 46, in scenario
+    return v,self.child(stage,v)
+             ~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 22, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: controls failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 185, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 92, in controls
+    a,b,c,p,e,values,_,_=fixture(False);m=mapping(a,c,p,e)
+                                          ~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 87, in mapping
+    return d.capture(a,c.pk,p.pk,'mapping-'+str(index),rows[index]['effect_key'],'fixture-finance',e.pk)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance.py", line 57, in capture
+    payload,_,_=adapter.original(p,d.effect(p,effect_key))
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\native_finance.py", line 21, in original
+    with n.connect(target['database']) as db:
+                   ~~~~~~^^^^^^^^^^^^
+TypeError: byte indices must be integers or slices, not str
+
+
+======================================================================
+FAIL: test_11_native_scope_guards_rotation_expiry_and_revocation (tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 52, in test_11_native_scope_guards_rotation_expiry_and_revocation
+    _,r=self.scenario('negatives');self.assertTrue(r['sql_guards']);self.assertTrue(r['scope_held']);self.assertTrue(r['quarantine_held'])
+        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 46, in scenario
+    return v,self.child(stage,v)
+             ~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 22, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: negatives failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 185, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 120, in negatives
+    a,b,c,p,e,values,_,_=fixture();m=mapping(a,c,p,e);approved_mapping(a,b,c,m);o=d.probe(a,c.pk,m.pk,'native')
+                                     ~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 87, in mapping
+    return d.capture(a,c.pk,p.pk,'mapping-'+str(index),rows[index]['effect_key'],'fixture-finance',e.pk)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance.py", line 57, in capture
+    payload,_,_=adapter.original(p,d.effect(p,effect_key))
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\native_finance.py", line 21, in original
+    with n.connect(target['database']) as db:
+                   ~~~~~~^^^^^^^^^^^^
+TypeError: byte indices must be integers or slices, not str
+
+
+======================================================================
+FAIL: test_12_reviewed_publication_crash_and_fresh_reconciliation (tests.test_native_finance.NativeFinanceTests.test_12_reviewed_publication_crash_and_fresh_reconciliation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 55, in test_12_reviewed_publication_crash_and_fresh_reconciliation
+    v,r=self.scenario('publication');v.update(r)
+        ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 46, in scenario
+    return v,self.child(stage,v)
+             ~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 22, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: publication failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 185, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 146, in publication
+    a,b,c,p,e,values,dest,domain_rules=fixture();m=mapping(a,c,p,e);approved_mapping(a,b,c,m)
+                                                   ~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 87, in mapping
+    return d.capture(a,c.pk,p.pk,'mapping-'+str(index),rows[index]['effect_key'],'fixture-finance',e.pk)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance.py", line 57, in capture
+    payload,_,_=adapter.original(p,d.effect(p,effect_key))
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\native_finance.py", line 21, in original
+    with n.connect(target['database']) as db:
+                   ~~~~~~^^^^^^^^^^^^
+TypeError: byte indices must be integers or slices, not str
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 380.013s
+
+FAILED (failures=3)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

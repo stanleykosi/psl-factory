@@ -1,0 +1,161 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification (tests.test_factory_flow.FactoryFlowTests.test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification) ... ok
+test_database_protects_identity_history_budget_and_false_verification (tests.test_factory_flow.FactoryFlowTests.test_database_protects_identity_history_budget_and_false_verification) ... ok
+test_exact_native_packet_changes_require_fresh_human_review (tests.test_factory_flow.FactoryFlowTests.test_exact_native_packet_changes_require_fresh_human_review) ... ok
+test_model_cannot_choose_dispatch_or_fabricate_citations (tests.test_factory_flow.FactoryFlowTests.test_model_cannot_choose_dispatch_or_fabricate_citations) ... ok
+test_same_key_changed_payload_and_cross_case_scope_fail (tests.test_factory_flow.FactoryFlowTests.test_same_key_changed_payload_and_cross_case_scope_fail) ... ok
+test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance (tests.test_factory_flow.FactoryFlowTests.test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance) ... ok
+test_aggregate_budget_stops_another_call_including_retry (tests.test_factory_controls.FactoryControlTests.test_aggregate_budget_stops_another_call_including_retry) ... ok
+test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect (tests.test_factory_controls.FactoryControlTests.test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect) ... ok
+test_cancellation_while_model_is_running_closes_without_a_financial_effect (tests.test_factory_controls.FactoryControlTests.test_cancellation_while_model_is_running_closes_without_a_financial_effect) ... ok
+test_changed_completion_cannot_silently_replace_pmo_acceptance (tests.test_factory_controls.FactoryControlTests.test_changed_completion_cannot_silently_replace_pmo_acceptance) ... ok
+test_eventual_absence_parks_without_model_poll_or_duplicate_publication (tests.test_factory_controls.FactoryControlTests.test_eventual_absence_parks_without_model_poll_or_duplicate_publication) ... ok
+test_existing_finance_screen_review_is_observed_as_the_same_decision (tests.test_factory_controls.FactoryControlTests.test_existing_finance_screen_review_is_observed_as_the_same_decision) ... ok
+test_missing_resolver_does_not_create_fictional_owner (tests.test_factory_controls.FactoryControlTests.test_missing_resolver_does_not_create_fictional_owner) ... ok
+test_new_form_key_cannot_create_another_business_budget (tests.test_factory_controls.FactoryControlTests.test_new_form_key_cannot_create_another_business_budget) ... ok
+test_plan_and_child_are_reserved_together (tests.test_factory_controls.FactoryControlTests.test_plan_and_child_are_reserved_together) ... ok
+test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery (tests.test_factory_controls.FactoryControlTests.test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery) ... ok
+test_reconciliation_activity_does_not_write_a_financial_draft (tests.test_factory_controls.FactoryControlTests.test_reconciliation_activity_does_not_write_a_financial_draft) ... ok
+test_returned_packet_reworks_changed_terms_without_rewriting_history (tests.test_factory_controls.FactoryControlTests.test_returned_packet_reworks_changed_terms_without_rewriting_history) ... ok
+test_source_successor_invalidates_exact_review_without_editing_old_task (tests.test_factory_controls.FactoryControlTests.test_source_successor_invalidates_exact_review_without_editing_old_task) ... ok
+test_stale_lease_cannot_finalize_another_attempt (tests.test_factory_controls.FactoryControlTests.test_stale_lease_cannot_finalize_another_attempt) ... ok
+test_unsupported_citation_cannot_become_a_native_result (tests.test_factory_controls.FactoryControlTests.test_unsupported_citation_cannot_become_a_native_result) ... ok
+test_malformed_workspace_identity_is_a_form_error (tests.test_factory_console.FactoryConsoleTests.test_malformed_workspace_identity_is_a_form_error) ... ok
+test_profile_adoption_and_claim_release_use_current_backend_authority (tests.test_factory_console.FactoryConsoleTests.test_profile_adoption_and_claim_release_use_current_backend_authority) ... ERROR
+
+======================================================================
+ERROR: test_profile_adoption_and_claim_release_use_current_backend_authority (tests.test_factory_console.FactoryConsoleTests.test_profile_adoption_and_claim_release_use_current_backend_authority)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.StringDataRightTruncation: value too long for type character varying(30)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_console.py", line 25, in test_profile_adoption_and_claim_release_use_current_backend_authority
+    self.assertEqual(client.post(url,values).status_code,302);w.refresh_from_db()
+                     ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1156, in post
+    response = super().post(
+        path,
+    ...<5 lines>...
+        **extra,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 499, in post
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "POST",
+        ^^^^^^^
+    ...<6 lines>...
+        **extra,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_views.py", line 165, in detail
+    elif operation=='adopt_profile':d.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
+                                    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory.py", line 362, in adopt_profile
+    TaskEvent.objects.create(task=task,actor=actor,action='factory.profile_wait_superseded',data={'from_profile':previous,'to_profile':config.pk,'reason':reason})
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1873, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.DataError: value too long for type character varying(30)
+
+----------------------------------------------------------------------
+Ran 23 tests in 124.519s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 45 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

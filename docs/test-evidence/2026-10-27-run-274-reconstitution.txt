@@ -1,0 +1,57 @@
+test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation (tests.test_cold_recovery.ColdRecoveryTests.test_actual_native_sql_failure_commit_loss_and_fresh_process_reconciliation) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+test_fresh_ui_policy_scope_agent_and_sql_guards_without_source (tests.test_cold_recovery.ColdRecoveryTests.test_fresh_ui_policy_scope_agent_and_sql_guards_without_source) ... ok
+test_preexisting_people_cannot_bootstrap_fresh_control_identity (tests.test_cold_recovery.ColdRecoveryTests.test_preexisting_people_cannot_bootstrap_fresh_control_identity) ... ok
+test_revoked_expired_forged_and_cross_purpose_authority (tests.test_cold_recovery.ColdRecoveryTests.test_revoked_expired_forged_and_cross_purpose_authority) ... ok
+test_01_ui_missing_policy_scope_agent_and_inventory (tests.test_reconstitution.ReconstitutionTests.test_01_ui_missing_policy_scope_agent_and_inventory) ... ok
+test_02_authenticated_receipts_unknown_and_human_dispositions (tests.test_reconstitution.ReconstitutionTests.test_02_authenticated_receipts_unknown_and_human_dispositions) ... ok
+test_03_complete_review_publication_and_changed_evidence (tests.test_reconstitution.ReconstitutionTests.test_03_complete_review_publication_and_changed_evidence) ... ok
+test_04_duplicates_and_fresh_process_commit_recovery (tests.test_reconstitution.ReconstitutionTests.test_04_duplicates_and_fresh_process_commit_recovery) ... ok
+test_05_sql_guards_and_foreign_scope (tests.test_reconstitution.ReconstitutionTests.test_05_sql_guards_and_foreign_scope) ... ok
+test_06_revoked_policy_roles_and_receipt_expiry (tests.test_reconstitution.ReconstitutionTests.test_06_revoked_policy_roles_and_receipt_expiry) ... FAIL
+
+======================================================================
+FAIL: test_06_revoked_policy_roles_and_receipt_expiry (tests.test_reconstitution.ReconstitutionTests.test_06_revoked_policy_roles_and_receipt_expiry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_reconstitution.py", line 62, in test_06_revoked_policy_roles_and_receipt_expiry
+    _,r=self.scenario('authority');self.assertTrue(r['authority_rejected'])
+        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_reconstitution.py", line 43, in scenario
+    return value,self.child(stage,value)
+                 ~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_reconstitution.py", line 17, in child
+    if result.returncode:raise AssertionError(stage+' failed\n'+result.stdout+'\n'+result.stderr)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: authority failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\reconstitution_scenario.py", line 206, in <module>
+    result=globals()[stage]()
+  File "C:\Users\USER\Desktop\psl-agent build\tests\reconstitution_scenario.py", line 185, in authority
+    a,b,c,p,values=fixture();gateway()
+                   ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\reconstitution_scenario.py", line 52, in fixture
+    p=d.capture(a,c.pk,r.pk,v['reference'],'synthetic-profile')
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\reconstitution.py", line 32, in capture
+    access(actor,c,'capture')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\reconstitution.py", line 19, in access
+    require(actor,case,'reconstitution.archive')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+
+----------------------------------------------------------------------
+Ran 11 tests in 1051.953s
+
+FAILED (failures=1)
+Found 11 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

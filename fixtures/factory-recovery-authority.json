@@ -1,0 +1,13 @@
+{
+  "classification": "synthetic_test_only; no actual appointments, authority, validity dates or independence policy supplied",
+  "rules": [{
+    "definition": "pmo-finance/v1",
+    "method": null,
+    "principal_id": null,
+    "reviewer_id": null,
+    "review_role": null,
+    "independent_of_worker": null,
+    "valid_from": null,
+    "valid_until": null
+  }]
+}

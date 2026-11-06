@@ -1,0 +1,93 @@
+Creating test database for alias 'default' ('test_psl')...
+
+Found 20 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying core.0001_initial... OK
+  Applying agents.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying baas.0001_initial... OK
+  Applying policy.0001_initial... OK
+  Applying pmo.0001_initial... OK
+  Applying documents.0001_initial... OK
+  Applying core.0002_append_only_history... OK
+  Applying workflows.0001_initial... OK
+  Applying finance.0001_initial... OK
+  Applying workflows.0002_effect_identity... OK
+  Applying documents.0002_controlledreview_document_publication_publicationjob_and_more... OK
+  Applying workflows.0003_humantask_taskevent... OK
+  Applying documents.0003_immutable_controlled_documents... OK
+  Applying documents.0004_alter_publication_review... OK
+  Applying pmo.0002_remove_decision_decision_subject_role_and_more... OK
+  Applying pmo.0003_deliverycandidate_gatedocumentbinding_gaterecord_and_more... OK
+  Applying pmo.0004_immutable_gate_history... OK
+  Applying pmo.0005_gaterecord_gate_source_identity... OK
+  Applying pmo.0006_actionitem_actionstate_actionitem_current_meeting_and_more... OK
+  Applying pmo.0007_meetingactionlink_and_more... OK
+  Applying pmo.0008_immutable_minutes_actions_reports... OK
+  Applying pmo.0009_changerequest_changeversion_changerequest_current_and_more... OK
+  Applying pmo.0010_immutable_commercial_changes... OK
+  Applying finance.0002_financialimport_importvalidation_invoicepreparation_and_more... OK
+  Applying finance.0003_immutable_intake... OK
+  Applying finance.0004_signedbaselineintake... OK
+  Applying identity.0001_initial... OK
+  Applying pmo.0011_changeclosure_changedocumentbinding_and_more... OK
+  Applying pmo.0012_immutable_change_execution_intake... OK
+  Applying pmo.0013_changedocumentbinding_execution_ids... OK
+  Applying pmo.0014_issue_issuestate_issueclosureentry_issue_current_and_more... OK
+  Applying pmo.0015_immutable_issue_history... OK
+  Applying pmo.0016_escalationscancursor_escalationdecision_and_more... OK
+  Applying pmo.0017_immutable_escalations... OK
+  Applying pmo.0018_changeauthorization_preapproval_snapshot_and_more... OK
+  Applying pmo.0019_standard_history_guards... OK
+  Applying pmo.0020_emergencyauthorization_emergencyoutcome_and_more... OK
+  Applying pmo.0021_emergency_history_guards... OK
+  Applying pmo.0022_emergencyscancursor_emergencydeadlinesignal... OK
+  Applying pmo.0023_emergency_signal_guard... OK
+test_coexist_needs_verified_current_glpi_not_just_text_or_old_acceptance (tests.test_emergencies.EmergencyTests.test_coexist_needs_verified_current_glpi_not_just_text_or_old_acceptance) ... ok
+test_coexist_preauthorization_review_retrospective_and_reviewed_publication (tests.test_emergencies.EmergencyTests.test_coexist_preauthorization_review_retrospective_and_reviewed_publication) ... ok
+test_defer_needs_exception_decision_and_later_glpi_before_reconciliation (tests.test_emergencies.EmergencyTests.test_defer_needs_exception_decision_and_later_glpi_before_reconciliation) ... ok
+test_distinct_people_rule_does_not_silently_count_one_actor_twice (tests.test_emergencies.EmergencyTests.test_distinct_people_rule_does_not_silently_count_one_actor_twice) ... ok
+test_late_log_and_later_authority_never_become_preauthorization (tests.test_emergencies.EmergencyTests.test_late_log_and_later_authority_never_become_preauthorization) ... ok
+test_missing_calendar_holds_only_deadline_reconciliation_not_human_decisions (tests.test_emergencies.EmergencyTests.test_missing_calendar_holds_only_deadline_reconciliation_not_human_decisions) ... ok
+test_missing_or_unknown_incident_priority_is_not_inferred_from_critical (tests.test_emergencies.EmergencyTests.test_missing_or_unknown_incident_priority_is_not_inferred_from_critical) ... ok
+test_new_source_or_revoked_source_grant_holds_queued_report (tests.test_emergencies.EmergencyTests.test_new_source_or_revoked_source_grant_holds_queued_report) ... ok
+test_p1_needs_cto_and_non_p1_still_needs_both_prescribed_roles (tests.test_emergencies.EmergencyTests.test_p1_needs_cto_and_non_p1_still_needs_both_prescribed_roles) ... ok
+test_policy_validation_rejects_inferred_priority_overlap_waiver_and_wrong_deadlines (tests.test_emergencies.EmergencyTests.test_policy_validation_rejects_inferred_priority_overlap_waiver_and_wrong_deadlines) ... ok
+test_prescribed_decisions_and_actual_outcomes_do_not_require_glpi_or_calendar_policy (tests.test_emergencies.EmergencyTests.test_prescribed_decisions_and_actual_outcomes_do_not_require_glpi_or_calendar_policy) ... ok
+test_replace_is_explicit_human_exception_and_never_financial_or_dispatch_permission (tests.test_emergencies.EmergencyTests.test_replace_is_explicit_human_exception_and_never_financial_or_dispatch_permission) ... ok
+test_reporting_manifest_and_cited_agent_bind_actual_sources_without_effects (tests.test_emergencies.EmergencyTests.test_reporting_manifest_and_cited_agent_bind_actual_sources_without_effects) ... ok
+test_return_rejection_and_current_authority_are_not_ignored (tests.test_emergencies.EmergencyTests.test_return_rejection_and_current_authority_are_not_ignored) ... ok
+test_review_revision_invalidates_old_retrospective_decisions (tests.test_emergencies.EmergencyTests.test_review_revision_invalidates_old_retrospective_decisions) ... ok
+test_staff_ui_draft_investigation_stale_scope_admin_and_postgres_history (tests.test_emergencies.EmergencyTests.test_staff_ui_draft_investigation_stale_scope_admin_and_postgres_history) ... ok
+test_superseded_or_revoked_policy_keeps_history_but_holds_reconciliation (tests.test_emergencies.EmergencyTests.test_superseded_or_revoked_policy_keeps_history_but_holds_reconciliation) ... ok
+test_working_days_holiday_and_elapsed_log_boundary (tests.test_emergencies.EmergencyTests.test_working_days_holiday_and_elapsed_log_boundary) ... ok
+test_actual_repeated_process_resumes_cursor_without_duplicate_signal (tests.test_emergencies.EmergencyProcessTests.test_actual_repeated_process_resumes_cursor_without_duplicate_signal) ... ok
+test_two_real_connections_signal_once (tests.test_emergencies.EmergencyProcessTests.test_two_real_connections_signal_once) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 147.536s
+
+OK
+Destroying test database for alias 'default' ('test_psl')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

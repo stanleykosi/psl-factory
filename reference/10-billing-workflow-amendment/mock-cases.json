@@ -1,0 +1,219 @@
+[
+  {
+    "id": "V05-M01",
+    "given": "Detailed planning/costing not finished, unsigned SOW",
+    "when": "Prepare client signature handoff",
+    "then": "Keep planning/costing incomplete; do not require a signature before doing detailed planning.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M02",
+    "given": "Signed SOW and approved opening amount; PMO records stage complete",
+    "when": "Finance prepares and issues opening invoice",
+    "then": "One invoice intent, PMO completion remains complete; no Finance milestone approval step.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M03",
+    "given": "PMO milestone complete, Finance delivery adapter times out",
+    "when": "Retry requested",
+    "then": "Keep invoice outcome_unknown; reconcile external identity before any issuance retry.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M04",
+    "given": "No confirmed completion-stage event or amount",
+    "when": "Attempt completion-stage invoice",
+    "then": "blocked_configuration for that invoice; preserve other evidence/receipts; do not invent go-live/closure trigger.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M05",
+    "given": "Hypothetical contract1000 units; issued opening invoice400; verified receipt150 assigned and allocated",
+    "when": "Compute balances",
+    "then": "Invoice receivable250; contract cash150; cash target850; milestone unchanged.400 is test data, not40% policy.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M06",
+    "given": "Same example then irregular verified receipts100 and120, all allocated",
+    "when": "Compute balances",
+    "then": "Total contract cash370; invoice receivable30; remaining contract cash630. Receipt timing need not match stages.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M07",
+    "given": "Same example then150 received; opening invoice has30 open",
+    "when": "Allocate30 to invoice, retain120 contract cash",
+    "then": "Invoice receivable0; contract cash520; unallocated120; cash target480. No negative invoice balance.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M08",
+    "given": "Hypothetical UAT invoice350 issued,120 contract cash remains unapplied",
+    "when": "Finance allocates120 under configured policy",
+    "then": "UAT invoice open230; cash remains520, not640; allocating never creates cash.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M09",
+    "given": "Contract1000, verified qualifying assigned cash790 then10",
+    "when": "Assess80% expectation",
+    "then": "79% then80%; below/meets expectation only. Current unresolved deployment policy grants neither release nor a new hard block.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M10",
+    "given": "Client says paid800 but verified assigned receipts total600",
+    "when": "Assess expectation",
+    "then": "Report claimed amount separately; qualifying paid never assumes800; verification pending remains visible.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M11",
+    "given": "Two workers allocate100 each from one receipt with150 capacity",
+    "when": "Commit concurrently",
+    "then": "One succeeds, other stale/capacity failure; aggregate allocations never exceed150.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M12",
+    "given": "Same source transaction imported twice",
+    "when": "Record receipt",
+    "then": "Same identity/hash returns original; conflicting amount enters review, never increases cash.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M13",
+    "given": "Receipt100 allocated across two invoices60/40 is reversed",
+    "when": "Apply authorized reversal",
+    "then": "Atomically reverse both allocations and receipt; restore invoice open amounts; cash drops100 once; retained audit.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M14",
+    "given": "Applied allocation60 points to wrong invoice",
+    "when": "Correct allocation",
+    "then": "Authorized reversal then new allocation; no historical overwrite or transient double use of receipt capacity.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M15",
+    "given": "Invoice100 unpaid, approved credit20, no receipts",
+    "when": "Compute and assess",
+    "then": "Receivable80; cash0. Credit does not count as paid toward80% absent explicit policy.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M16",
+    "given": "Contract1000 receives verified assigned1100",
+    "when": "Compute",
+    "then": "Cash target0; excess100; show unapplied/excess separately, never negative owing or automatic refund.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M17",
+    "given": "Invoice prepared from milestone v1; PMO disputes it before issuance",
+    "when": "Attempt issue",
+    "then": "Stale evidence guard prevents new issuance. If external issuance already occurred, preserve invoice and open separate Finance correction.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M18",
+    "given": "Funds in different currency or missing denominator",
+    "when": "Compute payment expectation",
+    "then": "No unapproved conversion or invented denominator; assessment unknown with precise missing evidence.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M19",
+    "given": "Document storage tool absent",
+    "when": "Capture signed SOW evidence in proposed design",
+    "then": "Specify controlled PSL artifact record/version/hash/permissions; do not claim existing production repository or migrated documents.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M20",
+    "given": "Payment arrives after80% snapshot but before deployment decision",
+    "when": "Refresh status",
+    "then": "Versioned fresh assessment reflects payment; prior assessment retained. Existing release approval still needed.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M21",
+    "given": "Invoice issued but client delivery fails",
+    "when": "Retry delivery",
+    "then": "Resend same approved invoice artifact only; no second invoice and no change to milestone or receipt states.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M22",
+    "given": "Cancellation requested after external invoice acceptance",
+    "when": "Cancel job",
+    "then": "Do not mark invoice nonexistent; reconcile and route authorized correction. Keep sticky cancellation for undispatched follow-on actions.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M23",
+    "given": "Contract amendment changes value after partial payment",
+    "when": "Version schedule",
+    "then": "Keep old invoices/receipts; revised obligations need approved evidence. Recompute new-version cash target and expectation; do not reinterpret prior payments or reissue stages automatically.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M28",
+    "given": "Delivery attempt1 succeeded, attempt2 later fails",
+    "when": "Record late failure",
+    "then": "Retain delivered aggregate for exact artifact/destination; preserve failed attempt separately, no invoice or cash state change.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M31",
+    "given": "Issued invoice100 has a correction request with unknown external outcome",
+    "when": "Compute balance",
+    "then": "Retain known100 obligation; affected net balance requires adjustment review. Do not exclude original or count an unverified replacement.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M29",
+    "given": "Reversed100 receipt included in gross history100",
+    "when": "Compute",
+    "then": "Cash0, not minus100; full reversal can apply only once across distinct request IDs.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M30",
+    "given": "Payment denominator zero or source manifest omits reversal",
+    "when": "Assess or compute",
+    "then": "Unknown/blocked result; never passing percentage from zero denominator or incomplete caller-selected snapshot.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M25",
+    "given": "Schedule cancelled while invoice worker is waiting",
+    "when": "Resume worker",
+    "then": "Sticky cancellation prevents new issuance; externally accepted invoice remains under Finance correction and no cash reversal occurs.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M26",
+    "given": "Caller submits receipt.record with verification_state verified",
+    "when": "Validate command",
+    "then": "Reject extra lifecycle field; trusted Finance verification is a separate command.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M27",
+    "given": "Result reports completed with null result",
+    "when": "Validate receipt schema",
+    "then": "Reject malformed success; exact typed result and audit reference required.",
+    "status": "specified_not_executed"
+  },
+  {
+    "id": "V05-M24",
+    "given": "Receipt from tenantA references invoice tenantB",
+    "when": "Allocate",
+    "then": "Permission/referential guard rejects before effect; no cross-tenant evidence leak.",
+    "status": "specified_not_executed"
+  }
+]

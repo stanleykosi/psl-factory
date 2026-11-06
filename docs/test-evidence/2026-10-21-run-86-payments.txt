@@ -1,0 +1,56 @@
+Found 22 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+test_agent_cites_sources_and_drafts_without_creating_approval (tests.test_payments.PaymentTests.test_agent_cites_sources_and_drafts_without_creating_approval) ... ok
+test_assessment_and_human_authority_are_independent_configuration_paths (tests.test_payments.PaymentTests.test_assessment_and_human_authority_are_independent_configuration_paths) ... ok
+test_assigned_verified_cash_is_distinct_from_allocated_cash (tests.test_payments.PaymentTests.test_assigned_verified_cash_is_distinct_from_allocated_cash) ... ok
+test_corrected_invoice_denominator_and_cash_successor_are_canonical (tests.test_payments.PaymentTests.test_corrected_invoice_denominator_and_cash_successor_are_canonical) ... ERROR
+test_cross_case_sources_and_stale_revision_are_rejected (tests.test_payments.PaymentTests.test_cross_case_sources_and_stale_revision_are_rejected) ... ok
+test_current_principal_grants_and_policy_revocation_hold_use (tests.test_payments.PaymentTests.test_current_principal_grants_and_policy_revocation_hold_use) ... ok
+test_exception_approval_does_not_require_or_override_independent_glpi_gate (tests.test_payments.PaymentTests.test_exception_approval_does_not_require_or_override_independent_glpi_gate) ... ok
+test_expiry_after_approval_is_checked_at_use (tests.test_payments.PaymentTests.test_expiry_after_approval_is_checked_at_use) ... ok
+test_expiry_duration_and_return_reject_transitions (tests.test_payments.PaymentTests.test_expiry_duration_and_return_reject_transitions) ... ok
+test_explicit_human_delegation_is_scoped_and_expires (tests.test_payments.PaymentTests.test_explicit_human_delegation_is_scoped_and_expires) ... ok
+test_human_decision_can_be_recorded_with_unknown_basis_but_release_use_holds (tests.test_payments.PaymentTests.test_human_decision_can_be_recorded_with_unknown_basis_but_release_use_holds) ... ok
+test_human_exception_preserves_debt_and_independent_control_manifest (tests.test_payments.PaymentTests.test_human_exception_preserves_debt_and_independent_control_manifest) ... ok
+test_meeting_expectation_needs_no_exception_authority (tests.test_payments.PaymentTests.test_meeting_expectation_needs_no_exception_authority) ... ok
+test_missing_basis_is_unknown_and_request_tracking_has_no_approval_default (tests.test_payments.PaymentTests.test_missing_basis_is_unknown_and_request_tracking_has_no_approval_default) ... ok
+test_new_cash_allocation_invalidates_snapshot_approval_and_reservation (tests.test_payments.PaymentTests.test_new_cash_allocation_invalidates_snapshot_approval_and_reservation) ... ok
+test_partial_coverage_and_inconsistent_basis_never_become_zero (tests.test_payments.PaymentTests.test_partial_coverage_and_inconsistent_basis_never_become_zero) ... ok
+test_postgresql_guards_preserve_assessment_request_decision_reservation (tests.test_payments.PaymentTests.test_postgresql_guards_preserve_assessment_request_decision_reservation) ... ok
+test_request_idempotency_bound_identity_and_wrong_scope (tests.test_payments.PaymentTests.test_request_idempotency_bound_identity_and_wrong_scope) ... ok
+test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt (tests.test_payments.PaymentTests.test_revocation_blocks_new_use_and_historical_idempotency_preserves_receipt) ... ok
+test_self_approval_and_admin_flag_do_not_grant_authority (tests.test_payments.PaymentTests.test_self_approval_and_admin_flag_do_not_grant_authority) ... ok
+test_server_rendered_ui_and_post_use_real_services (tests.test_payments.PaymentTests.test_server_rendered_ui_and_post_use_real_services) ... ok
+test_typed_policy_invalid_targets_and_scope_are_rejected (tests.test_payments.PaymentTests.test_typed_policy_invalid_targets_and_scope_are_rejected) ... ok
+
+======================================================================
+ERROR: test_corrected_invoice_denominator_and_cash_successor_are_canonical (tests.test_payments.PaymentTests.test_corrected_invoice_denominator_and_cash_successor_are_canonical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_payments.py", line 177, in test_corrected_invoice_denominator_and_cash_successor_are_canonical
+    assign(self.actor,self.case,self.r,self.cov,self.cash_e)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\settlement_helpers.py", line 41, in assign
+    def assign(a,c,r,cov,e):return cash.assign(a,c.pk,r.pk,cov.pk if cov else None,'Finance',e['cash_correction'].pk,'Synthetic evidenced receipt assignment',rev(c))
+                                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\cash.py", line 125, in assign
+    if prior and prior.coverage_id==coverage_id:raise ValidationError('Receipt already has this assignment')
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Receipt already has this assignment']
+
+----------------------------------------------------------------------
+Ran 22 tests in 32.471s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...

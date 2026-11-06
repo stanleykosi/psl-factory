@@ -1,0 +1,1 @@
+{"case": "62cbee2d-13c1-4117-bb40-97253e62f1e1", "missing_case": "989f1a03-e0a4-43cc-8ee4-852d9885f280", "principals": {"actor": 57, "reviewer": 58, "specialist": 59}, "claim": 1, "receipt": 1, "check": 1, "attestation": 1, "response_event": 17, "packet": 3, "channel_policy": 334, "clock_policy": 335}

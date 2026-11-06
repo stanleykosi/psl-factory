@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<div class="page-heading"><div><p class="eyebrow">DELIVERY</p><h1>{{ intake_title }}</h1><p class="lede">Connect an existing delivery candidate to its source observations, required decisions and verified output.</p></div></div>
+<section class="card"><h2>Project</h2>{% for case in available_cases %}<p><a href="?definition={{ definition }}&amp;case={{ case.pk }}">{{ case|workspace_name }}</a></p>{% empty %}<p>No project is currently available for delivery intake.</p>{% endfor %}</section>
+<section class="card"><form method="post">{% csrf_token %}{{ form.as_p }}<button>{{ intake_title }}</button></form></section>{% endblock %}

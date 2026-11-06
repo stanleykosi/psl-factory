@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "classification": "Bounded native invoice receipt recovery before changed-source rework; no full-process promotion",
+  "source_run": 521,
+  "browser_source_run": 520,
+  "parent_checkpoint": 513,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "passing_runs": {
+    "516": {
+      "tests": 9,
+      "unittest_seconds": 204.941,
+      "process_seconds": 211.623
+    },
+    "518": {
+      "tests": 3,
+      "unittest_seconds": 37.091,
+      "process_seconds": 42.58
+    },
+    "520": {
+      "tests": 8,
+      "unittest_seconds": 85.696,
+      "process_seconds": 91.706
+    },
+    "521": {
+      "tests": 130,
+      "unittest_seconds": 2600.548,
+      "process_seconds": 2607.277
+    }
+  },
+  "retained_failures": [
+    514,
+    517,
+    519
+  ],
+  "tested_scope": [
+    "Original unknown/expired native job before rework",
+    "Receipt-only lookup cannot send or claim pending work",
+    "Exact factory ownership excludes unrelated human reservations",
+    "Legacy replaced-head original-job recovery",
+    "Prior receipt observation after sender/reviewer access changes",
+    "Current configured source age at new-send boundary",
+    "Cross-invoice uncertain-work issuance hold with native pending-draft compatibility",
+    "Actual OS exit and lease expiry",
+    "Human UI exact review/reconciliation, agent replan and native correction hold"
+  ],
+  "browser": "Isolated native synthetic mock evidence; one human fixture has multiple roles, not independent UAT or real-provider evaluation",
+  "main_prior_rowsets_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "retained_finance_rowsets_unchanged": 329,
+  "native_review_receipts_allowance_preserved": true,
+  "preview_source_run": 521,
+  "refreshed_preview_count": 13,
+  "separate_recovery_preview": {
+    "port": 8015,
+    "source_run": 520,
+    "same_application_bytes": true
+  },
+  "migrations_added": [],
+  "dependencies_added": [],
+  "operational_owner_values_added": false,
+  "policy_slots": "Existing configured evidence age, Finance review, executor and contract terms; no new PSL policy values",
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "active_factory_restore": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-priority-acceptance.json",
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-priority-baseline.json",
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-priority-static521.json",
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-browser520.json",
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-retained521.json",
+    "docs/test-evidence/2026-11-02-factory-routing-main-after-recovery-ui521.json",
+    "docs/test-evidence/2026-11-02-factory-invoice-recovery-previews521-after.json"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "run": 359,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_native_validation",
+    "tests.test_pilot_physical",
+    "tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples",
+    "tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-359-process-acceptance.txt",
+  "started_at": "2026-10-29T11:47:15.523903+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 488.166
+}

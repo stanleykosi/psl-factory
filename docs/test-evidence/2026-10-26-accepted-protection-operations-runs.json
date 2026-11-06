@@ -1,0 +1,38 @@
+{
+  "runs": {
+    "2026-10-26-run-239-accepted-protection-baseline.txt": {
+      "tests": 2,
+      "seconds": 929.247,
+      "result": "OK"
+    },
+    "2026-10-26-run-240-accepted-protection-focused.txt": {
+      "tests": 2,
+      "seconds": 1072.691,
+      "result": "OK"
+    },
+    "2026-10-26-run-241-accepted-protection-complete.txt": {
+      "tests": 12,
+      "seconds": 27761.229,
+      "result": "FAILED (errors=1)"
+    },
+    "2026-10-26-run-242-accepted-protection-connected.txt": {
+      "tests": 78,
+      "seconds": 2096.129,
+      "result": "FAILED (failures=1)"
+    },
+    "2026-10-26-run-243-accepted-protection-boundaries.txt": {
+      "tests": 127,
+      "seconds": 5027.27,
+      "result": "FAILED (failures=1)"
+    },
+    "2026-10-26-run-244-accepted-protection-legacy-contract.txt": {
+      "tests": 2,
+      "seconds": 570.237,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "failed_runs_retained": true,
+  "upstream_and_supplied_owner_evidence": "synthetic; actual services/PostgreSQL/files/isolated metadata receipts",
+  "real_provider_or_operational_acceptance": false
+}

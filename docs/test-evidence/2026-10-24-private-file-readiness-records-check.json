@@ -1,0 +1,16 @@
+{
+  "records_consistent": true,
+  "verified_increment": "BUILD-PRIVATE-FILE-READINESS",
+  "proposed_next": "BUILD-PRIVATE-FILE-ACCEPTANCE",
+  "processes_partial": 122,
+  "source_fingerprints": 874,
+  "next_run": 233,
+  "actual_suites": [
+    229,
+    230,
+    231,
+    232
+  ],
+  "main_data_preserved": true,
+  "real_provider_operational_acceptance": false
+}

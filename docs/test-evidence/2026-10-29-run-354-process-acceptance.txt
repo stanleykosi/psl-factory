@@ -1,0 +1,195 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying documents.0012_native_validation_guards...test_csrf_ui_source_choices_agent_and_sql_native_identity_guards (tests.test_native_validation.NativeValidationTests.test_csrf_ui_source_choices_agent_and_sql_native_identity_guards) ... ERROR
+test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment (tests.test_native_validation.NativeValidationTests.test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment) ... ERROR
+test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance (tests.test_native_validation.NativeValidationTests.test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance) ... ERROR
+test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance (tests.test_native_validation.NativeValidationTests.test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance) ... ERROR
+test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance (tests.test_native_validation.NativeValidationTests.test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance) ... ERROR
+test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance (tests.test_native_validation.NativeValidationTests.test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance) ... ERROR
+
+======================================================================
+ERROR: test_csrf_ui_source_choices_agent_and_sql_native_identity_guards (tests.test_native_validation.NativeValidationTests.test_csrf_ui_source_choices_agent_and_sql_native_identity_guards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 117, in test_csrf_ui_source_choices_agent_and_sql_native_identity_guards
+    self.assertEqual(client.post(url,data).status_code,302);row=ValidationReplay.objects.get()
+                     ~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1156, in post
+    response = super().post(
+        path,
+    ...<5 lines>...
+        **extra,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 499, in post
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "POST",
+        ^^^^^^^
+    ...<6 lines>...
+        **extra,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation_views.py", line 41, in workbench
+    record(a,c,d['package'].pk,d['example_id'],d['family'],d['job_id'],d['evidence'].pk,d['operation_key'],v)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\native_validation.py", line 52, in record
+    'source_identity':adapter.build(),
+                      ~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\validation_native.py", line 41, in build
+    from config.build_identity import source_identity
+ImportError: cannot import name 'source_identity' from 'config.build_identity' (C:\Users\USER\Desktop\psl-agent build\config\build_identity.py). Did you mean: 'build_identity'?
+
+======================================================================
+ERROR: test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment (tests.test_native_validation.NativeValidationTests.test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 90, in test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment
+    f=fixture();first,_,r,_=ready(f);h.review(f,'acceptance')
+                            ~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 51, in ready
+    first=job(f,'native-normal');run_once(case_id=f['case'].pk);r1=evaluate(f,first)
+                                                                   ~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 47, in evaluate
+    return native.record(f['tester'],f['case'].pk,f['package'].pk,f['examples'][index].pk,'handoff',j.pk,f['decision_evidence'].pk,key or 'native-'+str(j.pk),rev(f['case']))
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\native_validation.py", line 52, in record
+    'source_identity':adapter.build(),
+                      ~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\validation_native.py", line 41, in build
+    from config.build_identity import source_identity
+ImportError: cannot import name 'source_identity' from 'config.build_identity' (C:\Users\USER\Desktop\psl-agent build\config\build_identity.py). Did you mean: 'build_identity'?
+
+======================================================================
+ERROR: test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance (tests.test_native_validation.NativeValidationTests.test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 79, in test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance
+    f=fixture();j=job(f,'not-executed');r=evaluate(f,j)
+                                          ~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 47, in evaluate
+    return native.record(f['tester'],f['case'].pk,f['package'].pk,f['examples'][index].pk,'handoff',j.pk,f['decision_evidence'].pk,key or 'native-'+str(j.pk),rev(f['case']))
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\native_validation.py", line 52, in record
+    'source_identity':adapter.build(),
+                      ~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\validation_native.py", line 41, in build
+    from config.build_identity import source_identity
+ImportError: cannot import name 'source_identity' from 'config.build_identity' (C:\Users\USER\Desktop\psl-agent build\config\build_identity.py). Did you mean: 'build_identity'?
+
+======================================================================
+ERROR: test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance (tests.test_native_validation.NativeValidationTests.test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 102, in test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance
+    f=fixture();_,_,r,_=ready(f)
+                        ~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 51, in ready
+    first=job(f,'native-normal');run_once(case_id=f['case'].pk);r1=evaluate(f,first)
+                                                                   ~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 47, in evaluate
+    return native.record(f['tester'],f['case'].pk,f['package'].pk,f['examples'][index].pk,'handoff',j.pk,f['decision_evidence'].pk,key or 'native-'+str(j.pk),rev(f['case']))
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\native_validation.py", line 52, in record
+    'source_identity':adapter.build(),
+                      ~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\validation_native.py", line 41, in build
+    from config.build_identity import source_identity
+ImportError: cannot import name 'source_identity' from 'config.build_identity' (C:\Users\USER\Desktop\psl-agent build\config\build_identity.py). Did you mean: 'build_identity'?
+
+======================================================================
+ERROR: test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance (tests.test_native_validation.NativeValidationTests.test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 71, in test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance
+    f=fixture(synthetic=False);ready(f);accepted=h.review(f,'acceptance')
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 28, in fixture
+    f['pmo']=signed(a,c)
+             ~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\helpers.py", line 72, in signed
+    decide(actor,case.pk,role,rev(case))
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 75, in decide
+    target, policy = guard_decide(actor,case,role)
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\services.py", line 51, in guard_decide
+    policy = role_policy(actor, case, role)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 304, in role_policy
+    raise ValidationError('Operational dual-role eligibility is not configured')
+django.core.exceptions.ValidationError: ['Operational dual-role eligibility is not configured']
+
+======================================================================
+ERROR: test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance (tests.test_native_validation.NativeValidationTests.test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 60, in test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance
+    f=fixture();first,second,r1,r2=ready(f)
+                                   ~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 51, in ready
+    first=job(f,'native-normal');run_once(case_id=f['case'].pk);r1=evaluate(f,first)
+                                                                   ~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 47, in evaluate
+    return native.record(f['tester'],f['case'].pk,f['package'].pk,f['examples'][index].pk,'handoff',j.pk,f['decision_evidence'].pk,key or 'native-'+str(j.pk),rev(f['case']))
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\native_validation.py", line 52, in record
+    'source_identity':adapter.build(),
+                      ~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\validation_native.py", line 41, in build
+    from config.build_identity import source_identity
+ImportError: cannot import name 'source_identity' from 'config.build_identity' (C:\Users\USER\Desktop\psl-agent build\config\build_identity.py). Did you mean: 'build_identity'?
+
+----------------------------------------------------------------------
+Ran 6 tests in 40.584s
+
+FAILED (errors=6)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

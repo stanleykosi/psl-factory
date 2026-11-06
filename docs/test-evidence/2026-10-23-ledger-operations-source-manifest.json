@@ -1,0 +1,95 @@
+{
+  "planned_final_run": "RUN189",
+  "selected_modules": [
+    {
+      "module": "tests.test_ledger_operations",
+      "tests": 14
+    },
+    {
+      "module": "tests.test_ledger_operations_concurrency",
+      "tests": 2
+    },
+    {
+      "module": "tests.test_ledger_agents",
+      "tests": 21
+    },
+    {
+      "module": "tests.test_ledger_agent_concurrency",
+      "tests": 3
+    },
+    {
+      "module": "tests.test_operator_recovery",
+      "tests": 24
+    },
+    {
+      "module": "tests.test_operator_workers",
+      "tests": 10
+    },
+    {
+      "module": "tests.test_operator_bridges",
+      "tests": 4
+    },
+    {
+      "module": "tests.test_readiness",
+      "tests": 26
+    },
+    {
+      "module": "tests.test_readiness_workers",
+      "tests": 6
+    },
+    {
+      "module": "tests.test_readiness_bridges",
+      "tests": 6
+    },
+    {
+      "module": "tests.test_support_channel_operations",
+      "tests": 11
+    },
+    {
+      "module": "tests.test_support_response_operations",
+      "tests": 19
+    },
+    {
+      "module": "tests.test_support_response_operations_workers",
+      "tests": 2
+    },
+    {
+      "module": "tests.test_agent_data_workers",
+      "tests": 5
+    },
+    {
+      "module": "tests.test_application",
+      "tests": 30
+    }
+  ],
+  "source_test_methods": 183,
+  "runtime_source_sha256": {
+    "apps/workflows/operator_inventory.py": "bd1b27abaf8d88d04e98197bc881b6a30a60353e74792b3b7cbfe123d53c3157",
+    "apps/workflows/operator_recovery.py": "90b41897aec323f7a22239006680e98915bfee777367211857058cfaaaeebcba",
+    "apps/workflows/operator_views.py": "b753f667da1fcf528b83cc4e8d71a49c05522e3c223f2fcd682fd2415f4bec3d",
+    "apps/workflows/operator_delivery.py": "c08e36963be2b670c339fd0f1a54275fa020b1dc0065ae9fa7c53c142f4b6de5",
+    "apps/workflows/protection.py": "c4f5ce6809cf4fdc9501d143b7be19888bd002de5b5e16e2687ecaaf0b3ec6be",
+    "apps/workflows/readiness.py": "2401876d8682088085246f7d502378581101ce84a9821cc425f4271ad8cac54a",
+    "apps/workflows/readiness_delivery.py": "951024f0b6c6029de1759ae61b86a056cc826a31acd1beb4647f1d3c97f9632f",
+    "apps/policy/operator_validators.py": "947cc6cdc1edc43aafeada308ea199d0d900c69e4a8155447d2409d5c856a1f9",
+    "apps/core/evidence_access.py": "fc2cfe1e82fb43f1e0a9458b987161cd5b5cb9f6000c9f2c213f96e205feb675",
+    "apps/agents/boundary_delivery.py": "ea8e452b142a350087f178e299c0730f3e19f6bc28cec019cc913562d7653a48",
+    "apps/agents/operations.py": "a61b54129f0790a6a8c99d9cb53d9608d264fe8797dd3271e1d298c1b080f06d",
+    "apps/agents/integrations.py": "fe38a0dea6bde6f2708c6fa455ea459e3446b50b294a71933a1b820e7b88ceae",
+    "apps/agents/ledger_operations.py": "528092f9d13c65eb17b74047bd1fd4078986cac8680e72e30e6dafe6c97732a0",
+    "apps/finance/ledger_agent_views.py": "1762fead32e4b9e1c079eec4e5c44df5170fe0629c7d00db0a5c8259c633fa0d",
+    "adapters/ledger_operations.py": "ec8ebede1ca5b6f59bd6c115cecc1c2c6e3634aa5d3bd7e4108b243c7344334b",
+    "adapters/readiness.py": "1a03f3b52d989a3d53cea6fa8dd6e78d91b9525bf7baaa755313f591e11b5edb",
+    "templates/finance/ledger_agents.html": "313581c11b60f83cc908aed87c1fc4d7a26090555fba08641d15aa89ac35a678",
+    "fixtures/ledger-private-operations.json": "2cc07340ec3ef117bc5e1d75a034f4c011e0618519a741a28bc32309ad431a74",
+    "tests/ledger_operations_helpers.py": "e696bd3ad161be2acd9f6cf2a2c30c9f3130c0e940a62b9ee1a00fb350a5c009",
+    "tests/test_ledger_operations.py": "f5eb4b9c77ace19374fe24a1aae9b186e8feb01c20e2bc74959bd5f8adddab06",
+    "tests/test_ledger_operations_concurrency.py": "7c12e987f7da9434c8d7b99724e377d49ee7d18311727e73a665e7a54c5cb718"
+  },
+  "files_exist": true,
+  "backlog_items": 40,
+  "dependencies_resolved": true,
+  "all122_statuses_partial": true,
+  "final_run": "RUN189",
+  "source_unchanged_through_final_run": true
+}

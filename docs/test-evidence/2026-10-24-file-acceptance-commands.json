@@ -1,0 +1,76 @@
+{
+  "233": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_private_file_readiness.PrivateFileReadinessTests.test_exact_backup_not_found_and_database_export_found_closed_scope tests.test_private_file_readiness.PrivateFileReadinessTests.test_v2_file_inventory_preserves_finance_source_and_requires_affected_restore_reassessment --keepdb --noinput --verbosity 2",
+    "result": "2/OK/554.436s",
+    "session_id": 77686
+  },
+  "234": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_file_acceptance tests.test_file_acceptance_concurrency --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "session_id": 41566,
+    "expected_count": 15,
+    "result": "15/FAILED(errors=2)/1894.034s",
+    "passed_tests": 13
+  },
+  "structural": {
+    "commands": [
+      ".venv/Scripts/python.exe manage.py check",
+      ".venv/Scripts/python.exe manage.py makemigrations --check --dry-run",
+      ".venv/Scripts/python.exe -m compileall -q apps adapters config tests",
+      ".venv/Scripts/python.exe -m pip check"
+    ],
+    "result": "All exit0; checks.json contains individual tool outputs."
+  },
+  "main_migrations": {
+    "command": ".venv/Scripts/python.exe manage.py migrate --noinput",
+    "result": "exit0; documents0011 applied after focused SQL lineage cases passed. No main business data/policies/appointments/effects."
+  },
+  "source_application": {
+    "initial": "ModuleNotFoundError apps during final migration generation; preceding source edits applied, database untouched.",
+    "repair": "Completed only remaining migration generation stage with workspace sys.path. Did not rerun already applied source edits."
+  },
+  "audit": {
+    "command": ".venv/Scripts/python.exe .runtime/verify_file_acceptance.py",
+    "status": "completed",
+    "result": "exit0; integrity.json"
+  },
+  "classification": "Real internal PostgreSQL/services/HTTP/native temporary files; synthetic authenticated upstream fixtures and supplied comparisons. No real-provider or actual process-owner/operational acceptance. Counts overlap.",
+  "235": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_file_acceptance.FileAcceptanceTests.test_owner_withdrawal_and_criteria_revision_revocation_expiry_preserve_history tests.test_file_acceptance_concurrency --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "session_id": 60719,
+    "expected_count": 2,
+    "corrections": "Only two test files changed: capture fresh packet before300-second criteria and assert initially current, then expire; idempotent review repeats exact rationale. Runtime application/policy/migration source unchanged.",
+    "result": "2/OK/721.570s"
+  },
+  "236": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_file_acceptance.FileAcceptanceTests.test_sql_closed_file_lineage_immutability_and_bidirectional_source_cycle_guards --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "session_id": 47256,
+    "expected_count": 1,
+    "refinement": "Only SQL test strengthened: fresh unreviewed protected package and otherwise correctly rebound original Finance/PrivateReadiness snapshots, assert exact protection-cycle guard message. Application unchanged.",
+    "result": "1/OK/168.507s"
+  },
+  "238": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_protection_acceptance --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "session_id": 56826,
+    "expected_count": 14,
+    "correction": "Only legacy restore test class clock stabilized at completed fixture time. Explicit expiry tests advance clock; worker/fence suites ran real time. No runtime/source/limit/evidence mutation.",
+    "result": "14/OK/3141.809s"
+  },
+  "237": {
+    "script": ".runtime/run_file_acceptance_connected.ps1",
+    "status": "completed",
+    "expected_count": 130,
+    "note": "Legacy restore shared source proof aged during long wall-clock run; all other scenarios passed. Failed log retained.",
+    "run": 237,
+    "session_id": 83523,
+    "result": "130/OK/14583.88s",
+    "passed_tests": 122
+  },
+  "records": {
+    "narrative": "completed",
+    "next_run": 239
+  }
+}

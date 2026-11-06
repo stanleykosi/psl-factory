@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation (tests.test_factory_accounting.AccountingRecoveryTests.test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation) ... FAIL
+
+======================================================================
+FAIL: test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation (tests.test_factory_accounting.AccountingRecoveryTests.test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_accounting.py", line 31, in test_missing_formula_policy_holds_only_formula_not_native_mapping_or_allocation
+    self.assertTrue(FinanceRun.objects.filter(case=c,source=source,kind='mapping').exists())
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 5.884s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

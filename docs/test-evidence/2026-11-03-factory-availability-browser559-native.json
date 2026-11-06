@@ -1,0 +1,20 @@
+{
+  "source_run": 559,
+  "database": "psl_factory_availability_ui_f599e39e4e5e",
+  "work": 1580,
+  "native_review": 1372,
+  "delegate_id": 16923,
+  "absent_principal_excluded": true,
+  "delegation": 79182,
+  "availability": 79184,
+  "native_approvals": 1,
+  "issue_receipts": 1,
+  "delivery_receipts": 1,
+  "budget_used": 1000,
+  "budget_limit": 20000,
+  "mock_files": {
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-availability-mock-receipts/0302a3c31997f9748c770ded14396c016ec395fbd23dbd1c530e223b0115f5f9.json": "26af5e5b91551110ad09802d2b0362f9867e9ffb627569a3243169be469b3071",
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-availability-mock-receipts/600a0e476c177f9c3338ececd3863c888466ebb2d82d752b2afeccf9423e3f46.json": "4763d1f17bf5d445ce978f17ce3d35f15228595a467bcc63259c9adfa03c2ce2"
+  },
+  "classification": "Actual native browser commands with synthetic policies and external mock; not live provider or independent UAT"
+}

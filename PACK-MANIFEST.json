@@ -1,0 +1,410 @@
+{
+  "pack_version": "0.7",
+  "hash_algorithm": "SHA-256",
+  "excludes": [
+    "PACK-MANIFEST.json itself",
+    "external ZIP/checksum receipt"
+  ],
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 2779,
+      "sha256": "7ac1b6e2d973d0ab2d3636be3dc10e1c2a0ef7c434a6b088d0c0183951aa04f2"
+    },
+    {
+      "path": "BUILD-BACKLOG.json",
+      "bytes": 17809,
+      "sha256": "d7726ba9716f7ea87b14fc10174090ae7c59cd6f9efeb2f7d83b0f66a8db8b57"
+    },
+    {
+      "path": "BUILD-DECISIONS.md",
+      "bytes": 882,
+      "sha256": "1d4712e07c05919d2e7aa60e8da559233f71b1bfe572c0225c181c998f5856c0"
+    },
+    {
+      "path": "BUILD-LOG.md",
+      "bytes": 442,
+      "sha256": "72e88f3d08a5808f2a6ae2bde097e5db35477311983a219dff59d3e663386b72"
+    },
+    {
+      "path": "BUILD-STATE.md",
+      "bytes": 1276,
+      "sha256": "ab6ea17219b23060be4e6683b525df87dffc2eb599b69f0f876f3d502f37110b"
+    },
+    {
+      "path": "BUILD-TESTS.md",
+      "bytes": 445,
+      "sha256": "1eb884c5c389d23b85cd457bc32cd064c552567cd6f32c4c14b14cb0ec144afd"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 1200,
+      "sha256": "0a44cc3e2a18582a3e281ddf6f6af80df095e397aace150edde5260156b23068"
+    },
+    {
+      "path": "HANDOFF.md",
+      "bytes": 659,
+      "sha256": "04c86883b0808433a159c25a7e9e33f525608055a7fd0bea2f040440dfd98fb1"
+    },
+    {
+      "path": "QA.md",
+      "bytes": 1056,
+      "sha256": "33163ae5c33f5cb8c0368509e08c60dc33aab9f52059e16b1cd295d9ff17aeb3"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3140,
+      "sha256": "c6e809e75720eb0a40720b6b09dab5fe5be8aef8c6ae4fcd6f5a37905aaa0472"
+    },
+    {
+      "path": "SOURCE-MANIFEST.json",
+      "bytes": 11407,
+      "sha256": "22544a0e86a18b100b865ef8b8c42dbf8e31beab5ae58eed495820942fa4e6d9"
+    },
+    {
+      "path": "SOURCES.md",
+      "bytes": 991,
+      "sha256": "c407378316a245aa9a7676b93a6b2570a7e8eb6c1432b2f0d2d844902bbf6f3a"
+    },
+    {
+      "path": "START-HERE.md",
+      "bytes": 2360,
+      "sha256": "e77a9274b1b477d7e820accf57026f92bb5998e169e21f87575713fe4147c5d3"
+    },
+    {
+      "path": "START-PROMPT.md",
+      "bytes": 1269,
+      "sha256": "976b2fedf3123bb7a0fc6cd4e5c24536d2d57117d73b39f072f8aca78f2c3499"
+    },
+    {
+      "path": "VALIDATION.json",
+      "bytes": 920,
+      "sha256": "88629d01833981beda19db61666ec9b165aaef835312fcb728aea7f6a34eb778"
+    },
+    {
+      "path": "contracts/decision-registry.json",
+      "bytes": 20509,
+      "sha256": "b235fde5f1a28f71475bf1d21e0da39989d500d0bb3713c798c3136c4b03e707"
+    },
+    {
+      "path": "contracts/policy-configuration.schema.json",
+      "bytes": 53423,
+      "sha256": "8196db6dfeb76b9f498fdbc986019285520573d050ba5fcc45db9f642aac1cc9"
+    },
+    {
+      "path": "contracts/policy-slots.json",
+      "bytes": 118704,
+      "sha256": "681a8fbe4300950426324ffa1f024d31bcee1b3ab5da4044f7fc1d84390832c7"
+    },
+    {
+      "path": "contracts/process-map.json",
+      "bytes": 812472,
+      "sha256": "ee7dc6b2f1e25e05e3097831be969950337c7b59e98833a7e2c34c58c7175489"
+    },
+    {
+      "path": "fixtures/README.md",
+      "bytes": 1093,
+      "sha256": "2029960f26a3b787935883b5de7add35bdbc045243329b9462125decef03d05b"
+    },
+    {
+      "path": "fixtures/synthetic-slice.json",
+      "bytes": 5095,
+      "sha256": "b403965112032a6dbc8ac0026d5b725aedb30739ebbda5507cb8c98e592bab13"
+    },
+    {
+      "path": "guide/01-BASELINE-AND-PRECEDENCE.md",
+      "bytes": 3643,
+      "sha256": "ee2c0a7e2051afada1b41911e6de563226fac5f12cc232f07f63aea8549bc385"
+    },
+    {
+      "path": "guide/02-ARCHITECTURE.md",
+      "bytes": 3931,
+      "sha256": "d59176ee5992cc068a0a2f20bb0b0bd64884e55bbe682102d990cae7b45ee880"
+    },
+    {
+      "path": "guide/03-FIRST-MILESTONE.md",
+      "bytes": 2533,
+      "sha256": "7106df2b41c8531ff0a14f2b80ae18542d472228f0b1300461c913c861b8f8ae"
+    },
+    {
+      "path": "guide/04-DECISIONS.md",
+      "bytes": 10489,
+      "sha256": "817ca64e8477bb7f5b09660cab5091813139d41cdb8f4f74cb56be66217a2710"
+    },
+    {
+      "path": "guide/05-PHASES.md",
+      "bytes": 2984,
+      "sha256": "550cbedadbaa20b550a2d33b3771c48b1d37b012be228225d3434bd3da117e42"
+    },
+    {
+      "path": "guide/06-PERMISSIONS-AND-AI.md",
+      "bytes": 4365,
+      "sha256": "a0cd819955137706fbe8bf45007cd5ba5a2d2bc64ab354a2c3c7df6e5070c2e1"
+    },
+    {
+      "path": "guide/07-DATA-AND-CONTRACTS.md",
+      "bytes": 4213,
+      "sha256": "7b62d450f9113df38683209253b8decb24466de50d3a7a0fdea4ed806e3332e9"
+    },
+    {
+      "path": "guide/08-WINDOWS-SETUP.md",
+      "bytes": 2209,
+      "sha256": "c095592d33e04c389fde9a76eaf9b7dbce64fa312c1b42e084797ae42d20d6ff"
+    },
+    {
+      "path": "guide/09-QUALITY-GATES.md",
+      "bytes": 2697,
+      "sha256": "8ab7d47f6913d04875a8a5365c48a872efd86fcfa465c314512bd02a915ab9af"
+    },
+    {
+      "path": "guide/10-POLICY-CONFIGURATION.md",
+      "bytes": 6658,
+      "sha256": "024dfe7f3a5bb12a6dcee058d30e37377287f46a48462cb688e6e1639891600c"
+    },
+    {
+      "path": "guide/11-FULL-PRODUCT.md",
+      "bytes": 11632,
+      "sha256": "83d9dedaebe38e648a4dc8caf53a99b46f401228ecf2b84f40f7a953a88447f3"
+    },
+    {
+      "path": "guide/12-ARCHITECTURE-TOPOLOGY.md",
+      "bytes": 3806,
+      "sha256": "94d6b4db6f5c19b62c36f6a6ce5d56970c4bc73671bf97e66c20d86afee9c97c"
+    },
+    {
+      "path": "guide/PROCESS-INDEX.md",
+      "bytes": 11997,
+      "sha256": "6b6a1e945f5950cfa588c1cee240624e3284aa3d236584862a853545925af8e8"
+    },
+    {
+      "path": "reference/00-control/DEFINITION-STANDARD.md",
+      "bytes": 5107,
+      "sha256": "5b8044bf4cf02d95ff41aee5513d63ae004197ad3ae53f8f1c49f03ec91a9a30"
+    },
+    {
+      "path": "reference/00-control/GLOSSARY.md",
+      "bytes": 3783,
+      "sha256": "ac8e07307818909778973907416a28d4f9403252c6527b1de74b1a4989453486"
+    },
+    {
+      "path": "reference/00-control/SOURCE-RECONCILIATION-v0.2.md",
+      "bytes": 5963,
+      "sha256": "c954e9a70d21ae0c609697ca6f4b5d752a58b7951d41c52699d231fbbc9a9cf7"
+    },
+    {
+      "path": "reference/00-control/definition.schema.json",
+      "bytes": 3850,
+      "sha256": "6fd0588bb7533e403993adc8aa5572a06521158f415beead6d91d1f565172d9f"
+    },
+    {
+      "path": "reference/01-sources/PSL_PMO_Review_and_Architecture_Decision_2026-10-15.md",
+      "bytes": 33104,
+      "sha256": "fbd64987edb289024d3782c44d401fd177436e03cd81eb00bdd44a467df465b0"
+    },
+    {
+      "path": "reference/02-coverage/register.json",
+      "bytes": 33496,
+      "sha256": "85a409bf916101594cd1bace4ccb295b5415543a0b8259c4e8f3d1f62cbe428e"
+    },
+    {
+      "path": "reference/03-definitions/BaaS.json",
+      "bytes": 148377,
+      "sha256": "aa8488d1c7ff299cbadfb4b66009ca69c159d264817eea6d492d0696448ac004"
+    },
+    {
+      "path": "reference/03-definitions/Finance.json",
+      "bytes": 502940,
+      "sha256": "9ac4e5ceee078ba1e1e33e84c3642de82c081689ba1d0f0b7036ddb93a4f82f9"
+    },
+    {
+      "path": "reference/03-definitions/PMO.json",
+      "bytes": 473499,
+      "sha256": "cdbd081a2ed1215be4fbfc77146280015000d8c59a1ebc88104606ec91df2864"
+    },
+    {
+      "path": "reference/04-shared-contracts/RECORDS-AND-HANDOFFS.md",
+      "bytes": 16883,
+      "sha256": "669c032080d6fe07c84e3fa2a4079a20115f20f1924bc67ca0e4a974c1273b45"
+    },
+    {
+      "path": "reference/04-shared-contracts/finance-baas-controls.json",
+      "bytes": 3252,
+      "sha256": "72dd624cc233b67ea3ffd208fda5b4724d0f6c7f450aef0fc9513bf937b6ba5f"
+    },
+    {
+      "path": "reference/04-shared-contracts/handoff-contracts.json",
+      "bytes": 9327,
+      "sha256": "e1d05254a85b81ea48b0835ca0d7e279998c8a86b4af92f716baa761cb9ed224"
+    },
+    {
+      "path": "reference/06-mock-tests/TEST-SPECIFICATION-GUIDE.md",
+      "bytes": 6173,
+      "sha256": "5beb1d0b2ab9d9c0bf203b3826d2481518cd3d1a6c977f9010cf4f76fd0349e7"
+    },
+    {
+      "path": "reference/06-mock-tests/catalogue.json",
+      "bytes": 126366,
+      "sha256": "56968d585cd224c072deba7701fecd6d19900cec6a212755fa0fe24ca9a4f324"
+    },
+    {
+      "path": "reference/06-mock-tests/cross-process-catalogue.json",
+      "bytes": 7320,
+      "sha256": "98dc64adfa369a4ee1f31119e8a328a9c684ffeaad6eed9081a781d83485a1ab"
+    },
+    {
+      "path": "reference/08-agent-architecture/ARCHITECTURE-PROPOSAL.md",
+      "bytes": 27329,
+      "sha256": "654a33e951d33ca2d6b4d46848c52c53d34db88cdabea6cab8c0d1f96cbbc9a5"
+    },
+    {
+      "path": "reference/08-agent-architecture/architecture-evaluation-catalogue.json",
+      "bytes": 13955,
+      "sha256": "f558225d73f683ddf4037ffbefd6812a7e33d13b3758fb888d2f6e144cdfa673"
+    },
+    {
+      "path": "reference/08-agent-architecture/capability-contracts.json",
+      "bytes": 17379,
+      "sha256": "372894ceedd1df32dd4be520cc51dad1df29a2de210b2fdefe6e42228863cc49"
+    },
+    {
+      "path": "reference/08-agent-architecture/process-agent-assignments.json",
+      "bytes": 1925063,
+      "sha256": "c9843df8fe10e0301f24830456802c11cc5379c79d7786fe668145c1ac6d9e81"
+    },
+    {
+      "path": "reference/08-agent-architecture/task-envelope.schema.json",
+      "bytes": 7046,
+      "sha256": "8bcba6be3b1cf775724b80d0d0d9059616578c05ceb2bd0a46aaf202f873cd83"
+    },
+    {
+      "path": "reference/09-execution-contracts/execution-command.schema.json",
+      "bytes": 53840,
+      "sha256": "747256925a186c56c32b295f8e4de7c9f4264414dbc67ec6af0947c83464da39"
+    },
+    {
+      "path": "reference/09-execution-contracts/execution-contracts.json",
+      "bytes": 106100,
+      "sha256": "9c47adc601586584681d69e1aada579b998959c19f238c82f1b5be7fab88c193"
+    },
+    {
+      "path": "reference/09-execution-contracts/execution-receipt.schema.json",
+      "bytes": 87058,
+      "sha256": "d2f5f87d01315e5104eb1d42781671f0be6f15ee3731fb4c8a72de29289fb163"
+    },
+    {
+      "path": "reference/09-execution-contracts/numeric-result.schema.json",
+      "bytes": 2287,
+      "sha256": "734c2d3a481ca71203db4f1cc4f3a687f5cfd0b0884133067e14278871efa5fb"
+    },
+    {
+      "path": "reference/10-billing-workflow-amendment/AMENDMENT.md",
+      "bytes": 17794,
+      "sha256": "f208f24f055ccec07a12d1d9153939a7c96e69ade197e5e1cb12ee1a41cc7efb"
+    },
+    {
+      "path": "reference/10-billing-workflow-amendment/billing-command.schema.json",
+      "bytes": 79061,
+      "sha256": "c64b096f99aefca2cc72f7f8a96767c307e21eafaa2e18934889ad9896c076bd"
+    },
+    {
+      "path": "reference/10-billing-workflow-amendment/billing-record.schema.json",
+      "bytes": 22764,
+      "sha256": "8b09d7fba778a989a1054852b492116599d19cb8326e8dd2d726ec354a8560cf"
+    },
+    {
+      "path": "reference/10-billing-workflow-amendment/billing-result.schema.json",
+      "bytes": 97201,
+      "sha256": "46f642f4a4c9fd07e868127e9ed07dbd057887300606dccf560b098e978d37bc"
+    },
+    {
+      "path": "reference/10-billing-workflow-amendment/billing-workflow-contract.json",
+      "bytes": 91480,
+      "sha256": "5ce273da1fa8aa3cf7e8b9e29e770c125bd3004fb3702a2626dadaafc799f274"
+    },
+    {
+      "path": "reference/10-billing-workflow-amendment/mock-cases.json",
+      "bytes": 9334,
+      "sha256": "9b311149dd3ef6e2d7bdeae5e7b0920d61a6dfed9bdd8ac77dd39cca0024f008"
+    },
+    {
+      "path": "reference/10-billing-workflow-amendment/source-rule-register.json",
+      "bytes": 46488,
+      "sha256": "dd436ca4f41b035cfb7d4b227cb9686b1bbc856ae7e72902a46a4329f7fcefde"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/AMENDMENT.md",
+      "bytes": 4901,
+      "sha256": "199be8b11f7477754c7ab10f3a01fb2b28b6ac464b2bd0a83254604f092d721c"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/README.md",
+      "bytes": 1359,
+      "sha256": "a17c95e120ec76dec70c07f52e4adbe6aa918dc330ada7ea9ccd51be17f0e421"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/current-exception-policy.json",
+      "bytes": 1794,
+      "sha256": "5a824066a60eb4d5f55c6cb0fc74e9dd4104e1cacfc6271ac3e31232b44f74a5"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/current-exception-record.schema.json",
+      "bytes": 3007,
+      "sha256": "1f65691f7f960679106b2142054de4825648aba5ea500bf6f90864802a7bb79f"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/future-human-decision-contract.json",
+      "bytes": 1904,
+      "sha256": "4ae88b4d7ceffe36cebf4a8e7920ed7adef4b1d582c5d24f0543b9bfaf792197"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/negative-mock-cases.json",
+      "bytes": 3419,
+      "sha256": "888685f28112296e3d630493e3bacc701629b19838be316b608fa1f25f920118"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/owner-decisions.json",
+      "bytes": 9003,
+      "sha256": "2fff7cab327b76c021d0105ac9081e4e2a5a1dfffa1981e0eee68c481ca54249"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/process-execution-bindings.json",
+      "bytes": 641595,
+      "sha256": "a18b9f16a3699b9052617205fb13f66acb70c25d835d8e76de19eecbf61e0dd3"
+    },
+    {
+      "path": "reference/12-payment-exception-policy/source-clarifications.json",
+      "bytes": 787,
+      "sha256": "8df832cc14fbfc3d45c7f5e2dd6ebe5e41eb90947441fd11d6e6d0748d829a4b"
+    },
+    {
+      "path": "reference/READING-NOTE.md",
+      "bytes": 717,
+      "sha256": "dfe0b20ee6a5ddab33ef04d2b13e823ea86efe77e2d3b5acda1b16c52606b967"
+    },
+    {
+      "path": "reference/README.md",
+      "bytes": 11483,
+      "sha256": "3488ab5f16be021caffd72775fc0ed88ed635717ef2649e3513b166bdd251e10"
+    },
+    {
+      "path": "templates/HANDOFF.md",
+      "bytes": 382,
+      "sha256": "7554f9ae0ac942a336e33252f0b9ac70eba69097dfa8326d8dd28f437c6c651b"
+    },
+    {
+      "path": "templates/PROGRESS-LOG.md",
+      "bytes": 420,
+      "sha256": "28a4c7e88a0843076418c051d3f49456a015b1446563e819506d2cff3c6682eb"
+    },
+    {
+      "path": "tests/README.md",
+      "bytes": 1830,
+      "sha256": "a13c4cc1d97943a96860a5a41d4a2745c2fddd3716c85ec3adf83c5fdcaf2f51"
+    },
+    {
+      "path": "tests/acceptance.json",
+      "bytes": 51333,
+      "sha256": "2fb0e523f2eacf3b751ca42263bf24fc05064f9c0544b307c592579225ff3022"
+    }
+  ]
+}

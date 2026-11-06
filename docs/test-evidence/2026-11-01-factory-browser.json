@@ -1,0 +1,56 @@
+{
+  "fixture": {
+    "database": "psl_factory_ui_e693533eb3db",
+    "case": "798a1851-98fa-454d-b1d9-368c8b8afc11",
+    "work": 1,
+    "actor": "factory-maker",
+    "fixture": "tests.factory_helpers.fixture(missing=True)",
+    "synthetic": true
+  },
+  "origin": "http://127.0.0.1:8001",
+  "source_snapshot": "docs/test-evidence/2026-11-01-factory-run400-source.json",
+  "classification": "Partial synthetic browser proof; observed display defects remain open",
+  "verified_native_facts": {
+    "invoice_reviews": 1,
+    "issues": 1,
+    "deliveries": 1,
+    "remote_effect_files": 2,
+    "cash_receipts": 0,
+    "budget_used": 1200
+  },
+  "observed_journey": [
+    "Sign in using existing isolated test identity",
+    "Keyboard search and queue-to-detail navigation",
+    "Agent source investigation and missing information task",
+    "Claim and record requested evidence",
+    "Agent wake/reconcile/native Finance draft",
+    "Exact-packet native Finance decision",
+    "Remote acceptance followed by lost response",
+    "Temporary provider absence remains unknown",
+    "Explicit original-operation reconciliation",
+    "Native delivery and receipt verification",
+    "Return filter retained; verified item moved queues"
+  ],
+  "role_scope": "Explicit synthetic fixture grants and nominated role values; not a real human/SoD/UAT evaluation",
+  "viewport": {
+    "desktop_width": 1265,
+    "mobile_width": 390,
+    "mobile_height": 844,
+    "mobile_document_width": 375,
+    "override_reset": true
+  },
+  "screenshots": {
+    "docs/test-evidence/2026-11-01-factory-browser-mobile.png": "307e9aefc379ec5c848adac064ad50077201fa1add065a74e02f80a7554c129f",
+    "docs/test-evidence/2026-11-01-factory-browser-unknown.png": "189ea70ca55b07f51e1283bb566c2be23612e3b22852e0577f000f0f522cc287",
+    "docs/test-evidence/2026-11-01-factory-browser-verified.png": "81067c3b2d5d8d85e5ceea25e9654f8fd30938c0bf07f3a2f04e9265691908a8"
+  },
+  "remaining": [
+    "Stale wait text after approval/reconciliation",
+    "Pre-bind allowance display",
+    "Readable source inspection",
+    "Wider role/access/browser variants"
+  ],
+  "live_provider": false,
+  "uat": "NOT_EVALUATED",
+  "production_authorization": "NOT_EVALUATED"
+}

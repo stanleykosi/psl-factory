@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery (tests.test_factory_delegation.FactoryDelegationTests.test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery) ... FAIL
+
+======================================================================
+FAIL: test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery (tests.test_factory_delegation.FactoryDelegationTests.test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_delegation.py", line 225, in test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery
+    job.refresh_from_db();w.refresh_from_db();self.assertEqual(job.status,'confirmed',f'{job.error}; work={w.status}: {w.finding}')
+                                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'unknown' != 'confirmed'
+- unknown
++ confirmed
+ : Original effect is not confirmed; receipt-only lookup authorises no send; work=waiting_effect: Provider result is still unknown. Reconcile the original operation when another observation is available.
+
+----------------------------------------------------------------------
+Ran 1 test in 39.830s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

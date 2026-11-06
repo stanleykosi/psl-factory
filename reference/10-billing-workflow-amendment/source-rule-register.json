@@ -1,0 +1,662 @@
+[
+  {
+    "id": "S01",
+    "process_ids": [
+      "P40",
+      "P41",
+      "P42"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Tuesday PMO-only internal meeting; weekly client report from PMO/PM; monthly executive report. External stakeholders receive monthly reporting only where required.",
+    "source": "PMO SOP v1.1 §§5.2–5.4 p.8",
+    "boundary": "Meeting hour, weekly day and timezone are not supplied. Cadence is known and must not be re-asked."
+  },
+  {
+    "id": "S02",
+    "process_ids": [
+      "P44"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Delivery-impact blockers escalate immediately. Internal issues escalate to PMO or CTO at24h based on severity and CTO at48h if unresolved. Client-dependent issues escalate within24h; PMO Lead/Head approval precedes client escalation/de-escalation.",
+    "source": "PMO SOP v1.1 §5.6 p.9",
+    "boundary": "Clock anchors, pause and calendar interpretation require configuration; do not replace known windows with invented thresholds."
+  },
+  {
+    "id": "S03",
+    "process_ids": [
+      "P61",
+      "P62"
+    ],
+    "evidence_class": "SOP prescribed with conflict",
+    "established_rule": "Emergency log within24h; mandatory post-implementation review; Product and Engineering Lead retrospective approval within1–2workingdays. Incident Lead+Engineering Lead authorize emergency implementation, with CTO for P1.",
+    "source": "PMO SOP v1.1 §9.10.9 p.17",
+    "boundary": "General GLPI-before-production requirement still exists; no inferred emergency waiver. Exact working-day selection/calendar unresolved."
+  },
+  {
+    "id": "S04",
+    "process_ids": [
+      "P03",
+      "P16",
+      "P20"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Log engagement and assign PM in Initiation; formal project ID is assigned in Planning.",
+    "source": "PMO SOP v1.1 Phase1 step1 p.2; Phase2 step1 p.4",
+    "boundary": "Signed baseline handoff must support engagement identity before a Planning project ID exists."
+  },
+  {
+    "id": "S05",
+    "process_ids": [
+      "P12",
+      "P20",
+      "P26",
+      "P34",
+      "P39",
+      "F34"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Share signed SOW milestones and costing with Finance; share aligned Planning milestones; PM notifies Finance when milestones are reached and records completion/notification; closure confirms all milestones notified.",
+    "source": "PMO SOP v1.1 Phase1 step7 p.3; Phase2 step9 p.5; Phase3 step10 p.7; Phase4 steps5–6/exit p.8",
+    "boundary": "Notification is not recognition, invoice generation or payment. Do not add paid-invoice closure requirement.",
+    "current_interpretation": "Read with U01-U06. Original claim preserved as historical evidence; latest explicit user clarification controls affected sequence and PMO/Finance responsibility only."
+  },
+  {
+    "id": "S06",
+    "process_ids": [
+      "P06",
+      "P07",
+      "P08",
+      "P09",
+      "P48",
+      "P58"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "All costing follows PM→Head of PMO→CEO; cost-changing revisions repeat that chain.",
+    "source": "PMO SOP v1.1 Phase1 step5 p.3; §7 p.11; §8 p.11",
+    "boundary": "This ordered chain is not a universal order for all multi-party approvals."
+  },
+  {
+    "id": "S07",
+    "process_ids": [
+      "P47",
+      "P48"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "PMO Lead and Engineering Lead review RFP response before commercial sign-off/submission.",
+    "source": "PMO SOP v1.1 §6.4 p.10",
+    "boundary": "Keep technical/internal review distinct from commercial costing and external document review."
+  },
+  {
+    "id": "S08",
+    "process_ids": [
+      "P19",
+      "P20",
+      "P25",
+      "P26"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Client signs SOW and PRD before Planning; Product Owner approves scope, Engineering Lead approves estimates; PMO Lead approves the plan for Planning exit.",
+    "source": "PMO SOP v1.1 Phase1 step7 p.3; Phase2 steps8–9 pp.4–5",
+    "boundary": "Signed-SOW timing versus Planning-as-SOW-basis wording requires reconciliation if later estimates change baseline.",
+    "current_interpretation": "Read with U01-U06. Original claim preserved as historical evidence; latest explicit user clarification controls affected sequence and PMO/Finance responsibility only."
+  },
+  {
+    "id": "S09",
+    "process_ids": [
+      "P29",
+      "P30"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "QA Lead exit with no critical defects precedes Product UAT; Product Manager, Product Owner and client contact approve UAT before deployment.",
+    "source": "PMO SOP v1.1 Phase3 steps3/5 p.6",
+    "boundary": "No extra sequential order among UAT roles is stated."
+  },
+  {
+    "id": "S10",
+    "process_ids": [
+      "P31",
+      "P32",
+      "P33"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Engineering Go/No-Go precedes PM GLPI request; Security, CTO and CEO approve before Infrastructure/DevOps releases. PM+Client post-release go-live records business acceptance.",
+    "source": "PMO SOP v1.1 Phase3 steps6–8 p.6",
+    "boundary": "External prerequisite evidence does not confer deployment authority on PMO or agents; no extra duplicated business-acceptance chain."
+  },
+  {
+    "id": "S11",
+    "process_ids": [
+      "P37",
+      "P39",
+      "P45",
+      "P50",
+      "P56"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Operational handover needs no extra approval; Head of PMO approves closure; respond to every RFP without a bid/no-bid approval; QA+PM close issues by updating the log; PM classifies changes without approval.",
+    "source": "PMO SOP v1.1 Phase4 steps3/6 pp.7–8; §6.1 p.9; §9.1 p.12; §9.10.2 p.15",
+    "boundary": "Do not manufacture approvals through generic manual-handoff contracts."
+  },
+  {
+    "id": "S12",
+    "process_ids": [
+      "P58",
+      "P59",
+      "P60"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Change approval: Product+Engineering; Client when client-facing; costing chain when cost changes; Engineering Lead+Security Manager timeline agreement; GLPI before deployment.",
+    "source": "PMO SOP v1.1 §9.10.4 p.16",
+    "boundary": "Standard changes are described as pre-approved but the approved catalogue and which gates it satisfies are absent."
+  },
+  {
+    "id": "S13",
+    "process_ids": [
+      "P10",
+      "P11",
+      "P41",
+      "P42",
+      "P43",
+      "P52",
+      "P53"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Documents have owner/version and consistent H1/H2/H3 structure. Client documents include executive summary and Scope, Timeline, Risks, Dependencies, Status. PMO Lead reviews every external share. No unresolved comments/placeholders or internal logs/commentary. External issue summaries expose relevant impact/status/resolution only.",
+    "source": "PMO SOP v1.1 §§9.3–9.8 pp.12–15",
+    "boundary": "Actual templates and destination permissions remain required. Source requirement for Timeline section does not authorize replanning project deadlines in this amendment."
+  },
+  {
+    "id": "S14",
+    "process_ids": [
+      "P43"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Formal minutes record purpose, decisions, actions, owners, deadlines and scope/timeline changes, and are stored in PMO repository.",
+    "source": "PMO SOP v1.1 §5.5 p.9",
+    "boundary": "This is required record content, not authorization for new scope changes."
+  },
+  {
+    "id": "S15",
+    "process_ids": [
+      "P50",
+      "P51",
+      "P54",
+      "P55"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Issue log has unique ID/title/type/severity set by PM/date/project/owner, Open/In Progress/Resolved/Closed states, timestamped notes, owner and next action, documented fix and no duplicate tracker. Security owns risk register; Engineering owns incident lifecycle.",
+    "source": "PMO SOP v1.1 §§9.1–9.2 p.12; §9.9 pp.15–16",
+    "boundary": "Generic case patches must not become writes to Security/Engineering masters."
+  },
+  {
+    "id": "S16",
+    "process_ids": [
+      "B08"
+    ],
+    "evidence_class": "Meeting described/requested",
+    "established_rule": "Track expiry and remind a general mailbox for team renewal follow-up. Older agreements are described as auto-renewing; newer bank SLAs add expiry tracking.",
+    "source": "BAAS:document:P0040 14:07",
+    "boundary": "Few days or maybe a month is suggested lead-time, not approved policy. Exact mailbox/address and agreement clauses still needed."
+  },
+  {
+    "id": "S17",
+    "process_ids": [
+      "B03",
+      "B09",
+      "B10"
+    ],
+    "evidence_class": "Meeting described/requested",
+    "established_rule": "Measure first response/resolution; surface onboarding stage ageing and documentation backlog.",
+    "source": "TEM:document:P0017/P0021/P0023 2:00–2:50; BAAS:document:P0044/P0046 16:01/16:26",
+    "boundary": "30/50-minute comparisons are illustrative, not SLAs. Stage catalogue and thresholds absent."
+  },
+  {
+    "id": "S18",
+    "process_ids": [
+      "B11",
+      "B12",
+      "F28",
+      "F29",
+      "F30",
+      "F45"
+    ],
+    "evidence_class": "Meeting described/requested",
+    "established_rule": "Data supplies client names/usage, Finance adds prices/calculates, recent Power Automate work reduces one-by-one invoicing. Planned BaaS report should include stored correct prices; Finance does not need duplicate pricing platform if report contains them.",
+    "source": "FIN:document:P0013/P0017/P0020/P0023–P0025 1:53–4:55; TEM:document:P0009–P0013 0:53–1:28",
+    "boundary": "Actual flow/input schema/deployed effects unverified. Generation/posting/sending are distinct effects, not three proven approval gates."
+  },
+  {
+    "id": "S19",
+    "process_ids": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09",
+      "F10",
+      "F11",
+      "F12",
+      "F13"
+    ],
+    "evidence_class": "Meeting described current practice",
+    "established_rule": "QuickBooks individual postings→exported TB→Excel lookup alignment→notes→statements/schedules. Budget imported manually for monthly reporting. Manual income detail can be a breakdown, not additive revenue.",
+    "source": "FIN:document:P0039 9:57; P0097–P0099 31:36–32:20; P0101/P0107/P0109 33:21–34:37",
+    "boundary": "Native layouts, lookup formula and missing-match behavior, full account maps and numerical oracles not supplied."
+  },
+  {
+    "id": "S20",
+    "process_ids": [
+      "F16",
+      "F17",
+      "F18",
+      "F19",
+      "F20",
+      "F21",
+      "F22",
+      "F35"
+    ],
+    "evidence_class": "Meeting described current practice",
+    "established_rule": "Two payroll inputs feed working sheet linked to HR staff/BU data. Finance must not edit HR source. BU totals filtered/transferred. Other-staff pooled costs use headcount; shared-service, individual executive ratios and OPEX allocations are separate.",
+    "source": "FIN:document:P0058/P0060 18:18/18:37; P0113–P0119 36:45–40:05; VID U0295/U0534",
+    "boundary": "Illustrative counts are not production ratios. Private allocation workbook deliberately withheld; actual source meanings/keys and formulas remain needed."
+  },
+  {
+    "id": "S21",
+    "process_ids": [
+      "F14",
+      "F15",
+      "F23",
+      "F24",
+      "F25",
+      "F26",
+      "F27",
+      "F44"
+    ],
+    "evidence_class": "Meeting described current practice",
+    "established_rule": "Monthly BU results derive from management accounts and allocations; company totals should tie exactly to management accounts. YTD sums monthly results. Annual budget/12×elapsed months is narrated. Additional reporting categories and historical rework were discussed.",
+    "source": "FIN:document:P0111/P0113/P0121 35:53/36:45/40:27; P0081/P0083–P0085 27:58–29:04",
+    "boundary": "Do not ask whether these methods exist. Exact applicability/calendar, names of new categories and historical treatment remain absent."
+  },
+  {
+    "id": "S22",
+    "process_ids": [
+      "F06",
+      "F08",
+      "F12",
+      "F15",
+      "F39"
+    ],
+    "evidence_class": "Observed visual evidence only",
+    "established_rule": "Selected expressions: note SUM(TB I3:I13)/1000; liability -SUM(TB I153)/1000; detailed income Notes1-4 G10×1000; selected cost-of-sales ×1000; cash C15-C33+C34.",
+    "source": "Recovered04 Evidence Review/visual_evidence_register.json V04/V06/V09/V10/V17",
+    "boundary": "Narrow observed-cell evidence, not universal rules. V10 is cost of sales, not proven BU revenue. V14 budget expression truncated. Native recalculation not performed."
+  },
+  {
+    "id": "S23",
+    "process_ids": [
+      "F31",
+      "F32",
+      "F36",
+      "F37",
+      "F38",
+      "F39",
+      "F40",
+      "F41",
+      "F42",
+      "F43"
+    ],
+    "evidence_class": "Meeting described current practice",
+    "established_rule": "IT billing includes monthly and annual cadence. Cash forecast selects some receivables, recurring/new expenses and current balance; management prioritizes payments and follow-up; actuals update expectations and unfinished items roll forward. Fuller internal versus reduced-detail group report exists.",
+    "source": "FIN:document:P0072–P0078 25:25–27:01; P0048 15:04; P0127/P0129 43:12/43:56",
+    "boundary": "Forecast is intentionally incomplete; first-week and three/six-month examples are not universal horizon/deadline. Payment authority not granted by forecast."
+  },
+  {
+    "id": "S24",
+    "process_ids": [
+      "F33",
+      "F34"
+    ],
+    "evidence_class": "Meeting described current practice/request",
+    "established_rule": "Finance calls PMs for price/progress where current PMO view is difficult; reuse PMO tool with Finance layer/notifications rather than duplicate it where feasible. Cash receipt alone does not determine recognized revenue.",
+    "source": "FIN:document:P0063/P0065/P0066 20:28/20:57/21:29",
+    "boundary": "Actual API and accounting recognition policy still absent.",
+    "current_interpretation": "Read with U01-U06. Original claim preserved as historical evidence; latest explicit user clarification controls affected sequence and PMO/Finance responsibility only."
+  },
+  {
+    "id": "S25",
+    "process_ids": [
+      "B04",
+      "B05",
+      "B06",
+      "B07"
+    ],
+    "evidence_class": "Meeting described current practice; secondhand limit",
+    "established_rule": "Reconciliation checks date-specific settlement report then routes corrective credit/update to Engineering. Reconciliation lacks queue-add access. Excel/pending-queue monitoring is secondhand and owner documentation was requested.",
+    "source": "BAAS:document:P0020/P0030 6:33/10:10; TEM:document:P0025–P0035 3:08–4:06",
+    "boundary": "Direct support portal correction is proposed, not established access. Business queue identity/states/cutoff/credit authority need owner evidence."
+  },
+  {
+    "id": "S26",
+    "process_ids": [
+      "B01",
+      "B02",
+      "B09",
+      "B10",
+      "B11",
+      "B13",
+      "B14"
+    ],
+    "evidence_class": "Meeting described current practice/request",
+    "established_rule": "Teams/WhatsApp support channels and manual onboarding tracking exist. Centralized case monitoring/ticketing is proposed. Partner usage reporting depends on historical manual/admin/Data handoffs.",
+    "source": "BAAS:document:P0030/P0032/P0034 10:10/11:34/11:54; P0044/P0046/P0047 16:01/16:26/17:14",
+    "boundary": "Authorized channel scope, resolution/reopen semantics, active-user definitions, actual stage catalogue and Support SOP remain absent."
+  },
+  {
+    "id": "S27",
+    "process_ids": [
+      "P01"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Required approval visibility before SOW sharing references the prescribed costing chain and external-document review, rather than replacing other teams’ authority.",
+    "source": "PMO SOP v1.1 Phase1 step5 p.3; §§7–8 p.11; §§9.3–9.8 pp.12–15",
+    "boundary": "No extra universal approval chain."
+  },
+  {
+    "id": "S28",
+    "process_ids": [
+      "P22",
+      "P23",
+      "P24"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "UI: Design Lead and Client if applicable, owned by Product/Design, before UI development. Technical design: Engineering Lead before development. QA Lead test strategy and Product Owner UAT approach sign-offs are confirmed at Planning exit as well as before QA/UAT.",
+    "source": "PMO SOP v1.1 Phase2 steps3/4/6 p.4; Planning exit p.5; §8 p.11",
+    "boundary": "Do not postpone Planning prerequisites or add PMO technical authority; no sequence specified between QA strategy and UAT approach approvals."
+  },
+  {
+    "id": "S29",
+    "process_ids": [
+      "P35"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Engineering/Infrastructure owns post-deployment stability/performance confirmation; PMO verifies it before closure.",
+    "source": "PMO SOP v1.1 Phase4 step1 p.7; §8 p.11",
+    "boundary": "No numerical threshold or fixed hypercare duration supplied; no extra PMO stability approval."
+  },
+  {
+    "id": "S30",
+    "process_ids": [
+      "P60"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Change closure requires completed implementation, validated testing, updated documentation, informed stakeholders and PM+Client signed change go-live.",
+    "source": "PMO SOP v1.1 §9.10.7 p.16; §8 p.11",
+    "boundary": "Same go-live acceptance, no extra closure acceptance gate."
+  },
+  {
+    "id": "S31",
+    "process_ids": [
+      "P63"
+    ],
+    "evidence_class": "SOP prescribed",
+    "established_rule": "Initiation→Planning→Execution→Closure gates have entry criteria, activities, deliverables and exits; PMO gate approval, documented communication and traceable decisions required; no unapproved scope changes.",
+    "source": "PMO SOP v1.1 §3 p.1; phase entries/exits pp.2–8; §7 pp.10–11",
+    "boundary": "Umbrella enforcement of existing phase authorities, not replacement with one generic PMO decision or new phase."
+  },
+  {
+    "id": "S-P02",
+    "process_ids": [
+      "P02"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): The meeting requested wider automated routing. The SOP now distinguishes PMO-owned approvals from prerequisites owned by Product, Design, Engineering, QA and other teams. | SOURCE OUTPUT: Proposed shared approval view and prerequisite receipts. | BOUNDARY AND OVERLAP: Automation is proposed; do not transfer external approval authority to PMO or impose a universal chain.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A66:F66: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A8:G8: SOP §2, p.1; §§7–8, pp.10–11; PMO meeting, 8 Oct, 0:04 | Primary source locator: SOP §2, p.1; §§7–8, pp.10–11; PMO meeting, 8 Oct, 0:04. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A65:J65: inherited scope only, not current build authorization. | PMO Process Automation.docx, meeting 8 October 2026, speaker timestamps 0:04; 2:57; transcript reviewed, original recording not reviewed in this cloud definition.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P04",
+    "process_ids": [
+      "P04"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Track delivery, dependencies and blockers, and prepare weekly internal/client and monthly executive outputs. | SOURCE OUTPUT: Status summaries and audience-specific reports. | BOUNDARY AND OVERLAP: Umbrella retained from the original list. P40–P42 define report cadences; P28 defines delivery tracking. Do not count separate full-report savings twice.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A68:F68: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A10:G10: SOP Phase 3 step 9, pp.6–7; §§5.2–5.4, p.8; §9.6, p.14; meeting 4:22 | Primary source locator: SOP Phase 3 step 9, pp.6–7; §§5.2–5.4, p.8; §9.6, p.14; meeting 4:22. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A67:J67: inherited scope only, not current build authorization. | PMO Process Automation.docx, meeting 8 October 2026, speaker timestamps 4:22; transcript reviewed, original recording not reviewed in this cloud definition.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P05",
+    "process_ids": [
+      "P05"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Retain the requested shared project view while respecting source ownership, no duplicate issue tracking, and separate internal/client-facing content. | SOURCE OUTPUT: Proposed status projection linked to authoritative records. | BOUNDARY AND OVERLAP: A shared view is not a new project ledger or universal access to commercial/HR data.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A69:F69: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A11:G11: PMO meeting, 8 Oct, 4:22; SOP §9.1, p.12; §§9.4–9.8, pp.13–15 | Primary source locator: PMO meeting, 8 Oct, 4:22; SOP §9.1, p.12; §§9.4–9.8, pp.13–15. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A68:J68: inherited scope only, not current build authorization. | PMO Process Automation.docx, meeting 8 October 2026, speaker timestamps 4:22; transcript reviewed, original recording not reviewed in this cloud definition.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P17",
+    "process_ids": [
+      "P17"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Carry approved RFP requirements for Route A; prepare product paper for Route C and PRD for client sign-off. Review objective/scope gaps and identify Engineering, QA, Infra and Security. | SOURCE OUTPUT: Requirements references, gaps and required-team map. | BOUNDARY AND OVERLAP: PMO coordinates and verifies; Product retains ownership of product requirements.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A78:F78: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A23:G23: Phase 1 steps 2–3, p.2 | Primary source locator: Phase 1 steps 2–3, p.2. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A77:J77: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P18",
+    "process_ids": [
+      "P18"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Obtain estimates from both teams, identify early risks/constraints, and include both types of effort in cost and plan. | SOURCE OUTPUT: Engineering/Security estimates feeding SOW and project plan. | BOUNDARY AND OVERLAP: Input collection, not invented calculator logic. Links P06/P07; risk ownership remains with Security.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A79:F79: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A24:G24: Phase 1 step 4, pp.2–3; Phase 2 step 5, p.4 | Primary source locator: Phase 1 step 4, pp.2–3; Phase 2 step 5, p.4. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A78:J78: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P21",
+    "process_ids": [
+      "P21"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Session 1: full PRD/UI-UX walkthrough, architecture understanding, gaps/dependencies. Session 2: final scope, estimate validation and dependency confirmation. | SOURCE OUTPUT: Alignment decisions and actions linked to the baseline. | BOUNDARY AND OVERLAP: Two prescribed sessions within one alignment activity; formal meeting minutes are governed by P43.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A82:F82: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A27:G27: Phase 2 steps 2 and 7, p.4 | Primary source locator: Phase 2 steps 2 and 7, p.4. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A81:J81: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P27",
+    "process_ids": [
+      "P27"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): After Planning approval, confirm scope, timelines, roles and expectations with all planning participants. | SOURCE OUTPUT: Kick-off minutes and actions. | BOUNDARY AND OVERLAP: Execution starts only after the prescribed Planning prerequisites; minutes use P43.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A88:F88: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A33:G33: Phase 3 step 1, p.5; §5.1, p.8 | Primary source locator: Phase 3 step 1, p.5; §5.1, p.8. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A87:J87: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P28",
+    "process_ids": [
+      "P28"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Track development/QA against plan, manage dependencies and blockers, escalate and control scope changes. | SOURCE OUTPUT: Updated delivery status, dependencies and control actions. | BOUNDARY AND OVERLAP: PMO does not own code review, merge, development or QA execution. Links P50/P56 rather than duplicate issue/CR registers.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A89:F89: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A34:G34: Phase 3 steps 2 and 9, pp.5–7 | Primary source locator: Phase 3 steps 2 and 9, pp.5–7. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A88:J88: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P36",
+    "process_ids": [
+      "P36"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Confirm finalized technical documentation, then archive project documents, test results and artifacts in the PMO repository. | SOURCE OUTPUT: Complete, linked project evidence archive. | BOUNDARY AND OVERLAP: Document versions and access remain governed under P11/P52; preserve owner authority.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A97:F97: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A42:G42: Phase 4 step 2, p.7 | Primary source locator: Phase 4 step 2, p.7. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A96:J96: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P38",
+    "process_ids": [
+      "P38"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Run lessons learned and record improvement actions. | SOURCE OUTPUT: Retrospective record and follow-up actions. | BOUNDARY AND OVERLAP: Meeting evidence is governed by P43; improvements do not silently modify approved SOP rules.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A99:F99: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A44:G44: Phase 4 step 4, p.7 | Primary source locator: Phase 4 step 4, p.7. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A98:J98: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P46",
+    "process_ids": [
+      "P46"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Review requirements, engage the named teams, define the solution and estimate effort and cost. | SOURCE OUTPUT: Solution approach and RFP estimate inputs. | BOUNDARY AND OVERLAP: Costing policy remains the prescribed chain; calculator arithmetic is still not supplied.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A107:F107: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A52:G52: §6.2, p.9 | Primary source locator: §6.2, p.9. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A106:J106: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P49",
+    "process_ids": [
+      "P49"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): On win, convert to formal project and enter Initiation Route A. On loss, document lessons, archive response and capture improvements. | SOURCE OUTPUT: Linked project conversion or loss archive/lessons. | BOUNDARY AND OVERLAP: No new bid/no-bid or win-approval gate is stated.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A110:F110: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A55:G55: §6.7, p.10 | Primary source locator: §6.7, p.10. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A109:J109: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P57",
+    "process_ids": [
+      "P57"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Assess technical effort, testing, deployment and compliance; capture timeline, cost/resource, risk and dependency impacts. | SOURCE OUTPUT: Change-impact assessment linked to the CR. | BOUNDARY AND OVERLAP: Security retains risk authority; assessment is not approval.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A118:F118: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A63:G63: §9.10.3, pp.15–16 | Primary source locator: §9.10.3, pp.15–16. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A117:J117: inherited scope only, not current build authorization.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P13",
+    "process_ids": [
+      "P13"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): The requested revised SOP has been supplied and names approval roles. Record the document receipt without treating every operating control as verified. | SOURCE OUTPUT: PMO SOP v1.1, revised 12 Oct 2026, and extracted approval structure. | BOUNDARY AND OVERLAP: Documentation-receipt component fulfilled; not a production process or an implemented-automation saving.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A126:F126: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A19:G19: SOP document control, p.1; approval structure, p.11; meeting 2:57 and 10:10 | Primary source locator: SOP document control, p.1; approval structure, p.11; meeting 2:57 and 10:10. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A125:J125: inherited scope only, not current build authorization. | PMO Process Automation.docx, meeting 8 October 2026, speaker timestamps 2:57; 10:10; transcript reviewed, original recording not reviewed in this cloud definition.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P14",
+    "process_ids": [
+      "P14"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Use the received SOP to focus the follow-up on the actual cost/pricing calculator and normal/exception examples. | SOURCE OUTPUT: Pending calculator, verified rules and worked examples. | BOUNDARY AND OVERLAP: Receipt of the SOP does not establish receipt of the calculator or completion of the follow-up meeting.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A127:F127: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A20:G20: Meeting, 8 Oct, 10:10 and 17:40–18:17; SOP Phase 1 step 4, p.3 | Primary source locator: Meeting, 8 Oct, 10:10 and 17:40–18:17; SOP Phase 1 step 4, p.3. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A126:J126: inherited scope only, not current build authorization. | PMO Process Automation.docx, meeting 8 October 2026, speaker timestamps 10:10; 17:40–18:17; transcript reviewed, original recording not reviewed in this cloud definition.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "S-P15",
+    "process_ids": [
+      "P15"
+    ],
+    "evidence_class": "Inherited source-qualified definition facts; exact evidence retained",
+    "established_rule": "SOURCE DESCRIPTION (not evidence of operational implementation): Reconcile source-prescribed workflows, replay actual cases with owners, and validate expected outputs and exceptions before live use. | SOURCE OUTPUT: Source mapping completed in this update; owner validation and acceptance evidence still pending. | BOUNDARY AND OVERLAP: Discovery and testing work; not an additional operational process or evidence that automation is implemented.",
+    "source": "PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, Process list!A128:F128: immutable ID/title/classification/source-owner fields. | PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, PMO detail!A21:G21: Meeting, 8 Oct, 6:05–10:10 and 14:10; SOP §§2–3, p.1 | Primary source locator: Meeting, 8 Oct, 6:05–10:10 and 14:10; SOP §§2–3, p.1. In this locator, SOP/Phase/section/page references mean PMO_SOP_v1.1.pdf (v1.1, revised 12 October 2026); meeting/timestamp references mean PMO Process Automation.docx (8 October 2026 transcript). | PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, Process scope!A127:J127: inherited scope only, not current build authorization. | PMO Process Automation.docx, meeting 8 October 2026, speaker timestamps 6:05–10:10; 14:10; transcript reviewed, original recording not reviewed in this cloud definition.",
+    "boundary": "See original definition for source versus proposal and readiness distinctions; this fact import creates no permission or new rule."
+  },
+  {
+    "id": "U01",
+    "process_ids": [
+      "P06",
+      "P07",
+      "P09",
+      "P19",
+      "P20",
+      "P21",
+      "P25",
+      "P26",
+      "P63"
+    ],
+    "evidence_class": "Explicit user clarification",
+    "established_rule": "Detailed planning and costing are completed before the client signs the SOW.",
+    "source": "User message Sentinel_88ba7d128134819190c139f3aee5351a, 19 October 2026; includes user-supplied transcription of Head of PMO voice note. Original audio has not been independently reviewed for this amendment.",
+    "boundary": "Supersedes conflicting signature-before-detailed-planning sequencing in the current design; preserves original SOP text. Does not remove costing approval or other prescribed sign-offs."
+  },
+  {
+    "id": "U02",
+    "process_ids": [
+      "P05",
+      "P10",
+      "P11",
+      "P36",
+      "P43",
+      "P52",
+      "P53"
+    ],
+    "evidence_class": "User reports team requirement",
+    "established_rule": "The requested document/evidence tooling does not yet exist; the team expects this product to provide it.",
+    "source": "User message Sentinel_88ba7d128134819190c139f3aee5351a, 19 October 2026; includes user-supplied transcription of Head of PMO voice note. Original audio has not been independently reviewed for this amendment.",
+    "boundary": "New PSL document/evidence capability is proposed, not an integration with a verified existing tool. Specific templates, destinations, migration and retention settings remain unconfirmed. Does not imply that all other Finance or PMO tools are absent."
+  },
+  {
+    "id": "U03",
+    "process_ids": [
+      "P12",
+      "P20",
+      "P30",
+      "P34",
+      "P39",
+      "F34"
+    ],
+    "evidence_class": "Explicit user clarification with PMO testimony",
+    "established_rule": "PMO establishes and marks a milestone complete; Finance then issues the invoice and records payments. Finance milestone approval is not required by this clarification.",
+    "source": "User message Sentinel_88ba7d128134819190c139f3aee5351a, 19 October 2026; includes user-supplied transcription of Head of PMO voice note. Original audio has not been independently reviewed for this amendment.",
+    "boundary": "Invoice issuance, receipt verification and allocation are separate Finance actions. A completed milestone is neither an issued invoice nor proof of payment. Existing UAT and deployment authorities are not replaced."
+  },
+  {
+    "id": "U04",
+    "process_ids": [
+      "P07",
+      "P12",
+      "P20",
+      "P30",
+      "P34",
+      "P39",
+      "F34"
+    ],
+    "evidence_class": "User-supplied PMO testimony",
+    "established_rule": "Three payment stages are described: beginning following signed SOW, UAT, and completion. Signed SOW triggers Finance to raise an opening invoice; reaching UAT triggers another invoice notification.",
+    "source": "User message Sentinel_88ba7d128134819190c139f3aee5351a, 19 October 2026; includes user-supplied transcription of Head of PMO voice note. Original audio has not been independently reviewed for this amendment.",
+    "boundary": "Exact completion trigger and stage amounts/percentages are not supplied. References to50%,10% and12% are illustrative, not a50/30/20 policy. Exact UAT evidence predicate still needs configuration."
+  },
+  {
+    "id": "U05",
+    "process_ids": [
+      "P05",
+      "P12",
+      "P34",
+      "F34"
+    ],
+    "evidence_class": "User-supplied PMO testimony",
+    "established_rule": "Clients may make irregular partial payments between stages. PMO needs visibility of what clients owe and Finance receives even when payments do not follow the three gates.",
+    "source": "User message Sentinel_88ba7d128134819190c139f3aee5351a, 19 October 2026; includes user-supplied transcription of Head of PMO voice note. Original audio has not been independently reviewed for this amendment.",
+    "boundary": "Specific receipt recognition, allocation priority, currencies, tax and overpayment treatment are not defined. Proposed technical records must not silently impose accounting treatment."
+  },
+  {
+    "id": "U06",
+    "process_ids": [
+      "P30",
+      "P31",
+      "P32",
+      "P34",
+      "F34"
+    ],
+    "evidence_class": "User-supplied PMO testimony with pending clarification",
+    "established_rule": "At least80% paid before deployment is a stated expectation.",
+    "source": "User message Sentinel_88ba7d128134819190c139f3aee5351a, 19 October 2026; includes user-supplied transcription of Head of PMO voice note. Original audio has not been independently reviewed for this amendment.",
+    "boundary": "Hard deployment block versus authorized exception policy remains unanswered. Denominator, qualifying settled funds and applicable deductions/credits also need agreed definitions. Assessment cannot grant release, invent an override approver or silently install a new hard block."
+  }
+]

@@ -1,0 +1,20 @@
+Using existing test database for alias 'default'...
+
+................F...
+======================================================================
+FAIL: test_stated_past_deadline_never_dispatches_or_backdates (tests.test_rfp.RFPTests.test_stated_past_deadline_never_dispatches_or_backdates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_rfp.py", line 174, in test_stated_past_deadline_never_dispatches_or_backdates
+    d=rfp_documents.draft(a,c.pk,v.pk,t.pk,'client_bid',rev(c))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 20 tests in 159.668s
+
+FAILED (failures=1)
+Preserving test database for alias 'default'...
+
+Found 20 test(s).
+System check identified no issues (0 silenced).

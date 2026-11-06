@@ -1,0 +1,22 @@
+{
+  "run": 485,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_closure.FactoryClosureDistinctAuthorityTests",
+    "tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_two_real_connections_capture_one_private_intake_for_the_same_dossier",
+    "tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_stop_after_committed_closure_records_followup_and_never_claims_it_was_cancelled",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T14:37:19.307431+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run485.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 425.67
+}

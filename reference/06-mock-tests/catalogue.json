@@ -1,0 +1,2396 @@
+[
+  {
+    "id": "B01-N01",
+    "scenario": "Mock complaint in Teams and a later WhatsApp message refer to the same transaction and issue.",
+    "expected": "A proposed case links both source references and one accountable owner; it does not erase or silently merge distinct issues.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B01",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B01-E01",
+    "scenario": "A support case needs corrective credit.",
+    "expected": "Keep the case open/awaiting specialist and route evidence to the authorised process; Support receives no new credit-execution permission.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B01",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B02-N01",
+    "scenario": "Mock scope contains three permitted cases, one reopened.",
+    "expected": "Summary covers all three, explicitly labels reopened status, cites each case and states the period.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B02",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B02-E01",
+    "scenario": "One case is inaccessible or ambiguous duplicate messages cannot be resolved.",
+    "expected": "State coverage limitation/uncertainty; do not claim exhaustive totals or leak restricted text through a summary.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B02",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B03-N01",
+    "scenario": "Synthetic fixture explicitly defines elapsed clock time, receipt 09:00 and qualifying response 09:15.",
+    "expected": "First-response duration is 15 minutes under fixture rule, with no claim that 15 minutes is PSL SLA.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B03",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B03-E01",
+    "scenario": "Resolution precedes receipt because of a bad timestamp, or a case is reopened with no rule.",
+    "expected": "Mark metric invalid/undefined and route correction; do not take an absolute value or silently choose a clock.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B03",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B04-N01",
+    "scenario": "Mock transaction T1 has a unique matching authoritative settled record S1 under approved keys.",
+    "expected": "Record settlement confirmation with S1 reference; B05 still requires its own authority and execution steps.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B04",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B04-E01",
+    "scenario": "Two possible settlements match or the authoritative status is pending.",
+    "expected": "Keep confirmation ambiguous/not established and block any automated corrective action.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B04",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B05-N01",
+    "scenario": "Mock request CR1 has approved payload/version and Engineering receipt EC1 with verified destination result.",
+    "expected": "Track requested, approved and executed as distinct events and close only under agreed evidence; no new Support execution right.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B05",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B05-E01",
+    "scenario": "Engineering call times out after possible success or the request amount changes after approval.",
+    "expected": "Mark uncertain/stale approval, inspect destination first, and prevent blind retry or use of old approval for a changed amount.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B05",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B06-N01",
+    "scenario": "Mock queue item Q1 has an approved specific transition requested and Engineering later verifies Q2-state.",
+    "expected": "Record the requested transition and receipt separately, with no direct Reconciliation insertion right.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B06",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B06-E01",
+    "scenario": "Q1 has already changed state before Engineering acts or result is uncertain.",
+    "expected": "Recheck authoritative state and require valid current action; no repeat queue insertion or assumed money movement.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B06",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B07-N01",
+    "scenario": "Owner provides a synthetic queue export with Q1 pending and a validated rule that pending is not settled.",
+    "expected": "Future check reports Q1 pending, linked to source time and owner, without initiating a fund movement.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B07",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B07-E01",
+    "scenario": "Queue state meanings or match keys are not supplied.",
+    "expected": "Definition stays blocked for executable reconciliation/alerts; no threshold or settlement interpretation is invented.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B07",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "B08-N01",
+    "scenario": "Synthetic agreement explicitly auto-renews unless notice is given by a specified validated date.",
+    "expected": "Internal tracker highlights the notice deadline and auto-renewal status; it does not label the agreement terminated at expiry.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B08",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B08-E01",
+    "scenario": "Only an expiry date is available with no notice/renewal clause.",
+    "expected": "Mark renewal interpretation unresolved and avoid invented alerts implying non-renewal or automatic termination.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B08",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B09-N01",
+    "scenario": "Synthetic owner-approved stages A then B have entry evidence at known dates and named owners.",
+    "expected": "Tracker records A-to-B transition and references without granting new document or onboarding-approval rights.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B09",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B09-E01",
+    "scenario": "A case is marked complete but required stage evidence or owner approval is absent.",
+    "expected": "Flag inconsistent status and require owner correction; do not fabricate a completed journey.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B09",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B10-N01",
+    "scenario": "Synthetic fixture defines elapsed days, stage entry 1 October 10:00 and as-of 3 October 10:00.",
+    "expected": "Display two days under fixture rule with source time, without assigning an SLA breach.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B10",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B10-E01",
+    "scenario": "Stage-entry date is unknown, but a tracker file was created last week.",
+    "expected": "Show age unknown; do not use file-created date or initiate a customer reminder.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B10",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B11-N01",
+    "scenario": "Synthetic owner-approved rule counts unique users with qualifying event type X in the month; U1 has two X events and U2 one.",
+    "expected": "Active users=2 with the declared rule and event coverage.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B11",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B11-E01",
+    "scenario": "Billing uses transaction volume while the activity report uses unique users.",
+    "expected": "Keep both metric definitions separate; do not reuse active-user count as billable usage or vice versa.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B11",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B12-N01",
+    "scenario": "Mock batch B1 has one accepted usage version and one approved effective price set.",
+    "expected": "B12 records preparation readiness and references the same B1 processed by F28/F29/F30, not a duplicate batch.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B12-E01",
+    "scenario": "A database contains prices but no approval/effective-date evidence or deploy status is unknown.",
+    "expected": "Mark pricing/integration readiness unresolved; do not treat stored values as authorised billable terms.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B12-E02",
+    "scenario": "An extractor proposes a mandatory Finance signature step solely from VID U0079, while FIN P0023 describes prices being present on the report.",
+    "expected": "Record a source conflict and mark the approval step unverified. No signature state, release gate or approver is established until the responsible owner confirms it.",
+    "basis": "FIN P0023 at 4:27 versus VID U0079 at 04:36.895-04:41.055; source-reconciliation test. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "B12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B13-N01",
+    "scenario": "Owner supplies a current reconciliation SOP and a synthetic failed-credit example.",
+    "expected": "Link them to B04-B07, record corroborations/conflicts and update open questions; no financial action occurs.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B13",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B13-E01",
+    "scenario": "All three meeting extracts are available, but the Support SOP and Henry/Reconciliation brief mentioned in the meetings are not in the supplied source set.",
+    "expected": "Mark those specific procedures outstanding and keep affected operational rules unvalidated. Do not claim the recovered transcripts replace the missing SOPs or that the SOPs do not exist elsewhere.",
+    "basis": "Primary-source references BAAS P0012/P0020/P0027 and TEM P0035; documented supplied-source gap, not run.",
+    "process_id": "B13",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B14-N01",
+    "scenario": "Synthetic approved flow allows received → investigating → specialist pending → resolved after evidence.",
+    "expected": "A mock case follows the allowed path with owner/evidence at each step and supplies B03 timestamps.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "B14",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "B14-E01",
+    "scenario": "A user attempts specialist pending → resolved without specialist result, or merges unrelated transactions.",
+    "expected": "Reject the unsupported transition/merge and retain the case histories; no silent closure.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "B14",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F01-N01",
+    "scenario": "Mock source TX-001 is already posted as QB-101, and a reporting user requests lineage.",
+    "expected": "Show TX-001 to QB-101 linkage without creating a second ledger entry.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F01",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F01-E01",
+    "scenario": "The same source is received twice or the existing posting response is uncertain.",
+    "expected": "Hold for incumbent-state verification; do not treat a timeout as permission to post again.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F01",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F02-N01",
+    "scenario": "File TB-2026-09-v1 for entity E1 arrives twice with the same hash.",
+    "expected": "One accepted snapshot and two intake receipts; no duplicate reporting rows.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F02",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F02-E01",
+    "scenario": "A file labelled September contains an October period header.",
+    "expected": "Quarantine it with the exact mismatch; no downstream mapping or silently corrected period.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F02",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F03-N01",
+    "scenario": "Mock TB contains A100=0 and A200=120, each with one approved mapping.",
+    "expected": "A100 is recorded as a present zero; A200 links to 120; both retain their source rows.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F03",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F03-E01",
+    "scenario": "A300 has no mapping and A200 has two conflicting mappings.",
+    "expected": "Report two distinct exceptions; neither is silently zeroed, duplicated or assigned by AI.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F03",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F04-N01",
+    "scenario": "TB snapshot has a documented report-only adjustment ADJ-1 approved against version 1.",
+    "expected": "Show original value, ADJ-1, adjusted value and evidence as separate traceable elements.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F04",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F04-E01",
+    "scenario": "ADJ-1 is edited after its review or the comparison has an unexplained difference.",
+    "expected": "Mark its review stale and output unresolved; do not auto-balance or create a ledger journal.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F04",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F04-N02",
+    "scenario": "Synthetic cell-level fixture supplies I95=120, K95=100, and G3:G170 containing 10,20,-5 with every other fixture cell explicitly zero.",
+    "expected": "Observed-expression reproductions give J95=20 and G171=25 TEST. These arithmetic results do not label the whole trial balance reconciled or approve an adjustment.",
+    "basis": "Local reviewer V01/V02 selected expressions; synthetic inputs only. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F04",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F05-N01",
+    "scenario": "Approved fixture maps A1=100 and A2=40 to Note N1, with no adjustments.",
+    "expected": "N1=140 in the fixture unit, with both account rows traceable and no extra notes claimed.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F05",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F05-E01",
+    "scenario": "A2 is assigned to both N1 and N2 without an approved split rule.",
+    "expected": "Flag duplicate inclusion and withhold a reconciled note result instead of counting A2 twice.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F05",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F06-N01",
+    "scenario": "A synthetic owner-approved fixture specifies base value 2,000 and scale 1,000 for one note.",
+    "expected": "Display 2 with the fixture unit label while retaining 2,000 and its lineage.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F06",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F06-E01",
+    "scenario": "An input already scaled to thousands is marked as base units by another feed.",
+    "expected": "Raise unit conflict; do not apply a second scaling step or guess the correct value.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F06",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F06-N02",
+    "scenario": "Synthetic fixture supplies Trial Balance I3:I13 whose explicit sum is 2500 TEST base units, with the selected /1000 presentation convention.",
+    "expected": "Selected E9 expression returns 2.5 TEST presentation units and retains 2500 as base provenance; another scaling step is rejected.",
+    "basis": "Local reviewer V04 formula structure; units are synthetic and not an assertion of PSL currency/unit policy. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F06",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F07-N01",
+    "scenario": "A test asset has a Finance-supplied calculation oracle for period P.",
+    "expected": "BLOCKED: owner-approved oracle/fixture pending. Once supplied and validated, the future implementation reproduces that oracle and identifies its asset/policy versions; this package supplies no substitute rate.",
+    "basis": "BLOCKED: owner-approved oracle/fixture pending. This is a required future acceptance test, not an executable numerical oracle and not run. No Finance formula or policy is invented.",
+    "process_id": "F07",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "F07-E01",
+    "scenario": "An asset addition has no approved capitalization treatment or useful life.",
+    "expected": "Keep the item blocked for Finance judgment, not assigned a common default or model-estimated depreciation.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F07",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "F07-E02",
+    "scenario": "A mock September reporting package contains an asset schedule labelled As at 31 March and no explanation of its roll-forward.",
+    "expected": "Flag date/basis ambiguity for Finance and block approved schedule publication until explained; do not change the date or calculate depreciation from a guessed policy.",
+    "basis": "Source issue in local reviewer V05 at 33:37.062; no numerical depreciation oracle exists. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F07",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F08-N01",
+    "scenario": "Synthetic fixture explicitly says source -500 is displayed as +500 for Note L1 without scaling.",
+    "expected": "Display +500 once and preserve -500 as the source; F09 consumes the presented convention.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F08",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F08-E01",
+    "scenario": "A downstream consumer requests another reversal on an already presented L1 value.",
+    "expected": "Detect the convention mismatch and require a defined conversion, not silently show -500.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F08",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F08-N02",
+    "scenario": "Synthetic I153=-5000 TEST base units is passed to the selected expression -SUM(I153)/1000.",
+    "expected": "Selected E16 returns +5 TEST presentation units, with negative-sign and scale provenance. No universal liability rule is inferred.",
+    "basis": "Local reviewer V06 selected expression; synthetic arithmetic only. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F08",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F09-N01",
+    "scenario": "September statement uses reviewed September asset, liability and equity snapshots.",
+    "expected": "BLOCKED: owner-approved oracle/fixture pending. Once supplied and validated, all statement lines identify matching-period sources and checks run against the agreed oracle.",
+    "basis": "BLOCKED: owner-approved oracle/fixture pending. This is a required future acceptance test, not an executable numerical oracle and not run. No Finance formula or policy is invented.",
+    "process_id": "F09",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "F09-E01",
+    "scenario": "Equity links to August while other notes use September.",
+    "expected": "Flag mixed periods and block approved publication; a numerically balanced total alone does not pass.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F09",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F09-N02",
+    "scenario": "Synthetic SOCE I17 contains 12 TEST units; the fixture preserves identical source and destination units and period.",
+    "expected": "Selected BalanceSheet C30=12 TEST and links to SOCE I17. Full balance-sheet numerical acceptance remains BLOCKED pending an owner-approved statement oracle.",
+    "basis": "Local reviewer V07 selected dependency, not a complete statement model. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F09",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "F10-N01",
+    "scenario": "September actuals and September budget are loaded with an August comparison deliberately labelled.",
+    "expected": "The output preserves each column period/version and applies only the approved comparison rules.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F10",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F10-E01",
+    "scenario": "A budget value is missing while actuals are valid.",
+    "expected": "Show budget unavailable and suppress dependent variance, rather than treat missing as zero or conceal the gap.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F10",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F11-N01",
+    "scenario": "Budget v1 supports January reporting; Finance later approves v2 for October onward.",
+    "expected": "January retains v1 unless a separate restatement is approved, and October records v2 explicitly.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F11",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F11-E01",
+    "scenario": "A file named final contains no identifiable approval/version and omits one BU/account dimension.",
+    "expected": "Quarantine the missing dimension and approval gap; do not substitute the latest filename as authority.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F11",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F12-N01",
+    "scenario": "A fixture has linked income 100 and separately evidenced, owner-approved supplement S1 of 20.",
+    "expected": "Show linked 100, S1 20 and reviewed total 120 with separate lineage.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F12-E01",
+    "scenario": "S1 is already represented by account A5 in the linked total.",
+    "expected": "Flag possible duplicate and require Finance resolution; no automatic subtraction, addition or ledger correction.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F12-N02",
+    "scenario": "Synthetic linked parent income total is 100 TEST, and two owner-labelled manual child breakdown lines are 60 and 40 with relationship disaggregation.",
+    "expected": "Children sum to parent 100; report shows 100 total, not 200. Each child references the parent and is not treated as an additive adjustment.",
+    "basis": "Direct FIN P0109 describes finer manual breakdown; non-double-count design fixture is proposed. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F12-N03",
+    "scenario": "Synthetic Notes 1-4 G10 is 2 TEST note-units and the fixture explicitly uses the selected ×1000 conversion to detailed units.",
+    "expected": "INCOME LINE AV9=2000 TEST detailed-units with a single scale conversion and source link; manual detail must use the declared target unit.",
+    "basis": "Local reviewer V09 selected expression; synthetic units only. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F13-N01",
+    "scenario": "Owner supplies an equity schedule with approved opening, movements, closing and statement linkage.",
+    "expected": "Add a traceable schedule-specific definition and oracle, preserving its relation to F09.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F13",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F13-E01",
+    "scenario": "A tab is named intercompany but its counterparty matching and elimination policy are absent.",
+    "expected": "Keep it unimplemented and record exact missing rules, rather than infer accounting policy from the name.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F13",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F14-N01",
+    "scenario": "Synthetic revenue R1=100 maps to BU-A and R2=50 to BU-B.",
+    "expected": "BU-A=100, BU-B=50, company=150, each retaining its source and mapping version.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F14",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F14-E01",
+    "scenario": "R2 matches two BU rules or no BU rule.",
+    "expected": "Keep R2 unresolved/unallocated according to approved policy; do not duplicate or drop its 50.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F14",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F15-N01",
+    "scenario": "Cost C1=60 is approved as direct to BU-A; C2=40 remains shared.",
+    "expected": "BU-A direct=60 and shared pool=40, with original total 100 conserved.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F15",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F15-E01",
+    "scenario": "C1 is also included in the pool for F22.",
+    "expected": "Detect overlap and block reconciled BU reporting until the ownership of C1 is resolved.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F15",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F15-N02",
+    "scenario": "Synthetic Notes 1-4 G18 is 3 TEST note-units and the fixture labels J5 as the selected cost-of-sales line using ×1000.",
+    "expected": "J5=3000 TEST detailed-units in the cost-of-sales population, not revenue. Retain external workbook/version and line classification.",
+    "basis": "Local reviewer V10 cost-of-sales observation; no complete account-to-BU mapping inferred. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F15",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F16-N01",
+    "scenario": "Fictional PAY-A contains E001=100 and PAY-B contains E002=150 for September 2026 in synthetic unit TEST. The fixture explicitly uses disjoint employee IDs, one included pay component, no overlap and a simple union of the two inputs.",
+    "expected": "The restricted combined snapshot has exactly two rows, E001=100 and E002=150. PAY-A control total=100, PAY-B control total=150 and combined control total=250 TEST. Each row retains its file/row provenance; unauthorised readers cannot retrieve employee-level amounts.",
+    "basis": "Explicit synthetic merge fixture, not actual payroll or PSL merge policy. Normal-case arithmetic and access expectation specified; not run. Actual source-overlap rules remain owner decisions.",
+    "process_id": "F16",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F16-E01",
+    "scenario": "E001 appears in both sources with conflicting amounts and no precedence rule.",
+    "expected": "Hold E001 in a conflict queue; do not sum, overwrite or deduplicate by name.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F16",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F17-N01",
+    "scenario": "E001 has a single HR-approved BU-A membership effective throughout September.",
+    "expected": "Match E001 to BU-A for September with HR snapshot/version lineage and no HR write.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F17",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F17-E01",
+    "scenario": "E002 has two memberships covering the period and no approved split rule.",
+    "expected": "Flag ambiguous membership and stop its allocation; do not pick the latest text row or alter HR.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F17",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F18-N01",
+    "scenario": "Synthetic validated staff E001=100 and E002=150 both belong to BU-A in the eligible pool.",
+    "expected": "BU-A staff-cost aggregate is 250; general readers cannot retrieve the two employee rows.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F18",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F18-E01",
+    "scenario": "The BU report receives an aggregate from payroll v1 after the working set was corrected to v2.",
+    "expected": "Flag stale aggregate and require a versioned replacement; do not silently overwrite the published period.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F18",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F19-N01",
+    "scenario": "A synthetic owner-approved fixture explicitly supplies BU-A weight 0.6, BU-B 0.4 and pool 100.",
+    "expected": "Allocate 60/40 with fixture basis lineage; do not claim these weights are PSL policy.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F19",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F19-E01",
+    "scenario": "The approved population has total headcount zero or excludes a BU with eligible cost.",
+    "expected": "Block calculation and request a valid basis; no equal split or copied prior-month ratio by default.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F19",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F19-E02",
+    "scenario": "An imported rule proposal copies the narrated example percentages, including the inconsistent machine-transcribed percentage at U0559.",
+    "expected": "Reject as an unapproved/inconsistent illustration; require the authoritative headcount, denominator and period-specific rule. Do not silently repair a percentage and deploy it.",
+    "basis": "FIN P0117 versus VID U0554-U0561; transcription/policy-boundary test. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F19",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F20-N01",
+    "scenario": "Synthetic standard pool 100 has a supplied approved fixture allocating 50/50, excluding E900.",
+    "expected": "Report BU-A=50 and BU-B=50 and no E900 contribution.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F20",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F20-E01",
+    "scenario": "A rule version applies after the reporting month or its allocation weights do not cover the full pool.",
+    "expected": "Hold output and report applicability/coverage errors; do not normalise ratios automatically.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F20",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F21-N01",
+    "scenario": "Synthetic E900 has an explicit approved fixture assigning its 100 cost as 70 to BU-A and 30 to BU-B.",
+    "expected": "Produce 70/30 with the restricted approval reference and no standard-pool duplication.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F21",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F21-E01",
+    "scenario": "E900 has no current approved ratio, but last month used 70/30.",
+    "expected": "Block this month pending authority; neither reuse nor infer the ratio from role or AI.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F21",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F22-N01",
+    "scenario": "Synthetic category X has approved fixture weights 25/75 for pool 100.",
+    "expected": "Allocate 25 and 75 under X rule, without applying that rule to category Y.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F22",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F22-E01",
+    "scenario": "Category Y has no approved basis, while X does.",
+    "expected": "Leave Y unresolved and report its entire pool; do not borrow X ratio to make the report balance.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F22",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F23-N01",
+    "scenario": "Synthetic BU totals 60 and 40 match comparable management-account total 100.",
+    "expected": "Comparison difference is 0, and the snapshot retains all source versions and reviewer status.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F23",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F23-E01",
+    "scenario": "BU totals are 95 while management accounts are 100 and no explanation exists.",
+    "expected": "Show difference 5 as unresolved; do not insert balancing income/cost or label the result reconciled.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F23",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F24-N01",
+    "scenario": "Synthetic approved January=10, February=20 and March=30 form the declared YTD set.",
+    "expected": "YTD=60 with all three version references and no implied later months.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F24",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F24-E01",
+    "scenario": "March is absent or February appears twice.",
+    "expected": "Mark YTD incomplete/duplicate and do not present a complete-quarter result by substituting zero or double counting.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F24",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F24-N02",
+    "scenario": "Synthetic BU M-o-M L5:T5 contains nine explicit values 1,2,3,4,5,6,7,8,9 TEST and a separately declared nine-period fixture manifest.",
+    "expected": "Selected BU YTD E4=45 TEST; preserve the manifest and row/period links. Any omitted/duplicated month remains a coverage exception despite correct SUM arithmetic.",
+    "basis": "Local reviewer V13 selected sum; synthetic values, not a fiscal-calendar approval. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F24",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F25-N01",
+    "scenario": "A synthetic owner-approved fixture explicitly selects annual 1,200 divided by 12 for three full months.",
+    "expected": "YTD budget=300, labelled with this fixture method and budget version.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F25",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F25-E01",
+    "scenario": "The source includes approved unequal monthly budgets but the reporting method is unresolved.",
+    "expected": "Ask Finance which method governs; do not replace seasonal values with a straight-line assumption.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F25",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F26-N01",
+    "scenario": "Synthetic September 2026 BU-A fixture supplies certified actual=120 and budget=100 in unit TEST and explicitly defines the example comparison as actual minus budget.",
+    "expected": "Example difference=20 TEST (120 minus 100). Chart shows Actual=120 and Budget=100 with correct labels, BU-A, September 2026 and unit TEST. Each series identifies its fixture snapshot; no claim is made that this is the approved PSL variance/PBT definition.",
+    "basis": "Explicit synthetic arithmetic/presentation fixture, not a PSL metric or accounting policy; not run. Actual metrics still need Finance approval.",
+    "process_id": "F26",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F26-E01",
+    "scenario": "Budget is absent or a narrative asserts causation not supported by the data.",
+    "expected": "Mark the metric unavailable and remove/flag the unsupported claim; no invented target or causal explanation.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F26",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F26-E02",
+    "scenario": "A provided chart/report screenshot shows a metric as ### with no readable value or underlying approved data.",
+    "expected": "Mark the value unreadable/unverified and request the native result; do not infer it from bar length, nearby labels or a guessed percent formula.",
+    "basis": "Local review E15/V13/V14 reports obscured percentage values; extraction safeguard. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F26",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F27-N01",
+    "scenario": "An approved fixture adds category C prospectively from October only.",
+    "expected": "September remains unchanged and October uses the new effective mapping with an explicit comparability note.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F27",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F27-E01",
+    "scenario": "A request says add C but gives no effective date or historical direction.",
+    "expected": "Produce impact options and leave existing reports intact; do not silently rewrite all history.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F27",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F27-E02",
+    "scenario": "The source request says add two business units but provides no names, definitions or historical effective date.",
+    "expected": "Keep two requested categories unresolved in the decision log; do not invent BU names, transform services into BUs or restate January onward.",
+    "basis": "FIN P0081/P0083/P0084/P0121; proposed controlled-change safeguard. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F27",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F28-N01",
+    "scenario": "Mock report U1 includes clients C1/C2 for September and its approved control totals; resend is identical.",
+    "expected": "One accepted usage version feeds pricing, with duplicate receipt recorded and no second billing batch.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F28",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F28-E01",
+    "scenario": "C2 is absent although expected, or a second report changes C1 usage.",
+    "expected": "Flag missing coverage or create an explicit correction version; no silent omission or overwriting an already reviewed batch.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F28",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F29-N01",
+    "scenario": "Synthetic test supplies usage 10 units and an explicitly approved fixture rate 2 per unit with no other rule.",
+    "expected": "Candidate line=20 in the fixture currency, showing both source versions; no PSL rate is inferred.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F29",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F29-E01",
+    "scenario": "Two rates cover the same client/product/date or tax treatment is required but unknown.",
+    "expected": "Block that line for Finance decision; no latest-file heuristic, guessed tax or model-selected rate.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F29",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F29-E02",
+    "scenario": "An extractor proposes a mandatory Finance signature step solely from VID U0079, while FIN P0023 describes prices being present on the report.",
+    "expected": "Record a source conflict and mark the approval step unverified. No signature state, release gate or approver is established until the responsible owner confirms it.",
+    "basis": "FIN P0023 at 4:27 versus VID U0079 at 04:36.895-04:41.055; source-reconciliation test. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F29",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F30-N01",
+    "scenario": "Mock flow contract says generate draft only and returns DOC-1 for batch B1.",
+    "expected": "Record draft generation, not posted/sent status, and retain one B1-to-DOC-1 reference.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F30",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F30-E01",
+    "scenario": "The flow times out after possibly creating DOC-1.",
+    "expected": "Query run/output state first; keep outcome uncertain and prevent a second generator or blind rerun.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F30",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F30-E02",
+    "scenario": "An extractor proposes a mandatory Finance signature step solely from VID U0079, while FIN P0023 describes prices being present on the report.",
+    "expected": "Record a source conflict and mark the approval step unverified. No signature state, release gate or approver is established until the responsible owner confirms it.",
+    "basis": "FIN P0023 at 4:27 versus VID U0079 at 04:36.895-04:41.055; source-reconciliation test. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F30",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F31-N01",
+    "scenario": "Synthetic contract explicitly requires annual billing on 1 October and has no midterm changes.",
+    "expected": "Identify that annual obligation once, with its contract/version, not twelve monthly charges.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F31",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F31-E01",
+    "scenario": "One client appears with monthly cadence in a spreadsheet and annual cadence in the contract.",
+    "expected": "Raise conflict for IT/Finance; do not invoice using a guessed priority.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F31",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F32-N01",
+    "scenario": "Synthetic invoice INV1=100 has verified receipt R1=40 under a supplied partial-payment rule.",
+    "expected": "Preserve 40 matched and 60 outstanding; do not mark fully paid.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F32",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F32-E01",
+    "scenario": "One receipt could match either INV1 or INV2, or its outcome is reversed.",
+    "expected": "Queue it for Finance resolution and preserve history; no guessed match, write-off or automatic customer message.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F32",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F33-N01",
+    "scenario": "Project P1 has signed milestone M1 and dated PM completion evidence; Finance receives it.",
+    "expected": "Record a reviewable packet and acknowledgement only; no recognised amount is inferred.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F33",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F33-E01",
+    "scenario": "A client pays 100 before any progress/acceptance evidence exists.",
+    "expected": "Keep payment and progress separate; recognition stays pending Finance policy review.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F33",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F33-E02",
+    "scenario": "A mock PM says progress is 50 percent and a client has paid 20 TEST, but no accounting-recognition policy or accepted progress basis is provided.",
+    "expected": "Retain both facts separately and leave recognised revenue BLOCKED. Do not compute 50 percent of price, use cash received or create a journal from the examples.",
+    "basis": "FIN P0063/P0065 explicitly distinguishes progress context from cash; percentages are examples, not an approved formula. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F33",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "F34-N01",
+    "scenario": "Mock project P1 has client-signed baseline V1, approved aligned plan and completed milestone M1.",
+    "expected": "Record one M1 completion and one linked Finance notification; Finance may review next steps, but no invoice, recognition or payment is created.",
+    "basis": "SOP prescribed sharing/notification (pp.3,5,7,8) plus proposed event deduplication and explicit accounting boundary; synthetic, not run.",
+    "process_id": "F34",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F34-E01",
+    "scenario": "Baseline V2 changes cost after V1 was shared, or notification delivery is uncertain.",
+    "expected": "Preserve V1, flag a revision linked to the required costing reapproval, and verify delivery before retry; do not duplicate M1 or treat V1 approval as V2 authority.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F34",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F35-N01",
+    "scenario": "Approved contract allows employee ID, BU and effective dates only.",
+    "expected": "Finance receives those fields with source lineage and no authority to edit HR or retrieve unrelated HR records.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F35",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F35-E01",
+    "scenario": "A new extract includes medical or disciplinary fields outside the approved contract.",
+    "expected": "Reject/remove from the intended interface and escalate scope; do not broaden access because the file was supplied.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F35",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F36-N01",
+    "scenario": "Receivables include R1=100 and R2=200; Finance explicitly forecasts R1 only.",
+    "expected": "Forecast selected inflow=100 and coverage states R2 excluded, not total receivables=100.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F36",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F36-E01",
+    "scenario": "R1 expected receipt slips but its contractual due date is unchanged.",
+    "expected": "Revise expected timing with reason/history while preserving the original due date and prior forecast.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F36",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F37-N01",
+    "scenario": "Recurring lease item L1 and a distinct one-off repair R1 are supplied with approved forecast timing.",
+    "expected": "Both appear once with separate provenance, and neither is marked payment-authorised by inclusion.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F37",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F37-E01",
+    "scenario": "The same L1 arrives again as a new spending request.",
+    "expected": "Flag duplicate obligation and require reconciliation before aggregation, without deleting either source receipt.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F37",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F38-N01",
+    "scenario": "Mock forecast begins 1 October using a verified 30 September closing snapshot for an explicitly defined account set.",
+    "expected": "Opening input names those accounts, dates and source versions.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F38",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F38-E01",
+    "scenario": "Workbook label says August while source bank position is dated September and no reconciliation exists.",
+    "expected": "Mark opening unverified and block reliable forecast publication; do not relabel by assumption.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F38",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F39-N01",
+    "scenario": "Finance supplies a synthetic two-month oracle and its full rule.",
+    "expected": "BLOCKED: owner-approved oracle/fixture pending. Once supplied and validated, future calculation reproduces each month and explicit carry-forward links under that rule; this definition invents no formula.",
+    "basis": "BLOCKED: owner-approved oracle/fixture pending. This is a required future acceptance test, not an executable numerical oracle and not run. No Finance formula or policy is invented.",
+    "process_id": "F39",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "F39-E01",
+    "scenario": "Month 2 references a different scenario’s closing/opening input or the formula chain is incomplete.",
+    "expected": "Block the affected chain and report the broken reference; no conventional formula substituted.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F39",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F39-N02",
+    "scenario": "Synthetic same-cell fixture supplies C15=100, C33=60 and C34=20, all explicitly in one TEST unit and period.",
+    "expected": "Selected C35=60 TEST using 100-60+20. Do not infer how C34 is sourced or carried between months; F39-N01 full-chain production-oracle acceptance stays BLOCKED.",
+    "basis": "Local reviewer V17 observed selected expression only; synthetic arithmetic is narrower than operational forecast validation. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F39",
+    "status": "Specified, not run",
+    "readiness": "Blocked: owner oracle/fixture pending"
+  },
+  {
+    "id": "F40-N01",
+    "scenario": "Management ranks obligation O1 ahead of O2 in a mock meeting.",
+    "expected": "Record the prioritisation and rationale only, with no bank transfer, payment release or new client promise.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F40",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F40-E01",
+    "scenario": "A forecast suggests enough cash but the payment approver/authority is unknown.",
+    "expected": "Leave execution unapproved and request the responsible decision; projected funds are not spending permission.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F40",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F41-N01",
+    "scenario": "Mock expected receipt R1=100 has verified actual 40 under an owner-approved partial rule.",
+    "expected": "Preserve original 100 expectation, link actual 40 and track remaining 60 rather than replace history with 60.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F41",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F41-E01",
+    "scenario": "A 40 receipt matches two possible forecast items or is later reversed.",
+    "expected": "Keep an exception/reversal history and require Finance resolution; no double reduction of forecast balances.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F41",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F42-N01",
+    "scenario": "R1 due 15 September is still unresolved and Finance approves expected receipt 10 October.",
+    "expected": "October shows the new expectation and retains 15 September plus the prior forecast history.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F42",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F42-E01",
+    "scenario": "A disputed item is repeatedly rolled forward with no new evidence.",
+    "expected": "Flag it for review instead of automatically resetting its age or presenting it as a fresh reliable inflow.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F42",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F42-E02",
+    "scenario": "A mock sheet has SEP/OCT/NOV/DEC/JAN/OTHERS columns but no approved active horizon, and a transcript example mentions first-week rollover.",
+    "expected": "Keep horizon and deadline unconfigured pending owner decision. Do not interpret every visible column as active or create a fixed first-week deadline from the example.",
+    "basis": "FIN P0048/P0127/P0129 and local V15; scope/clock safeguard. Not run. No live source values or PSL policy are inferred.",
+    "process_id": "F42",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F43-N01",
+    "scenario": "Synthetic internal forecast includes restricted row X; approved group policy excludes X and its details.",
+    "expected": "Group artifact contains only permitted rows, with no hidden sheet/formula/cache exposing X.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F43",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F43-E01",
+    "scenario": "A group output hides X on a worksheet but retains X in cached totals or comments.",
+    "expected": "Fail disclosure review and block publication; hiding is not redaction.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F43",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F44-N01",
+    "scenario": "Mock event E1=100 has an approved direct BU-A attribution.",
+    "expected": "A reference-based BU view includes 100 once and company roll-up remains 100; no ledger record changes.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F44",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F44-E01",
+    "scenario": "E1 belongs to a shared-cost pool or has conflicting tags across sources.",
+    "expected": "Keep unresolved/shared classification visible and use the appropriate approved allocation rule, not duplicate event amount across BUs.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F44",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F45-N01",
+    "scenario": "Mock service S1 has an explicit monthly contract for September and a verified September invoice reference.",
+    "expected": "Mark that obligation covered, retaining contract and invoice provenance.",
+    "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules.",
+    "process_id": "F45",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "F45-E01",
+    "scenario": "S1 has no contract cadence or is suspended midperiod.",
+    "expected": "Mark coverage indeterminate and ask the source owner; no assumed monthly billing or customer commitment.",
+    "basis": "Proposed exception safeguard; not run; no business rule inferred.",
+    "process_id": "F45",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P01-M01",
+    "scenario": "Both gates satisfied for SOW-v3",
+    "expected": "Show v3 eligible for P19, not sent.",
+    "basis": "SOP p.3 and §§9.7–9.8; manual-send boundary from V1 WF01; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P01",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P01-M02",
+    "scenario": "CEO approved v2; v3 changes price",
+    "expected": "Show costing incomplete for v3 despite retained v2 decisions.",
+    "basis": "SOP Phase 1 step 5; V1 T08; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P01",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P02-M01",
+    "scenario": "QA sends a signed current prerequisite",
+    "expected": "Show QA’s decision as referenced evidence, not a PMO-issued QA approval.",
+    "basis": "SOP §§2,7–8; proposed evidence contract; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P02",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P02-M02",
+    "scenario": "Source access fails after earlier receipt",
+    "expected": "Keep provenance/history and flag verification unavailable; do not substitute a hub checkbox.",
+    "basis": "V1 ADP01/T34; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P02",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P03-M01",
+    "scenario": "A Route C engagement reaches Planning",
+    "expected": "Preserve its engagement reference and link one registered project with assigned PM.",
+    "basis": "SOP Phase 1 step 1 and Phase 2 step 1; V1 T06; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P03",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P03-M02",
+    "scenario": "The same RFP-win intake is received twice",
+    "expected": "Flag existing linkage; proposed deduplication prevents two synthetic project links without deleting evidence.",
+    "basis": "Proposed identity safeguard; actual identifier rules Q02; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P03",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P04-M01",
+    "scenario": "One project update feeds weekly views",
+    "expected": "Internal overview and client-safe preview use the same dated source references but different permitted content.",
+    "basis": "SOP §§5.2–5.4; proposed projection control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P04",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P04-M02",
+    "scenario": "Source issue has internal commentary and missing milestone date",
+    "expected": "Internal view retains permitted detail; client preview excludes commentary and shows the missing date rather than inventing it.",
+    "basis": "SOP §§9.4–9.8; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P04",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P05-M01",
+    "scenario": "Engineering user opens assigned project",
+    "expected": "Show permitted delivery evidence without exposing unauthorized costing or Finance details.",
+    "basis": "Proposed access design; V1 PLAT02/T02; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P05",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P05-M02",
+    "scenario": "User guesses another project export URL",
+    "expected": "Deny content and metadata access; do not rely on hiding a navigation link.",
+    "basis": "V1 T02; proposed permission contract; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P05",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P06-M01",
+    "scenario": "Both teams supply versioned effort estimates and calculator attachment",
+    "expected": "Cost proposal records both sources and existing calculator version; no new arithmetic claimed.",
+    "basis": "SOP Phase 1 step 4, Phase 2 step 5; V1 WF01; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P06",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P06-M02",
+    "scenario": "Security effort missing but spreadsheet has a total",
+    "expected": "Mark required input missing; do not label resource inputs complete or substitute zero.",
+    "basis": "SOP required Security input; proposed completeness control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P06",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P07-M01",
+    "scenario": "Route C product paper, PRD and both estimates supplied",
+    "expected": "Record SOW proposal, cost source and milestones tied to those source versions.",
+    "basis": "SOP Phase 1 steps 2–4; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P07",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P07-M02",
+    "scenario": "Planning estimate differs from signed SOW",
+    "expected": "Flag Q05 baseline mismatch and cost-change route; do not overwrite signed commercial terms.",
+    "basis": "SOP Phase 2 steps 8–9; Q05; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P07",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P08-M01",
+    "scenario": "Approved total changes from synthetic 100 to 120",
+    "expected": "New cost version requires full chain; original approvals remain historical only.",
+    "basis": "SOP p.3; V1 T08; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P08",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P08-M02",
+    "scenario": "Only formatting changes, no declared cost impact",
+    "expected": "Route document review as applicable and flag agreed revision policy; do not invent a mandatory commercial reset.",
+    "basis": "SOP limits cost-repeat rule; Q06/Q11; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P08",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P09-M01",
+    "scenario": "Synthetic PM, Head and CEO approve same version in order",
+    "expected": "Record complete costing chain; external sharing still also needs P53.",
+    "basis": "SOP Phase 1 step 5; V1 T07; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P09",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P09-M02",
+    "scenario": "CEO approval arrives before Head or against older cost",
+    "expected": "Do not advance current chain; preserve attempted/received evidence for review.",
+    "basis": "SOP sequential chain; proposed version-bound safeguard; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P09",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P10-M01",
+    "scenario": "Owner supplies approved SOW template v2",
+    "expected": "Document records that exact template reference and its own separate version.",
+    "basis": "Proposed template provenance; SOP version/ownership standards; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P10",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P10-M02",
+    "scenario": "Two templates claim to be current",
+    "expected": "Flag conflict for document owner; do not silently choose the newest timestamp.",
+    "basis": "Meeting 15:18–17:11; Q11; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P10",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P11-M01",
+    "scenario": "Minutes and final test results are added",
+    "expected": "Both have project, owner, version and durable repository reference under respective permissions.",
+    "basis": "SOP Phase 4 step 2, §5.5, §9.7; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P11",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P11-M02",
+    "scenario": "Referenced file becomes inaccessible",
+    "expected": "Show unavailable evidence and responsible owner; do not claim deleted, approved or complete.",
+    "basis": "Proposed evidence recovery control; V1 DOC01/T34; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P11",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P12-M01",
+    "scenario": "Signed baseline and two reached milestones are handed off",
+    "expected": "One chain records baseline/version and two distinct completion notifications; F34 uses same records.",
+    "basis": "SOP pp.3,5,7–8; V1 FIN01/FIN02; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P12-M02",
+    "scenario": "Same milestone event replayed after timeout",
+    "expected": "Reconcile destination receipt and preserve attempt history; do not duplicate Finance item or issue an invoice.",
+    "basis": "Proposed reliability; V1 T19–T22; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P12-M03",
+    "scenario": "A PM supplies an illustrative percentage-progress update, a client payment record and a signed baseline, but no completed-milestone evidence.",
+    "expected": "Keep progress, payment and baseline as distinct evidence. Do not derive recognized revenue, mark a milestone complete or trigger invoice creation. Finance can review authorized evidence under its separately agreed recognition/billing rules; any new progress interface remains out of inherited V1 scope.",
+    "basis": "FIN P0063/P0065/P0066; VID U0314–U0341; SOP baseline/milestone duties pp.3,5,7–8. Proposed boundary scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P12",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P13-M01",
+    "scenario": "SOP v1.1 supplied",
+    "expected": "Receipt component marked fulfilled; referenced implementation/owner-validation gaps remain open.",
+    "basis": "SOP document control; register P13; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P13",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P13-M02",
+    "scenario": "Later explanation changes emergency GLPI interpretation",
+    "expected": "Retain both source versions and exact authorized clarification before revising definitions; no assumed waiver.",
+    "basis": "Proposed policy provenance; Q03; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P13",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P14-M01",
+    "scenario": "Calculator and owner-verified normal/exception examples supplied",
+    "expected": "Record formulas, sources and expected outcomes with unresolved points separated before C01 admission.",
+    "basis": "V1 conditional C01; Q01; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P14",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P14-M02",
+    "scenario": "Only SOP or meeting invitation available",
+    "expected": "Evidence remains pending; no claim walkthrough occurred or calculator reproduced.",
+    "basis": "Register P14 evidence limit; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P14",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P15-M01",
+    "scenario": "Owner reviews a normal SOW and cost-revision example",
+    "expected": "Record corrections and explicit expected outcomes, with source IDs and unresolved questions retained.",
+    "basis": "Meeting 14:10; V1 GOV01/DEC01; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P15",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P15-M02",
+    "scenario": "Only synthetic test results exist for real-interface claim",
+    "expected": "Keep integration unvalidated; do not label live-ready or accepted.",
+    "basis": "V1 DEC02/T39–T40; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P15",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P16-M01",
+    "scenario": "Client contacts PSL directly before PRD exists",
+    "expected": "Log Route B and assigned PM immediately; PRD is later evidence.",
+    "basis": "SOP Phase 1 opening and step 1; V1 T06; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P16",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P16-M02",
+    "scenario": "RFP received but outcome unknown",
+    "expected": "Keep RFP P45 record; do not label it a won Route A project.",
+    "basis": "SOP §6.7 and Phase 1 routes; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P16",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P17-M01",
+    "scenario": "Route A enters Initiation",
+    "expected": "Link approved RFP requirements, Product PRD and four delivery-team references.",
+    "basis": "SOP Phase 1 steps 2–3; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P17",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P17-M02",
+    "scenario": "Two documents conflict on scope",
+    "expected": "Keep both versions, raise clarification owner, and avoid silently selecting a scope baseline.",
+    "basis": "Proposed evidence safeguard; P25/Q05; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P17",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P18-M01",
+    "scenario": "Both teams provide effort and dates for PRD-v2",
+    "expected": "Link both estimates to SOW/plan and preserve their separate provenance.",
+    "basis": "SOP Phase 1 step 4, Phase 2 step 5; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P18",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P18-M02",
+    "scenario": "Engineering estimates v3 while Security estimates v1",
+    "expected": "Flag version mismatch; no invented conversion or assumption of equivalence.",
+    "basis": "Proposed evidence control; Q01/Q12; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P18",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P19-M01",
+    "scenario": "Reviewed SOW-v4 sent through approved channel",
+    "expected": "Submission evidence identifies v4 and feedback links to v4; no signature assumed.",
+    "basis": "SOP Phase 1 step 6; V1 manual P19; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P19",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P19-M02",
+    "scenario": "Client requests higher scope and revised price",
+    "expected": "Create revised proposal and return changed cost to P09; retain submitted v4 history.",
+    "basis": "SOP Phase 1 steps 5–6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P19",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P20-M01",
+    "scenario": "Client signs matching current SOW and PRD",
+    "expected": "Record both and shared Finance baseline; show source’s immediate commencement rule with Q05 unresolved stage representation.",
+    "basis": "SOP Phase 1 step 7; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P20",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P20-M02",
+    "scenario": "SOW signed, PRD unsigned",
+    "expected": "Required signature evidence incomplete; cannot report Initiation exit complete.",
+    "basis": "SOP Phase 1 exit; V1 T11; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P20",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P20-M03",
+    "scenario": "Both current documents are client-signed and the cost/milestone baseline is shared, but no delivery milestone has yet been reached.",
+    "expected": "Record the signatures and Finance baseline handoff under the prescribed commencement rule. Do not mark delivery complete, post revenue or issue an invoice solely because the SOW/PRD were signed; do not add a new Finance approval before Planning.",
+    "basis": "SOP Phase 1 step 7 and exit, p.3; FIN P0063/P0065/P0066 distinguish Finance’s progress/recognition and milestone/billing needs. Proposed boundary scenario, NOT RUN; owner validation pending.",
+    "process_id": "P20",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P21-M01",
+    "scenario": "Two sessions discuss the same PRD baseline with resolved gaps",
+    "expected": "Keep two meeting records, final scope/estimate/dependency confirmations, and links to P25.",
+    "basis": "SOP Phase 2 steps 2 and 7; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P21",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P21-M02",
+    "scenario": "Session 2 changes a milestone beyond signed SOW",
+    "expected": "Flag alignment/baseline discrepancy Q05; do not silently approve changed contractual dates.",
+    "basis": "SOP Phase 2 step 9; proposed consistency check; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P21",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P22-M01",
+    "scenario": "UI design v2 has applicable Design Lead/client evidence",
+    "expected": "Reference exact evidence and show prerequisite verified without PMO approving design.",
+    "basis": "SOP Phase 2 step 3; §8; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P22",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P22-M02",
+    "scenario": "UI evidence covers v1 but UI work targets v2",
+    "expected": "Flag mismatch and obtain owning-team confirmation; do not treat an old receipt as current.",
+    "basis": "Proposed evidence control; V1 T12; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P22",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P23-M01",
+    "scenario": "Current architecture/integration/data-flow sign-off supplied",
+    "expected": "Record Engineering Lead evidence and correct project/design linkage.",
+    "basis": "SOP Phase 2 step 4; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P23",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P23-M02",
+    "scenario": "Approval names another project/design version",
+    "expected": "Do not satisfy prerequisite for this project; seek corrected evidence.",
+    "basis": "Proposed subject-binding control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P23",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P24-M01",
+    "scenario": "Both subject-specific approvals are present",
+    "expected": "Planning checklist shows both separately and retains their artifact/version evidence.",
+    "basis": "SOP Phase 2 step 6 and exit; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P24",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P24-M02",
+    "scenario": "Test strategy approved but UAT approach missing",
+    "expected": "Planning evidence remains incomplete; QA approval is not a substitute.",
+    "basis": "V1 T13; SOP Planning exit; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P24",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P25-M01",
+    "scenario": "Scope and estimate evidence match signed SOW",
+    "expected": "Record both decisions and make baseline available for plan approval.",
+    "basis": "SOP Phase 2 step 8; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P25",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P25-M02",
+    "scenario": "Approved estimate timeline exceeds client-signed milestone",
+    "expected": "Raise discrepancy and owner decision; not an automatic new contractual baseline.",
+    "basis": "SOP Phase 2 steps 8–9; Q05; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P25",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P26-M01",
+    "scenario": "Complete aligned plan and all prerequisites",
+    "expected": "Record PMO Lead approval, Finance milestone-sharing evidence and readiness for P27.",
+    "basis": "SOP Phase 2 step 9/exit; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P26",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P26-M02",
+    "scenario": "Plan approved but missing technical design receipt",
+    "expected": "Display missing referenced prerequisite; cannot claim full Planning exit.",
+    "basis": "SOP Planning exit; proposed completeness control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P26",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P27-M01",
+    "scenario": "All named teams attend after plan approval",
+    "expected": "Minutes capture scope/timeline/roles/expectations and actions with owners/deadlines.",
+    "basis": "SOP Phase 3 step 1; §5.1; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P27",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P27-M02",
+    "scenario": "Meeting held before plan approval",
+    "expected": "Record actual event without falsely reporting compliant Execution entry; raise prerequisite exception.",
+    "basis": "SOP Phase 3 entry; proposed discrepancy handling; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P27",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P28-M01",
+    "scenario": "Engineering update names delayed dependency",
+    "expected": "Record plan impact and owner/next action through authoritative issue reference; surface escalation if timeline impacted.",
+    "basis": "SOP Phase 3 step 9; §5.6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P28",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P28-M02",
+    "scenario": "Engineer reports implementation of undocumented new scope",
+    "expected": "Flag change-control violation; do not silently update approved scope or create retroactive normal approval.",
+    "basis": "SOP §9.10.8; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P28",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P29-M01",
+    "scenario": "QA Lead signs candidate B7 with no outstanding critical defects",
+    "expected": "Record verified receipt for B7 and allow UAT prerequisite checklist to complete.",
+    "basis": "SOP Phase 3 step 3; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P29",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P29-M02",
+    "scenario": "Signed receipt exists but one Critical defect remains open",
+    "expected": "QA-exit prerequisite not satisfied for Product UAT; show exact source conflict.",
+    "basis": "SOP explicit no-critical-defects condition; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P29",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P30-M01",
+    "scenario": "All three roles approve same UAT evidence before release",
+    "expected": "Show UAT approved for candidate; GLPI deployment gate still separate.",
+    "basis": "SOP Phase 3 steps 4–5; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P30",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P30-M02",
+    "scenario": "Client approval missing while Product approvals complete",
+    "expected": "UAT approval set incomplete; no production-readiness shortcut.",
+    "basis": "SOP named UAT approvers; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P30",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P31-M01",
+    "scenario": "Engineering Go for candidate B7 verified before request",
+    "expected": "Record reference and timing; P32 may then record the external GLPI request route.",
+    "basis": "SOP Phase 3 step 6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P31",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P31-M02",
+    "scenario": "Engineering No-Go or old candidate receipt",
+    "expected": "Do not mark current deployment request prerequisites complete; keep exact decision visible.",
+    "basis": "SOP dependency; proposed subject-binding; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P31",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P32-M01",
+    "scenario": "Current GLPI request has all three approvals before Infra release",
+    "expected": "Record source decisions and timestamps linked to exact release; hub does not claim it approved deployment.",
+    "basis": "SOP Phase 3 step 7; §7; §9.10.4; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P32",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P32-M02",
+    "scenario": "Emergency authorization exists but GLPI approvals absent",
+    "expected": "Surface unresolved Q03; no new automated bypass or fabricated GLPI approval.",
+    "basis": "Conflicting SOP §§7,9.10.4,9.10.9; V1 exclusion; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P32",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P33-M01",
+    "scenario": "PM and Client sign after release R7",
+    "expected": "Record one go-live/business-acceptance decision set for R7.",
+    "basis": "SOP Phase 3 step 8; V1 T15; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P33",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P33-M02",
+    "scenario": "Only pre-release UAT approvals attached",
+    "expected": "Keep go-live signatures missing; do not reuse UAT as business acceptance.",
+    "basis": "SOP distinct UAT and go-live steps; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P33",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P34-M01",
+    "scenario": "PM records completed milestone M2 once",
+    "expected": "Finance test inbox receives one event with exact project/baseline/version; PMO tracks completion and delivery separately.",
+    "basis": "SOP Phase 3 step 10; V1 T18; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P34",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P34-M02",
+    "scenario": "Receiver accepted M2 then sender times out and restarts",
+    "expected": "Reconcile receipt and replay safely; one Finance item, no invoice/ledger/payment action.",
+    "basis": "Proposed reliability; V1 T19–T22; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P34",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P34-M03",
+    "scenario": "Finance receives a PM progress update showing partial work while the named billing milestone has no acceptance/completion evidence.",
+    "expected": "Retain the dated progress evidence without setting milestone reached or dispatching a completion notification. Do not calculate recognized revenue or automatically invoice. Expose the missing milestone evidence and the separate Finance recognition decision.",
+    "basis": "FIN P0065/P0066; VID U0316–U0341; SOP Phase 3 step 10 requires a reached milestone. Proposed evidence/authority boundary, NOT RUN; owner validation pending.",
+    "process_id": "P34",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P35-M01",
+    "scenario": "Engineering/Infrastructure confirms release stability",
+    "expected": "Record confirmation and its stated coverage as closure evidence.",
+    "basis": "SOP Phase 4 step 1; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P35",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P35-M02",
+    "scenario": "No incidents seen but no owner confirmation",
+    "expected": "Keep prerequisite pending; do not auto-complete hypercare.",
+    "basis": "SOP requires confirmation; Q12; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P35",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P36-M01",
+    "scenario": "Final engineering docs and project/test artifacts available",
+    "expected": "Manifest identifies final versions and accessible authorized repository locations.",
+    "basis": "SOP Phase 4 step 2; proposed inventory; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P36",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P36-M02",
+    "scenario": "Final technical doc missing while draft exists",
+    "expected": "Mark finalization evidence missing and distinguish draft; do not claim complete archive.",
+    "basis": "SOP required Engineering finalization; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P36",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P37-M01",
+    "scenario": "Support receives accessible support/escalation documents",
+    "expected": "Record handover evidence and no approval task.",
+    "basis": "SOP Phase 4 step 3; V1 T45; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P37",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P37-M02",
+    "scenario": "Recipient cannot open a document",
+    "expected": "Record access issue and arrange authorized access/re-delivery; do not create handover approval gate.",
+    "basis": "Proposed delivery recovery; explicit no-gate; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P37",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P38-M01",
+    "scenario": "Participants identify a dependency problem and remedy",
+    "expected": "Record lesson plus action/owner/deadline linked to project evidence.",
+    "basis": "SOP Phase 4 step 4; §5.5; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P38",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P38-M02",
+    "scenario": "Retrospective proposes dropping GLPI CEO approval",
+    "expected": "Record proposal only; existing source rule unchanged pending authorized policy change.",
+    "basis": "SOP §§7–8; proposed change-governance boundary; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P38",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P39-M01",
+    "scenario": "All milestones notified and report approved, some invoices unpaid",
+    "expected": "Closure can satisfy prescribed requirements without invented payment gate; archive evidence recorded.",
+    "basis": "SOP Phase 4 exit; V1 T23; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P39",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P39-M02",
+    "scenario": "One milestone completion lacks Finance notification",
+    "expected": "Show exact missing notification and do not report complete exit merely because closure report exists.",
+    "basis": "SOP Phase 4 steps 5–6/exit; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P39",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P39-M03",
+    "scenario": "Prescribed project-closure evidence and all milestone notifications are complete, while Finance still has a separate recognition or billing review open.",
+    "expected": "Evaluate PMO closure only against its prescribed requirements and record the separate Finance follow-up without inventing another closure approval. Do not mark Finance recognition, invoice posting, payment collection or accounting close complete from the PMO status.",
+    "basis": "SOP Phase 4 steps 5–6 and exit, p.8; FIN P0065/P0066 and SRC-H06/E17. Proposed cross-process boundary scenario, NOT RUN; owner validation pending.",
+    "process_id": "P39",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P40-M01",
+    "scenario": "Tuesday review includes production issue and dependency",
+    "expected": "Internal summary/minutes record both and relevant next actions.",
+    "basis": "SOP §5.2 and §9.6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P40",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P40-M02",
+    "scenario": "Tuesday data source unavailable",
+    "expected": "Mark dated input unavailable and preserve human review; no fabricated healthy project summary.",
+    "basis": "Proposed reporting freshness control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P40",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P41-M01",
+    "scenario": "Current weekly report passes human review",
+    "expected": "Reviewed preview contains the required four topics and only approved client-visible references. Exact internal source/version links remain restricted in audit metadata; manual distribution is separately recorded.",
+    "basis": "SOP §5.3, §§9.4–9.8; V1 REP01; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P41",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P41-M02",
+    "scenario": "Source contains internal diagnosis comment and unresolved placeholder",
+    "expected": "Remove prohibited internal content and resolve placeholder before external-ready status; PMO Lead still reviews.",
+    "basis": "SOP §§9.4–9.8; V1 T28–T29; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P41",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P42-M01",
+    "scenario": "Monthly report includes applicable critical incident summary",
+    "expected": "Report covers required themes with permitted source-linked evidence and audience handling.",
+    "basis": "SOP §5.4 and §9.6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P42",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P42-M02",
+    "scenario": "Proposed dashboard gives unprovided RAG thresholds",
+    "expected": "Keep thresholds as owner decisions; do not label generated colors source-prescribed.",
+    "basis": "Q11/Q14; inherited P42 deferred; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P42",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P43-M01",
+    "scenario": "Formal meeting agrees action with owner/deadline",
+    "expected": "Minutes contain all prescribed fields and repository reference; action is linked to follow-up.",
+    "basis": "SOP §5.5; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P43",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P43-M02",
+    "scenario": "Meeting proposes a scope change but no approval exists",
+    "expected": "Record proposal and CR reference; baseline remains unchanged.",
+    "basis": "SOP §7/§9.10.8; V1 T27; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P43",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P44-M01",
+    "scenario": "Timeline-impacting blocker just logged",
+    "expected": "Show immediate escalation need; do not wait 24h, and retain named approval before client communication.",
+    "basis": "SOP §5.6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P44",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P44-M02",
+    "scenario": "Client-dependent issue passes 24h while approval pending",
+    "expected": "Show overdue/pending approval clearly; no automatic send or approval.",
+    "basis": "SOP §5.6; Q07; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P44",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P45-M01",
+    "scenario": "New RFP received without CEO approval record",
+    "expected": "Log/assign under actual assignment process; do not create bid/no-bid gate.",
+    "basis": "SOP §6.1; V1 T45; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P45",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P45-M02",
+    "scenario": "Updated RFP arrives for existing case",
+    "expected": "Preserve original/version relationship and ask owner about changed requirements/deadline; no second independent win record.",
+    "basis": "Proposed case/version safeguard; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P45",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P46-M01",
+    "scenario": "All four teams provide scoped inputs",
+    "expected": "Response preparation receives solution approach and source-linked effort/cost assumptions.",
+    "basis": "SOP §6.2; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P46",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P46-M02",
+    "scenario": "Security estimate unavailable near deadline",
+    "expected": "Keep gap visible for PM and reviewers; no fabricated zero effort or compliant solution claim.",
+    "basis": "SOP required team engagement; Q01; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P46",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P47-M01",
+    "scenario": "Both named reviewers approve response v3",
+    "expected": "Record internal-review complete for v3 and pass to P48 commercial chain.",
+    "basis": "SOP §§6.3–6.4; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P47",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P47-M02",
+    "scenario": "PMO Lead approved v2 while Engineering reviewed v3",
+    "expected": "Flag version discrepancy; do not call v3 jointly reviewed without reconciliation.",
+    "basis": "Proposed version-binding control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P47",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P48-M01",
+    "scenario": "Reviewed response passes chain and quality review",
+    "expected": "Submit authorized exact version and record receipt; await outcome P49.",
+    "basis": "SOP §§6.4–6.6; §§9.7–9.8; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P48",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P48-M02",
+    "scenario": "Commercial figure changes after CEO approval",
+    "expected": "Repeat costing approval before revised response submission; retain previous version.",
+    "basis": "SOP §7 all costing; cost-change source rule; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P48",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P49-M01",
+    "scenario": "Won outcome confirmed",
+    "expected": "One linked Route A engagement/project retains approved RFP requirements and normal lifecycle obligations.",
+    "basis": "SOP §6.7; Phase 1 Route A; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P49",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P49-M02",
+    "scenario": "No result received after submission",
+    "expected": "Keep outcome pending; do not classify loss or auto-archive based on elapsed time.",
+    "basis": "Proposed outcome-evidence boundary; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P49",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P50-M01",
+    "scenario": "Bug is logged, assigned, fixed and QA/PM update closure",
+    "expected": "Retain required fields, timestamped history and documented fix; no approval request created.",
+    "basis": "SOP §9.1; V1 T24/T45; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P50",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P50-M02",
+    "scenario": "Active issue has no owner or next action",
+    "expected": "Mark incomplete and prevent proposed active-record completion; surface remedy without inventing assignment.",
+    "basis": "SOP no ownerless/no-next-action rule; proposed validation; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P50",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P51-M01",
+    "scenario": "Security risk R9 linked to project issue",
+    "expected": "PMO shows permitted reference/status without a second editable lifecycle or risk register in plan.",
+    "basis": "SOP §9.2; §9.1 no duplicates; V1 T25; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P51",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P51-M02",
+    "scenario": "PM tries to change risk disposition from hub",
+    "expected": "Not permitted under proposed reference-only design; direct to owning Security route.",
+    "basis": "SOP ownership boundary; proposed permission control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P51",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P52-M01",
+    "scenario": "Current client document contains required structure and owner/version",
+    "expected": "Record compliance checks, then route to P53; no automatic external approval.",
+    "basis": "SOP §§9.3,9.7; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P52",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P52-M02",
+    "scenario": "Nicely formatted report has obsolete milestone date",
+    "expected": "Fail current-content review until corrected despite passing style checks.",
+    "basis": "SOP §§9.7–9.8; V1 T29; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P52",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P53-M01",
+    "scenario": "Client issue summary includes impact/status/resolution only and PMO Lead reviews",
+    "expected": "Only reviewed version becomes external-ready; raw internal log stays private.",
+    "basis": "SOP §§9.4–9.8; V1 T28; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P53",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P53-M02",
+    "scenario": "Review completed for v1 but download renders v2 with internal comment",
+    "expected": "Do not mark/export v2 as reviewed; expose version mismatch and remove comment before review.",
+    "basis": "SOP current/reviewed-content requirement; proposed exact-version control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P53",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P54-M01",
+    "scenario": "Critical production issue has severity, timing and RCA evidence",
+    "expected": "PMO weekly summary references permitted evidence; monthly inclusion considered where applicable.",
+    "basis": "SOP §9.6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P54",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P54-M02",
+    "scenario": "Production source inaccessible during reporting",
+    "expected": "Show unverified status/as-of date; no second locally updated incident lifecycle.",
+    "basis": "SOP §§9.1,9.9; proposed unavailable-source control; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P54",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P55-M01",
+    "scenario": "Engineering incident needs production change",
+    "expected": "Link incident to emergency CR and show prescribed pre-authorizations plus unresolved GLPI question.",
+    "basis": "SOP §9.9/§9.10.9; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P55",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P55-M02",
+    "scenario": "PM attempts to close incident through PMO issue page",
+    "expected": "Reference-only design does not write incident closure; keep authoritative Engineering status.",
+    "basis": "SOP ownership; V1 T25; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P55",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P56-M01",
+    "scenario": "PM classifies complete request Normal",
+    "expected": "Record CR/category and prepare impact assessment, without approval task for classification.",
+    "basis": "SOP §§9.10.1–9.10.2; V1 T45; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P56",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P56-M02",
+    "scenario": "PM selects Standard or Emergency and tries implementation",
+    "expected": "No execution authorized by category; show missing applicable authority/policy decision.",
+    "basis": "SOP §9.10.4/§9.10.9; V1 T26; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P56",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P57-M01",
+    "scenario": "All team assessments provide four impact outputs",
+    "expected": "Record source-linked assessment ready for conditional approval determination.",
+    "basis": "SOP §9.10.3; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P57",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P57-M02",
+    "scenario": "Infra deployment impact unknown",
+    "expected": "Keep assessment incomplete/uncertain; do not assume non-production or bypass P32.",
+    "basis": "Proposed impact completeness; Q12; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P57",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P58-M01",
+    "scenario": "Normal client-facing cost change",
+    "expected": "Require Product, Engineering, Client, sequential cost chain and named timeline agreement; GLPI before production.",
+    "basis": "SOP §9.10.4; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P58",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P58-M02",
+    "scenario": "Non-cost internal change with Standard label",
+    "expected": "Do not require cost chain solely by habit, but do not waive other approvals based on unverified Standard catalogue.",
+    "basis": "SOP conditional cost rule; Q04; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P58",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P59-M01",
+    "scenario": "Approved change shifts timeline",
+    "expected": "Updated plan and weekly report show approved impact; client notification recorded through authorized formal route.",
+    "basis": "SOP §§9.10.5–9.10.6; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P59",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P59-M02",
+    "scenario": "Engineering implementation adds further scope not approved",
+    "expected": "Flag deviation and return assessment/authority question; do not retroactively normalize it.",
+    "basis": "SOP §9.10.8; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P59",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P60-M01",
+    "scenario": "All five closure conditions present for CR7",
+    "expected": "Record closed CR7 with its signed change go-live document and source references.",
+    "basis": "SOP §9.10.7; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P60",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P60-M02",
+    "scenario": "Implementation done but client signature absent",
+    "expected": "Do not report closure complete; for internal case surface unresolved applicability instead of inventing client.",
+    "basis": "SOP closure conditions; Q09/Q16; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P60",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P61-M01",
+    "scenario": "P1 emergency has Incident Lead, Engineering Lead and CTO evidence",
+    "expected": "Record timing/roles and still expose unresolved GLPI policy; no automated production action.",
+    "basis": "SOP §9.10.9 versus §7/§9.10.4; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P61",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P61-M02",
+    "scenario": "PM labels change Emergency with no Incident Lead authorization",
+    "expected": "Classification grants no implementation authority; keep missing pre-authorization explicit.",
+    "basis": "SOP §§9.10.2,9.10.9; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P61",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P62-M01",
+    "scenario": "Authorized emergency logged in stated 24h and review/decisions recorded",
+    "expected": "Retain real times, reviewers and agreed calendar evidence; show compliance only against confirmed clock interpretation.",
+    "basis": "SOP §9.10.9; Q07; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P62",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P62-M02",
+    "scenario": "Log/retrospective approval arrives late",
+    "expected": "Preserve true timestamps and overdue exception, not auto-approval or backdating.",
+    "basis": "SOP deadlines; proposed audit safeguard; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P62",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P63-M01",
+    "scenario": "Complete synthetic normal lifecycle evidence supplied",
+    "expected": "One four-phase checklist references child decisions once and preserves Finance/GLPI authority boundaries; rule ambiguity shown.",
+    "basis": "SOP §§3,7 and phases; V1 PMO02; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P63",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  },
+  {
+    "id": "P63-M02",
+    "scenario": "Global gate marked approved but QA/GLPI current evidence missing",
+    "expected": "Do not report Execution exit complete; identify missing specific evidence, not auto-create approval.",
+    "basis": "SOP Phase 3 exit; V1 T14; proposed mock acceptance scenario, NOT RUN; owner expected-result validation pending.",
+    "process_id": "P63",
+    "status": "Specified, not run",
+    "readiness": "Proposed: owner validation pending"
+  }
+]

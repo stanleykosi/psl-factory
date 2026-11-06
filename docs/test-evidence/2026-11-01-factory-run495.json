@@ -1,0 +1,22 @@
+{
+  "run": 495,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_lost_response_cancellation_reconciles_original_delivery_without_inferred_signoff_or_new_send",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_native_sql_preserves_single_anchor_linear_parent_unused_signatures_and_append_only_history",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T17:24:34.777218+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run495.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 64.703
+}

@@ -1,0 +1,131 @@
+{
+  "fixture_scope": "synthetic_test",
+  "notice": "Engineering examples only, not actual PSL owners, rules, schedules or workbook execution. IDs are replaced by scoped test records.",
+  "income_rule": {
+    "entity": "synthetic-company",
+    "period": "2026-10",
+    "currency": "NGN",
+    "report_line": "revenue",
+    "source_unit": "major_currency",
+    "target_unit": "major_currency",
+    "factor": "1",
+    "child_tolerance": "0",
+    "oracles": [
+      {
+        "input": "100",
+        "expected": "100"
+      },
+      {
+        "input": null,
+        "expected": null
+      }
+    ],
+    "allowed_relationships": [
+      "disaggregation",
+      "reclassification",
+      "additive"
+    ],
+    "source_overlap": "reviewed_evidence_resolution"
+  },
+  "inventory_rule": {
+    "required_keys": [
+      "equity",
+      "intercompany"
+    ],
+    "accepted_levels": [
+      "definition",
+      "synthetic_implementation"
+    ],
+    "monthly_performance": "undecided",
+    "decision_evidence_id": null
+  },
+  "authority": {
+    "independent_reviewer": true,
+    "assignments": [
+      {
+        "user_id": 1,
+        "role": "Finance",
+        "purposes": [
+          "income",
+          "inventory"
+        ]
+      }
+    ]
+  },
+  "detail": {
+    "entity": "synthetic-company",
+    "period": "2026-10",
+    "currency": "NGN",
+    "report_line": "revenue",
+    "source_unit": "major_currency",
+    "target_unit": "major_currency",
+    "rows": [
+      {
+        "key": "child-a",
+        "relationship": "disaggregation",
+        "amount": "-600",
+        "unit": "major_currency",
+        "source_accounts": [
+          "sales"
+        ],
+        "evidence_id": 1,
+        "duplicate_state": "already_represented",
+        "duplicate_resolution_evidence_id": null,
+        "adjustment_lines": []
+      },
+      {
+        "key": "child-b",
+        "relationship": "disaggregation",
+        "amount": "-400",
+        "unit": "major_currency",
+        "source_accounts": [
+          "sales"
+        ],
+        "evidence_id": 1,
+        "duplicate_state": "already_represented",
+        "duplicate_resolution_evidence_id": null,
+        "adjustment_lines": []
+      }
+    ]
+  },
+  "inventory": {
+    "workbook_evidence_id": null,
+    "coverage": "partial",
+    "schedules": [
+      {
+        "key": "equity",
+        "purpose": "Synthetic equity opening, movements and closing link to F09; definition only",
+        "owner_id": null,
+        "dependencies": [],
+        "source_evidence_ids": [],
+        "formula_evidence_ids": [],
+        "manual_cell_evidence_ids": [],
+        "consumer_refs": [
+          "F09"
+        ],
+        "restricted": false,
+        "validation_package_id": null,
+        "gaps": [
+          "Native workbook and owner examples absent"
+        ]
+      },
+      {
+        "key": "intercompany",
+        "purpose": "Named only; no matching or elimination rule inferred",
+        "owner_id": null,
+        "dependencies": [],
+        "source_evidence_ids": [],
+        "formula_evidence_ids": [],
+        "manual_cell_evidence_ids": [],
+        "consumer_refs": [
+          "F09"
+        ],
+        "restricted": true,
+        "validation_package_id": null,
+        "gaps": [
+          "Counterparty matching and elimination policy absent"
+        ]
+      }
+    ]
+  }
+}

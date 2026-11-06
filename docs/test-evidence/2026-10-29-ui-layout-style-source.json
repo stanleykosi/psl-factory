@@ -1,0 +1,7 @@
+{
+  "run": 389,
+  "files": {
+    "static/studio.css": "25f90c2b2acd886b271b03496a4f73e4cf8ff8ed39edfdfae4907840f69b4cd8"
+  },
+  "classification": "CSS frozen alongside application/template source for UI verification"
+}

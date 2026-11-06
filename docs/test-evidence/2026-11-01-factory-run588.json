@@ -1,0 +1,22 @@
+{
+  "run": 588,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_worker_expiry",
+    "tests.test_factory_planning.FactoryPlanningTests.test_planning_ui_and_profile_are_available_without_finance_grant",
+    "tests.test_factory_controls.FactoryControlTests.test_stale_lease_cannot_finalize_another_attempt",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T11:59:23.624124+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run588.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 58.924
+}

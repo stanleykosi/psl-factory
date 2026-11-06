@@ -1,0 +1,33 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 13 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying baas.0008_supportagentdraft_supportagentdraftreview_and_more... OK
+test_actual_ui_source_reuse_revision_review_and_private_access (tests.test_support_agent.SupportAgentTests.test_actual_ui_source_reuse_revision_review_and_private_access) ... ok
+test_current_native_permission_required_before_provider_send_and_cached_reads (tests.test_support_agent.SupportAgentTests.test_current_native_permission_required_before_provider_send_and_cached_reads) ... ok
+test_draft_owner_independence_budgets_and_cross_case_source (tests.test_support_agent.SupportAgentTests.test_draft_owner_independence_budgets_and_cross_case_source) ... ok
+test_exact_native_fields_reviewed_result_reuse_and_human_revision (tests.test_support_agent.SupportAgentTests.test_exact_native_fields_reviewed_result_reuse_and_human_revision) ... ok
+test_flow_event_and_native_policy_changes_invalidate_projection_and_reuse (tests.test_support_agent.SupportAgentTests.test_flow_event_and_native_policy_changes_invalidate_projection_and_reuse) ... ok
+test_forged_private_kind_and_generic_reprojection_cannot_bypass_native_service (tests.test_support_agent.SupportAgentTests.test_forged_private_kind_and_generic_reprojection_cannot_bypass_native_service) ... ok
+test_missing_native_policy_holds_only_projection_not_support_or_configuration (tests.test_support_agent.SupportAgentTests.test_missing_native_policy_holds_only_projection_not_support_or_configuration) ... ok
+test_native_missing_data_policy_preserves_source_capture_and_read_interface (tests.test_support_agent.SupportAgentTests.test_native_missing_data_policy_preserves_source_capture_and_read_interface) ... ok
+test_native_policy_validators_fields_principals_unknowns_and_case_scope (tests.test_support_agent.SupportAgentTests.test_native_policy_validators_fields_principals_unknowns_and_case_scope) ... ok
+test_policy_replacement_requires_fresh_source_and_review (tests.test_support_agent.SupportAgentTests.test_policy_replacement_requires_fresh_source_and_review) ... ok
+test_result_review_withdrawal_and_source_grant_revocation_hold_reuse (tests.test_support_agent.SupportAgentTests.test_result_review_withdrawal_and_source_grant_revocation_hold_reuse) ... ok
+test_sql_immutability_for_source_draft_and_review (tests.test_support_agent.SupportAgentTests.test_sql_immutability_for_source_draft_and_review) ... ok
+test_unknown_selected_field_holds_and_excluded_field_is_not_fetched (tests.test_support_agent.SupportAgentTests.test_unknown_selected_field_holds_and_excluded_field_is_not_fetched) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 187.762s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying baas.0009_support_agent_guards... OK
+System check identified no issues (0 silenced).

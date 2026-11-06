@@ -1,0 +1,134 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0017_acceptedprotectionreadiness... OK
+  Applying workflows.0018_accepted_protection_native_guards...setUpClass (tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: record "old" has no field "case_id"
+CONTEXT:  SQL expression "NEW.intent ? 'native_accepted_protection' OR EXISTS(SELECT 1 FROM workflows_integrationcontract c JOIN workflows_integrationcontract old ON old.case_id=c.case_id AND old.reference=c.reference JOIN workflows_acceptedprotectionreadiness previous ON previous.contract_id=old.id WHERE c.id=NEW.contract_id)"
+PL/pgSQL function psl_af13_native_probe() line 4 at IF
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_accepted_protection_readiness.py", line 33, in setUpTestData
+    f=fixture('af13-native');plan(f);j=ow.reserve(f['actor'],f['case'].pk,f['plan'].pk,'export');lease=ow.claim();assert lease[0]==j.pk;value=ow.dispatch(*lease,NativeMetadataProtectionAdapter());ow.finish(*lease,'confirmed',value);f['export']=j;f['artifact']=RecoveryArtifact.objects.get(job=j);f['backup']=ow.reserve(f['actor'],f['case'].pk,f['plan'].pk,'backup',f['artifact'].pk)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\accepted_protection_operations_helpers.py", line 11, in fixture
+    f=native(prefix,foreign=foreign);owners(f);configure(f);reviews(f)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\file_acceptance_helpers.py", line 14, in fixture
+    f=native_fixture(prefix,foreign=foreign);native_configure(f);assessed(f);package(f,'file-owner-package');prepare(f);f['protection_owner_evidence']=evidence(f,'owner_validation','Explicit synthetic native file evidence owner decision; operational acceptance separate');return f
+  File "C:\Users\USER\Desktop\psl-agent build\tests\private_file_helpers.py", line 11, in fixture
+    f=ops_fixture(prefix,foreign=foreign);a=effect(f,'export');f['file_export']=a.job;f['file_backup']=ow.reserve(f['actor'],f['case'].pk,f['plan'].pk,'backup',a.pk)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\private_operations_helpers.py", line 10, in fixture
+    f=native_fixture(prefix,foreign=foreign);native_policy(f);reviews(f);values=operators(f,configured=False)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\private_readiness_helpers.py", line 13, in fixture
+    f=native_fixture(prefix,foreign=foreign);enrolled(f);package(f)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\publication_readiness_helpers.py", line 21, in fixture
+    f=ready(prefix,source_fixture=base);f['publication_rules']['review_ttl_seconds']=3600;finance_policy(f,PUBLICATION,f['publication_rules']);v=reviewed(f);f['version']=v;f['publication']=d.publish(f['acceptor'],f['case'].pk,v.pk);f['job']=f['publication'].job;f['sources']={'policy_decision':f['e']}
+  File "C:\Users\USER\Desktop\psl-agent build\tests\accepted_publication_helpers.py", line 13, in ready
+    f=source_fixture or fixture(prefix);handoff(f);validate(f);af13_reviews(f);decide(f,'accept');a,c=f['actor'],f['case']
+                                        ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\finance_acceptance_helpers.py", line 36, in handoff
+    if 'draft' not in f:draft(f)
+                        ~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\finance_acceptance_helpers.py", line 33, in draft
+    receipt=extracted(f);r=finance.reuse(f['actor'],f['case'].pk,receipt.pk,'for-owner-validation');finance.review(f['reviewer'],f['case'].pk,r.pk,'approve');f['draft']=r;return r
+  File "C:\Users\USER\Desktop\psl-agent build\tests\ledger_agent_helpers.py", line 40, in extracted
+    integration(f);gateway.review_projection(f['reviewer'],f['case'].pk,f['projection'].pk,'confirm');j=gateway.reserve(f['actor'],f['case'].pk,f['projection'].pk,'finance-extract');delivery.run_once(f['case'].pk);j.refresh_from_db();assert j.status=='confirmed',j.status
+    ~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\ledger_agent_helpers.py", line 33, in integration
+    j=rw.reserve(a,c.pk,contract.pk,kind,kind);rw.run_once(case_id=c.pk);j.refresh_from_db();assert j.status=='confirmed'
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness_delivery.py", line 51, in reserve
+    j=IntegrationProbe.objects.create(contract=r,intent_key=key,operation_key=digest({'case':str(c.pk),'contract':r.pk,'key':key}),intent=v,actor=a);d.audit(a,c,'integration.probe_reserved',r,job=j.pk);bump(c);return j
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1873, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.ProgrammingError: record "old" has no field "case_id"
+CONTEXT:  SQL expression "NEW.intent ? 'native_accepted_protection' OR EXISTS(SELECT 1 FROM workflows_integrationcontract c JOIN workflows_integrationcontract old ON old.case_id=c.case_id AND old.reference=c.reference JOIN workflows_acceptedprotectionreadiness previous ON previous.contract_id=old.id WHERE c.id=NEW.contract_id)"
+PL/pgSQL function psl_af13_native_probe() line 4 at IF
+
+----------------------------------------------------------------------
+Ran 0 tests in 9.145s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,9 @@
+{
+  "classification":"Structural interface fixture; no real principals, contracts, credentials or destination configuration",
+  "component":"OPS.domain_contracts",
+  "schema_ref":"schema:psl/domain-contract-criteria/v1",
+  "value":null,
+  "endpoint_registry":{},
+  "secret_registry":{},
+  "activation_enabled":false
+}

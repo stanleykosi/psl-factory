@@ -1,0 +1,16 @@
+{
+  "plan": [
+    [
+      "workflows",
+      "0026_reconstitution",
+      false
+    ],
+    [
+      "workflows",
+      "0027_reconstitution_guards",
+      false
+    ]
+  ],
+  "applied": true,
+  "business_or_authority_rows_created": false
+}

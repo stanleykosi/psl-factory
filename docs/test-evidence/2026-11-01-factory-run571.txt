@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt (tests.test_factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt) ... ok
+test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker (tests.test_factory_accounting.AccountingOperatorTests.test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker) ... ERROR
+
+======================================================================
+ERROR: test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker (tests.test_factory_accounting.AccountingOperatorTests.test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_accounting.py", line 227, in test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker
+    row=next(row for row in response.context['rows'] if row['work'].pk==work.pk)
+StopIteration
+
+----------------------------------------------------------------------
+Ran 2 tests in 181.936s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 46 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

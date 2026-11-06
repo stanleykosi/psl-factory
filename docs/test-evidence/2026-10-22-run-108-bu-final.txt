@@ -1,0 +1,56 @@
+Found 39 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+test_F21_E01_missing_current_ratio_does_not_infer_or_reuse (tests.test_bu.BUTests.test_F21_E01_missing_current_ratio_does_not_infer_or_reuse) ... ok
+test_F21_N01_70_30_exact_E900_excluded_from_standard_pool (tests.test_bu.BUTests.test_F21_N01_70_30_exact_E900_excluded_from_standard_pool) ... ok
+test_F44_E01_shared_uses_explicit_weights_and_conflicting_tags_hold (tests.test_bu.BUTests.test_F44_E01_shared_uses_explicit_weights_and_conflicting_tags_hold) ... ok
+test_F44_N01_E1_direct_once_rolls_up_100_no_ledger_write (tests.test_bu.BUTests.test_F44_N01_E1_direct_once_rolls_up_100_no_ledger_write) ... ok
+test_SQL_guards_all_five_history_types (tests.test_bu.BUTests.test_SQL_guards_all_five_history_types) ... ok
+test_closed_period_hold_then_explicit_reviewed_reference_only (tests.test_bu.BUTests.test_closed_period_hold_then_explicit_reviewed_reference_only) ... ok
+test_company_only_is_not_assigned_to_a_BU (tests.test_bu.BUTests.test_company_only_is_not_assigned_to_a_BU) ... ok
+test_corrected_event_source_invalidates_prior_report_requires_historical_review (tests.test_bu.BUTests.test_corrected_event_source_invalidates_prior_report_requires_historical_review) ... ok
+test_duplicate_event_rows_rejected_without_values_or_claims (tests.test_bu.BUTests.test_duplicate_event_rows_rejected_without_values_or_claims) ... ok
+test_duplicate_exception_and_wrong_pool_cannot_double_allocate (tests.test_bu.BUTests.test_duplicate_exception_and_wrong_pool_cannot_double_allocate) ... ok
+test_empty_selected_staff_population_is_unknown_and_unpublishable (tests.test_bu.BUTests.test_empty_selected_staff_population_is_unknown_and_unpublishable) ... ok
+test_event_identity_cannot_be_claimed_by_another_batch_reference (tests.test_bu.BUTests.test_event_identity_cannot_be_claimed_by_another_batch_reference) ... ok
+test_exact_retry_changed_intent_and_receipt_idempotence (tests.test_bu.BUTests.test_exact_retry_changed_intent_and_receipt_idempotence) ... ok
+test_metadata_UI_agent_never_read_private_work_or_payroll (tests.test_bu.BUTests.test_metadata_UI_agent_never_read_private_work_or_payroll) ... ok
+test_missing_company_comparison_holds_only_rollup (tests.test_bu.BUTests.test_missing_company_comparison_holds_only_rollup) ... ok
+test_missing_event_mapping_does_not_block_source_capture (tests.test_bu.BUTests.test_missing_event_mapping_does_not_block_source_capture) ... ok
+test_missing_financial_and_authority_policy_holds_dependent_steps_only (tests.test_bu.BUTests.test_missing_financial_and_authority_policy_holds_dependent_steps_only) ... ok
+test_no_store_human_report_UI_private_denial_and_safe_capture (tests.test_bu.BUTests.test_no_store_human_report_UI_private_denial_and_safe_capture) ... ok
+test_private_named_readers_independent_actual_humans_and_case_scope (tests.test_bu.BUTests.test_private_named_readers_independent_actual_humans_and_case_scope) ... ok
+test_prospective_only_policy_holds_historical_rework_not_source_capture (tests.test_bu.BUTests.test_prospective_only_policy_holds_historical_rework_not_source_capture) ... ok
+test_retention_policies_grants_and_HR_recipient_revocation_invalidate (tests.test_bu.BUTests.test_retention_policies_grants_and_HR_recipient_revocation_invalidate) ... ok
+test_rule_cannot_approve_a_subject_absent_from_exact_payroll (tests.test_bu.BUTests.test_rule_cannot_approve_a_subject_absent_from_exact_payroll) ... ok
+test_small_group_holds_whole_staff_publication (tests.test_bu.BUTests.test_small_group_holds_whole_staff_publication) ... ok
+test_source_controls_and_unknown_tags_hold_report (tests.test_bu.BUTests.test_source_controls_and_unknown_tags_hold_report) ... ok
+test_source_scope_and_malformed_extra_fields_retained_only_as_codes (tests.test_bu.BUTests.test_source_scope_and_malformed_extra_fields_retained_only_as_codes) ... ok
+test_superseded_private_ratio_invalidates_without_rewriting_history (tests.test_bu.BUTests.test_superseded_private_ratio_invalidates_without_rewriting_history) ... ok
+test_typed_oracles_actual_actors_residuals_and_superseded_evidence (tests.test_bu.BUTests.test_typed_oracles_actual_actors_residuals_and_superseded_evidence) ... ok
+test_unapproved_rule_stays_held_and_parent_reviews_must_be_current (tests.test_bu.BUTests.test_unapproved_rule_stays_held_and_parent_reviews_must_be_current) ... ok
+test_unknown_event_amount_and_partial_inventory_do_not_become_zero (tests.test_bu.BUTests.test_unknown_event_amount_and_partial_inventory_do_not_become_zero) ... ok
+test_zero_cost_employee_still_counts_for_small_group_protection (tests.test_bu.BUTests.test_zero_cost_employee_still_counts_for_small_group_protection) ... ok
+test_actual_finance_allocation_metric_ties_to_current_event_source (tests.test_bu_comparison.BUFinanceComparisonTests.test_actual_finance_allocation_metric_ties_to_current_event_source) ... ok
+test_comparison_metadata_board_and_agent_never_load_finance_result (tests.test_bu_comparison.BUFinanceComparisonTests.test_comparison_metadata_board_and_agent_never_load_finance_result) ... ok
+test_finance_source_revision_invalidates_published_reference (tests.test_bu_comparison.BUFinanceComparisonTests.test_finance_source_revision_invalidates_published_reference) ... ok
+test_mismatch_and_wrong_case_comparison_cannot_certify_rollup (tests.test_bu_comparison.BUFinanceComparisonTests.test_mismatch_and_wrong_case_comparison_cannot_certify_rollup) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_committed_revocation_blocks_report_reader_on_second_connection (tests.test_bu_concurrency.BUConcurrencyTests.test_committed_revocation_blocks_report_reader_on_second_connection) ... ok
+test_two_case_event_claim_race_has_one_owner_and_no_duplicate (tests.test_bu_concurrency.BUConcurrencyTests.test_two_case_event_claim_race_has_one_owner_and_no_duplicate) ... ok
+test_two_connections_capture_same_export_once (tests.test_bu_concurrency.BUConcurrencyTests.test_two_connections_capture_same_export_once) ... ok
+test_two_connections_publish_same_work_once (tests.test_bu_concurrency.BUConcurrencyTests.test_two_connections_publish_same_work_once) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 541.136s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

@@ -1,0 +1,353 @@
+Using existing test database for alias 'default'...
+
+EEEEEEEEEEEEEEEEEE.
+======================================================================
+ERROR: test_lost_response_recovers_provider_receipt_once_after_sender_revocation (tests.test_readiness.ProviderReadinessTests.test_lost_response_recovers_provider_receipt_once_after_sender_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 79, in setUp
+    def setUp(self):self.f=fixture(kind='provider')
+                           ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'fixture-model/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_real_authenticated_http_canary_and_selected_gateway (tests.test_readiness.ProviderReadinessTests.test_real_authenticated_http_canary_and_selected_gateway)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 79, in setUp
+    def setUp(self):self.f=fixture(kind='provider')
+                           ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'fixture-model/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_redirect_is_not_followed_and_synthetic_target_cannot_be_operational (tests.test_readiness.ProviderReadinessTests.test_redirect_is_not_followed_and_synthetic_target_cannot_be_operational)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 79, in setUp
+    def setUp(self):self.f=fixture(kind='provider')
+                           ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'fixture-model/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_rotation_same_revision_holds_old_intent_and_redacts_auth_error (tests.test_readiness.ProviderReadinessTests.test_rotation_same_revision_holds_old_intent_and_redacts_auth_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 79, in setUp
+    def setUp(self):self.f=fixture(kind='provider')
+                           ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'fixture-model/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_wrong_identity_unavailable_and_mismatched_oracle_never_ready (tests.test_readiness.ProviderReadinessTests.test_wrong_identity_unavailable_and_mismatched_oracle_never_ready)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 79, in setUp
+    def setUp(self):self.f=fixture(kind='provider')
+                           ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'fixture-model/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_actual_database_identity_health_review_and_enrollment (tests.test_readiness.ReadinessTests.test_actual_database_identity_health_review_and_enrollment)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_configured_independent_reviewer_and_current_source_grants (tests.test_readiness.ReadinessTests.test_configured_independent_reviewer_and_current_source_grants)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_enrolled_handoff_holds_then_dispatches_without_bypassing_finance (tests.test_readiness.ReadinessTests.test_enrolled_handoff_holds_then_dispatches_without_bypassing_finance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_missing_runtime_revision_and_unknown_contract_hold_only_probes (tests.test_readiness.ReadinessTests.test_missing_runtime_revision_and_unknown_contract_hold_only_probes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_new_unavailable_report_preserves_native_history_but_invalidates_review (tests.test_readiness.ReadinessTests.test_new_unavailable_report_preserves_native_history_but_invalidates_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_policy_change_and_probe_revocation_hold_undispatched_work (tests.test_readiness.ReadinessTests.test_policy_change_and_probe_revocation_hold_undispatched_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_private_evidence_and_agent_do_not_repackage_credentials (tests.test_readiness.ReadinessTests.test_private_evidence_and_agent_do_not_repackage_credentials)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_receipt_first_recovery_survives_later_readiness_failure (tests.test_readiness.ReadinessTests.test_receipt_first_recovery_survives_later_readiness_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_source_receipt_probe_is_scoped_to_exact_case (tests.test_readiness.ReadinessTests.test_source_receipt_probe_is_scoped_to_exact_case)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_sql_history_and_probe_intents_are_immutable (tests.test_readiness.ReadinessTests.test_sql_history_and_probe_intents_are_immutable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_strict_reference_only_contract_and_supplied_identity_controls (tests.test_readiness.ReadinessTests.test_strict_reference_only_contract_and_supplied_identity_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_supplied_success_never_proves_authenticated_readiness (tests.test_readiness.ReadinessTests.test_supplied_success_never_proves_authenticated_readiness)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+======================================================================
+ERROR: test_ui_real_posts_and_private_source_boundary (tests.test_readiness.ReadinessTests.test_ui_real_posts_and_private_source_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_readiness.py", line 20, in setUp
+    def setUp(self):self.f=fixture()
+                           ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 32, in fixture
+Found 19 test(s).
+System check identified no issues (0 silenced).
+    f['contract']=d.capture(a,c.pk,'primary',body,evidence(f,'integration_contract').pk);f['review_evidence']=evidence(f,'integration_review');f['selection_evidence']=evidence(f,'integration_selection');return f
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness.py", line 44, in capture
+    c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);e=subject(c,evidence_id,'integration_contract')
+                                                                                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["'psl.internal-receipts/v1' is not valid under any of the given schemas"]
+
+----------------------------------------------------------------------
+Ran 19 tests in 39.778s
+
+FAILED (errors=18)
+Preserving test database for alias 'default'...
+

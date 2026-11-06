@@ -1,0 +1,21 @@
+{
+  "pid": 27304,
+  "path": "C:\\Python313\\python.exe",
+  "start_utc": "2026-10-27T15:27:56.3607692Z",
+  "session_id": 61709,
+  "listener": "127.0.0.1:8000",
+  "previous_verified_owned_pid": 40736,
+  "runtime_references": {
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1",
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo"
+  },
+  "operational_acceptance": false,
+  "classification": "Main updated; fresh control/native Finance provider/credentials/store deployment remain unconfigured",
+  "smoke_statuses": {
+    "operations/": 302,
+    "integrations/": 302,
+    "validation/protection/": 302,
+    "application-recovery/": 302
+  },
+  "smoke_classification": "Unauthenticated login redirects only; authenticated native Finance UI proof uses synthetic PostgreSQL clients"
+}

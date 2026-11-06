@@ -1,0 +1,9 @@
+{
+  "classification": "Additive schema expansion of retained synthetic planning preview; no new business effects",
+  "database": "psl_factory_planning_ui_780d38dc78ac",
+  "old_rowsets_preserved": 329,
+  "old_guards_preserved_except_reviewed_factory_function": true,
+  "main_guard_definitions_match": true,
+  "old_work_and_receipts_preserved": true,
+  "credentials_changed": false
+}

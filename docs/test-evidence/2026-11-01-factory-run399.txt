@@ -1,0 +1,46 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 29 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0039_factory_business_identity...test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification (tests.test_factory_flow.FactoryFlowTests.test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification) ... ok
+test_database_protects_identity_history_budget_and_false_verification (tests.test_factory_flow.FactoryFlowTests.test_database_protects_identity_history_budget_and_false_verification) ... ok
+test_exact_native_packet_changes_require_fresh_human_review (tests.test_factory_flow.FactoryFlowTests.test_exact_native_packet_changes_require_fresh_human_review) ... ok
+test_model_cannot_choose_dispatch_or_fabricate_citations (tests.test_factory_flow.FactoryFlowTests.test_model_cannot_choose_dispatch_or_fabricate_citations) ... ok
+test_same_key_changed_payload_and_cross_case_scope_fail (tests.test_factory_flow.FactoryFlowTests.test_same_key_changed_payload_and_cross_case_scope_fail) ... ok
+test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance (tests.test_factory_flow.FactoryFlowTests.test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance) ... ok
+test_aggregate_budget_stops_another_call_including_retry (tests.test_factory_controls.FactoryControlTests.test_aggregate_budget_stops_another_call_including_retry) ... ok
+test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect (tests.test_factory_controls.FactoryControlTests.test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect) ... ok
+test_eventual_absence_parks_without_model_poll_or_duplicate_publication (tests.test_factory_controls.FactoryControlTests.test_eventual_absence_parks_without_model_poll_or_duplicate_publication) ... ok
+test_existing_finance_screen_review_is_observed_as_the_same_decision (tests.test_factory_controls.FactoryControlTests.test_existing_finance_screen_review_is_observed_as_the_same_decision) ... ok
+test_missing_resolver_does_not_create_fictional_owner (tests.test_factory_controls.FactoryControlTests.test_missing_resolver_does_not_create_fictional_owner) ... ok
+test_new_form_key_cannot_create_another_business_budget (tests.test_factory_controls.FactoryControlTests.test_new_form_key_cannot_create_another_business_budget) ... ok
+test_reconciliation_activity_does_not_write_a_financial_draft (tests.test_factory_controls.FactoryControlTests.test_reconciliation_activity_does_not_write_a_financial_draft) ... ok
+test_source_successor_invalidates_exact_review_without_editing_old_task (tests.test_factory_controls.FactoryControlTests.test_source_successor_invalidates_exact_review_without_editing_old_task) ... ok
+test_stale_lease_cannot_finalize_another_attempt (tests.test_factory_controls.FactoryControlTests.test_stale_lease_cannot_finalize_another_attempt) ... ok
+test_unsupported_citation_cannot_become_a_native_result (tests.test_factory_controls.FactoryControlTests.test_unsupported_citation_cannot_become_a_native_result) ... ok
+test_profile_screen_uses_native_lifecycle_and_caps_not_default_values (tests.test_factory_console.FactoryConsoleTests.test_profile_screen_uses_native_lifecycle_and_caps_not_default_values) ... ok
+test_queue_case_agent_information_review_receipts_and_return_context (tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context) ... ok
+test_source_and_work_grants_are_rechecked_on_get_and_direct_posts (tests.test_factory_console.FactoryConsoleTests.test_source_and_work_grants_are_rechecked_on_get_and_direct_posts) ... ok
+test_stale_command_preserves_work_and_reports_refresh (tests.test_factory_console.FactoryConsoleTests.test_stale_command_preserves_work_and_reports_refresh) ... ok
+test_browsing_does_not_create_business_records_or_expose_revoked_workspace (tests.test_ui_layout.StudioLayoutTests.test_browsing_does_not_create_business_records_or_expose_revoked_workspace) ... ok
+test_every_template_compiles_after_shared_shell_and_copy_changes (tests.test_ui_layout.StudioLayoutTests.test_every_template_compiles_after_shared_shell_and_copy_changes) ... ok
+test_finance_navigation_filters_before_pagination_and_rechecks_current_access (tests.test_ui_layout.StudioLayoutTests.test_finance_navigation_filters_before_pagination_and_rechecks_current_access) ... ok
+test_friendly_sample_names_do_not_change_original_records_or_real_workspace_titles (tests.test_ui_layout.StudioLayoutTests.test_friendly_sample_names_do_not_change_original_records_or_real_workspace_titles) ... ok
+test_grouped_case_navigation_is_permission_based_and_all_links_use_the_case (tests.test_ui_layout.StudioLayoutTests.test_grouped_case_navigation_is_permission_based_and_all_links_use_the_case) ... ok
+test_overview_preserves_actual_names_escaping_search_and_no_development_badges (tests.test_ui_layout.StudioLayoutTests.test_overview_preserves_actual_names_escaping_search_and_no_development_badges) ... ok
+test_restyled_document_capture_keeps_csrf_native_revision_and_exact_source (tests.test_ui_layout.StudioLayoutTests.test_restyled_document_capture_keeps_csrf_native_revision_and_exact_source) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_two_workers_share_one_current_claim (tests.test_factory_controls.FactoryConcurrencyTests.test_two_workers_share_one_current_claim) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 115.824s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

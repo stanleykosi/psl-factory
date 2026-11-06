@@ -1,0 +1,252 @@
+{
+  "pack_version": "0.7",
+  "source_baseline": "PSL process definition v0.6; historical layers retained only under stated precedence",
+  "files": [
+    {
+      "source_relative_path": "README.md",
+      "pack_path": "reference/README.md",
+      "bytes": 11483,
+      "sha256": "3488ab5f16be021caffd72775fc0ed88ed635717ef2649e3513b166bdd251e10"
+    },
+    {
+      "source_relative_path": "00-control/DEFINITION-STANDARD.md",
+      "pack_path": "reference/00-control/DEFINITION-STANDARD.md",
+      "bytes": 5107,
+      "sha256": "5b8044bf4cf02d95ff41aee5513d63ae004197ad3ae53f8f1c49f03ec91a9a30"
+    },
+    {
+      "source_relative_path": "00-control/GLOSSARY.md",
+      "pack_path": "reference/00-control/GLOSSARY.md",
+      "bytes": 3783,
+      "sha256": "ac8e07307818909778973907416a28d4f9403252c6527b1de74b1a4989453486"
+    },
+    {
+      "source_relative_path": "00-control/SOURCE-RECONCILIATION-v0.2.md",
+      "pack_path": "reference/00-control/SOURCE-RECONCILIATION-v0.2.md",
+      "bytes": 5963,
+      "sha256": "c954e9a70d21ae0c609697ca6f4b5d752a58b7951d41c52699d231fbbc9a9cf7"
+    },
+    {
+      "source_relative_path": "00-control/definition.schema.json",
+      "pack_path": "reference/00-control/definition.schema.json",
+      "bytes": 3850,
+      "sha256": "6fd0588bb7533e403993adc8aa5572a06521158f415beead6d91d1f565172d9f"
+    },
+    {
+      "source_relative_path": "02-coverage/register.json",
+      "pack_path": "reference/02-coverage/register.json",
+      "bytes": 33496,
+      "sha256": "85a409bf916101594cd1bace4ccb295b5415543a0b8259c4e8f3d1f62cbe428e"
+    },
+    {
+      "source_relative_path": "04-shared-contracts/RECORDS-AND-HANDOFFS.md",
+      "pack_path": "reference/04-shared-contracts/RECORDS-AND-HANDOFFS.md",
+      "bytes": 16883,
+      "sha256": "669c032080d6fe07c84e3fa2a4079a20115f20f1924bc67ca0e4a974c1273b45"
+    },
+    {
+      "source_relative_path": "04-shared-contracts/finance-baas-controls.json",
+      "pack_path": "reference/04-shared-contracts/finance-baas-controls.json",
+      "bytes": 3252,
+      "sha256": "72dd624cc233b67ea3ffd208fda5b4724d0f6c7f450aef0fc9513bf937b6ba5f"
+    },
+    {
+      "source_relative_path": "04-shared-contracts/handoff-contracts.json",
+      "pack_path": "reference/04-shared-contracts/handoff-contracts.json",
+      "bytes": 9327,
+      "sha256": "e1d05254a85b81ea48b0835ca0d7e279998c8a86b4af92f716baa761cb9ed224"
+    },
+    {
+      "source_relative_path": "06-mock-tests/catalogue.json",
+      "pack_path": "reference/06-mock-tests/catalogue.json",
+      "bytes": 126366,
+      "sha256": "56968d585cd224c072deba7701fecd6d19900cec6a212755fa0fe24ca9a4f324"
+    },
+    {
+      "source_relative_path": "06-mock-tests/cross-process-catalogue.json",
+      "pack_path": "reference/06-mock-tests/cross-process-catalogue.json",
+      "bytes": 7320,
+      "sha256": "98dc64adfa369a4ee1f31119e8a328a9c684ffeaad6eed9081a781d83485a1ab"
+    },
+    {
+      "source_relative_path": "06-mock-tests/TEST-SPECIFICATION-GUIDE.md",
+      "pack_path": "reference/06-mock-tests/TEST-SPECIFICATION-GUIDE.md",
+      "bytes": 6173,
+      "sha256": "5beb1d0b2ab9d9c0bf203b3826d2481518cd3d1a6c977f9010cf4f76fd0349e7"
+    },
+    {
+      "source_relative_path": "08-agent-architecture/ARCHITECTURE-PROPOSAL.md",
+      "pack_path": "reference/08-agent-architecture/ARCHITECTURE-PROPOSAL.md",
+      "bytes": 27329,
+      "sha256": "654a33e951d33ca2d6b4d46848c52c53d34db88cdabea6cab8c0d1f96cbbc9a5"
+    },
+    {
+      "source_relative_path": "08-agent-architecture/capability-contracts.json",
+      "pack_path": "reference/08-agent-architecture/capability-contracts.json",
+      "bytes": 17379,
+      "sha256": "372894ceedd1df32dd4be520cc51dad1df29a2de210b2fdefe6e42228863cc49"
+    },
+    {
+      "source_relative_path": "08-agent-architecture/task-envelope.schema.json",
+      "pack_path": "reference/08-agent-architecture/task-envelope.schema.json",
+      "bytes": 7046,
+      "sha256": "8bcba6be3b1cf775724b80d0d0d9059616578c05ceb2bd0a46aaf202f873cd83"
+    },
+    {
+      "source_relative_path": "08-agent-architecture/process-agent-assignments.json",
+      "pack_path": "reference/08-agent-architecture/process-agent-assignments.json",
+      "bytes": 1925063,
+      "sha256": "c9843df8fe10e0301f24830456802c11cc5379c79d7786fe668145c1ac6d9e81"
+    },
+    {
+      "source_relative_path": "08-agent-architecture/architecture-evaluation-catalogue.json",
+      "pack_path": "reference/08-agent-architecture/architecture-evaluation-catalogue.json",
+      "bytes": 13955,
+      "sha256": "f558225d73f683ddf4037ffbefd6812a7e33d13b3758fb888d2f6e144cdfa673"
+    },
+    {
+      "source_relative_path": "03-definitions/BaaS.json",
+      "pack_path": "reference/03-definitions/BaaS.json",
+      "bytes": 148377,
+      "sha256": "aa8488d1c7ff299cbadfb4b66009ca69c159d264817eea6d492d0696448ac004"
+    },
+    {
+      "source_relative_path": "03-definitions/Finance.json",
+      "pack_path": "reference/03-definitions/Finance.json",
+      "bytes": 502940,
+      "sha256": "9ac4e5ceee078ba1e1e33e84c3642de82c081689ba1d0f0b7036ddb93a4f82f9"
+    },
+    {
+      "source_relative_path": "03-definitions/PMO.json",
+      "pack_path": "reference/03-definitions/PMO.json",
+      "bytes": 473499,
+      "sha256": "cdbd081a2ed1215be4fbfc77146280015000d8c59a1ebc88104606ec91df2864"
+    },
+    {
+      "source_relative_path": "09-execution-contracts/execution-contracts.json",
+      "pack_path": "reference/09-execution-contracts/execution-contracts.json",
+      "bytes": 106100,
+      "sha256": "9c47adc601586584681d69e1aada579b998959c19f238c82f1b5be7fab88c193"
+    },
+    {
+      "source_relative_path": "09-execution-contracts/execution-command.schema.json",
+      "pack_path": "reference/09-execution-contracts/execution-command.schema.json",
+      "bytes": 53840,
+      "sha256": "747256925a186c56c32b295f8e4de7c9f4264414dbc67ec6af0947c83464da39"
+    },
+    {
+      "source_relative_path": "09-execution-contracts/execution-receipt.schema.json",
+      "pack_path": "reference/09-execution-contracts/execution-receipt.schema.json",
+      "bytes": 87058,
+      "sha256": "d2f5f87d01315e5104eb1d42781671f0be6f15ee3731fb4c8a72de29289fb163"
+    },
+    {
+      "source_relative_path": "09-execution-contracts/numeric-result.schema.json",
+      "pack_path": "reference/09-execution-contracts/numeric-result.schema.json",
+      "bytes": 2287,
+      "sha256": "734c2d3a481ca71203db4f1cc4f3a687f5cfd0b0884133067e14278871efa5fb"
+    },
+    {
+      "source_relative_path": "10-billing-workflow-amendment/AMENDMENT.md",
+      "pack_path": "reference/10-billing-workflow-amendment/AMENDMENT.md",
+      "bytes": 17794,
+      "sha256": "f208f24f055ccec07a12d1d9153939a7c96e69ade197e5e1cb12ee1a41cc7efb"
+    },
+    {
+      "source_relative_path": "10-billing-workflow-amendment/billing-workflow-contract.json",
+      "pack_path": "reference/10-billing-workflow-amendment/billing-workflow-contract.json",
+      "bytes": 91480,
+      "sha256": "5ce273da1fa8aa3cf7e8b9e29e770c125bd3004fb3702a2626dadaafc799f274"
+    },
+    {
+      "source_relative_path": "10-billing-workflow-amendment/billing-record.schema.json",
+      "pack_path": "reference/10-billing-workflow-amendment/billing-record.schema.json",
+      "bytes": 22764,
+      "sha256": "8b09d7fba778a989a1054852b492116599d19cb8326e8dd2d726ec354a8560cf"
+    },
+    {
+      "source_relative_path": "10-billing-workflow-amendment/billing-command.schema.json",
+      "pack_path": "reference/10-billing-workflow-amendment/billing-command.schema.json",
+      "bytes": 79061,
+      "sha256": "c64b096f99aefca2cc72f7f8a96767c307e21eafaa2e18934889ad9896c076bd"
+    },
+    {
+      "source_relative_path": "10-billing-workflow-amendment/billing-result.schema.json",
+      "pack_path": "reference/10-billing-workflow-amendment/billing-result.schema.json",
+      "bytes": 97201,
+      "sha256": "46f642f4a4c9fd07e868127e9ed07dbd057887300606dccf560b098e978d37bc"
+    },
+    {
+      "source_relative_path": "10-billing-workflow-amendment/source-rule-register.json",
+      "pack_path": "reference/10-billing-workflow-amendment/source-rule-register.json",
+      "bytes": 46488,
+      "sha256": "dd436ca4f41b035cfb7d4b227cb9686b1bbc856ae7e72902a46a4329f7fcefde"
+    },
+    {
+      "source_relative_path": "10-billing-workflow-amendment/mock-cases.json",
+      "pack_path": "reference/10-billing-workflow-amendment/mock-cases.json",
+      "bytes": 9334,
+      "sha256": "9b311149dd3ef6e2d7bdeae5e7b0920d61a6dfed9bdd8ac77dd39cca0024f008"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/README.md",
+      "pack_path": "reference/12-payment-exception-policy/README.md",
+      "bytes": 1359,
+      "sha256": "a17c95e120ec76dec70c07f52e4adbe6aa918dc330ada7ea9ccd51be17f0e421"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/AMENDMENT.md",
+      "pack_path": "reference/12-payment-exception-policy/AMENDMENT.md",
+      "bytes": 4901,
+      "sha256": "199be8b11f7477754c7ab10f3a01fb2b28b6ac464b2bd0a83254604f092d721c"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/current-exception-policy.json",
+      "pack_path": "reference/12-payment-exception-policy/current-exception-policy.json",
+      "bytes": 1794,
+      "sha256": "5a824066a60eb4d5f55c6cb0fc74e9dd4104e1cacfc6271ac3e31232b44f74a5"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/current-exception-record.schema.json",
+      "pack_path": "reference/12-payment-exception-policy/current-exception-record.schema.json",
+      "bytes": 3007,
+      "sha256": "1f65691f7f960679106b2142054de4825648aba5ea500bf6f90864802a7bb79f"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/future-human-decision-contract.json",
+      "pack_path": "reference/12-payment-exception-policy/future-human-decision-contract.json",
+      "bytes": 1904,
+      "sha256": "4ae88b4d7ceffe36cebf4a8e7920ed7adef4b1d582c5d24f0543b9bfaf792197"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/source-clarifications.json",
+      "pack_path": "reference/12-payment-exception-policy/source-clarifications.json",
+      "bytes": 787,
+      "sha256": "8df832cc14fbfc3d45c7f5e2dd6ebe5e41eb90947441fd11d6e6d0748d829a4b"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/process-execution-bindings.json",
+      "pack_path": "reference/12-payment-exception-policy/process-execution-bindings.json",
+      "bytes": 641595,
+      "sha256": "a18b9f16a3699b9052617205fb13f66acb70c25d835d8e76de19eecbf61e0dd3"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/owner-decisions.json",
+      "pack_path": "reference/12-payment-exception-policy/owner-decisions.json",
+      "bytes": 9003,
+      "sha256": "2fff7cab327b76c021d0105ac9081e4e2a5a1dfffa1981e0eee68c481ca54249"
+    },
+    {
+      "source_relative_path": "12-payment-exception-policy/negative-mock-cases.json",
+      "pack_path": "reference/12-payment-exception-policy/negative-mock-cases.json",
+      "bytes": 3419,
+      "sha256": "888685f28112296e3d630493e3bacc701629b19838be316b608fa1f25f920118"
+    },
+    {
+      "source_relative_path": "01-sources/PSL_PMO_Review_and_Architecture_Decision_2026-10-15.md",
+      "pack_path": "reference/01-sources/PSL_PMO_Review_and_Architecture_Decision_2026-10-15.md",
+      "bytes": 33104,
+      "sha256": "fbd64987edb289024d3782c44d401fd177436e03cd81eb00bdd44a467df465b0"
+    }
+  ]
+}

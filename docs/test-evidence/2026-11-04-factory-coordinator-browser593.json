@@ -1,0 +1,38 @@
+{
+  "source_run": 593,
+  "fixture_source_run": 591,
+  "native_browser": "Codex in-app browser, tab6",
+  "work": 1,
+  "sequence": [
+    "Seeded synthetic unknown coordination only in fresh cohort",
+    "Browser saved, validated and activated revision2 internal workflow rules",
+    "One preparation request reached native Finance output wait",
+    "Browser revoked coordination revision2; failed review/read projection saved",
+    "Corrected593 reloaded same work; claimed and approved original native output while coordination stayed revoked",
+    "Browser saved successor revision3 using keyboard after first click produced no POST; validated and activated",
+    "One continuation request reached verified internal recipient receipt",
+    "Verified queue keyboard search and detail back link retained queue=verified&q=Synthetic"
+  ],
+  "commands_replayed": false,
+  "transport_timeouts": "Fresh accessibility state and server completion observed; no work/claim/continuation POST replay",
+  "desktop": {
+    "viewport": 1280,
+    "document": 1265,
+    "scroll": 1265
+  },
+  "narrow": {
+    "viewport": 390,
+    "document": 375,
+    "scroll": 375,
+    "heading": "column"
+  },
+  "configuration_narrow": {
+    "viewport": 390,
+    "document": 375,
+    "scroll": 375
+  },
+  "viewport_restored": true,
+  "actual_model_provider": false,
+  "actual_owner_policy": false,
+  "independent_human_UAT": "NOT_EVALUATED"
+}

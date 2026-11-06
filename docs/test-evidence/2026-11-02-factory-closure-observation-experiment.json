@@ -1,0 +1,14 @@
+{
+  "classification": "Proposed ephemeral read memo experiment in fresh synthetic clone; NOT implementation or product acceptance",
+  "database": "psl_factory_closure_observation_ecd858526727",
+  "parent_database": "psl_closure_preparation_ui_165a58bb0435",
+  "work": 641,
+  "elapsed_seconds": 4.019,
+  "database_calls": 1487,
+  "plan_revision": 1,
+  "budget_used": 100,
+  "status": "ready",
+  "observation_discarded_before_command": true,
+  "application_source_changed": false,
+  "main_or_test_mutated": false
+}

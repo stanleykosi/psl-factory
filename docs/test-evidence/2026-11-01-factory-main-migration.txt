@@ -1,0 +1,7 @@
+Operations to perform:
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Running migrations:
+  Applying finance.0062_exact_publication_review... OK
+  Applying workflows.0037_factory_coordination... OK
+  Applying workflows.0038_factory_guards... OK
+  Applying workflows.0039_factory_business_identity... OK

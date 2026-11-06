@@ -1,0 +1,31 @@
+{
+  "database": "psl_factory_migration_ff813b5a9f63",
+  "source_database": "psl_factory_ui_e693533eb3db",
+  "source_unchanged": true,
+  "commands": [
+    [
+      "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+      "manage.py",
+      "migrate",
+      "workflows",
+      "0038",
+      "--noinput"
+    ],
+    [
+      "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+      "manage.py",
+      "migrate",
+      "workflows",
+      "0039",
+      "--noinput"
+    ]
+  ],
+  "status": "PASS",
+  "synthetic_verified_work_retained": true,
+  "rowsets_preserved": 329,
+  "all_guard_definitions_restored": true,
+  "main_touched": false,
+  "live_provider": false,
+  "rollback_boundary": "0039 reversed/reapplied only on fresh synthetic clone. Production rollback retains additive0037/0038/0062 schema and guards;0038 reverse is intentionally a no-op and is not a supported full schema downgrade.",
+  "restore_boundary": "Existing native archive/quarantine four-variant test passed400; full active factory restore/reconstitution remains a separate acceptance gap"
+}

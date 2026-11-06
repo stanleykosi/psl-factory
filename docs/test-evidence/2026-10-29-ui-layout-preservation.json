@@ -1,0 +1,11 @@
+{
+  "main_rowsets_unchanged": 326,
+  "applied_migration_sources_unchanged": 203,
+  "functions": 79,
+  "triggers": 363,
+  "constraints": 1719,
+  "main_test_definitions_identical": true,
+  "source_records_unchanged": true,
+  "owner_values_installed": false,
+  "live_pilot_performed": false
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:psl:v06:unconfigured-payment-exception",
+  "title": "Current unconfigured human exception record",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deployment_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payment_snapshot_manifest_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assessment_policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "requested_valid_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "requested_valid_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "request_id",
+        "tenant_id",
+        "project_ref",
+        "contract_version_ref",
+        "deployment_ref",
+        "payment_snapshot_manifest_ref",
+        "assessment_policy_ref",
+        "reason",
+        "evidence_refs",
+        "requested_valid_from",
+        "requested_valid_until",
+        "expected_version",
+        "operation_key"
+      ],
+      "additionalProperties": false
+    },
+    "requester_principal_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "prepared",
+        "requested",
+        "awaiting_authority_configuration",
+        "withdrawn"
+      ]
+    },
+    "authority_status": {
+      "const": "UNCONFIGURED"
+    },
+    "approval_ref": {
+      "type": "null"
+    },
+    "payment_exception_authorized": {
+      "const": false
+    },
+    "payment_waived": {
+      "const": false
+    },
+    "release_authorized": {
+      "const": false
+    },
+    "audit_receipt_ref": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "request",
+    "requester_principal_ref",
+    "request_version",
+    "status",
+    "authority_status",
+    "approval_ref",
+    "payment_exception_authorized",
+    "payment_waived",
+    "release_authorized",
+    "audit_receipt_ref"
+  ],
+  "additionalProperties": false
+}

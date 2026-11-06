@@ -1,0 +1,6 @@
+{
+  "database": "test_psl_factory_receipt_schema_5008efff9ff9",
+  "source_run": 644,
+  "purpose": "Fresh migration-only disposable test schema; no retained business records cloned",
+  "seeded": false
+}

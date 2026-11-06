@@ -1,0 +1,18 @@
+{
+  "system": {
+    "exit_code": 0,
+    "output": "System check identified no issues (0 silenced)."
+  },
+  "migration_drift": {
+    "exit_code": 0,
+    "output": "No changes detected"
+  },
+  "compile": {
+    "exit_code": 0,
+    "output": ""
+  },
+  "dependencies": {
+    "exit_code": 0,
+    "output": "No broken requirements found."
+  }
+}

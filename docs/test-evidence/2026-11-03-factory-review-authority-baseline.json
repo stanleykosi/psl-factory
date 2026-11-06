@@ -1,0 +1,13 @@
+{
+  "parent_checkpoint": 522,
+  "verified_files": 2832,
+  "parent_manifest": "docs/test-evidence/2026-11-02-factory-checkpoint522-source-manifest.json",
+  "classification": "Recorded Finance review authority comparison, engineering increment; owner values deferred",
+  "planned_delta": [
+    "Current relevant authority observation",
+    "Claim/decision/UI compare recorded routing",
+    "Stale native-review replan"
+  ],
+  "migration_or_dependency_proposed": false,
+  "full_product_complete": false
+}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<div class="page-heading"><div><h1>Original response recovery settings</h1><p>Choose who may review replacement credentials for an existing response. Undecided fields hold only this recovery action.</p></div></div>
+<section class="card"><form method="post">{% csrf_token %}<input type="hidden" name="action" value="draft">{{ form.as_p }}<button>Save draft settings</button></form></section>
+<section class="card"><h2>Settings history</h2>{% for version in versions %}<article><p>Revision {{ version.revision }} · {{ version.created_at }}</p><form method="post">{% csrf_token %}<input type="hidden" name="configuration" value="{{ version.pk }}"><button name="action" value="validated">Validate</button><button name="action" value="active">Activate</button><button name="action" value="revoked">Withdraw</button></form></article>{% empty %}<p>No recovery reviewer or authority has been configured.</p>{% endfor %}</section>
+{% endblock %}

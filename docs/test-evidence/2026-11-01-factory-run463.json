@@ -1,0 +1,23 @@
+{
+  "run": 463,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_handover.FactoryHandoverTests.test_unassigned_allowance_and_missing_sources_are_plain_and_human_wait_has_no_continue_button",
+    "tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving",
+    "tests.test_factory_handover.FactoryHandoverTests.test_current_owner_projection_does_not_assign_a_revoked_recipient",
+    "tests.test_delivery.DeliveryTests.test_connected_planning_release_hypercare_archive_handover_finance_head_closure",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T11:28:06.674309+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run463.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 208.772
+}

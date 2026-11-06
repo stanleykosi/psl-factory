@@ -1,0 +1,33 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 11 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0044_factory_archive...test_agent_creates_native_index_as_configured_operator_without_archive_approval_or_hypercare_gate (tests.test_factory_archive.FactoryArchiveTests.test_agent_creates_native_index_as_configured_operator_without_archive_approval_or_hypercare_gate) ... ok
+test_cancel_after_native_index_then_resume_observes_original_index_once (tests.test_factory_archive.FactoryArchiveTests.test_cancel_after_native_index_then_resume_observes_original_index_once) ... ERROR
+
+======================================================================
+ERROR: test_cancel_after_native_index_then_resume_observes_original_index_once (tests.test_factory_archive.FactoryArchiveTests.test_cancel_after_native_index_then_resume_observes_original_index_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_archive.py", line 127, in test_cancel_after_native_index_then_resume_observes_original_index_once
+    archive.restart(f.actor,f.work.pk,f.work.revision,rev(f.case),'Observe the already-created local index after a fresh human instruction')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_archive.py", line 234, in restart
+    if w.revision!=expected or w.status!='cancelled' or not w.cancel_requested:raise ValidationError('STALE_VERSION: select stopped archive work')
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['STALE_VERSION: select stopped archive work']
+
+----------------------------------------------------------------------
+Ran 2 tests in 40.159s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

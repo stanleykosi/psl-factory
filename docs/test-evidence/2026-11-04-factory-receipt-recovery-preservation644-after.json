@@ -1,0 +1,111 @@
+{
+  "source_run": 644,
+  "databases": [
+    {
+      "database": "psl",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_routing_ui_c87774ebaed7",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_review_authority_ui_f4ef78667cad",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_review_status_ui_82525e1a8333",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_review_retirement_ui_7036019b48ae",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_review_restore_ui_0c64ab3f2a4f",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_delegation_ui_7de03a500dbf",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_availability_ui_f599e39e4e5e",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_accounting_ui_08cf999821ca",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_coordinator_ui_98ae90c203b0",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_execution_ui_009444c84974",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    },
+    {
+      "database": "psl_factory_source_ui_c484d169d676",
+      "original_rowsets_preserved": 331,
+      "original_indexes_preserved": 1562,
+      "all_original_guards_preserved": true,
+      "new_recovery_and_use_tables_empty": true,
+      "framework_metadata_only": true
+    }
+  ],
+  "business_records_budgets_receipts_grants_unchanged": true,
+  "commands_replayed": false
+}

@@ -1,0 +1,19 @@
+{
+  "run": 318,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_shared_workbench",
+    "tests.test_product_intake",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-318-shared-workbench.txt",
+  "started_at": "2026-10-28T13:52:04.772312+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 215.998
+}

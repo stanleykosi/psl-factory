@@ -1,0 +1,105 @@
+{
+  "synthetic_only": true,
+  "case": "6beec8aa-76d2-4066-a21d-2de65545b4a8",
+  "principals": {
+    "actor": 66,
+    "reviewer": 67,
+    "specialist": 68
+  },
+  "initial_claim": 2,
+  "successor_claim": 3,
+  "initial_receipt": 2,
+  "new_check": 3,
+  "new_receipt": 3,
+  "original_attestation": 2,
+  "original_event": 21,
+  "historical_first_response_at": "2026-10-23T13:56:07.781475+00:00",
+  "correction": 1,
+  "correction_review": 1,
+  "projection": {
+    "correction": 1,
+    "version": 1,
+    "review": 1,
+    "time": "2026-10-23T13:56:19.161504+00:00",
+    "finding": null
+  },
+  "metrics": {
+    "first_response_seconds": "3660.715981",
+    "resolution_seconds": null,
+    "finding": null
+  },
+  "report": 4,
+  "report_period_end": "2026-10-23T13:56:19.161504+00:00",
+  "native_contract": 13,
+  "readiness_assessment": 15,
+  "inventory": 4,
+  "internal_job_pending": 6,
+  "gateway_gets": 2,
+  "gateway_classification": "synthetic_authenticated_http",
+  "customer_message_dispatched": false,
+  "live_customer_channel_evaluated": false,
+  "real_model_evaluated": false,
+  "events_rewritten": false,
+  "viewer_read_grants": [
+    "case.read",
+    "support.read",
+    "support.private.read",
+    "support.agent.read",
+    "agent.data.read",
+    "agent.data.source",
+    "integration.read",
+    "support.response.read",
+    "support.channel.read",
+    "ops.read"
+  ],
+  "private_guidance": {
+    "current_clock": {
+      "correction": 1,
+      "version": 1,
+      "review": 1,
+      "time": "2026-10-23T13:56:19.161504+00:00",
+      "finding": null
+    },
+    "correction_question": "Prepare an explicit source revision/new verification and human correction successor when review, source or policy changes; never rewrite ordered events or attest automatically.",
+    "operator_checks": [
+      {
+        "job": 2,
+        "status": "confirmed",
+        "question": "Reconcile unknown reads with the scoped worker; retry/cancel only through configured native recovery and original budget."
+      },
+      {
+        "job": 3,
+        "status": "confirmed",
+        "question": "Reconcile unknown reads with the scoped worker; retry/cancel only through configured native recovery and original budget."
+      }
+    ],
+    "claims": [
+      {
+        "claim": 3,
+        "status": "confirmed",
+        "reviewed_delivery": true,
+        "question": "A configured human may attest the exact delivery time through original Support controls; late times need correction and duplicate message clocks are forbidden."
+      },
+      {
+        "claim": 2,
+        "status": "confirmed",
+        "reviewed_delivery": false,
+        "question": "Inspect delivered/human status, release window and independent review history. Withdrawn, retracted or expired proof cannot support a current clock."
+      }
+    ],
+    "policy_status": {
+      "B14.channel_receipts": "ACTIVE",
+      "B14.channel_clock": "ACTIVE",
+      "B14.clock_corrections": "ACTIVE"
+    },
+    "clock_applied": false,
+    "message_sent": false,
+    "generic_agent_history_written": false
+  },
+  "missing_case": "8196d698-16b3-4e5b-ae28-cee8da1fc354",
+  "missing_principals": [
+    69,
+    70,
+    71
+  ]
+}

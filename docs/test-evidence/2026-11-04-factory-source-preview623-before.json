@@ -1,0 +1,7 @@
+{
+  "reason": "Correct native-browser exception queue omission",
+  "listener": "  TCP    127.0.0.1:8024         0.0.0.0:0              LISTENING       19872",
+  "path": "C:\\Python313\\python.exe",
+  "start_utc": "2026-11-04T18:36:50.6704351Z",
+  "id": 19872
+}

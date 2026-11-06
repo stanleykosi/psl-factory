@@ -1,0 +1,272 @@
+{
+  "classification": "Supplemental engineering interfaces; no default accounting policies or real appointments",
+  "components": [
+    {
+      "id": "F01.verification_rules",
+      "parent_decision_id": "F01",
+      "schema_ref": "schema:psl/policy-component/F01.verification_rules/v1",
+      "subject_scope": "Exact incumbent realm, source identity and Finance reference verification",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F01.review_authority",
+      "parent_decision_id": "F01",
+      "schema_ref": "schema:psl/policy-component/F01.review_authority/v1",
+      "subject_scope": "Exact incumbent realm, source identity and Finance reference verification",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F01.conflict_rules",
+      "parent_decision_id": "F01",
+      "schema_ref": "schema:psl/ledger-conflict-rules/v1",
+      "subject_scope": "Scoped human disposition of duplicate claims and corrected incumbent references; no posting authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F01.agent_projection",
+      "parent_decision_id": "F01",
+      "schema_ref": "schema:psl/ledger-agent-projection/v1",
+      "subject_scope": "Private selected-field projection and independent reviewed Finance evidence reuse",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F01.validation_handoff",
+      "parent_decision_id": "F01",
+      "schema_ref": "schema:psl/finance-validation-handoff/v1",
+      "subject_scope": "Exact private Finance evidence to recipient-owned AF13 validation and separate acceptance",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F01.accepted_publication",
+      "parent_decision_id": "F01",
+      "schema_ref": "schema:psl/accepted-finance-publication/v1",
+      "subject_scope": "Exact accepted Finance metadata, selected fields, audience and independent human publication authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "ledger.verify",
+      "required_components": [
+        "F01.verification_rules"
+      ]
+    },
+    {
+      "operation": "ledger.review",
+      "required_components": [
+        "F01.verification_rules",
+        "F01.review_authority",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ledger.resolve",
+      "required_components": [
+        "F01.conflict_rules",
+        "F01.verification_rules",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ledger.agent.project",
+      "required_components": [
+        "F01.agent_projection",
+        "F01.verification_rules",
+        "F01.review_authority",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "finance.handoff.prepare",
+      "required_components": [
+        "F01.validation_handoff",
+        "F01.agent_projection",
+        "AF13.owner_validation_rules",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "finance.accepted.publish",
+      "required_components": [
+        "F01.accepted_publication",
+        "D11.recipient_grant_refs",
+        "D11.template_storage_retention_rules",
+        "D05.role_principal_assignments"
+      ]
+    }
+  ]
+}

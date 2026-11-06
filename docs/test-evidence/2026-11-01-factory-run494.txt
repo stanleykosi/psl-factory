@@ -1,0 +1,22 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone (tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone) ... ok
+test_queued_publication_rechecks_current_publisher_and_retries_only_original_exact_job (tests.test_factory_go_live.FactoryGoLiveTests.test_queued_publication_rechecks_current_publisher_and_retries_only_original_exact_job) ... ok
+test_competing_human_reaffirmations_of_same_parent_cannot_fork_native_evidence (tests.test_factory_go_live.FactoryGoLiveConcurrencyTests.test_competing_human_reaffirmations_of_same_parent_cannot_fork_native_evidence) ... ok
+test_real_process_exit_after_delivery_recovers_original_receipt_before_human_signoff (tests.test_factory_go_live.FactoryGoLiveConcurrencyTests.test_real_process_exit_after_delivery_recovers_original_receipt_before_human_signoff) ... ok
+test_two_first_intakes_create_one_private_source_and_one_business_identity (tests.test_factory_go_live.FactoryGoLiveConcurrencyTests.test_two_first_intakes_create_one_private_source_and_one_business_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 173.158s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

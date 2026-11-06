@@ -1,0 +1,11 @@
+{
+  "fixture_scope": "synthetic_test_only",
+  "deadlines": {"implementation":"explicit_agreement_dates_v1","timezone":"Africa/Lagos","expiry_boundary":"end_of_day","review_clock":"calendar_days","agreement_roles":["PM"],"renewal_roles":["PM"],"followup_roles":["PM"],"notice_lead_days":10,"expiry_lead_days":5},
+  "stages": [
+    {"key":"review","initial":true,"terminal":false,"next_stages":["verification","complete"],"roles":["PM"],"required_evidence_kinds":["document"],"clock":"elapsed_seconds","pause":"freeze_elapsed","reentry":"reset_on_explicit_entry","followup_after_seconds":3600},
+    {"key":"verification","initial":false,"terminal":false,"next_stages":["review","complete"],"roles":["PM"],"required_evidence_kinds":["document"],"clock":"elapsed_seconds","pause":"freeze_elapsed","reentry":"reset_on_explicit_entry","followup_after_seconds":3600},
+    {"key":"complete","initial":false,"terminal":true,"next_stages":[],"roles":["PM"],"required_evidence_kinds":["document","signature"],"clock":"elapsed_seconds","pause":"not_permitted","reentry":"reset_on_explicit_entry","followup_after_seconds":null}
+  ],
+  "activity":{"implementation":"partner_activity_v1","timezone":"Africa/Lagos","sources":["synthetic-admin"],"active_kinds":["use"],"excluded_kinds":["test"],"reviewer_roles":["Finance"],"sender_roles":["PM"],"allow_preparer_review":false,"allow_partial":false,"recipient_id":1,"columns":["product","event_count","active_users","coverage"],"lease_seconds":30,"max_attempts":3},
+  "meter":{"implementation":"explicit_event_quantity_v1","coverage_id":1,"partner":"partner-1","product":"payments","event_kinds":["use"],"unit":"transaction","quantity_method":"sum_supplied_quantities","allow_partial":false}
+}

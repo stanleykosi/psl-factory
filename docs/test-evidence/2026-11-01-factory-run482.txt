@@ -1,0 +1,29 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_invalid_execution_configuration_cannot_appoint_or_expand_a_closure_operator (tests.test_factory_closure.FactoryClosureTests.test_invalid_execution_configuration_cannot_appoint_or_expand_a_closure_operator) ... ok
+test_provider_cannot_self_approve_select_finalisation_early_or_invent_citations (tests.test_factory_closure.FactoryClosureTests.test_provider_cannot_self_approve_select_finalisation_early_or_invent_citations) ... ok
+test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect (tests.test_factory_closure.FactoryClosureTests.test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect) ... FAIL
+
+======================================================================
+FAIL: test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect (tests.test_factory_closure.FactoryClosureTests.test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_closure.py", line 161, in test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect
+    self.assertEqual(self.client.get(url).status_code,403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 404 != 403
+
+----------------------------------------------------------------------
+Ran 3 tests in 34.019s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

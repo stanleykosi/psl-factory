@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_10_provider_and_destination_through_source_owned_review (tests.test_domain_contracts.DomainContractTests.test_10_provider_and_destination_through_source_owned_review) ... ok
+test_11_contract_guards_binding_expiry_privacy_and_revocation (tests.test_domain_contracts.DomainContractTests.test_11_contract_guards_binding_expiry_privacy_and_revocation) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 490.876s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

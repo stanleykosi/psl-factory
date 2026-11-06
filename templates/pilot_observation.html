@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}<a href="{% url 'pilot_contract' case.pk report.contract %}">Selected contract</a><h1>Read-only pilot evidence #{{ report.observation }}</h1>
+<p>Current: {{ report.current }} · observed {{ report.observed_at }} · expires after 15 minutes. Refresh after source, policy, grant, build, receipt or selected job changes.</p>
+<p>No live pilot performed. Operational acceptance: {{ report.operational_acceptance }}. Missing owner policy holds only its dependent runtime operation. This pack does not authorize work.</p>
+<p><a href="?export=1">Download access-checked metadata evidence pack</a></p>
+<section class="workflow-panel"><h2>Selected investigator</h2>{% if agent %}<ul>{% for finding in agent.findings %}<li>{{ finding }}</li>{% endfor %}</ul>{% else %}<p>Agent access is not granted.</p>{% endif %}
+</section><section class="workflow-panel"><h2>Observed evidence</h2><pre>{{ report.snapshot }}</pre></section>{% endblock %}

@@ -1,0 +1,32 @@
+{
+  "classification": "Engineering baseline/proposal, not current-head implementation acceptance",
+  "parent_manifest": "docs/test-evidence/2026-11-01-factory-checkpoint438-source-manifest.json",
+  "verified_parent_files": 2095,
+  "requirements": [
+    "REQ-06",
+    "REQ-07",
+    "REQ-09",
+    "REQ-19",
+    "REQ-21"
+  ],
+  "process_ids": [
+    "P32",
+    "P33",
+    "P35",
+    "P63"
+  ],
+  "disposition": "KEEP complete native history and current native controls; EXTEND a separate bounded current-head adapter projection",
+  "symbols": [
+    "adapters/delivery.py:LocalDeliveryAdapter.read",
+    "apps/workflows/factory_delivery.py:snapshot",
+    "apps/workflows/factory_hypercare.py:snapshot"
+  ],
+  "reason_for_sequence": "Old historical source/record limits block legitimate continued source corrections before downstream closure. Resolve current-fact projection before growing the dossier further.",
+  "intended_change": "Current source/verification/record/signal heads and latest/current-consumed document bindings, explicit history counts; no history deletion or weaker business qualification",
+  "compatibility": "Retain legacy bounded full-history read API; no migration/dependency/policy change",
+  "tests": [
+    "More than100 genuine native source successors still permits current qualification",
+    "An unverified current successor invalidates qualification rather than falling back to an old accepted source",
+    "Full history read remains bounded and retained"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "classification": "EXPLICIT SYNTHETIC example only; no real appointments, source authentication or owner acceptance",
+  "routes": {"lease_seconds": 30, "max_attempts": 3, "routes": [{"kind": "qa_exit", "gate_kind": "qa_exit", "source_owner": "QA Lead", "owner_id": 1, "owner_role": "QA", "source_actor_ref": "synthetic-qa-owner", "system": "synthetic-qa", "route_mode": "internal_inbox_v1"}]},
+  "contracts": {"contracts": [{"kind": "qa_exit", "contract_evidence_id": 1, "mode": "owner_supplied_reference_v1", "signature_assurance": "reference_only", "ordering": "decided_at_monotonic_v1", "max_age_seconds": 86400, "required_subject_fields": ["build_ref", "release_ref"], "reminders_enabled": false, "minimum_reminder_interval_seconds": 3600, "maximum_reminders": 0}]}
+}

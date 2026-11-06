@@ -1,0 +1,35 @@
+{
+  "pid": 14172,
+  "path": "C:\\Python313\\python.exe",
+  "started_utc": "2026-10-28T16:57:23.7159251Z",
+  "session_id": 85131,
+  "previous_verified_pid": 47948,
+  "url": "http://127.0.0.1:8000",
+  "classification": "Unauthenticated main redirects only; authenticated UI proof uses synthetic PostgreSQL clients",
+  "smokes": [
+    {
+      "path": "/",
+      "status": 302,
+      "location": "/accounts/login/?next=/"
+    },
+    {
+      "path": "/work/",
+      "status": 302,
+      "location": "/accounts/login/?next=/work/"
+    },
+    {
+      "path": "/project-views/",
+      "status": 302,
+      "location": "/accounts/login/?next=/project-views/"
+    },
+    {
+      "path": "/cases/00000000-0000-0000-0000-000000000000/planning/",
+      "status": 302,
+      "location": "/accounts/login/?next=/cases/00000000-0000-0000-0000-000000000000/planning/"
+    }
+  ],
+  "preserved_environment": {
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo",
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1"
+  }
+}

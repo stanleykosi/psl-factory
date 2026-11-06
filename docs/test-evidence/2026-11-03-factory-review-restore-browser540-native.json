@@ -1,0 +1,22 @@
+{
+  "source_run": 540,
+  "database": "psl_factory_review_restore_ui_0c64ab3f2a4f",
+  "work": 1384,
+  "obsolete_task": 1905,
+  "old_context_and_claim_unchanged": true,
+  "obsolete_wait_returned": true,
+  "native_review": 1258,
+  "original_invoice": 1389,
+  "budget_before": 700,
+  "budget_after": 1300,
+  "budget_limit": 20000,
+  "native_approvals": 1,
+  "issue_receipts": 1,
+  "delivery_receipts": 1,
+  "retirement_events": 1,
+  "mock_files": {
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-review-restore-mock-receipts/9dbf09a2554adfdcdea4f93617736a2d2f965a0a9eaf943662fa6a0f39b2acdd.json": "17e137bb3f5237cd2572469c7edcf9beee0e43a738b1e188c91e269e5b5e23c3",
+    "C:/Users/USER/Desktop/psl-agent build/.runtime/factory-review-restore-mock-receipts/cad9eb87f9c3c2f8fc93b710cf98d5edff7f4ac494eb9d4c3633ccd826038f53.json": "3e713327eb88dbe1cf340da4fb32b60d4ce3b2b59fcf12ea849c124ed90be148"
+  },
+  "classification": "Actual browser agent execution/verification; setup approval and policy restoration via native fixture services, not UAT/real-provider proof"
+}

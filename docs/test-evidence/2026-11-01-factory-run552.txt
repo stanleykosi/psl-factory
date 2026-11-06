@@ -1,0 +1,31 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_authority_window_expiry_keeps_approval_history_but_blocks_new_issuance (tests.test_factory_delegation.FactoryDelegationTests.test_actual_authority_window_expiry_keeps_approval_history_but_blocks_new_issuance) ... Found 13 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+Actual delegation expiry wait: 104.308s until 2026-11-03T03:39:33.861684+00:00
+ok
+test_currency_mismatch_does_not_infer_conversion_or_grant_generic_role_authority (tests.test_factory_delegation.FactoryDelegationTests.test_currency_mismatch_does_not_infer_conversion_or_grant_generic_role_authority) ... ok
+test_delegation_does_not_bypass_acting_preparer_separation_of_duties (tests.test_factory_delegation.FactoryDelegationTests.test_delegation_does_not_bypass_acting_preparer_separation_of_duties) ... ok
+test_exact_limit_boundary_and_two_matching_rules_are_deterministic (tests.test_factory_delegation.FactoryDelegationTests.test_exact_limit_boundary_and_two_matching_rules_are_deterministic) ... ok
+test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery (tests.test_factory_delegation.FactoryDelegationTests.test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery) ... ok
+test_revoked_delegation_after_approval_cannot_issue_from_the_old_decision (tests.test_factory_delegation.FactoryDelegationTests.test_revoked_delegation_after_approval_cannot_issue_from_the_old_decision) ... ok
+test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts (tests.test_factory_delegation.FactoryDelegationTests.test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts) ... ok
+test_source_access_and_stale_replacement_cannot_copy_or_erase_other_rules (tests.test_factory_delegation.FactoryDelegationTests.test_source_access_and_stale_replacement_cannot_copy_or_erase_other_rules) ... ok
+test_strict_scope_validation_retains_the_active_rule_without_coercion (tests.test_factory_delegation.FactoryDelegationTests.test_strict_scope_validation_retains_the_active_rule_without_coercion) ... ok
+test_structured_configuration_preserves_other_delegations_and_needs_human_activation (tests.test_factory_delegation.FactoryDelegationTests.test_structured_configuration_preserves_other_delegations_and_needs_human_activation) ... ok
+test_unknown_financial_limit_holds_only_delegated_review_after_useful_drafting (tests.test_factory_delegation.FactoryDelegationTests.test_unknown_financial_limit_holds_only_delegated_review_after_useful_drafting) ... ok
+test_unknown_review_mode_is_a_typed_configuration_hold_with_invoice_drafting_available (tests.test_factory_delegation.FactoryDelegationTests.test_unknown_review_mode_is_a_typed_configuration_hold_with_invoice_drafting_available) ... ok
+test_review_and_revocation_serialize_without_allowing_a_later_dispatch (tests.test_factory_delegation.FactoryDelegationConcurrencyTests.test_review_and_revocation_serialize_without_allowing_a_later_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 425.568s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

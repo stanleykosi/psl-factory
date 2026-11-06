@@ -1,0 +1,10 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'home' %}">← Work queue</a>
+<div class="page-heading"><div><p class="eyebrow">PROJECT EVIDENCE</p><h1>Start archive work</h1><p class="lede">Declare the final project evidence. Engineering finalises the technical document; PMO archives the inventory under the reviewed storage rules.</p></div></div>
+<section class="card"><h2>Choose a project</h2><form method="get"><input type="hidden" name="definition" value="delivery-archive/v1"><label>Project{{ form.case }}</label><button>Open project inventory</button></form></section>
+{% if case %}<section class="card"><h2>Declared artifact inventory</h2><p>Leave evidence unprovided when it is unknown. Inventory corrections retain the original work and execution allowance.</p>
+<form method="post">{% csrf_token %}{{ form.definition }}{{ form.key }}{{ form.revision }}{{ form.non_field_errors }}
+<input type="hidden" name="case" value="{{ case.pk }}">
+{{ form.dossier.as_field_group }}{{ form.reference.as_field_group }}{{ inventory_form.as_p }}
+<button>Start archive work</button></form></section>{% else %}{{ form.errors }}<p>Select an available project to declare its inventory.</p>{% endif %}
+{% endblock %}

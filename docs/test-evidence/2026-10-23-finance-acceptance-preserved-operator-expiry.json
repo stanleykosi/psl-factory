@@ -1,0 +1,87 @@
+{
+  "assessment": 3,
+  "snapshot_unchanged": true,
+  "stored_result": {
+    "findings": [],
+    "objectives": {
+      "rpo": "unknown",
+      "rto": "unknown"
+    },
+    "operational_ready": false,
+    "documentary_complete": true,
+    "deployment_authorized": false,
+    "supplied_report_scopes": {
+      "restore": "portable_case_metadata_v1"
+    },
+    "business_jobs_reenacted": false,
+    "native_metadata_effects": {
+      "backup": true,
+      "export": true,
+      "restore": true
+    },
+    "full_database_restore_verified": false,
+    "native_metadata_drill_verified": true
+  },
+  "current_result": {
+    "documentary_complete": false,
+    "findings": [
+      "Native metadata export expired",
+      "Native metadata backup expired",
+      "Native metadata restore expired",
+      "Reported restore expired"
+    ],
+    "native_metadata_effects": {
+      "export": true,
+      "backup": true,
+      "restore": true
+    },
+    "supplied_report_scopes": {
+      "restore": "portable_case_metadata_v1"
+    },
+    "objectives": {
+      "rpo": "unknown",
+      "rto": "unknown"
+    },
+    "native_metadata_drill_verified": true,
+    "full_database_restore_verified": false,
+    "operational_ready": false,
+    "deployment_authorized": false,
+    "business_jobs_reenacted": false
+  },
+  "policy": 277,
+  "artifact_age_proofs": [
+    {
+      "artifact": 1,
+      "kind": "export",
+      "sha256": "3dd96c101ce7d383b44079d4c4c0a8dde3236bb4aab328e0a19fa42e6f44c192",
+      "age_seconds": 90487.683346,
+      "max_age_seconds": 86400
+    },
+    {
+      "artifact": 2,
+      "kind": "backup",
+      "sha256": "3dd96c101ce7d383b44079d4c4c0a8dde3236bb4aab328e0a19fa42e6f44c192",
+      "age_seconds": 90487.425858,
+      "max_age_seconds": 86400
+    },
+    {
+      "artifact": 3,
+      "kind": "restore",
+      "sha256": "3dd96c101ce7d383b44079d4c4c0a8dde3236bb4aab328e0a19fa42e6f44c192",
+      "age_seconds": 86887.024062,
+      "max_age_seconds": 86400
+    }
+  ],
+  "review": 2,
+  "authority_unchanged": true,
+  "source_access_unchanged": true,
+  "no_refresh_or_reauthorisation": true,
+  "reported_restore_age_proofs": [
+    {
+      "proof": 2,
+      "sha256": "ea7a392b0f2096ef19728271f046081d578a4129d7bfd104ac41aa777962751c",
+      "age_seconds": 91103.718091,
+      "max_age_seconds": 86400
+    }
+  ]
+}

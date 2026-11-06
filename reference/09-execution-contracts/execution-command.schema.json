@@ -1,0 +1,2331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PSL execution command envelope v0.4",
+  "description": "Shape validation only; no schema grants permission or proves source truth. Each payload requires semantic and state validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "command_id",
+    "contract_id",
+    "contract_version",
+    "tenant_id",
+    "case_id",
+    "process_ids",
+    "subject_ref",
+    "expected_version",
+    "principal_ref",
+    "grant_ref",
+    "policy_ref",
+    "operation_key",
+    "issued_at",
+    "evidence_refs",
+    "payload",
+    "action"
+  ],
+  "properties": {
+    "command_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "process_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(B(0[1-9]|1[0-4])|F(0[1-9]|[1-3][0-9]|4[0-5])|P(0[1-9]|[1-5][0-9]|6[0-3]))$"
+      }
+    },
+    "subject_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "expected_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "principal_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "grant_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "policy_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "operation_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ref"
+      }
+    },
+    "payload": {
+      "type": "object"
+    },
+    "action": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "content_hash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.create"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schedule_id",
+            "subject_ref",
+            "rule_ref",
+            "timezone",
+            "calendar_ref",
+            "anchor_at",
+            "due_at",
+            "occurrence_key",
+            "action_template_ref",
+            "clock_kind"
+          ],
+          "properties": {
+            "schedule_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "rule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "timezone": {
+              "type": "string",
+              "minLength": 1
+            },
+            "calendar_ref": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ref"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "anchor_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "due_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "occurrence_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "action_template_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "clock_kind": {
+              "type": "string",
+              "enum": [
+                "elapsed",
+                "working_calendar",
+                "recurrence"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.revise"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schedule_ref",
+            "replacement_rule_ref",
+            "replacement_due_at",
+            "reason"
+          ],
+          "properties": {
+            "schedule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "replacement_rule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "replacement_due_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.claim_due"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schedule_ref",
+            "observed_now",
+            "lease_id"
+          ],
+          "properties": {
+            "schedule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "observed_now": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "lease_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.fire"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "occurrence_ref",
+            "fencing_token",
+            "delivery_operation_key"
+          ],
+          "properties": {
+            "occurrence_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "fencing_token": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "delivery_operation_key": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.cancel"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schedule_ref",
+            "reason"
+          ],
+          "properties": {
+            "schedule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.reconcile"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schedule_ref",
+            "last_observed_occurrence"
+          ],
+          "properties": {
+            "schedule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "last_observed_occurrence": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.advance_recurrence"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schedule_ref",
+            "previous_occurrence_ref",
+            "recurrence_rule_ref",
+            "next_occurrence_key"
+          ],
+          "properties": {
+            "schedule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "previous_occurrence_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "recurrence_rule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "next_occurrence_key": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.reclaim"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schedule_ref",
+            "expired_lease_ref",
+            "observed_now"
+          ],
+          "properties": {
+            "schedule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "expired_lease_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "observed_now": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.receive"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "event_id",
+            "producer_ref",
+            "event_type",
+            "subject_key",
+            "occurred_at",
+            "received_at",
+            "payload_ref",
+            "schema_ref",
+            "source_sequence",
+            "supersedes_event_id"
+          ],
+          "properties": {
+            "event_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "producer_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "event_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "occurred_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "received_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "payload_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "schema_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "source_sequence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "supersedes_event_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.validate"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "event_ref",
+            "producer_policy_ref"
+          ],
+          "properties": {
+            "event_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "producer_policy_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.correlate"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "event_ref",
+            "candidate_subject_refs"
+          ],
+          "properties": {
+            "event_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "candidate_subject_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.apply"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "event_ref",
+            "correlation_ref",
+            "expected_subject_version"
+          ],
+          "properties": {
+            "event_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "correlation_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "expected_subject_version": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.reconcile_source"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "producer_ref",
+            "checkpoint_ref",
+            "source_snapshot_ref"
+          ],
+          "properties": {
+            "producer_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "checkpoint_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "source_snapshot_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.prepare"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "adapter_contract_ref",
+            "input_batch_ref",
+            "intended_effects",
+            "destination_ref"
+          ],
+          "properties": {
+            "adapter_contract_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "input_batch_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "intended_effects": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "destination_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.start"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "job_request_ref",
+            "approval_refs",
+            "external_idempotency_key"
+          ],
+          "properties": {
+            "job_request_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "approval_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "external_idempotency_key": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.query"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "job_ref",
+            "external_run_id"
+          ],
+          "properties": {
+            "job_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "external_run_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.callback"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "job_ref",
+            "callback_event_ref",
+            "external_run_id",
+            "item_result_refs"
+          ],
+          "properties": {
+            "job_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "callback_event_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "external_run_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "item_result_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.cancel"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "job_ref",
+            "reason"
+          ],
+          "properties": {
+            "job_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.reconcile"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "job_ref",
+            "destination_snapshot_ref",
+            "resolution_evidence_refs"
+          ],
+          "properties": {
+            "job_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "destination_snapshot_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "resolution_evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.request"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "request_id",
+            "subject_ref",
+            "decision_policy_ref",
+            "required_role_refs",
+            "ordering",
+            "evidence_refs"
+          ],
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "decision_policy_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "required_role_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "ordering": {
+              "type": "string",
+              "enum": [
+                "serial",
+                "unordered"
+              ]
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.submit"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "request_ref",
+            "subject_ref",
+            "outcome",
+            "reason",
+            "evidence_refs"
+          ],
+          "properties": {
+            "request_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "subject_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "approve",
+                "reject",
+                "return"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.withdraw"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision_ref",
+            "reason"
+          ],
+          "properties": {
+            "decision_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.invalidate"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "request_ref",
+            "changed_subject_ref",
+            "invalidation_rule_ref"
+          ],
+          "properties": {
+            "request_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "changed_subject_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "invalidation_rule_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.record_external"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "request_ref",
+            "external_decision_ref",
+            "issuer_ref",
+            "verification_evidence_refs"
+          ],
+          "properties": {
+            "request_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "external_decision_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "issuer_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "verification_evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.cancel_request"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "request_ref",
+            "reason"
+          ],
+          "properties": {
+            "request_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.expire"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "request_ref",
+            "expiry_policy_ref",
+            "due_occurrence_ref"
+          ],
+          "properties": {
+            "request_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "expiry_policy_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "due_occurrence_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.ingest"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_id",
+            "content_hash",
+            "media_type",
+            "source_ref",
+            "classification",
+            "size_bytes",
+            "period_ref"
+          ],
+          "properties": {
+            "artifact_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content_hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "media_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "classification": {
+              "type": "string",
+              "minLength": 1
+            },
+            "size_bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "period_ref": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ref"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.validate_import"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_ref",
+            "import_schema_ref",
+            "parser_version",
+            "calculation_policy_ref"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "import_schema_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "parser_version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "calculation_policy_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.accept_snapshot"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_ref",
+            "validation_ref",
+            "dataset_ref"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "validation_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "dataset_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.assemble"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "template_ref",
+            "input_refs",
+            "audience_policy_ref",
+            "render_policy_ref"
+          ],
+          "properties": {
+            "template_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "input_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "audience_policy_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "render_policy_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.request_review"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_ref",
+            "review_policy_ref"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "review_policy_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.release"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_ref",
+            "review_receipt_refs",
+            "destination_ref",
+            "audience_policy_ref"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "review_receipt_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "destination_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "audience_policy_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.supersede"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_ref",
+            "replacement_ref",
+            "reason"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "replacement_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.record_review"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_ref",
+            "decision_receipt_ref"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "decision_receipt_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.reconcile_release"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_ref",
+            "operation_key",
+            "destination_evidence_refs"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "operation_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "destination_evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.create"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "batch_id",
+            "rule_set_ref",
+            "input_snapshot_refs",
+            "entity_ref",
+            "period_ref",
+            "dimension_policy_ref",
+            "item_keys"
+          ],
+          "properties": {
+            "batch_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rule_set_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "input_snapshot_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "entity_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "period_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "dimension_policy_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "item_keys": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.validate"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "batch_ref",
+            "oracle_ref"
+          ],
+          "properties": {
+            "batch_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "oracle_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.calculate_item"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "batch_ref",
+            "item_key",
+            "rule_ref",
+            "input_refs",
+            "numeric_policy_ref"
+          ],
+          "properties": {
+            "batch_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "item_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "input_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "numeric_policy_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.reconcile"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "batch_ref",
+            "result_refs",
+            "control_total_refs",
+            "oracle_ref"
+          ],
+          "properties": {
+            "batch_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "result_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "control_total_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "oracle_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.correct"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "batch_ref",
+            "replacement_input_refs",
+            "correction_kind",
+            "reason",
+            "approved_rule_ref"
+          ],
+          "properties": {
+            "batch_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "replacement_input_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "correction_kind": {
+              "type": "string",
+              "enum": [
+                "split",
+                "reclassify",
+                "additive",
+                "replace"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "approved_rule_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.cancel_remaining"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "batch_ref",
+            "reason"
+          ],
+          "properties": {
+            "batch_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.offer"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_id",
+            "subject_ref",
+            "recipient_role_ref",
+            "task_contract_ref",
+            "evidence_refs",
+            "completion_requirements_ref",
+            "due_rule_ref"
+          ],
+          "properties": {
+            "handoff_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "recipient_role_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "task_contract_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "completion_requirements_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "due_rule_ref": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ref"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.accept"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "acceptance_note"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "acceptance_note": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.return"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "reason",
+            "missing_evidence_refs"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "missing_evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.reassign"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "new_recipient_role_ref",
+            "reason"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "new_recipient_role_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.record_completion"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "completion_evidence_refs",
+            "owning_system_record_ref",
+            "asserted_outcome"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "completion_evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            },
+            "owning_system_record_ref": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ref"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "asserted_outcome": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.verify"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "verification_rule_ref",
+            "observed_evidence_refs"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "verification_rule_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "observed_evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.cancel"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "reason"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.start"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.mark_overdue"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "due_occurrence_ref"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "due_occurrence_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.reconcile_delivery"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handoff_ref",
+            "operation_key",
+            "destination_evidence_refs"
+          ],
+          "properties": {
+            "handoff_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "operation_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "destination_evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.enqueue"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "task_ref",
+            "task_type",
+            "priority",
+            "partition_key",
+            "not_before",
+            "retry_policy_ref"
+          ],
+          "properties": {
+            "task_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "task_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "priority": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "partition_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "not_before": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "retry_policy_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.claim"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "worker_ref",
+            "lease_seconds"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "worker_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "lease_seconds": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 300
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.heartbeat"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "lease_id",
+            "fencing_token"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "lease_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fencing_token": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.complete"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "lease_id",
+            "fencing_token",
+            "result_ref",
+            "effect_receipt_refs"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "lease_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fencing_token": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "result_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "effect_receipt_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.fail"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "failure_class",
+            "failure_evidence_ref",
+            "lease_id",
+            "fencing_token"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "failure_class": {
+              "type": "string",
+              "enum": [
+                "transient",
+                "permanent",
+                "policy",
+                "validation",
+                "unknown_effect"
+              ]
+            },
+            "failure_evidence_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "lease_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fencing_token": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.cancel"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "reason"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.redrive"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "remediation_ref",
+            "expected_task_ref"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "remediation_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "expected_task_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.park"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "lease_id",
+            "fencing_token",
+            "correlation_ref",
+            "wait_reason"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "lease_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fencing_token": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "correlation_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "wait_reason": {
+              "type": "string",
+              "enum": [
+                "human",
+                "external_job",
+                "event",
+                "timer"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.resume"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "correlated_event_ref"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "correlated_event_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.reclaim_expired"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "expired_lease_id",
+            "observed_now"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "expired_lease_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "observed_now": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.reconcile_outcome"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queue_item_ref",
+            "reconciliation_receipt_ref"
+          ],
+          "properties": {
+            "queue_item_ref": {
+              "$ref": "#/$defs/ref"
+            },
+            "reconciliation_receipt_ref": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

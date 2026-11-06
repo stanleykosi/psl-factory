@@ -1,0 +1,78 @@
+Operations to perform:
+  Target specific migration: 0014_native_subject_identity, from documents
+Running migrations:
+  Rendering model states... DONE
+  Unapplying documents.0015_factory_publication_scope...Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\manage.py", line 7, in <module>
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 111, in wrapper
+    res = handle_func(*args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\commands\migrate.py", line 353, in handle
+    post_migrate_state = executor.migrate(
+        targets,
+    ...<3 lines>...
+        fake_initial=fake_initial,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 141, in migrate
+    state = self._migrate_all_backwards(plan, full_plan, fake=fake)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 219, in _migrate_all_backwards
+    self.unapply_migration(states[migration], migration, fake=fake)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 282, in unapply_migration
+    state = migration.unapply(state, schema_editor)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\migration.py", line 159, in unapply
+    raise IrreversibleError(
+        "Operation %s in %s is not reversible" % (operation, self)
+    )
+django.db.migrations.exceptions.IrreversibleError: Operation <RunSQL "\nCREATE FUNCTION psl_publication_factory_scope() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN\n IF (NEW.factory_work_id IS NULL) IS DISTINCT FROM (NEW.factory_policy_id IS NULL)\n  OR (NEW.factory_work_id IS NULL) IS DISTINCT FROM (NEW.factory_source_id IS NULL)\n THEN RAISE EXCEPTION 'Complete optional factory publication scope required'; END IF;\n IF NEW.factory_work_id IS NOT NULL AND NOT EXISTS(\n  SELECT 1 FROM workflows_factorywork w JOIN documents_version v ON v.id=NEW.version_id JOIN documents_document d ON d.id=v.document_id\n   JOIN policy_configuration p ON p.id=NEW.factory_policy_id JOIN core_evidence e ON e.id=NEW.factory_source_id\n   WHERE w.id=NEW.factory_work_id AND w.definition='commercial/v1' AND w.case_id=d.case_id\n   AND p.case_id=w.case_id AND p.component='OPS.factory_commercial_execution' AND e.case_id=w.case_id AND e.kind='agent_private_commercial_intake'\n   AND EXISTS(SELECT 1 FROM pmo_commercialdocumentbinding b JOIN pmo_commercialrevision r ON r.id=b.revision_id JOIN pmo_commercialcase c ON c.id=r.dossier_id WHERE b.version_id=v.id AND c.case_id=w.case_id))\n THEN RAISE EXCEPTION 'Same-case commercial factory publication references required'; END IF;\n RETURN NEW;\nEND $$;\nCREATE TRIGGER psl_publication_factory_scope BEFORE INSERT ON documents_publication FOR EACH ROW EXECUTE FUNCTION psl_publication_factory_scope();\n"> in documents.0015_factory_publication_scope is not reversible
+Operations to perform:
+  Target specific migration: 0040_factory_planning, from workflows
+Running migrations:
+  Rendering model states... DONE
+  Unapplying documents.0015_factory_publication_scope...Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\manage.py", line 7, in <module>
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\base.py", line 111, in wrapper
+    res = handle_func(*args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\management\commands\migrate.py", line 353, in handle
+    post_migrate_state = executor.migrate(
+        targets,
+    ...<3 lines>...
+        fake_initial=fake_initial,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 141, in migrate
+    state = self._migrate_all_backwards(plan, full_plan, fake=fake)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 219, in _migrate_all_backwards
+    self.unapply_migration(states[migration], migration, fake=fake)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\executor.py", line 282, in unapply_migration
+    state = migration.unapply(state, schema_editor)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\migrations\migration.py", line 159, in unapply
+    raise IrreversibleError(
+        "Operation %s in %s is not reversible" % (operation, self)
+    )
+django.db.migrations.exceptions.IrreversibleError: Operation <RunSQL "\nCREATE FUNCTION psl_publication_factory_scope() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN\n IF (NEW.factory_work_id IS NULL) IS DISTINCT FROM (NEW.factory_policy_id IS NULL)\n  OR (NEW.factory_work_id IS NULL) IS DISTINCT FROM (NEW.factory_source_id IS NULL)\n THEN RAISE EXCEPTION 'Complete optional factory publication scope required'; END IF;\n IF NEW.factory_work_id IS NOT NULL AND NOT EXISTS(\n  SELECT 1 FROM workflows_factorywork w JOIN documents_version v ON v.id=NEW.version_id JOIN documents_document d ON d.id=v.document_id\n   JOIN policy_configuration p ON p.id=NEW.factory_policy_id JOIN core_evidence e ON e.id=NEW.factory_source_id\n   WHERE w.id=NEW.factory_work_id AND w.definition='commercial/v1' AND w.case_id=d.case_id\n   AND p.case_id=w.case_id AND p.component='OPS.factory_commercial_execution' AND e.case_id=w.case_id AND e.kind='agent_private_commercial_intake'\n   AND EXISTS(SELECT 1 FROM pmo_commercialdocumentbinding b JOIN pmo_commercialrevision r ON r.id=b.revision_id JOIN pmo_commercialcase c ON c.id=r.dossier_id WHERE b.version_id=v.id AND c.case_id=w.case_id))\n THEN RAISE EXCEPTION 'Same-case commercial factory publication references required'; END IF;\n RETURN NEW;\nEND $$;\nCREATE TRIGGER psl_publication_factory_scope BEFORE INSERT ON documents_publication FOR EACH ROW EXECUTE FUNCTION psl_publication_factory_scope();\n"> in documents.0015_factory_publication_scope is not reversible

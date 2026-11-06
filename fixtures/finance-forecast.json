@@ -1,0 +1,23 @@
+{
+  "scope": "synthetic_test_only_not_operational_policy",
+  "method": {
+    "implementation": "monthly_cash_chain_v1",
+    "decimal_places": 2,
+    "opening_max_age_days": 0,
+    "partial_publication": "label_partial",
+    "matching": "explicit_partial",
+    "match_reversal": "full_once",
+    "rollover": "explicit_dates_and_reasons",
+    "actual_roles": ["Finance"],
+    "distinct_actual_reporter": false,
+    "oracles": [
+      {"opening":"100","inflow":"50","outflow":"20","expected":"130"},
+      {"opening":"100","inflow":null,"outflow":"20","expected":null},
+      {"opening":"10","inflow":"0","outflow":"20","expected":"-10"}
+    ]
+  },
+  "projection": {"forecast":[
+    {"audience":"internal","publisher_roles":["Finance"],"columns":["opening","inflow","outflow","closing"],"disclosure":"aggregate_with_coverage"},
+    {"audience":"management","publisher_roles":["Finance"],"columns":["closing"],"disclosure":"aggregate_with_coverage"}
+  ]}
+}

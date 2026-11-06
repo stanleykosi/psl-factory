@@ -1,0 +1,25 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_native_quality_and_head_return_reject_rework_need_fresh_exact_reports (tests.test_factory_closure.FactoryClosureTests.test_native_quality_and_head_return_reject_rework_need_fresh_exact_reports) ... ok
+test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers (tests.test_factory_closure.FactoryClosureTests.test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers) ... ok
+test_superseded_controlled_version_holds_and_same_input_reassessment_needs_fresh_head_decision (tests.test_factory_closure.FactoryClosureTests.test_superseded_controlled_version_holds_and_same_input_reassessment_needs_fresh_head_decision) ... ok
+test_stop_restart_keeps_original_allowance_and_requires_new_exact_head_decision (tests.test_factory_closure.FactoryClosureTests.test_stop_restart_keeps_original_allowance_and_requires_new_exact_head_decision) ... ok
+test_actual_exit_after_commit_observes_original_closure_and_rechecks_current_authority_before_verification (tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_actual_exit_after_commit_observes_original_closure_and_rechecks_current_authority_before_verification) ... ok
+test_actual_exit_before_commit_rolls_back_native_closure_then_one_recovery_retains_budget (tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_actual_exit_before_commit_rolls_back_native_closure_then_one_recovery_retains_budget) ... ok
+test_stop_after_committed_closure_records_followup_and_never_claims_it_was_cancelled (tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_stop_after_committed_closure_records_followup_and_never_claims_it_was_cancelled) ... ok
+test_two_real_connections_capture_one_private_intake_for_the_same_dossier (tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_two_real_connections_capture_one_private_intake_for_the_same_dossier) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1386.142s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

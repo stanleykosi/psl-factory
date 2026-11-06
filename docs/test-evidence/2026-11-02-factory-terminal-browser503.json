@@ -1,0 +1,34 @@
+{
+  "classification": "Actual synthetic UI agent preparation then human cancellation; PostgreSQL read-only native evidence, not UAT",
+  "source_run": 503,
+  "database": "psl_factory_terminal_ui_4eb1bdeb4ddb",
+  "case": "394ef91e-5365-4072-9719-fba02eabf971",
+  "work": 1,
+  "state": "cancelled",
+  "document": 1,
+  "native_review_task": 1,
+  "native_review_status": "open",
+  "native_review_withdrawn": false,
+  "useful_agent_investigation_and_draft": true,
+  "budget_used": 300,
+  "budget_limit": 20000,
+  "publication_receipt_invoice_go_live_effects": 0,
+  "fresh_instruction_capability_current": true,
+  "false_active_owner_blocker_actions": false,
+  "screenshots": {
+    "docs/test-evidence/2026-11-02-factory-terminal-cancelled503.png": "e85b1462a1f1ad9b08da079aaee86036cfeefbcd1d03fd26b1af9026a646c208",
+    "docs/test-evidence/2026-11-02-factory-terminal-narrow503.png": "76bc2050b683d43bc00e572aa465ebc4c790c0fde8976bc50a958339d5aa9e9d"
+  },
+  "narrow": {
+    "viewport": 390,
+    "height": 844,
+    "document_width": 375,
+    "overflow": false
+  },
+  "keyboard_filter": "Enter on return link preserves active/Stopped; Enter search changes to active/Go-live and shows no active work; same retained cancelled detail remains accessible",
+  "screenshot_note": "Full-page narrow capture failed once; documented viewport capture succeeded after state check. No POST replay.",
+  "viewport_reset": true,
+  "main_fixture_values_added": false,
+  "independent_human_UAT": false,
+  "real_provider": false
+}

@@ -1,0 +1,10 @@
+{
+  "classification": "synthetic_test_only",
+  "purpose": "finance.invoice.review",
+  "window_seconds": 3600,
+  "principal_status": "unavailable",
+  "delegate_status": "available",
+  "method": "native_finance_single_review/v3",
+  "availability_mode": "current_window_required",
+  "operational_values_supplied": false
+}

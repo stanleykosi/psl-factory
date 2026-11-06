@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_superseded_document_cannot_reuse_historical_receipts_as_current_output (tests.test_factory_accounting_reuse.AccountingReceiptReuseTests.test_superseded_document_cannot_reuse_historical_receipts_as_current_output) ... FAIL
+
+======================================================================
+FAIL: test_superseded_document_cannot_reuse_historical_receipts_as_current_output (tests.test_factory_accounting_reuse.AccountingReceiptReuseTests.test_superseded_document_cannot_reuse_historical_receipts_as_current_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_accounting_reuse.py", line 67, in test_superseded_document_cannot_reuse_historical_receipts_as_current_output
+    self.assertIsNone(accounting.snapshot(self.work, self.value, reader=self.actor)[0]['document'])
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 133 is not None
+
+----------------------------------------------------------------------
+Ran 1 test in 18.507s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

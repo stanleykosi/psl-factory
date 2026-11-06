@@ -1,0 +1,144 @@
+[
+  {
+    "run": 266,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_application_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-266-application-recovery.txt",
+    "started_at": "2026-10-27T11:22:37.103457+00:00",
+    "status": "finished",
+    "returncode": 0,
+    "elapsed_seconds": 185.033,
+    "tests": 7,
+    "unittest_seconds": 179.324
+  },
+  {
+    "run": 267,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_cold_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-267-cold-recovery.txt",
+    "started_at": "2026-10-27T11:31:22.482171+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 315.163,
+    "tests": 0,
+    "unittest_seconds": 305.346
+  },
+  {
+    "run": 268,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_cold_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-268-cold-recovery.txt",
+    "started_at": "2026-10-27T11:37:28.393084+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 40.988,
+    "tests": 0,
+    "unittest_seconds": 36.314
+  },
+  {
+    "run": 269,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_cold_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-269-cold-recovery.txt",
+    "started_at": "2026-10-27T11:38:55.900970+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 127.005,
+    "tests": 4,
+    "unittest_seconds": 122.787
+  },
+  {
+    "run": 270,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_cold_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-270-cold-recovery.txt",
+    "started_at": "2026-10-27T11:41:48.443858+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 181.415,
+    "tests": 4,
+    "unittest_seconds": 178.327
+  },
+  {
+    "run": 271,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_cold_recovery",
+      "tests.test_application_recovery",
+      "tests.test_application",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-271-cold-recovery.txt",
+    "started_at": "2026-10-27T11:45:50.584726+00:00",
+    "status": "finished",
+    "returncode": 0,
+    "elapsed_seconds": 523.716,
+    "tests": 41,
+    "unittest_seconds": 513.053
+  },
+  {
+    "run": 272,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_cold_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-272-cold-recovery.txt",
+    "started_at": "2026-10-27T11:55:13.530058+00:00",
+    "status": "finished",
+    "returncode": 0,
+    "elapsed_seconds": 199.572,
+    "tests": 5,
+    "unittest_seconds": 196.104
+  }
+]

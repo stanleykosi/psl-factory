@@ -1,0 +1,15 @@
+{
+  "case": "c06ea65e-0846-42e3-b524-455b72cf4443",
+  "viewer": "studio-demo",
+  "verification": "CUA live browser, localhost Django server",
+  "metadata_board_rendered": true,
+  "current_and_historical_sources_and_working_runs_visible": true,
+  "rejection_code_visible": "out_of_contract_fields",
+  "private_input_and_working_links_absent_for_metadata_viewer": true,
+  "report_link_current_permission_check_returned": 403,
+  "no_private_rows_or_pay_values_on_board": true,
+  "screenshot": "docs/test-evidence/2026-10-22-payroll-board.png",
+  "screenshot_visually_inspected": true,
+  "human_private_and_report_rendering": "real Django client/PostgreSQL tests in RUN105; no browser session impersonation",
+  "native_source_authenticity": false
+}

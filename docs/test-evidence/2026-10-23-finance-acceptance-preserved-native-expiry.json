@@ -1,0 +1,40 @@
+{
+  "observations": [
+    {
+      "case": "5b533c39-910f-412c-9290-44ee69f0c9c9",
+      "lineage": 14,
+      "check": 19,
+      "review": 9,
+      "max_age_seconds": 3600,
+      "age_seconds": 9643.489289,
+      "source_sha256": "e7b37435d7044002976fb1b8f1be50befb71f654e7c0247e31b76cf6f8538d6f",
+      "report_sha256": "3fda8fd9e014c8e55eb311afa1228fe128722f1b02f50e8f561e04b27b85811f",
+      "verification_snapshot": {
+        "F01.verification_rules": 393
+      },
+      "authority_unchanged": true,
+      "other_current_checks_passed": true,
+      "current_hold": "Incumbent observation expired",
+      "refreshed_or_reauthorised": false
+    },
+    {
+      "case": "a9f964e7-ee00-4a33-9a1a-b6f14b9bc6ce",
+      "lineage": 15,
+      "check": 20,
+      "review": 10,
+      "max_age_seconds": 3600,
+      "age_seconds": 9627.911199,
+      "source_sha256": "ac76b7902a92e97aab770e3d83c3f6a5e440ce4946249f8da026293060a09479",
+      "report_sha256": "306f3c300c02e2ae8a5889437adf0231516b3b300ccb908c79847fd33dae4728",
+      "verification_snapshot": {
+        "F01.verification_rules": 401
+      },
+      "authority_unchanged": true,
+      "other_current_checks_passed": true,
+      "current_hold": "Incumbent observation expired",
+      "refreshed_or_reauthorised": false
+    }
+  ],
+  "source_and_authority_unchanged": true,
+  "no_current_reauthorisation": true
+}

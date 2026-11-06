@@ -1,0 +1,71 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 40 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0012_role_native_guard...test_direct_guard_shares_native_authority_without_granting_actions_or_requiring_unused_policies (tests.test_role_guard.RoleGuardTests.test_direct_guard_shares_native_authority_without_granting_actions_or_requiring_unused_policies) ... ok
+test_invalid_delegated_bundle_drafts_cannot_replace_active_rule (tests.test_role_guard.RoleGuardTests.test_invalid_delegated_bundle_drafts_cannot_replace_active_rule) ... ok
+test_operational_mixed_delegate_needs_explicit_bundle_while_own_role_remains_available (tests.test_role_guard.RoleGuardTests.test_operational_mixed_delegate_needs_explicit_bundle_while_own_role_remains_available) ... ok
+test_typed_delegation_ui_drafts_without_activation_and_boolean_false_binding_is_valid (tests.test_role_guard.RoleGuardTests.test_typed_delegation_ui_drafts_without_activation_and_boolean_false_binding_is_valid) ... ok
+test_v2_principal_can_delegate_single_role_and_actual_document_review_expires_with_principal_eligibility (tests.test_role_guard.RoleGuardTests.test_v2_principal_can_delegate_single_role_and_actual_document_review_expires_with_principal_eligibility) ... ERROR
+test_v2_shared_security_engineering_requires_explicit_current_bundle_and_fresh_decisions (tests.test_role_eligibility.EmergencyBundleTests.test_v2_shared_security_engineering_requires_explicit_current_bundle_and_fresh_decisions) ... ok
+test_csrf_typed_ui_drafts_only_and_agent_rechecks_current_scope (tests.test_role_eligibility.RoleEligibilityTests.test_csrf_typed_ui_drafts_only_and_agent_rechecks_current_scope) ... ok
+test_eligibility_cannot_grant_action_or_waive_native_reviewer_independence (tests.test_role_eligibility.RoleEligibilityTests.test_eligibility_cannot_grant_action_or_waive_native_reviewer_independence) ... ok
+test_exact_explicit_bundle_runs_native_decisions_and_baseline_without_new_gates (tests.test_role_eligibility.RoleEligibilityTests.test_exact_explicit_bundle_runs_native_decisions_and_baseline_without_new_gates) ... ok
+test_expiry_is_half_open_actor_specific_and_stales_unsigned_approval_use (tests.test_role_eligibility.RoleEligibilityTests.test_expiry_is_half_open_actor_specific_and_stales_unsigned_approval_use) ... ok
+test_invalid_bundles_remain_drafts_and_cannot_replace_active_nomination (tests.test_role_eligibility.RoleEligibilityTests.test_invalid_bundles_remain_drafts_and_cannot_replace_active_nomination) ... ok
+test_missing_eligibility_holds_only_multirole_decision_and_capture_remains_available (tests.test_role_eligibility.RoleEligibilityTests.test_missing_eligibility_holds_only_multirole_decision_and_capture_remains_available) ... ok
+test_policy_successor_and_revocation_require_fresh_native_authority (tests.test_role_eligibility.RoleEligibilityTests.test_policy_successor_and_revocation_require_fresh_native_authority) ... ok
+test_scoped_bundle_adoption_requires_origin_access_and_never_installs_action_grants (tests.test_role_eligibility.RoleEligibilityTests.test_scoped_bundle_adoption_requires_origin_access_and_never_installs_action_grants) ... ok
+test_agent_has_cited_draft_and_independent_check_but_no_approval (tests.test_controlled_documents.ControlledDocumentTests.test_agent_has_cited_draft_and_independent_check_but_no_approval) ... ok
+test_agent_rejects_forged_citation_or_authority_and_rechecks_grant (tests.test_controlled_documents.ControlledDocumentTests.test_agent_rejects_forged_citation_or_authority_and_rechecks_grant) ... ok
+test_changed_pmo_baseline_holds_old_document (tests.test_controlled_documents.ControlledDocumentTests.test_changed_pmo_baseline_holds_old_document) ... ok
+test_changed_policy_snapshot_holds_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_changed_policy_snapshot_holds_delivery) ... ok
+test_client_template_cannot_configure_internal_note_leak (tests.test_controlled_documents.ControlledDocumentTests.test_client_template_cannot_configure_internal_note_leak) ... ok
+test_database_protects_document_history_and_task_identity (tests.test_controlled_documents.ControlledDocumentTests.test_database_protects_document_history_and_task_identity) ... ok
+test_delegation_is_explicit_scoped_and_rechecked_at_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_delegation_is_explicit_scoped_and_rechecked_at_delivery) ... ok
+test_drafting_and_review_continue_without_publication_configuration (tests.test_controlled_documents.ControlledDocumentTests.test_drafting_and_review_continue_without_publication_configuration) ... ok
+test_duplicate_publication_and_stale_requests_do_not_mutate (tests.test_controlled_documents.ControlledDocumentTests.test_duplicate_publication_and_stale_requests_do_not_mutate) ... ok
+test_expired_fence_cannot_deliver_or_finalize (tests.test_controlled_documents.ControlledDocumentTests.test_expired_fence_cannot_deliver_or_finalize) ... ok
+test_held_transport_retry_revalidates_and_records_operator_rationale (tests.test_controlled_documents.ControlledDocumentTests.test_held_transport_retry_revalidates_and_records_operator_rationale) ... ok
+test_internal_template_can_explicitly_avoid_an_invented_pmo_lead_gate (tests.test_controlled_documents.ControlledDocumentTests.test_internal_template_can_explicitly_avoid_an_invented_pmo_lead_gate) ... ok
+test_invalid_policy_artifacts_are_rejected (tests.test_controlled_documents.ControlledDocumentTests.test_invalid_policy_artifacts_are_rejected) ... ok
+test_lookups_fail_closed_and_operator_can_retry_or_cancel (tests.test_controlled_documents.ControlledDocumentTests.test_lookups_fail_closed_and_operator_can_retry_or_cancel) ... ok
+test_missing_sections_and_citations_hold_only_review_request (tests.test_controlled_documents.ControlledDocumentTests.test_missing_sections_and_citations_hold_only_review_request) ... ok
+test_new_revision_obsoletes_open_wait_and_held_publication (tests.test_controlled_documents.ControlledDocumentTests.test_new_revision_obsoletes_open_wait_and_held_publication) ... ok
+test_publication_independent_from_hypercare_and_payment_policy (tests.test_controlled_documents.ControlledDocumentTests.test_publication_independent_from_hypercare_and_payment_policy) ... ok
+test_receipt_access_is_rechecked_after_delivery_and_revocation (tests.test_controlled_documents.ControlledDocumentTests.test_receipt_access_is_rechecked_after_delivery_and_revocation) ... ok
+test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case (tests.test_controlled_documents.ControlledDocumentTests.test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case) ... ok
+test_reject_and_withdraw_are_configured_distinct_terminal_events (tests.test_controlled_documents.ControlledDocumentTests.test_reject_and_withdraw_are_configured_distinct_terminal_events) ... ok
+test_return_needs_configured_authority_then_revision_gets_new_review (tests.test_controlled_documents.ControlledDocumentTests.test_return_needs_configured_authority_then_revision_gets_new_review) ... ok
+test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox (tests.test_controlled_documents.ControlledDocumentTests.test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox) ... ok
+test_staff_draft_review_publication_and_recipient_projection (tests.test_controlled_documents.ControlledDocumentTests.test_staff_draft_review_publication_and_recipient_projection) ... ok
+test_timeout_after_accept_is_reconciled_before_revoked_authority (tests.test_controlled_documents.ControlledDocumentTests.test_timeout_after_accept_is_reconciled_before_revoked_authority) ... ok
+test_publication_worker_recovers_after_separate_process_exit (tests.test_controlled_documents.PublicationProcessTests.test_publication_worker_recovers_after_separate_process_exit) ... ok
+test_two_actual_connections_claim_one_publication_once (tests.test_controlled_documents.PublicationProcessTests.test_two_actual_connections_claim_one_publication_once) ... ok
+
+======================================================================
+ERROR: test_v2_principal_can_delegate_single_role_and_actual_document_review_expires_with_principal_eligibility (tests.test_role_guard.RoleGuardTests.test_v2_principal_can_delegate_single_role_and_actual_document_review_expires_with_principal_eligibility)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_role_guard.py", line 77, in test_v2_principal_can_delegate_single_role_and_actual_document_review_expires_with_principal_eligibility
+    with self.assertRaises(ValidationError):controlled.validate_review(c,version)
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\controlled.py", line 244, in validate_review
+    if decision_authority(review.actor,case,'PMO Lead','approve',review.delegated)!=review.authority:
+       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 368, in decision_authority
+    raise PermissionDenied('No current delegated authority for this person and role')
+django.core.exceptions.PermissionDenied: No current delegated authority for this person and role
+
+----------------------------------------------------------------------
+Ran 40 tests in 79.540s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

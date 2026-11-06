@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0046_factory_closure...test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure (tests.test_factory_closure.FactoryClosureTests.test_agent_prepares_waits_for_actual_head_decision_then_finalises_and_verifies_native_closure) ... ok
+test_configured_document_review_is_native_and_head_decision_does_not_get_inferred (tests.test_factory_closure.FactoryClosureTests.test_configured_document_review_is_native_and_head_decision_does_not_get_inferred) ... FAIL
+
+======================================================================
+FAIL: test_configured_document_review_is_native_and_head_decision_does_not_get_inferred (tests.test_factory_closure.FactoryClosureTests.test_configured_document_review_is_native_and_head_decision_does_not_get_inferred)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_closure.py", line 74, in test_configured_document_review_is_native_and_head_decision_does_not_get_inferred
+    self.assertIsNotNone(v);self.assertEqual(HumanTask.objects.filter(version=v,status='open').count(),1)
+    ~~~~~~~~~~~~~~~~~~~~^^^
+AssertionError: unexpectedly None
+
+----------------------------------------------------------------------
+Ran 2 tests in 520.901s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

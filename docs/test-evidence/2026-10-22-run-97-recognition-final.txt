@@ -1,0 +1,83 @@
+Found 66 test(s).
+Using existing test database for alias 'default' ('test_psl')...
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+test_F33_E01_cash_alone_retains_unknown_and_gap (tests.test_recognition.RecognitionTests.test_F33_E01_cash_alone_retains_unknown_and_gap) ... ok
+test_F33_E02_estimate_and_cash_no_policy_no_revenue (tests.test_recognition.RecognitionTests.test_F33_E02_estimate_and_cash_no_policy_no_revenue) ... ok
+test_F33_N01_connected_packet_receipt_review_no_accounting (tests.test_recognition.RecognitionTests.test_F33_N01_connected_packet_receipt_review_no_accounting) ... ok
+test_actual_finance_grant_revocation_invalidates_current_decision (tests.test_recognition.RecognitionTests.test_actual_finance_grant_revocation_invalidates_current_decision) ... ok
+test_admin_and_role_text_do_not_grant_finance_authority (tests.test_recognition.RecognitionTests.test_admin_and_role_text_do_not_grant_finance_authority) ... ok
+test_cash_cannot_be_classified_as_completion (tests.test_recognition.RecognitionTests.test_cash_cannot_be_classified_as_completion) ... ok
+test_cross_case_sources_and_packet_denied (tests.test_recognition.RecognitionTests.test_cross_case_sources_and_packet_denied) ... ok
+test_current_criteria_require_acceptance_without_relabelling_completion (tests.test_recognition.RecognitionTests.test_current_criteria_require_acceptance_without_relabelling_completion) ... ok
+test_exact_retry_once_changed_intent_denied (tests.test_recognition.RecognitionTests.test_exact_retry_once_changed_intent_denied) ... ok
+test_gaps_conflicts_prevent_completed_review_but_allow_return (tests.test_recognition.RecognitionTests.test_gaps_conflicts_prevent_completed_review_but_allow_return) ... ok
+test_historical_retry_after_policy_revocation_no_new_effect (tests.test_recognition.RecognitionTests.test_historical_retry_after_policy_revocation_no_new_effect) ... ok
+test_independence_requires_distinct_configured_finance_human (tests.test_recognition.RecognitionTests.test_independence_requires_distinct_configured_finance_human) ... ok
+test_invalid_calendar_date_and_foreign_packet_validation (tests.test_recognition.RecognitionTests.test_invalid_calendar_date_and_foreign_packet_validation) ... ok
+test_invalid_future_date_and_unknown_fields (tests.test_recognition.RecognitionTests.test_invalid_future_date_and_unknown_fields) ... ok
+test_missing_authority_only_holds_attestation (tests.test_recognition.RecognitionTests.test_missing_authority_only_holds_attestation) ... ok
+test_new_attestation_requires_new_finance_review (tests.test_recognition.RecognitionTests.test_new_attestation_requires_new_finance_review) ... ok
+test_new_packet_requires_new_attestation_and_review (tests.test_recognition.RecognitionTests.test_new_packet_requires_new_attestation_and_review) ... ok
+test_policy_document_successor_invalidates_rule (tests.test_recognition.RecognitionTests.test_policy_document_successor_invalidates_rule) ... ok
+test_policy_revocation_and_successor_invalidate_review (tests.test_recognition.RecognitionTests.test_policy_revocation_and_successor_invalidate_review) ... ok
+test_reattestation_requires_fresh_request_and_receipt_not_old_acknowledgement (tests.test_recognition.RecognitionTests.test_reattestation_requires_fresh_request_and_receipt_not_old_acknowledgement) ... ok
+test_receipt_does_not_need_recognition_policy (tests.test_recognition.RecognitionTests.test_receipt_does_not_need_recognition_policy) ... ok
+test_request_requires_attestation_receipt_requires_request (tests.test_recognition.RecognitionTests.test_request_requires_attestation_receipt_requires_request) ... ok
+test_review_requires_receipt_and_decision_reference (tests.test_recognition.RecognitionTests.test_review_requires_receipt_and_decision_reference) ... ok
+test_revised_signed_baseline_invalidates_use (tests.test_recognition.RecognitionTests.test_revised_signed_baseline_invalidates_use) ... ok
+test_revoked_attesting_grant_holds_finance_review (tests.test_recognition.RecognitionTests.test_revoked_attesting_grant_holds_finance_review) ... ok
+test_scoped_AF13_source_successor_holds_packet (tests.test_recognition.RecognitionTests.test_scoped_AF13_source_successor_holds_packet) ... ok
+test_scoped_agent_cites_categories_drafts_questions_never_approves (tests.test_recognition.RecognitionTests.test_scoped_agent_cites_categories_drafts_questions_never_approves) ... ok
+test_source_successor_invalidates_use_preserves_receipt (tests.test_recognition.RecognitionTests.test_source_successor_invalidates_use_preserves_receipt) ... ok
+test_sql_update_delete_guards (tests.test_recognition.RecognitionTests.test_sql_update_delete_guards) ... ok
+test_typed_policy_draft_ui_and_shared_lifecycle (tests.test_recognition.RecognitionTests.test_typed_policy_draft_ui_and_shared_lifecycle) ... ok
+test_ui_and_whitelisted_report_no_raw_source (tests.test_recognition.RecognitionTests.test_ui_and_whitelisted_report_no_raw_source) ... ok
+test_ui_rejects_claim_fields_and_stale_revision (tests.test_recognition.RecognitionTests.test_ui_rejects_claim_fields_and_stale_revision) ... ok
+test_unknown_scoped_source_and_milestone_are_validation_errors (tests.test_recognition.RecognitionTests.test_unknown_scoped_source_and_milestone_are_validation_errors) ... ok
+test_validator_actual_pm_finance_human_and_no_formula (tests.test_recognition.RecognitionTests.test_validator_actual_pm_finance_human_and_no_formula) ... ok
+test_admin_flag_does_not_grant_record_access (tests.test_application.ApplicationTests.test_admin_flag_does_not_grant_record_access) ... ok
+test_agent_rejects_uncited_output_and_cross_scope_read (tests.test_application.ApplicationTests.test_agent_rejects_uncited_output_and_cross_scope_read) ... ok
+test_agent_source_instructions_are_cited_data_only (tests.test_application.ApplicationTests.test_agent_source_instructions_are_cited_data_only) ... ok
+test_all_122_original_ids_visible_in_coverage (tests.test_application.ApplicationTests.test_all_122_original_ids_visible_in_coverage) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_cost_revision_cannot_reuse_decisions (tests.test_application.ApplicationTests.test_cost_revision_cannot_reuse_decisions) ... ok
+test_cross_case_evidence_cannot_form_baseline (tests.test_application.ApplicationTests.test_cross_case_evidence_cannot_form_baseline) ... ok
+test_csrf_and_template_escaping (tests.test_application.ApplicationTests.test_csrf_and_template_escaping) ... ok
+test_database_blocks_history_rewrites_even_via_queryset (tests.test_application.ApplicationTests.test_database_blocks_history_rewrites_even_via_queryset) ... ok
+test_duplicate_milestone_has_one_outbox_intent (tests.test_application.ApplicationTests.test_duplicate_milestone_has_one_outbox_intent) ... ok
+test_expired_worker_cannot_finish_after_reclaim (tests.test_application.ApplicationTests.test_expired_worker_cannot_finish_after_reclaim) ... ok
+test_human_costing_order_and_separate_review (tests.test_application.ApplicationTests.test_human_costing_order_and_separate_review) ... ok
+test_lookup_failure_does_not_dispatch (tests.test_application.ApplicationTests.test_lookup_failure_does_not_dispatch) ... ok
+test_no_signature_before_plan_and_cost_decisions (tests.test_application.ApplicationTests.test_no_signature_before_plan_and_cost_decisions) ... ok
+test_policy_expiry_invalid_timezone_and_synthetic_isolation (tests.test_application.ApplicationTests.test_policy_expiry_invalid_timezone_and_synthetic_isolation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+test_policy_partial_activation_stale_revoke_and_version_history (tests.test_application.ApplicationTests.test_policy_partial_activation_stale_revoke_and_version_history) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_requires_postgresql (tests.test_application.ApplicationTests.test_requires_postgresql) ... ok
+test_reserved_effect_payload_and_confirmed_receipt_are_immutable (tests.test_application.ApplicationTests.test_reserved_effect_payload_and_confirmed_receipt_are_immutable) ... ok
+test_review_binds_exact_version_and_does_not_review_next_revision (tests.test_application.ApplicationTests.test_review_binds_exact_version_and_does_not_review_next_revision) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_stale_command_has_no_mutation (tests.test_application.ApplicationTests.test_stale_command_has_no_mutation) ... ok
+test_superseded_role_policy_can_be_reapproved_without_rewriting_history (tests.test_application.ApplicationTests.test_superseded_role_policy_can_be_reapproved_without_rewriting_history) ... ok
+test_support_response_resolution_reopen_preserve_history (tests.test_application.ApplicationTests.test_support_response_resolution_reopen_preserve_history) ... ok
+test_unknown_external_result_is_reconciled_without_resend (tests.test_application.ApplicationTests.test_unknown_external_result_is_reconciled_without_resend) ... ok
+test_worker_rechecks_revoked_grant (tests.test_application.ApplicationTests.test_worker_rechecks_revoked_grant) ... ok
+test_grant_revocation_before_acceptance_serializes_and_holds_decision (tests.test_recognition_concurrency.RecognitionConcurrencyTests.test_grant_revocation_before_acceptance_serializes_and_holds_decision) ... ok
+test_two_connections_record_one_owner_decision_for_same_operation (tests.test_recognition_concurrency.RecognitionConcurrencyTests.test_two_connections_record_one_owner_decision_for_same_operation) ... ok
+test_staff_handoff_survives_worker_process_exit_and_restart (tests.test_application.WorkerConcurrencyTests.test_staff_handoff_survives_worker_process_exit_and_restart) ... ok
+test_two_workers_claim_one_intent_once (tests.test_application.WorkerConcurrencyTests.test_two_workers_claim_one_intent_once) ... ok
+
+----------------------------------------------------------------------
+Ran 66 tests in 113.307s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...

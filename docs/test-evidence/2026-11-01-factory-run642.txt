@@ -1,0 +1,71 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_unknown_policy_ui_and_validator_do_not_install_authority (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_unknown_policy_ui_and_validator_do_not_install_authority) ... ERROR
+
+======================================================================
+ERROR: test_unknown_policy_ui_and_validator_do_not_install_authority (tests.test_factory_receipt_recovery.ReceiptRecoveryTests.test_unknown_policy_ui_and_validator_do_not_install_authority)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_receipt_recovery_views.py", line 69, in configuration
+    except (ValueError,TypeError):raise ValidationError('Choose an exact settings revision') from None
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Choose an exact settings revision']
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_receipt_recovery.py", line 112, in test_unknown_policy_ui_and_validator_do_not_install_authority
+    self.assertContains(self.client.post(url,{'action':'active','configuration':'invalid'}),'Choose an exact settings revision')
+                        ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1156, in post
+    response = super().post(
+        path,
+    ...<5 lines>...
+        **extra,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 499, in post
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "POST",
+        ^^^^^^^
+    ...<6 lines>...
+        **extra,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_receipt_recovery_views.py", line 72, in configuration
+    except ValidationError as exc:form.add_error(None,exc)
+                                  ~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\forms\forms.py", line 315, in add_error
+    if field in self.cleaned_data:
+                ^^^^^^^^^^^^^^^^^
+AttributeError: 'SettingsForm' object has no attribute 'cleaned_data'. Did you mean: 'changed_data'?
+
+----------------------------------------------------------------------
+Ran 1 test in 3.957s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

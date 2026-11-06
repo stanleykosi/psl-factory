@@ -1,0 +1,38 @@
+[
+  {
+    "launcher_start_utc": "2026-11-03T02:10:01.8963639Z",
+    "name": "main",
+    "port": 8000,
+    "launcher_id": 60
+  },
+  {
+    "launcher_start_utc": "2026-11-03T02:10:01.9570657Z",
+    "name": "routing",
+    "port": 8014,
+    "launcher_id": 13716
+  },
+  {
+    "launcher_start_utc": "2026-11-03T02:10:01.9873870Z",
+    "name": "recovery",
+    "port": 8015,
+    "launcher_id": 6660
+  },
+  {
+    "launcher_start_utc": "2026-11-03T02:10:02.0235766Z",
+    "name": "authority",
+    "port": 8016,
+    "launcher_id": 6256
+  },
+  {
+    "launcher_start_utc": "2026-11-03T02:10:02.0893854Z",
+    "name": "status",
+    "port": 8017,
+    "launcher_id": 3316
+  },
+  {
+    "launcher_start_utc": "2026-11-03T02:10:02.1612754Z",
+    "name": "retirement",
+    "port": 8018,
+    "launcher_id": 2444
+  }
+]

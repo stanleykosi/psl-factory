@@ -1,0 +1,24 @@
+{
+  "run": 659,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_rfp.RFPTests.test_queued_response_rechecks_deadline_and_holds_operator_retry",
+    "tests.test_rfp.RFPTests.test_committed_receipt_reconciles_after_deadline_without_resending",
+    "tests.test_factory_accounting.AccountingOperatorTests.test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown",
+    "tests.test_factory_commercial.FactoryCommercialTests.test_primary_commercial_intake_and_configuration_use_plain_native_source_choices",
+    "tests.test_factory_coverage",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T23:11:40.195782+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run659.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 98.341
+}

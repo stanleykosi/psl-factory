@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "identity",
+    "0004_source_access_delegation",
+    "--noinput"
+  ],
+  "started_at": "2026-10-28T16:56:33.978876+00:00",
+  "elapsed_seconds": 3.838,
+  "returncode": 0,
+  "log": "docs\\test-evidence\\2026-10-28-source-access-main-migration.txt",
+  "actual_owner_or_grant_installation": false
+}

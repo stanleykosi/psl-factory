@@ -1,0 +1,33 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_configured_native_coordinator_prepares_an_operational_case_without_external_provider (tests.test_factory_coordinator.FactoryCoordinatorTests.test_configured_native_coordinator_prepares_an_operational_case_without_external_provider) ... ERROR
+
+======================================================================
+ERROR: test_configured_native_coordinator_prepares_an_operational_case_without_external_provider (tests.test_factory_coordinator.FactoryCoordinatorTests.test_configured_native_coordinator_prepares_an_operational_case_without_external_provider)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_coordinator.py", line 15, in test_configured_native_coordinator_prepares_an_operational_case_without_external_provider
+    policy=draft_operator_policy(a,c.pk,'OPS.factory_coordinator',{
+        'mode':'internal_permitted_step_v1','contract_id':None,'planner_id':a.pk,
+        'data_scope':'eligible_actions_and_opaque_citations_v1','max_output_chars':2048},e['policy_decision'].pk,timezone.now())
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\operator_drafts.py", line 13, in draft_operator_policy
+    if component not in SCHEMAS:raise ValidationError('Choose a supplemental operator interface')
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Choose a supplemental operator interface']
+
+----------------------------------------------------------------------
+Ran 1 test in 3.415s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

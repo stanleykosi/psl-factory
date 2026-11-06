@@ -1,0 +1,21 @@
+{
+  "run": 391,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_ui_layout",
+    "tests.test_shared_workbench",
+    "tests.test_settlement",
+    "tests.test_support_flow",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-391-process-acceptance.txt",
+  "started_at": "2026-10-29T18:22:41.960157+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 505.436
+}

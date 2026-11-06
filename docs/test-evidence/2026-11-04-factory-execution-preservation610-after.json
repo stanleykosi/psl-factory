@@ -1,0 +1,95 @@
+{
+  "source_run": 610,
+  "databases": [
+    {
+      "database": "psl",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_routing_ui_c87774ebaed7",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_review_authority_ui_f4ef78667cad",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_review_status_ui_82525e1a8333",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_review_retirement_ui_7036019b48ae",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_review_restore_ui_0c64ab3f2a4f",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_delegation_ui_7de03a500dbf",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_availability_ui_f599e39e4e5e",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_accounting_ui_08cf999821ca",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    },
+    {
+      "database": "psl_factory_coordinator_ui_98ae90c203b0",
+      "original_rowsets_preserved": 330,
+      "original_indexes_preserved": 1553,
+      "new_bindings_empty": true,
+      "all_original_work_fields_preserved": true,
+      "all_work_binding_pointers_null": true
+    }
+  ],
+  "business_records_preserved": true,
+  "commands_replayed": false
+}

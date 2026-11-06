@@ -1,0 +1,10 @@
+{
+  "submitted_utc": "2026-11-04T18:53:52.9203738Z",
+  "source_run": 623,
+  "other_processes_stopped": false,
+  "launcher_pid": 15572,
+  "port": 8024,
+  "database": "psl_factory_source_ui_c484d169d676",
+  "fixture_source_run": 619,
+  "status": "PENDING"
+}

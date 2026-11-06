@@ -1,0 +1,22 @@
+{
+  "run": 493,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_missing_client_recipient_retains_reviewed_draft_then_publishes_same_version_after_configuration",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone",
+    "tests.test_factory_go_live.FactoryGoLiveTests.test_queued_publication_rechecks_current_publisher_and_retries_only_original_exact_job",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T17:17:21.639516+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run493.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 31.507
+}

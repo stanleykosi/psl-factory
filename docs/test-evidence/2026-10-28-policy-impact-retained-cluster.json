@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-28",
+  "database_target": "retained local PostgreSQL cluster, psl/test_psl on 127.0.0.1:55432",
+  "initial_observation": "pg_ctl status reported no server; pg_isready reported no response",
+  "sandbox_start": {"returncode":1,"result":"Windows restricted-token startup error87"},
+  "elevated_start": {"returncode":1,"result":"pg_ctl30s wait expired while normal unclean-shutdown recovery continued"},
+  "eventual_observation": "pg_isready accepting connections and PostgreSQL ready log at 2026-10-28T20:07:54Z",
+  "data_verification": "docs/test-evidence/2026-10-28-policy-impact-baseline.json",
+  "prior_main_table_rowsets_verified":319,
+  "main_test_prior_definitions_identical":true,
+  "reset_reinitialize_old_database_delete_or_recovery_bypass":false,
+  "classification":"retained local build-cluster continuity evidence; not a production DR or live-pilot acceptance"
+}

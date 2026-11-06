@@ -1,0 +1,19 @@
+{
+  "run": 282,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_native_finance",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-282-native-finance.txt",
+  "started_at": "2026-10-27T15:06:06.563662+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 1151.431
+}

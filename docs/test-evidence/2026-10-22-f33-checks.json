@@ -1,0 +1,8 @@
+{
+ "django_check":{"exit_code":0,"result":"System check identified no issues (0 silenced)"},
+ "migration_drift":{"exit_code":0,"result":"No changes detected"},
+ "compileall":{"exit_code":0,"result":"Passed; final agent/test files also compiled after RUN98"},
+ "pip_check":{"exit_code":0,"result":"No broken requirements found"},
+ "sources_changed_after_RUN98":false,
+ "evidence_boundary":"Actual local checks; no native provider, deployment or accounting execution"
+}

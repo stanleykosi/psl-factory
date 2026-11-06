@@ -1,0 +1,72 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_csrf_ui_source_choices_agent_and_sql_native_identity_guards (tests.test_native_validation.NativeValidationTests.test_csrf_ui_source_choices_agent_and_sql_native_identity_guards) ... ok
+test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment (tests.test_native_validation.NativeValidationTests.test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment) ... ok
+test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance (tests.test_native_validation.NativeValidationTests.test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance) ... ok
+test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance (tests.test_native_validation.NativeValidationTests.test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance) ... ok
+test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance (tests.test_native_validation.NativeValidationTests.test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance) ... ok
+test_pilot_links_current_native_owner_scope_and_rechecks_revoked_source_and_review (tests.test_native_validation.NativeValidationTests.test_pilot_links_current_native_owner_scope_and_rechecks_revoked_source_and_review) ... ok
+test_pilot_ui_selects_native_review_and_rejects_foreign_or_unsupported_contract_fields (tests.test_native_validation.NativeValidationTests.test_pilot_ui_selects_native_review_and_rejects_foreign_or_unsupported_contract_fields) ... ok
+test_real_controlled_publication_uses_immutable_reservation_time_and_receipt (tests.test_native_validation.NativeValidationTests.test_real_controlled_publication_uses_immutable_reservation_time_and_receipt) ... ERROR
+test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance (tests.test_native_validation.NativeValidationTests.test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance) ... ok
+test_reported_external_actuals_matching_examples_still_cannot_establish_operational_execution (tests.test_native_validation.NativeValidationTests.test_reported_external_actuals_matching_examples_still_cannot_establish_operational_execution) ... ok
+test_synthetic_case_cannot_promote_native_history_to_operational_acceptance (tests.test_native_validation.NativeValidationTests.test_synthetic_case_cannot_promote_native_history_to_operational_acceptance) ... ok
+test_engineering_immutable_request_timestamp_and_real_receipt (tests.test_native_validation.OwnedNativeSourceTests.test_engineering_immutable_request_timestamp_and_real_receipt) ... ok
+test_partner_immutable_report_timestamp_and_real_finance_receipt (tests.test_native_validation.OwnedNativeSourceTests.test_partner_immutable_report_timestamp_and_real_finance_receipt) ... ok
+test_private_response_immutable_human_decision_time_and_receipt (tests.test_native_validation.OwnedNativeSourceTests.test_private_response_immutable_human_decision_time_and_receipt) ... ok
+test_worker_row_lock_holds_native_evaluation_without_deadlock_or_receipt_claim (tests.test_native_validation.NativeEvaluationConcurrencyTests.test_worker_row_lock_holds_native_evaluation_without_deadlock_or_receipt_claim) ... ok
+
+======================================================================
+ERROR: test_real_controlled_publication_uses_immutable_reservation_time_and_receipt (tests.test_native_validation.NativeValidationTests.test_real_controlled_publication_uses_immutable_reservation_time_and_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_validation.py", line 207, in test_real_controlled_publication_uses_immutable_reservation_time_and_receipt
+    self.assertEqual(native.current(row,a),row.pk)
+                     ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\native_validation.py", line 69, in current
+    expect=af13.approved_review(p,'expectations')
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 159, in approved_review
+    if p.finance_handoffs.exists() or hasattr(p,'private_readiness_packet') or hasattr(p,'private_protection_packet') or ValidationReplay.objects.filter(package=p,provenance__format='psl.native-validation/v1').exists():return evaluation.confirmed(p.case_id,('af13',p.pk,kind),lambda:_approved_review(p,kind))
+                                                                                                                                                                                                                                  ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 27, in confirmed
+    if checks(case_id) is None:return read()
+                                      ~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 159, in <lambda>
+    if p.finance_handoffs.exists() or hasattr(p,'private_readiness_packet') or hasattr(p,'private_protection_packet') or ValidationReplay.objects.filter(package=p,provenance__format='psl.native-validation/v1').exists():return evaluation.confirmed(p.case_id,('af13',p.pk,kind),lambda:_approved_review(p,kind))
+                                                                                                                                                                                                                                                                                           ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 165, in _approved_review
+    if owner_authority(r.actor,p,kind)!=r.authority:raise ValidationError('Owner authority changed; new review required')
+       ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\validation.py", line 150, in owner_authority
+    package_access(actor,p)
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance.py", line 122, in package_access
+    native_access(a,p)
+    ~~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\native_validation.py", line 21, in package_access
+    adapter.source(actor,p.case,row.provenance['family'],row.provenance['job'])
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\validation_native.py", line 24, in source
+    family_access(actor,case,family) # Check current domain authority before source existence.
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\operator_inventory.py", line 37, in family_access
+    else:require(a,c,ROUTES[family][2])
+         ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+----------------------------------------------------------------------
+Ran 15 tests in 206.857s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

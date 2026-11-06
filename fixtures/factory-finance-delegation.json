@@ -1,0 +1,15 @@
+{
+  "classification": "synthetic_test_only",
+  "notice": "Fictional test configuration; never operational policy or real authority appointments.",
+  "method": "native_finance_single_review/v2",
+  "authority_mode": "direct_or_configured_delegate",
+  "role": "Finance",
+  "delegate_eligibility_roles": ["Finance"],
+  "window_seconds": 3600,
+  "decision_scope": {
+    "decision_type": "finance.invoice.review",
+    "actions": ["approve"],
+    "currency": "NGN",
+    "maximum_amount": "100.00"
+  }
+}

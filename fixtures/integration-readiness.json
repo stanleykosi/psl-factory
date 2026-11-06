@@ -1,0 +1,15 @@
+{
+  "classification": "EXPLICIT SYNTHETIC test rules only; principals are supplied by the fixture, never real appointments",
+  "rules": {
+    "probe_user_id": null,
+    "probe_role": "PM",
+    "reviewer_id": null,
+    "reviewer_role": "PMO",
+    "independent_review": true,
+    "freshness_seconds": 86400,
+    "require_receipt_probe": false,
+    "allow_synthetic_target": true,
+    "lease_seconds": 30,
+    "max_attempts": 4
+  }
+}

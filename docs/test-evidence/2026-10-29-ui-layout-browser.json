@@ -1,0 +1,35 @@
+{
+  "tool": "cua_repl IAB browser",
+  "principal": "existing studio-demo session",
+  "data": "existing synthetic sample workspaces; no new grants/credentials/policies",
+  "actions": "GET navigation, search and responsive inspection only; no business submissions",
+  "desktop_width": 1280,
+  "desktop_document_width": 1265,
+  "mobile_width": 390,
+  "mobile_document_width": 375,
+  "mobile_finance_tables": {
+    "client_width": 299,
+    "scroll_width": 500,
+    "page_overflow": false
+  },
+  "mobile_sign_out_visible": 1,
+  "viewport_override_reset": true,
+  "verified": [
+    "Overview and current-access Finance navigation",
+    "Workspace grouping",
+    "Action descriptions in My work",
+    "Published document inbox",
+    "Shared project reports",
+    "Invoice and receipt sections and empty states",
+    "Transaction corrections display-name search returns expected workspace"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-29-studio-finance-mobile.jpg",
+    "docs/test-evidence/2026-10-29-studio-finance.jpg",
+    "docs/test-evidence/2026-10-29-studio-mobile.jpg",
+    "docs/test-evidence/2026-10-29-studio-overview.jpg",
+    "docs/test-evidence/2026-10-29-studio-workspace.jpg"
+  ],
+  "live_provider_evaluation": false,
+  "live_pilot_performed": false
+}

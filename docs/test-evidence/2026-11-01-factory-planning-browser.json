@@ -1,0 +1,210 @@
+{
+  "classification": "Synthetic connected browser observation; no real-provider evaluation, live authenticity, independent-human UAT or production acceptance",
+  "application_source": "docs/test-evidence/2026-11-01-factory-run410-source.json",
+  "database": "psl_factory_planning_ui_780d38dc78ac",
+  "case": "acdbbdc9-fb68-45ef-b109-bcd0a806caa7",
+  "work": 203,
+  "actors": {
+    "initiator": "factory-planning-ui-eb82de81",
+    "owners": {
+      "scope": {
+        "id": 14681,
+        "username": "factory-planning-ui-eb82de81-scope"
+      },
+      "estimates": {
+        "id": 14682,
+        "username": "factory-planning-ui-eb82de81-estimates"
+      }
+    }
+  },
+  "journey": [
+    "Queue to current packet intake",
+    "Scoped agent investigation",
+    "Two controlled internal department deliveries",
+    "Distinct Product Owner and Engineering Lead read-evidence observations in the factory case",
+    "Agent readiness preparation and exact internal delivery handoff",
+    "Verified detail and390px view"
+  ],
+  "native_facts": {
+    "status": "verified",
+    "budget_used": 700,
+    "budget_limit": 20000,
+    "owner_observations": [
+      {
+        "id": 368,
+        "actor_id": 14681,
+        "evidence_id": 93607,
+        "status": "referenced",
+        "receipt_id": 396
+      },
+      {
+        "id": 369,
+        "actor_id": 14682,
+        "evidence_id": 93609,
+        "status": "referenced",
+        "receipt_id": 397
+      }
+    ],
+    "jobs": [
+      {
+        "id": 197,
+        "status": "confirmed",
+        "attempts": 1,
+        "operation_key": "4bc9a1f4517e999c0d3f0deee1da064b291af0f4e5b29016162b9174648a8d49",
+        "intent": {
+          "public": {
+            "kind": "planning_scope",
+            "purpose": "request",
+            "subject": {
+              "case_id": "acdbbdc9-fb68-45ef-b109-bcd0a806caa7",
+              "build_ref": null,
+              "release_ref": null,
+              "candidate_ref": "planning-packet-93598",
+              "requirements_sha256": "b738989ace8af8f7f069b0ce2b0a75f6d24d6120326d664045b8a12639a00499"
+            },
+            "version": 1,
+            "reference": "planning_scope-93598",
+            "request_id": 286,
+            "source_owner": "Product Owner",
+            "approval_granted": false
+          },
+          "policies": [
+            57575,
+            57576
+          ],
+          "authority": {
+            "D05.role_principal_assignments": 57574
+          },
+          "recipient": 14681,
+          "max_attempts": 3,
+          "lease_seconds": 30,
+          "contract_review": 253,
+          "factory_execution": {
+            "work": 203,
+            "schema": "factory-planning-routing/v1",
+            "profile": 57578,
+            "executor": 14680
+          }
+        }
+      },
+      {
+        "id": 198,
+        "status": "confirmed",
+        "attempts": 1,
+        "operation_key": "f6eaa7129986f9596cd81c059559ad7d0801e04df5a311aeb7b2f4e0d789fbff",
+        "intent": {
+          "public": {
+            "kind": "planning_estimates",
+            "purpose": "request",
+            "subject": {
+              "case_id": "acdbbdc9-fb68-45ef-b109-bcd0a806caa7",
+              "build_ref": null,
+              "release_ref": null,
+              "candidate_ref": "planning-packet-93598",
+              "requirements_sha256": "b738989ace8af8f7f069b0ce2b0a75f6d24d6120326d664045b8a12639a00499"
+            },
+            "version": 1,
+            "reference": "planning_estimates-93598",
+            "request_id": 287,
+            "source_owner": "Engineering Lead",
+            "approval_granted": false
+          },
+          "policies": [
+            57575,
+            57576
+          ],
+          "authority": {
+            "D05.role_principal_assignments": 57574
+          },
+          "recipient": 14682,
+          "max_attempts": 3,
+          "lease_seconds": 30,
+          "contract_review": 254,
+          "factory_execution": {
+            "work": 203,
+            "schema": "factory-planning-routing/v1",
+            "profile": 57578,
+            "executor": 14680
+          }
+        }
+      }
+    ],
+    "receipts": [
+      {
+        "id": 124,
+        "recipient_id": 14681,
+        "operation_key": "4bc9a1f4517e999c0d3f0deee1da064b291af0f4e5b29016162b9174648a8d49",
+        "payload": {
+          "kind": "planning_scope",
+          "purpose": "request",
+          "subject": {
+            "case_id": "acdbbdc9-fb68-45ef-b109-bcd0a806caa7",
+            "build_ref": null,
+            "release_ref": null,
+            "candidate_ref": "planning-packet-93598",
+            "requirements_sha256": "b738989ace8af8f7f069b0ce2b0a75f6d24d6120326d664045b8a12639a00499"
+          },
+          "version": 1,
+          "reference": "planning_scope-93598",
+          "request_id": 286,
+          "source_owner": "Product Owner",
+          "approval_granted": false
+        }
+      },
+      {
+        "id": 125,
+        "recipient_id": 14682,
+        "operation_key": "f6eaa7129986f9596cd81c059559ad7d0801e04df5a311aeb7b2f4e0d789fbff",
+        "payload": {
+          "kind": "planning_estimates",
+          "purpose": "request",
+          "subject": {
+            "case_id": "acdbbdc9-fb68-45ef-b109-bcd0a806caa7",
+            "build_ref": null,
+            "release_ref": null,
+            "candidate_ref": "planning-packet-93598",
+            "requirements_sha256": "b738989ace8af8f7f069b0ce2b0a75f6d24d6120326d664045b8a12639a00499"
+          },
+          "version": 1,
+          "reference": "planning_estimates-93598",
+          "request_id": 287,
+          "source_owner": "Engineering Lead",
+          "approval_granted": false
+        }
+      }
+    ],
+    "output": {
+      "verified": true,
+      "verification_scope": "current_planning_artifact_and_internal_handoff",
+      "packet": 93598,
+      "readiness": 93610,
+      "delivery_source": 1129,
+      "dossier": 99,
+      "owner_observations": {
+        "estimates": 369,
+        "scope": 368
+      },
+      "native_verified": false,
+      "environment": "synthetic_reference_only"
+    },
+    "invoices": 0,
+    "factory_approval_tasks": 0
+  },
+  "keyboard": "Product Owner and Engineering Lead submissions used Return; Engineering native key action completed normally",
+  "browser_tool_limitations": [
+    "Product Owner Playwright Return reported focus-emulation timeout after successful submission; inspected state and did not resubmit",
+    "Final agent action reported snapshot timeout after successful processing; inspected verified state and did not repeat"
+  ],
+  "viewport": {
+    "selected_tab": "7",
+    "narrow_width": 390,
+    "narrow_height": 844,
+    "document_width": 375,
+    "override_reset": true
+  },
+  "screenshots": {
+    "docs/test-evidence/2026-11-01-factory-planning-owner.png": "ab48297a7a513786a6a2629a6b0954d13ec333518934f9f9b732ad7788c7db4b",
+    "docs/test-evidence/2026-11-01-factory-planning-verified.png": "4df758928b8657fe1b684f2528f0164faffb3ea2637206ac5409340e4147209a",
+    "docs/test-evidence/2026-11-01-factory-planning-mobile.png": "37f01ced81e413b9973320ae4f2cc5d8b0b609e5718f1e1f753c9412e64ee346"
+  }
+}

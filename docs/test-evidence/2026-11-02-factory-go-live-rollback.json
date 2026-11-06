@@ -1,0 +1,20 @@
+{
+  "classification": "Actual unsupported-downgrade refusal on fresh synthetic clone; not active-factory restore acceptance",
+  "database": "psl_factory_go_live_rollback_b0324b4375cf",
+  "source_database": "psl_factory_go_live_ui_d7cbfe7f08a6",
+  "source_unchanged": true,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "workflows",
+    "0046_factory_closure",
+    "--noinput"
+  ],
+  "returncode": 1,
+  "rowsets_and_guards_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "retained_verified_work": 1,
+  "rollback_requirement": "Keep additive0047/0048/0017/pmo0042 guards; operational restore needs fresh authority and uncertain-effect reconciliation",
+  "log": "docs/test-evidence/2026-11-02-factory-go-live-rollback.txt"
+}

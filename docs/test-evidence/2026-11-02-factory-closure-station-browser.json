@@ -1,0 +1,69 @@
+{
+  "classification": "Synthetic native factory closure browser proof; fixture human exercises configured PM/PMO Lead/Head roles; not independent human UAT or live model evidence",
+  "read_at": "2026-11-02T14:37:48.650560+00:00",
+  "database": "psl_factory_closure_ui_e63d1dc3b212",
+  "runtime": 480,
+  "work": 641,
+  "dossier": 335,
+  "case": "731b37e7-9380-4d9d-a404-78c55c077c70",
+  "actor_id": 15615,
+  "proof": {
+    "verified": true,
+    "head": 103390,
+    "dossier": 335,
+    "closure": 2061,
+    "document_version": 1851,
+    "decision": 2060,
+    "verification_scope": "synthetic_native_project_closure",
+    "debt_waived": false,
+    "deployment_authorized": false,
+    "external_authenticity_verified": false,
+    "separate_retrospective_approval": false,
+    "finance_attestation_inferred": false
+  },
+  "budget_used": 1100,
+  "budget_limit": 20000,
+  "controlled_versions": [
+    1850,
+    1851
+  ],
+  "head_decisions": [
+    {
+      "id": 2059,
+      "verdict": "return",
+      "version": 1850,
+      "actor": 15615
+    },
+    {
+      "id": 2060,
+      "verdict": "approve",
+      "version": 1851,
+      "actor": 15615
+    }
+  ],
+  "native_quality_tasks": [
+    1282,
+    1283
+  ],
+  "private_source_heads": [
+    103387,
+    103389,
+    103390
+  ],
+  "native_closures": 1,
+  "invoices": 0,
+  "actual_browser_path": [
+    "Unknown inputs held with useful investigation",
+    "Existing actual retrospective/report selected",
+    "Agent prepared controlled report and requested native quality review",
+    "Human approved exact quality version",
+    "Human Head returned first version",
+    "Human selected already-prepared alternative PM source with reason",
+    "Agent prepared fresh report and required fresh native quality review",
+    "Human quality approval and exact Head approval",
+    "Agent recorded native closure and verified current native output"
+  ],
+  "real_model_evaluation": false,
+  "independent_human_UAT": false,
+  "operational_owner_values_added": false
+}

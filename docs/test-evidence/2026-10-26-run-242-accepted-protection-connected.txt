@@ -1,0 +1,106 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_agent_holds_superseded_plan_and_does_not_cache_authority_across_commands (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_agent_holds_superseded_plan_and_does_not_cache_authority_across_commands) ... ok
+test_missing_and_corrupt_actual_backup_hold_new_restore_despite_cached_artifact (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_missing_and_corrupt_actual_backup_hold_new_restore_despite_cached_artifact) ... ok
+test_af13_operator_job_cannot_masquerade_as_old_native_or_public_receipt_inventory (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_af13_operator_job_cannot_masquerade_as_old_native_or_public_receipt_inventory) ... FAIL
+test_live_agent_http_selected_inventory_policy_draft_and_generic_privacy (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_live_agent_http_selected_inventory_policy_draft_and_generic_privacy) ... ok
+test_source_revocation_denies_cached_download_plan_inventory_ui_and_agent (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_source_revocation_denies_cached_download_plan_inventory_ui_and_agent) ... ok
+test_original_private_grants_required_for_configuration_and_expired_source_holds_new_effect (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_original_private_grants_required_for_configuration_and_expired_source_holds_new_effect) ... ok
+test_actual_export_backup_restore_and_independent_protection_review (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_export_backup_restore_and_independent_protection_review) ... ok
+test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools) ... ok
+test_http_selected_packet_plan_policy_ui_and_historical_artifact_download (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_http_selected_packet_plan_policy_ui_and_historical_artifact_download) ... ok
+test_actual_native_receipt_lookup_after_lost_response_and_revocation (tests.test_operator_recovery.OperatorRecoveryTests.test_actual_native_receipt_lookup_after_lost_response_and_revocation) ... ok
+test_actual_target_guard_and_current_availability_preserve_native_history (tests.test_operator_recovery.OperatorRecoveryTests.test_actual_target_guard_and_current_availability_preserve_native_history) ... ok
+test_actual_ui_post_snapshot_and_source_access (tests.test_operator_recovery.OperatorRecoveryTests.test_actual_ui_post_snapshot_and_source_access) ... ok
+test_current_assessment_and_review_invalidate_after_new_unknown_report (tests.test_operator_recovery.OperatorRecoveryTests.test_current_assessment_and_review_invalidate_after_new_unknown_report) ... ok
+test_direct_protection_recovery_requires_configured_recovery_purpose (tests.test_operator_recovery.OperatorRecoveryTests.test_direct_protection_recovery_requires_configured_recovery_purpose) ... ok
+test_export_download_rechecks_every_original_source_grant (tests.test_operator_recovery.OperatorRecoveryTests.test_export_download_rechecks_every_original_source_grant) ... ok
+test_independent_authority_and_admin_flags_cannot_review (tests.test_operator_recovery.OperatorRecoveryTests.test_independent_authority_and_admin_flags_cannot_review) ... ok
+test_inventory_before_policy_and_no_raw_body_errors_or_intents (tests.test_operator_recovery.OperatorRecoveryTests.test_inventory_before_policy_and_no_raw_body_errors_or_intents) ... ok
+test_native_effect_assessment_and_review_forms_use_real_services (tests.test_operator_recovery.OperatorRecoveryTests.test_native_effect_assessment_and_review_forms_use_real_services) ... ok
+test_native_target_must_be_an_explicit_separate_database (tests.test_operator_recovery.OperatorRecoveryTests.test_native_target_must_be_an_explicit_separate_database) ... ok
+test_only_currently_leased_work_is_reported_as_an_expired_lease (tests.test_operator_recovery.OperatorRecoveryTests.test_only_currently_leased_work_is_reported_as_an_expired_lease) ... ok
+test_pending_export_holds_after_scope_read_revocation_and_replaces_intent (tests.test_operator_recovery.OperatorRecoveryTests.test_pending_export_holds_after_scope_read_revocation_and_replaces_intent) ... ok
+test_policy_validators_and_effect_explicit_replacement (tests.test_operator_recovery.OperatorRecoveryTests.test_policy_validators_and_effect_explicit_replacement) ... ok
+test_private_reports_cannot_be_repackaged_and_agent_keeps_no_raw_source (tests.test_operator_recovery.OperatorRecoveryTests.test_private_reports_cannot_be_repackaged_and_agent_keeps_no_raw_source) ... ok
+test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review (tests.test_operator_recovery.OperatorRecoveryTests.test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review) ... ok
+test_reference_only_holds_restore_but_export_and_backup_work (tests.test_operator_recovery.OperatorRecoveryTests.test_reference_only_holds_restore_but_export_and_backup_work) ... ok
+test_review_current_rechecks_reviewer_source_visibility (tests.test_operator_recovery.OperatorRecoveryTests.test_review_current_rechecks_reviewer_source_visibility) ... ok
+test_sealed_artifact_conflict_is_not_overwritten_or_blindly_retried (tests.test_operator_recovery.OperatorRecoveryTests.test_sealed_artifact_conflict_is_not_overwritten_or_blindly_retried) ... ok
+test_source_report_cannot_claim_native_execution_and_unknown_stays_unknown (tests.test_operator_recovery.OperatorRecoveryTests.test_source_report_cannot_claim_native_execution_and_unknown_stays_unknown) ... ok
+test_sql_history_and_reserved_intents_are_immutable (tests.test_operator_recovery.OperatorRecoveryTests.test_sql_history_and_reserved_intents_are_immutable) ... ok
+test_supplied_external_receipt_identity_cannot_be_reclaimed_by_another_case (tests.test_operator_recovery.OperatorRecoveryTests.test_supplied_external_receipt_identity_cannot_be_reclaimed_by_another_case) ... ok
+test_supplied_full_database_reports_and_objectives_never_claim_native_restore (tests.test_operator_recovery.OperatorRecoveryTests.test_supplied_full_database_reports_and_objectives_never_claim_native_restore) ... ok
+test_supplied_receipt_duplicates_conflicts_future_dates_and_scope (tests.test_operator_recovery.OperatorRecoveryTests.test_supplied_receipt_duplicates_conflicts_future_dates_and_scope) ... ok
+test_missing_policy_does_not_prevent_inventory_or_report_capture (tests.test_operator_recovery.UnconfiguredOperatorTests.test_missing_policy_does_not_prevent_inventory_or_report_capture) ... ok
+test_department_route_recovery_delegates_to_source_service (tests.test_operator_workers.OperatorApprovalBridgeTests.test_department_route_recovery_delegates_to_source_service) ... ok
+test_pending_handoff_cancel_and_held_retry_use_real_source_controls (tests.test_operator_workers.OperatorSourceRecoveryTests.test_pending_handoff_cancel_and_held_retry_use_real_source_controls) ... ok
+test_scoped_inventory_and_recovery_need_source_permission (tests.test_operator_workers.OperatorSourceRecoveryTests.test_scoped_inventory_and_recovery_need_source_permission) ... ok
+test_unknown_finance_handoff_cannot_be_cancelled_and_reconciles_once (tests.test_operator_workers.OperatorSourceRecoveryTests.test_unknown_finance_handoff_cannot_be_cancelled_and_reconciles_once) ... ok
+test_controlled_publication_recovery_retains_review_and_no_receipt (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_controlled_publication_recovery_retains_review_and_no_receipt) ... ok
+test_engineering_handoff_recovery_cannot_apply_credit (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_engineering_handoff_recovery_cannot_apply_credit) ... ok
+test_invoice_recovery_retains_finance_review_and_no_issuance (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_invoice_recovery_retains_finance_review_and_no_issuance) ... ok
+test_partner_handoff_recovery_cannot_import_usage (tests.test_operator_bridges.OperatorRemainingBridgesTests.test_partner_handoff_recovery_cannot_import_usage) ... ok
+test_admin_flag_does_not_grant_record_access (tests.test_application.ApplicationTests.test_admin_flag_does_not_grant_record_access) ... ok
+test_agent_rejects_uncited_output_and_cross_scope_read (tests.test_application.ApplicationTests.test_agent_rejects_uncited_output_and_cross_scope_read) ... ok
+test_agent_source_instructions_are_cited_data_only (tests.test_application.ApplicationTests.test_agent_source_instructions_are_cited_data_only) ... ok
+test_all_122_original_ids_visible_in_coverage (tests.test_application.ApplicationTests.test_all_122_original_ids_visible_in_coverage) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_cost_revision_cannot_reuse_decisions (tests.test_application.ApplicationTests.test_cost_revision_cannot_reuse_decisions) ... ok
+test_cross_case_evidence_cannot_form_baseline (tests.test_application.ApplicationTests.test_cross_case_evidence_cannot_form_baseline) ... ok
+test_csrf_and_template_escaping (tests.test_application.ApplicationTests.test_csrf_and_template_escaping) ... ok
+test_database_blocks_history_rewrites_even_via_queryset (tests.test_application.ApplicationTests.test_database_blocks_history_rewrites_even_via_queryset) ... ok
+test_duplicate_milestone_has_one_outbox_intent (tests.test_application.ApplicationTests.test_duplicate_milestone_has_one_outbox_intent) ... ok
+test_expired_worker_cannot_finish_after_reclaim (tests.test_application.ApplicationTests.test_expired_worker_cannot_finish_after_reclaim) ... ok
+test_human_costing_order_and_separate_review (tests.test_application.ApplicationTests.test_human_costing_order_and_separate_review) ... ok
+test_lookup_failure_does_not_dispatch (tests.test_application.ApplicationTests.test_lookup_failure_does_not_dispatch) ... ok
+test_no_signature_before_plan_and_cost_decisions (tests.test_application.ApplicationTests.test_no_signature_before_plan_and_cost_decisions) ... ok
+test_policy_expiry_invalid_timezone_and_synthetic_isolation (tests.test_application.ApplicationTests.test_policy_expiry_invalid_timezone_and_synthetic_isolation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+test_policy_partial_activation_stale_revoke_and_version_history (tests.test_application.ApplicationTests.test_policy_partial_activation_stale_revoke_and_version_history) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_requires_postgresql (tests.test_application.ApplicationTests.test_requires_postgresql) ... ok
+test_reserved_effect_payload_and_confirmed_receipt_are_immutable (tests.test_application.ApplicationTests.test_reserved_effect_payload_and_confirmed_receipt_are_immutable) ... ok
+test_review_binds_exact_version_and_does_not_review_next_revision (tests.test_application.ApplicationTests.test_review_binds_exact_version_and_does_not_review_next_revision) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_stale_command_has_no_mutation (tests.test_application.ApplicationTests.test_stale_command_has_no_mutation) ... ok
+test_superseded_role_policy_can_be_reapproved_without_rewriting_history (tests.test_application.ApplicationTests.test_superseded_role_policy_can_be_reapproved_without_rewriting_history) ... ok
+test_support_response_resolution_reopen_preserve_history (tests.test_application.ApplicationTests.test_support_response_resolution_reopen_preserve_history) ... ok
+test_unknown_external_result_is_reconciled_without_resend (tests.test_application.ApplicationTests.test_unknown_external_result_is_reconciled_without_resend) ... ok
+test_worker_rechecks_revoked_grant (tests.test_application.ApplicationTests.test_worker_rechecks_revoked_grant) ... ok
+test_lookup_unavailable_never_dispatches (tests.test_operator_workers.OperatorConcurrencyTests.test_lookup_unavailable_never_dispatches) ... ok
+test_old_fence_cannot_write_after_reclaim (tests.test_operator_workers.OperatorConcurrencyTests.test_old_fence_cannot_write_after_reclaim) ... ok
+test_revocation_commits_before_native_effect (tests.test_operator_workers.OperatorConcurrencyTests.test_revocation_commits_before_native_effect) ... ok
+test_separate_process_reconciles_actual_isolated_receipt_after_revocation (tests.test_operator_workers.OperatorConcurrencyTests.test_separate_process_reconciles_actual_isolated_receipt_after_revocation) ... ok
+test_simultaneous_first_export_and_competing_workers (tests.test_operator_workers.OperatorConcurrencyTests.test_simultaneous_first_export_and_competing_workers) ... ok
+test_simultaneous_first_receipt_has_one_claim (tests.test_operator_workers.OperatorConcurrencyTests.test_simultaneous_first_receipt_has_one_claim) ... ok
+test_staff_handoff_survives_worker_process_exit_and_restart (tests.test_application.WorkerConcurrencyTests.test_staff_handoff_survives_worker_process_exit_and_restart) ... ok
+test_two_workers_claim_one_intent_once (tests.test_application.WorkerConcurrencyTests.test_two_workers_claim_one_intent_once) ... ok
+test_duplicate_reservations_workers_foreign_revocation_and_fresh_process_receipt_recovery (tests.test_accepted_protection_concurrency.AcceptedProtectionConcurrencyTests.test_duplicate_reservations_workers_foreign_revocation_and_fresh_process_receipt_recovery) ... ok
+
+======================================================================
+FAIL: test_af13_operator_job_cannot_masquerade_as_old_native_or_public_receipt_inventory (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_af13_operator_job_cannot_masquerade_as_old_native_or_public_receipt_inventory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_accepted_protection_operations.py", line 144, in test_af13_operator_job_cannot_masquerade_as_old_native_or_public_receipt_inventory
+    with self.assertRaisesRegex(ValidationError,'exact private readiness binding'):rw.reserve(f['actor'],f['case'].pk,contract.pk,'no-public-receipt','receipt',e.job_id)
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 78 tests in 2096.129s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 78 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

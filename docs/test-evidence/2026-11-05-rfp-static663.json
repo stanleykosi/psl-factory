@@ -1,0 +1,12 @@
+{
+  "source_run": 663,
+  "checks": [
+    {"command": ".venv/Scripts/python.exe manage.py check", "returncode": 0, "output": "System check identified no issues (0 silenced)."},
+    {"command": ".venv/Scripts/python.exe manage.py makemigrations --check --dry-run", "returncode": 0, "output": "No changes detected"}
+  ],
+  "composition_proof": "2026-11-05-factory-rfp-composition663.json",
+  "retained_database_baseline": "2026-11-05-factory-rfp-preservation663-before.json",
+  "native_browser_connection": "RESTORED; existing tab7 cached source623 read successfully. No source663 reload or screenshot claimed yet.",
+  "preview_started": false,
+  "live_provider_or_external_connection": false
+}

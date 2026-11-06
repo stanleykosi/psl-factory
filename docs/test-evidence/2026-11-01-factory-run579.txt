@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected (tests.test_factory_coordinator.CoordinatorConfigurationTests.test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected) ... 
+  test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected (tests.test_factory_coordinator.CoordinatorConfigurationTests.test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected) (changes={'planner_id': True}) ... FAIL
+
+======================================================================
+FAIL: test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected (tests.test_factory_coordinator.CoordinatorConfigurationTests.test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected) (changes={'planner_id': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_coordinator.py", line 75, in test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected
+    with self.subTest(changes=changes),self.assertRaises(ValidationError):
+                                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 1.670s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

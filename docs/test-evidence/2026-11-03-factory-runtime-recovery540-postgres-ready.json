@@ -1,0 +1,10 @@
+{
+  "forced_kill": false,
+  "data_reset": false,
+  "ready_log": ".runtime/factory-runtime-recovery540-postgres.stderr.txt",
+  "path": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\pgsql\\bin\\postgres.exe",
+  "port": 55432,
+  "start_utc": "2026-11-03T01:47:12.3414050Z",
+  "prior_process_exited_cleanly": true,
+  "id": 15808
+}

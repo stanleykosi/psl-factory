@@ -1,0 +1,20 @@
+{
+  "run": 298,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_followup_successors",
+    "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-298-followup-successors.txt",
+  "started_at": "2026-10-28T10:09:08.691711+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 82.977
+}

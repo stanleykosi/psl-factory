@@ -1,0 +1,29 @@
+{
+  "database": "psl_factory_planning_ui_780d38dc78ac",
+  "work": 203,
+  "historical_status": "verified",
+  "current_readiness": "BLOCKED",
+  "observed_at": "2026-11-02T19:58:38.324940+00:00",
+  "criteria_configuration": 57577,
+  "alignment_max_age_seconds": 86400,
+  "current_alignment_meetings": [
+    {
+      "version": 344,
+      "occurred_at": "2026-11-01T19:15:54.522673+00:00",
+      "age_seconds": 88963.802267,
+      "fresh_until": "2026-11-02T19:15:54.522673+00:00",
+      "current_within_window": false
+    },
+    {
+      "version": 345,
+      "occurred_at": "2026-11-01T19:16:54.635277+00:00",
+      "age_seconds": 88903.689663,
+      "fresh_until": "2026-11-02T19:16:54.635277+00:00",
+      "current_within_window": false
+    }
+  ],
+  "prior_acceptance_preserved": true,
+  "commands_replayed": false,
+  "clock_or_policy_changed": false,
+  "next_action": "Actual fresh alignment meeting evidence and authorised native reassessment; do not backdate or relax criteria to make retained proof green"
+}

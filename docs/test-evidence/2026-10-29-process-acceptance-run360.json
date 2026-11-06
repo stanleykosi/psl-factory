@@ -1,0 +1,24 @@
+{
+  "run": 360,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_finance_acceptance",
+    "tests.test_finance_acceptance_concurrency",
+    "tests.test_private_readiness_acceptance",
+    "tests.test_protection_acceptance",
+    "tests.test_file_acceptance",
+    "tests.test_controlled_documents",
+    "tests.test_validation_concurrency",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-360-process-acceptance.txt",
+  "started_at": "2026-10-29T11:56:29.844591+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 4491.138
+}

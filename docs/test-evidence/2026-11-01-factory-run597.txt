@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_human_owner_recheck_is_not_planning_or_finance_approval (tests.test_factory_human_independence.IndependentResponsibilityTests.test_human_owner_recheck_is_not_planning_or_finance_approval) ... FAIL
+
+======================================================================
+FAIL: test_human_owner_recheck_is_not_planning_or_finance_approval (tests.test_factory_human_independence.IndependentResponsibilityTests.test_human_owner_recheck_is_not_planning_or_finance_approval)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_human_independence.py", line 79, in test_human_owner_recheck_is_not_planning_or_finance_approval
+    self.assertEqual(row['next_action'],'Recheck current owners and review permissions')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Review responsibility assignments and recheck the current Finance route' != 'Recheck current owners and review permissions'
+- Review responsibility assignments and recheck the current Finance route
++ Recheck current owners and review permissions
+
+
+----------------------------------------------------------------------
+Ran 1 test in 9.636s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

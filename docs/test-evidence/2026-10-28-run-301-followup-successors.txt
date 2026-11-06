@@ -1,0 +1,82 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_capture_policy_review_ui_agent_revocation_and_sql_history (tests.test_followup_successors.FollowupSuccessorTests.test_capture_policy_review_ui_agent_revocation_and_sql_history) ... ok
+test_duplicate_ownership_scope_policy_successor_and_decline (tests.test_followup_successors.FollowupSuccessorTests.test_duplicate_ownership_scope_policy_successor_and_decline) ... ok
+test_normal_generation_replacement_unknown_receipt_and_successor (tests.test_followup_successors.FollowupSuccessorTests.test_normal_generation_replacement_unknown_receipt_and_successor) ... ok
+test_installed_supplement_guard_allows_metadata_and_rejects_private_or_active_payload (tests.test_finance_successor_readback.SuccessorMetadataSqlTests.test_installed_supplement_guard_allows_metadata_and_rejects_private_or_active_payload) ... ERROR
+test_native_current_lineage_separate_receipt_and_reviewer_revocation (tests.test_finance_successor_readback.SuccessorReadbackAdapterTests.test_native_current_lineage_separate_receipt_and_reviewer_revocation) ... ok
+
+======================================================================
+ERROR: test_installed_supplement_guard_allows_metadata_and_rejects_private_or_active_payload (tests.test_finance_successor_readback.SuccessorMetadataSqlTests.test_installed_supplement_guard_allows_metadata_and_rejects_private_or_active_payload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.InvalidTextRepresentation: invalid input syntax for type json
+LINE 4:       NEW.result->'successors' - ARRAY['format','lineage'] I...
+                          ^
+DETAIL:  Token "successors" is invalid.
+QUERY:  NEW.pin->>'lineage_contract' IS DISTINCT FROM 'psl.finance-successor-lineage/v1' OR
+      NEW.result->'successors'->>'format' IS DISTINCT FROM 'psl.finance-successor-lineage/v1' OR
+      jsonb_typeof(NEW.result->'successors'->'lineage') IS DISTINCT FROM 'array' OR
+      NEW.result->'successors' - ARRAY['format','lineage'] IS DISTINCT FROM '{}'::jsonb
+CONTEXT:  JSON data, line 1: successors
+PL/pgSQL function psl_native_successor_metadata_guard() line 5 at IF
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_finance_successor_readback.py", line 41, in test_installed_supplement_guard_allows_metadata_and_rejects_private_or_active_payload
+    insert(empty)
+    ~~~~~~^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_finance_successor_readback.py", line 39, in insert
+    with connection.cursor() as cursor:cursor.execute('INSERT INTO successor_guard_contract VALUES (%s::jsonb,%s::jsonb)',[json.dumps(pin),json.dumps(result)])
+                                       ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.DataError: invalid input syntax for type json
+LINE 4:       NEW.result->'successors' - ARRAY['format','lineage'] I...
+                          ^
+DETAIL:  Token "successors" is invalid.
+QUERY:  NEW.pin->>'lineage_contract' IS DISTINCT FROM 'psl.finance-successor-lineage/v1' OR
+      NEW.result->'successors'->>'format' IS DISTINCT FROM 'psl.finance-successor-lineage/v1' OR
+      jsonb_typeof(NEW.result->'successors'->'lineage') IS DISTINCT FROM 'array' OR
+      NEW.result->'successors' - ARRAY['format','lineage'] IS DISTINCT FROM '{}'::jsonb
+CONTEXT:  JSON data, line 1: successors
+PL/pgSQL function psl_native_successor_metadata_guard() line 5 at IF
+
+----------------------------------------------------------------------
+Ran 6 tests in 118.447s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

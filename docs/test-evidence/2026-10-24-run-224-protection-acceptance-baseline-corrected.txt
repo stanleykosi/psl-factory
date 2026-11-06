@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_exact_native_health_receipt_independent_review_and_restore_changes_provenance (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_exact_native_health_receipt_independent_review_and_restore_changes_provenance) ... ok
+test_revoked_source_denies_cached_reads_forms_and_private_guidance (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_revoked_source_denies_cached_reads_forms_and_private_guidance) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 498.899s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,13 @@
+{
+  "phase": "after",
+  "old_main_rowsets_preserved": 329,
+  "old_migration_sources_preserved": 213,
+  "old_guards_preserved_except_two_reviewed_functions": true,
+  "source_snapshots_preserved": true,
+  "main_factory_work": 0,
+  "main_owner_or_rule_values_added": false,
+  "forward_migrations": [
+    "workflows0045_factory_handover",
+    "documents0016_factory_handover_scope"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "listener": "  TCP    127.0.0.1:8024         0.0.0.0:0              LISTENING       21160",
+  "start_utc": "2026-11-04T15:56:22.8650603Z",
+  "reason": "Stop exact synthetic preview before source successor",
+  "id": 21160,
+  "source_run": 606,
+  "path": "C:\\Python313\\python.exe"
+}

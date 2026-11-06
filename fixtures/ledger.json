@@ -1,0 +1,67 @@
+{
+  "classification": "Synthetic engineering fixture, not actual Finance authority",
+  "source": {
+    "provider": "quickbooks",
+    "realm": "synthetic-realm",
+    "entity": "synthetic-company",
+    "source_reference": "TX-001",
+    "transaction_date": "2026-10-01",
+    "accounting_period": "2026-10",
+    "treatment_evidence_id": 1,
+    "incumbent_user_reference": "synthetic-finance-user",
+    "posting_evidence_id": 1,
+    "target_reference": "QB-101",
+    "outcome": "reported_posted",
+    "provenance": []
+  },
+  "rules": {
+    "entity": "synthetic-company",
+    "realm": "synthetic-realm",
+    "provider": "quickbooks",
+    "mode": "supplied_read_only",
+    "max_age_seconds": 3600,
+    "evidence_kind": "quickbooks_verification",
+    "treatment_evidence_ids": [
+      1
+    ],
+    "incumbent_user_references": [
+      "synthetic-finance-user"
+    ]
+  },
+  "authority": {
+    "independent_reviewer": true,
+    "user_ids": [
+      1
+    ]
+  },
+  "conflicts": {
+    "proposer_id": null,
+    "reviewer_id": null,
+    "independent_review": true,
+    "allowed_modes": [
+      "duplicate_alias",
+      "reference_correction"
+    ],
+    "allow_cross_case": false,
+    "max_members": 40,
+    "decision_ttl_seconds": 3600,
+    "basis": "exact_supplied_source_target_version",
+    "post_decision_verification": true,
+    "posting_permitted": false
+  },
+  "projection": {
+    "lineage_ids": [],
+    "fields": [
+      "source_reference",
+      "target_reference",
+      "incumbent_version"
+    ],
+    "purpose": "finance-evidence-draft",
+    "projector_id": null,
+    "owner_id": null,
+    "reviewer_id": null,
+    "independent_review": true,
+    "max_draft_chars": 2000,
+    "review_ttl_seconds": 3600
+  }
+}

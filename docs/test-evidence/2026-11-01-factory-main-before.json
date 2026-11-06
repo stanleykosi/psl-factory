@@ -1,0 +1,9 @@
+{
+  "phase": "before",
+  "old_main_rowsets_unchanged": 326,
+  "old_definitions_preserved": true,
+  "old_migration_bytes_preserved": true,
+  "source_snapshots_preserved": true,
+  "operational_policy_or_owner_installed": false,
+  "main_factory_records_created": false
+}

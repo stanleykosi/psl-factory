@@ -1,0 +1,24 @@
+{
+  "classification": "Actual local browser inspection of synthetic D03 walkthrough; no operational acceptance",
+  "browser_id": "2",
+  "tab_id": "2",
+  "principal": "studio-demo",
+  "case": "b31cbc2a-5678-42b3-ad7b-77de732d33fd",
+  "observed": [
+    "Both original D03 components ACTIVE; source confirmations displayed as evidence metadata",
+    "Current issue assessment6 and delivery7 ready separately; native incumbent verification pending",
+    "Unavailable assessment5 and superseded initial4 retain recorded versus current distinctions",
+    "No action forms for read-only viewer",
+    "Source3 link returns403 without d03.source.read",
+    "Unconfigured case504d1f92-c9fd-4906-b54d-fe5494da87ed retains source5 before policy, both components MISSING and no enrollment/assessments"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-billing-evidence-workbench.png",
+    "docs/test-evidence/2026-10-22-billing-evidence-history.png",
+    "docs/test-evidence/2026-10-22-billing-evidence-source-denied.png",
+    "docs/test-evidence/2026-10-22-billing-evidence-unconfigured.png"
+  ],
+  "handoff": "approvalsTab on D03 workbench",
+  "native_flow_verified": false,
+  "real_owner_acceptance": false
+}

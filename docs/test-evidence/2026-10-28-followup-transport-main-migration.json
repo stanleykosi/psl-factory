@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "--noinput"
+  ],
+  "returncode": 0,
+  "stdout": "Operations to perform:\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\nRunning migrations:\n  Applying finance.0060_followup_transport... OK\n  Applying finance.0061_authenticated_intake_guard... OK\n  Applying workflows.0035_followup_transport... OK\n  Applying workflows.0036_followup_transport_guard... OK\n",
+  "stderr": "",
+  "final_test_run": 306
+}

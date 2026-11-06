@@ -1,0 +1,24 @@
+{
+  "run": 480,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_closure.FactoryClosureTests.test_native_quality_and_head_return_reject_rework_need_fresh_exact_reports",
+    "tests.test_factory_closure.FactoryClosureTests.test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers",
+    "tests.test_factory_closure.FactoryClosureTests.test_superseded_controlled_version_holds_and_same_input_reassessment_needs_fresh_head_decision",
+    "tests.test_factory_closure.FactoryClosureTests.test_stop_restart_keeps_original_allowance_and_requires_new_exact_head_decision",
+    "tests.test_factory_closure_recovery",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T13:59:58.229978+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run480.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 1395.161
+}

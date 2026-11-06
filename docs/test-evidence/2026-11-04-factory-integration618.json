@@ -1,0 +1,24 @@
+{
+  "no_business_actions_replayed": true,
+  "unittest_seconds": 46.488,
+  "all_source_hashes_equal_verified_working_copy": true,
+  "changed": [
+    "apps/agents/factory_catalogue.py",
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_archive.py",
+    "apps/workflows/factory_views.py",
+    "tests/factory_helpers.py"
+  ],
+  "process_seconds": 54.4,
+  "working_directory": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\source616",
+  "result": "PASS15",
+  "original_files_preserved": ".runtime/pre-merge618",
+  "added": [
+    "adapters/factory_invoice_preparation.py",
+    "tests/test_factory_execution_owner_ui.py",
+    "tests/test_factory_execution_source_projection.py",
+    "tests/test_factory_operational_invoice.py"
+  ],
+  "parent_root_source": 610,
+  "source_run": 618
+}

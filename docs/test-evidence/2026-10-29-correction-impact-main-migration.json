@@ -1,0 +1,6 @@
+{
+  "returncode": 0,
+  "database": "psl:55432",
+  "migration": "policy0008",
+  "owner_values_installed": false
+}

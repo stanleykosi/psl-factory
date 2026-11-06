@@ -1,0 +1,25 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_context_failure_and_other_project_never_reuse_observed_authority (tests.test_delivery_observation.DeliveryObservationTests.test_context_failure_and_other_project_never_reuse_observed_authority) ... ok
+test_current_authority_is_rechecked_after_observation_and_cannot_finalise_from_cached_facts (tests.test_delivery_observation.DeliveryObservationTests.test_current_authority_is_rechecked_after_observation_and_cannot_finalise_from_cached_facts) ... ok
+test_observation_is_read_only_and_returned_data_cannot_poison_later_reads (tests.test_delivery_observation.DeliveryObservationTests.test_observation_is_read_only_and_returned_data_cannot_poison_later_reads) ... ok
+test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved (tests.test_factory_intake.FactoryIntakeTests.test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved) ... ok
+test_current_same_project_grants_drive_discovery_and_no_cross_project_union (tests.test_factory_intake.FactoryIntakeTests.test_current_same_project_grants_drive_discovery_and_no_cross_project_union) ... ok
+test_queue_has_one_context_preserving_start_action_and_chooser_reuses_native_forms (tests.test_factory_intake.FactoryIntakeTests.test_queue_has_one_context_preserving_start_action_and_chooser_reuses_native_forms) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 66.590s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

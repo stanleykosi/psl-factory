@@ -1,0 +1,42 @@
+{
+  "pid": 24920,
+  "path": "C:\\Python313\\python.exe",
+  "started_utc": "2026-10-28T17:52:31.6901541Z",
+  "session_id": 40130,
+  "previous_verified_pid": 28440,
+  "url": "http://127.0.0.1:8000",
+  "classification": "Unauthenticated main redirects only; authenticated UI proof uses synthetic PostgreSQL clients",
+  "smokes": [
+    {
+      "path": "/",
+      "status": 302,
+      "location": "/accounts/login/?next=/"
+    },
+    {
+      "path": "/work/",
+      "status": 302,
+      "location": "/accounts/login/?next=/work/"
+    },
+    {
+      "path": "/project-views/",
+      "status": 302,
+      "location": "/accounts/login/?next=/project-views/"
+    },
+    {
+      "path": "/cases/00000000-0000-0000-0000-000000000000/policy/scopes/",
+      "status": 302,
+      "location": "/accounts/login/?next=/cases/00000000-0000-0000-0000-000000000000/policy/scopes/"
+    },
+    {
+      "path": "/cases/00000000-0000-0000-0000-000000000000/policy/scopes/investigate/",
+      "status": 302,
+      "location": "/accounts/login/?next=/cases/00000000-0000-0000-0000-000000000000/policy/scopes/investigate/"
+    }
+  ],
+  "preserved_environment": {
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo",
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1"
+  },
+  "supersedes": "docs/test-evidence/2026-10-28-policy-scopes-server.json",
+  "correction": "Canonical path spelling only; original PID/start/session/HTTP evidence preserved, no new verification claim"
+}

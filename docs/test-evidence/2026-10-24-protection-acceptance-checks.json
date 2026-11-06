@@ -1,0 +1,46 @@
+[
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "system",
+      "chunk_id": "b13fe2",
+      "wall_time_seconds": 10.0068296,
+      "session_id": 47163,
+      "original_token_count": 0,
+      "output": ""
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "migration_drift",
+      "chunk_id": "e4fc73",
+      "wall_time_seconds": 10.0055914,
+      "session_id": 69117,
+      "original_token_count": 0,
+      "output": ""
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "compile",
+      "chunk_id": "cdfb9f",
+      "wall_time_seconds": 8.8486018,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "dependencies",
+      "chunk_id": "1386f7",
+      "wall_time_seconds": 10.0411612,
+      "session_id": 79871,
+      "original_token_count": 0,
+      "output": ""
+    }
+  }
+]

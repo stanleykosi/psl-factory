@@ -1,0 +1,22 @@
+{
+  "classification": "Actual local browser inspection of explicit synthetic data; no native provider or real owner evaluation",
+  "browser_id": "2",
+  "tab_id": "2",
+  "authenticated_principal": "studio-demo",
+  "case": "d6ea5933-7a3f-4a13-ab84-c7dcee8b2504",
+  "observed": [
+    "Owner acceptance referenced for recovered request 2; original request 1 shows Verification unavailable",
+    "Last captured decision explicitly distinguished from current verification",
+    "Candidate, build and release displayed separately; requirements digest in expandable detail",
+    "Read-only access: no permitted mutation forms",
+    "Unconfigured case 2d93282d-d455-4309-b5d0-f31cc7b61da3 retains request 3 with missing policy and no routing jobs",
+    "Department inbox contains no request for this viewer; actual recipient filtering tested separately in PostgreSQL"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-approvals-workbench.png",
+    "docs/test-evidence/2026-10-22-approvals-unconfigured.png",
+    "docs/test-evidence/2026-10-22-approvals-inbox.png"
+  ],
+  "handoff": "approvalsTab on shared workbench",
+  "operational_acceptance": false
+}

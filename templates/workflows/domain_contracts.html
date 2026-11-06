@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}<h1>Domain receipt and reviewed destination contracts</h1>
+<p>{{ case|workspace_name }} · <a href="{% url 'reconstitution' case.id %}">Reconstitution inventory and human dispositions</a> · <a href="{% url 'native_finance' case.id %}">Connected Finance verification and publication</a> · <a href="{% url 'policy' case.id %}">Configuration lifecycle</a></p>
+<p>Criteria: <strong>{{ policy_status }}</strong>. Capture incomplete references now; review and verification require current criteria and supported protocols.</p>
+<p>Receipt requests bind the exact sealed archive, source case, family, effect, original operation hash and archived job-row hash. Authenticated remote claims retain their evidence classification. UNKNOWN and conflict require investigation; neither authorizes a retry.</p>
+<p>Destination preflight records identity, database, store, provisioning and outbound prerequisites. Review creates no identities or sessions, enables no outbound workers and dispatches no archived jobs. Debt and independent release controls remain in force.</p>
+<details><summary>Typed criteria</summary><pre>{{ criteria_schema }}</pre></details>
+<details><summary>Provider contract schema</summary><pre>{{ provider_schema }}</pre></details>
+<details><summary>Destination contract schema</summary><pre>{{ destination_schema }}</pre></details>
+{% for action,label,form in commands %}<section><h2>{{ label }}</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button>{{ label }}</button></form></section>{% endfor %}
+<section class="workflow-panel"><h2>Contract versions</h2><ul>{% for r in contracts %}<li><a href="{% url 'domain_contract_report' case.id r.id %}">{{ r }}</a></li>{% empty %}<li>No contracts captured.</li>{% endfor %}</ul>
+</section><section class="workflow-panel"><h2>Observation history</h2><ul>{% for o in observations %}<li>#{{ o.pk }} · {{ o.contract }} · {{ o.result.classification }} · {{ o.result.outcome }} · {{ o.result.prerequisites }} · {{ o.created_at }}</li>{% empty %}<li>No observations.</li>{% endfor %}</ul>
+</section><section class="workflow-panel"><h2>Independent review history</h2><ul>{% for r in reviews %}<li>#{{ r.pk }} · {{ r.contract }} · observation {{ r.observation_id|default:'contract' }} · {{ r.verdict }} · {{ r.created_at }}</li>{% empty %}<li>No reviews.</li>{% endfor %}</ul></section>{% endblock %}

@@ -1,0 +1,19 @@
+{
+  "run": 314,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_complaint_summaries",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-314-support-summaries.txt",
+  "started_at": "2026-10-28T12:49:18.129224+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 156.026
+}

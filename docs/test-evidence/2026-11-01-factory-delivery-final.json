@@ -1,0 +1,67 @@
+{
+  "classification": "Current synthetic browser source-rework proof; not independent-human UAT, real source authenticity, deployment or full-process acceptance",
+  "parent": "docs/test-evidence/2026-11-01-factory-delivery-browser.json",
+  "source_snapshot": "docs/test-evidence/2026-11-01-factory-run430-source.json",
+  "work": 381,
+  "case": "4528c6e7-864e-4650-b2a8-ad37a232ef1b",
+  "database": "psl_factory_delivery_ui_a31fd74f85e4",
+  "journey": [
+    "Actual fixture design successor invalidated current readiness",
+    "Reviewed reassessment retained original work/allowance/history",
+    "Agent investigated and waited for a fresh native Planning exit",
+    "Inspected corrected design and exact source references",
+    "Submitted fresh native Planning decision through rendered case/work/source/authority packet binding; only configured approve action offered",
+    "Agent held because old kickoff/request belonged to the older plan",
+    "Fresh synthetic kickoff/upstream/GLPI source receipts supplied",
+    "Agent prepared/verified successor readiness",
+    "Verified queue, search/context and narrow layout"
+  ],
+  "native_counts": {
+    "planning_decision": 2,
+    "kickoff": 2,
+    "glpi_request": 2,
+    "release_ready": 2,
+    "release_outcome": 0
+  },
+  "current_output": {
+    "head": 97815,
+    "dossier": 129,
+    "release_ready": 821,
+    "verified": true,
+    "verification_scope": "synthetic_native_release_evidence_readiness",
+    "deployment_authorized": false,
+    "deployment_dispatched": false,
+    "financial_release_granted": false,
+    "external_authenticity_verified": false
+  },
+  "retained_prior_readiness": 817,
+  "budget_before_rework": 600,
+  "budget_used": 1200,
+  "original_budget_limit": 20000,
+  "single_work": true,
+  "invoices": 0,
+  "parallel_factory_reviews": 0,
+  "source_observations": [
+    "docs/test-evidence/2026-11-01-factory-delivery-rework-design.json",
+    "docs/test-evidence/2026-11-01-factory-delivery-rework-downstream.json"
+  ],
+  "fixture_limits": "All source transport verifications and principals remain explicit synthetic fixtures. New Planning decisions use the real native service; no live external authority is claimed.",
+  "narrow_viewport": {
+    "width": 390,
+    "height": 844,
+    "document_width": 375,
+    "client_width": 375,
+    "document_overflow": false
+  },
+  "viewport_reset": true,
+  "screenshots": {
+    "docs/test-evidence/2026-11-01-factory-delivery-rework-stale.jpg": "1cbe8f1093252959965fe5ed657cc2bd48498ec715a2a0aa5d74240dce3515c1",
+    "docs/test-evidence/2026-11-01-factory-delivery-rework-planning-review.jpg": "9dbe26c6e070063a4d158f7627585090cab086b032eb6fb648fc9e8513b48aa7",
+    "docs/test-evidence/2026-11-01-factory-delivery-rework-waiting.jpg": "f56c2bba4b2d022cab2a27f28c071bc1462253715d30d65b5bdb9dda93a74d81",
+    "docs/test-evidence/2026-11-01-factory-delivery-final-desktop.jpg": "7e41bc120b5b1c0f11ae5608ed038c54900920569a2ab17443d85c47946f9904",
+    "docs/test-evidence/2026-11-01-factory-delivery-final-narrow.jpg": "fdfc052e3fc7c52ac6fb0ecf652d90f143c6ddee740a0bbfc15a659db92e68ac",
+    "docs/test-evidence/2026-11-01-factory-delivery-final-queue-narrow.jpg": "794b8cd111b1863b504f271e998f21883cb703efba8e12989e1959d2c3150763"
+  },
+  "main_business_data_changed": false,
+  "live_provider": false
+}

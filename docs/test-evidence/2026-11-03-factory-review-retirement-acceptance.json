@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "classification": "Bounded restored Finance approval projection and receipt-verified obsolete coordination-wait retirement",
+  "parent_checkpoint": 535,
+  "source_run": 541,
+  "browser_source_run": 540,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "passing_runs": {
+    "537": {
+      "tests": 2,
+      "unittest_seconds": 39.438,
+      "process_seconds": 44.602
+    },
+    "538": {
+      "tests": 1,
+      "unittest_seconds": 26.272,
+      "process_seconds": 31.251
+    },
+    "540": {
+      "tests": 7,
+      "unittest_seconds": 117.646,
+      "process_seconds": 125.633
+    },
+    "541": {
+      "tests": 94,
+      "unittest_seconds": 910.672,
+      "process_seconds": 916.01
+    }
+  },
+  "retained_failed_runs": [
+    536
+  ],
+  "interrupted_runs": [
+    539
+  ],
+  "tested_scope": [
+    "Original valid native approval reused after relevant rule content restoration",
+    "Exact issue/delivery/destination postconditions before obsolete wait retirement",
+    "Same-work open factory_review only, current packet/authority guard",
+    "Context/claim history retained; fresh row locks; one audit event with receipt IDs and observed task IDs",
+    "Actual PostgreSQL contention with claim release preserves both revisions/events",
+    "HTTP verified history, idempotent terminal retry, same native invoice/approval/two receipts/original allowance",
+    "Current approval header/action/current-access configured executor or Unassigned",
+    "No-execute account, pending-effect precedence and current queue projection",
+    "Actual Codex native-browser agent continuation,329-table GET preservation, queue/keyboard/narrow checks"
+  ],
+  "native_finance_policy_adapters_models_migrations_unchanged": true,
+  "migrations_added": [],
+  "dependencies_added": [],
+  "main_rowsets_unchanged": 329,
+  "main_indexes_unchanged": 1550,
+  "three_prior_cohorts_rowsets_unchanged_each": 329,
+  "status_cohort_selected_facts_retained_since": 533,
+  "status_cohort_full_fingerprint_established_in": 539,
+  "original_mock_files_unchanged": 5,
+  "prior_previews_refreshed": false,
+  "prior_preview_versions": "Processes interrupted; older identities are historical, not current listeners",
+  "separate_new_preview": {
+    "port": 8019,
+    "source_run": 540,
+    "same_application_bytes_as": 541
+  },
+  "operational_owner_values_added": false,
+  "policy_slots": "Existing typed Finance rule/role/responsibility interfaces; actual owner values deferred",
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "active_factory_restore": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-03-factory-review-retirement-acceptance.json",
+    "docs/test-evidence/2026-11-03-factory-review-retirement-static541.json",
+    "docs/test-evidence/2026-11-03-factory-review-restore-browser540.json",
+    "docs/test-evidence/2026-11-03-factory-review-retirement-preservation541.json",
+    "docs/test-evidence/2026-11-03-factory-run539-interruption.json",
+    "docs/test-evidence/2026-11-03-factory-runtime-recovery540-postgres-ready.json",
+    "docs/test-evidence/2026-11-03-factory-review-retirement-preservation539-first-attempt.json",
+    "docs/test-evidence/2026-11-03-factory-review-restore-preview540-identity.json"
+  ]
+}

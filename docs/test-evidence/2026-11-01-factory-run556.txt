@@ -1,0 +1,18 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts (tests.test_factory_availability.FactoryAvailabilityTests.test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 43.065s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

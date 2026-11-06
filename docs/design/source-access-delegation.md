@@ -1,0 +1,9 @@
+# Exact source-read access administration — next connected engineering increment
+
+Current technical tenant access v1 accepts only fixed registered actions. P02 source verification/inspection requires an exact `approval.source.read:<system>` action. Those source keys are deliberately not installed or guessed by the build, so v1 cannot provision them through ordinary access screens.
+
+Add technical tenant-access/v2 with the same bounded, versioned delegation structure and explicit literal actions. Preserve v1 validation unchanged. Recognize only the closed approval-source-read action family, with bounded valid system key and total action length, no wildcard, and an explicit literal in the delegated allowed-actions list. Initial workspace actions remain fixed registered actions; a blank new workspace cannot receive a dynamic source grant.
+
+When enabling a source-read action on a case, require current same-tenant/classification technical authority and an active exact-case reviewed P02 route containing the exact system key. Source roles and owner contract acceptance remain separate. A missing or revoked route holds granting that source action only; revocation must remain possible without restoring a missing route. Existing action-access history remains append-only, and technical expiry stops new access administration without silently rewriting established grants.
+
+Provide the existing configuration/access screens with this typed v2 interface; no actual principal, route, expiry, policy value or grant is installed. Use a forward migration to extend only the existing immutable technical-history guard's format allowlist; preserve all other checks and applied migrations. Verify real PostgreSQL/UI/CSRF, v1 compatibility, exact-case/system bounds, wildcard/unknown-source/foreign-tenant/classification denial, route withdrawal and grant revocation, immutable SQL history and current planning readiness-source revalidation.

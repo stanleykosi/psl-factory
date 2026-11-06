@@ -1,0 +1,7 @@
+{
+  "observed_at_utc": "2026-11-04T23:16:20.2064069Z",
+  "source_run": 659,
+  "files_checked": 1402,
+  "mismatches": [],
+  "scope": "Recorded application/test/contract/template/fixture source; build records and evidence are excluded by the original harness"
+}

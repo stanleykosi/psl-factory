@@ -1,0 +1,60 @@
+{
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "migration_lineage": {
+    "apps/workflows/migrations/0047_factory_go_live.py": {
+      "first_applied_test_run": 488,
+      "sha256": "d3c27c6eb233f3f8ed6f4b8d5c92a06198b59608373e8a15602a96d2207caf43"
+    },
+    "apps/documents/migrations/0017_factory_go_live_scope.py": {
+      "first_applied_test_run": 488,
+      "sha256": "2053c642cbe9d50b0ba10fd886989beefb8a64e3667632ca23f30c8ceba7a70e"
+    },
+    "apps/pmo/migrations/0042_go_live_reaffirmation.py": {
+      "first_applied_test_run": 489,
+      "sha256": "db3c666443448c6ce023d6f181f8b4af3648ff9393323b2fc2617af54c82ea52"
+    },
+    "apps/workflows/migrations/0048_factory_go_live_reaffirmation.py": {
+      "first_applied_test_run": 489,
+      "sha256": "d4082421a0c753d3c77f29f628338594da6863b8a4db92b388373bd02afd9d16"
+    }
+  },
+  "dependencies_added": []
+}

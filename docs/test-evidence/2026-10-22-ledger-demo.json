@@ -1,0 +1,22 @@
+{
+  "case": "be737719-4094-4985-b30d-d2c2ac7f20c2",
+  "principals": {
+    "preparer": 16,
+    "reviewer": 17
+  },
+  "normal": 1,
+  "uncertain": 2,
+  "recovered": 3,
+  "corrected_versions": [
+    4,
+    5
+  ],
+  "duplicate_versions": [
+    6,
+    7
+  ],
+  "agent": 45,
+  "mode": "supplied_read_only",
+  "native_verified": false,
+  "posting_performed": false
+}

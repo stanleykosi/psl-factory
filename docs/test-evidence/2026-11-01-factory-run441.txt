@@ -1,0 +1,19 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_long_lived_native_history_qualifies_current_observations_but_never_falls_back_after_successor (tests.test_factory_current_heads.FactoryCurrentHeadTests.test_long_lived_native_history_qualifies_current_observations_but_never_falls_back_after_successor) ... ok
+test_queue_case_agent_information_review_receipts_and_return_context (tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 125.056s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

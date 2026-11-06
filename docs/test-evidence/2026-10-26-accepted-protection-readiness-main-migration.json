@@ -1,0 +1,27 @@
+{
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "--noinput"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 5.849,
+  "stdout": "Operations to perform:\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\nRunning migrations:\n  Applying workflows.0017_acceptedprotectionreadiness... OK\n  Applying workflows.0018_accepted_protection_native_guards... OK\n  Applying workflows.0019_af13_native_alias... OK\n  Applying workflows.0020_af13_native_closed_shapes... OK\n",
+  "stderr": "",
+  "recorded_at": "2026-10-27T03:51:48.629332+00:00",
+  "plan": {
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "migrate",
+      "--plan",
+      "--noinput"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 5.997,
+    "stdout": "Planned operations:\nworkflows.0017_acceptedprotectionreadiness\n    Create model AcceptedProtectionReadiness\nworkflows.0018_accepted_protection_native_guards\n    Raw SQL operation -> CREATE TRIGGER psl_immutable BEFORE\u2026\nworkflows.0019_af13_native_alias\n    Raw SQL operation -> CREATE OR REPLACE FUNCTION psl_af13\u2026\nworkflows.0020_af13_native_closed_shapes\n    Raw SQL operation -> CREATE OR REPLACE FUNCTION psl_af13\u2026\n",
+    "stderr": ""
+  },
+  "classification": "Main DDL/framework migration metadata only; no business seed/authority/evidence renewal or queue drain"
+}

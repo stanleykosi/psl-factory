@@ -1,0 +1,21 @@
+{
+  "classification": "Browser verification of synthetic local case, no operational acceptance",
+  "case": "4c72630b-b3e1-43f5-9d6e-1aca29cfc30c",
+  "viewer": "studio-demo",
+  "read_only": true,
+  "private_source_hidden": true,
+  "protected_result_status": 403,
+  "policy_status": "ACTIVE revision1; independent sender/provider controls still required",
+  "job_statuses": [
+    "confirmed",
+    "confirmed"
+  ],
+  "source_body_and_result_body_visible": false,
+  "screenshots": [
+    "docs/test-evidence/agent-data-read-only.png",
+    "docs/test-evidence/agent-data-result-403.png"
+  ],
+  "server_exec": 90969,
+  "browser": 2,
+  "tab": 2
+}

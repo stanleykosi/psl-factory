@@ -1,0 +1,20 @@
+{
+  "run": 549,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_delegation.FactoryDelegationTests.test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T03:18:22.104253+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run549.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 51.443
+}

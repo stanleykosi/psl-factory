@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_agent_extract_does_not_replace_case_or_current_reader_access (tests.test_agent_source_visibility.AgentSourceVisibilityTests.test_agent_extract_does_not_replace_case_or_current_reader_access) ... ok
+test_generic_workspace_excludes_private_domain_runs_but_retains_public_runs (tests.test_agent_source_visibility.AgentSourceVisibilityTests.test_generic_workspace_excludes_private_domain_runs_but_retains_public_runs) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_private_projection_is_not_generic_evidence_or_timeline (tests.test_factory_planning.FactoryPlanningTests.test_private_projection_is_not_generic_evidence_or_timeline) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 11.888s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,20 @@
+{
+  "classification": "Fresh synthetic schema-boundary rehearsal, not full restore/reconstitution acceptance",
+  "database": "psl_factory_planning_rollback_0657b2bd8aaf",
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "workflows",
+    "0039_factory_business_identity",
+    "--noinput"
+  ],
+  "returncode": 1,
+  "expected_refusal": "IrreversibleError before schema or row mutation",
+  "rowsets_and_guards_unchanged": 329,
+  "retained_verified_planning_work": 1,
+  "external_effects": false,
+  "parent_database_changed": false,
+  "rollback_requirement": "Retain expanded schema AND current family access/private projections. Serving planning rows with405 UI/worker code is unsupported.",
+  "log": "docs/test-evidence/2026-11-01-factory-planning-rollback.txt"
+}

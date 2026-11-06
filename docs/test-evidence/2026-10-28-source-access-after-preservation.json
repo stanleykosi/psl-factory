@@ -1,0 +1,18 @@
+{
+  "phase": "after",
+  "unchanged_business_and_other_main_rowsets": 315,
+  "prior_django_migration_rows_preserved": true,
+  "appended_migration_rows": 1,
+  "old_migration_files_preserved": 184,
+  "current_migration_files": 185,
+  "frozen_source_files": 41,
+  "unchanged_functions": 72,
+  "changed_function": "psl_technical_intake_guard",
+  "change": "Only supported-format predicate expanded from v1 to v1/v2; all other function text identical",
+  "triggers_preserved": 341,
+  "constraints_preserved": 1676,
+  "tables": 316,
+  "main_test_definitions_match": true,
+  "business_interfaces": 124,
+  "actual_principals_grants_or_policy_installed": false
+}

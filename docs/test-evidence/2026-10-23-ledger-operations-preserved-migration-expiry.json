@@ -1,0 +1,133 @@
+{
+  "assessment": 3,
+  "snapshot": {
+    "plan": 1,
+    "plan_sha256": "948253bd18eeca1e834ab4c6028f7d4903b818cbb76230c37d633205a5ddb607",
+    "policy": 241,
+    "proofs": [
+      [
+        "backup",
+        1,
+        "8cc7e7c80586454b436266174aad936b11404157ab104a9547b906dfda1b181f"
+      ],
+      [
+        "rollback",
+        2,
+        "129f42ec8115433c35afdd1c4e9fa249313f1daa7eb104d6969056bfda395512"
+      ],
+      [
+        "reconciliation",
+        3,
+        "3640b1982cdb6f7669638df2307120acfbefe3ab4dcc45e8cacea6e2ed5f16e6"
+      ],
+      [
+        "access",
+        4,
+        "df55c38cd7ed8bb65054ab65a5f8819c5ea381fe6dd89af5826a85f0813fa882"
+      ],
+      [
+        "fallback",
+        5,
+        "4a6ad08661d88656cec0990ee0c8c05ec6d0b8958c886342c6fe7bf9f97b9c22"
+      ],
+      [
+        "rollout",
+        6,
+        "9f177b8f78e61f552af0f13fe74d2f7416ae57ed0bc54906f919123766df4bfe"
+      ],
+      [
+        "execution",
+        7,
+        "6d6ffd61ce7c5adab165415d1a81bc84f50ea6be1c8e894fc0900a823d3f696d"
+      ],
+      [
+        "restore",
+        10,
+        "80d8a9c0b7cc00009458066864badf28b8a26d97c2d8e040c7dc632d8d7d4ab4"
+      ]
+    ],
+    "inventory": 1,
+    "package": {
+      "id": 7,
+      "sha256": "7c88133167627386b4fe33b44244daaa284179aa39b03925e6c2e632adc4a826",
+      "meaning": 13,
+      "expectations": 14
+    }
+  },
+  "recorded_result": {
+    "coverage": "Exact selected plan/processes/build and evidence metadata; supplied execution/restore reports remain unverified",
+    "findings": [],
+    "operational_ready": false,
+    "documentary_complete": true,
+    "deployment_authorized": false,
+    "native_inventory_read": true,
+    "whole_product_accepted": false,
+    "native_restore_verified": false,
+    "native_migration_execution_verified": false
+  },
+  "current_findings": [
+    "backup evidence expired or future dated",
+    "rollback evidence expired or future dated",
+    "reconciliation evidence expired or future dated",
+    "access evidence expired or future dated",
+    "fallback evidence expired or future dated",
+    "rollout evidence expired or future dated",
+    "execution evidence expired or future dated",
+    "restore evidence expired or future dated",
+    "Inventory observation expired"
+  ],
+  "configured_max_age_seconds": 86400,
+  "ages": [
+    {
+      "kind": "backup",
+      "proof": 1,
+      "age_seconds": 95299.276693,
+      "sha256": "8cc7e7c80586454b436266174aad936b11404157ab104a9547b906dfda1b181f"
+    },
+    {
+      "kind": "rollback",
+      "proof": 2,
+      "age_seconds": 95299.209437,
+      "sha256": "129f42ec8115433c35afdd1c4e9fa249313f1daa7eb104d6969056bfda395512"
+    },
+    {
+      "kind": "reconciliation",
+      "proof": 3,
+      "age_seconds": 95299.159922,
+      "sha256": "3640b1982cdb6f7669638df2307120acfbefe3ab4dcc45e8cacea6e2ed5f16e6"
+    },
+    {
+      "kind": "access",
+      "proof": 4,
+      "age_seconds": 95299.108756,
+      "sha256": "df55c38cd7ed8bb65054ab65a5f8819c5ea381fe6dd89af5826a85f0813fa882"
+    },
+    {
+      "kind": "fallback",
+      "proof": 5,
+      "age_seconds": 95299.055842,
+      "sha256": "4a6ad08661d88656cec0990ee0c8c05ec6d0b8958c886342c6fe7bf9f97b9c22"
+    },
+    {
+      "kind": "rollout",
+      "proof": 6,
+      "age_seconds": 95299.00814,
+      "sha256": "9f177b8f78e61f552af0f13fe74d2f7416ae57ed0bc54906f919123766df4bfe"
+    },
+    {
+      "kind": "execution",
+      "proof": 7,
+      "age_seconds": 95298.955996,
+      "sha256": "6d6ffd61ce7c5adab165415d1a81bc84f50ea6be1c8e894fc0900a823d3f696d"
+    },
+    {
+      "kind": "restore",
+      "proof": 10,
+      "age_seconds": 95292.746119,
+      "sha256": "80d8a9c0b7cc00009458066864badf28b8a26d97c2d8e040c7dc632d8d7d4ab4"
+    }
+  ],
+  "history_preserved": true,
+  "policy_role_source_and_AF13_pins_unchanged": true,
+  "refreshed_or_reauthorised": false
+}

@@ -1,0 +1,183 @@
+{
+  "case_id": "2ea0e4ca-21cb-44f8-b4af-bcb2892d60fa",
+  "packet_id": 1,
+  "review_id": 8,
+  "agent_id": 35,
+  "synthetic": true,
+  "status": {
+    "packet_id": 1,
+    "reference": "monthly-review",
+    "version": 1,
+    "sha256": "0d0a24032e3b8411875b687ae4e2818c7c1a4dcca7c6a7ddf7bbdef84a528bb2",
+    "holds": [],
+    "records": [
+      {
+        "id": 1,
+        "kind": "attest",
+        "actor_id": 2,
+        "current": false,
+        "payload": {
+          "intent": {
+            "note": "Explicit synthetic human statement",
+            "verdict": null,
+            "decision_evidence_id": null
+          },
+          "snapshot": {},
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      },
+      {
+        "id": 2,
+        "kind": "request",
+        "actor_id": 2,
+        "current": false,
+        "payload": {
+          "intent": {
+            "note": "Explicit synthetic human statement",
+            "verdict": null,
+            "decision_evidence_id": null
+          },
+          "snapshot": {
+            "attestation_id": 1
+          },
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      },
+      {
+        "id": 3,
+        "kind": "receive",
+        "actor_id": 3,
+        "current": false,
+        "payload": {
+          "intent": {
+            "note": "Explicit synthetic human statement",
+            "verdict": null,
+            "decision_evidence_id": null
+          },
+          "snapshot": {
+            "request_id": 2,
+            "receipt_only": true
+          },
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      },
+      {
+        "id": 4,
+        "kind": "review",
+        "actor_id": 3,
+        "current": false,
+        "payload": {
+          "intent": {
+            "note": "Explicit synthetic human statement",
+            "verdict": "reviewed",
+            "decision_evidence_id": 245
+          },
+          "snapshot": {
+            "attestation_id": 1,
+            "review_policy_id": 146,
+            "policy_evidence_id": 244
+          },
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      },
+      {
+        "id": 5,
+        "kind": "attest",
+        "actor_id": 2,
+        "current": true,
+        "payload": {
+          "intent": {
+            "note": "Final lineage demonstration: fresh request and receipt after renewed PM attestation",
+            "verdict": null,
+            "decision_evidence_id": null
+          },
+          "snapshot": {},
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      },
+      {
+        "id": 6,
+        "kind": "request",
+        "actor_id": 2,
+        "current": true,
+        "payload": {
+          "intent": {
+            "note": "Final lineage demonstration: fresh request and receipt after renewed PM attestation",
+            "verdict": null,
+            "decision_evidence_id": null
+          },
+          "snapshot": {
+            "attestation_id": 5
+          },
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      },
+      {
+        "id": 7,
+        "kind": "receive",
+        "actor_id": 3,
+        "current": true,
+        "payload": {
+          "intent": {
+            "note": "Final lineage demonstration: fresh request and receipt after renewed PM attestation",
+            "verdict": null,
+            "decision_evidence_id": null
+          },
+          "snapshot": {
+            "request_id": 6,
+            "receipt_only": true,
+            "attestation_id": 5
+          },
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      },
+      {
+        "id": 8,
+        "kind": "review",
+        "actor_id": 3,
+        "current": true,
+        "payload": {
+          "intent": {
+            "note": "Final lineage demonstration: fresh request and receipt after renewed PM attestation",
+            "verdict": "reviewed",
+            "decision_evidence_id": 245
+          },
+          "snapshot": {
+            "receipt_id": 7,
+            "request_id": 6,
+            "attestation_id": 5,
+            "review_policy_id": 146,
+            "policy_evidence_id": 244
+          },
+          "invoice_approved": false,
+          "payment_approved": false,
+          "accounting_posted": false,
+          "recognised_amount": null
+        }
+      }
+    ],
+    "recognised_amount": null,
+    "accounting_posted": false
+  }
+}

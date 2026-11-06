@@ -1,0 +1,103 @@
+Creating test database for alias 'default' ('test_psl')...
+
+Found 24 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying core.0001_initial... OK
+  Applying agents.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying baas.0001_initial... OK
+  Applying policy.0001_initial... OK
+  Applying pmo.0001_initial... OK
+  Applying documents.0001_initial... OK
+  Applying core.0002_append_only_history... OK
+  Applying workflows.0001_initial... OK
+  Applying finance.0001_initial... OK
+  Applying workflows.0002_effect_identity... OK
+  Applying documents.0002_controlledreview_document_publication_publicationjob_and_more... OK
+  Applying workflows.0003_humantask_taskevent... OK
+  Applying documents.0003_immutable_controlled_documents... OK
+  Applying documents.0004_alter_publication_review... OK
+  Applying finance.0002_financialimport_importvalidation_invoicepreparation_and_more... OK
+  Applying finance.0003_immutable_intake... OK
+  Applying identity.0001_initial... OK
+  Applying pmo.0002_remove_decision_decision_subject_role_and_more... OK
+  Applying pmo.0003_deliverycandidate_gatedocumentbinding_gaterecord_and_more... OK
+  Applying pmo.0004_immutable_gate_history... OK
+  Applying pmo.0005_gaterecord_gate_source_identity... OK
+  Applying pmo.0006_actionitem_actionstate_actionitem_current_meeting_and_more... OK
+  Applying pmo.0007_meetingactionlink_and_more... OK
+  Applying pmo.0008_immutable_minutes_actions_reports... OK
+test_actual_staff_meeting_action_minutes_path (tests.test_minutes_reporting.MinutesReportingTests.test_actual_staff_meeting_action_minutes_path) ... ok
+test_agents_only_suggest_cited_work_and_cannot_assign_or_change_scope (tests.test_minutes_reporting.MinutesReportingTests.test_agents_only_suggest_cited_work_and_cannot_assign_or_change_scope) ... ok
+test_calculated_working_deadline_uses_holidays_and_policy_lineage (tests.test_minutes_reporting.MinutesReportingTests.test_calculated_working_deadline_uses_holidays_and_policy_lineage) ... ERROR
+test_changed_action_holds_old_minutes_and_new_revision_gets_new_review (tests.test_minutes_reporting.MinutesReportingTests.test_changed_action_holds_old_minutes_and_new_revision_gets_new_review) ... ok
+test_clock_configuration_ui_saves_draft_not_authority (tests.test_minutes_reporting.MinutesReportingTests.test_clock_configuration_ui_saves_draft_not_authority) ... ok
+test_configured_pause_resume_preserves_history_and_elapsed_extension (tests.test_minutes_reporting.MinutesReportingTests.test_configured_pause_resume_preserves_history_and_elapsed_extension) ... ok
+test_database_history_and_current_pointers_are_protected (tests.test_minutes_reporting.MinutesReportingTests.test_database_history_and_current_pointers_are_protected) ... ok
+test_manual_period_reporting_does_not_need_calendar_and_tracks_action_changes (tests.test_minutes_reporting.MinutesReportingTests.test_manual_period_reporting_does_not_need_calendar_and_tracks_action_changes) ... ok
+test_minutes_actions_review_and_actual_recipient_publication (tests.test_minutes_reporting.MinutesReportingTests.test_minutes_actions_review_and_actual_recipient_publication) ... ok
+test_missing_calendar_holds_only_calculation_and_explicit_due_still_works (tests.test_minutes_reporting.MinutesReportingTests.test_missing_calendar_holds_only_calculation_and_explicit_due_still_works) ... ok
+test_missing_owner_and_deadline_remain_unknown_and_capture_needs_no_calendar (tests.test_minutes_reporting.MinutesReportingTests.test_missing_owner_and_deadline_remain_unknown_and_capture_needs_no_calendar) ... ok
+test_naive_timestamps_and_cross_case_principals_are_rejected (tests.test_minutes_reporting.MinutesReportingTests.test_naive_timestamps_and_cross_case_principals_are_rejected) ... ok
+test_new_meeting_revision_and_previous_action_links_invalidate_snapshot (tests.test_minutes_reporting.MinutesReportingTests.test_new_meeting_revision_and_previous_action_links_invalidate_snapshot) ... ok
+test_only_current_owner_can_complete_and_current_grants_are_checked (tests.test_minutes_reporting.MinutesReportingTests.test_only_current_owner_can_complete_and_current_grants_are_checked) ... ok
+test_other_case_and_ungranted_admin_are_denied (tests.test_minutes_reporting.MinutesReportingTests.test_other_case_and_ungranted_admin_are_denied) ... ok
+test_report_schedule_dependencies_are_narrow_and_tuesday_is_fixed (tests.test_minutes_reporting.MinutesReportingTests.test_report_schedule_dependencies_are_narrow_and_tuesday_is_fixed) ... ok
+test_revoked_pause_policy_holds_resume_but_explicit_manager_reset_remains (tests.test_minutes_reporting.MinutesReportingTests.test_revoked_pause_policy_holds_resume_but_explicit_manager_reset_remains) ... ok
+test_schedule_creates_one_draft_and_review_wait_without_publication (tests.test_minutes_reporting.MinutesReportingTests.test_schedule_creates_one_draft_and_review_wait_without_publication) ... ok
+test_schedule_policy_change_is_held_and_manual_reporting_still_works (tests.test_minutes_reporting.MinutesReportingTests.test_schedule_policy_change_is_held_and_manual_reporting_still_works) ... ok
+test_schedule_revoked_dispatch_grant_and_paused_schedule_never_draft (tests.test_minutes_reporting.MinutesReportingTests.test_schedule_revoked_dispatch_grant_and_paused_schedule_never_draft) ... ok
+test_short_month_and_dst_are_explicit (tests.test_minutes_reporting.MinutesReportingTests.test_short_month_and_dst_are_explicit) ... ok
+test_stale_action_and_case_revisions_do_not_overwrite_history (tests.test_minutes_reporting.MinutesReportingTests.test_stale_action_and_case_revisions_do_not_overwrite_history) ... ok
+test_separate_worker_process_generates_draft_once_and_persisted_cursor_resumes (tests.test_minutes_reporting.ReportingProcessTests.test_separate_worker_process_generates_draft_once_and_persisted_cursor_resumes) ... ok
+test_two_connections_generate_one_occurrence (tests.test_minutes_reporting.ReportingProcessTests.test_two_connections_generate_one_occurrence) ... ok
+
+======================================================================
+ERROR: test_calculated_working_deadline_uses_holidays_and_policy_lineage (tests.test_minutes_reporting.MinutesReportingTests.test_calculated_working_deadline_uses_holidays_and_policy_lineage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_minutes_reporting.py", line 114, in test_calculated_working_deadline_uses_holidays_and_policy_lineage
+    due,policies,meta=calculate_action_due(self.case,datetime.fromisoformat('2026-10-20T10:00:00+01:00'),timezone.now())
+                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\clocks.py", line 38, in calculate_action_due
+    calendar=reference_values(configs['D04.working_calendar_ref'])[0]
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 217, in reference_values
+    return [RegisteredReference.objects.get(case=configuration.case,ref=ref,version=1).content for ref in value]
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    raise self.model.DoesNotExist(
+        "%s matching query does not exist." % self.model._meta.object_name
+    )
+apps.policy.models.RegisteredReference.DoesNotExist: RegisteredReference matching query does not exist.
+
+----------------------------------------------------------------------
+Ran 24 tests in 16.231s
+
+FAILED (errors=1)
+Destroying test database for alias 'default' ('test_psl')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

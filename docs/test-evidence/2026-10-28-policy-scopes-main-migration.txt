@@ -1,0 +1,6 @@
+Operations to perform:
+  Apply all migrations: policy
+Running migrations:
+  Applying policy.0002_scopeversion_scopestate_scopeapplication... OK
+  Applying policy.0003_scope_initial_state_guard... OK
+

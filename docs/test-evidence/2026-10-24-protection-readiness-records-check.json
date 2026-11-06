@@ -1,0 +1,20 @@
+{
+  "records": "PASS",
+  "current": "verified",
+  "next": "BUILD-PRIVATE-PROTECTION-ACCEPTANCE",
+  "next_run": 223,
+  "server_session": 40066,
+  "unauthenticated_login_redirect": true,
+  "tests_running": false,
+  "focused_tests": 15,
+  "connected_tests": 90,
+  "baseline_counts_overlap": true,
+  "source_files": 852,
+  "app_test_fixture_unchanged_through_final_runs": true,
+  "backlog_items": 46,
+  "all_122_exact_partial_rows": true,
+  "existing_main_tables_preserved": 266,
+  "policy_interfaces": 102,
+  "supplements": 45,
+  "real_owner_operational_acceptance": false
+}

@@ -1,0 +1,48 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0032_native_invoice_guards...test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_exact_four_variants_credit_debit_void_and_negative_receipts (tests.test_invoice_variants.InvoiceVariantTests.test_exact_four_variants_credit_debit_void_and_negative_receipts) ... FAIL
+test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent (tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent) ... ERROR
+
+======================================================================
+ERROR: test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent (tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_invoice_variants.py", line 55, in test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent
+    cfg=draft_operator_policy(a,c.pk,FOLLOWUP,{**values['followup_template'],'owner_id':a.pk},e['review'].pk,timezone.now())
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\operator_drafts.py", line 15, in draft_operator_policy
+    r=register_reference(a,c.pk,'ops:'+str(uuid4()),schema,content,evidence_id)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 306, in register_reference
+    raise ValidationError('Reference needs a schema identifier and this case owner-decision evidence')
+django.core.exceptions.ValidationError: ['Reference needs a schema identifier and this case owner-decision evidence']
+
+======================================================================
+FAIL: test_exact_four_variants_credit_debit_void_and_negative_receipts (tests.test_invoice_variants.InvoiceVariantTests.test_exact_four_variants_credit_debit_void_and_negative_receipts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_invoice_variants.py", line 33, in test_exact_four_variants_credit_debit_void_and_negative_receipts
+    m,p,r=self.original(j,c);self.assertEqual(r[0],'present');seen.append(m['variant'])
+                             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 'conflict' != 'present'
+- conflict
++ present
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 60.150s
+
+FAILED (failures=1, errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

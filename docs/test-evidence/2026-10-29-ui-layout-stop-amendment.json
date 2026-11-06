@@ -1,0 +1,8 @@
+{
+  "previous_manifest": "docs/test-evidence/2026-10-29-ui-layout-source-manifest.json",
+  "changes": "User-requested preview shutdown and handoff amendment only",
+  "files": {
+    "HANDOFF.md": "da92c9353b6b5264d7ca1c8460f30a0a33a7e8c30407b606082f0e65b72683ed",
+    "docs/test-evidence/2026-10-29-ui-layout-server-stopped.json": "237637daddf70efe7559873f117d855e42ed55bc8554db59cdd232e892615e85"
+  }
+}

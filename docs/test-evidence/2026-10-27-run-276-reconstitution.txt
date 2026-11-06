@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_01_ui_missing_policy_scope_agent_and_inventory (tests.test_reconstitution.ReconstitutionTests.test_01_ui_missing_policy_scope_agent_and_inventory) ... ok
+test_02_authenticated_receipts_unknown_and_human_dispositions (tests.test_reconstitution.ReconstitutionTests.test_02_authenticated_receipts_unknown_and_human_dispositions) ... ok
+test_03_complete_review_publication_and_changed_evidence (tests.test_reconstitution.ReconstitutionTests.test_03_complete_review_publication_and_changed_evidence) ... ok
+test_04_duplicates_and_fresh_process_commit_recovery (tests.test_reconstitution.ReconstitutionTests.test_04_duplicates_and_fresh_process_commit_recovery) ... ok
+test_05_sql_guards_and_foreign_scope (tests.test_reconstitution.ReconstitutionTests.test_05_sql_guards_and_foreign_scope) ... ok
+test_06_revoked_policy_roles_and_receipt_expiry (tests.test_reconstitution.ReconstitutionTests.test_06_revoked_policy_roles_and_receipt_expiry) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 788.949s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

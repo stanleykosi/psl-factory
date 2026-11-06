@@ -1,0 +1,8 @@
+{
+  "classification": "synthetic_test_only; no PSL operating values or appointments",
+  "mode": null,
+  "contract_id": null,
+  "planner_id": null,
+  "data_scope": "eligible_actions_and_opaque_citations_v1",
+  "max_output_chars": 2048
+}

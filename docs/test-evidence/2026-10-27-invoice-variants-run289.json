@@ -1,0 +1,18 @@
+{
+  "run": 289,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-289-invoice-variants.txt",
+  "started_at": "2026-10-27T17:08:19.687650+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 35.107
+}

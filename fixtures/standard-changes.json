@@ -1,0 +1,14 @@
+{
+  "fixture_scope": "synthetic_test",
+  "not_business_policy": true,
+  "catalogue_entry": {
+    "key": "synthetic-maintenance",
+    "module": "Synthetic API",
+    "procedure_evidence_id": "REPLACE_WITH_CASE_EVIDENCE_ID",
+    "procedure_sha256": "REPLACE_WITH_EXACT_EVIDENCE_HASH",
+    "expected_impact": {"cost_impact": false, "timeline_impact": false, "client_facing": false},
+    "production_gate": "independent_release_controls"
+  },
+  "gate_map": {"standard": [{"catalogue_key": "synthetic-maintenance", "roles": ["Product", "Engineering"]}]},
+  "negative_cases": ["missing", "wrong_hash", "null_impact", "duplicate_key", "waived_production", "unmapped_role", "superseded", "revoked", "expired", "source_changed", "authority_revoked"]
+}

@@ -1,0 +1,19 @@
+{
+  "run": 296,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_invoice_variants.InvoiceVariantTests.test_canonical_receipt_successor_generation_and_two_connection_intake",
+    "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-296-followup-successors.txt",
+  "started_at": "2026-10-28T09:59:42.438271+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 37.302
+}

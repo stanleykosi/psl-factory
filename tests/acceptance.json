@@ -1,0 +1,1074 @@
+{
+  "pack_version": "0.7",
+  "status": "ALL_SPECIFIED_NOT_RUN",
+  "application_test_runs": 0,
+  "scope_notes": "Initial connected-increment and cross-cutting cases, plus full-family acceptance. No phase is a build ceiling. All tests are specifications until executed.",
+  "cases": [
+    {
+      "id": "M1-01",
+      "category": "happy path",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P03",
+        "P17",
+        "P18",
+        "P21",
+        "P26"
+      ],
+      "decision_refs": [
+        "D02",
+        "D05"
+      ],
+      "setup": "Synthetic engagement, requirement and Engineering/Security estimate refs; no signature.",
+      "action": "Create and view detailed plan/cost evidence before signed SOW.",
+      "expected": [
+        "Plan persists without signature prerequisite.",
+        "Source-linked effort evidence visible; calculator is not fabricated.",
+        "No external effect or default real approver."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-02",
+      "category": "human decisions",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P09",
+        "P01",
+        "P53"
+      ],
+      "decision_refs": [],
+      "setup": "Distinct synthetic human PM, Head, CEO and PMO Lead; same exact cost/document versions.",
+      "action": "Attempt costing out of order then correct order; independently record quality review.",
+      "expected": [
+        "Out-of-order costing denied with no approval mutation.",
+        "PM then Head then CEO recorded against cost version.",
+        "Quality review remains separate, not satisfied by CEO alone."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-03",
+      "category": "happy path",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P20",
+        "P12",
+        "P34",
+        "F34"
+      ],
+      "decision_refs": [
+        "D11",
+        "D12"
+      ],
+      "setup": "Synthetic signed SOW/PRD evidence, incomplete stage schedule, PMO grant.",
+      "action": "Record opening milestone and deliver local Finance handoff.",
+      "expected": [
+        "Milestone and one outbox commit atomically.",
+        "Finance need not approve milestone.",
+        "One restricted Finance inbox item; no invoice issued or real notification."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-04",
+      "category": "agent usefulness",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P07",
+        "P10",
+        "P26",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Cited fixture documents, mocked provider and scoped demo grants.",
+      "action": "O01 coordinates A02 extraction and A04 missing-evidence task, A05 explanation, A08 check.",
+      "expected": [
+        "More than a chatbot: typed bounded task plan, cited artifacts and internal task results.",
+        "No source-free facts, signature certification or invented stage terms.",
+        "All tool calls go through server policy gateway."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-05",
+      "category": "error",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P18",
+        "P26"
+      ],
+      "decision_refs": [],
+      "setup": "Required Engineering or Security reference missing.",
+      "action": "Attempt transition requiring that evidence.",
+      "expected": [
+        "CONFIGURATION_REQUIRED or schema-specific missing-evidence outcome.",
+        "No fabricated approval or completion; unrelated case work remains usable."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-06",
+      "category": "versioning",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P08",
+        "P09",
+        "P19",
+        "P53"
+      ],
+      "decision_refs": [],
+      "setup": "Cost v1 approved; v2 changes cost.",
+      "action": "Reuse v1 approvals on v2.",
+      "expected": [
+        "Denied for revised cost; complete costing chain required for v2.",
+        "Original approval evidence retained; no send."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-07",
+      "category": "unresolved policy",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P08",
+        "P53"
+      ],
+      "decision_refs": [
+        "D05"
+      ],
+      "setup": "Non-cost revision with unavailable invalidation policy.",
+      "action": "Attempt automatically reusing previous review.",
+      "expected": [
+        "Affected reuse blocked by D05; not blanket approval and not invented universal reapproval.",
+        "Version/evidence capture continues."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-08",
+      "category": "idempotency",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P34",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "A successful milestone completion with operation key K.",
+      "action": "Repeat same payload/key; repeat with same key different payload.",
+      "expected": [
+        "Same request returns original milestone/handoff.",
+        "Different payload conflicts.",
+        "Exactly one durable handoff semantic event."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-09",
+      "category": "concurrency",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P34",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Two transactions read same milestone version.",
+      "action": "Race completion/revision from separate DB connections.",
+      "expected": [
+        "At most one allowed next version from expected version.",
+        "Losing stale request cannot overwrite.",
+        "No duplicate outbox; assertions run on PostgreSQL, not SQLite."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-10",
+      "category": "atomicity",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P34",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Inject failure after milestone write but before outbox write.",
+      "action": "Attempt completion; rollback and retry safely.",
+      "expected": [
+        "No partial committed milestone without handoff.",
+        "Retry creates one consistent milestone/outbox."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-11",
+      "category": "retry",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Mock destination rejects before acceptance with known transient failure.",
+      "action": "Run retry under bounded policy.",
+      "expected": [
+        "Attempts are recorded; stable operation key persists.",
+        "One accepted inbox item; bounded exhaustion parks task."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-12",
+      "category": "unknown outcome",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Mock adapter accepts handoff then times out before response.",
+      "action": "Resume/retry processing.",
+      "expected": [
+        "Outcome is UNKNOWN, not failed.",
+        "Lookup stable key confirms existing delivery before new submission.",
+        "No second inbox item."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-13",
+      "category": "restart",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Persisted ready and leased tasks; simulated worker crash.",
+      "action": "Restart with lease expiry/fencing.",
+      "expected": [
+        "New worker resumes trusted state; stale worker cannot commit.",
+        "Completed effects/human decisions are not replayed."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-14",
+      "category": "cancellation",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Undispatched task; second case already accepted by mock.",
+      "action": "Cancel each.",
+      "expected": [
+        "First prevents dispatch.",
+        "Second keeps accepted receipt and reports correction boundary, not fabricated rollback."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-15",
+      "category": "denied actions",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P34",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Finance human or A04 attempts PMO completion without PMO grant.",
+      "action": "Submit direct domain action and model tool request.",
+      "expected": [
+        "Denied server-side, no milestone/outbox mutation.",
+        "Model catalogue does not expose human milestone completion."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-16",
+      "category": "permissions",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P05",
+        "P52",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Unrelated project/tenant viewer and restricted Finance projection.",
+      "action": "Try URL guessing, form POST, export, worker input and tool evidence read.",
+      "expected": [
+        "Every path denies unauthorized object/field access with no sensitive leak.",
+        "Finance sees only required approved evidence.",
+        "Django staff/auth flag alone is insufficient."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-17",
+      "category": "revocation",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Task queued under grant then grant revoked.",
+      "action": "Worker dispatches task.",
+      "expected": [
+        "Current grant checked at dispatch; no mock send.",
+        "Revoked cached context cannot restore permission."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-18",
+      "category": "prompt injection",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P20",
+        "P52",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Fixture contains forged CEO/system command and attacker destination.",
+      "action": "Extract facts and execute proposed plan.",
+      "expected": [
+        "Content remains data; no policy/role/tool/recipient change.",
+        "No payroll read, exception approval or arbitrary HTTP.",
+        "Security finding does not echo sensitive content externally."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-19",
+      "category": "agent tool permissions",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P02",
+        "P63"
+      ],
+      "decision_refs": [],
+      "setup": "Mock provider asks for shell, SQL, grant edit, invoice issue or deployment.",
+      "action": "Send tool requests through gateway.",
+      "expected": [
+        "All absent/forbidden tools denied; no side effect.",
+        "Human review cannot turn missing role into authority."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-20",
+      "category": "schema and semantics",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P52",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Malformed JSON, cross-case references and fabricated citations.",
+      "action": "Validate proposed artifact/handoff.",
+      "expected": [
+        "Reject schema errors and semantic reference/citation failures.",
+        "No artifact marked verified from syntactic validity alone."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-21",
+      "category": "bounded execution",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P02",
+        "P26"
+      ],
+      "decision_refs": [],
+      "setup": "Mock provider loops, times out or emits cyclic plan.",
+      "action": "Run under fixture ceilings.",
+      "expected": [
+        "Reject invalid graph; stop at test bounds; persist useful blocker.",
+        "No unbounded spend/retry or lost task; manual safe actions remain available."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-22",
+      "category": "payment unknown",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P30",
+        "P31",
+        "P32",
+        "F34"
+      ],
+      "decision_refs": [
+        "D13"
+      ],
+      "setup": "80% expectation, null denominator/qualifying-funds rule.",
+      "action": "Request payment readiness display.",
+      "expected": [
+        "UNKNOWN with D13 reason, not 0%, pass or fail from guessed denominator.",
+        "No deployment authority inferred."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-23",
+      "category": "human override denied",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P31",
+        "P32",
+        "F34"
+      ],
+      "decision_refs": [
+        "D13"
+      ],
+      "setup": "Authority UNCONFIGURED; actors demo CEO/admin/human/agent each attempt approval.",
+      "action": "Attempt approve payment exception, mark payment waived, authorize deployment.",
+      "expected": [
+        "Every attempt denied regardless of human/job title/admin flag.",
+        "No authorized exception or release record; request preparation may remain allowed.",
+        "No debt change."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-24",
+      "category": "partial decision progress",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [
+        "D12",
+        "D14"
+      ],
+      "setup": "Stage schedule has null amounts/tax/due terms.",
+      "action": "Prepare evidence and request invoice issuance.",
+      "expected": [
+        "Evidence/handoff work can continue; issuance blocked.",
+        "No 50/30/20 or alternative default; no rounding/due-date assumption."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-25",
+      "category": "privacy",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P52",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Restricted mock internal comments and fake credential-shaped values.",
+      "action": "Generate Finance projection, logs and agent audit.",
+      "expected": [
+        "Unrelated internal fields absent; secret-like input redacted.",
+        "No hidden reasoning log required; provenance/hashes retained."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-26",
+      "category": "mock isolation",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Configure live URL/adapter/key or non-loopback server in mock environment.",
+      "action": "Attempt startup/test execution.",
+      "expected": [
+        "Fail closed before network effects.",
+        "No real recipients, model API call or production DB reset."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-27",
+      "category": "human pause",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P02",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Running/queued bounded agent task and pending unknown effect.",
+      "action": "Pause case then resume only with permitted request.",
+      "expected": [
+        "New dispatch stops; unknown effect remains visible for reconciliation.",
+        "Resume does not duplicate accepted operations or bypass grants."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-28",
+      "category": "UI acceptance",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P26",
+        "P20",
+        "P34",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Happy path plus blocked/denied/unknown cases.",
+      "action": "Use staff screens with keyboard and validation errors.",
+      "expected": [
+        "Timeline shows plan before signature.",
+        "Separate document/cost decisions and milestone/invoice/receipt states.",
+        "Errors explain next needed evidence without leaking other projects."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "M1-29",
+      "category": "connected end-to-end integration",
+      "scope": "INITIAL_CONNECTED_INCREMENT",
+      "process_ids": [
+        "P03",
+        "P07",
+        "P09",
+        "P20",
+        "P26",
+        "P34",
+        "P52",
+        "P53",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "One actual local staff application session per distinct synthetic role; real PostgreSQL and application services; same DEMO-ENG-001/DEMO-PRJ-001 and evidence-version IDs throughout. Only the model provider and external adapters are mocked.",
+      "action": "Through actual staff request/UI paths create plan and cost/SOW evidence, record separate ordered costing and document decisions, attach signed baseline evidence, record PMO milestone, stop/restart the separate worker, deliver to mock Finance inbox, run scoped agent evidence/missing-term tasks and inspect final audit.",
+      "expected": [
+        "One linked case timeline proves plan/cost evidence precedes signature.",
+        "Actual authenticated request handlers and domain transactions persist decisions, milestone and atomic outbox; do not mock internal services, ORM, permission gateway or transaction boundary.",
+        "After worker restart one stable handoff operation/receipt and one Finance inbox item exist for the same milestone version.",
+        "Agent task/citation/tool audit uses those same evidence/case IDs and gateway.",
+        "Invoice issue and payment-exception approval remain denied with no financial or deployment effect.",
+        "Capture database assertions, UI screenshots and process restart/test command evidence; fail if an end-to-end path is merely simulated by canned internal responses."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "LATER-01",
+      "category": "future human exception",
+      "scope": "FULL_PRODUCT_CONFIGURATION_OR_INTEGRATION",
+      "process_ids": [
+        "P31",
+        "P32",
+        "F34"
+      ],
+      "decision_refs": [
+        "D01",
+        "D05",
+        "D13"
+      ],
+      "setup": "Isolated synthetic configured authority/scope/validity for infrastructure tests; operational use requires legitimate actual configuration.",
+      "action": "Record authorized human exception then evaluate release dispatch.",
+      "expected": [
+        "Decision guard uses actual human authority/evidence/version.",
+        "Do not add release guards as prerequisites to recording decision.",
+        "Release dispatch independently checks Engineering/Security/GLPI and payment policy; exception never waives debt."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "LATER-02",
+      "category": "payment threshold",
+      "scope": "FULL_PRODUCT_CONFIGURATION_OR_INTEGRATION",
+      "process_ids": [
+        "F34"
+      ],
+      "decision_refs": [
+        "D13",
+        "D14"
+      ],
+      "setup": "Future owner-approved denominator/qualifying funds rule and comparable exact basis.",
+      "action": "Test below, exactly and above 80%, stale/reversed evidence.",
+      "expected": [
+        "79.999% cannot round into pass.",
+        "Missing/stale basis remains unknown; refreshed current evidence used.",
+        "Technical fixtures cannot establish operational policy."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "LATER-03",
+      "category": "receipt concurrency",
+      "scope": "FULL_PRODUCT_CONFIGURATION_OR_INTEGRATION",
+      "process_ids": [
+        "F32",
+        "F34"
+      ],
+      "decision_refs": [
+        "D12",
+        "D14"
+      ],
+      "setup": "Future receipt/allocation policy and authorized independent oracles.",
+      "action": "Race allocations, duplicate source receipts, full reversal and corrected cash-lot lineage.",
+      "expected": [
+        "No over-allocation/double cash; full-only unique reversal atomic with allocations.",
+        "Unmatched/multi-contract/excess stays explicit; no invented priority."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "LATER-04",
+      "category": "invoice uncertainty",
+      "scope": "FULL_PRODUCT_CONFIGURATION_OR_INTEGRATION",
+      "process_ids": [
+        "F30",
+        "F34"
+      ],
+      "decision_refs": [
+        "D08",
+        "D12",
+        "D14"
+      ],
+      "setup": "Future authorized mock/live adapter contract and actual approved terms.",
+      "action": "Race milestone revision with issuance; timeout/correction/delivery retries.",
+      "expected": [
+        "No duplicate obligation; unknown correction does not erase original debt.",
+        "Stale pre-dispatch evidence blocks; possible external acceptance reconciled."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "LATER-05",
+      "category": "real model evaluation",
+      "scope": "FULL_PRODUCT_CONFIGURATION_OR_INTEGRATION",
+      "process_ids": [
+        "P02",
+        "P52",
+        "F34"
+      ],
+      "decision_refs": [],
+      "setup": "Configured real provider with appropriate data/budget controls and independent golden cases; record actual provider/environment.",
+      "action": "Measure citations, extraction, tool choices, injection resistance and task completion.",
+      "expected": [
+        "Report measured quality/errors/latency/cost and limits.",
+        "Canned mock behavior is not a real-model pass; no self-defined oracle."
+      ],
+      "required_evidence": "Actual command and result plus assertions on persisted business/task/effect/audit state; UI evidence where applicable.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF01",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "B01",
+        "B02",
+        "B03",
+        "B14"
+      ],
+      "setup": "Real application services/PostgreSQL and Case/channel/transaction links, response timestamps, resolution evidence; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Channel intake → identity/evidence triage → investigation/internal task → owned resolution/reopen and summary through Support inbox, case detail, triage/merge review, timeline and response metrics, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in baas.support.",
+        "No corrective credit implied by support status.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF02",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "B04",
+        "B05",
+        "B06",
+        "B07"
+      ],
+      "setup": "Real application services/PostgreSQL and Settlement/reference evidence, request/queue identifiers and effect receipt; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Compare settlement evidence → investigate → Engineering-owned corrective request → reconcile result through Reconciliation workbench, discrepancy detail, corrective-request and receipt tracker, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in baas.reconciliation.",
+        "Business queue/funds authority is separate from infrastructure jobs.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF03",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "B08",
+        "B09",
+        "B10",
+        "B11"
+      ],
+      "setup": "Real application services/PostgreSQL and Partner agreement, onboarding history, usage period/batch; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Agreement/onboarding intake → configured stages/deadlines → follow-up → usage/report handoff through Partner agreements/renewal calendar, onboarding board, ageing and usage dashboard, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in baas.partner_operations.",
+        "Unknown stage/calendar policy is explicit.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF04",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F12",
+        "F13"
+      ],
+      "setup": "Real application services/PostgreSQL and Import batch, account map, formula lineage, management report versions; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Import TB/source → map/validate → deterministic schedules/reports → investigate differences → review output through Import/validation wizard, mapping editor, rule lineage, reconciliation and report workbench, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in finance.management_accounts.",
+        "Actual owner oracles validate financial rules.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF05",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "F14",
+        "F15",
+        "F16",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22",
+        "F23",
+        "F24",
+        "F25",
+        "F26",
+        "F27",
+        "F44"
+      ],
+      "setup": "Real application services/PostgreSQL and BU/staff references, allocation pool/rule, period/rounding and report lineage; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Import permitted inputs → effective attribution/allocation → tie out company/BU → YTD/performance/report through BU mappings/allocation configuration, payroll-input validation, comparison and performance views, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in finance.bu_performance.",
+        "No guessed payroll ratios or silent historical restatement.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF06",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "B12",
+        "F28",
+        "F29",
+        "F30",
+        "F31",
+        "F32",
+        "F45"
+      ],
+      "setup": "Real application services/PostgreSQL and Service/contract/schedule/stage, invoice/obligation, receipt/cash lot, allocation/adjustment; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Usage/contract stage → approved pricing/evidence → invoice preparation/issuance/delivery → receipts/allocation/correction through Client/service register, usage batch, price-rule editor, invoice queue, receivables and receipt/allocation views, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in finance.billing.",
+        "Generation, posting, sending and cash settlement stay separate.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF07",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43"
+      ],
+      "setup": "Real application services/PostgreSQL and Forecast version, included sources/coverage, opening balance and projection; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Select inflow/outflow evidence → deterministic forecast → management review → actual update/roll-forward through Forecast inputs, horizon/opening balance, scenario/actual comparison and audience reporting, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in finance.forecast.",
+        "Partial source coverage cannot be labelled complete cash forecast.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF08",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "F33",
+        "F34",
+        "F35",
+        "P12",
+        "P20",
+        "P34"
+      ],
+      "setup": "Real application services/PostgreSQL and Handoff correlation, source/evidence versions, Finance projection and receipt; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Signed baseline/milestone/HR evidence → audience projection → durable handoff → receipt/next owned task through Cross-team inbox, milestone/Finance view, evidence packet and delivery/reconciliation detail, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in handoffs.",
+        "PMO completes; Finance invoices; HR scope remains read-limited.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF09",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "P02",
+        "P03",
+        "P16",
+        "P17",
+        "P21",
+        "P22",
+        "P23",
+        "P24",
+        "P25",
+        "P26",
+        "P27",
+        "P28",
+        "P29",
+        "P30",
+        "P31",
+        "P32",
+        "P33",
+        "P35",
+        "P37",
+        "P38",
+        "P39",
+        "P63"
+      ],
+      "setup": "Real application services/PostgreSQL and Project/plan, estimate/signoff evidence, milestone and closure record; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Engagement → pre-signature planning → delivery → owned external gate evidence → release/closure handoffs through Engagement/project workspace, requirements/plan, phase-gate/evidence board, UAT/release/closure views, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in pmo.delivery.",
+        "Do not replace external approval owners or invent paid-invoice closure gate.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF10",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "P01",
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P18",
+        "P19",
+        "P45",
+        "P46",
+        "P47",
+        "P48",
+        "P49"
+      ],
+      "setup": "Real application services/PostgreSQL and Cost/SOW versions, decisions, signed artifacts and RFP response; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Requirements/estimates → costing chain and document review → client baseline/revisions; RFP to project/archive through Costing/SOW editor, decision inbox, revision comparison, RFP workspace, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in pmo.commercial.",
+        "Plan/cost before signature; exact prescribed costing order.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF11",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "P04",
+        "P05",
+        "P10",
+        "P11",
+        "P36",
+        "P40",
+        "P41",
+        "P42",
+        "P43",
+        "P52",
+        "P53"
+      ],
+      "setup": "Real application services/PostgreSQL and Template/document/review/report/minutes and audience versions; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Template/evidence → draft → quality review → permitted audience projection → publication receipt through Template library, version/review detail, publication queue, shared project/report/minutes views, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in documents.reporting.",
+        "Current reviewed artifact and audience bound to publication.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF12",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "P44",
+        "P50",
+        "P51",
+        "P54",
+        "P55",
+        "P56",
+        "P57",
+        "P58",
+        "P59",
+        "P60",
+        "P61",
+        "P62"
+      ],
+      "setup": "Real application services/PostgreSQL and Issue/change history, external incident/risk refs, decision/timer/release evidence; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Intake/classification → impact assessment → conditional decisions → implementation evidence → validation/closure through Issue board, risk/incident links, change/emergency workspace and escalation queue, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in pmo.issues_changes.",
+        "Emergency/Standard ambiguity is a configured rule, not inferred waiver.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "FULL-AF13",
+      "category": "full-family connected acceptance",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "B13",
+        "P13",
+        "P14",
+        "P15"
+      ],
+      "setup": "Real application services/PostgreSQL and Source version, gap/decision, owner example and validation record; synthetic valid/unconfigured policy variants; contract-faithful adapters.",
+      "action": "Exercise Collect/compare process evidence → validate rules/examples → record accepted policy/configuration/test evidence through Evidence-gap/decision workbench, SOP/calculator reference library and owner validation/test board, including the exact per-process cases linked in contracts/process-map.json.",
+      "expected": [
+        "Every mapped ID has its trigger/input/output and correct implemented workflow/control/reference/discovery disposition in evidence.validation.",
+        "Discovery is implemented workflow, not an item to mark automated away.",
+        "Required human decisions and agent tools follow exact source assignments with object/version checks.",
+        "Known and missing policy cases exercise the same implementation; only dependent runtime effects wait.",
+        "UI, agents, adapters and durable state agree; denied/retry/unknown/concurrent cases leave correct audit and effects.",
+        "For real adapter/provider validation, record separate actual execution evidence rather than infer from mocks."
+      ],
+      "required_evidence": "Per-process source scenario results and one connected family UI/service/agent/adapter path with real database assertions; actual command/environment evidence.",
+      "status": "SPECIFIED_NOT_RUN"
+    },
+    {
+      "id": "CFG-01",
+      "category": "partial policy configuration",
+      "scope": "FULL_PRODUCT",
+      "process_ids": [
+        "F34",
+        "P34",
+        "P35",
+        "P53"
+      ],
+      "setup": "Only payment assessment basis configured, no exception authority; only signed-SOW stage terms configured; publication configuration exists but hypercare criteria absent.",
+      "action": "Resolve each independent operation, then attempt affected and unaffected transitions.",
+      "expected": [
+        "Payment assessment can evaluate without an exception approver; exception approval remains unavailable.",
+        "Signed-SOW stage preparation does not require later UAT/completion predicates or stage amounts.",
+        "Publication rule resolution does not require hypercare configuration.",
+        "Known human/source guards remain enforced; no missing parent-group value blocks an unrelated operation.",
+        "Reject active component with mismatched schema reference, unreviewed implementation, invalid artifact hash or synthetic-to-operational fallback."
+      ],
+      "status": "SPECIFIED_NOT_RUN"
+    }
+  ]
+}

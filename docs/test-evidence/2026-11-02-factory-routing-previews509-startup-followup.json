@@ -1,0 +1,8 @@
+{
+  "additional_stops": 0,
+  "legacy8002_untouched": true,
+  "source_run": 509,
+  "subsequent_probe": "All12 exact new process identities/listeners verified",
+  "additional_launches": 0,
+  "initial_probe": "40-second startup deadline exceeded"
+}

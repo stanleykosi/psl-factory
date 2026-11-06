@@ -1,0 +1,1398 @@
+{
+  "classification": "Engineering metadata inspection only; not exhaustive validator, domain, provider, oracle or live acceptance proof",
+  "business_component_count": 124,
+  "component_declared_routes": {
+    "D01.change_type_catalogue": [
+      "apps/policy/change_validators.py:SUPPORTED"
+    ],
+    "D01.emergency_glpi_relationship": [
+      "apps/policy/emergency_validators.py:SUPPORTED"
+    ],
+    "D01.satisfied_gate_map": [
+      "apps/policy/change_validators.py:SUPPORTED"
+    ],
+    "D03.verified_billing_statement": [
+      "apps/policy/d03_validators.py:SCHEMAS"
+    ],
+    "D03.invoice_release_control_refs": [
+      "apps/policy/d03_validators.py:SCHEMAS"
+    ],
+    "D04.iana_timezone": [
+      "apps/policy/services.py:explicit semantic branch"
+    ],
+    "D04.working_calendar_ref": [
+      "apps/policy/clock_validators.py:SUPPORTED"
+    ],
+    "D04.clock_anchor_pause_rules": [
+      "apps/policy/clock_validators.py:SUPPORTED"
+    ],
+    "D04.deadline_parameters": [
+      "apps/policy/clock_validators.py:SUPPORTED",
+      "apps/policy/partner_validators.py:SCHEMAS"
+    ],
+    "D05.role_principal_assignments": [
+      "apps/policy/services.py:explicit semantic branch"
+    ],
+    "D05.delegation_rules": [
+      "apps/policy/document_validators.py:SUPPORTED"
+    ],
+    "D05.decision_action_matrix": [
+      "apps/policy/document_validators.py:SUPPORTED"
+    ],
+    "D05.revision_invalidation_rules": [
+      "apps/policy/revision_validators.py:SUPPORTED"
+    ],
+    "D06.source_schema_ref": [
+      "apps/policy/services.py:explicit semantic branch"
+    ],
+    "D06.account_bu_maps": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D06.unit_sign_currency_period": [
+      "apps/policy/services.py:explicit semantic branch"
+    ],
+    "D06.rule_oracle_refs": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D07.authorized_input_refs": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D07.join_overlap_rule_id": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D07.effective_membership_ref": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D07.allocation_pool_rules": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D07.rounding_residual_rule_id": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D08.adapter_contract_ref": [
+      "apps/policy/settlement_validators.py:SUPPORTED",
+      "apps/policy/settlement_validators.py:SCHEMAS"
+    ],
+    "D08.effective_price_rule_refs": [
+      "apps/policy/billing_validators.py:SUPPORTED",
+      "apps/policy/billing_validators.py:SCHEMAS"
+    ],
+    "D08.tax_tier_rounding_rules": [
+      "apps/policy/billing_validators.py:SUPPORTED",
+      "apps/policy/billing_validators.py:SCHEMAS"
+    ],
+    "D08.billing_calendar": [
+      "apps/policy/partner_validators.py:SCHEMAS"
+    ],
+    "D08.duplicate_correction_rules": [
+      "apps/policy/settlement_validators.py:SUPPORTED",
+      "apps/policy/settlement_validators.py:SCHEMAS"
+    ],
+    "D09.support_sop_ref": [
+      "apps/policy/validation_validators.py:SCHEMAS"
+    ],
+    "D09.reconciliation_contract_ref": [
+      "apps/policy/baas_validators.py:SUPPORTED"
+    ],
+    "D09.queue_state_command_map": [
+      "apps/policy/baas_validators.py:SUPPORTED"
+    ],
+    "D09.onboarding_stage_catalogue": [
+      "apps/policy/partner_validators.py:SCHEMAS"
+    ],
+    "D10.report_category_effective_dates": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS"
+    ],
+    "D10.restatement_rule_id": [
+      "apps/policy/finance_validators.py:SUPPORTED"
+    ],
+    "D10.forecast_inclusion_rule_id": [
+      "apps/policy/finance_validators.py:SUPPORTED"
+    ],
+    "D10.audience_projection_rules": [
+      "apps/policy/finance_validators.py:SUPPORTED",
+      "apps/policy/finance_validators.py:SCHEMAS",
+      "apps/policy/partner_validators.py:SCHEMAS"
+    ],
+    "D11.recipient_grant_refs": [
+      "apps/policy/document_validators.py:SUPPORTED"
+    ],
+    "D11.adapter_configuration_refs": [
+      "apps/policy/rfp_validators.py:SUPPORTED"
+    ],
+    "D11.template_storage_retention_rules": [
+      "apps/policy/document_validators.py:SUPPORTED"
+    ],
+    "D11.migration_evidence_rules": [
+      "apps/policy/migration_validators.py:SCHEMAS"
+    ],
+    "D11.hypercare_criteria_ref": [
+      "apps/policy/delivery_validators.py:SUPPORTED"
+    ],
+    "D12.contract_version_ref": [
+      "apps/policy/billing_validators.py:SUPPORTED",
+      "apps/policy/billing_validators.py:SCHEMAS"
+    ],
+    "D12.currency_amount_basis": [
+      "apps/policy/billing_validators.py:SUPPORTED",
+      "apps/policy/billing_validators.py:SCHEMAS"
+    ],
+    "D12.stage_terms": [
+      "apps/policy/billing_validators.py:SUPPORTED",
+      "apps/policy/billing_validators.py:SCHEMAS"
+    ],
+    "D12.uat_billing_predicate_ref": [
+      "apps/policy/billing_validators.py:SUPPORTED",
+      "apps/policy/billing_validators.py:SCHEMAS"
+    ],
+    "D12.completion_billing_predicate_ref": [
+      "apps/policy/billing_validators.py:SUPPORTED",
+      "apps/policy/billing_validators.py:SCHEMAS"
+    ],
+    "D13.human_authority_role_ref": [
+      "apps/policy/payment_validators.py:SCHEMAS"
+    ],
+    "D13.human_principal_refs": [
+      "apps/policy/payment_validators.py:SCHEMAS"
+    ],
+    "D13.delegation_evidence_refs": [
+      "apps/policy/payment_validators.py:SCHEMAS"
+    ],
+    "D13.validity_revocation_reassessment_rules": [
+      "apps/policy/payment_validators.py:SCHEMAS"
+    ],
+    "D13.payment_denominator_rule_ref": [
+      "apps/policy/payment_validators.py:SCHEMAS"
+    ],
+    "D13.qualifying_funds_rule_ref": [
+      "apps/policy/payment_validators.py:SCHEMAS"
+    ],
+    "D14.receipt_verification_source_ref": [
+      "apps/policy/settlement_validators.py:SUPPORTED",
+      "apps/policy/settlement_validators.py:SCHEMAS"
+    ],
+    "D14.recorder_authority_ref": [
+      "apps/policy/settlement_validators.py:SUPPORTED",
+      "apps/policy/settlement_validators.py:SCHEMAS"
+    ],
+    "D14.allocation_rule_ref": [
+      "apps/policy/settlement_validators.py:SUPPORTED",
+      "apps/policy/settlement_validators.py:SCHEMAS"
+    ],
+    "D14.adjustment_correction_rule_refs": [
+      "apps/policy/settlement_validators.py:SUPPORTED",
+      "apps/policy/settlement_validators.py:SCHEMAS"
+    ],
+    "D14.legal_document_requirements": [
+      "apps/policy/settlement_validators.py:SUPPORTED",
+      "apps/policy/settlement_validators.py:SCHEMAS"
+    ],
+    "P14-Q01.commercial_costing_rule_oracle": [
+      "apps/policy/costing_validators.py:SCHEMAS"
+    ],
+    "AF13.owner_validation_rules": [
+      "apps/policy/validation_validators.py:SCHEMAS"
+    ],
+    "AF13.acceptance_rules": [
+      "apps/policy/validation_validators.py:SCHEMAS"
+    ],
+    "AF13.protection_acceptance_rules": [
+      "apps/policy/validation_validators.py:SCHEMAS"
+    ],
+    "AF13.protection_owner_rules": [
+      "apps/policy/validation_validators.py:SCHEMAS"
+    ],
+    "F33.authority_rules": [
+      "apps/policy/recognition_validators.py:SCHEMAS"
+    ],
+    "F33.recognition_review_rules": [
+      "apps/policy/recognition_validators.py:SCHEMAS"
+    ],
+    "F35.authority_rules": [
+      "apps/policy/hrfinance_validators.py:SCHEMAS"
+    ],
+    "F35.disclosure_rules": [
+      "apps/policy/hrfinance_validators.py:SCHEMAS"
+    ],
+    "F16.input_access_rules": [
+      "apps/policy/payroll_validators.py:SCHEMAS"
+    ],
+    "F16.merge_rules": [
+      "apps/policy/payroll_validators.py:SCHEMAS"
+    ],
+    "F17.match_rules": [
+      "apps/policy/payroll_validators.py:SCHEMAS"
+    ],
+    "F18.reporting_rules": [
+      "apps/policy/payroll_validators.py:SCHEMAS"
+    ],
+    "F18.review_authority": [
+      "apps/policy/payroll_validators.py:SCHEMAS"
+    ],
+    "F21.allocation_rules": [
+      "apps/policy/bu_validators.py:SCHEMAS"
+    ],
+    "F44.source_rules": [
+      "apps/policy/bu_validators.py:SCHEMAS"
+    ],
+    "F44.attribution_rules": [
+      "apps/policy/bu_validators.py:SCHEMAS"
+    ],
+    "BU.review_authority": [
+      "apps/policy/bu_validators.py:SCHEMAS"
+    ],
+    "BU.disclosure_rules": [
+      "apps/policy/bu_validators.py:SCHEMAS"
+    ],
+    "F12.detail_rules": [
+      "apps/policy/schedule_validators.py:SCHEMAS"
+    ],
+    "F13.inventory_rules": [
+      "apps/policy/schedule_validators.py:SCHEMAS"
+    ],
+    "SCHEDULES.review_authority": [
+      "apps/policy/schedule_validators.py:SCHEMAS"
+    ],
+    "F07.source_rules": [
+      "apps/policy/ppe_validators.py:SCHEMAS"
+    ],
+    "F07.calculation_rules": [
+      "apps/policy/ppe_validators.py:SCHEMAS"
+    ],
+    "F07.review_authority": [
+      "apps/policy/ppe_validators.py:SCHEMAS"
+    ],
+    "F01.verification_rules": [
+      "apps/policy/ledger_validators.py:SCHEMAS"
+    ],
+    "F01.review_authority": [
+      "apps/policy/ledger_validators.py:SCHEMAS"
+    ],
+    "F01.conflict_rules": [
+      "apps/policy/ledger_validators.py:SCHEMAS"
+    ],
+    "F01.agent_projection": [
+      "apps/policy/ledger_validators.py:SCHEMAS"
+    ],
+    "F01.validation_handoff": [
+      "apps/policy/ledger_validators.py:SCHEMAS"
+    ],
+    "F01.accepted_publication": [
+      "apps/policy/ledger_validators.py:SCHEMAS"
+    ],
+    "B14.intake_rules": [
+      "apps/policy/support_validators.py:SCHEMAS"
+    ],
+    "B14.flow_rules": [
+      "apps/policy/support_validators.py:SCHEMAS"
+    ],
+    "B14.authority": [
+      "apps/policy/support_validators.py:SCHEMAS"
+    ],
+    "B14.metric_rules": [
+      "apps/policy/support_validators.py:SCHEMAS"
+    ],
+    "B14.agent_projection": [
+      "apps/policy/support_agent_validators.py:SCHEMAS"
+    ],
+    "B14.response_release": [
+      "apps/policy/support_release_validators.py:SCHEMAS"
+    ],
+    "B14.channel_receipts": [
+      "apps/policy/support_channel_validators.py:SCHEMAS"
+    ],
+    "B14.channel_clock": [
+      "apps/policy/support_channel_validators.py:SCHEMAS"
+    ],
+    "B14.clock_corrections": [
+      "apps/policy/support_channel_validators.py:SCHEMAS"
+    ],
+    "B14.summary_scope": [
+      "apps/policy/summary_validators.py:SCHEMAS",
+      "apps/policy/support_validators.py:SCHEMAS"
+    ],
+    "B14.summary_review": [
+      "apps/policy/summary_validators.py:SCHEMAS",
+      "apps/policy/support_validators.py:SCHEMAS"
+    ],
+    "P02.owner_routes": [
+      "apps/policy/approval_validators.py:SCHEMAS"
+    ],
+    "P02.evidence_contracts": [
+      "apps/policy/approval_validators.py:SCHEMAS"
+    ],
+    "OPS.operator_rules": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.protection_rules": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.accepted_protection_rules": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.application_recovery": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.cold_recovery": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.reconstitution": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.domain_contracts": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.native_finance_receipts": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.native_finance_variants": [
+      "apps/policy/invoice_receipt_validators.py:SCHEMAS",
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.finance_receipt_followup": [
+      "apps/policy/invoice_receipt_validators.py:SCHEMAS",
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.native_finance_readback": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.finance_followup_successors": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.finance_followup_transport": [
+      "apps/policy/followup_transport_validators.py:SCHEMAS",
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "OPS.finance_followup_intake": [
+      "apps/policy/followup_transport_validators.py:SCHEMAS",
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "D11.engagement_assignment": [
+      "apps/policy/engagement_validators.py:SCHEMAS",
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "D11.project_identifiers": [
+      "apps/policy/engagement_validators.py:SCHEMAS",
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "D11.engagement_identity_resolution": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "D11.shared_project_view": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "D11.planning_alignment": [
+      "apps/policy/operator_validators.py:SCHEMAS"
+    ],
+    "INT.adapter_readiness": [
+      "apps/policy/readiness_validators.py:SCHEMAS"
+    ],
+    "INT.provider_readiness": [
+      "apps/policy/readiness_validators.py:SCHEMAS"
+    ],
+    "INT.agent_data": [
+      "apps/policy/agent_data_validators.py:SCHEMAS"
+    ],
+    "INT.private_protection_readiness": [
+      "apps/policy/readiness_validators.py:SCHEMAS"
+    ],
+    "INT.accepted_protection_readiness": [
+      "apps/policy/readiness_validators.py:SCHEMAS"
+    ]
+  },
+  "unmatched_declared_routes": [],
+  "native_operation_guard_ids": [
+    "pmo.baseline.prepare",
+    "pmo.decision.record",
+    "pmo.baseline.sign",
+    "pmo.milestone.complete",
+    "finance.invoice.issue",
+    "finance.invoice.deliver",
+    "finance.invoice.correct",
+    "finance.invoice.correction_deliver",
+    "baas.response.decide"
+  ],
+  "policy_operations_without_declared_native_guard": [
+    "adapter.dispatch",
+    "approval.observe",
+    "approval.route",
+    "billing.release_control_evaluate",
+    "change.preapproval_evaluate",
+    "commercial_cost.calculate",
+    "corrective_request.route",
+    "decision.reuse_after_revision",
+    "document.publish",
+    "emergency.release_evaluate",
+    "engagement.engagement_assignment",
+    "engagement.identity_resolution",
+    "engagement.project_identifiers",
+    "finance.accepted.publish",
+    "finance.handoff.prepare",
+    "financial.correct",
+    "financial_import.validate",
+    "financial_report.calculate",
+    "forecast.calculate",
+    "hrfinance.authorize",
+    "hrfinance.snapshot",
+    "hypercare.evaluate",
+    "integration.accepted_protection.probe",
+    "integration.private_protection.probe",
+    "invoice.adapter_effect",
+    "invoice.prepare.completion",
+    "invoice.prepare.signed_sow",
+    "invoice.prepare.uat",
+    "invoice.price",
+    "invoice.schedule",
+    "ledger.agent.project",
+    "ledger.resolve",
+    "ledger.review",
+    "ledger.verify",
+    "migration.validate",
+    "onboarding.transition",
+    "ops.accepted_protection_effect",
+    "ops.application_recovery",
+    "ops.cold_recovery",
+    "ops.domain_contracts",
+    "ops.finance_followup_intake",
+    "ops.finance_followup_successors",
+    "ops.finance_followup_transport",
+    "ops.finance_receipt_followup",
+    "ops.native_finance_readback",
+    "ops.native_finance_receipts",
+    "ops.native_finance_variants",
+    "ops.reconstitution",
+    "payment.assess",
+    "payment_exception.decide",
+    "payment_exception.prepare_track",
+    "payroll.allocate",
+    "payroll.capture",
+    "payroll.combine",
+    "payroll.import_join",
+    "payroll.match",
+    "payroll.report",
+    "planning.readiness",
+    "project_view.presentation",
+    "receipt.allocate",
+    "receipt.verify",
+    "recognition.attest",
+    "recognition.review",
+    "reconciliation.evaluate",
+    "report.category_apply",
+    "report.project_audience",
+    "report.restate",
+    "role.decision.evaluate",
+    "support.channel.attest",
+    "support.channel.correct",
+    "support.channel.verify",
+    "support.flow.metrics",
+    "support.flow.start",
+    "support.response.release",
+    "support.summary_review",
+    "support.summary_scope",
+    "support.transition",
+    "validation.accept",
+    "validation.capture",
+    "validation.owner_review",
+    "validation.protection.acceptance",
+    "validation.protection.owner_review",
+    "workflow.clock.evaluate"
+  ],
+  "native_worker_entrypoints": {
+    "handoff": "apps.workflows.management.commands.work_outbox",
+    "publication": "apps.documents.management.commands.work_publications",
+    "invoice": "apps.core.management.commands.work_invoices",
+    "engineering": "apps.core.management.commands.work_corrective_requests",
+    "partner": "apps.core.management.commands.work_partner_finance",
+    "approval": "apps.core.management.commands.work_approval_routes",
+    "supportresponse": "apps.baas.management.commands.work_support_responses",
+    "supportchannel": "apps.baas.management.commands.work_support_channels",
+    "ledgerdata": "apps.agents.management.commands.work_private_evidence",
+    "protection": "apps.workflows.management.commands.work_operator_recovery",
+    "readiness": "apps.workflows.management.commands.work_integration_readiness",
+    "application": "apps.workflows.management.commands.work_application_recovery",
+    "cold": "apps.workflows.management.commands.run_cold_recovery",
+    "reconstitution": "apps.workflows.management.commands.run_reconstitution",
+    "nativefinance": "apps.workflows.management.commands.run_native_finance_publications",
+    "financefollowup": "apps.workflows.management.commands.work_finance_followup"
+  },
+  "known_impact_coverage_gaps": [
+    "other direct/JSON policy consumers",
+    "controlled-document audience projections",
+    "private Finance/payroll/HR/BU domains",
+    "invoice corrections and other effect receipt variants",
+    "indirect dependencies outside these declared contracts"
+  ],
+  "remaining_interface_work": [
+    "Reviewed source/oracle and source-owned supervised staff acceptance bindings",
+    "Physical storage/retention/monitoring evidence beyond deployment declarations",
+    "Additional native operation/variant guard bindings",
+    "Private/document/correction and other typed impact consumers"
+  ],
+  "processes": [
+    {
+      "id": "B01",
+      "family": "AF01",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B01",
+      "remaining": "Connected supplied flow/private drafting/human release/gateway receipt evidence plus immutable source successors, independently reviewed clock corrections/revalidation/late evidence and private shared operator/readiness implemented/tested in bounded scope. Actual vendor/source mappings, dispatch contracts, operational SOP/native AF13/owner acceptance, broader variants/security/real-provider/full recovery/load/UAT remain."
+    },
+    {
+      "id": "B02",
+      "family": "AF01",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B02",
+      "remaining": "Defined-period selected-case summary, current reviewed case sources, coverage/omission/merge/duplicate uncertainty, separate current reviewer/audience controls and metadata export implemented/tested in bounded scope. Actual owner period/disclosure/source contracts and broader operational/security/load/UAT acceptance remain."
+    },
+    {
+      "id": "B03",
+      "family": "AF01",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B03",
+      "remaining": "Connected supplied flow/private drafting/human release/gateway receipt evidence plus immutable source successors, independently reviewed clock corrections/revalidation/late evidence and private shared operator/readiness implemented/tested in bounded scope. Actual vendor/source mappings, dispatch contracts, operational SOP/native AF13/owner acceptance, broader variants/security/real-provider/full recovery/load/UAT remain."
+    },
+    {
+      "id": "B04",
+      "family": "AF02",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B04",
+      "remaining": "Native Excel/bank/Engineering source adapters and authenticity, complete partner inventories/correlation variants, repeated/partial correction and reversal protocols, recipient custody recovery and source-specific UAT; actual owner policy remains separately unresolved."
+    },
+    {
+      "id": "B05",
+      "family": "AF02",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B05",
+      "remaining": "Native Excel/bank/Engineering source adapters and authenticity, complete partner inventories/correlation variants, repeated/partial correction and reversal protocols, recipient custody recovery and source-specific UAT; actual owner policy remains separately unresolved."
+    },
+    {
+      "id": "B06",
+      "family": "AF02",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B06",
+      "remaining": "Native Excel/bank/Engineering source adapters and authenticity, complete partner inventories/correlation variants, repeated/partial correction and reversal protocols, recipient custody recovery and source-specific UAT; actual owner policy remains separately unresolved."
+    },
+    {
+      "id": "B07",
+      "family": "AF02",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B07",
+      "remaining": "Native Excel/bank/Engineering source adapters and authenticity, complete partner inventories/correlation variants, repeated/partial correction and reversal protocols, recipient custody recovery and source-specific UAT; actual owner policy remains separately unresolved."
+    },
+    {
+      "id": "B08",
+      "family": "AF03",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B08",
+      "remaining": "Native agreement/mailbox/portal/Data/meter adapters and authenticity; complete partner/product/user inventories; complex clauses and working-day clocks, exact native document taxonomy/history recovery; corrected/partial/repeated meter protocols, audience publication beyond the local Finance inbox, supervised scheduling and source-specific UAT."
+    },
+    {
+      "id": "B09",
+      "family": "AF03",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B09",
+      "remaining": "Native agreement/mailbox/portal/Data/meter adapters and authenticity; complete partner/product/user inventories; complex clauses and working-day clocks, exact native document taxonomy/history recovery; corrected/partial/repeated meter protocols, audience publication beyond the local Finance inbox, supervised scheduling and source-specific UAT."
+    },
+    {
+      "id": "B10",
+      "family": "AF03",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B10",
+      "remaining": "Native agreement/mailbox/portal/Data/meter adapters and authenticity; complete partner/product/user inventories; complex clauses and working-day clocks, exact native document taxonomy/history recovery; corrected/partial/repeated meter protocols, audience publication beyond the local Finance inbox, supervised scheduling and source-specific UAT."
+    },
+    {
+      "id": "B11",
+      "family": "AF03",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B11",
+      "remaining": "D03 source/control evidence, enrolled usage issuance/delivery and recovery implemented; authenticated incumbent flow contracts/adapters, actual Finance source clarification, source-specific variants and owner acceptance remain. See BUILD-BILLING-RELEASE-EVIDENCE."
+    },
+    {
+      "id": "B12",
+      "family": "AF06",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B12",
+      "remaining": "D03 source/control evidence, enrolled usage issuance/delivery and recovery implemented; authenticated incumbent flow contracts/adapters, actual Finance source clarification, source-specific variants and owner acceptance remain. See BUILD-BILLING-RELEASE-EVIDENCE."
+    },
+    {
+      "id": "B14",
+      "family": "AF01",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B14",
+      "remaining": "Connected supplied flow/private drafting/human release/gateway receipt evidence plus immutable source successors, independently reviewed clock corrections/revalidation/late evidence and private shared operator/readiness implemented/tested in bounded scope. Actual vendor/source mappings, dispatch contracts, operational SOP/native AF13/owner acceptance, broader variants/security/real-provider/full recovery/load/UAT remain."
+    },
+    {
+      "id": "F01",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F01",
+      "remaining": "Explicit AF13 operator native health/receipt enrollment, independent typed criteria, source-filtered UI/live agents, human review, closed immutable SQL, exact leased dispatch and actual receipt-first recovery implemented/tested. Original business/source ownership stays separate; process status remains partial. Broader native/vendor/provider/process-owner/SOP/operational evidence, production identity/security, full application/database recovery, performance/load/UAT remain."
+    },
+    {
+      "id": "F02",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F02",
+      "remaining": "Actual QuickBooks read/extraction contract and source authenticity; current adapter validates a supplied controlled CSV and declared extraction context."
+    },
+    {
+      "id": "F03",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F03",
+      "remaining": "Original workbook and owner golden scenarios, native schemas and broader mapping variants; exact local CSV mapping is partial."
+    },
+    {
+      "id": "F04",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F04",
+      "remaining": "Native movement/workbook variants and owner accounting acceptance; reporting adjustments are immutable reviewed overlays, never ledger postings."
+    },
+    {
+      "id": "F05",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F05",
+      "remaining": "Actual note structures and golden workbook equivalence; finite configured linear aggregation only."
+    },
+    {
+      "id": "F06",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F06",
+      "remaining": "Actual asset-note schedules and source workbook/oracles; explicit one-time scaling subset only."
+    },
+    {
+      "id": "F07",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F07",
+      "remaining": "Verified native asset register/accounting/workbook adapters and source authenticity; Broader reviewed depreciation, start/stop, event, impairment/gain-loss and multi-currency conventions; unsupported methods explicitly remain engineering holds; Native F06/F09 statement bindings, source-specific implementation/native AF13 replay, remote controlled delivery and operational restore/export/load/UAT"
+    },
+    {
+      "id": "F08",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F08",
+      "remaining": "Actual liability-note schedules and golden equivalence; explicit coefficient/sign subset only."
+    },
+    {
+      "id": "F09",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F09",
+      "remaining": "Complete statement/equity schedules and source workbook/oracles; configured finite metric assembly only."
+    },
+    {
+      "id": "F10",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F10",
+      "remaining": "Native statement/workbook equivalence and broader metric/period layouts; explicit budget/prior/YTD comparison, configured review and local presentation are implemented subsets."
+    },
+    {
+      "id": "F11",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F11",
+      "remaining": "Native account-level authoritative budget source/workbook joins and owner acceptance; current supplied metric-level monthly/annual version capture/review is partial."
+    },
+    {
+      "id": "F12",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F12",
+      "remaining": "Verified native workbook/tab/formula adapters, source authenticity and complete source-specific acceptance; Broader multi-note/unit-specific source contracts, source-native accounting/adjustment numerical oracles and accounting-population duplicate claims; Native schedule execution and operational acceptance, remote controlled delivery and cross-family operator/export/restore/load/UAT"
+    },
+    {
+      "id": "F13",
+      "family": "AF04",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F13",
+      "remaining": "Verified native workbook/tab/formula adapters, source authenticity and complete source-specific acceptance; Broader multi-note/unit-specific source contracts, source-native accounting/adjustment numerical oracles and accounting-population duplicate claims; Native schedule execution and operational acceptance, remote controlled delivery and cross-family operator/export/restore/load/UAT"
+    },
+    {
+      "id": "F14",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F14",
+      "remaining": "Actual owner BU catalogue and revenue classification/oracles, broader source variants and full process acceptance."
+    },
+    {
+      "id": "F15",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F15",
+      "remaining": "Actual transaction/direct cost source variants and owner acceptance; supplied account-row attribution only."
+    },
+    {
+      "id": "F16",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F16",
+      "remaining": "Verified native payroll/HR source schemas, authentication and delivery adapters; Broader approved source/adjustment/transfer-proration variants beyond the finite supplied protocol; Production encryption/key management, physical purge and source correction/deletion propagation; Actual owner numerical oracles, appointments, source authenticity and operational UAT"
+    },
+    {
+      "id": "F17",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F17",
+      "remaining": "Verified native payroll/HR source schemas, authentication and delivery adapters; Broader approved source/adjustment/transfer-proration variants beyond the finite supplied protocol; Production encryption/key management, physical purge and source correction/deletion propagation; Actual owner numerical oracles, appointments, source authenticity and operational UAT"
+    },
+    {
+      "id": "F18",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F18",
+      "remaining": "Verified native payroll/HR source schemas, authentication and delivery adapters; Broader approved source/adjustment/transfer-proration variants beyond the finite supplied protocol; Production encryption/key management, physical purge and source correction/deletion propagation; Actual owner numerical oracles, appointments, source authenticity and operational UAT"
+    },
+    {
+      "id": "F19",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F19",
+      "remaining": "Actual payroll/HR source contracts and owner denominator/exclusion/oracle acceptance; separate authorized effective basis snapshot subset only."
+    },
+    {
+      "id": "F20",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F20",
+      "remaining": "Actual standard shared-service ratios/oracles and broader source variants; no operational percentages installed."
+    },
+    {
+      "id": "F21",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F21",
+      "remaining": "Native source authenticity, event schema/identity/coverage and verified source adapters; Broader approved individual exceptions, standard-pool basis/transfer/headcount variants and upstream/source/F27 restatement contracts; Remote report delivery, production encryption/key management/physical purge and deletion propagation; Actual confidential ratios/financial oracles, appointments, source/design decisions and operational UAT"
+    },
+    {
+      "id": "F22",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F22",
+      "remaining": "Actual pool categories/weights/exclusions/oracles and broader allocation variants; local fixed/headcount rules are partial."
+    },
+    {
+      "id": "F23",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F23",
+      "remaining": "Complete monthly workbook/review/report acceptance, budget/YTD and remote delivery; current company/BU aggregate comparison is partial."
+    },
+    {
+      "id": "F24",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F24",
+      "remaining": "Broader fiscal/granularity variants and actual workbook/oracle acceptance; explicit monthly fiscal inventory, sum/closing aggregation and sealed history subset implemented."
+    },
+    {
+      "id": "F25",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F25",
+      "remaining": "Annual closing-stock/other proration implementations, native budget dimensions and actual owner/oracle acceptance; monthly exact and explicit annual weights implemented."
+    },
+    {
+      "id": "F26",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F26",
+      "remaining": "Broader metric/statement/chart variants and operational source/audience acceptance; configured finite comparisons, signed chart specs and immutable public-payload rendering implemented."
+    },
+    {
+      "id": "F27",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F27",
+      "remaining": "Broader classification/mapping/source correction and downstream rollout variants; exact authorised immutable local period replacement, impact inventory and stale publication holds implemented."
+    },
+    {
+      "id": "F28",
+      "family": "AF06",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F28",
+      "remaining": "D03 source/control evidence, enrolled usage issuance/delivery and recovery implemented; authenticated incumbent flow contracts/adapters, actual Finance source clarification, source-specific variants and owner acceptance remain. See BUILD-BILLING-RELEASE-EVIDENCE."
+    },
+    {
+      "id": "F29",
+      "family": "AF06",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F29",
+      "remaining": "D03 source/control evidence, enrolled usage issuance/delivery and recovery implemented; authenticated incumbent flow contracts/adapters, actual Finance source clarification, source-specific variants and owner acceptance remain. See BUILD-BILLING-RELEASE-EVIDENCE."
+    },
+    {
+      "id": "F30",
+      "family": "AF06",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F30",
+      "remaining": "D03 source/control evidence, enrolled usage issuance/delivery and recovery implemented; authenticated incumbent flow contracts/adapters, actual Finance source clarification, source-specific variants and owner acceptance remain. See BUILD-BILLING-RELEASE-EVIDENCE."
+    },
+    {
+      "id": "F31",
+      "family": "AF06",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F31",
+      "remaining": "Bounded local gross credit/debit and full terminal void, reviewed amount-only cash successors and independent note delivery are implemented. Full source-specific acceptance remains partial: actual Power Automate/accounting/bank adapters and owner/source authenticity; native legal numbering/net-tax/cadence/tier/ageing methods; non-amount/split/multi-contract successors, partial chargeback/refund/write-off and void reopening; forecasts and D13 human exception/independent release infrastructure. No ledger posting, payment or deployment permission inferred."
+    },
+    {
+      "id": "F32",
+      "family": "AF06",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F32",
+      "remaining": "Bounded local gross credit/debit and full terminal void, reviewed amount-only cash successors and independent note delivery are implemented. Full source-specific acceptance remains partial: actual Power Automate/accounting/bank adapters and owner/source authenticity; native legal numbering/net-tax/cadence/tier/ageing methods; non-amount/split/multi-contract successors, partial chargeback/refund/write-off and void reopening; forecasts and D13 human exception/independent release infrastructure. No ledger posting, payment or deployment permission inferred."
+    },
+    {
+      "id": "F33",
+      "family": "AF08",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F33",
+      "remaining": "Native authenticated PM/commercial/accounting sources and actual owner/UAT acceptance; reviewed recognition method/oracles if accounting execution is added. Bounded local packet/PM attestation/request/Finance receipt/review is implemented; no recognised amount or posting inferred."
+    },
+    {
+      "id": "F34",
+      "family": "AF08",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F34",
+      "remaining": "Full source-specific acceptance, native contract/bank/accounting/GLPI/Engineering dispatch and reconciliation, additional denominator/qualification methods, complete identity lifecycle and real owner/UAT evidence. Bounded D13 local payment assessment, configured human decision and independent control reservation path is implemented; no deployment or debt waiver."
+    },
+    {
+      "id": "F35",
+      "family": "AF08",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F35",
+      "remaining": "Native HR source/export capability and authenticity, actual HR/Finance policy/owner/UAT acceptance, broader schemas and native deletion/retention/key-management operations. Bounded private minimal snapshot/receipt/correction and existing Finance allocation bridge are implemented. F16/F17/F18 bounded payroll source/join/pay-component path now implemented separately; broader native and owner-approved variants remain."
+    },
+    {
+      "id": "F36",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F36",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F37",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F37",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F38",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F38",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F39",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F39",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F40",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F40",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F41",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F41",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F42",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F42",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F43",
+      "family": "AF07",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F43",
+      "remaining": "Bounded local monthly chain, explicit captured-account/source coverage, corrected receivables, unknowns, reviewed aggregate publication, supplied verified actuals/matches/full reversal/cash successor lineage, owned priorities and explicit reviewed roll-forward are implemented. Full native/source-specific acceptance, bank/accounting authenticity, full company/group inventories, multi-case/entity/FX consolidation, native workbook formula/timing variants and external actual correction methods remain. No payment/spending/debt waiver/release authority."
+    },
+    {
+      "id": "F44",
+      "family": "AF05",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F44",
+      "remaining": "Native source authenticity, event schema/identity/coverage and verified source adapters; Broader approved individual exceptions, standard-pool basis/transfer/headcount variants and upstream/source/F27 restatement contracts; Remote report delivery, production encryption/key management/physical purge and deletion propagation; Actual confidential ratios/financial oracles, appointments, source/design decisions and operational UAT"
+    },
+    {
+      "id": "F45",
+      "family": "AF06",
+      "status": "partial",
+      "source": "reference/03-definitions/Finance.json#F45",
+      "remaining": "D03 source/control evidence, enrolled usage issuance/delivery and recovery implemented; authenticated incumbent flow contracts/adapters, actual Finance source clarification, source-specific variants and owner acceptance remain. See BUILD-BILLING-RELEASE-EVIDENCE."
+    },
+    {
+      "id": "P01",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P01",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P02",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P02",
+      "remaining": "Authenticated native source/order/signature and remote routing adapters, actual department contracts/acceptance and wider operational source-specific UAT"
+    },
+    {
+      "id": "P03",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P03",
+      "remaining": "Technical front door, pre-planning engagement/current PM/manual identifier/history/delivery bridge and human scoped duplicate/alias/conflict findings implemented/tested in bounded scope. Actual tracker namespace/native contracts/owner conventions and broader operational acceptance remain."
+    },
+    {
+      "id": "P04",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P04",
+      "remaining": "Full source-specific/operational acceptance and real incident/GLPI/communication adapters; actual owner policy; historical authority/correction recovery, general dual-role/alternate checkpoint algorithms, financial/scope follow-up and independent release/change/project closure. P61/P62 local evidence controls and reviewed local receipts are implemented, not production execution."
+    },
+    {
+      "id": "P05",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P05",
+      "remaining": "Configured finite current audience/source-grant recorded metadata projection, UI, internal adapter/agent and PostgreSQL negative tests implemented. Broader source-specific progress/dependency metrics, actual audience/freshness/disclosure policy and operational per-process acceptance remain."
+    },
+    {
+      "id": "P06",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P06",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P07",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P07",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P08",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P08",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P09",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P09",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P10",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P10",
+      "remaining": "Controlled template/draft/review/internal publication path tested; full source-specific report/minutes cadence, actions, archive and real external delivery remain"
+    },
+    {
+      "id": "P11",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P11",
+      "remaining": "Controlled template/draft/review/internal publication path tested; full source-specific report/minutes cadence, actions, archive and real external delivery remain"
+    },
+    {
+      "id": "P12",
+      "family": "AF08",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P12",
+      "remaining": "Complete per-process contract and acceptance evidence"
+    },
+    {
+      "id": "P16",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P16",
+      "remaining": "Technical case/access front door, pre-planning route capture, actual won-RFP Route A link, separate current PM/identifier configuration and manual registration/immutable identifier history/delivery bridge tested. Human cross-case duplicate/alias/conflict resolution, actual tracker contracts/owner values and broader operational acceptance remain."
+    },
+    {
+      "id": "P17",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P17",
+      "remaining": "Private typed planning, ordinary source/contact/question forms, two-purpose alignment, separate source-owned approvals, current readiness/delivery bridge and exact source-read administration verified in bounded PostgreSQL scope. Actual owner rules/native authenticity, broader phase/source variants and operational per-process acceptance remain."
+    },
+    {
+      "id": "P18",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P18",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P19",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P19",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P20",
+      "family": "AF08",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P20",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P21",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P21",
+      "remaining": "Private typed planning, ordinary source/contact/question forms, two-purpose alignment, separate source-owned approvals, current readiness/delivery bridge and exact source-read administration verified in bounded PostgreSQL scope. Actual owner rules/native authenticity, broader phase/source variants and operational per-process acceptance remain."
+    },
+    {
+      "id": "P22",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P22",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P23",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P23",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P24",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P24",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P25",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P25",
+      "remaining": "Private typed planning, ordinary source/contact/question forms, two-purpose alignment, separate source-owned approvals, current readiness/delivery bridge and exact source-read administration verified in bounded PostgreSQL scope. Actual owner rules/native authenticity, broader phase/source variants and operational per-process acceptance remain."
+    },
+    {
+      "id": "P26",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P26",
+      "remaining": "Bounded private typed planning/two-purpose alignment/separate source-owned decisions/current readiness and delivery bridge verified, with exact source-read administration. Practical ordinary capture form selectors, actual owner/source rules/native authenticity, broader phase variants and per-process operational acceptance remain."
+    },
+    {
+      "id": "P27",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P27",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P28",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P28",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P29",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P29",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P30",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P30",
+      "remaining": "Full source-specific acceptance, native contract/bank/accounting/GLPI/Engineering dispatch and reconciliation, additional denominator/qualification methods, complete identity lifecycle and real owner/UAT evidence. Bounded D13 local payment assessment, configured human decision and independent control reservation path is implemented; no deployment or debt waiver."
+    },
+    {
+      "id": "P31",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P31",
+      "remaining": "Full source-specific acceptance, native contract/bank/accounting/GLPI/Engineering dispatch and reconciliation, additional denominator/qualification methods, complete identity lifecycle and real owner/UAT evidence. Bounded D13 local payment assessment, configured human decision and independent control reservation path is implemented; no deployment or debt waiver."
+    },
+    {
+      "id": "P32",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P32",
+      "remaining": "Full source-specific acceptance, native contract/bank/accounting/GLPI/Engineering dispatch and reconciliation, additional denominator/qualification methods, complete identity lifecycle and real owner/UAT evidence. Bounded D13 local payment assessment, configured human decision and independent control reservation path is implemented; no deployment or debt waiver."
+    },
+    {
+      "id": "P33",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P33",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P34",
+      "family": "AF08",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P34",
+      "remaining": "Full source-specific acceptance, native contract/bank/accounting/GLPI/Engineering dispatch and reconciliation, additional denominator/qualification methods, complete identity lifecycle and real owner/UAT evidence. Bounded D13 local payment assessment, configured human decision and independent control reservation path is implemented; no deployment or debt waiver."
+    },
+    {
+      "id": "P35",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P35",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P36",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P36",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P37",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P37",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P38",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P38",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P39",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P39",
+      "remaining": "Full source-specific operational acceptance, authoritative external-owner/GLPI/Infra/signature adapters, independent financial/deployment controls, signed PRD/route/detail-planning variants, changed-source/authority correction/reopen/multiple-release variants and remote archive/physical retention. Connected local source-evidence-to-dossier-closure subset is implemented; no production authorization or full process acceptance claimed."
+    },
+    {
+      "id": "P40",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P40",
+      "remaining": "Actual source/transport/provider/operator acceptance, full per-process metrics/coverage and source variants; only elapsed/no-pause issue clocks supported, actual owner policy unconfigured outside synthetic cases."
+    },
+    {
+      "id": "P41",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P41",
+      "remaining": "Actual source/transport/provider/operator acceptance, full per-process metrics/coverage and source variants; only elapsed/no-pause issue clocks supported, actual owner policy unconfigured outside synthetic cases."
+    },
+    {
+      "id": "P42",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P42",
+      "remaining": "Actual source/transport/provider/operator acceptance, full per-process metrics/coverage and source variants; only elapsed/no-pause issue clocks supported, actual owner policy unconfigured outside synthetic cases."
+    },
+    {
+      "id": "P43",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P43",
+      "remaining": "Formal minutes/actions/local report and configured preparation clock paths tested; full source-specific delivery/escalation metrics, real adapters, operational supervision and UAT remain"
+    },
+    {
+      "id": "P44",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P44",
+      "remaining": "Actual source/transport/provider/operator acceptance, full per-process metrics/coverage and source variants; only elapsed/no-pause issue clocks supported, actual owner policy unconfigured outside synthetic cases."
+    },
+    {
+      "id": "P45",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P45",
+      "remaining": "Authoritative external intake/assignment contracts and amendment/correction variants; actual owner configuration and full process acceptance"
+    },
+    {
+      "id": "P46",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P46",
+      "remaining": "Real P14 calculator/oracles, authoritative upstream adapters, broader solution/planning variants and full process acceptance"
+    },
+    {
+      "id": "P47",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P47",
+      "remaining": "Real-provider evaluation, broader amendment/retraction/recovery variants and full process acceptance"
+    },
+    {
+      "id": "P48",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P48",
+      "remaining": "Actual remote submission channel/verified target contract, amendment/withdrawal recovery and full process acceptance"
+    },
+    {
+      "id": "P49",
+      "family": "AF10",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P49",
+      "remaining": "Authoritative relationship-owner outcome adapter, post-disposition correction/reopen, remote archive/export/retention and full process acceptance"
+    },
+    {
+      "id": "P50",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P50",
+      "remaining": "Actual source/transport/provider/operator acceptance, full per-process metrics/coverage and source variants; only elapsed/no-pause issue clocks supported, actual owner policy unconfigured outside synthetic cases."
+    },
+    {
+      "id": "P51",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P51",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P52",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P52",
+      "remaining": "Controlled template/draft/review/internal publication path tested; full source-specific report/minutes cadence, actions, archive and real external delivery remain"
+    },
+    {
+      "id": "P53",
+      "family": "AF11",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P53",
+      "remaining": "Actual source/transport/provider/operator acceptance, full per-process metrics/coverage and source variants; only elapsed/no-pause issue clocks supported, actual owner policy unconfigured outside synthetic cases."
+    },
+    {
+      "id": "P54",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P54",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P55",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P55",
+      "remaining": "Complete source-specific acceptance, real owner/source adapters, operational policy and unresolved Standard/Emergency/escalation/recovery paths; captured commercial costs are not calculated/oracle-validated."
+    },
+    {
+      "id": "P56",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P56",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P57",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P57",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P58",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P58",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P59",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P59",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P60",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P60",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P61",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P61",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P62",
+      "family": "AF12",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P62",
+      "remaining": "Full source-specific/operational acceptance, actual owner policy and remote incident/GLPI/signature/transport adapters; actual commercial calculator/oracles; changed-source/D01 correction and Standard catalogue recovery variants; independent release/project/hypercare closure. Authority-only historical recovery and Emergency-to-ordinary signed-scope/cost follow-up are implemented local subsets, not operational approval or complete process acceptance."
+    },
+    {
+      "id": "P63",
+      "family": "AF09",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P63",
+      "remaining": "Bounded private typed planning/two-purpose alignment/separate source-owned decisions/current readiness and delivery bridge verified, with exact source-read administration. Practical ordinary capture form selectors, actual owner/source rules/native authenticity, broader phase variants and per-process operational acceptance remain."
+    },
+    {
+      "id": "B13",
+      "family": "AF13",
+      "status": "partial",
+      "source": "reference/03-definitions/BaaS.json#B13",
+      "remaining": "Explicit AF13 operator native health/receipt enrollment, independent typed criteria, source-filtered UI/live agents, human review, closed immutable SQL, exact leased dispatch and actual receipt-first recovery implemented/tested. Original business/source ownership stays separate; process status remains partial. Broader native/vendor/provider/process-owner/SOP/operational evidence, production identity/security, full application/database recovery, performance/load/UAT remain."
+    },
+    {
+      "id": "P13",
+      "family": "AF13",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P13",
+      "remaining": "Explicit AF13 operator native health/receipt enrollment, independent typed criteria, source-filtered UI/live agents, human review, closed immutable SQL, exact leased dispatch and actual receipt-first recovery implemented/tested. Original business/source ownership stays separate; process status remains partial. Broader native/vendor/provider/process-owner/SOP/operational evidence, production identity/security, full application/database recovery, performance/load/UAT remain."
+    },
+    {
+      "id": "P14",
+      "family": "AF13",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P14",
+      "remaining": "Versioned declared rule, independent oracle, persisted calculation, costing/AF13 UI and bindings implemented; authenticated native calculator inventory/execution/equivalence, actual owner examples and source-specific acceptance remain. See BUILD-COSTING-ORACLE."
+    },
+    {
+      "id": "P15",
+      "family": "AF13",
+      "status": "partial",
+      "source": "reference/03-definitions/PMO.json#P15",
+      "remaining": "Explicit AF13 operator native health/receipt enrollment, independent typed criteria, source-filtered UI/live agents, human review, closed immutable SQL, exact leased dispatch and actual receipt-first recovery implemented/tested. Original business/source ownership stays separate; process status remains partial. Broader native/vendor/provider/process-owner/SOP/operational evidence, production identity/security, full application/database recovery, performance/load/UAT remain."
+    }
+  ],
+  "owner_values_installed": false,
+  "no_code_gaps_claim": false,
+  "live_pilot_performed": false
+}

@@ -1,0 +1,90 @@
+{
+  "source_run": 528,
+  "database": "psl_factory_review_authority_ui_f4ef78667cad",
+  "old_configuration": 71138,
+  "new_configuration": 71139,
+  "before": {
+    "current_task": 1704,
+    "native_review": 1148,
+    "review_packet": {
+      "amount": "42.00",
+      "schema": "invoice-publication-review/v1",
+      "invoice": 1232,
+      "sources": {
+        "usage": null,
+        "handoff": 1227,
+        "coverage": 2307,
+        "policies": {
+          "D12.stage_terms": {
+            "id": 71125,
+            "status": "ACTIVE",
+            "revision": 2
+          },
+          "D12.contract_version_ref": {
+            "id": 71122,
+            "status": "ACTIVE",
+            "revision": 1
+          },
+          "D12.currency_amount_basis": {
+            "id": 71123,
+            "status": "ACTIVE",
+            "revision": 1
+          },
+          "D12.completion_billing_predicate_ref": {
+            "id": 71126,
+            "status": "ACTIVE",
+            "revision": 1
+          }
+        },
+        "usage_hash": null,
+        "usage_context": null,
+        "implementation": "billing-preparation/v1",
+        "signed_baseline": 116451,
+        "coverage_version": 1,
+        "handoff_payload_hash": "6428d63392271d66e8c8d20e281577f24b6f07ea4225e007a9aead25e6b024a5",
+        "coverage_evidence_hash": "c849ac7ac019e08a8f20e969c482568444f0d79b1f50ad9585eb133e897ff34b"
+      },
+      "version": 1,
+      "currency": "NGN",
+      "preparation": 1670,
+      "payload_hash": "470f63662198ab2737319591799e441519c9176e1e2067c25df7f23d5ae4b69e",
+      "recipient_id": 16305,
+      "factory_sources": {
+        "work": 1145,
+        "profile": 71137,
+        "evidence": {
+          "completion": {
+            "id": 116452,
+            "sha256": "b02ccd45367850afa1c8faa21252b5afb749a543f4f56a4e6b1a88813bb04941",
+            "version": 1
+          }
+        }
+      },
+      "adapter_policies": {
+        "D08.adapter_contract_ref": 71129,
+        "D08.duplicate_correction_rules": 71130
+      },
+      "adapter_readiness": {
+        "D08.adapter_contract_ref": "ACTIVE",
+        "D08.duplicate_correction_rules": "ACTIVE"
+      },
+      "factory_responsibility": {
+        "value": {
+          "method": "native_finance_single_review/v1",
+          "activity": "ACT10",
+          "definition": "pmo-finance/v1",
+          "process_id": "F30",
+          "policy_owner_id": 16305,
+          "process_owner_id": 16305,
+          "activity_owner_id": 16305,
+          "governance_resolver_id": 16305
+        },
+        "schema": "factory-finance-responsibility-binding/v1",
+        "status": "ACTIVE",
+        "configuration": 71136
+      }
+    }
+  },
+  "method": "Native synthetic fixture policy service; not browser configuration lifecycle",
+  "main_mutated": false
+}

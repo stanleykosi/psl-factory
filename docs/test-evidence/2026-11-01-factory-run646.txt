@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0059_delivery_intake_reaffirmation...test_current_authority_cannot_be_relabelled_and_sql_requires_fresh_review (tests.test_factory_intake_authority.IntakeAuthorityTests.test_current_authority_cannot_be_relabelled_and_sql_requires_fresh_review) ... ok
+test_hypercare_instruction_recovery_to_current_native_qualification (tests.test_factory_intake_authority.IntakeAuthorityTests.test_hypercare_instruction_recovery_to_current_native_qualification) ... ok
+test_release_instruction_recovery_to_current_native_readiness (tests.test_factory_intake_authority.IntakeAuthorityTests.test_release_instruction_recovery_to_current_native_readiness) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 81.497s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

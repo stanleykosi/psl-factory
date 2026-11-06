@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_http_review_form_requires_granted_actions_and_limits_decision_types (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_http_review_form_requires_granted_actions_and_limits_decision_types) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 338.935s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

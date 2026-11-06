@@ -1,0 +1,14 @@
+{
+  "status": "running",
+  "session_id": 82479,
+  "path": "C:\\Python313\\python.exe",
+  "preserved_environment": {
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1",
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo"
+  },
+  "verification": "HTTP 200 login page and localhost8000 listener",
+  "request": "User requested manual inspection",
+  "url": "http://127.0.0.1:8000",
+  "pid": 15944,
+  "started_utc": "2026-10-30T16:35:01.7505739Z"
+}

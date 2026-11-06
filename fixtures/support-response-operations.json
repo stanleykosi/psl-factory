@@ -1,0 +1,15 @@
+{
+  "classification": "EXPLICIT SYNTHETIC engineering contracts; not real operator appointments, native customer delivery or response clock proof",
+  "operator_route": {
+    "family": "supportresponse",
+    "actions": [
+      "cancel",
+      "retry"
+    ]
+  },
+  "readiness_family": "supportresponse",
+  "implementation": "internal_postgres_session_v1",
+  "target_key": "internal:supportresponse",
+  "receipt_scope": "native_internal_storage_metadata_only",
+  "require_receipt_probe": true
+}

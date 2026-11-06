@@ -1,0 +1,11 @@
+{
+  "classification": "synthetic_fixture_only",
+  "schema": "schema:psl/role-assignment/v2",
+  "roles": ["PM", "Head of PMO"],
+  "eligibility": {
+    "roles": ["PM", "Head of PMO"],
+    "valid_from": "2026-10-29T00:00:00Z",
+    "valid_until": "2026-10-30T00:00:00Z"
+  },
+  "notes": "Tests replace users and window timestamps explicitly. This fixture is not an operational nomination or qualification rule. Native action grants and independence checks remain separate."
+}

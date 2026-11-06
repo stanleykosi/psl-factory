@@ -1,0 +1,22 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stale_private_and_unqualified_instructions_hold_without_worker_or_history_changes (tests.test_factory_intake_authority.IntakeAuthorityTests.test_stale_private_and_unqualified_instructions_hold_without_worker_or_history_changes) ... ok
+test_delivery_reader_never_receives_private_source_bodies_or_agent_history (tests.test_factory_delivery.FactoryDeliveryTests.test_delivery_reader_never_receives_private_source_bodies_or_agent_history) ... ok
+test_actual_release_without_prior_readiness_cannot_be_retroactively_prepared (tests.test_factory_delivery.FactoryDeliveryTests.test_actual_release_without_prior_readiness_cannot_be_retroactively_prepared) ... ok
+test_recorded_release_without_prior_readiness_stays_a_source_owned_exception (tests.test_factory_hypercare.FactoryHypercareTests.test_recorded_release_without_prior_readiness_stays_a_source_owned_exception) ... ok
+test_actual_release_ui_remains_available_before_execution_and_stability_configuration (tests.test_factory_hypercare.FactoryHypercareTests.test_actual_release_ui_remains_available_before_execution_and_stability_configuration) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 27.013s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

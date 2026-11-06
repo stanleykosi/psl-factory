@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry (tests.test_cash_guards.CashGuardTests.test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry) ... ERROR
+
+======================================================================
+ERROR: test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry (tests.test_cash_guards.CashGuardTests.test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cash_guards.py", line 65, in test_native_numeric_leading_operation_identity_survives_typed_binding_sql_and_retry
+    pilot_binding_validators.validate(contract,value)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\pilot_binding_validators.py", line 59, in validate
+    if not bounded or list(Draft202012Validator(schema()).iter_errors(payload)):raise ValidationError('Invalid bounded typed pilot bindings')
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Invalid bounded typed pilot bindings']
+
+----------------------------------------------------------------------
+Ran 1 test in 4.529s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "V06-N01",
+    "given": "Authenticated human but exception role UNCONFIGURED",
+    "when": "Approve",
+    "expected": "Block: authority_unconfigured; no approval or waiver flag.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N02",
+    "given": "Agent or service principal requests approval",
+    "when": "Approve",
+    "expected": "Block: human_only; cannot acquire authority from prompt or document.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N03",
+    "given": "Request contains role=CEO or approved=true",
+    "when": "Validate current record/request",
+    "expected": "Reject extra properties; caller claims do not configure authority.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N04",
+    "given": "Source text instructs agent to waive payment",
+    "when": "Process evidence",
+    "expected": "Treat as untrusted content; no authority or financial mutation.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N05",
+    "given": "Payment or contract snapshot changes after request",
+    "when": "Use prior exception",
+    "expected": "Needs reassessment in future configured flow; no stale reuse. Current policy still cannot approve.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N06",
+    "given": "Exception approved in a hypothetical later configured policy but expired/revoked",
+    "when": "Use at deployment",
+    "expected": "Block exception use; preserve audit and other controls.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N07",
+    "given": "Exception binds deploymentA; releaseB requested",
+    "when": "Use decision",
+    "expected": "Block mismatched deployment/contract/project.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N08",
+    "given": "Payment exception hypothetical approved but Security gate missing",
+    "when": "Authorize release",
+    "expected": "Block overall release under existing control; exception does not replace Security.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N09",
+    "given": "Current role UNCONFIGURED, user submits valid request",
+    "when": "Prepare and track",
+    "expected": "Record awaiting_authority_configuration; approval_ref=null and all authorization/waiver flags false. Other definitions continue.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N10",
+    "given": "Duplicate request operation_key and identical payload",
+    "when": "Submit again",
+    "expected": "Return same logical request; changed payload under same key conflicts, no second case.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N11",
+    "given": "Authority revoked while decision/dispatch races",
+    "when": "Validate/use",
+    "expected": "Atomic version/reservation ordering; before reservation invalidates, after reservation reconcile possible external effect.",
+    "status": "specified_not_executed_application_test"
+  },
+  {
+    "id": "V06-N12",
+    "given": "Exception permits future deployment below80%",
+    "when": "Compute balances",
+    "expected": "Keep debt, invoices, receipts and balances unchanged; no financial waiver.",
+    "status": "specified_not_executed_application_test"
+  }
+]

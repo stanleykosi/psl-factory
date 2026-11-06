@@ -1,0 +1,14 @@
+test_connected_native_jobs (unittest.loader._FailedTest.test_connected_native_jobs) ... ERROR
+
+======================================================================
+ERROR: test_connected_native_jobs (unittest.loader._FailedTest.test_connected_native_jobs)
+----------------------------------------------------------------------
+AttributeError: type object 'AcceptedProtectionReadinessTests' has no attribute 'test_connected_native_jobs'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (errors=1)
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

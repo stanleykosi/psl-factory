@@ -1,0 +1,130 @@
+{
+  "status": "PASS",
+  "classification": "Bounded native accounting preparation, Finance-owned reviews and controlled aggregate report recipient verification",
+  "parent_checkpoint": 562,
+  "source_run": 575,
+  "business_browser_source_run": 572,
+  "regression_run": 573,
+  "process_ids": [
+    "F03",
+    "F04",
+    "F09",
+    "F14",
+    "F15",
+    "F19",
+    "F20",
+    "F22",
+    "F23"
+  ],
+  "passing_runs": {
+    "565": {
+      "tests": 1,
+      "unittest_seconds": 102.459,
+      "process_seconds": 107.428,
+      "database_used": true
+    },
+    "567": {
+      "tests": 4,
+      "unittest_seconds": 178.535,
+      "process_seconds": 183.859,
+      "database_used": true
+    },
+    "568": {
+      "tests": 3,
+      "unittest_seconds": 267.71,
+      "process_seconds": 274.01,
+      "database_used": true
+    },
+    "570": {
+      "tests": 10,
+      "unittest_seconds": 480.521,
+      "process_seconds": 486.734,
+      "database_used": true
+    },
+    "572": {
+      "tests": 3,
+      "unittest_seconds": 30.211,
+      "process_seconds": 35.77,
+      "database_used": true
+    },
+    "573": {
+      "tests": 42,
+      "unittest_seconds": 135.466,
+      "process_seconds": 140.581,
+      "database_used": true
+    },
+    "574": {
+      "tests": 2,
+      "unittest_seconds": 0.104,
+      "process_seconds": 3.12,
+      "database_used": false
+    },
+    "575": {
+      "tests": 5,
+      "unittest_seconds": 4.322,
+      "process_seconds": 9.16,
+      "database_used": true
+    }
+  },
+  "retained_failed_runs": [
+    563,
+    564,
+    566,
+    569,
+    571
+  ],
+  "retained_visual_failure": "layout574 retained cached v3; corrected and visually verified575",
+  "tested_scope": [
+    "Explicit current source/adjustment inventory and immutable intake with source-owned successors",
+    "Native source/rule/output FinanceReview waits, current authority/withdrawal, CSRF and no context override",
+    "Native mapping/applicable BU allocation/formulas; missing later policy holds only its dependent stage",
+    "Useful cited source/lineage investigations through typed native tools, not an additional calculation engine",
+    "Reviewed aggregate report publication and every exact native recipient receipt; no ledger posting/payment",
+    "Returned report requires explicit recheck; native outside-console review is reused, history retained",
+    "Actual PostgreSQL concurrent claim admits one revision, SQL refuses premature verified status",
+    "Committed delivery reconciles after policy withdrawal; absent receipt authorises no resend/new input",
+    "Shared exception visibility, current source invalidation, bounded queues, native browser and corrected narrow layout",
+    "Fresh template0 migrations and nine retained databases with exact business/receipt/budget/index preservation"
+  ],
+  "engineering_design": "Factory coordination over native Finance/Document services; stage order/ACT assignments are engineering design, not invented business policy",
+  "operational_policy_slots": [
+    "Actual source conventions, chart/category mappings, allocation methods/bases and formula/oracle references",
+    "Qualified human source/rule/output reviewers and current authority/separation settings",
+    "Company/BU scope and metric inventory, approved report template/audience/recipients/publisher",
+    "Execution limits, evidence freshness and information owner"
+  ],
+  "remaining_code": [
+    "Governed factory coordinator/provider and data boundary beyond the current synthetic-only path",
+    "Execution-principal recovery independent of immutable work initiator",
+    "Remaining108 workflow connections and wider staged/quorum/veto/amount-FX, background/recovery/impact contracts"
+  ],
+  "screenshots": {
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-claimed.jpg": "d83074fc9db421116ed203af06ba275c20dfc260cca9b3bf5bc653a2f7dae893",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-configuration-narrow.jpg": "9e363b683dd8f132d4beeea9c811a73098cb4ad4495e7d04801e9a0bbf843f7b",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-configuration.jpg": "b0d09016febdd8c125fb25cba64788277e5e7003b9829d4a4de9fcb7f7720d73",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-decision-visible.jpg": "341ff97702e7d215dfaea7de8ab9a3aa94dc7072ea2a00d74ae63f4b68e1f6d6",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-decision.jpg": "2f1b76c374b4012db65da0481feff46b358804be9507bdd9dce71f9842630ee8",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-review-panel.jpg": "355e5f8bec3d9479e733a17036cd6916ed39067212835aa3fed9a01f3b731cee",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-verified-narrow.jpg": "a80f3e4b847a81aae4301688c87902ebc0eae1c65c92ab8b481fe35e87719833",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-verified.jpg": "b62b324299536e669508f3d55269f2235c94210036264df5202ccbdd9f9e4f7d",
+    "docs/test-evidence/2026-11-03-factory-accounting-layout575-desktop.jpg": "4c7f7fd5287f33ea04923157129508e09225e3deac3c8f274da70718289285de",
+    "docs/test-evidence/2026-11-03-factory-accounting-layout575-narrow.jpg": "568d7e7bee7fe3d1fb0a31c981c4bc426638a6753321cd7412a086528777f5cf"
+  },
+  "prior_mock_files_unchanged": 13,
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-03-factory-accounting-acceptance.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-baseline.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-static575.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-browser572-native.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-layout575-browser.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-layout575-after.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-preservation573-after.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-fresh-migrations571.json",
+    "docs/test-evidence/2026-11-03-factory-accounting-preview575-identity.json"
+  ]
+}

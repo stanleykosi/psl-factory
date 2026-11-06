@@ -1,0 +1,10 @@
+{
+  "phase": "after",
+  "old_main_rowsets_preserved": 329,
+  "old_migration_sources_preserved": 212,
+  "old_guards_preserved_except_reviewed_factory_function": true,
+  "source_snapshots_preserved": true,
+  "main_factory_work": 0,
+  "main_owner_or_rule_values_added": false,
+  "forward_migration": "workflows0044_factory_archive"
+}

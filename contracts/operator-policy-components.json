@@ -1,0 +1,1310 @@
+{
+  "classification": "Supplemental engineering operator/protection interfaces; no new process or consolidated D group, no default RPO/RTO or real appointments",
+  "components": [
+    {
+      "id": "OPS.rfp_outcome_reconciliation",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.rfp_outcome_reconciliation/v1",
+      "subject_scope": "Ambiguous actual submitted RFP versions require the existing current relationship-owner's explicit evidence and exact submission/outcome selection. No automatic latest-wins precedence, new win approval, real owner or policy selection is supplied. Missing method holds conversion only; investigation, human review, receipt capture and actual outcome recording remain separate.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_rfp_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_rfp_execution/v1",
+      "subject_scope": "RFP scoped worker limits, selected response template and existing submission route. Native assignment, parallel response reviews, ordered costing approvals, final document review and human outcome remain separate. No real nominee, route, template or approval supplied.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_receipt_recovery",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_receipt_recovery/v1",
+      "subject_scope": "Reviewed receipt lookup after same-provider credential rotation. Unknown reviewer, responsibility, independence and window hold only recovery. No new request, target, grant, approval or activation.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_recovery_authority",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_recovery_authority/v1",
+      "subject_scope": "Supplemental reviewed replacement execution authority by work type. The immutable starter, native human decisions, budgets and original effects remain separate. No actual worker, reviewer, role or validity window is supplied; nomination grants no permissions.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_coordinator",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_coordinator/v1",
+      "subject_scope": "Supplemental engineering planning mode, nominated principal and explicit opaque-metadata provider contract. No private evidence body, financial value, business approval, credential or real appointment is supplied.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_accounting_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_accounting_execution/v1",
+      "subject_scope": "Supplemental closed accounting production envelope referencing native Finance source, calculation, review and controlled report services. Allocation scope, report audience/template and execution principals are explicitly configured or unknown. No accounting formula, real appointment, provider credential or operating policy is supplied.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_review_availability",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_review_availability/v1",
+      "subject_scope": "Supplemental engineering interface for independently versioned finite reviewer availability windows. Available/unavailable/unknown never grants role or action authority. Required only by explicit version3 invoice routing mode; absent values hold that dependent decision. No live availability or substitute appointments supplied.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_finance_responsibility",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_finance_responsibility/v1",
+      "subject_scope": "Exact Finance invoice factory responsibility nominations and governance resolver. Selection grants no business role or invoice authority. Unknown assignments hold dependent review/publication, not useful drafting. Native single review supports explicit scoped delegation and optional required availability windows through versioned references; multi-stage and aggregation/FX remain separate interfaces.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_go_live_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_go_live_execution/v1",
+      "subject_scope": "Exact synthetic post-release dossier/template/checklist/incident/rollback source; currently authorised PM report preparation, native document review and configured client publication. Actual PM/Client signature evidence requires a human PM attestation; no model attestation, deployment, financial release or external authenticity inferred.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_closure_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_closure_execution/v1",
+      "subject_scope": "Exact synthetic dossier, selected actual retrospective, PM report and controlled template; native draft and prescribed exact Head-PMO decision wait, then finalisation by an already-authorised current PM. No meeting occurrence, Finance attestation, debt waiver, deployment or external publication inferred.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_handover_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_handover_execution/v1",
+      "subject_scope": "Exact synthetic delivery dossier, support and escalation evidence and controlled template; useful native draft and exact bound internal publication under an already-authorised publisher. Actual recipients record received/gaps. No separate handover approval, closure, deployment or financial release authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_archive_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_archive_execution/v1",
+      "subject_scope": "Exact synthetic delivery dossier and declared inventory. Configured already-authorised PMO operator may create the native archive index after Engineering finalisation and reviewed storage rules; no separate archive approval, closure, physical purge or financial release authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_hypercare_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_hypercare_execution/v1",
+      "subject_scope": "Exact synthetic delivery candidate; actual release/go-live observations remain human, stability uses the native reviewed criterion. No closure, deployment or financial release authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_delivery_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_delivery_execution/v1",
+      "subject_scope": "Exact synthetic delivery candidate; native source gates and human Planning exit retain authority. Readiness does not authorise deployment or financial release.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_commercial_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_commercial_execution/v1",
+      "subject_scope": "Exact synthetic commercial case; native costing, commercial and document decisions remain authoritative.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_planning_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_planning_execution/v1",
+      "subject_scope": "Exact synthetic planning engagement; native department decisions remain authoritative.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_execution/v1",
+      "subject_scope": "Exact synthetic case; bounded native factory coordination. No operational policy defaults.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.operator_rules",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.operator_rules/v1",
+      "subject_scope": "Exact case operator and metadata recovery purpose",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.protection_rules",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.protection_rules/v1",
+      "subject_scope": "Exact case operator and metadata recovery purpose",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.accepted_protection_rules",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.accepted_protection_rules/v1",
+      "subject_scope": "Explicit AF13 accepted protection packet inventory; independent of original source policies",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.application_recovery",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.application_recovery/v1",
+      "subject_scope": "Exact control case and deployment-authorised whole database/managed attachment recovery; separate from portable metadata",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.cold_recovery",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.cold_recovery/v1",
+      "subject_scope": "Fresh independent cold control case and exact sealed archive recovery",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.reconstitution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.reconstitution/v1",
+      "subject_scope": "Fresh independent control case, exact isolated recovery and inert reconstitution plan",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.domain_contracts",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.domain_contracts/v1",
+      "subject_scope": "Fresh control case, exact reconstitution plan and source-owned provider/destination contracts",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.native_finance_receipts",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.native_finance_receipts/v1",
+      "subject_scope": "Fresh Finance control case, exact original handoff mapping/current provider and inert companion publication",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.native_finance_variants",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.native_finance_variants/v1",
+      "subject_scope": "Exact incumbent invoice and legal correction receipt variants",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.finance_receipt_followup",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.finance_receipt_followup/v1",
+      "subject_scope": "Current source-owned Finance receipt follow-up; no execution authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.native_finance_readback",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.native_finance_readback/v1",
+      "subject_scope": "Exact published invoice follow-up and current registered source Finance authority readback",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.finance_followup_successors",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.finance_followup_successors/v1",
+      "subject_scope": "Source-owned Finance successor lineage, independent review and evidence requirements",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.finance_followup_transport",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.finance_followup_transport/v1",
+      "subject_scope": "Exact inert published Finance metadata transport and current source intake",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.finance_followup_intake",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.finance_followup_intake/v1",
+      "subject_scope": "Exact inert published Finance metadata transport and current source intake",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "D11.engagement_assignment",
+      "parent_decision_id": "D11",
+      "schema_ref": "schema:psl/policy-component/D11.engagement_assignment/v1",
+      "subject_scope": "Exact project source-owned engagement assignment or registration; no additional registration approval",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "D11.project_identifiers",
+      "parent_decision_id": "D11",
+      "schema_ref": "schema:psl/policy-component/D11.project_identifiers/v1",
+      "subject_scope": "Exact project source-owned engagement assignment or registration; no additional registration approval",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "D11.engagement_identity_resolution",
+      "parent_decision_id": "D11",
+      "schema_ref": "schema:psl/policy-component/D11.engagement_identity_resolution/v1",
+      "subject_scope": "Both exact authorized project cases for a human identity finding; no business record or authority transfer",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "D11.shared_project_view",
+      "parent_decision_id": "D11",
+      "schema_ref": "schema:psl/policy-component/D11.shared_project_view/v1",
+      "subject_scope": "Exact project audience, source-disclosure authority and recorded-metadata freshness",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "D11.planning_alignment",
+      "parent_decision_id": "D11",
+      "schema_ref": "schema:psl/policy-component/D11.planning_alignment/v1",
+      "subject_scope": "Exact project question/contact/alignment-age and signed-contract comparison criteria",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "ops.accepted_protection_effect",
+      "required_components": [
+        "OPS.operator_rules",
+        "OPS.protection_rules",
+        "OPS.accepted_protection_rules"
+      ]
+    },
+    {
+      "operation": "ops.application_recovery",
+      "required_components": [
+        "OPS.application_recovery",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.cold_recovery",
+      "required_components": [
+        "OPS.cold_recovery",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.reconstitution",
+      "required_components": [
+        "OPS.reconstitution",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.domain_contracts",
+      "required_components": [
+        "OPS.domain_contracts",
+        "OPS.reconstitution",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.native_finance_receipts",
+      "required_components": [
+        "OPS.native_finance_receipts",
+        "OPS.reconstitution",
+        "OPS.domain_contracts",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.native_finance_variants",
+      "required_components": [
+        "OPS.native_finance_variants",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.finance_receipt_followup",
+      "required_components": [
+        "OPS.finance_receipt_followup",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.native_finance_readback",
+      "required_components": [
+        "OPS.native_finance_readback",
+        "OPS.native_finance_receipts",
+        "OPS.native_finance_variants",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.finance_followup_successors",
+      "required_components": [
+        "OPS.finance_followup_successors",
+        "OPS.finance_receipt_followup",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.finance_followup_transport",
+      "required_components": [
+        "OPS.finance_followup_transport",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "ops.finance_followup_intake",
+      "required_components": [
+        "OPS.finance_followup_intake",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "engagement.engagement_assignment",
+      "required_components": [
+        "D11.engagement_assignment",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "engagement.project_identifiers",
+      "required_components": [
+        "D11.project_identifiers",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "engagement.identity_resolution",
+      "required_components": [
+        "D11.engagement_identity_resolution",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "project_view.presentation",
+      "required_components": [
+        "D11.shared_project_view"
+      ]
+    },
+    {
+      "operation": "planning.readiness",
+      "required_components": [
+        "D11.planning_alignment",
+        "P02.owner_routes",
+        "P02.evidence_contracts"
+      ]
+    }
+  ]
+}

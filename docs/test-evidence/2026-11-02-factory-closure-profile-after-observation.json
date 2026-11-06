@@ -1,0 +1,418 @@
+{
+  "classification": "Implemented read-observation native one-step profile; performance evidence only, not release acceptance",
+  "database": "psl_factory_closure_profile_after_3f0ab1d3fd94",
+  "parent_database": "psl_closure_preparation_ui_165a58bb0435",
+  "work": 641,
+  "elapsed_seconds": 6.177,
+  "database_calls": 1433,
+  "status": "ready",
+  "budget_used": 100,
+  "plan_revision": 1,
+  "command_frame_checks": [
+    true
+  ],
+  "top_cumulative_functions": [
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory.py",
+      "line": 289,
+      "function": "run_once",
+      "calls": 1,
+      "self_seconds": 0.000464,
+      "cumulative_seconds": 6.175916
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\core\\read_observation.py",
+      "line": 23,
+      "function": "observe",
+      "calls": 3,
+      "self_seconds": 4.5e-05,
+      "cumulative_seconds": 5.804486
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory.py",
+      "line": 74,
+      "function": "snapshot",
+      "calls": 2,
+      "self_seconds": 2.7e-05,
+      "cumulative_seconds": 4.570304
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory_closure.py",
+      "line": 130,
+      "function": "snapshot",
+      "calls": 2,
+      "self_seconds": 0.000401,
+      "cumulative_seconds": 4.57009
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\core\\read_observation.py",
+      "line": 35,
+      "function": "read",
+      "calls": 71,
+      "self_seconds": 0.001749,
+      "cumulative_seconds": 3.884571
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\sql\\compiler.py",
+      "line": 1593,
+      "function": "execute_sql",
+      "calls": 1422,
+      "self_seconds": 0.026771,
+      "cumulative_seconds": 3.422787
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\query.py",
+      "line": 1952,
+      "function": "_fetch_all",
+      "calls": 1026,
+      "self_seconds": 0.020036,
+      "cumulative_seconds": 3.201634
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\query.py",
+      "line": 87,
+      "function": "__iter__",
+      "calls": 2267,
+      "self_seconds": 0.052522,
+      "cumulative_seconds": 3.089317
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\policy\\services.py",
+      "line": 260,
+      "function": "resolve",
+      "calls": 52,
+      "self_seconds": 0.004505,
+      "cumulative_seconds": 3.063744
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery_closure.py",
+      "line": 26,
+      "function": "accepted_go_live",
+      "calls": 3,
+      "self_seconds": 0.00027,
+      "cumulative_seconds": 2.746389
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory_closure.py",
+      "line": 99,
+      "function": "prerequisites",
+      "calls": 2,
+      "self_seconds": 2.5e-05,
+      "cumulative_seconds": 2.671071
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery_closure.py",
+      "line": 253,
+      "function": "closure_inputs",
+      "calls": 2,
+      "self_seconds": 7.7e-05,
+      "cumulative_seconds": 2.670611
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\query.py",
+      "line": 371,
+      "function": "__iter__",
+      "calls": 735,
+      "self_seconds": 0.001808,
+      "cumulative_seconds": 2.66323
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\documents\\controlled.py",
+      "line": 146,
+      "function": "current_version",
+      "calls": 6,
+      "self_seconds": 0.000272,
+      "cumulative_seconds": 2.645564
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\documents\\controlled.py",
+      "line": 75,
+      "function": "preflight",
+      "calls": 6,
+      "self_seconds": 0.001787,
+      "cumulative_seconds": 2.589048
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\query.py",
+      "line": 1099,
+      "function": "first",
+      "calls": 616,
+      "self_seconds": 0.007244,
+      "cumulative_seconds": 2.336779
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\policy\\services.py",
+      "line": 340,
+      "function": "decision_authority",
+      "calls": 15,
+      "self_seconds": 0.000325,
+      "cumulative_seconds": 2.147948
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\policy\\services.py",
+      "line": 31,
+      "function": "validate_envelope",
+      "calls": 52,
+      "self_seconds": 0.027632,
+      "cumulative_seconds": 2.120766
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery_documents.py",
+      "line": 49,
+      "function": "binding_findings",
+      "calls": 6,
+      "self_seconds": 0.000239,
+      "cumulative_seconds": 2.074736
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery_closure.py",
+      "line": 17,
+      "function": "go_live_inputs",
+      "calls": 3,
+      "self_seconds": 0.000148,
+      "cumulative_seconds": 1.831561
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery.py",
+      "line": 212,
+      "function": "valid_release",
+      "calls": 3,
+      "self_seconds": 0.000109,
+      "cumulative_seconds": 1.800121
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\sql\\compiler.py",
+      "line": 755,
+      "function": "as_sql",
+      "calls": 1416,
+      "self_seconds": 0.050167,
+      "cumulative_seconds": 1.776404
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery.py",
+      "line": 182,
+      "function": "readiness_inputs",
+      "calls": 3,
+      "self_seconds": 0.000205,
+      "cumulative_seconds": 1.749635
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\policy\\services.py",
+      "line": 325,
+      "function": "active_component",
+      "calls": 31,
+      "self_seconds": 0.000403,
+      "cumulative_seconds": 1.747109
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\backends\\utils.py",
+      "line": 120,
+      "function": "execute",
+      "calls": 1433,
+      "self_seconds": 0.014051,
+      "cumulative_seconds": 1.411349
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\backends\\utils.py",
+      "line": 78,
+      "function": "execute",
+      "calls": 1433,
+      "self_seconds": 0.00552,
+      "cumulative_seconds": 1.336448
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\backends\\utils.py",
+      "line": 88,
+      "function": "_execute_with_wrappers",
+      "calls": 1433,
+      "self_seconds": 0.009569,
+      "cumulative_seconds": 1.330928
+    },
+    {
+      "file": "<string>",
+      "line": 23,
+      "function": "count",
+      "calls": 1433,
+      "self_seconds": 0.004547,
+      "cumulative_seconds": 1.321359
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\psycopg\\connection.py",
+      "line": 479,
+      "function": "wait",
+      "calls": 1445,
+      "self_seconds": 0.006751,
+      "cumulative_seconds": 1.317807
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\backends\\utils.py",
+      "line": 94,
+      "function": "_execute",
+      "calls": 1433,
+      "self_seconds": 0.011911,
+      "cumulative_seconds": 1.316812
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\psycopg\\waiting.py",
+      "line": 329,
+      "function": "wait_select",
+      "calls": 1445,
+      "self_seconds": 0.01534,
+      "cumulative_seconds": 1.311055
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory.py",
+      "line": 185,
+      "function": "act",
+      "calls": 1,
+      "self_seconds": 1.7e-05,
+      "cumulative_seconds": 1.304232
+    },
+    {
+      "file": "<string>",
+      "line": 18,
+      "function": "checked_act",
+      "calls": 1,
+      "self_seconds": 2.2e-05,
+      "cumulative_seconds": 1.304212
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory_closure.py",
+      "line": 196,
+      "function": "act",
+      "calls": 1,
+      "self_seconds": 0.000196,
+      "cumulative_seconds": 1.304185
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\psycopg\\cursor.py",
+      "line": 100,
+      "function": "execute",
+      "calls": 1433,
+      "self_seconds": 0.007931,
+      "cumulative_seconds": 1.303012
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\sql\\compiler.py",
+      "line": 79,
+      "function": "pre_sql_setup",
+      "calls": 1416,
+      "self_seconds": 0.016846,
+      "cumulative_seconds": 1.250042
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\adapters\\delivery.py",
+      "line": 21,
+      "function": "read_closure",
+      "calls": 1,
+      "self_seconds": 1.4e-05,
+      "cumulative_seconds": 1.23412
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery_closure.py",
+      "line": 223,
+      "function": "closure_requirements",
+      "calls": 1,
+      "self_seconds": 4.7e-05,
+      "cumulative_seconds": 1.234107
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery_closure.py",
+      "line": 230,
+      "function": "check",
+      "calls": 8,
+      "self_seconds": 8.5e-05,
+      "cumulative_seconds": 1.233996
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\policy\\services.py",
+      "line": 297,
+      "function": "role_policy",
+      "calls": 15,
+      "self_seconds": 0.000319,
+      "cumulative_seconds": 1.215521
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\django\\db\\models\\manager.py",
+      "line": 85,
+      "function": "manager_method",
+      "calls": 1289,
+      "self_seconds": 0.011883,
+      "cumulative_seconds": 1.130562
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery.py",
+      "line": 154,
+      "function": "upstream",
+      "calls": 3,
+      "self_seconds": 0.000166,
+      "cumulative_seconds": 1.123008
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\jsonschema\\validators.py",
+      "line": 349,
+      "function": "iter_errors",
+      "calls": 7137,
+      "self_seconds": 0.028739,
+      "cumulative_seconds": 0.891109
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory_closure.py",
+      "line": 110,
+      "function": "owners",
+      "calls": 4,
+      "self_seconds": 0.000197,
+      "cumulative_seconds": 0.888737
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method select.select>",
+      "calls": 1445,
+      "self_seconds": 0.883269,
+      "cumulative_seconds": 0.883269
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\jsonschema\\validators.py",
+      "line": 396,
+      "function": "descend",
+      "calls": 15748,
+      "self_seconds": 0.124036,
+      "cumulative_seconds": 0.862234
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\delivery_closure.py",
+      "line": 242,
+      "function": "<lambda>",
+      "calls": 1,
+      "self_seconds": 5e-06,
+      "cumulative_seconds": 0.85789
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.sorted>",
+      "calls": 1862,
+      "self_seconds": 0.004723,
+      "cumulative_seconds": 0.856901
+    },
+    {
+      "file": "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Lib\\site-packages\\jsonschema\\_keywords.py",
+      "line": 332,
+      "function": "allOf",
+      "calls": 104,
+      "self_seconds": 0.01301,
+      "cumulative_seconds": 0.801335
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.next>",
+      "calls": 44803,
+      "self_seconds": 0.02999,
+      "cumulative_seconds": 0.795363
+    }
+  ],
+  "main_or_test_mutated": false,
+  "baseline": "docs/test-evidence/2026-11-02-factory-closure-station-profile.json"
+}

@@ -1,0 +1,56 @@
+{
+  "classification": "Current local source/schema and retained synthetic output; listener availability is not operational readiness",
+  "read_at": "2026-11-02T15:35:45.483533+00:00",
+  "source_run": 487,
+  "verified_source_files": 1295,
+  "application_source_matches_broad486": true,
+  "previews": 10,
+  "retained_preview_checks": [
+    {
+      "family": "planning",
+      "native_rowsets_preserved": 329
+    },
+    {
+      "family": "commercial",
+      "native_rowsets_preserved": 329
+    },
+    {
+      "family": "delivery",
+      "native_rowsets_preserved": 329
+    },
+    {
+      "family": "hypercare",
+      "native_rowsets_preserved": 329
+    },
+    {
+      "family": "archive",
+      "native_rowsets_preserved": 329
+    },
+    {
+      "family": "handover",
+      "native_rowsets_preserved": 329
+    },
+    {
+      "family": "hypercare-review",
+      "native_rowsets_preserved": 329
+    },
+    {
+      "family": "closure-preparation",
+      "native_rowsets_preserved": 329
+    }
+  ],
+  "closure_work": 641,
+  "native_closure_proof_unchanged": true,
+  "budget_used": 1100,
+  "budget_limit": 20000,
+  "browser_reload": [
+    "Verified closure641 and handover615 retained identical visible state without POST"
+  ],
+  "screenshot": "docs/test-evidence/2026-11-02-factory-closure-verified-runtime487.jpg",
+  "business_actions_replayed": false,
+  "global_business_worker_started": false,
+  "legacy8002_touched": false,
+  "operator_drill_db": "psl_drill_operator_demo",
+  "readiness_database_revision": "fixture-v1",
+  "full_product_complete": false
+}

@@ -1,0 +1,10 @@
+{
+  "start_utc": "2026-11-04T21:09:14.6542869Z",
+  "launch_source": 644,
+  "reason": "Pause preview during intake source and schema verification",
+  "port": 8024,
+  "exact_identity_verified": true,
+  "source_files_changed_since_launch": true,
+  "id": 8588,
+  "path": "C:\\Python313\\python.exe"
+}

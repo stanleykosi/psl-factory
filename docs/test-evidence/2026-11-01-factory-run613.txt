@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+test_current_native_source_successor_does_not_borrow_the_starter_access (test_starter_successor_projection.StarterSuccessorProjectionTests.test_current_native_source_successor_does_not_borrow_the_starter_access) ... FAIL
+
+======================================================================
+FAIL: test_current_native_source_successor_does_not_borrow_the_starter_access (test_starter_successor_projection.StarterSuccessorProjectionTests.test_current_native_source_successor_does_not_borrow_the_starter_access)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\recovery-projection-successor-tests\test_starter_successor_projection.py", line 37, in test_current_native_source_successor_does_not_borrow_the_starter_access
+    self.assertTrue(archive.projection(f.actor, work)['intake_current'])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 6.382s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

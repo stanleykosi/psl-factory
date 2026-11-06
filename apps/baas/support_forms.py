@@ -1,0 +1,16 @@
+from django import forms
+from django.contrib.auth import get_user_model
+from apps.identity.models import Grant
+from apps.finance.forms import CommandForm
+from apps.policy.support_validators import SCHEMAS,ACTIONS
+from apps.core.models import Case
+from .models import SupportIntake,SupportEvent,SupportReport
+def commands(a,c,data=None):
+ def ev(kind=None):return forms.ModelChoiceField(c.evidence.filter(kind=kind) if kind else c.evidence.all())
+ def choice(v):return forms.ChoiceField(choices=[(k,k) for k in v])
+ people=get_user_model().objects.filter(grant__case=c,grant__action='support.own',grant__active=True,is_active=True).distinct()
+ defs={'capture':('Capture supplied channel reference','support.capture',{'evidence':ev('support_intake')}),'link':('Link exact complaint identity','support.triage',{'intake':forms.ModelChoiceField(SupportIntake.objects.filter(case=c)),'evidence':ev('support_triage')}),'start':('Start or explicitly adopt legacy case','support.transition',{'owner':forms.ModelChoiceField(people),'evidence':ev(),'occurred_at':forms.DateTimeField()}),'transition':('Record owned state/response/migration event','support.transition',{'transition':choice(ACTIONS+['respond','adopt_flow']),'owner':forms.ModelChoiceField(people),'evidence':ev(),'occurred_at':forms.DateTimeField(),'response_kind':choice(['human','bot_ack'])}),'result':('Record authorised specialist outcome','support.specialist',{'pending':forms.ModelChoiceField(SupportEvent.objects.filter(case=c,action='await_specialist')),'evidence':ev('support_specialist_result')}),'merge':('Merge exact same complaint into canonical case','support.merge',{'target':forms.ModelChoiceField(Case.objects.filter(pk__in=__import__('apps.identity.services',fromlist=['visible_cases']).visible_cases(a).values('pk')).filter(pk__in=Grant.objects.filter(user=a,action='support.read',active=True).values('case_id')).filter(tenant=c.tenant,kind='support',grant__user=a,grant__action='support.merge',grant__active=True).exclude(pk=c.pk).distinct()),'evidence':ev('support_merge'),'occurred_at':forms.DateTimeField()}),'flow_review':('Review exact versioned flow','support.review',{'evidence':ev('support_review'),'verdict':choice(['approve','reject','withdraw'])}),'report':('Prepare scoped summary and metrics','support.report',{'evidence':ev('support_report')}),'report_review':('Review exact summary','support.review',{'report':forms.ModelChoiceField(SupportReport.objects.filter(case=c)),'evidence':ev('support_review'),'verdict':choice(['approve','reject','withdraw'])}),'policy':('Draft typed support configuration','policy.configure',{'component':choice(SCHEMAS),'content':forms.JSONField(widget=forms.Textarea),'evidence':ev('policy_decision'),'effective_from':forms.DateTimeField()}),'investigate':('Investigate intake, ownership and specialist gaps','agent.support',{})}
+ grants=set(Grant.objects.filter(case=c,user=a,active=True).values_list('action',flat=True));out=[]
+ for action,(title,permission,fields) in defs.items():
+  if permission in grants:out.append({'title':title,'form':type('Support'+action,(CommandForm,),fields)(data if data is not None and data.get('action')==action else None,initial={'action':action,'revision':c.revision},auto_id='id_'+action+'_%s')})
+ return out

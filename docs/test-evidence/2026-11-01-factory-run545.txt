@@ -1,0 +1,43 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts (tests.test_factory_delegation.FactoryDelegationTests.test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts) ... ERROR
+
+======================================================================
+ERROR: test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts (tests.test_factory_delegation.FactoryDelegationTests.test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_delegation.py", line 45, in test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts
+    f,delegate,config,record=configured_delegate();w=f['work']
+                             ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_delegation.py", line 34, in configured_delegate
+    transition(a,config.pk,'validated');transition(a,config.pk,'active')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 247, in transition
+    validate_envelope(case, config.envelope)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 173, in validate_envelope
+    validate_reference(envelope['component_id'],target,case,runtime=runtime)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\document_validators.py", line 67, in validate_reference
+    validate_delegation(target,case)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\delegation_validators.py", line 22, in validate_reference
+    raise ValidationError('Expected a closed typed decision delegation v1 or explicit delegate eligibility v2')
+django.core.exceptions.ValidationError: ['Expected a closed typed decision delegation v1 or explicit delegate eligibility v2']
+
+----------------------------------------------------------------------
+Ran 1 test in 8.526s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

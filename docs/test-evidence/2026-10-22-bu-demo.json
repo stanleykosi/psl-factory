@@ -1,0 +1,90 @@
+{
+  "case": "c06ea65e-0846-42e3-b524-455b72cf4443",
+  "principals": {
+    "preparer": 7,
+    "reviewer": 8,
+    "manager": 9
+  },
+  "payroll_match": 5,
+  "initial_staff": [
+    1,
+    2,
+    1
+  ],
+  "corrected_staff": [
+    3,
+    4,
+    2
+  ],
+  "initial_event": [
+    5,
+    6,
+    3
+  ],
+  "corrected_event": [
+    7,
+    8,
+    4
+  ],
+  "rejected_source": 9,
+  "held_missing_rule": 10,
+  "agent": 42,
+  "receipts": [
+    1,
+    2
+  ],
+  "policies": {
+    "F21.allocation_rules": 160,
+    "F44.source_rules": 161,
+    "F44.attribution_rules": 162,
+    "BU.review_authority": 163,
+    "BU.disclosure_rules": 164
+  },
+  "staff_report": {
+    "unit": "major_currency",
+    "by_bu": {
+      "BU-A": "260.00",
+      "BU-B": "40.00"
+    },
+    "entity": "synthetic-company",
+    "period": "2026-09",
+    "coverage": "selected_supplied_population_only",
+    "currency": "TEST",
+    "residual": "0.00",
+    "conserved": true,
+    "disclosure": "aggregate_only",
+    "destination": "synthetic-bu-report",
+    "source_work": 4,
+    "company_only": "0",
+    "ledger_posted": false,
+    "source_written": false,
+    "allocated_total": "300.00",
+    "company_source_total": "300",
+    "native_authenticity_verified": false
+  },
+  "event_report": {
+    "unit": "major_currency",
+    "by_bu": {
+      "BU-A": "84.00",
+      "BU-B": "36.00"
+    },
+    "entity": "synthetic-company",
+    "period": "2026-09",
+    "coverage": "selected_supplied_population_only",
+    "currency": "TEST",
+    "residual": "0.00",
+    "conserved": true,
+    "disclosure": "aggregate_only",
+    "destination": "synthetic-bu-report",
+    "source_work": 8,
+    "company_only": "0",
+    "ledger_posted": false,
+    "source_written": false,
+    "allocated_total": "120.00",
+    "company_source_total": "120",
+    "native_authenticity_verified": false
+  },
+  "native_source_authenticity": false,
+  "historical_agent": 40,
+  "pre_inventory_agent": 41
+}

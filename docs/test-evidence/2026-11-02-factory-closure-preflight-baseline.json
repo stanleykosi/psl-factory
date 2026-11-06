@@ -1,0 +1,329 @@
+{
+  "parent": "checkpoint469",
+  "verified_files": 2332,
+  "source_processes": [
+    {
+      "id": "P38",
+      "department": "PMO",
+      "family": "Closure",
+      "title": "Conduct retrospective and capture improvement actions",
+      "classification": "SOP-prescribed workflow",
+      "source_owner": "PMO; relevant project participants",
+      "workflow_family_id": "AF09",
+      "design_basis": "Module/UI/test grouping is proposed engineering design; original fields and cited source responsibilities are preserved evidence.",
+      "implementation_module": "pmo.delivery",
+      "shared_modules": [
+        "core",
+        "identity",
+        "workflows",
+        "policy",
+        "agents",
+        "documents"
+      ],
+      "ui_surfaces": "Engagement/project workspace, requirements/plan, phase-gate/evidence board, UAT/release/closure views",
+      "proposed_family_flow": "Engagement \u00e2\u2020\u2019 pre-signature planning \u00e2\u2020\u2019 delivery \u00e2\u2020\u2019 owned external gate evidence \u00e2\u2020\u2019 release/closure handoffs",
+      "definition_ref": "reference/03-definitions/PMO.json#P38",
+      "current_binding_ref": "reference/12-payment-exception-policy/process-execution-bindings.json#P38",
+      "architecture_assignment_ref": "reference/08-agent-architecture/process-agent-assignments.json#assignments/P38",
+      "trigger": "Closure lessons-learned activity is due and relevant participants/evidence are available.",
+      "inputs": [
+        "Project performance and delivery evidence P28/P39",
+        "Issues/resolutions and change history",
+        "Participant observations",
+        "Meeting record requirements P43"
+      ],
+      "outputs": [
+        "Retrospective record and follow-up actions."
+      ],
+      "execution_contracts": [
+        "X02",
+        "X05",
+        "X07",
+        "X08"
+      ],
+      "agent_tool_contracts": [
+        {
+          "contract_id": "C09",
+          "name": "Prepare audience-specific reporting",
+          "candidate_operations": [
+            "report.compose_draft",
+            "report.apply_allowed_field_projection",
+            "artifact.create_restricted_draft"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C04",
+          "name": "Investigate a discrepancy",
+          "candidate_operations": [
+            "evidence.read",
+            "diagnostic.compare",
+            "calculation.run_approved_rule",
+            "task.create_internal"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C08",
+          "name": "Reconcile an uncertain effect",
+          "candidate_operations": [
+            "effect.lookup_by_operation_key",
+            "effect.compare_payload",
+            "task.request_retry"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C03",
+          "name": "Plan and coordinate permitted tasks",
+          "candidate_operations": [
+            "workflow.allowed_tasks",
+            "task.dispatch",
+            "task.cancel_unstarted",
+            "task.request_retry",
+            "task.create_internal"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C07",
+          "name": "Dispatch an internal handoff",
+          "candidate_operations": [
+            "handoff.validate",
+            "handoff.submit_internal",
+            "handoff.query_receipt"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        }
+      ],
+      "agent_responsibility": [
+        {
+          "id": "A06",
+          "name": "Management insight and drafting",
+          "assignment": "Primary capability for this process",
+          "process_responsibility": "Synthesize evidence-grounded lessons and distinguish operational remedies from policy/model change proposals."
+        },
+        {
+          "id": "A03",
+          "name": "Exception investigation",
+          "assignment": "Supporting capability invoked only when its task is needed",
+          "process_responsibility": "Choose useful bounded diagnostic reads, trace a discrepancy and distinguish missing data, stale state, conflict and unknown effect."
+        },
+        {
+          "id": "A04",
+          "name": "Planning and workflow coordination",
+          "assignment": "Supporting capability invoked only when its task is needed",
+          "process_responsibility": "Coordinate dependencies and permitted tasks inside a declared business case/workflow."
+        }
+      ],
+      "human_responsibility": {
+        "source_responsibilities": [
+          "Participants reflect; designated owners decide and execute improvements"
+        ],
+        "prescribed_or_unresolved_authorities": [
+          "No separate retrospective approval is specified. Policy, pricing-model or release-rule changes are not authorized by a retrospective action."
+        ],
+        "boundary": "Keep actual source role ownership; where authority is unverified, no named person or approval matrix is inferred. Controls that explicitly need no approval must not acquire one."
+      },
+      "deterministic_responsibility": [
+        "Track action ownership/deadlines and evidence links"
+      ],
+      "source_rule_refs": [
+        "S-P38"
+      ],
+      "current_amendment_refs": [],
+      "policy_slot_ids": [
+        "D11"
+      ],
+      "policy_dependency_note": "Per-action needs are resolved at runtime; these IDs do not prevent implementing this process. D02 is a settled rule.",
+      "source_test_ids": [
+        "P38-M01",
+        "P38-M02"
+      ],
+      "full_product_test_id": "FULL-AF09",
+      "implementation_status": "NOT_STARTED",
+      "test_evidence": [],
+      "effective_semantics_note": "Top-level trigger/inputs use available current overrides. Historical fields are provenance, not current prerequisites.",
+      "supplemental_policy_component_ids": []
+    },
+    {
+      "id": "P39",
+      "department": "PMO",
+      "family": "Closure",
+      "title": "Prepare closure report, confirm Finance notifications and approve/archive closure",
+      "classification": "SOP-prescribed control",
+      "source_owner": "Project Manager prepares; Finance confirms notifications; Head of PMO approves",
+      "workflow_family_id": "AF09",
+      "design_basis": "Module/UI/test grouping is proposed engineering design; original fields and cited source responsibilities are preserved evidence.",
+      "implementation_module": "pmo.delivery",
+      "shared_modules": [
+        "core",
+        "identity",
+        "workflows",
+        "policy",
+        "agents",
+        "documents"
+      ],
+      "ui_surfaces": "Engagement/project workspace, requirements/plan, phase-gate/evidence board, UAT/release/closure views",
+      "proposed_family_flow": "Engagement \u00e2\u2020\u2019 pre-signature planning \u00e2\u2020\u2019 delivery \u00e2\u2020\u2019 owned external gate evidence \u00e2\u2020\u2019 release/closure handoffs",
+      "definition_ref": "reference/03-definitions/PMO.json#P39",
+      "current_binding_ref": "reference/12-payment-exception-policy/process-execution-bindings.json#P39",
+      "architecture_assignment_ref": "reference/08-agent-architecture/process-agent-assignments.json#assignments/P39",
+      "trigger": "Go-live sign-off exists and Closure activities/evidence are being assembled.",
+      "inputs": [
+        "Performance summary and risks/resolutions",
+        "Stability P35, archive P36, handover P37 and retrospective P38 evidence",
+        "Milestone set and Finance notification records P12/P34",
+        "PM-prepared closure report"
+      ],
+      "outputs": [
+        "Approved closure report, Finance notification completeness and archived project."
+      ],
+      "execution_contracts": [
+        "X02",
+        "X04",
+        "X05",
+        "X07",
+        "X08"
+      ],
+      "agent_tool_contracts": [
+        {
+          "contract_id": "C09",
+          "name": "Prepare audience-specific reporting",
+          "candidate_operations": [
+            "report.compose_draft",
+            "report.apply_allowed_field_projection",
+            "artifact.create_restricted_draft"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C06",
+          "name": "Prepare and check approval evidence",
+          "candidate_operations": [
+            "approval.read_verified_reference",
+            "artifact.create_restricted_draft",
+            "task.create_internal"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C03",
+          "name": "Plan and coordinate permitted tasks",
+          "candidate_operations": [
+            "workflow.allowed_tasks",
+            "task.dispatch",
+            "task.cancel_unstarted",
+            "task.request_retry",
+            "task.create_internal"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C07",
+          "name": "Dispatch an internal handoff",
+          "candidate_operations": [
+            "handoff.validate",
+            "handoff.submit_internal",
+            "handoff.query_receipt"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        },
+        {
+          "contract_id": "C08",
+          "name": "Reconcile an uncertain effect",
+          "candidate_operations": [
+            "effect.lookup_by_operation_key",
+            "effect.compare_payload",
+            "task.request_retry"
+          ],
+          "binding": "Only the exact task-specific operation/resource/field/destination subset explicitly granted by runtime policy; catalogue membership alone grants nothing."
+        }
+      ],
+      "agent_responsibility": [
+        {
+          "id": "A06",
+          "name": "Management insight and drafting",
+          "assignment": "Primary capability for this process",
+          "process_responsibility": "Explain missing milestone-notification or archive evidence and draft a balanced closure narrative."
+        },
+        {
+          "id": "A07",
+          "name": "Control evidence and release preflight",
+          "assignment": "Supporting capability invoked only when its task is needed",
+          "process_responsibility": "Explain completeness, actor/subject/version alignment and contradictions in required control evidence."
+        },
+        {
+          "id": "A04",
+          "name": "Planning and workflow coordination",
+          "assignment": "Supporting capability invoked only when its task is needed",
+          "process_responsibility": "Coordinate dependencies and permitted tasks inside a declared business case/workflow."
+        }
+      ],
+      "human_responsibility": {
+        "source_responsibilities": [
+          "PM prepares; Finance confirms notifications; Head of PMO approves"
+        ],
+        "prescribed_or_unresolved_authorities": [
+          "Head of PMO approves PM-prepared closure report. Finance confirms notification coverage, not a new financial closure approval."
+        ],
+        "boundary": "Keep actual source role ownership; where authority is unverified, no named person or approval matrix is inferred. Controls that explicitly need no approval must not acquire one."
+      },
+      "deterministic_responsibility": [
+        "Reconcile milestone/notification completeness",
+        "Check required closure evidence and archive reference"
+      ],
+      "source_rule_refs": [
+        "S05",
+        "S11",
+        "U03",
+        "U04"
+      ],
+      "current_amendment_refs": [
+        "U03",
+        "U04"
+      ],
+      "policy_slot_ids": [
+        "D05",
+        "D11",
+        "D12",
+        "D14"
+      ],
+      "policy_dependency_note": "Per-action needs are resolved at runtime; these IDs do not prevent implementing this process. D02 is a settled rule.",
+      "source_test_ids": [
+        "P39-M01",
+        "P39-M02",
+        "P39-M03"
+      ],
+      "full_product_test_id": "FULL-AF09",
+      "implementation_status": "NOT_STARTED",
+      "test_evidence": [],
+      "effective_semantics_note": "Top-level trigger/inputs use available current overrides. Historical fields are provenance, not current prerequisites.",
+      "supplemental_policy_component_ids": []
+    }
+  ],
+  "requirements": [
+    "REQ-03",
+    "REQ-06",
+    "REQ-07",
+    "REQ-09",
+    "REQ-13",
+    "REQ-19",
+    "REQ-21"
+  ],
+  "disposition": "KEEP native retrospective/Finance/Head-PMO authority; EXTEND independent prerequisite readback, adapter, durable investigation and connected UI",
+  "gap": "Before a closure document exists, the agent returns only a prepare-report finding and does not independently expose current retrospective/Finance/report prerequisites",
+  "change": "Extract existing native checks and reuse them in independent metadata preflight; exact nullable human selections; read-only preparation UI and persisted agent investigation connected from verified handover",
+  "compatibility": "No tables/migrations/dependencies/second decision ledger; native closure snapshot and human approvals retained",
+  "tests": [
+    "Same native source/current version/policy checks before and after draft",
+    "Unknown meeting/report rather than guessed selection",
+    "Finance coverage successors and actual human confirmation",
+    "Foreign/stale/future meeting and source rights",
+    "UI/agent authority, private-source filtering and no business effects"
+  ],
+  "remaining": "Autonomous closure drafting/decision wait/finalisation and all wider release gaps remain distinct",
+  "policy_slots": [
+    "Existing actual D05 roles and D11 rules; no new owner values"
+  ]
+}

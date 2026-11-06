@@ -1,0 +1,19 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_canonical_receipt_successor_generation_and_two_connection_intake (tests.test_invoice_variants.InvoiceVariantTests.test_canonical_receipt_successor_generation_and_two_connection_intake) ... ok
+test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent (tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 32.398s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

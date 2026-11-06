@@ -1,0 +1,38 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt (tests.test_factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt) ... ERROR
+
+======================================================================
+ERROR: test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt (tests.test_factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_definitions.py", line 17, in definition
+    try:return DEFINITIONS[name]
+               ~~~~~~~~~~~^^^^^^
+KeyError: 'finance-accounts/v1'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_accounting.py", line 13, in test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt
+    definition('finance-accounts/v1')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_definitions.py", line 18, in definition
+    except KeyError:raise ValidationError('unknown_case: no registered factory definition')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['unknown_case: no registered factory definition']
+
+----------------------------------------------------------------------
+Ran 1 test in 3.062s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

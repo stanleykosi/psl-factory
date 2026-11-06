@@ -1,0 +1,11 @@
+{
+  "process_seconds": 16.152,
+  "run": 616,
+  "parent_source615_preserved": true,
+  "production_guard_weakened": false,
+  "reason": "Correct operational role-bundle eligibility guard; fixture needs explicit current authority",
+  "unittest_seconds": 2.548,
+  "result": "ERROR1",
+  "working_directory": "C:/Users/USER/Desktop/psl-agent build/.runtime/source616",
+  "changed_fixture_sources": ".runtime/failed-source616/tests"
+}

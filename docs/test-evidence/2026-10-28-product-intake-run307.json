@@ -1,0 +1,19 @@
+{
+  "run": 307,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_product_intake",
+    "tests.test_finance_followup_intake",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-307-product-intake.txt",
+  "started_at": "2026-10-28T11:45:34.518026+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 163.836
+}

@@ -1,0 +1,21 @@
+{
+  "run": 344,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_pilot_preflight",
+    "tests.test_policy_scopes",
+    "tests.test_readiness",
+    "tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-344-process-acceptance.txt",
+  "started_at": "2026-10-28T22:13:46.029929+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 346.929
+}

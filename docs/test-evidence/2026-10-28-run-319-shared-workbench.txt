@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_action_assignment_and_document_review_are_source_owned_and_read_only (tests.test_shared_workbench.SharedWorkbenchTests.test_action_assignment_and_document_review_are_source_owned_and_read_only) ... ok
+test_search_scope_keyset_cursor_binding_active_user_and_escaping (tests.test_shared_workbench.SharedWorkbenchTests.test_search_scope_keyset_cursor_binding_active_user_and_escaping) ... ok
+test_configuration_intake_access_ui_and_immutable_history (tests.test_product_intake.ProductIntakeTests.test_configuration_intake_access_ui_and_immutable_history) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 39.049s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

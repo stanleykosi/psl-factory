@@ -1,0 +1,119 @@
+{
+  "classification": "EXPLICIT SYNTHETIC costing contract and independently entered examples; not PSL rates, policy, appointments or native workbook proof",
+  "rule": {
+    "implementation": "declared_decimal_graph_v1",
+    "implementation_version": "1",
+    "calculator_ref": "synthetic-calculator",
+    "calculator_version": "v1",
+    "calculator_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contract_basis": "synthetic-hours-contract",
+    "currency": "NGN",
+    "source_class": "synthetic_fixture",
+    "source_locator": "explicit-isolated-fixture",
+    "owner_id": 1,
+    "owner_role": "PMO",
+    "oracle_owner_id": 2,
+    "oracle_role": "Finance",
+    "override_mode": "new_rule_version",
+    "inputs": [
+      {
+        "key": "hours",
+        "unit": "hour"
+      }
+    ],
+    "parameters": [
+      {
+        "key": "rate",
+        "unit": "NGN/hour",
+        "value": "10.00",
+        "evidence_id": 1
+      }
+    ],
+    "nodes": [
+      {
+        "key": "cost",
+        "unit": "NGN",
+        "operation": "multiply",
+        "operands": [
+          "input:hours",
+          "parameter:rate"
+        ],
+        "decimal_places": 2,
+        "rounding": "half_up"
+      }
+    ],
+    "outputs": [
+      "cost"
+    ]
+  },
+  "scenarios": [
+    {
+      "key": "normal",
+      "scenario": "normal",
+      "inputs": [
+        {
+          "key": "hours",
+          "unit": "hour",
+          "value": "2"
+        }
+      ],
+      "expected": {
+        "status": "known",
+        "values": [
+          {
+            "key": "cost",
+            "unit": "NGN",
+            "value": "20.00"
+          }
+        ],
+        "findings": []
+      }
+    },
+    {
+      "key": "unknown",
+      "scenario": "exception",
+      "inputs": [
+        {
+          "key": "hours",
+          "unit": "hour",
+          "value": null
+        }
+      ],
+      "expected": {
+        "status": "held",
+        "values": [
+          {
+            "key": "cost",
+            "unit": "NGN",
+            "value": null
+          }
+        ],
+        "findings": [
+          "unknown:input:hours"
+        ]
+      }
+    },
+    {
+      "key": "rounding",
+      "scenario": "exception",
+      "inputs": [
+        {
+          "key": "hours",
+          "unit": "hour",
+          "value": "0.1005"
+        }
+      ],
+      "expected": {
+        "status": "known",
+        "values": [
+          {
+            "key": "cost",
+            "unit": "NGN",
+            "value": "1.01"
+          }
+        ],
+        "findings": []
+      }
+    }
+  ]
+}

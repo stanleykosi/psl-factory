@@ -1,0 +1,46 @@
+{
+  "classification": "EXPLICIT SYNTHETIC engineering protocol/clock examples; not actual channel, approver or SLA values",
+  "receipts": {
+    "target_key": "endpoint:channel-fixture",
+    "credential_ref": "secret:channel-fixture",
+    "credential_revision": "fixture-v1",
+    "principal_ref": "principal:channel-fixture",
+    "contract_version": "fixture-channel/v1",
+    "channel_ref": "synthetic-channel",
+    "account_ref": "synthetic-account",
+    "customer_ref": null,
+    "recipient_ref": "synthetic-customer-destination",
+    "verifier_id": null,
+    "reviewer_id": null,
+    "independent_review": true,
+    "review_ttl_seconds": 3600,
+    "lease_seconds": 30,
+    "max_attempts": 3,
+    "protocol": "psl.support-receipt/v1",
+    "contract_evidence_id": null,
+    "sender_ref": "synthetic-human-sender"
+  },
+  "clock": {
+    "attestor_id": null,
+    "basis": "reviewed_human_customer_delivery",
+    "late_event_handling": "hold_for_correction",
+    "max_receipt_age_seconds": 86400
+  },
+  "corrections": {
+    "proposer_id": null,
+    "reviewer_id": null,
+    "source_author_id": null,
+    "independent_review": true,
+    "allowed_modes": [
+      "revalidate",
+      "replace",
+      "late",
+      "withdraw"
+    ],
+    "allow_source_revision": true,
+    "basis": "reviewed_human_customer_delivery",
+    "history_handling": "immutable_events_separate_metric_projection",
+    "max_receipt_age_seconds": 86400,
+    "review_ttl_seconds": 3600
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "pid": 16796,
+  "path": "C:/Python313/python.exe",
+  "started_utc": "2026-10-29T18:36:46.5675140Z",
+  "session_id": 18040,
+  "url": "http://127.0.0.1:8000",
+  "classification": "UI preview; existing authenticated synthetic workspace browser; no live pilot",
+  "unauthenticated_smokes": [
+    {
+      "path": "/",
+      "status": 302,
+      "location": "/accounts/login/?next=/"
+    },
+    {
+      "path": "/work/",
+      "status": 302,
+      "location": "/accounts/login/?next=/work/"
+    },
+    {
+      "path": "/documents/inbox/",
+      "status": 302,
+      "location": "/accounts/login/?next=/documents/inbox/"
+    },
+    {
+      "path": "/project-views/",
+      "status": 302,
+      "location": "/accounts/login/?next=/project-views/"
+    }
+  ],
+  "preserved_environment": {
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo",
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1"
+  }
+}

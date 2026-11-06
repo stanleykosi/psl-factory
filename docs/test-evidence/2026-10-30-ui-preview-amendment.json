@@ -1,0 +1,8 @@
+{
+  "previous_amendment": "docs/test-evidence/2026-10-29-ui-layout-stop-amendment.json",
+  "changes": "Requested preview restart and handoff update only",
+  "files": {
+    "HANDOFF.md": "ccf2f614ae6ae118eb98f46585a44df783ccd3b5a90c6954662b64e6ef07ddef",
+    "docs/test-evidence/2026-10-30-ui-preview-server.json": "7802bca132c21278cf14ff256af93c5f5749edb012dd3fb5bfd3dd0c543254cc"
+  }
+}

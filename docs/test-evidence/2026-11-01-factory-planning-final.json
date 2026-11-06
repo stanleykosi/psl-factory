@@ -1,0 +1,77 @@
+{
+  "classification": "Final synthetic browser readback after tested privacy/presentation changes; no new human or agent effects",
+  "parent": "docs/test-evidence/2026-11-01-factory-planning-browser.json",
+  "parent_sha256": "8f829637b1d7352cd7a788d5394bdc2692d6b2530cbb1d7d7c6eee232f320a12",
+  "source": "docs/test-evidence/2026-11-01-factory-run413-source.json",
+  "work": 203,
+  "proof": {
+    "verified": true,
+    "verification_scope": "current_planning_artifact_and_internal_handoff",
+    "packet": 93598,
+    "readiness": 93610,
+    "delivery_source": 1129,
+    "dossier": 99,
+    "owner_observations": {
+      "estimates": 369,
+      "scope": 368
+    },
+    "native_verified": false,
+    "environment": "synthetic_reference_only"
+  },
+  "budget_used": 700,
+  "budget_limit": 20000,
+  "readbacks": [
+    "Outcome queue to stable detail retains verified queue context",
+    "Native investigation history exposes bounded findings/references",
+    "Current source evidence and explicit reference-only verification scope"
+  ],
+  "viewport": {
+    "selected_tab": "7",
+    "width": 390,
+    "height": 844,
+    "document_width": 375,
+    "screenshot_width": 375,
+    "screenshot_height": 812,
+    "reset": true
+  },
+  "artifact_notes": "Native screenshot API returns JPEG bytes. Earlier .png-named artifacts are retained. The first final-mobile capture was375x211 during viewport transition and is not accepted as responsive screenshot proof; settled final-narrow.jpg is375x812.",
+  "screenshots": {
+    "docs/test-evidence/2026-11-01-factory-planning-final-desktop.jpg": "fd20efc486801094220985c7548c6bfcceb2219f0a210f304ea35e6f4c80e4ec",
+    "docs/test-evidence/2026-11-01-factory-planning-final-narrow.jpg": "6799718817699872bce6b3471e38a8b034fa9dc49c1afe0f77e6f1b16f9b467e"
+  },
+  "health": {
+    "8000": 200,
+    "8003": 200
+  },
+  "current_previews": [
+    {
+      "port": 8000,
+      "pid": 2784,
+      "executable": "C:/Python313/python.exe",
+      "start_utc": "2026-11-01T19:43:49.8625142Z",
+      "session": 51213,
+      "database": "psl"
+    },
+    {
+      "port": 8003,
+      "pid": 20608,
+      "executable": "C:/Python313/python.exe",
+      "start_utc": "2026-11-01T19:43:50.6187925Z",
+      "session": 85961,
+      "database": "psl_factory_planning_ui_780d38dc78ac"
+    }
+  ],
+  "unchanged_legacy_preview": {
+    "port": 8002,
+    "pid": 20204,
+    "start_utc": "2026-11-01T18:04:21.2134974Z",
+    "source_checkpoint": 405,
+    "database": "psl_factory_ui_026a98f9ab47",
+    "schema": "through workflows0039; keep old wrapper/schema pairing"
+  },
+  "main_environment_preserved": {
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo",
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1"
+  },
+  "global_workers_started": false
+}

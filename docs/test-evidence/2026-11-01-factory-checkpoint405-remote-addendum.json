@@ -1,0 +1,11 @@
+{
+  "parent_manifest": "docs\\test-evidence\\2026-11-01-factory-checkpoint405-source-manifest.json",
+  "parent_sha256": "c34879865b966a02247f7aa491dc9b12cbc13f132591c74a8ede41529541e9a5",
+  "classification": "Only durable synthetic mock provider files; no live provider authenticity claim",
+  "files": {
+    "docs/test-evidence/2026-11-01-factory-ui-remote/0d9ded7d795da1f1c270c2f105eaa3a3ad572fb117473a1e1b1b91cfe42fbcc4.json": "bcbaa33e4851fbae9f5f045eb3a1a8a2b0e8841b23be8e126b9bbd6dc3f439ce",
+    "docs/test-evidence/2026-11-01-factory-ui-remote/289f30b2ac77738c3b6b9c4aca8179eb4d1644700a03b94b56e90e6171bd77c4.json": "bc5af2138b74f874e6dc1719343ba4bda3160f249f96de332da60912236cb220",
+    "docs/test-evidence/2026-11-01-factory-ui-b-remote/5fbeb8116c5208de18c3c74f46f2b5f757941566e826d230b08956f18137b928.json": "d860fe1fa400a08280a7215eb2b8caca6d0185560febe0b91a5029fdb45f7230",
+    "docs/test-evidence/2026-11-01-factory-ui-b-remote/7dd84184fefc6689eddb741394df91d5735219db765f482a0d3ccad5a9fdc495.json": "f0e80106852fabc75b3d20ca77c6d6c1eb9d4b64a07e327c33485fd9ebd25f10"
+  }
+}

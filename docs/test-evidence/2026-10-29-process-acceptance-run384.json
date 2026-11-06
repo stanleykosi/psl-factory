@@ -1,0 +1,18 @@
+{
+  "run": 384,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_cash_guards.CashGuardTests.test_cash_storage_limit_holds_verification_before_effect_without_losing_report",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-384-process-acceptance.txt",
+  "started_at": "2026-10-29T16:24:41.003556+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 8.108
+}

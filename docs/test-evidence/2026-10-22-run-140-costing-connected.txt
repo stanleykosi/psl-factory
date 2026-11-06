@@ -1,0 +1,33 @@
+Using existing test database for alias 'default'...
+
+E....E....................................................................................
+======================================================================
+ERROR: test_commercial_revisions (unittest.loader._FailedTest.test_commercial_revisions)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_commercial_revisions
+Traceback (most recent call last):
+  File "C:\Python313\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'tests.test_commercial_revisions'
+
+
+======================================================================
+ERROR: test_current_binding_cannot_bypass_existing_commercial_cost_approvals (tests.test_costing.CostingTests.test_current_binding_cannot_bypass_existing_commercial_cost_approvals)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_costing.py", line 122, in test_current_binding_cannot_bypass_existing_commercial_cost_approvals
+    proposal=commercial.propose(f['actor'],f['case'].pk,sources,context.pk,'Explicit synthetic proposal',rev(f['case']))
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\commercial.py", line 88, in propose
+    raise ValidationError('Link requirements, captured client feedback or a change request')
+django.core.exceptions.ValidationError: ['Link requirements, captured client feedback or a change request']
+
+----------------------------------------------------------------------
+Ran 90 tests in 221.136s
+
+FAILED (errors=2)
+Preserving test database for alias 'default'...
+
+Found 90 test(s).
+System check identified no issues (0 silenced).

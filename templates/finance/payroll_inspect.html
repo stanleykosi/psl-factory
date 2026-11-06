@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<a href="{% url 'payroll' case.pk %}">Back to restricted payroll</a>
+<h1>{% if kind == 'report' %}Reviewed BU staff-cost report{% else %}Restricted payroll working data{% endif %}</h1>
+{% if case.synthetic %}{% endif %}
+<p>{{ kind }} #{{ record_id }} / {{ case|workspace_name }}. Access and current source checks were applied for this read.</p>
+{% if kind == 'report' %}
+<p>{{ value.entity }} / {{ value.period }} / {{ value.currency }} / {{ value.unit }} / report v{{ value.report_version }}</p>
+<table><thead><tr><th>Business unit</th><th>Staff cost</th></tr></thead><tbody>{% for bu,total in value.by_bu.items %}<tr><td>{{ bu }}</td><td>{{ total|default_if_none:'Unknown' }}</td></tr>{% endfor %}</tbody></table>
+<p>Eligible total: {{ value.eligible_total|default_if_none:'Unknown' }}. Destination: {{ value.destination }}. Source aggregate #{{ value.source_run }}.</p>
+<p>Aggregate disclosure only. This report creates no payroll payment, HR edit or accounting posting.</p>
+{% else %}
+<p>Restricted source and working values are shown only to current named readers. Unknown values remain unknown. Review exact controls and holds before deciding.</p>
+<table><thead><tr><th>Employee reference</th><th>Component</th><th>Amount</th><th>BU / match</th><th>Source history</th></tr></thead><tbody>{% for row in value.rows %}<tr><td>{{ row.employee_id }}</td><td>{{ row.component }}</td><td>{{ row.amount|default_if_none:'Unknown' }}</td><td>{{ row.bu|default_if_none:'Unknown' }} {{ row.match_status }}</td><td>{{ row.row_ref }} {{ row.provenance }}</td></tr>{% empty %}<tr><td colspan="5">No readable rows.</td></tr>{% endfor %}</tbody></table>
+<details><summary>Private controls, tie-out and complete source history</summary><pre>{{ value }}</pre></details>
+{% endif %}
+{% endblock %}

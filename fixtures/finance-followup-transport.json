@@ -1,0 +1,5 @@
+{
+  "classification": "Synthetic examples only. No installed endpoint, signing key, owner or principal.",
+  "outbound": {"sender_ref":"sender:fixture","destination_ref":"inbox:fixture","endpoint_ref":"endpoint:finance-inbox","credential_ref":"secret:finance-inbox","credential_revision":"fixture-v1","lease_seconds":300,"max_attempts":2,"allow_synthetic":true},
+  "inbound_template": {"sender_ref":"sender:fixture","destination_ref":"inbox:fixture","principal_id":null,"principal_role":"Finance","evidence_id":null,"signature_window_seconds":60,"variants":["issue","deliver","adjust","adjust_deliver"],"allow_synthetic":true}
+}

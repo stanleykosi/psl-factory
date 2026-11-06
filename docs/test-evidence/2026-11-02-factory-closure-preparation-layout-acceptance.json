@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "passing_runs": [
+    472,
+    473
+  ],
+  "behavior": "Compact required-output layout and local readable dates; both check and agent buttons submit the current visible typed selections; read-only check survives agent-grant revocation",
+  "browser_runtime": 473,
+  "browser_dossier": 335,
+  "agent_run_ids": [
+    3120,
+    3121,
+    3122
+  ],
+  "actual_browser_action": "From an unselected GET, chose both recorded inputs then invoked agent directly without checking first; third durable observation has exactly those selections",
+  "previous_observations_retained": true,
+  "business_approval_or_closure": false,
+  "screenshots": [
+    "docs/test-evidence/2026-11-02-factory-closure-preparation-final-runtime473.jpg",
+    "docs/test-evidence/2026-11-02-factory-closure-preparation-final-narrow-runtime473.jpg"
+  ],
+  "viewports": {
+    "desktop_requested": [
+      1280,
+      900
+    ],
+    "narrow_requested": [
+      390,
+      844
+    ],
+    "narrow_document_width": 375,
+    "narrow_scroll_width": 375
+  },
+  "main_preserved_rowsets": 329,
+  "main_test_guards_match": true,
+  "schema_changed": false,
+  "new_business_values": false,
+  "preview_evidence": "docs/test-evidence/2026-11-02-factory-closure-layout-previews.json",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false
+}

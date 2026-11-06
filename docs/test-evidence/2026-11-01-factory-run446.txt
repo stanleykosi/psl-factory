@@ -1,0 +1,26 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart (tests.test_factory_archive.FactoryArchiveTests.test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart) ... ERROR
+
+======================================================================
+ERROR: test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart (tests.test_factory_archive.FactoryArchiveTests.test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_archive.py", line 49, in test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart
+    from apps.pmo.commercial import register_candidate
+ImportError: cannot import name 'register_candidate' from 'apps.pmo.commercial' (C:\Users\USER\Desktop\psl-agent build\apps\pmo\commercial.py)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.008s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

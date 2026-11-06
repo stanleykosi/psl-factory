@@ -1,0 +1,60 @@
+{
+  "classification": "EXPLICIT SYNTHETIC principals/rules/reports; actual local PostgreSQL session/receipt probes and source Finance handoff; authenticated HTTP mock provider canaries, no real-model evaluation/private egress/operational acceptance",
+  "case": "746214a4-8481-43b7-86de-c2aa8cc37567",
+  "principals": {
+    "actor": 38,
+    "reviewer": 39
+  },
+  "native_contract": 1,
+  "native_health_observations": [
+    1,
+    4
+  ],
+  "native_receipt_observations": [
+    2,
+    5
+  ],
+  "source_job": 4,
+  "source_receipt": "3",
+  "initial_assessment": 1,
+  "held_assessment": 2,
+  "current_assessment": 3,
+  "native_reviews": [
+    1,
+    2
+  ],
+  "supplied_outage": 3,
+  "provider_contract": 2,
+  "provider_assessment": 5,
+  "provider_review": 4,
+  "provider_observations": [
+    6,
+    7,
+    8
+  ],
+  "provider_current_ready": false,
+  "provider_mock_executions": 2,
+  "held_agent": 55,
+  "agent": 56,
+  "unconfigured_case": "66ee32ca-6392-47da-bf7a-019a06b8fc92",
+  "unconfigured_contract": 3,
+  "unconfigured_report": 9,
+  "preexisting_handoffs": [
+    {
+      "id": 1,
+      "state_sha256": "52b3e8cb2ecc00924f06468dda1064190d549849668930ae6fe060b4edf77239"
+    },
+    {
+      "id": 2,
+      "state_sha256": "c8a25b6c6154002393f77a40e0d9e60e555178cb46552783efa2f7cfeeb59baa"
+    },
+    {
+      "id": 3,
+      "state_sha256": "d034248dcf7ae8e56eeaf3ec78083aaee035d12eb7159e152a148d54a0e10209"
+    }
+  ],
+  "native_source_handoff_confirmed": true,
+  "real_model_evaluated": false,
+  "private_source_sent": false,
+  "operational_ready": false
+}

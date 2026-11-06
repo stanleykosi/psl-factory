@@ -1,0 +1,18 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0020_af13_native_closed_shapes...test_duplicate_probes_workers_foreign_revocation_and_fresh_process_recovery (tests.test_accepted_protection_readiness_concurrency.AcceptedProtectionReadinessConcurrencyTests.test_duplicate_probes_workers_foreign_revocation_and_fresh_process_recovery) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1107.014s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

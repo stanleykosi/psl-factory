@@ -1,0 +1,12 @@
+{
+  "classification": "synthetic example; no production criteria installed",
+  "implementation": "source_finance_authority_v1",
+  "max_records": 1000,
+  "max_queries": 256,
+  "max_payload_bytes": 1048576,
+  "max_seconds": 5,
+  "observation_valid_seconds": 3600,
+  "review_valid_seconds": 3600,
+  "allow_synthetic": true,
+  "disclosure": "acknowledgement_metadata_only"
+}

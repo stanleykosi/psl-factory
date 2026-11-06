@@ -1,0 +1,11 @@
+{
+  "classification": "Forward source refinement, no schema or actual principal/policy/grant changes",
+  "schema_migration_test_run": 315,
+  "final_test_run": 316,
+  "changes": [
+    "apps/baas/summaries.py",
+    "apps/policy/summary_validators.py",
+    "tests/test_complaint_summaries.py"
+  ],
+  "behavior": "Current reviewer must have private draft inspection; reviewed recipients need only their authorized projection; draft access checked before composition."
+}

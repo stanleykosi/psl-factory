@@ -1,0 +1,28 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_release_without_prior_readiness_cannot_be_retroactively_prepared (tests.test_factory_delivery.FactoryDeliveryTests.test_actual_release_without_prior_readiness_cannot_be_retroactively_prepared) ... ok
+test_agent_cannot_approve_or_authenticate_unverified_source_evidence (tests.test_factory_delivery.FactoryDeliveryTests.test_agent_cannot_approve_or_authenticate_unverified_source_evidence) ... ok
+test_agent_waits_for_native_gates_then_prepares_and_verifies_readiness (tests.test_factory_delivery.FactoryDeliveryTests.test_agent_waits_for_native_gates_then_prepares_and_verifies_readiness) ... ok
+test_cancellation_while_planning_retains_attempt_without_preparing_readiness (tests.test_factory_delivery.FactoryDeliveryTests.test_cancellation_while_planning_retains_attempt_without_preparing_readiness) ... ok
+test_capture_before_policy_and_missing_approver_do_not_invent_decisions (tests.test_factory_delivery.FactoryDeliveryTests.test_capture_before_policy_and_missing_approver_do_not_invent_decisions) ... ok
+test_changed_gate_requires_reviewed_reassessment_and_fresh_native_request (tests.test_factory_delivery.FactoryDeliveryTests.test_changed_gate_requires_reviewed_reassessment_and_fresh_native_request) ... ok
+test_idempotent_intake_forged_source_and_false_completion_guards (tests.test_factory_delivery.FactoryDeliveryTests.test_idempotent_intake_forged_source_and_false_completion_guards) ... ok
+test_native_planning_decision_is_available_in_primary_ui_without_finance (tests.test_factory_delivery.FactoryDeliveryTests.test_native_planning_decision_is_available_in_primary_ui_without_finance) ... ok
+test_revoked_intake_producer_retains_operator_readback_without_execution_authority (tests.test_factory_delivery.FactoryDeliveryTests.test_revoked_intake_producer_retains_operator_readback_without_execution_authority) ... ok
+test_planning_decision_and_cancellation_share_current_work_lock (tests.test_factory_delivery.FactoryDeliveryConcurrencyTests.test_planning_decision_and_cancellation_share_current_work_lock) ... ok
+test_racing_forms_retain_one_candidate_intake_and_allowance (tests.test_factory_delivery.FactoryDeliveryConcurrencyTests.test_racing_forms_retain_one_candidate_intake_and_allowance) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 155.240s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 11 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

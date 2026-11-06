@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_missing_accountable_owner_is_a_typed_hold_without_state_change (tests.test_support_flow.SupportFlowTests.test_missing_accountable_owner_is_a_typed_hold_without_state_change) ... ok
+test_b14_n01_connected_specialist_flow_ownership_response_and_report (tests.test_support_flow.SupportFlowTests.test_b14_n01_connected_specialist_flow_ownership_response_and_report) ... ok
+test_agent_ui_and_reviewed_report_are_scoped_no_store_and_typed (tests.test_support_flow.SupportFlowTests.test_agent_ui_and_reviewed_report_are_scoped_no_store_and_typed) ... ok
+test_merge_history_is_postgresql_immutable_and_preserves_target_access (tests.test_support_flow.SupportFlowTests.test_merge_history_is_postgresql_immutable_and_preserves_target_access) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 19.603s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

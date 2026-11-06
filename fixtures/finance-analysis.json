@@ -1,0 +1,487 @@
+{
+  "fixture_scope": "synthetic_test",
+  "note": "Illustrative mappings/formulas/BU weights/rounding only; not PSL accounting policy or real workbook oracles.",
+  "csv": "account,amount,currency,period\nsales,-1000,NGN,2026-10\ndirect_cost,200,NGN,2026-10\nshared_opex,100.01,NGN,2026-10\nstaff_pool,90,NGN,2026-10\nasset,500,NGN,2026-10\n",
+  "source_control_total": "-109.99",
+  "conventions": {
+    "currency": "NGN",
+    "unit": "major_currency",
+    "period": "2026-10",
+    "sign_convention": "debit_positive",
+    "report_controls": {
+      "require_source_total": true,
+      "tolerance": "0",
+      "bu_tolerance": "0"
+    }
+  },
+  "mapping": [
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "map_sales",
+      "account": "sales",
+      "report_line": "revenue",
+      "metric": "revenue",
+      "treatment": "direct",
+      "bu": "alpha",
+      "pool": null,
+      "source_rows": "reject_duplicate_accounts"
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "map_direct_cost",
+      "account": "direct_cost",
+      "report_line": "direct_cost",
+      "metric": "direct_cost",
+      "treatment": "direct",
+      "bu": "beta",
+      "pool": null,
+      "source_rows": "reject_duplicate_accounts"
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "map_shared_opex",
+      "account": "shared_opex",
+      "report_line": "opex",
+      "metric": "opex",
+      "treatment": "pool",
+      "bu": null,
+      "pool": "opex",
+      "source_rows": "reject_duplicate_accounts"
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "map_staff_pool",
+      "account": "staff_pool",
+      "report_line": "staff_cost",
+      "metric": "staff_cost",
+      "treatment": "pool",
+      "bu": null,
+      "pool": "staff",
+      "source_rows": "reject_duplicate_accounts"
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "map_asset",
+      "account": "asset",
+      "report_line": "asset",
+      "metric": "asset",
+      "treatment": "company",
+      "bu": null,
+      "pool": null,
+      "source_rows": "reject_duplicate_accounts"
+    }
+  ],
+  "formulas": [
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "revenue",
+      "implementation": "linear_decimal_v1",
+      "scope": "company_and_bu",
+      "terms": [
+        {
+          "kind": "line",
+          "key": "revenue",
+          "coefficient": "-1",
+          "value_stage": "base_value"
+        }
+      ],
+      "divisor": "1",
+      "output_unit": "major_currency",
+      "decimal_places": 2,
+      "rounding": "half_up",
+      "oracle_evidence_id": 1,
+      "oracles": [
+        {
+          "key": "normal",
+          "inputs": [
+            {
+              "kind": "line",
+              "key": "revenue",
+              "value": "-1000"
+            }
+          ],
+          "expected": "1000.00"
+        },
+        {
+          "key": "unknown",
+          "inputs": [
+            {
+              "kind": "line",
+              "key": "revenue",
+              "value": null
+            }
+          ],
+          "expected": null
+        }
+      ]
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "expenses",
+      "implementation": "linear_decimal_v1",
+      "scope": "company_and_bu",
+      "terms": [
+        {
+          "kind": "line",
+          "key": "direct_cost",
+          "coefficient": "1",
+          "value_stage": "base_value"
+        },
+        {
+          "kind": "line",
+          "key": "opex",
+          "coefficient": "1",
+          "value_stage": "base_value"
+        },
+        {
+          "kind": "line",
+          "key": "staff_cost",
+          "coefficient": "1",
+          "value_stage": "base_value"
+        }
+      ],
+      "divisor": "1",
+      "output_unit": "major_currency",
+      "decimal_places": 2,
+      "rounding": "half_up",
+      "oracle_evidence_id": 1,
+      "oracles": [
+        {
+          "key": "normal",
+          "inputs": [
+            {
+              "kind": "line",
+              "key": "direct_cost",
+              "value": "200"
+            },
+            {
+              "kind": "line",
+              "key": "opex",
+              "value": "100.01"
+            },
+            {
+              "kind": "line",
+              "key": "staff_cost",
+              "value": "90"
+            }
+          ],
+          "expected": "390.01"
+        },
+        {
+          "key": "unknown",
+          "inputs": [
+            {
+              "kind": "line",
+              "key": "direct_cost",
+              "value": null
+            },
+            {
+              "kind": "line",
+              "key": "opex",
+              "value": "100.01"
+            },
+            {
+              "kind": "line",
+              "key": "staff_cost",
+              "value": "90"
+            }
+          ],
+          "expected": null
+        }
+      ]
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "pbt",
+      "implementation": "linear_decimal_v1",
+      "scope": "company_and_bu",
+      "terms": [
+        {
+          "kind": "formula",
+          "key": "revenue",
+          "coefficient": "1",
+          "value_stage": "rounded_formula"
+        },
+        {
+          "kind": "formula",
+          "key": "expenses",
+          "coefficient": "-1",
+          "value_stage": "rounded_formula"
+        }
+      ],
+      "divisor": "1",
+      "output_unit": "major_currency",
+      "decimal_places": 2,
+      "rounding": "half_up",
+      "oracle_evidence_id": 1,
+      "oracles": [
+        {
+          "key": "normal",
+          "inputs": [
+            {
+              "kind": "formula",
+              "key": "revenue",
+              "value": "1000.00"
+            },
+            {
+              "kind": "formula",
+              "key": "expenses",
+              "value": "390.01"
+            }
+          ],
+          "expected": "609.99"
+        },
+        {
+          "key": "unknown",
+          "inputs": [
+            {
+              "kind": "formula",
+              "key": "revenue",
+              "value": null
+            },
+            {
+              "kind": "formula",
+              "key": "expenses",
+              "value": "390.01"
+            }
+          ],
+          "expected": null
+        }
+      ]
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "asset_display",
+      "implementation": "linear_decimal_v1",
+      "scope": "company_only",
+      "terms": [
+        {
+          "kind": "line",
+          "key": "asset",
+          "coefficient": "1",
+          "value_stage": "base_value"
+        }
+      ],
+      "divisor": "1000",
+      "output_unit": "thousands_currency",
+      "decimal_places": 2,
+      "rounding": "half_up",
+      "oracle_evidence_id": 1,
+      "oracles": [
+        {
+          "key": "normal",
+          "inputs": [
+            {
+              "kind": "line",
+              "key": "asset",
+              "value": "500"
+            }
+          ],
+          "expected": "0.50"
+        },
+        {
+          "key": "unknown",
+          "inputs": [
+            {
+              "kind": "line",
+              "key": "asset",
+              "value": null
+            }
+          ],
+          "expected": null
+        }
+      ]
+    }
+  ],
+  "catalogue": [
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "alpha",
+      "name": "Synthetic Alpha"
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "beta",
+      "name": "Synthetic Beta"
+    }
+  ],
+  "pools": [
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "opex_split",
+      "pool": "opex",
+      "metric": "opex",
+      "method": "fixed_weights",
+      "weights": [
+        {
+          "bu": "alpha",
+          "weight": "1"
+        },
+        {
+          "bu": "beta",
+          "weight": "1"
+        }
+      ],
+      "excluded_bu_keys": [],
+      "excluded_accounts": []
+    },
+    {
+      "entity": "synthetic-company",
+      "from_period": "2026-10",
+      "to_period": "2026-10",
+      "key": "staff_headcount",
+      "pool": "staff",
+      "metric": "staff_cost",
+      "method": "headcount_weighted",
+      "weights": [],
+      "excluded_bu_keys": [],
+      "excluded_accounts": []
+    }
+  ],
+  "rounding": {
+    "decimal_places": 2,
+    "rounding": "half_up",
+    "residual": "assign_to_configured_bu",
+    "residual_bu": "beta",
+    "source_precision": "reject_excess_precision"
+  },
+  "basis": {
+    "entity": "synthetic-company",
+    "period": "2026-10",
+    "as_of": "2026-10-01T00:00:00+00:00",
+    "completeness": "complete",
+    "rows": [
+      {
+        "subject_ref": "opaque-synthetic-1",
+        "bu": "alpha",
+        "weight": "1"
+      },
+      {
+        "subject_ref": "opaque-synthetic-2",
+        "bu": "alpha",
+        "weight": "1"
+      },
+      {
+        "subject_ref": "opaque-synthetic-3",
+        "bu": "beta",
+        "weight": "1"
+      }
+    ]
+  },
+  "join": {
+    "implementation": "single_effective_snapshot_v1",
+    "match_key": "subject_ref",
+    "duplicate_subjects": "reject",
+    "period_basis": "snapshot_at_as_of",
+    "weight_semantics": "unit_per_subject"
+  },
+  "authority": {
+    "finance": [
+      {
+        "purpose": "source",
+        "role": "Finance",
+        "actions": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "allow_preparer_review": true
+      },
+      {
+        "purpose": "mapping",
+        "role": "Finance",
+        "actions": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "allow_preparer_review": true
+      },
+      {
+        "purpose": "formula",
+        "role": "Finance",
+        "actions": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "allow_preparer_review": true
+      },
+      {
+        "purpose": "allocation",
+        "role": "Finance",
+        "actions": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "allow_preparer_review": true
+      },
+      {
+        "purpose": "adjustment",
+        "role": "Finance",
+        "actions": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "allow_preparer_review": true
+      },
+      {
+        "purpose": "output",
+        "role": "Finance",
+        "actions": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "allow_preparer_review": true
+      }
+    ]
+  },
+  "projection": {
+    "disclosure": "aggregate_only",
+    "audiences": [
+      {
+        "audience": "internal",
+        "formula_keys": [
+          "revenue",
+          "expenses",
+          "pbt"
+        ],
+        "bu_keys": [
+          "alpha",
+          "beta"
+        ],
+        "include_company": true,
+        "publisher_roles": [
+          "Finance"
+        ]
+      }
+    ]
+  }
+}

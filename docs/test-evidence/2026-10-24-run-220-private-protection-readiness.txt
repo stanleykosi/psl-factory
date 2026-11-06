@@ -1,0 +1,40 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 11 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0010_private_protection_readiness... OK
+test_exact_native_health_receipt_independent_review_and_restore_changes_provenance (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_exact_native_health_receipt_independent_review_and_restore_changes_provenance) ... ok
+test_generic_agent_timeline_omit_private_and_typed_ui_agent_capture (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_generic_agent_timeline_omit_private_and_typed_ui_agent_capture) ... FAIL
+test_independent_policy_does_not_stale_source_acceptance_and_missing_holds_only_private (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_independent_policy_does_not_stale_source_acceptance_and_missing_holds_only_private) ... ok
+test_lost_finish_reconciles_committed_observation_after_source_revocation_and_keeps_budget (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_lost_finish_reconciles_committed_observation_after_source_revocation_and_keeps_budget) ... ok
+test_owner_withdrawal_preserves_historical_report_but_holds_current_probe_and_review (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_owner_withdrawal_preserves_historical_report_but_holds_current_probe_and_review) ... ok
+test_policy_revocation_and_expired_observation_hold_new_use (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_policy_revocation_and_expired_observation_hold_new_use) ... ok
+test_policy_validates_inventory_roles_independence_and_original_private_grants (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_policy_validates_inventory_roles_independence_and_original_private_grants) ... ok
+test_public_contract_and_wrong_job_cannot_probe_private_receipt_or_downgrade_reference (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_public_contract_and_wrong_job_cannot_probe_private_receipt_or_downgrade_reference) ... ok
+test_retry_cannot_reset_private_original_budget (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_retry_cannot_reset_private_original_budget) ... ok
+test_revoked_source_denies_cached_reads_forms_and_private_guidance (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_revoked_source_denies_cached_reads_forms_and_private_guidance) ... ok
+test_sql_immutable_binding_wrong_probe_and_observation_lineage (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_sql_immutable_binding_wrong_probe_and_observation_lineage) ... ok
+
+======================================================================
+FAIL: test_generic_agent_timeline_omit_private_and_typed_ui_agent_capture (tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_generic_agent_timeline_omit_private_and_typed_ui_agent_capture)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_private_protection_readiness.py", line 107, in test_generic_agent_timeline_omit_private_and_typed_ui_agent_capture
+    run=investigate(f['actor'],f['case'].pk);self.assertNotIn('private_protection',json.dumps(run.result));self.assertNotIn('private-restore',json.dumps(run.result))
+                                             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'private_protection' unexpectedly found in '{"diagnostics": {"history_window": 100, "identity_mismatch_count": 0, "oracle_mismatch_count": 0, "supplied_report_count": 0, "missing_endpoint_registry_count": 0, "missing_secret_reference_count": 0, "policy_status": {"INT.adapter_readiness": "ACTIVE", "INT.provider_readiness": "ACTIVE", "INT.private_protection_readiness": "ACTIVE"}}, "probe_findings": [], "assessments": [{"ordinal": 1, "recorded_ready": true, "question": "Reassess current health/receipt/evaluation and independent review; supplied reports do not prove authentication or business dispatch."}], "private_source_sent": false, "secrets_read": false, "business_tools_executed": false, "operational_ready": false}'
+
+----------------------------------------------------------------------
+Ran 11 tests in 1000.931s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying workflows.0011_private_protection_guards... OK
+System check identified no issues (0 silenced).

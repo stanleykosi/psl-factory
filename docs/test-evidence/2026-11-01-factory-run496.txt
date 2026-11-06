@@ -1,0 +1,49 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package (tests.test_factory_go_live.FactoryGoLiveTests.test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package) ... ERROR
+
+======================================================================
+ERROR: test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package (tests.test_factory_go_live.FactoryGoLiveTests.test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_go_live.py", line 337, in test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package
+    with self.assertRaises(ValidationError):go_live.verify(f.work)
+                                            ~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_go_live.py", line 241, in verify
+    d,data,v,p,receipts=published(work)
+                        ~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_go_live.py", line 118, in published
+    d,data,_=source(work);prerequisites(d,data);v=document(work)
+                          ~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_go_live.py", line 89, in prerequisites
+    return native.go_live_inputs(d,selected(data))
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\core\read_observation.py", line 38, in read
+    if frame is None:return fn(d,*args,**kwargs)
+                            ~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\delivery_closure.py", line 19, in go_live_inputs
+    outcome=valid_release(d)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\core\read_observation.py", line 38, in read
+    if frame is None:return fn(d,*args,**kwargs)
+                            ~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\delivery.py", line 217, in valid_release
+    require(ready.actor,d.case,'delivery.manage')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\identity\services.py", line 9, in require
+    raise PermissionDenied('This record/action has no active grant')
+django.core.exceptions.PermissionDenied: This record/action has no active grant
+
+----------------------------------------------------------------------
+Ran 1 test in 65.766s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,127 @@
+{
+  "classification": "Actual invocations and retained failure; overlapping counts and synthetic upstream inputs",
+  "runs": [
+    {
+      "run": 290,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+        "tests.test_invoice_variants.InvoiceVariantTests.test_canonical_receipt_successor_generation_and_two_connection_intake",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-28-run-290-followup-readback.txt",
+      "started_at": "2026-10-28T08:27:14.780759+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 49.801
+    },
+    {
+      "run": 291,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_finance_readback",
+        "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-28-run-291-followup-readback.txt",
+      "started_at": "2026-10-28T08:41:22.391580+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 139.904
+    },
+    {
+      "run": 292,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_finance_readback_recovery.FinanceReadbackRecoveryTests",
+        "tests.test_finance_readback.FinanceReadbackAdapterTests",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-28-run-292-followup-readback.txt",
+      "started_at": "2026-10-28T08:46:06.048233+00:00",
+      "status": "finished",
+      "returncode": 1,
+      "elapsed_seconds": 583.221
+    },
+    {
+      "run": 293,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_finance_readback_recovery.FinanceReadbackRecoveryTests",
+        "tests.test_finance_readback.FinanceReadbackAdapterTests",
+        "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-28-run-293-followup-readback.txt",
+      "started_at": "2026-10-28T08:57:58.477829+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 748.255
+    },
+    {
+      "run": 294,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_finance_readback_advice",
+        "tests.test_finance_readback.FinanceReadbackAdapterTests",
+        "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-28-run-294-followup-readback.txt",
+      "started_at": "2026-10-28T09:19:33.243355+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 79.418
+    },
+    {
+      "run": 295,
+      "argv": [
+        ".venv\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "tests.test_finance_readback_advice",
+        "tests.test_finance_readback.FinanceReadbackAdapterTests",
+        "tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent",
+        "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+        "--keepdb",
+        "--noinput",
+        "--verbosity",
+        "2"
+      ],
+      "log": "docs\\test-evidence\\2026-10-28-run-295-followup-readback.txt",
+      "started_at": "2026-10-28T09:24:28.945460+00:00",
+      "status": "finished",
+      "returncode": 0,
+      "elapsed_seconds": 88.279
+    }
+  ]
+}

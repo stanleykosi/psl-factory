@@ -1,0 +1,11 @@
+# Shared discovery and human work views
+
+Engineering next increment. The current home page lists every granted case without search/pagination. HumanTask records already persist controlled-document review work, but the global document inbox shows published recipient receipts; open reviews are shown inside individual cases. Reuse these records and owning domain services rather than creating a second task engine.
+
+Build bounded permission-filtered case discovery by title/UUID and, only with engagement.read, recorded project references/identifiers. Use Django forms/ORM and signed user/filter-bound keyset cursors. Recheck current active identity and per-record grants. Return no hidden-case counts or private source-body excerpts. Tenant/kind filters narrow current access rather than grant access.
+
+Add a shared human work view over source-recorded assignments and current eligible reviews: PMO current ActionState owner/deadline, controlled-document HumanTask with actual current PMO review/delegation authority and version preflight, latest Support owner assignment, and owned Finance intent metadata requiring reconciliation. Keep recorded assignments, role-eligible reviews and initiated operational work distinct. Include B02 reviewer queues only through current summary/source/draft-read/reviewer checks. No source grant, role, deadline, approver or financial authority is inferred from a dashboard row.
+
+Rows link to the existing domain UI. Decisions, calculations, owner changes, retries and effects stay in the owning services and preserve current permission/version/policy checks. Do not expose private accepted Finance document tasks through the generic PMO review path. Do not turn missing configuration into an invented task owner or automatic approval.
+
+Acceptance uses actual PostgreSQL services/UI for current grants, inactive users, foreign tenants, search injection/escaping, pagination/cursor binding, identifier disclosure, current owners/review eligibility/version/source changes, private-task exclusion and no task/effect mutation from discovery. Then continue the concrete all122/13-family acceptance audit and measured security/load/recovery work. These are engineering gaps; owner policies and live provider inputs remain separate.

@@ -1,0 +1,15 @@
+{
+  "database": "psl_factory_routing_ui_c87774ebaed7",
+  "work": 1,
+  "governance_task": 1,
+  "governance_event": 3,
+  "status": "ready",
+  "budget_used": 500,
+  "budget_limit": 20000,
+  "native_invoice_reviews": 0,
+  "native_invoice_jobs": 0,
+  "native_issue_receipts": 0,
+  "native_delivery_receipts": 0,
+  "approval_granted": false,
+  "classification": "Read-only native proof after actual UI governance recheck, before independent Finance approval"
+}

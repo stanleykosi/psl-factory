@@ -1,0 +1,25 @@
+{
+  "work": 12,
+  "stored_hash_matches_original": true,
+  "snapshot_unchanged": true,
+  "extracted_at": "2026-10-22T13:23:47.722356+00:00",
+  "max_age_seconds": 86400,
+  "age_seconds": 88975.840434,
+  "stored_findings": [],
+  "current_findings": [
+    "source_stale"
+  ],
+  "stored_totals": {
+    "cost": "1000",
+    "charge": "50.00",
+    "book_value": "500.00",
+    "accumulated": "500.00"
+  },
+  "current_totals": {
+    "cost": "1000",
+    "accumulated": "500.00",
+    "book_value": "500.00",
+    "charge": "50.00"
+  },
+  "exact_only_freshness_change": true
+}

@@ -1,0 +1,27 @@
+{
+  "run": 440,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_current_heads.FactoryCurrentHeadTests.test_latest_rejected_verification_is_visible_and_cannot_fall_back_to_acceptance",
+    "tests.test_factory_delivery",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_reader_projection_excludes_private_bodies_and_revoked_producer_cannot_continue",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_unknown_and_negative_observations_are_recorded_without_false_qualification",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled",
+    "tests.test_factory_hypercare.FactoryHypercareConcurrencyTests",
+    "tests.test_delivery.DeliveryTests.test_staff_ui_agent_policy_draft_and_cited_unknowns",
+    "tests.test_agent_source_visibility",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T23:42:46.398807+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run440.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 539.794
+}

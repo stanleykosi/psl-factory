@@ -1,0 +1,8 @@
+Operations to perform:
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Running migrations:
+  Applying documents.0012_native_validation_guards... OK
+  Applying documents.0013_native_reservation_subject_time... OK
+  Applying documents.0014_native_subject_identity... OK
+  Applying policy.0009_pilot_source_acceptance... OK
+

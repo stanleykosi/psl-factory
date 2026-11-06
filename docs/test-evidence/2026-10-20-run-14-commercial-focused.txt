@@ -1,0 +1,21 @@
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).
+test_commercial_changes (unittest.loader._FailedTest.test_commercial_changes) ... ERROR
+
+======================================================================
+ERROR: test_commercial_changes (unittest.loader._FailedTest.test_commercial_changes)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_commercial_changes
+Traceback (most recent call last):
+  File "C:\Python313\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_commercial_changes.py", line 18, in <module>
+    from apps.documents.delivery import run_once
+ImportError: cannot import name 'run_once' from 'apps.documents.delivery' (C:\Users\USER\Desktop\psl-agent build\apps\documents\delivery.py)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

@@ -1,0 +1,13 @@
+{
+  "verified_increment": "BUILD-ACCEPTED-PROTECTION-READINESS",
+  "next_proposed_increment": "BUILD-APPLICATION-RECOVERY",
+  "backlog_items": 51,
+  "exact_partial_processes": 122,
+  "frozen_250_to_251_changes": [
+    "tests/test_accepted_protection_readiness.py"
+  ],
+  "application_fixture_policy_migration_source_identical": true,
+  "only_coverage_build_metadata_updated_after_test": true,
+  "current_evidence_files_exist": true,
+  "whole_product_or_operational_acceptance": false
+}

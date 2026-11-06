@@ -1,0 +1,6 @@
+{
+  "status": "APPLIED",
+  "format": "psl.native-validation/v2",
+  "prior_migrations_unchanged": true,
+  "expected_verdicts_generated": false
+}

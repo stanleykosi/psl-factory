@@ -1,0 +1,31 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_routing_is_idempotent_and_receipt_is_not_approval (tests.test_approvals.ApprovalTests.test_routing_is_idempotent_and_receipt_is_not_approval) ... ok
+test_unknown_deadline_holds_only_submission (tests.test_rfp.RFPTests.test_unknown_deadline_holds_only_submission) ... ok
+test_delivered_department_request_current_recipient_source_resolution_and_no_effect (tests.test_coordination_work.CoordinationWorkTests.test_delivered_department_request_current_recipient_source_resolution_and_no_effect) ... ok
+test_department_current_contract_sender_and_recipient_revocation_keep_receipt (tests.test_coordination_work.CoordinationWorkTests.test_department_current_contract_sender_and_recipient_revocation_keep_receipt) ... ok
+test_rfp_assignment_current_owner_deadline_and_intake_successor (tests.test_coordination_work.CoordinationWorkTests.test_rfp_assignment_current_owner_deadline_and_intake_successor) ... ok
+test_rfp_real_reviewed_submission_and_won_disposition_remove_assignment (tests.test_coordination_work.CoordinationWorkTests.test_rfp_real_reviewed_submission_and_won_disposition_remove_assignment) ... ok
+test_action_assignment_and_document_review_are_source_owned_and_read_only (tests.test_shared_workbench.SharedWorkbenchTests.test_action_assignment_and_document_review_are_source_owned_and_read_only) ... ok
+test_document_review_authority_revocation_does_not_close_or_reassign_task (tests.test_shared_workbench.SharedWorkbenchTests.test_document_review_authority_revocation_does_not_close_or_reassign_task) ... ok
+test_financial_intent_metadata_does_not_retry_or_issue (tests.test_shared_workbench.SharedWorkbenchTests.test_financial_intent_metadata_does_not_retry_or_issue) ... ok
+test_private_finance_version_never_enters_generic_pmo_review_discovery (tests.test_shared_workbench.SharedWorkbenchTests.test_private_finance_version_never_enters_generic_pmo_review_discovery) ... ok
+test_project_references_require_current_engagement_read_and_case_read (tests.test_shared_workbench.SharedWorkbenchTests.test_project_references_require_current_engagement_read_and_case_read) ... ok
+test_search_scope_keyset_cursor_binding_active_user_and_escaping (tests.test_shared_workbench.SharedWorkbenchTests.test_search_scope_keyset_cursor_binding_active_user_and_escaping) ... ok
+test_summary_review_requires_configured_reviewer_source_scope_and_current_version (tests.test_shared_workbench.SharedWorkbenchTests.test_summary_review_requires_configured_reviewer_source_scope_and_current_version) ... ok
+test_support_ownership_uses_latest_event_and_closed_cases_disappear (tests.test_shared_workbench.SharedWorkbenchTests.test_support_ownership_uses_latest_event_and_closed_cases_disappear) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 248.936s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 14 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "definition": "delivery-handover/v1",
+  "process_ids": [
+    "P37"
+  ],
+  "paths": [
+    "apps/workflows/factory_handover.py",
+    "apps/workflows/factory_handover_views.py",
+    "apps/workflows/factory_publications.py",
+    "apps/workflows/factory.py",
+    "apps/policy/factory_validators.py",
+    "apps/documents/controlled.py",
+    "apps/documents/delivery.py",
+    "apps/workflows/migrations/0045_factory_handover.py",
+    "apps/documents/migrations/0016_factory_handover_scope.py",
+    "templates/factory/handover_detail.html",
+    "templates/factory/handover_start.html",
+    "fixtures/factory-handover.json",
+    "tests/test_factory_handover.py"
+  ],
+  "tested_scope": "Synthetic typed private intake, native draft and template-configured exact human review, scoped internal publication, actual recipient receipt/gaps, corrected-source successor, lifetime allowance and lookup-first lost-response/process-exit/operator recovery",
+  "source_boundary": "PMO/PM transfers; Support/Operations receives and raises gaps; no separate handover approval",
+  "passing_runs": [
+    454,
+    456,
+    457,
+    459,
+    462,
+    463,
+    464
+  ],
+  "browser_runtime": 462,
+  "browser_work": 615,
+  "main_preserved_rowsets": 329,
+  "prior_migrations_preserved": 213,
+  "schema": [
+    "workflows0045",
+    "documents0016"
+  ],
+  "technical_interface_count": 131,
+  "operational_policy_values_added": false,
+  "full_process_acceptance": "NOT_EVALUATED",
+  "active_factory_restore": "NOT_EVALUATED",
+  "external_authenticity_verified": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-02-factory-handover-station-browser.json",
+    "docs/test-evidence/2026-11-02-factory-handover-station-static464.json",
+    "docs/test-evidence/2026-11-02-factory-handover-station-rollback.json"
+  ]
+}

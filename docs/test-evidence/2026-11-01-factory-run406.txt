@@ -1,0 +1,25 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0040_factory_planning...test_connected_owner_wait_then_current_readiness_and_delivery_handoff (tests.test_factory_planning.FactoryPlanningTests.test_connected_owner_wait_then_current_readiness_and_delivery_handoff) ... ok
+test_forged_packet_and_premature_verified_status_rejected (tests.test_factory_planning.FactoryPlanningTests.test_forged_packet_and_premature_verified_status_rejected) ... ok
+test_malicious_activity_cannot_record_owner_acceptance (tests.test_factory_planning.FactoryPlanningTests.test_malicious_activity_cannot_record_owner_acceptance) ... ok
+test_missing_profile_holds_execution_not_capture (tests.test_factory_planning.FactoryPlanningTests.test_missing_profile_holds_execution_not_capture) ... ok
+test_planning_ui_and_profile_are_available_without_finance_grant (tests.test_factory_planning.FactoryPlanningTests.test_planning_ui_and_profile_are_available_without_finance_grant) ... ok
+test_private_projection_is_not_generic_evidence_or_timeline (tests.test_factory_planning.FactoryPlanningTests.test_private_projection_is_not_generic_evidence_or_timeline) ... ok
+test_restricted_source_and_invented_reviewer_rejected (tests.test_factory_planning.FactoryPlanningTests.test_restricted_source_and_invented_reviewer_rejected) ... ok
+test_successor_packet_keeps_business_identity_and_spent_allowance (tests.test_factory_planning.FactoryPlanningTests.test_successor_packet_keeps_business_identity_and_spent_allowance) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 50.064s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

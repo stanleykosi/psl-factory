@@ -1,0 +1,35 @@
+{
+  "source_run": 498,
+  "old_main_rowsets_preserved": 329,
+  "old_migration_sources_preserved": 216,
+  "old_indexes_preserved": 1549,
+  "single_go_live_anchor_index_unchanged": true,
+  "old_guards_preserved_except_reviewed_closed_expansions": true,
+  "main_test_guard_definitions_equal": true,
+  "source_snapshots_preserved": true,
+  "migrations": [
+    [
+      "documents",
+      "0017_factory_go_live_scope",
+      false
+    ],
+    [
+      "pmo",
+      "0042_go_live_reaffirmation",
+      false
+    ],
+    [
+      "workflows",
+      "0047_factory_go_live",
+      false
+    ],
+    [
+      "workflows",
+      "0048_factory_go_live_reaffirmation",
+      false
+    ]
+  ],
+  "main_factory_work": 0,
+  "owner_operational_values_added": false,
+  "dependencies_added": []
+}

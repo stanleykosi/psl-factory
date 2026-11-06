@@ -1,0 +1,24 @@
+{
+  "run": 648,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_intake_authority.IntakeAuthorityTests.test_stale_private_and_unqualified_instructions_hold_without_worker_or_history_changes",
+    "tests.test_factory_delivery.FactoryDeliveryTests.test_delivery_reader_never_receives_private_source_bodies_or_agent_history",
+    "tests.test_factory_delivery.FactoryDeliveryTests.test_actual_release_without_prior_readiness_cannot_be_retroactively_prepared",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_recorded_release_without_prior_readiness_stays_a_source_owned_exception",
+    "tests.test_factory_hypercare.FactoryHypercareTests.test_actual_release_ui_remains_available_before_execution_and_stability_configuration",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T21:32:01.479454+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run648.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 33.355
+}

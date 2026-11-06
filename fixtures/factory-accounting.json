@@ -1,0 +1,17 @@
+{
+  "classification": "synthetic_test_only",
+  "definition": "finance-accounts/v1",
+  "max_steps": 50,
+  "max_tokens": 30000,
+  "tokens_per_call": 100,
+  "max_children": 100,
+  "max_depth": 1,
+  "lease_seconds": 120,
+  "max_age_seconds": 86400,
+  "required_evidence_kinds": ["finance_source", "financial_input"],
+  "review_role": "Finance",
+  "provider": "synthetic_factory_v1",
+  "enabled": true,
+  "allocation_mode": "company_and_bu",
+  "audience": "internal"
+}

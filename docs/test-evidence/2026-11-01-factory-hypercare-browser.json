@@ -1,0 +1,51 @@
+{
+  "classification": "Synthetic native release capture and exact go-live acceptance in browser; native report/criteria/source service fixtures. Not real provider/source authenticity or independent-human UAT",
+  "source_run": 435,
+  "database": "psl_factory_hypercare_ui_ab92faf193e4",
+  "case": "8c74f2fc-56f0-4aba-ab20-e6fc62196d80",
+  "work": 479,
+  "native_counts": {
+    "release_ready": 1,
+    "release_outcome": 1,
+    "go_live": 1,
+    "hypercare": 1,
+    "closure": 0
+  },
+  "budget": {
+    "used": 800,
+    "original_limit": 20000
+  },
+  "current_output": {
+    "head": 99438,
+    "dossier": 204,
+    "hypercare": 1089,
+    "verified": true,
+    "qualified": true,
+    "verification_scope": "synthetic_native_hypercare_qualification",
+    "deployment_authorized": false,
+    "deployment_dispatched": false,
+    "financial_release_granted": false,
+    "closure_approved": false,
+    "external_authenticity_verified": false
+  },
+  "client_report_reviews": 1,
+  "publication_receipts": [
+    656
+  ],
+  "parallel_factory_reviews": 0,
+  "invoice_issues": 0,
+  "screenshots": [
+    "docs/test-evidence/2026-11-01-factory-hypercare-verified.jpg",
+    "docs/test-evidence/2026-11-01-factory-hypercare-narrow.jpg"
+  ],
+  "keyboard": "Continue button activated with Return; verified DOM after action",
+  "narrow_viewport": {
+    "requested_width": 390,
+    "requested_height": 844,
+    "document_width": 375,
+    "overflow": false
+  },
+  "queue_context": "Verified filter and Release follow-up query retained through detail/back navigation",
+  "owner_policy_values_installed_on_main": false,
+  "full_process_acceptance": "NOT_EVALUATED"
+}

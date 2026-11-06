@@ -1,0 +1,18 @@
+{
+  "classification": "Synthetic example only; no actual owners, recipients, age thresholds or defaults",
+  "value": {
+    "discloser_id": 1,
+    "allow_synthetic": true,
+    "profiles": [
+      {
+        "key": "synthetic_team",
+        "recipient_ids": [2],
+        "groups": ["identifiers", "milestones", "actions", "delivery_events"],
+        "max_records": 10,
+        "max_age_seconds": 86400,
+        "stale_behavior": "mark_recorded_facts",
+        "missing_behavior": "mark_unknown"
+      }
+    ]
+  }
+}

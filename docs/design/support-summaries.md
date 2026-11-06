@@ -1,0 +1,13 @@
+# B02 period and scope complaint summaries
+
+Engineering next increment,28 October2026. Source-backed B02 asks for a defined period/scope, permission-filtered B01 cases/channel references, unresolved/reopened evidence, intended audience and review owner; outputs are a cited draft with coverage/omission/merge uncertainty and a reviewed summary version. Actual Support review/disclosure ownership is unresolved and belongs in typed configuration.
+
+Current implementation supports one canonical case and its linked supplied references (apps/baas/support.py prepare_report/read_report). This is useful evidence, not the full multi-case period/scope request. Reuse the current Support source/flow/review/merge/clock services rather than reading unprotected source bodies or inventing state meanings.
+
+Build a persisted summary request/version and human review path. Request capture should record the exact selected authorized cases, aware period, selection basis and intended audience before missing review configuration. Typed criteria govern supported period membership, bounded source counts, allowed metadata fields/audiences and actual current reviewer authority. Missing criteria hold dependent composition/review/disclosure only. Source text is not appointment authority.
+
+Draft only bounded permitted metadata and source links. State coverage explicitly: selected cases and supplied linked references, not exhaustive channel ingestion. Distinguish omitted unconfigured/unknown flow or merge evidence, unresolved/reopened cases and metrics with incomplete clocks. Do not count hidden cases or expose private messages, model drafts, customer/transaction details or names by default. A selection containing unauthorized cases must not become a disclosure/count side channel.
+
+Bind reviews to exact source snapshots and current source/reviewer/audience permissions. Source or grant/policy/role changes must invalidate current acceptance while preserving version history. A reviewed in-application version/export must recheck disclosure and source access; actual external publication is a separate controlled-document/adapter contract. No corrective credit, debt waiver or financial authority follows from a complaint summary.
+
+Acceptance: actual PostgreSQL defined-period membership and boundaries, multiple canonical cases, source links/omission/merge uncertainty, missing/invalid/synthetic/current/superseded/revoked criteria, source and audience revocation/redaction, independent human review as configured, immutable history/concurrency, useful bounded drafting/investigation agent, UI and reviewed export. Retain all failures and distinguish supplied/mock channel evidence from native receipt or live-provider evidence.

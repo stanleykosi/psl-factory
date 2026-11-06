@@ -1,0 +1,18 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_connected_sql_file_isolated_restore_review_and_exact_job_gate (tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_connected_sql_file_isolated_restore_review_and_exact_job_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2247.978s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

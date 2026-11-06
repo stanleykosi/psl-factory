@@ -1,0 +1,22 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_reviewed_costing_policy_rollforward_creates_a_fresh_unapproved_proposal (tests.test_factory_commercial.FactoryCommercialTests.test_reviewed_costing_policy_rollforward_creates_a_fresh_unapproved_proposal) ... ok
+test_revoked_private_source_authority_holds_selected_dispatch (tests.test_factory_commercial.FactoryCommercialTests.test_revoked_private_source_authority_holds_selected_dispatch) ... ok
+test_unprivileged_factory_reader_has_no_private_costing_or_intake_projection (tests.test_factory_commercial.FactoryCommercialTests.test_unprivileged_factory_reader_has_no_private_costing_or_intake_projection) ... ok
+test_staff_proposal_decisions_review_delivery_and_signed_adoption (tests.test_commercial_changes.CommercialTests.test_staff_proposal_decisions_review_delivery_and_signed_adoption) ... ok
+test_racing_forms_and_selected_publication_claim_share_native_identity (tests.test_factory_commercial.FactoryCommercialConcurrencyTests.test_racing_forms_and_selected_publication_claim_share_native_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 111.859s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

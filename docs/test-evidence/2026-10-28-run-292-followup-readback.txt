@@ -1,0 +1,49 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_published_followup_native_readback_review_successors_and_restart (tests.test_finance_readback_recovery.FinanceReadbackRecoveryTests.test_published_followup_native_readback_review_successors_and_restart) ... FAIL
+test_native_receipt_current_source_authority_bounds_and_revocation (tests.test_finance_readback.FinanceReadbackAdapterTests.test_native_receipt_current_source_authority_bounds_and_revocation) ... ok
+
+======================================================================
+FAIL: test_published_followup_native_readback_review_successors_and_restart (tests.test_finance_readback_recovery.FinanceReadbackRecoveryTests.test_published_followup_native_readback_review_successors_and_restart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_finance_readback_recovery.py", line 8, in test_published_followup_native_readback_review_successors_and_restart
+    unknown=self.child('followup_probe',v);self.assertEqual(unknown['result']['outcome'],'unknown')
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_invoice_recovery.py", line 11, in child
+    return super().child(stage,v,cold)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 23, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: followup_probe failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 33, in <module>
+    if stage!='provider_seed':settings.COLD_RECOVERY=domain.prior.old.runtime()
+                                                     ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 97, in runtime
+    'keys':{'synthetic-key':base64.b64decode(v['key'])},'build_ref':'synthetic-reviewed-build','pg_bin':v['pg_bin']}
+                            ~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\base64.py", line 88, in b64decode
+    return binascii.a2b_base64(s, strict_mode=validate)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+binascii.Error: Incorrect padding
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 573.739s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

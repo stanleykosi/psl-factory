@@ -1,0 +1,40 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_closure_and_agent_readback_hold_old_accepted_package_then_current_receipt_recovers (tests.test_factory_handover_current.HandoverCurrentDocumentTests.test_closure_and_agent_readback_hold_old_accepted_package_then_current_receipt_recovers) ... ok
+test_superseded_handover_cannot_clear_or_record_recipient_gaps_and_new_package_recovers (tests.test_factory_handover_current.HandoverCurrentDocumentTests.test_superseded_handover_cannot_clear_or_record_recipient_gaps_and_new_package_recovers) ... ok
+test_actual_release_capture_without_readiness_preserves_exception_no_backdating (tests.test_delivery.DeliveryTests.test_actual_release_capture_without_readiness_preserves_exception_no_backdating) ... ok
+test_bad_adapter_binding_future_observation_and_wrong_recipient_are_rejected (tests.test_delivery.DeliveryTests.test_bad_adapter_binding_future_observation_and_wrong_recipient_are_rejected) ... ok
+test_complete_planning_exit_does_not_require_client_signature (tests.test_delivery.DeliveryTests.test_complete_planning_exit_does_not_require_client_signature) ... ok
+test_connected_planning_release_hypercare_archive_handover_finance_head_closure (tests.test_delivery.DeliveryTests.test_connected_planning_release_hypercare_archive_handover_finance_head_closure) ... ok
+test_engineering_finalization_exact_inventory_and_changed_policy_require_new_archive (tests.test_delivery.DeliveryTests.test_engineering_finalization_exact_inventory_and_changed_policy_require_new_archive) ... ok
+test_handover_actual_recipient_gap_and_new_finance_milestone_hold_closure (tests.test_delivery.DeliveryTests.test_handover_actual_recipient_gap_and_new_finance_milestone_hold_closure) ... ok
+test_hypercare_unknown_negative_metrics_units_and_period_are_explicit (tests.test_delivery.DeliveryTests.test_hypercare_unknown_negative_metrics_units_and_period_are_explicit) ... ok
+test_invalid_policies_reject_waivers_missing_archive_kinds_and_infinite_metrics (tests.test_delivery.DeliveryTests.test_invalid_policies_reject_waivers_missing_archive_kinds_and_infinite_metrics) ... ok
+test_later_readiness_record_does_not_authorize_an_earlier_claimed_release (tests.test_delivery.DeliveryTests.test_later_readiness_record_does_not_authorize_an_earlier_claimed_release) ... ok
+test_missing_hypercare_policy_holds_only_evaluation_not_actual_release_or_archive (tests.test_delivery.DeliveryTests.test_missing_hypercare_policy_holds_only_evaluation_not_actual_release_or_archive) ... ok
+test_missing_qa_uat_go_and_glpi_cannot_be_skipped_or_cross_request_reused (tests.test_delivery.DeliveryTests.test_missing_qa_uat_go_and_glpi_cannot_be_skipped_or_cross_request_reused) ... ok
+test_operational_source_verification_cannot_use_synthetic_adapter (tests.test_delivery.DeliveryTests.test_operational_source_verification_cannot_use_synthetic_adapter) ... ok
+test_revoked_future_expired_policy_preserves_capture_and_holds_qualification (tests.test_delivery.DeliveryTests.test_revoked_future_expired_policy_preserves_capture_and_holds_qualification) ... ok
+test_shared_reporting_freshness_binds_delivery_sources_signals_and_current_policy (tests.test_delivery.DeliveryTests.test_shared_reporting_freshness_binds_delivery_sources_signals_and_current_policy) ... ok
+test_source_change_or_verifier_revocation_holds_queued_exact_go_live (tests.test_delivery.DeliveryTests.test_source_change_or_verifier_revocation_holds_queued_exact_go_live) ... ok
+test_staff_ui_agent_policy_draft_and_cited_unknowns (tests.test_delivery.DeliveryTests.test_staff_ui_agent_policy_draft_and_cited_unknowns) ... ok
+test_unknown_inventory_not_empty_and_admin_foreign_stale_and_postgres_immutable (tests.test_delivery.DeliveryTests.test_unknown_inventory_not_empty_and_admin_foreign_stale_and_postgres_immutable) ... ok
+test_unknown_ui_and_conditional_signoffs_do_not_become_false (tests.test_delivery.DeliveryTests.test_unknown_ui_and_conditional_signoffs_do_not_become_false) ... ok
+test_separate_processes_resume_hypercare_scan_without_duplicate_or_effect (tests.test_delivery.DeliveryConcurrencyTests.test_separate_processes_resume_hypercare_scan_without_duplicate_or_effect) ... ok
+test_two_connections_generate_one_due_signal_and_never_close (tests.test_delivery.DeliveryConcurrencyTests.test_two_connections_generate_one_due_signal_and_never_close) ... ok
+test_two_real_connections_record_one_actual_outcome (tests.test_delivery.DeliveryConcurrencyTests.test_two_real_connections_record_one_actual_outcome) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 294.180s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 23 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

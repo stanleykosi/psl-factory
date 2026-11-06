@@ -1,0 +1,42 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_credit_handoff_and_terminal_verified_outcome_are_separate_facts (tests.test_reconciliation.ReconciliationTests.test_credit_handoff_and_terminal_verified_outcome_are_separate_facts) ... ok
+test_fund_and_queue_requests_use_distinct_configured_routes (tests.test_reconciliation.ReconciliationTests.test_fund_and_queue_requests_use_distinct_configured_routes) ... ok
+test_expiry_notice_followup_and_renewal_intent_do_not_renew_contract (tests.test_partners.PartnerTests.test_expiry_notice_followup_and_renewal_intent_do_not_renew_contract) ... ok
+test_age_pause_resume_reentry_and_completion_evidence (tests.test_partners.PartnerTests.test_age_pause_resume_reentry_and_completion_evidence) ... ok
+test_reviewed_aggregate_handoff_and_explicit_finance_meter_import (tests.test_partners.PartnerTests.test_reviewed_aggregate_handoff_and_explicit_finance_meter_import) ... ok
+test_connected_mapping_formula_bu_review_and_local_aggregate_delivery (tests.test_finance_analysis.FinanceAnalysisTests.test_connected_mapping_formula_bu_review_and_local_aggregate_delivery) ... ok
+test_reviewed_projection_delivery_agent_and_ui (tests.test_finance_performance.FinancePerformanceTests.test_reviewed_projection_delivery_agent_and_ui) ... ok
+test_F17_N01_and_F18_N01_reviewed_current_aggregate_250 (tests.test_payroll.PayrollTests.test_F17_N01_and_F18_N01_reviewed_current_aggregate_250) ... ok
+test_exact_pricing_lineage_idempotence_and_no_financial_effect (tests.test_billing.BillingTests.test_exact_pricing_lineage_idempotence_and_no_financial_effect) ... ok
+test_full_cash_staff_path_calls_real_services_including_full_reversal (tests.test_settlement.SettlementTests.test_full_cash_staff_path_calls_real_services_including_full_reversal) ... ok
+test_staff_ui_full_connected_path_and_policy_draft (tests.test_forecast.ForecastTests.test_staff_ui_full_connected_path_and_policy_draft) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_F33_N01_connected_packet_receipt_review_no_accounting (tests.test_recognition.RecognitionTests.test_F33_N01_connected_packet_receipt_review_no_accounting) ... ok
+test_F35_N01_minimal_exact_disclosure_snapshot_receipt (tests.test_hrfinance.HRFinanceTests.test_F35_N01_minimal_exact_disclosure_snapshot_receipt) ... ok
+test_connected_planning_release_hypercare_archive_handover_finance_head_closure (tests.test_delivery.DeliveryTests.test_connected_planning_release_hypercare_archive_handover_finance_head_closure) ... ok
+test_department_reference_is_not_a_pmo_approval (tests.test_approvals.ApprovalTests.test_department_reference_is_not_a_pmo_approval) ... ok
+test_staff_proposal_decisions_review_delivery_and_signed_adoption (tests.test_commercial_changes.CommercialTests.test_staff_proposal_decisions_review_delivery_and_signed_adoption) ... ok
+test_won_route_a_then_fresh_project_contract (tests.test_rfp.RFPTests.test_won_route_a_then_fresh_project_contract) ... ok
+test_minutes_actions_review_and_actual_recipient_publication (tests.test_minutes_reporting.MinutesReportingTests.test_minutes_actions_review_and_actual_recipient_publication) ... ok
+test_connected_preapproval_execution_review_publication_and_signed_closure (tests.test_standard_changes.StandardChangeTests.test_connected_preapproval_execution_review_publication_and_signed_closure) ... ok
+test_human_exception_preserves_debt_and_independent_control_manifest (tests.test_payments.PaymentTests.test_human_exception_preserves_debt_and_independent_control_manifest) ... ok
+test_connected_meaning_expectations_comparison_acceptance_and_scoped_report (tests.test_evidence_validation.EvidenceValidationTests.test_connected_meaning_expectations_comparison_acceptance_and_scoped_report) ... ok
+test_connected_calculation_cost_approvals_signature_and_af13 (tests.test_costing.CostingTests.test_connected_calculation_cost_approvals_signature_and_af13) ... ok
+test_capture_before_criteria_agent_draft_reviewed_projection_ui_privacy_and_revocation (tests.test_complaint_summaries.ComplaintSummaryTests.test_capture_before_criteria_agent_draft_reviewed_projection_ui_privacy_and_revocation) ... ok
+test_route_a_requires_and_links_actual_reviewed_won_rfp_conversion (tests.test_engagement_intake.EngagementIntakeTests.test_route_a_requires_and_links_actual_reviewed_won_rfp_conversion) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 244.690s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 25 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,19 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_current_owner_projection_does_not_assign_a_revoked_recipient (tests.test_factory_handover.FactoryHandoverTests.test_current_owner_projection_does_not_assign_a_revoked_recipient) ... ok
+test_configured_native_document_review_is_exact_and_separate_from_receiving (tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 134.778s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

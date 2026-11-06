@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'factory_intake' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Start work</a>
+<div class="page-heading"><div><p class="eyebrow">GO-LIVE ACCEPTANCE</p><h1>Prepare the client report</h1><p class="lede">Use actual release evidence, then follow the controlled review, delivery and PM/Client sign-off.</p></div></div>
+{% if not form.selected %}<section class="card"><h2>Choose a project</h2><form method="get"><input type="hidden" name="definition" value="delivery-go-live/v1"><input type="hidden" name="queue" value="{{ queue }}"><input type="hidden" name="q" value="{{ q }}">{{ form.case.as_field_group }}<button>Continue with this project</button></form>{{ form.non_field_errors }}</section>
+{% else %}<section class="card"><h2>Capture the intended output</h2><p>Leave an unavailable record unselected. The agent can investigate what is missing; it cannot invent release or sign-off evidence.</p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start go-live acceptance work</button></form></section>{% endif %}
+{% endblock %}

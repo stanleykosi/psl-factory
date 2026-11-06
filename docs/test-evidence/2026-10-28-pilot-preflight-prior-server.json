@@ -1,0 +1,7 @@
+{
+  "action": "Stop exactly verified owned dev server for tested source refresh",
+  "path": "C:\\Python313\\python.exe",
+  "listener": "  TCP    127.0.0.1:8000         0.0.0.0:0              LISTENING       6408",
+  "pid": 6408,
+  "started_utc": "2026-10-28T20:34:31.4660906Z"
+}

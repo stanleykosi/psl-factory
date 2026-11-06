@@ -1,0 +1,22 @@
+{
+  "pid": 30424,
+  "path": "C:\\Python313\\python.exe",
+  "start_utc": "2026-10-27T11:11:22.3201624Z",
+  "session": 3728,
+  "listener": "127.0.0.1:8000",
+  "previous_verified_owned_pid": 34636,
+  "old_stopped_after_identity_verification": true,
+  "final_source": true,
+  "smoke_statuses": {
+    "operations/": 302,
+    "integrations/": 302,
+    "validation/protection/": 302,
+    "application-recovery/": 302
+  },
+  "classification": "Final owned source; unauthenticated redirect smoke only. Authenticated UI/authority evidence uses actual synthetic PostgreSQL test clients.",
+  "runtime_references": {
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo",
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1"
+  },
+  "operational_acceptance": false
+}

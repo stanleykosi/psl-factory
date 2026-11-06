@@ -1,0 +1,18 @@
+{
+  "run": 283,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-283-native-finance.txt",
+  "started_at": "2026-10-27T16:12:24.463162+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 394.843
+}

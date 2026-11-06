@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'home' %}">← Work queue</a>
+<div class="page-heading"><div><p class="eyebrow">PROJECT CLOSURE</p><h1>Start closure work</h1><p class="lede">Prepare the PM report from recorded evidence, obtain the prescribed decision and verify native closure.</p></div></div>
+{% if not case %}<section class="card"><h2>Choose a project</h2><form method="get"><input type="hidden" name="definition" value="delivery-closure/v1">{{ form.case.as_field_group }}<button>Open closure inputs</button></form>{{ form.non_field_errors }}</section>{% else %}<section class="card"><h2>Declare the current work</h2><p>Unknown inputs may be provided later. An agent cannot record a meeting, Finance attestation or approval on your behalf.</p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start closure work</button></form></section>{% endif %}
+{% endblock %}

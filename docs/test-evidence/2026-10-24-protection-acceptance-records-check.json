@@ -1,0 +1,20 @@
+{
+  "current": "verified",
+  "next": "not_started",
+  "next_design_exists": true,
+  "backlog_items": 47,
+  "source_files": 865,
+  "processes_partial": 122,
+  "required_records_exist": true,
+  "source_unchanged_after_final_ui_except_coverage": true,
+  "no_tests_running": true,
+  "next_run": 229,
+  "actual_commands_recorded": [
+    223,
+    224,
+    225,
+    226,
+    227,
+    228
+  ]
+}

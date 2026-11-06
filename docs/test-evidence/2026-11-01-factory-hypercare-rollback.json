@@ -1,0 +1,19 @@
+{
+  "classification": "Fresh synthetic unsupported-downgrade refusal, not full rollback/active-factory restore acceptance",
+  "database": "psl_factory_hypercare_rollback_db2e53c3d33b",
+  "source_database": "psl_factory_hypercare_ui_ab92faf193e4",
+  "source_unchanged": true,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "workflows",
+    "0042_factory_delivery",
+    "--noinput"
+  ],
+  "returncode": 1,
+  "rowsets_and_guards_unchanged": 329,
+  "retained_verified_hypercare_work": 1,
+  "rollback_requirement": "Retain0043 expanded guard and current native/family/private interfaces. Active-factory restore remains separate engineering.",
+  "log": "docs/test-evidence/2026-11-01-factory-hypercare-rollback.txt"
+}

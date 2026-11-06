@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_current_authority_cannot_be_relabelled_and_sql_requires_fresh_review (tests.test_factory_intake_authority.IntakeAuthorityTests.test_current_authority_cannot_be_relabelled_and_sql_requires_fresh_review) ... ok
+test_stale_private_and_unqualified_instructions_hold_without_worker_or_history_changes (tests.test_factory_intake_authority.IntakeAuthorityTests.test_stale_private_and_unqualified_instructions_hold_without_worker_or_history_changes) ... ok
+test_changed_gate_requires_reviewed_reassessment_and_fresh_native_request (tests.test_factory_delivery.FactoryDeliveryTests.test_changed_gate_requires_reviewed_reassessment_and_fresh_native_request) ... ok
+test_source_successor_removes_current_outcome_and_reassessment_keeps_history_and_allowance (tests.test_factory_hypercare.FactoryHypercareTests.test_source_successor_removes_current_outcome_and_reassessment_keeps_history_and_allowance) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 117.329s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

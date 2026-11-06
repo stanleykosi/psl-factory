@@ -1,0 +1,43 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_adapter_duplicate_json_and_shared_sql_guards (tests.test_ppe.PPETests.test_adapter_duplicate_json_and_shared_sql_guards) ... ok
+test_addition_disposal_and_reclassification_events_need_full_reconciliation (tests.test_ppe.PPETests.test_addition_disposal_and_reclassification_events_need_full_reconciliation) ... ok
+test_af13_method_definition_acceptance_and_revocation_are_current (tests.test_ppe.PPETests.test_af13_method_definition_acceptance_and_revocation_are_current) ... ok
+test_below_threshold_and_full_disposal_do_not_invent_asset_treatment (tests.test_ppe.PPETests.test_below_threshold_and_full_disposal_do_not_invent_asset_treatment) ... ok
+test_explicit_residual_cap_and_hold_have_distinct_configured_results (tests.test_ppe.PPETests.test_explicit_residual_cap_and_hold_have_distinct_configured_results) ... ok
+test_f07_e01_unknown_life_and_classification_hold_only_dependent_rows (tests.test_ppe.PPETests.test_f07_e01_unknown_life_and_classification_hold_only_dependent_rows) ... ok
+test_f07_e02_preserves_march_label_until_independent_basis_decision (tests.test_ppe.PPETests.test_f07_e02_preserves_march_label_until_independent_basis_decision) ... ok
+test_f07_n01_explicit_synthetic_oracle_and_reviewed_finance_note (tests.test_ppe.PPETests.test_f07_n01_explicit_synthetic_oracle_and_reviewed_finance_note) ... ok
+test_human_ui_csrf_json_reports_agent_and_legacy_schedule_isolation (tests.test_ppe.PPETests.test_human_ui_csrf_json_reports_agent_and_legacy_schedule_isolation) ... ok
+test_independent_human_authority_and_report_access_are_required (tests.test_ppe.PPETests.test_independent_human_authority_and_report_access_are_required) ... ok
+test_invalid_disposal_is_an_unknown_row_and_other_assets_continue (tests.test_ppe.PPETests.test_invalid_disposal_is_an_unknown_row_and_other_assets_continue) ... ok
+test_legacy_services_and_inactive_cached_principals_cannot_cross_scope (tests.test_ppe.PPETests.test_legacy_services_and_inactive_cached_principals_cannot_cross_scope) ... ok
+test_policy_oracle_numeric_and_unknown_validation (tests.test_ppe.PPETests.test_policy_oracle_numeric_and_unknown_validation) ... ok
+test_prior_opening_roll_forward_and_missing_prior_hold (tests.test_ppe.PPETests.test_prior_opening_roll_forward_and_missing_prior_hold) ... ok
+test_register_schema_duplicates_unknown_authority_and_scope (tests.test_ppe.PPETests.test_register_schema_duplicates_unknown_authority_and_scope) ... ok
+test_required_af13_is_localized_and_missing_package_never_auto_accepts (tests.test_ppe.PPETests.test_required_af13_is_localized_and_missing_package_never_auto_accepts) ... ok
+test_source_capture_survives_missing_rules_and_authority (tests.test_ppe.PPETests.test_source_capture_survives_missing_rules_and_authority) ... ok
+test_source_correction_policy_review_and_actor_grant_invalidate_reports (tests.test_ppe.PPETests.test_source_correction_policy_review_and_actor_grant_invalidate_reports) ... ok
+test_source_staleness_unknown_controls_and_ledger_mismatch_hold (tests.test_ppe.PPETests.test_source_staleness_unknown_controls_and_ledger_mismatch_hold) ... ok
+test_typed_capture_and_policy_posts_do_not_approve_or_accept_extra_authority (tests.test_ppe.PPETests.test_typed_capture_and_policy_posts_do_not_approve_or_accept_extra_authority) ... ok
+test_unsupported_method_has_explicit_engineering_hold (tests.test_ppe.PPETests.test_unsupported_method_has_explicit_engineering_hold) ... ok
+test_reviewer_grant_revocation_commits_before_report_read (tests.test_ppe_concurrency.PPEConcurrencyTests.test_reviewer_grant_revocation_commits_before_report_read) ... ok
+test_source_correction_commits_before_review_and_holds_old_output (tests.test_ppe_concurrency.PPEConcurrencyTests.test_source_correction_commits_before_review_and_holds_old_output) ... ok
+test_two_connections_prepare_one_exact_schedule (tests.test_ppe_concurrency.PPEConcurrencyTests.test_two_connections_prepare_one_exact_schedule) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 237.880s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 24 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_agent_and_ui_are_scoped_typed_and_no_store (tests.test_ledger.LedgerTests.test_agent_and_ui_are_scoped_typed_and_no_store) ... ok
+test_typed_ui_capture_verify_review_and_policy_draft (tests.test_ledger.LedgerTests.test_typed_ui_capture_verify_review_and_policy_draft) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 5.631s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

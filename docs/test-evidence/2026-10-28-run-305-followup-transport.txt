@@ -1,0 +1,87 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_actual_django_endpoint_and_signed_adapter_receipt (tests.test_finance_followup_intake.FinanceFollowupHttpTests.test_actual_django_endpoint_and_signed_adapter_receipt) ... ok
+test_policy_authentication_scope_idempotency_history_and_no_decision (tests.test_finance_followup_intake.FinanceFollowupIntakeTests.test_policy_authentication_scope_idempotency_history_and_no_decision) ... ok
+test_two_connections_converge_and_foreign_case_cannot_receive (tests.test_finance_followup_intake.FinanceFollowupIntakeTests.test_two_connections_converge_and_foreign_case_cannot_receive) ... ok
+test_signed_current_source_intake_uncertain_response_receipt_first_recovery (tests.test_followup_transport_recovery.FollowupTransportRecoveryTests.test_signed_current_source_intake_uncertain_response_receipt_first_recovery) ... FAIL
+test_capture_policy_review_ui_agent_revocation_and_sql_history (tests.test_followup_successors.FollowupSuccessorTests.test_capture_policy_review_ui_agent_revocation_and_sql_history) ... ok
+test_duplicate_ownership_scope_policy_successor_and_decline (tests.test_followup_successors.FollowupSuccessorTests.test_duplicate_ownership_scope_policy_successor_and_decline) ... ok
+test_normal_generation_replacement_unknown_receipt_and_successor (tests.test_followup_successors.FollowupSuccessorTests.test_normal_generation_replacement_unknown_receipt_and_successor) ... ok
+
+======================================================================
+FAIL: test_signed_current_source_intake_uncertain_response_receipt_first_recovery (tests.test_followup_transport_recovery.FollowupTransportRecoveryTests.test_signed_current_source_intake_uncertain_response_receipt_first_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_followup_transport_recovery.py", line 15, in test_signed_current_source_intake_uncertain_response_receipt_first_recovery
+    uncertain=self.child('transport_uncertain',v);self.assertEqual(uncertain['status'],'unknown')
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_invoice_recovery.py", line 11, in child
+    return super().child(stage,v,cold)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_native_finance.py", line 23, in child
+    if r.returncode:raise AssertionError(stage+' failed\n'+r.stdout+'\n'+r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: transport_uncertain failed
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 402, in <module>
+    try:result=globals()[stage]()
+               ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\native_finance_scenario.py", line 381, in transport_uncertain
+    return t.report(a,c.pk,j.pk)
+           ~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\followup_transport.py", line 77, in report
+    j=Job.objects.select_related('packet__mapping__plan__case').get(pk=job_id,packet__mapping__plan__case_id=case_id);access(actor,j.packet,'read')
+                                                                                                                      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\followup_transport.py", line 17, in access
+    m=d.get(actor,p.mapping.plan.case_id,p.mapping_id,purpose);d.principal(actor,m,purpose,d.rules(m)[1])
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance.py", line 35, in get
+    access(actor,m.plan.case,purpose,family='invoice' if 'variant' in m.payload else 'handoff');return m
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\native_finance.py", line 19, in access
+    d.access(actor,case,purpose,locked=locked)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\reconstitution.py", line 18, in access
+    cold.access(actor,case,purpose if purpose in ['read','capture','review','agent','configure'] else 'operate',locked=locked)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\cold_recovery.py", line 47, in access
+    Case.objects.select_for_update().get(pk=case.pk)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 631, in get
+    num = len(clone)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 368, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1954, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 93, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1610, in execute_sql
+    sql, params = self.as_sql()
+                  ~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 846, in as_sql
+    raise TransactionManagementError(
+        "select_for_update cannot be used outside of a transaction."
+    )
+django.db.transaction.TransactionManagementError: select_for_update cannot be used outside of a transaction.
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 712.767s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 8 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

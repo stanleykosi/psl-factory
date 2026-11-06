@@ -1,0 +1,23 @@
+{
+  "classification": "Synthetic source observations within the same browser cohort; not live authority or external source verification",
+  "database": "psl_factory_delivery_ui_a31fd74f85e4",
+  "case": "4528c6e7-864e-4650-b2a8-ad37a232ef1b",
+  "work": 381,
+  "planning_decision": 814,
+  "kickoff": 815,
+  "meeting": 430,
+  "glpi_request": 816,
+  "gate_ids": [
+    1517,
+    1520,
+    1519,
+    1518,
+    1513,
+    1516,
+    1514,
+    1515
+  ],
+  "deployment_dispatched": false,
+  "external_source_authenticity": false,
+  "actual_release_recorded": false
+}

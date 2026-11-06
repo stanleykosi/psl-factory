@@ -1,0 +1,20 @@
+{
+  "run": 319,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_shared_workbench.SharedWorkbenchTests.test_action_assignment_and_document_review_are_source_owned_and_read_only",
+    "tests.test_shared_workbench.SharedWorkbenchTests.test_search_scope_keyset_cursor_binding_active_user_and_escaping",
+    "tests.test_product_intake.ProductIntakeTests.test_configuration_intake_access_ui_and_immutable_history",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-319-shared-workbench.txt",
+  "started_at": "2026-10-28T14:30:04.207961+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 45.632
+}

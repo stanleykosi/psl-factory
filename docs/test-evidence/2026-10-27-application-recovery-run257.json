@@ -1,0 +1,18 @@
+{
+  "run": 257,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-257-application-recovery.txt",
+  "started_at": "2026-10-27T10:17:50.051865+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 33.249
+}

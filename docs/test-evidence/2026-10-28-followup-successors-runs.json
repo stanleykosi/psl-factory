@@ -1,0 +1,54 @@
+{
+  "classification": "Actual retained runs/failures; overlapping counts; synthetic people/inputs/destination/fault adapters",
+  "runs": [
+    {
+      "run": 296,
+      "reported_tests": 2,
+      "unittest_seconds": 32.398,
+      "process_seconds": 37.302,
+      "returncode": 0
+    },
+    {
+      "run": 297,
+      "reported_tests": 4,
+      "unittest_seconds": 70.336,
+      "process_seconds": 77.234,
+      "returncode": 1
+    },
+    {
+      "run": 298,
+      "reported_tests": 5,
+      "unittest_seconds": 78.311,
+      "process_seconds": 82.977,
+      "returncode": 0
+    },
+    {
+      "run": 299,
+      "reported_tests": 7,
+      "unittest_seconds": 230.67,
+      "process_seconds": 235.871,
+      "returncode": 1
+    },
+    {
+      "run": 300,
+      "reported_tests": 8,
+      "unittest_seconds": 481.028,
+      "process_seconds": 488.175,
+      "returncode": 1
+    },
+    {
+      "run": 301,
+      "reported_tests": 6,
+      "unittest_seconds": 118.447,
+      "process_seconds": 123.355,
+      "returncode": 1
+    },
+    {
+      "run": 302,
+      "reported_tests": 10,
+      "unittest_seconds": 727.392,
+      "process_seconds": 733.778,
+      "returncode": 0
+    }
+  ]
+}

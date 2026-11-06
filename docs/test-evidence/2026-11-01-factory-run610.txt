@@ -1,0 +1,19 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stop_settlement_waits_for_an_active_lease_then_preserves_original_work (tests.test_factory_archive.FactoryArchiveTests.test_stop_settlement_waits_for_an_active_lease_then_preserves_original_work) ... ok
+test_replacement_prepares_and_delivers_only_after_independent_native_review (tests.test_factory_execution_accounting.BoundAccountingTests.test_replacement_prepares_and_delivers_only_after_independent_native_review) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 186.286s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,84 @@
+[
+  {
+    "run": 273,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_cold_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-273-cold-recovery.txt",
+    "started_at": "2026-10-27T12:07:39.397473+00:00",
+    "status": "finished",
+    "returncode": 0,
+    "elapsed_seconds": 232.138,
+    "tests": 5,
+    "unittest_seconds": 224.911
+  },
+  {
+    "run": 274,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_reconstitution",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-274-reconstitution.txt",
+    "started_at": "2026-10-27T12:22:36.775758+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 1059.644,
+    "tests": 11,
+    "unittest_seconds": 1051.953
+  },
+  {
+    "run": 275,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_reconstitution",
+      "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-275-reconstitution.txt",
+    "started_at": "2026-10-27T12:42:59.714666+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 723.674,
+    "tests": 7,
+    "unittest_seconds": 707.114
+  },
+  {
+    "run": 276,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_reconstitution",
+      "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-276-reconstitution.txt",
+    "started_at": "2026-10-27T12:57:34.513716+00:00",
+    "status": "finished",
+    "returncode": 0,
+    "elapsed_seconds": 797.588,
+    "tests": 7,
+    "unittest_seconds": 788.949
+  }
+]

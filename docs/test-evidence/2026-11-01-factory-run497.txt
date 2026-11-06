@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package (tests.test_factory_go_live.FactoryGoLiveTests.test_versioned_recipient_contract_change_removes_verified_output_and_requires_fresh_reviewed_package) ... ok
+test_native_sql_preserves_single_anchor_linear_parent_unused_signatures_and_append_only_history (tests.test_factory_go_live.FactoryGoLiveTests.test_native_sql_preserves_single_anchor_linear_parent_unused_signatures_and_append_only_history) ... ok
+test_source_instructions_and_unsupported_citations_cannot_grant_signoff_or_early_verification (tests.test_factory_go_live.FactoryGoLiveTests.test_source_instructions_and_unsupported_citations_cannot_grant_signoff_or_early_verification) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 81.234s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

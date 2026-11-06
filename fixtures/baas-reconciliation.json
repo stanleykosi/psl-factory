@@ -1,0 +1,129 @@
+{
+  "scope": "synthetic_test_only_not_operational_policy",
+  "contract": {
+    "implementation": "exact_declared_sources_v1",
+    "sources": {
+      "ledger": "synthetic-ledger",
+      "settlement": "synthetic-settlement",
+      "queue": "synthetic-queue"
+    },
+    "decimal_places": 2,
+    "amount_tolerance": "0",
+    "max_age_seconds": 3600,
+    "pending_after_seconds": 60,
+    "statuses": {
+      "settled": [
+        "settled"
+      ],
+      "pending": [
+        "pending"
+      ],
+      "failed": [
+        "failed"
+      ]
+    },
+    "attestation_kinds": [
+      "settlement"
+    ],
+    "attester_roles": [
+      "Finance"
+    ],
+    "pending_queue_states": [
+      "pending"
+    ]
+  },
+  "commands": {
+    "implementation": "engineering_request_only_v1",
+    "execution_source": "synthetic-engineering-register",
+    "lease_seconds": 30,
+    "max_attempts": 3,
+    "duplicate_subject_method": "one_delivery_per_partner_transaction_kind_transition_v1",
+    "commands": [
+      {
+        "key": "credit",
+        "kind": "corrective_credit",
+        "currency": "NGN",
+        "allowed_findings": [
+          "settlement_confirmed"
+        ],
+        "require_queue_state": null,
+        "from_state": null,
+        "to_state": null,
+        "max_amount": "1000",
+        "amount_rule": "up_to_ledger_amount",
+        "account_pairs": [
+          {
+            "from_account": null,
+            "to_account": "client-account"
+          }
+        ],
+        "approver_roles": [
+          "Finance"
+        ],
+        "sender_roles": [
+          "Finance"
+        ],
+        "verifier_roles": [
+          "Finance"
+        ],
+        "allow_preparer_review": true,
+        "distinct_outcome_verifier": true
+      },
+      {
+        "key": "move",
+        "kind": "fund_movement",
+        "currency": "NGN",
+        "allowed_findings": [
+          "settlement_confirmed"
+        ],
+        "require_queue_state": null,
+        "from_state": null,
+        "to_state": null,
+        "max_amount": "1000",
+        "amount_rule": "exact_ledger_amount",
+        "account_pairs": [
+          {
+            "from_account": "operating-account",
+            "to_account": "reserve-account"
+          }
+        ],
+        "approver_roles": [
+          "Finance"
+        ],
+        "sender_roles": [
+          "Finance"
+        ],
+        "verifier_roles": [
+          "Finance"
+        ],
+        "allow_preparer_review": true,
+        "distinct_outcome_verifier": true
+      },
+      {
+        "key": "release-queue",
+        "kind": "queue_transition",
+        "currency": "NGN",
+        "allowed_findings": [
+          "not_confirmed"
+        ],
+        "require_queue_state": "pending",
+        "from_state": "pending",
+        "to_state": "ready",
+        "max_amount": null,
+        "amount_rule": "no_money",
+        "account_pairs": [],
+        "approver_roles": [
+          "Finance"
+        ],
+        "sender_roles": [
+          "Finance"
+        ],
+        "verifier_roles": [
+          "Finance"
+        ],
+        "allow_preparer_review": true,
+        "distinct_outcome_verifier": true
+      }
+    ]
+  }
+}

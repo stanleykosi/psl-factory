@@ -1,0 +1,9 @@
+{
+  "submitted_utc": "2026-11-03T18:44:15.6743552Z",
+  "launcher_pid": 15292,
+  "port": 8022,
+  "other_processes_stopped": false,
+  "source_run": 575,
+  "status": "PENDING",
+  "database": "psl_factory_accounting_ui_08cf999821ca"
+}

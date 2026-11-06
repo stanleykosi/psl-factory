@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_ui_agent_and_policy_draft_are_connected (tests.test_rfp.RFPTests.test_ui_agent_and_policy_draft_are_connected) ... ok
+test_rfp_factory_settings_use_native_template_and_route_choices (tests.test_rfp.RFPTests.test_rfp_factory_settings_use_native_template_and_route_choices) ... ok
+test_unbound_typed_rfp_document_cannot_publish (tests.test_rfp.RFPTests.test_unbound_typed_rfp_document_cannot_publish) ... ok
+test_unknown_deadline_holds_only_submission (tests.test_rfp.RFPTests.test_unknown_deadline_holds_only_submission) ... ok
+test_won_route_a_then_fresh_project_contract (tests.test_rfp.RFPTests.test_won_route_a_then_fresh_project_contract) ... ok
+test_two_postgres_connections_convert_once (tests.test_rfp.RFPConcurrencyTests.test_two_postgres_connections_convert_once) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 135.646s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,82 @@
+Creating test database for alias 'default' ('test_psl')...
+
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying core.0001_initial... OK
+  Applying agents.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying baas.0001_initial... OK
+  Applying policy.0001_initial... OK
+  Applying pmo.0001_initial... OK
+  Applying documents.0001_initial... OK
+  Applying core.0002_append_only_history... OK
+  Applying workflows.0001_initial... OK
+  Applying finance.0001_initial... OK
+  Applying workflows.0002_effect_identity... OK
+  Applying documents.0002_controlledreview_document_publication_publicationjob_and_more... OK
+  Applying workflows.0003_humantask_taskevent... OK
+  Applying documents.0003_immutable_controlled_documents... OK
+  Applying documents.0004_alter_publication_review... OK
+  Applying pmo.0002_remove_decision_decision_subject_role_and_more... OK
+  Applying pmo.0003_deliverycandidate_gatedocumentbinding_gaterecord_and_more... OK
+  Applying pmo.0004_immutable_gate_history... OK
+  Applying pmo.0005_gaterecord_gate_source_identity... OK
+  Applying pmo.0006_actionitem_actionstate_actionitem_current_meeting_and_more... OK
+  Applying pmo.0007_meetingactionlink_and_more... OK
+  Applying pmo.0008_immutable_minutes_actions_reports... OK
+  Applying pmo.0009_changerequest_changeversion_changerequest_current_and_more... OK
+  Applying pmo.0010_immutable_commercial_changes... OK
+  Applying finance.0002_financialimport_importvalidation_invoicepreparation_and_more... OK
+  Applying finance.0003_immutable_intake... OK
+  Applying finance.0004_signedbaselineintake... OK
+  Applying identity.0001_initial... OK
+  Applying pmo.0011_changeclosure_changedocumentbinding_and_more... OK
+  Applying pmo.0012_immutable_change_execution_intake... OK
+  Applying pmo.0013_changedocumentbinding_execution_ids... OK
+  Applying pmo.0014_issue_issuestate_issueclosureentry_issue_current_and_more... OK
+  Applying pmo.0015_immutable_issue_history... OK
+  Applying pmo.0016_escalationscancursor_escalationdecision_and_more... OK
+  Applying pmo.0017_immutable_escalations... OK
+test_changed_issue_or_profile_holds_queued_client_message (tests.test_escalations.EscalationTests.test_changed_issue_or_profile_holds_queued_client_message) ... ok
+test_client_deescalation_also_needs_decision_and_no_auto_approval (tests.test_escalations.EscalationTests.test_client_deescalation_also_needs_decision_and_no_auto_approval) ... ok
+test_clock_trigger_unknown_future_and_severity_routing_unknown_are_explicit (tests.test_escalations.EscalationTests.test_clock_trigger_unknown_future_and_severity_routing_unknown_are_explicit) ... ok
+test_decision_revoked_grant_or_new_profile_requires_fresh_approval (tests.test_escalations.EscalationTests.test_decision_revoked_grant_or_new_profile_requires_fresh_approval) ... ok
+test_history_scope_staleness_and_meaningful_agent (tests.test_escalations.EscalationTests.test_history_scope_staleness_and_meaningful_agent) ... ok
+test_immediate_impact_remains_known_when_policy_missing_and_unknowns_are_not_zero (tests.test_escalations.EscalationTests.test_immediate_impact_remains_known_when_policy_missing_and_unknowns_are_not_zero) ... ok
+test_internal_delivery_requires_actual_configured_role_recipient (tests.test_escalations.EscalationTests.test_internal_delivery_requires_actual_configured_role_recipient) ... ok
+test_invalid_clock_configuration_does_not_install_guessed_rules (tests.test_escalations.EscalationTests.test_invalid_clock_configuration_does_not_install_guessed_rules) ... ok
+test_logged_anchor_and_acknowledged_late_actual_service_timestamps (tests.test_escalations.EscalationTests.test_logged_anchor_and_acknowledged_late_actual_service_timestamps) ... ok
+test_manual_client_path_requires_human_decision_then_reviewed_delivery_without_clocks (tests.test_escalations.EscalationTests.test_manual_client_path_requires_human_decision_then_reviewed_delivery_without_clocks) ... ok
+test_policy_revocation_and_supersession_keep_immediate_but_never_rewrite_signals (tests.test_escalations.EscalationTests.test_policy_revocation_and_supersession_keep_immediate_but_never_rewrite_signals) ... ok
+test_real_staff_profile_request_decision_and_draft_forms (tests.test_escalations.EscalationTests.test_real_staff_profile_request_decision_and_draft_forms) ... ok
+test_source_threshold_boundaries_acknowledgement_and_narrow_elapsed_dependencies (tests.test_escalations.EscalationTests.test_source_threshold_boundaries_acknowledgement_and_narrow_elapsed_dependencies) ... ok
+test_persisted_cursor_and_repeated_actual_worker_process (tests.test_escalations.EscalationProcessTests.test_persisted_cursor_and_repeated_actual_worker_process) ... ok
+test_two_connections_signal_once (tests.test_escalations.EscalationProcessTests.test_two_connections_signal_once) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 89.497s
+
+OK
+Destroying test database for alias 'default' ('test_psl')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

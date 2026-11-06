@@ -1,0 +1,24 @@
+{
+  "run": 412,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_planning.FactoryPlanningTests.test_missing_department_policy_retains_requests_and_holds_only_delivery",
+    "tests.test_factory_planning.FactoryPlanningTests.test_successor_packet_keeps_business_identity_and_spent_allowance",
+    "tests.test_factory_planning.FactoryPlanningTests.test_connected_owner_wait_then_current_readiness_and_delivery_handoff",
+    "tests.test_factory_planning.FactoryPlanningTests.test_verified_handoff_detects_changed_sources_and_requires_reviewed_reassessment",
+    "tests.test_factory_coverage.FactoryCoverageTests",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T19:41:21.041489+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run412.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 117.204
+}

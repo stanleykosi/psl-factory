@@ -1,0 +1,19 @@
+{
+  "classification": "Actual retained overlapping synthetic runs and failure",
+  "runs": [
+    {
+      "run": 312,
+      "tests": 5,
+      "unittest_seconds": 87.71,
+      "process_seconds": 97.189,
+      "returncode": 1
+    },
+    {
+      "run": 313,
+      "tests": 13,
+      "unittest_seconds": 270.731,
+      "process_seconds": 280.738,
+      "returncode": 0
+    }
+  ]
+}

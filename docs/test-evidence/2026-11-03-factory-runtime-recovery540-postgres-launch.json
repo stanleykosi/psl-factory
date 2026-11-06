@@ -1,0 +1,8 @@
+{
+  "start_utc": "2026-11-03T01:47:12.3414050Z",
+  "path": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\pgsql\\bin\\postgres.exe",
+  "classification": "Original corrected-port launch; verify actual listener/readiness separately; never replay",
+  "id": 15808,
+  "port": 55432,
+  "data_directory": "C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\pgdata"
+}

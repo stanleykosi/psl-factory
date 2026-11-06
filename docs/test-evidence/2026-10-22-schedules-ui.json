@@ -1,0 +1,26 @@
+{
+  "verified_at": "2026-10-22",
+  "browser": "IAB 2 / tab 3",
+  "authenticated_user": "studio-demo",
+  "case": "109a9540-d890-406d-9eb4-302a90563f50",
+  "final_url": "http://127.0.0.1:8000/cases/109a9540-d890-406d-9eb4-302a90563f50/finance/schedules/6/report/",
+  "observations": {
+    "three_supplemental_policies_active": true,
+    "income_parent_and_child_each_100_not_added_twice": true,
+    "separate_supplement_25_explained_total_125": true,
+    "exact_review_and_evidence_refs_visible": true,
+    "equity_included_at_definition_level_only": true,
+    "intercompany_excluded_with_explicit_gaps": true,
+    "partial_coverage_and_undecided_monthly_output_visible": true,
+    "native_workbook_verification_unavailable": true,
+    "no_prepare_review_or_adjust_commands_for_viewer": true,
+    "screenshots_visually_inspected": true
+  },
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-schedules-income.png",
+    "docs/test-evidence/2026-10-22-schedules-total.png",
+    "docs/test-evidence/2026-10-22-schedules-inventory.png"
+  ],
+  "server_session": 25759,
+  "evidence_class": "local synthetic supplied data; read-only browser verification; no actual owner/native/provider acceptance"
+}

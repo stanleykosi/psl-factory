@@ -1,0 +1,34 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts (tests.test_factory_availability.FactoryAvailabilityTests.test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts) ... ERROR
+
+======================================================================
+ERROR: test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts (tests.test_factory_availability.FactoryAvailabilityTests.test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_availability.py", line 33, in test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts
+    f,b,delegation,record=configured_delegate();configure_availability(f,b);w=f['work']
+                                                ~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_availability.py", line 23, in configure_availability
+    c=draft_operator_policy(f['actor'],f['case'].pk,AVAILABILITY,value,f['evidence']['policy_decision'].pk,now)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\operator_drafts.py", line 13, in draft_operator_policy
+    if component not in SCHEMAS:raise ValidationError('Choose a supplemental operator interface')
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Choose a supplemental operator interface']
+
+----------------------------------------------------------------------
+Ran 1 test in 5.638s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

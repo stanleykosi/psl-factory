@@ -1,0 +1,15 @@
+{
+  "main_version": "0025_cold_authorization_expression",
+  "original_main_tables_preserved": 282,
+  "original_functions_preserved": 58,
+  "functions": 59,
+  "triggers": 311,
+  "constraints": 1515,
+  "frozen_sources": 41,
+  "old_migration_sources": 154,
+  "processes_partial": 122,
+  "families": 13,
+  "interfaces": 108,
+  "supplements": 51,
+  "new_main_authority_or_policy_installed": false
+}

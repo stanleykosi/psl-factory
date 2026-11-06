@@ -1,0 +1,7 @@
+{
+  "classification": "Structural fixture only; no actual policy values, authority, storage or secret installed",
+  "component": "OPS.cold_recovery",
+  "schema_ref": "schema:psl/cold-recovery/v1",
+  "value": null,
+  "deployment": {"control_ref": null, "control_database": null, "control_secret_env": null, "archives": {}, "targets": {}, "key_env": {}, "principals": {}, "build_ref": null, "pg_bin": null}
+}

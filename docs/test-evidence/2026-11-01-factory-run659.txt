@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_queued_response_rechecks_deadline_and_holds_operator_retry (tests.test_rfp.RFPTests.test_queued_response_rechecks_deadline_and_holds_operator_retry) ... ok
+test_committed_receipt_reconciles_after_deadline_without_resending (tests.test_rfp.RFPTests.test_committed_receipt_reconciles_after_deadline_without_resending) ... ok
+test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown (tests.test_factory_accounting.AccountingOperatorTests.test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown) ... ok
+test_primary_commercial_intake_and_configuration_use_plain_native_source_choices (tests.test_factory_commercial.FactoryCommercialTests.test_primary_commercial_intake_and_configuration_use_plain_native_source_choices) ... ok
+test_original_process_fields_and_all_release_deferred_bindings_are_retained (tests.test_factory_coverage.FactoryCoverageTests.test_original_process_fields_and_all_release_deferred_bindings_are_retained) ... ok
+test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes (tests.test_factory_coverage.FactoryCoverageTests.test_shared_shell_keeps_recovery_plane_separate_without_adding_operational_routes) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 86.753s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,19 @@
+{
+  "run": 372,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_document_guard",
+    "tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-372-process-acceptance.txt",
+  "started_at": "2026-10-29T14:24:57.655287+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 55.936
+}

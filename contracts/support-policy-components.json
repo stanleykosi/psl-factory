@@ -1,0 +1,469 @@
+{
+  "classification": "Supplemental engineering interfaces; no default accounting policies or real appointments",
+  "components": [
+    {
+      "id": "B14.intake_rules",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.intake_rules/v1",
+      "subject_scope": "Exact support case supplied channels, owner-reviewed flow and event/metric evidence",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.flow_rules",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.flow_rules/v1",
+      "subject_scope": "Exact support case supplied channels, owner-reviewed flow and event/metric evidence",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.authority",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.authority/v1",
+      "subject_scope": "Exact support case supplied channels, owner-reviewed flow and event/metric evidence",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.metric_rules",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.metric_rules/v1",
+      "subject_scope": "Exact support case supplied channels, owner-reviewed flow and event/metric evidence",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.agent_projection",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.agent_projection/v1",
+      "subject_scope": "Exact linked support intake fields and private human-owned draft reuse; no response or financial authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.response_release",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.response_release/v1",
+      "subject_scope": "Exact human-controlled response packet, internal recipient and storage receipt; no customer response clock",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.channel_receipts",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.channel_receipts/v1",
+      "subject_scope": "Read-only customer-channel receipt gateway verification and independent human review; no dispatch",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.channel_clock",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.channel_clock/v1",
+      "subject_scope": "Explicit human response-clock attestation from exact independently reviewed channel delivery evidence",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.clock_corrections",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/support-clock-corrections/v1",
+      "subject_scope": "Explicit source revisions and independently reviewed current clock corrections without rewriting history",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.summary_scope",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.summary_scope/v1",
+      "subject_scope": "B02 exact selected Support cases, period metadata and current human/audience disclosure; no financial authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "B14.summary_review",
+      "parent_decision_id": "B14",
+      "schema_ref": "schema:psl/policy-component/B14.summary_review/v1",
+      "subject_scope": "B02 exact selected Support cases, period metadata and current human/audience disclosure; no financial authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "support.flow.start",
+      "required_components": [
+        "B14.intake_rules",
+        "B14.flow_rules",
+        "B14.authority",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "support.flow.metrics",
+      "required_components": [
+        "B14.metric_rules"
+      ]
+    },
+    {
+      "operation": "support.response.release",
+      "required_components": [
+        "B14.response_release",
+        "B14.agent_projection",
+        "B14.authority",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "support.channel.verify",
+      "required_components": [
+        "B14.channel_receipts",
+        "B14.authority",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "support.channel.attest",
+      "required_components": [
+        "B14.channel_receipts",
+        "B14.channel_clock",
+        "B14.metric_rules",
+        "B14.flow_rules",
+        "B14.authority",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "support.channel.correct",
+      "required_components": [
+        "B14.clock_corrections",
+        "B14.channel_clock",
+        "B14.channel_receipts",
+        "B14.metric_rules",
+        "B14.authority",
+        "D05.role_principal_assignments"
+      ]
+    },
+    {
+      "operation": "support.summary_scope",
+      "required_components": [
+        "B14.summary_scope"
+      ]
+    },
+    {
+      "operation": "support.summary_review",
+      "required_components": [
+        "B14.summary_review"
+      ]
+    }
+  ]
+}

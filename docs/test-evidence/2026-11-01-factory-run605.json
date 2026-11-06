@@ -1,0 +1,22 @@
+{
+  "run": 605,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_execution_binding",
+    "tests.test_factory_recovery_policy",
+    "tests.test_finance_analysis",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T15:24:44.268072+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run605.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 162.975
+}

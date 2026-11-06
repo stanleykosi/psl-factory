@@ -1,0 +1,51 @@
+{
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "main_new_migrations_applied": {
+    "0045_factory_handover": true,
+    "0016_factory_handover_scope": true
+  },
+  "first_test_applied": 454,
+  "migration_hashes": {
+    "apps/workflows/migrations/0045_factory_handover.py": "e38df577ce4271142c65ba77cd67c16186eb6430bf16e154941ac601ba70b4a7",
+    "apps/documents/migrations/0016_factory_handover_scope.py": "bb1da0caf3db5ba8073fd2fcd5e0ccc734c779171b3a1f44f541e13d04ef9fa4"
+  },
+  "dependencies_added": []
+}

@@ -1,0 +1,12 @@
+{
+  "status": "APPLIED",
+  "files": 988,
+  "runtime_changes_after_run279": false,
+  "coverage_only_changed": [
+    "contracts/implementation-coverage.json"
+  ],
+  "next_run": 280,
+  "backlog_items": 55,
+  "processes_partial": 122,
+  "interfaces": 110
+}

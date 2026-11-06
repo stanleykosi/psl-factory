@@ -1,0 +1,109 @@
+{
+  "classification": "Synthetic P37 native draft/review/publication/actual recipient gap and source-rework browser proof; not real-model/live/UAT/full-process acceptance",
+  "database": "psl_factory_handover_ui_8a327205ea9a",
+  "case": "47a089ae-0511-4c6b-aca7-dcab5f3e3ac2",
+  "work": 615,
+  "dossier": 320,
+  "profile": 62151,
+  "source_head": 102550,
+  "fixture": "tests.test_factory_handover.setup(known=False,review=True), native ready; new fixture human/test-only-password and distinct already-granted synthetic publisher",
+  "current_output": {
+    "verified": true,
+    "verification_scope": "synthetic_native_handover_and_actual_recipient_acknowledgement",
+    "head": 102550,
+    "document_version": 1808,
+    "publication": 1274,
+    "receipt_ids": [
+      790
+    ],
+    "handover_ids": [
+      1876
+    ],
+    "separate_handover_approval": false,
+    "closure_approved": false,
+    "financial_release_granted": false,
+    "deployment_authorized": false,
+    "external_authenticity_verified": false
+  },
+  "retained_publications": [
+    {
+      "publication": 1273,
+      "source_head": 102549,
+      "document_version": 1807,
+      "review": 1152,
+      "reviewer": 15557,
+      "publisher": 15558,
+      "receipt": 789,
+      "recipient": 15557,
+      "payload_sha256": "76ccef4242d88aefc19efc37bef091c698453ed47937c5d5f6c4736ffe82b123",
+      "acknowledgement": 1875,
+      "ack_status": "gaps",
+      "ack_note": "Synthetic Support received the package but needs the corrected operating instructions before accepting the handover as complete.",
+      "job_attempts": 1
+    },
+    {
+      "publication": 1274,
+      "source_head": 102550,
+      "document_version": 1808,
+      "review": 1153,
+      "reviewer": 15557,
+      "publisher": 15558,
+      "receipt": 790,
+      "recipient": 15557,
+      "payload_sha256": "1e630133a5d91ba543b0f23b7550866fc391237d50de2c91e4d628245dc71452",
+      "acknowledgement": 1876,
+      "ack_status": "received",
+      "ack_note": "Actual synthetic Support receipt of the corrected package. The revised operating instructions resolve the earlier source gap; the original package and gap remain recorded.",
+      "job_attempts": 1
+    }
+  ],
+  "budget": {
+    "limit": 20000,
+    "used": 1300
+  },
+  "parallel_handover_approval_tasks": 0,
+  "closure": 0,
+  "invoice": 0,
+  "runtime_for_mutating_journey": 462,
+  "browser_actions": [
+    "Keyboard search and queue context",
+    "Unknown source investigation/hold",
+    "Exact public source choices and reason",
+    "Agent native draft and template-required human review",
+    "Agent scoped internal publication",
+    "Actual recipient gaps",
+    "Reviewed Support source successor with original allowance",
+    "Fresh exact document review and replacement internal receipt",
+    "Actual receipt acknowledgement and current verified output",
+    "Back to same filtered queue, then current Verified row"
+  ],
+  "viewport": {
+    "desktop_request": [
+      1280,
+      900
+    ],
+    "narrow_request": [
+      390,
+      844
+    ],
+    "narrow_document_width": 375,
+    "narrow_scroll_width": 375,
+    "navigation_has_own_horizontal_scroll": true,
+    "reset_to_user_size": true
+  },
+  "tool_issues": [
+    "DOMSnapshot timeouts after committed actions were read back without replay",
+    "Focus-emulation timeouts after committed actions were read back without replay",
+    "AX-root scroll reported detached element after text entry; readback confirmed text once, then screenshot-grounded scroll used"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-11-02-factory-handover-station-review.jpg",
+    "docs/test-evidence/2026-11-02-factory-handover-station-review-content.jpg",
+    "docs/test-evidence/2026-11-02-factory-handover-station-gap.jpg",
+    "docs/test-evidence/2026-11-02-factory-handover-station-verified-runtime462.jpg",
+    "docs/test-evidence/2026-11-02-factory-handover-station-narrow-runtime462.jpg"
+  ],
+  "independent_human_UAT": false,
+  "real_model_provider": false,
+  "external_authenticity_verified": false
+}

@@ -1,0 +1,13 @@
+{
+  "format":"psl.policy-impact-examples/v1",
+  "classification":"synthetic examples only; no owner values or authority installation",
+  "scenarios":[
+    {"condition":"absent successor","expected":"capture held; unrelated work available"},
+    {"condition":"active exact successor and current selected heads","expected":"independent engineering review available"},
+    {"condition":"changed source, policy or record head","expected":"acceptance held; capture successor assessment"},
+    {"condition":"uncertain effect","expected":"receipt-first reconciliation; never replay from assessment"},
+    {"condition":"committed effect","expected":"preserve receipt and historical approval"},
+    {"condition":"missing domain/private/source access","expected":"no record projection"},
+    {"condition":"unregistered dependency","expected":"explicit unknown coverage; never complete inventory"}
+  ]
+}

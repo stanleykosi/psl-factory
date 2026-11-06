@@ -1,0 +1,8 @@
+{
+  "port": 8022,
+  "all_intended_targets_checked": true,
+  "id": 7272,
+  "reason": "New coordinator source increment; retain isolated accounting data",
+  "start_utc": "2026-11-03T18:44:15.7649391Z",
+  "path": "C:\\Python313\\python.exe"
+}

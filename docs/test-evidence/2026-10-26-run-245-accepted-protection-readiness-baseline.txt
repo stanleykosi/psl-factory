@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_connected_file_acceptance_export_backup_isolated_restore_and_independent_review (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_connected_file_acceptance_export_backup_isolated_restore_and_independent_review) ... ok
+test_mixed_inventory_native_choices_and_raw_sql_bindings_are_rejected (tests.test_accepted_protection_operations.AcceptedProtectionOperationsTests.test_mixed_inventory_native_choices_and_raw_sql_bindings_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 1283.491s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

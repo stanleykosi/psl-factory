@@ -1,0 +1,29 @@
+from django.db import migrations
+
+class Migration(migrations.Migration):
+ dependencies=[('documents','0009_private_protection_packet'),('finance','0053_private_readiness_guards'),('workflows','0012_private_protection_boundaries')]
+ operations=[migrations.RunSQL('CREATE TRIGGER psl_immutable BEFORE UPDATE OR DELETE ON documents_privateprotectionpacket FOR EACH ROW EXECUTE FUNCTION psl_append_only()','DROP TRIGGER psl_immutable ON documents_privateprotectionpacket'),migrations.RunSQL("""
+ CREATE FUNCTION psl_protection_acceptance_packet() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+ IF NOT EXISTS(SELECT 1 FROM documents_validationpackage p JOIN workflows_integrationassessment a ON a.id=NEW.assessment_id JOIN workflows_integrationcontract c ON c.id=a.contract_id JOIN workflows_privateprotectionreadiness b ON b.contract_id=c.id JOIN workflows_recoveryjob j ON j.id=b.job_id JOIN workflows_recoveryplan rp ON rp.id=j.plan_id JOIN workflows_integrationreview rr ON rr.id::text=NEW.snapshot->'evidence'->>'transport_review'
+ WHERE p.id=NEW.package_id AND p.case_id=NEW.case_id AND c.case_id=NEW.case_id AND rp.case_id=NEW.case_id AND j.kind='restore' AND rr.assessment_id=a.id AND rr.verdict='confirm' AND rr.actor_id::text=NEW.snapshot->'evidence'->>'transport_reviewer'
+ AND NEW.snapshot->>'package'=p.id::text AND NEW.snapshot->>'package_sha256'=p.sha256 AND NEW.snapshot->'evidence'->>'assessment'=a.id::text AND NEW.snapshot->'evidence'->>'contract'=c.id::text AND NEW.snapshot->'evidence'->>'contract_sha256'=c.sha256 AND NEW.snapshot->'evidence'->>'binding'=b.id::text AND NEW.snapshot->'evidence'->>'binding_sha256'=b.sha256 AND NEW.snapshot->'evidence'->>'restore_job'=j.id::text AND NEW.snapshot->'evidence'->>'plan'=rp.id::text AND NEW.snapshot->'evidence'->'manifest_sha256'=b.snapshot->'manifest_sha256'
+ AND p.payload->'process_ids' ? 'F01' AND (p.payload->'process_ids') <@ '["F01","B13","P13","P15"]'::jsonb AND p.payload->>'level'<>'operational' AND NOT (p.payload->'policy_components' ?| ARRAY['AF13.protection_owner_rules','AF13.protection_acceptance_rules'])
+ AND NEW.snapshot - ARRAY['package','package_sha256','evidence']='{}'::jsonb
+ AND (NEW.snapshot->'evidence') - ARRAY['assessment','contract','contract_sha256','readiness_policy','transport_review','transport_reviewer','binding','binding_sha256','restore_job','plan','manifest_sha256','observations','receipt_state','classification','payload_bodies_included','current_authority_restored','full_database_restore','business_acceptance','operational_acceptance','deployment_authorized']='{}'::jsonb
+ AND NEW.snapshot->'evidence'->>'classification'='native_private_restore_capability_metadata' AND NEW.snapshot->'evidence'->'payload_bodies_included'='false'::jsonb AND NEW.snapshot->'evidence'->'current_authority_restored'='false'::jsonb AND NEW.snapshot->'evidence'->'full_database_restore'='false'::jsonb AND NEW.snapshot->'evidence'->'business_acceptance'='false'::jsonb AND NEW.snapshot->'evidence'->'operational_acceptance'='false'::jsonb AND NEW.snapshot->'evidence'->'deployment_authorized'='false'::jsonb
+ AND NEW.snapshot->'evidence'->'readiness_policy'=rr.authority->'policy' AND jsonb_array_length(NEW.snapshot->'evidence'->'observations')=2 AND (NEW.snapshot->'evidence'->'observations') @> '[{"kind":"health"},{"kind":"receipt"}]'::jsonb
+ AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(NEW.snapshot->'evidence'->'observations') o WHERE (o - ARRAY['kind','observation','sha256','probe'])<>'{}'::jsonb OR NOT EXISTS(SELECT 1 FROM workflows_integrationobservation io WHERE io.id::text=o->>'observation' AND io.contract_id=c.id AND io.job_id::text=o->>'probe' AND io.sha256=o->>'sha256' AND io.payload->'kind'=o->'kind' AND io.payload->'native_protection'->>'binding'=b.id::text AND (o->>'kind'<>'receipt' OR io.payload->'receipt_provenance'->'state'=NEW.snapshot->'evidence'->'receipt_state')))
+ ) OR EXISTS(SELECT 1 FROM documents_validationreview r WHERE r.package_id=NEW.package_id) OR EXISTS(SELECT 1 FROM finance_financehandoff h WHERE h.package_id=NEW.package_id) OR EXISTS(SELECT 1 FROM finance_privatereadinesspacket q WHERE q.package_id=NEW.package_id) THEN RAISE EXCEPTION 'Exact fresh private protection evidence/package lineage required'; END IF;
+ IF NEW.parent_id IS NULL THEN
+ IF NEW.version<>1 OR EXISTS(SELECT 1 FROM documents_privateprotectionpacket q WHERE q.case_id=NEW.case_id AND q.reference=NEW.reference) THEN RAISE EXCEPTION 'Initial protection packet version required'; END IF;
+ ELSE
+ IF NOT EXISTS(SELECT 1 FROM documents_privateprotectionpacket q WHERE q.id=NEW.parent_id AND q.case_id=NEW.case_id AND q.reference=NEW.reference AND q.version+1=NEW.version) THEN RAISE EXCEPTION 'Exact protection packet predecessor required'; END IF;
+ END IF;
+ RETURN NEW; END $$;
+ CREATE TRIGGER psl_lineage BEFORE INSERT ON documents_privateprotectionpacket FOR EACH ROW EXECUTE FUNCTION psl_protection_acceptance_packet();
+ CREATE FUNCTION psl_no_protection_acceptance_cycle() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+ IF EXISTS(SELECT 1 FROM documents_privateprotectionpacket q WHERE q.package_id=NEW.package_id) THEN RAISE EXCEPTION 'Protection evidence cannot become its own Finance source'; END IF;
+ RETURN NEW; END $$;
+ CREATE TRIGGER psl_no_protection_cycle BEFORE INSERT ON finance_financehandoff FOR EACH ROW EXECUTE FUNCTION psl_no_protection_acceptance_cycle();
+ CREATE TRIGGER psl_no_protection_cycle BEFORE INSERT ON finance_privatereadinesspacket FOR EACH ROW EXECUTE FUNCTION psl_no_protection_acceptance_cycle();
+ """,'DROP TRIGGER psl_no_protection_cycle ON finance_privatereadinesspacket; DROP TRIGGER psl_no_protection_cycle ON finance_financehandoff; DROP FUNCTION psl_no_protection_acceptance_cycle(); DROP TRIGGER psl_lineage ON documents_privateprotectionpacket; DROP FUNCTION psl_protection_acceptance_packet();')]

@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_binding_ui_and_engineering_review_cannot_publish_and_source_drift_stales_pack (tests.test_document_guard.DocumentGuardTests.test_binding_ui_and_engineering_review_cannot_publish_and_source_drift_stales_pack) ... ok
+test_closed_sql_contract_rejects_unknown_keys_foreign_subjects_nonintegers_and_unselected_people (tests.test_document_guard.DocumentGuardTests.test_closed_sql_contract_rejects_unknown_keys_foreign_subjects_nonintegers_and_unselected_people) ... ok
+test_finance_bound_publication_observer_needs_native_finance_read_without_a_new_pmo_gate (tests.test_document_guard.DocumentGuardTests.test_finance_bound_publication_observer_needs_native_finance_read_without_a_new_pmo_gate) ... ok
+test_guard_is_read_only_and_actual_reservation_uses_exact_same_current_requirements (tests.test_document_guard.DocumentGuardTests.test_guard_is_read_only_and_actual_reservation_uses_exact_same_current_requirements) ... ok
+test_missing_policy_holds_only_publication_and_missing_actor_grant_cannot_be_replaced_by_observer (tests.test_document_guard.DocumentGuardTests.test_missing_policy_holds_only_publication_and_missing_actor_grant_cannot_be_replaced_by_observer) ... ok
+test_observer_access_precedes_selected_version_lookup_and_current_heads_hold_old_versions (tests.test_document_guard.DocumentGuardTests.test_observer_access_precedes_selected_version_lookup_and_current_heads_hold_old_versions) ... ok
+test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 50.578s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone (tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone) ... FAIL
+
+======================================================================
+FAIL: test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone (tests.test_factory_go_live.FactoryGoLiveTests.test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_go_live.py", line 389, in test_stopped_preparation_restarts_with_original_allowance_but_delivered_output_cannot_be_undone
+    self.assertEqual(page.context['row']['state'],'Cancelled');self.assertNotContains(page,'Awaiting document review')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Awaiting document review' != 'Cancelled'
+- Awaiting document review
++ Cancelled
+
+
+----------------------------------------------------------------------
+Ran 1 test in 11.145s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

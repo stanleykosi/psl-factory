@@ -1,0 +1,26 @@
+{
+  "run": 339,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_policy_impact",
+    "tests.test_policy_scopes",
+    "tests.test_application",
+    "tests.test_minutes_reporting",
+    "tests.test_billing",
+    "tests.test_support_flow",
+    "tests.test_finance_analysis",
+    "tests.test_support_release",
+    "tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-339-process-acceptance.txt",
+  "started_at": "2026-10-28T20:12:56.123992+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 818.564
+}

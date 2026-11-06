@@ -1,0 +1,57 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification (tests.test_factory_flow.FactoryFlowTests.test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification) ... ok
+test_database_protects_identity_history_budget_and_false_verification (tests.test_factory_flow.FactoryFlowTests.test_database_protects_identity_history_budget_and_false_verification) ... ok
+test_exact_native_packet_changes_require_fresh_human_review (tests.test_factory_flow.FactoryFlowTests.test_exact_native_packet_changes_require_fresh_human_review) ... ok
+test_model_cannot_choose_dispatch_or_fabricate_citations (tests.test_factory_flow.FactoryFlowTests.test_model_cannot_choose_dispatch_or_fabricate_citations) ... ok
+test_same_key_changed_payload_and_cross_case_scope_fail (tests.test_factory_flow.FactoryFlowTests.test_same_key_changed_payload_and_cross_case_scope_fail) ... ok
+test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance (tests.test_factory_flow.FactoryFlowTests.test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance) ... ok
+test_aggregate_budget_stops_another_call_including_retry (tests.test_factory_controls.FactoryControlTests.test_aggregate_budget_stops_another_call_including_retry) ... ok
+test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect (tests.test_factory_controls.FactoryControlTests.test_cancel_before_dispatch_never_means_undo_of_an_accepted_effect) ... ok
+test_cancellation_while_model_is_running_closes_without_a_financial_effect (tests.test_factory_controls.FactoryControlTests.test_cancellation_while_model_is_running_closes_without_a_financial_effect) ... ok
+test_changed_completion_cannot_silently_replace_pmo_acceptance (tests.test_factory_controls.FactoryControlTests.test_changed_completion_cannot_silently_replace_pmo_acceptance) ... ok
+test_eventual_absence_parks_without_model_poll_or_duplicate_publication (tests.test_factory_controls.FactoryControlTests.test_eventual_absence_parks_without_model_poll_or_duplicate_publication) ... ok
+test_existing_finance_screen_review_is_observed_as_the_same_decision (tests.test_factory_controls.FactoryControlTests.test_existing_finance_screen_review_is_observed_as_the_same_decision) ... ok
+test_missing_resolver_does_not_create_fictional_owner (tests.test_factory_controls.FactoryControlTests.test_missing_resolver_does_not_create_fictional_owner) ... ok
+test_new_form_key_cannot_create_another_business_budget (tests.test_factory_controls.FactoryControlTests.test_new_form_key_cannot_create_another_business_budget) ... ok
+test_plan_and_child_are_reserved_together (tests.test_factory_controls.FactoryControlTests.test_plan_and_child_are_reserved_together) ... ok
+test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery (tests.test_factory_controls.FactoryControlTests.test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery) ... ok
+test_reconciliation_activity_does_not_write_a_financial_draft (tests.test_factory_controls.FactoryControlTests.test_reconciliation_activity_does_not_write_a_financial_draft) ... ok
+test_returned_packet_reworks_changed_terms_without_rewriting_history (tests.test_factory_controls.FactoryControlTests.test_returned_packet_reworks_changed_terms_without_rewriting_history) ... ok
+test_source_successor_invalidates_exact_review_without_editing_old_task (tests.test_factory_controls.FactoryControlTests.test_source_successor_invalidates_exact_review_without_editing_old_task) ... ok
+test_stale_lease_cannot_finalize_another_attempt (tests.test_factory_controls.FactoryControlTests.test_stale_lease_cannot_finalize_another_attempt) ... ok
+test_stop_after_exact_invoice_delivery_keeps_finance_followup_distinct_from_verification (tests.test_factory_controls.FactoryControlTests.test_stop_after_exact_invoice_delivery_keeps_finance_followup_distinct_from_verification) ... ok
+test_unsupported_citation_cannot_become_a_native_result (tests.test_factory_controls.FactoryControlTests.test_unsupported_citation_cannot_become_a_native_result) ... ok
+test_adoption_requires_current_policy_authority_and_does_not_erase_overspent_new_cap (tests.test_factory_recovery.FactoryRecoveryTests.test_adoption_requires_current_policy_authority_and_does_not_erase_overspent_new_cap) ... ok
+test_claim_release_preserves_history_and_does_not_grant_decision_authority (tests.test_factory_recovery.FactoryRecoveryTests.test_claim_release_preserves_history_and_does_not_grant_decision_authority) ... ok
+test_corrupted_remote_proof_remains_unknown_without_another_effect (tests.test_factory_recovery.FactoryRecoveryTests.test_corrupted_remote_proof_remains_unknown_without_another_effect) ... ok
+test_native_worker_rechecks_the_reserved_factory_profile_before_sending (tests.test_factory_recovery.FactoryRecoveryTests.test_native_worker_rechecks_the_reserved_factory_profile_before_sending) ... ok
+test_policy_activation_during_planning_rejects_old_tools (tests.test_factory_recovery.FactoryRecoveryTests.test_policy_activation_during_planning_rejects_old_tools) ... ok
+test_recorded_legacy_factory_intent_requires_explicit_native_rebinding (tests.test_factory_recovery.FactoryRecoveryTests.test_recorded_legacy_factory_intent_requires_explicit_native_rebinding) ... FAIL
+
+======================================================================
+FAIL: test_recorded_legacy_factory_intent_requires_explicit_native_rebinding (tests.test_factory_recovery.FactoryRecoveryTests.test_recorded_legacy_factory_intent_requires_explicit_native_rebinding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_recovery.py", line 39, in test_recorded_legacy_factory_intent_requires_explicit_native_rebinding
+    factory.run_once(w.pk);legacy.refresh_from_db();self.assertEqual(legacy.status,'held')
+                                                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'pending' != 'held'
+- pending
++ held
+
+
+----------------------------------------------------------------------
+Ran 28 tests in 179.410s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 121 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

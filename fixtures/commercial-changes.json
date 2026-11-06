@@ -1,0 +1,9 @@
+{
+  "scope": "synthetic_test",
+  "business_values": "Examples only; not actual owner policy or named operational authority",
+  "paths": ["six exact sources -> PM/Head PMO/CEO costing + separate PMO Lead -> controlled SOW review -> actual local recipient receipt -> captured signed response -> baseline adoption -> atomic Finance intake", "Normal change -> four contributor impact statements -> conditional source role decisions -> linked approved commercial proposal -> signed adoption -> implementation/QA evidence -> reviewed notice/go-live receipts -> PM and Client signature capture -> closure"],
+  "policy_schema": "schema:psl/commercial-revision/v1",
+  "policy_example": {"unchanged_subject_reuse_roles": ["PM", "Head of PMO", "CEO"], "changed_cost_requires_full_chain": true},
+  "unknowns": ["No cost calculation or real calculator oracle", "No real signature-provider authenticity check", "Standard catalogue and Emergency/GLPI execution policy remain unresolved"],
+  "executable_fixtures": ["tests/test_commercial_changes.py", "manage.py seed_commercial_demo"]
+}

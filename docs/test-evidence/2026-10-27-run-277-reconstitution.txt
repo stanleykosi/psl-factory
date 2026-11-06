@@ -1,0 +1,9 @@
+test_01_ui_missing_policy_scope_agent_and_inventory (tests.test_reconstitution.ReconstitutionTests.test_01_ui_missing_policy_scope_agent_and_inventory) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 209.089s
+
+OK
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

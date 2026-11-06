@@ -1,0 +1,134 @@
+[
+  {
+    "run": 252,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_connected_native_jobs",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-252-application-recovery.txt",
+    "started_at": "2026-10-27T09:32:51.170575+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 3.661,
+    "unittest": [
+      "1",
+      "0.002"
+    ]
+  },
+  {
+    "run": 253,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_accepted_protection_readiness.AcceptedProtectionReadinessTests.test_connected_sql_file_isolated_restore_review_and_exact_job_gate",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-253-application-recovery.txt",
+    "started_at": "2026-10-27T09:33:09.212067+00:00",
+    "status": "finished",
+    "returncode": 0,
+    "elapsed_seconds": 2252.747,
+    "unittest": [
+      "1",
+      "2247.978"
+    ]
+  },
+  {
+    "run": 254,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_application_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-254-application-recovery.txt",
+    "started_at": "2026-10-27T10:11:38.901220+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 73.069,
+    "unittest": [
+      "4",
+      "64.597"
+    ]
+  },
+  {
+    "run": 255,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_application_recovery",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-255-application-recovery.txt",
+    "started_at": "2026-10-27T10:13:26.606002+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 82.131,
+    "unittest": [
+      "4",
+      "77.141"
+    ]
+  },
+  {
+    "run": 256,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-256-application-recovery.txt",
+    "started_at": "2026-10-27T10:16:13.823707+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 40.509,
+    "unittest": [
+      "1",
+      "31.689"
+    ]
+  },
+  {
+    "run": 257,
+    "argv": [
+      ".venv\\Scripts\\python.exe",
+      "manage.py",
+      "test",
+      "tests.test_application_recovery.NativeApplicationRecoveryTests.test_real_archive_isolated_restore_human_review_and_physical_counterexamples",
+      "--keepdb",
+      "--noinput",
+      "--verbosity",
+      "2"
+    ],
+    "log": "docs\\test-evidence\\2026-10-27-run-257-application-recovery.txt",
+    "started_at": "2026-10-27T10:17:50.051865+00:00",
+    "status": "finished",
+    "returncode": 1,
+    "elapsed_seconds": 33.249,
+    "unittest": [
+      "1",
+      "28.313"
+    ]
+  }
+]

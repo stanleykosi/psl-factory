@@ -1,0 +1,19 @@
+{
+  "classification": "Documentation/planning integrity only; not PostgreSQL, provider or live-factory acceptance",
+  "rewritten_files": 25,
+  "protected_runtime_source_files_unchanged": 1246,
+  "frozen_source_files_unchanged": 41,
+  "process_rows_unchanged": 122,
+  "workflow_families_preserved": 13,
+  "previous_backlog_statuses_preserved": 83,
+  "new_factory_items_planned_not_started": [
+    "BUILD-FACTORY-FLOW",
+    "BUILD-FACTORY-CONSOLE",
+    "BUILD-FACTORY-CONNECTED-PROOF"
+  ],
+  "local_markdown_links_checked": 25,
+  "json_parsing": "passed",
+  "runtime_tests_rerun": false,
+  "owner_values_installed": false,
+  "full_factory_implemented": false
+}

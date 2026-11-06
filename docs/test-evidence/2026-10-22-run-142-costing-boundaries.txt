@@ -1,0 +1,30 @@
+Using existing test database for alias 'default'...
+
+.....E......................................................
+======================================================================
+ERROR: test_costing_hold_does_not_block_independent_quality_review_or_return (tests.test_costing.CostingTests.test_costing_hold_does_not_block_independent_quality_review_or_return)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_costing.py", line 142, in test_costing_hold_does_not_block_independent_quality_review_or_return
+    decision=register_reference(f['actor'],c.pk,'synthetic-return','schema:psl/decision-actions/v1',{'rules':[{'role':'PM','actions':['return']}]},s['policy_decision'].pk);activate(f['actor'],c,'D05.decision_action_matrix',decision.ref,s['policy_decision'])
+                                                                                                                                                                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\helpers.py", line 36, in activate
+    transition(actor,config.pk,'validated'); transition(actor,config.pk,'active')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 224, in transition
+    validate_envelope(case, config.envelope)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 34, in validate_envelope
+    raise ValidationError([f'{list(e.path)}: {e.message}' for e in errors])
+django.core.exceptions.ValidationError: ["['value']: 'synthetic-return' is not of type 'object'"]
+
+----------------------------------------------------------------------
+Ran 60 tests in 194.943s
+
+FAILED (errors=1)
+Preserving test database for alias 'default'...
+
+Found 60 test(s).
+System check identified no issues (0 silenced).

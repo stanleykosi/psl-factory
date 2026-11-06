@@ -1,0 +1,11 @@
+{
+  "classification": "EXPLICIT SYNTHETIC D03 examples; no real owner statement, signature policy or Power Automate execution",
+  "statement_quote": "EXPLICIT SYNTHETIC owner clarification: the example report contains prices. No signature gate is asserted by this fixture.",
+  "flow_quote": "EXPLICIT SYNTHETIC contract: local invoice registration and delivery are separate; no ledger posting or production deployment is performed.",
+  "flow_ref": "synthetic-internal-invoice-register",
+  "flow_version": "v1",
+  "environment_ref": "isolated-synthetic",
+  "control_key": "source_ready",
+  "control_evidence_kind": "d03_control_source",
+  "freshness_seconds": 86400
+}

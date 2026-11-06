@@ -1,0 +1,40 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader) ... ERROR
+
+======================================================================
+ERROR: test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 77, in test_closure_current_source_reader
+    self.check_successor(module, f, 'technical_document', 'technical_document')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 50, in check_successor
+    module.correct(f.actor, work.pk, work.revision, rev(f.case), dict(f.inputs, **{field: replacement.pk}), 'Reviewed genuine source successor')
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_closure.py", line 260, in correct
+    d,data,_=source(w,actor,current=False);delivery.dossier_for(case,d.pk);delivery.ensure_open(d);input_rows(case,inputs)
+                                                                                                   ~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_closure.py", line 40, in input_rows
+    validate(INPUT,inputs)
+    ~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 21, in validate
+    raise ValidationError([e.message for e in errors])
+django.core.exceptions.ValidationError: ["Additional properties are not allowed ('technical_document' was unexpected)"]
+
+----------------------------------------------------------------------
+Ran 1 test in 16.019s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

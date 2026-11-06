@@ -1,0 +1,22 @@
+{
+  "run": 356,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_native_validation",
+    "tests.test_evidence_validation",
+    "tests.test_validation_concurrency",
+    "tests.test_pilot_preflight",
+    "tests.test_pilot_bindings",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-356-process-acceptance.txt",
+  "started_at": "2026-10-29T11:22:21.667526+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 558.053
+}

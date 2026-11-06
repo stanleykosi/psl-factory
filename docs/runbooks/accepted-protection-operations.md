@@ -1,0 +1,19 @@
+# Accepted AF13 protection metadata in operator work
+
+Engineering interface: `private_protection_packet_ids` selects `documents.PrivateProtectionPacket`. `private_readiness_packet_ids` continues selecting Finance readiness packets. They can coexist, with separate closed manifest extensions and lineage. Neither field is a business approval or a full database backup.
+
+1. Prepare exact native restore/file evidence and obtain separately configured AF13 owner acceptance at `/cases/<case>/validation/protection/`.
+2. In `/cases/<case>/operations/`, select the protection packets explicitly. Include every selected process ID. Use a distinct plan reference from the original native source plans and their protection dependencies. Capture is available before downstream inventory configuration.
+3. Draft, validate and activate `OPS.accepted_protection_rules` through the existing policy lifecycle. Supply exact packet IDs and `private_disclosure: accepted_metadata_only`. Actual active operators still require D05 purpose authority, operator grants and every original source/export grant. This independent component does not replace OPS.protection_rules, transport readiness or owner criteria. The fixture installs no real values.
+4. Reserve an export, then a backup using that exact export, then an isolated metadata restore using that exact backup. Current source and owner acceptance, inventory version, targets and immutable intent are checked before new effects. Version changes require explicit held-intent recovery or a new plan; sealed metadata is never refreshed silently.
+5. Assess the receipts and obtain independent protection evidence review. Supplied reports and native effects remain distinguished. Missing RPO/RTO remains unknown. Metadata receipts do not reenact business work, restore grants or establish operational acceptance.
+
+Historical downloads retain acceptance-at-capture and recheck original private source/export permissions, including reference history and foreign cases. Owner withdrawal/expiry can hold a new copy while leaving permitted historical metadata readable. Source revocation denies cached downloads, inventories, plan detail and source-filtered choices. Agents investigate and prepare typed plans, with no effect/approval tools or generic private AgentRun persistence.
+
+Unknown effects must reconcile their original file/SQL receipt before retry. The durable worker performs receipt lookup before current policy/authority and attempt gates. It confirms an already committed effect after revocation without restoring authority, rewriting bytes or resetting attempts. Operators cannot cancel uncertain work or reset unchanged private intent budgets. Do not delete artifacts, renew source evidence or edit prior receipts to clear a hold.
+
+The new AF13 extension has its own schema and closed adapter. SQL guards reject cross-case/process inventories, source-plan self-supersession, public downgrade, mismatched artifacts, forged acceptance lineage, added metadata fields and restored-authority claims. Existing immutable and Finance lineage guards remain installed.
+
+Old native file/restore selectors and choices exclude AF13 protection inventory, including plans that also select Finance packets. Public receipt admission and forward SQL probe/binding guards enforce the same boundary, including alternate numeric text identities. Public health without a private source remains available. Configure no workaround through an old contract; the new inventory needs its own explicit native provenance contract.
+
+Separate remaining engineering: native health/receipt enrollment for this new AF13 inventory requires its own explicit provenance contract; existing native private readiness contracts remain Finance-packet scoped. Real provider contracts, full application/database recovery, security/load/UAT and actual process-owner/SOP/operational acceptance remain distinct. No production appointment or deployment is implied.

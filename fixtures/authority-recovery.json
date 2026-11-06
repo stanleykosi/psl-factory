@@ -1,0 +1,26 @@
+{
+  "fixture_scope": "synthetic_test",
+  "schema_ref": "schema:psl/commercial-revision/v2",
+  "value": {
+    "unchanged_subject_reuse_roles": [],
+    "changed_cost_requires_full_chain": true,
+    "historical_authority": {
+      "emergency_outcome": {
+        "roles": [
+          "PMO Lead"
+        ],
+        "scope": "authority_only",
+        "original_times": "preserve",
+        "financial_release_controls": "independent"
+      },
+      "signed_adoption": {
+        "roles": [
+          "PMO Lead"
+        ],
+        "scope": "authority_only",
+        "original_times": "preserve",
+        "financial_release_controls": "independent"
+      }
+    }
+  }
+}

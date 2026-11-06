@@ -1,0 +1,31 @@
+{
+  "run": 445,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_archive.FactoryArchiveTests.test_current_engineering_finalization_must_match_the_exact_declared_technical_document",
+    "tests.test_factory_archive.FactoryArchiveTests.test_operator_revoked_while_planning_cannot_create_the_native_index",
+    "tests.test_factory_archive.FactoryArchiveTests.test_configuration_rejects_invented_approvals_private_sources_and_ungranted_operator",
+    "tests.test_factory_archive.FactoryArchiveTests.test_source_correction_http_binds_current_project_work_and_exact_public_choices",
+    "tests.test_delivery",
+    "tests.test_factory_console",
+    "tests.test_factory_flow",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "tests.test_agent_source_visibility",
+    "tests.test_factory_delivery.FactoryDeliveryTests.test_idempotent_intake_forged_source_and_false_completion_guards",
+    "tests.test_factory_planning.FactoryPlanningTests.test_connected_owner_wait_then_current_readiness_and_delivery_handoff",
+    "tests.test_factory_commercial.FactoryCommercialTests.test_agent_publication_is_bound_and_lost_response_reconciles_original_receipt",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T09:12:51.332725+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run445.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 349.365
+}

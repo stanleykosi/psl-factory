@@ -1,0 +1,19 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_scoped_delegation_origin_revocation_denies_dependent_metadata_without_holding_direct_nomination (tests.test_role_guard.RoleGuardTests.test_scoped_delegation_origin_revocation_denies_dependent_metadata_without_holding_direct_nomination) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 155.653s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

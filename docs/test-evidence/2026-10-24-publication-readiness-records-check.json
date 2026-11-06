@@ -1,0 +1,35 @@
+{
+  "verified_at": "2026-10-24T01:33:41.269915+00:00",
+  "frozen_sources": 41,
+  "exact_process_ids_titles_and_partial_plan_rows": 122,
+  "families": 13,
+  "policy_interfaces": 101,
+  "supplements": 44,
+  "backlog_items": 43,
+  "current": "BUILD-FINANCE-PUBLICATION-READINESS",
+  "next": "BUILD-PRIVATE-READINESS-ACCEPTANCE",
+  "source_fingerprints_matched": 822,
+  "temporary_test_roles": 0,
+  "main_native_readiness_bindings": 0,
+  "main_native_v2_policy_versions": 0,
+  "original_document_receipts": 16,
+  "pending_support_jobs": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "schemas": {
+    "psl": "0051_publication_readiness_guards",
+    "test_psl": "0051_publication_readiness_guards"
+  },
+  "server": {
+    "server_session": 70486,
+    "url": "http://127.0.0.1:8000/cases/5b533c39-910f-412c-9290-44ee69f0c9c9/integrations/",
+    "unauthenticated_login_redirect": true,
+    "current_tested_source_loaded": true,
+    "case_data_mutated": false,
+    "new_browser_walkthrough": false
+  },
+  "next_run": 209,
+  "full_historical_audit": "Earlier integrity.json and final-adapter-check.json; not rerun by this final records check.",
+  "diagnostic_correction": "Initial records check queried nonexistent SupportResponseJob.state; corrected to status. No application source or runtime mutations."
+}

@@ -1,0 +1,19 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0055_current_accounting_document...test_bound_worker_reuses_original_native_report_and_receipt_without_another_effect (tests.test_factory_accounting_reuse.AccountingReceiptReuseTests.test_bound_worker_reuses_original_native_report_and_receipt_without_another_effect) ... ok
+test_superseded_document_cannot_reuse_historical_receipts_as_current_output (tests.test_factory_accounting_reuse.AccountingReceiptReuseTests.test_superseded_document_cannot_reuse_historical_receipts_as_current_output) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 131.699s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,22 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_source_and_contact_selectors_capture_unknowns_without_owner_defaults (tests.test_planning_forms.PlanningFormTests.test_actual_source_and_contact_selectors_capture_unknowns_without_owner_defaults) ... ok
+test_foreign_sources_contacts_private_records_and_management_count_tampering_are_held (tests.test_planning_forms.PlanningFormTests.test_foreign_sources_contacts_private_records_and_management_count_tampering_are_held) ... ok
+test_preview_limit_and_question_omission_preserve_old_packet_history (tests.test_planning_forms.PlanningFormTests.test_preview_limit_and_question_omission_preserve_old_packet_history) ... ok
+test_preview_rows_preserve_inputs_and_write_nothing_then_capture_all_questions (tests.test_planning_forms.PlanningFormTests.test_preview_rows_preserve_inputs_and_write_nothing_then_capture_all_questions) ... ok
+test_stale_predecessor_current_contact_and_coordination_permission_cannot_be_bypassed (tests.test_planning_forms.PlanningFormTests.test_stale_predecessor_current_contact_and_coordination_permission_cannot_be_bypassed) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 22.417s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 5 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

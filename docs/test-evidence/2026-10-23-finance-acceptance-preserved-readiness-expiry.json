@@ -1,0 +1,50 @@
+{
+  "assessment": 3,
+  "snapshot_unchanged": true,
+  "stored_result": {
+    "scope": "internal receipt readiness or public provider canary only",
+    "findings": [],
+    "capability_ready": true,
+    "operational_ready": false,
+    "real_model_evaluated": false,
+    "deployment_authorized": false,
+    "business_dispatch_verified": false,
+    "synthetic_provider_evaluated": false,
+    "operational_provider_canary_evaluated": false
+  },
+  "current_result": {
+    "capability_ready": false,
+    "findings": [
+      "Current health expired",
+      "Current receipt expired"
+    ],
+    "scope": "internal receipt readiness or public provider canary only",
+    "business_dispatch_verified": false,
+    "real_model_evaluated": false,
+    "operational_provider_canary_evaluated": false,
+    "synthetic_provider_evaluated": false,
+    "operational_ready": false,
+    "deployment_authorized": false
+  },
+  "policy": 280,
+  "observation_age_proofs": [
+    {
+      "observation": 4,
+      "sha256": "a1b9d95c190456d2fe3d2c06cf7ada38a88ee58ac95c514e1c9a5b8827577a16",
+      "kind": "health",
+      "age_seconds": 88121.821261,
+      "max_age_seconds": 86400
+    },
+    {
+      "observation": 5,
+      "sha256": "7f86698b424a226f1c57039c9ffd5fb9fb747e8e1dd504adf3f0b3b71ab0ca18",
+      "kind": "receipt",
+      "age_seconds": 88121.666998,
+      "max_age_seconds": 86400
+    }
+  ],
+  "review": 2,
+  "authority_unchanged": true,
+  "source_and_binding_unchanged": true,
+  "no_refresh_or_reauthorisation": true
+}

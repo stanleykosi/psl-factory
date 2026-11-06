@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader) ... FAIL
+
+======================================================================
+FAIL: test_closure_current_source_reader (tests.test_factory_execution_source_projection.DeliverySuccessorReaderTests.test_closure_current_source_reader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 78, in test_closure_current_source_reader
+    self.check_successor(module, f, 'report_evidence_id', 'closure_report')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_execution_source_projection.py", line 57, in check_successor
+    self.assertTrue(row['intake_current'], row)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'dossier': <DeliveryDossier: #501 · delivery-build>, 'data': {'dossier_id': 501, 'inputs': {'report_evidence_id': 136941, 'retrospective_id': 946, 'template_id': 1880}, 'protocol': 'factory-closure-intake/v1'}, 'report': {'as_of': '2026-11-04T19:17:03.823698+00:00', 'checks': [{'key': 'context', 'title': 'Current project scope', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [501]}, {'key': 'go_live', 'title': 'Go-live acceptance', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3274]}, {'key': 'hypercare', 'title': 'Release stability', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3275]}, {'key': 'archive', 'title': 'Project archive', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3276]}, {'key': 'handover', 'title': 'Support handover', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3277]}, {'key': 'retrospective', 'title': 'Retrospective', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [946]}, {'key': 'finance', 'title': 'Finance notification coverage', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [3278]}, {'key': 'report', 'title': 'PM closure report', 'status': 'current', 'summary': 'Current recorded evidence is available', 'references': [136941]}], 'ready_to_prepare': True, 'selected': {'retrospective_id': 946, 'report_evidence_id': 136941}, 'recorded_closure_id': None, 'closure_approved': False, 'debt_waived': False, 'deployment_authorized': False}, 'document': None, 'decision': None, 'closure': None, 'finding': 'This record/action has no active grant', 'intake_current': False, 'readiness_changed': False, 'pending_review': False, 'reviewer_names': [], 'decision_names': ['human'], 'can_review': False, 'review_verdicts': [], 'verdicts': [], 'can_correct': True, 'can_restart': False, 'can_settle': False, 'next_options': [], 'next_action': 'Review current closure evidence and prescribed decisions'}
+
+----------------------------------------------------------------------
+Ran 1 test in 16.018s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 3 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

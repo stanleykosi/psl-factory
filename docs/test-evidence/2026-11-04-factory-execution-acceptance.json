@@ -1,0 +1,178 @@
+{
+  "status": "BOUNDED_IMPLEMENTATION_VERIFIED",
+  "source_run": 623,
+  "parent_bounded_checkpoint": 594,
+  "passing_runs": {
+    "605": {
+      "tests": 40,
+      "unittest_seconds": 154.131,
+      "process_seconds": 162.975,
+      "database": "test_psl; PostgreSQL127.0.0.1:55432"
+    },
+    "606": {
+      "tests": 11,
+      "unittest_seconds": 20.786,
+      "process_seconds": 39.061,
+      "database": "test_psl; PostgreSQL127.0.0.1:55432"
+    },
+    "608": {
+      "tests": 3,
+      "unittest_seconds": 98.984,
+      "process_seconds": 109.713,
+      "database": "test_psl_factory_execution_contention_c19aaafd118a; PostgreSQL127.0.0.1:55432"
+    },
+    "610": {
+      "tests": 2,
+      "unittest_seconds": 186.286,
+      "process_seconds": 193.486,
+      "database": "test_psl; PostgreSQL127.0.0.1:55432"
+    },
+    "615": {
+      "tests": 12,
+      "unittest_seconds": 28.556,
+      "process_seconds": 45.31,
+      "database": "test_psl_factory_execution_contention_c19aaafd118a; PostgreSQL127.0.0.1:55432"
+    },
+    "618": {
+      "tests": 15,
+      "unittest_seconds": 46.488,
+      "process_seconds": 54.4,
+      "database": "test_psl_factory_execution_contention_c19aaafd118a; PostgreSQL127.0.0.1:55432"
+    },
+    "619": {
+      "tests": 9,
+      "unittest_seconds": 485.907,
+      "process_seconds": 493.869,
+      "database": "test_psl; PostgreSQL127.0.0.1:55432"
+    },
+    "620": {
+      "tests": 29,
+      "unittest_seconds": 838.757,
+      "process_seconds": 847.157,
+      "database": "test_psl; PostgreSQL127.0.0.1:55432"
+    },
+    "621": {
+      "tests": 9,
+      "unittest_seconds": 162.424,
+      "process_seconds": 174.683,
+      "database": "test_psl; PostgreSQL127.0.0.1:55432"
+    },
+    "623": {
+      "tests": 9,
+      "unittest_seconds": 55.604,
+      "process_seconds": 61.345,
+      "database": "test_psl; PostgreSQL127.0.0.1:55432"
+    }
+  },
+  "counts_are_overlapping_suites_not_unique_tests": true,
+  "implemented": [
+    "Typed nullable reviewed execution recovery; immutable starter/history/grants/lifetime allowance",
+    "Current execution identity through ten native adapters; independent human/source/receipt interfaces",
+    "Full bound accounting calculation, native Finance decision and actual internal recipient receipt",
+    "Governed invoice ACT04v2 native billing investigation with explicit agent.billing permission; no generic-provider fallback",
+    "Archive source-owner successor uses current viewer; missing worker holds continuation/status and appears in Exceptions",
+    "Additive0054 restores existing go-live reaffirmation evidence support without dropping accounting/receipt/signature guards"
+  ],
+  "native_browser": {
+    "client": "Codex native in-app browser",
+    "current_tab": 7,
+    "source_run": 623,
+    "fixture_source_run": 619,
+    "native_readback": {
+      "source_run": 623,
+      "fixture_source_run": 619,
+      "database": "psl_factory_source_ui_c484d169d676",
+      "case": "3ed70794-014d-45ad-b6ea-88a4399eb744",
+      "work": 2,
+      "starter_id": 5,
+      "old_head": 38,
+      "current_head": 40,
+      "current_head_author": 3,
+      "viewer_id": 3,
+      "intake_current": true,
+      "can_correct": true,
+      "can_advance": false,
+      "budget_used": 0,
+      "budget_limit": 0,
+      "visible_work_ids": [
+        2
+      ],
+      "agent_runs": 0,
+      "archive_indexes": 0,
+      "starter_read_grant_active": false,
+      "scope": "Source-owned successor only; no archive, support acceptance, closure or external file verification claimed"
+    },
+    "source_correction_performed_once_at_source619": true,
+    "current_source_reload_did_not_replay_correction": true,
+    "exception_queue_now_includes_work": true,
+    "keyboard_search_and_return_context": "queue=exceptions&q=Project%20records",
+    "desktop": {
+      "viewport": 1280,
+      "document": 1265,
+      "scroll": 1265
+    },
+    "narrow": {
+      "viewport": 390,
+      "document": 375,
+      "scroll": 375
+    },
+    "viewport_reset": true,
+    "get_rowsets_preserved": 331,
+    "get_indexes_preserved": 1562,
+    "screenshots": {
+      "docs\\test-evidence\\2026-11-04-factory-source-browser619-before.jpg": "49b692e80d4fa4723bbd088891d81565ce80f684b6932f97f6cd520115b50534",
+      "docs\\test-evidence\\2026-11-04-factory-source-browser619-corrected.jpg": "e574fe77edd3e067c7b4fe3562fb5cac8de7e07be2b93f003fe5e5cd0a8bccc5",
+      "docs\\test-evidence\\2026-11-04-factory-source-browser621-current.jpg": "e47c4889ed8d37d221614cb16c5eb705d316a19f07e21a3dbed4888e6c44c282",
+      "docs\\test-evidence\\2026-11-04-factory-source-browser621-exceptions-gap.jpg": "ec4f56ce373cdaefd71d11b116b181ad0c44ab51230197d4610c3d22e677da58",
+      "docs\\test-evidence\\2026-11-04-factory-source-browser623-exceptions.jpg": "99305537acd6a8d08ea0cd61b7dc34f2d59dd422872c47f4ee64ca3c68d5af19",
+      "docs\\test-evidence\\2026-11-04-factory-source-browser623-current.jpg": "f8164d1a50bd1c33ef1ec2bc1fde5082a6c3210f298c6f142aae7b9be1befa94",
+      "docs\\test-evidence\\2026-11-04-factory-source-browser623-narrow.jpg": "ccf5ec99346c7f88258872713198faf463daf9e3aca1f99201bf4c2673e103b5"
+    }
+  },
+  "retained_migrations": "All12 pre-existing application databases0054/0018; all331 rowsets/1562 indexes preserved; only exact kind restoration in one function and migration metadata",
+  "new_browser_database": "Synthetic0054 clone; not mislabelled as a fresh233-migration run",
+  "retained_failed_runs": [
+    595,
+    597,
+    604,
+    607,
+    609,
+    611,
+    612,
+    613,
+    614,
+    616,
+    617,
+    622
+  ],
+  "important_failure_distinctions": [
+    "612 and616 exposed correct authority guards; fixtures/expectations corrected, guards retained",
+    "611 exposed0050 importing older SQL and losing0048; repaired only by additive0054",
+    "Browser source621 exposed true exception-query omission; regression622 then fix623"
+  ],
+  "isolated_sources": "615 and618 verified in isolated working copies before exact hash-checked integration; original files/failed fixtures retained",
+  "real_provider_evaluation": "NOT_EVALUATED",
+  "external_live_integration": "NOT_EVALUATED",
+  "independent_uat": "NOT_EVALUATED",
+  "live_owner_values_added": false,
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "remaining_engineering": [
+    "Reviewed fresh receipt credential/binding recovery without resend",
+    "Sibling source-reader authority audit and unchanged-intake fresh reaffirmation where needed",
+    "Binding-aware existing accounting report receipt reuse",
+    "Remaining108 production connections and broader staged/quorum/veto/amount-FX/background/recovery/impact variants",
+    "Broader bound-principal end-to-end coverage beyond accounting/invoice evidence"
+  ],
+  "policy_slots": [
+    "Actual nominees/roles/independence/validity",
+    "Financial conventions/oracles and operational limits",
+    "Provider/target credentials and activation",
+    "Deployment, evaluation and UAT choices"
+  ],
+  "evidence": [
+    "docs/test-evidence/2026-11-04-factory-execution-acceptance.json",
+    "docs/test-evidence/2026-11-04-factory-execution-static623.json",
+    "docs/test-evidence/2026-11-04-factory-reaffirmation-preservation619-after.json"
+  ]
+}

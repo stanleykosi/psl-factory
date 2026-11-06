@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_shared_guard_matches_actual_decision_and_does_not_write_domain_records (tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records) ... ok
+test_csrf_ui_binding_selection_review_web_observation_and_agent (tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent) ... ok
+test_report_and_native_guard_enforce_case_access_before_record_lookup (tests.test_pilot_bindings.NativeGuardTests.test_report_and_native_guard_enforce_case_access_before_record_lookup) ... ok
+test_actual_csrf_ui_capture_export_agent_and_no_get_writes (tests.test_pilot_preflight.PilotTests.test_actual_csrf_ui_capture_export_agent_and_no_get_writes) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 61.818s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

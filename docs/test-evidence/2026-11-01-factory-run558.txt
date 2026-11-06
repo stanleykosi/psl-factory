@@ -1,0 +1,29 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_absence_after_approval_holds_new_issuance_but_retains_native_history (tests.test_factory_availability.FactoryAvailabilityTests.test_absence_after_approval_holds_new_issuance_but_retains_native_history) ... ok
+test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts (tests.test_factory_availability.FactoryAvailabilityTests.test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts) ... ok
+test_availability_change_after_claim_requires_current_routing_without_history_rewrite (tests.test_factory_availability.FactoryAvailabilityTests.test_availability_change_after_claim_requires_current_routing_without_history_rewrite) ... FAIL
+
+======================================================================
+FAIL: test_availability_change_after_claim_requires_current_routing_without_history_rewrite (tests.test_factory_availability.FactoryAvailabilityTests.test_availability_change_after_claim_requires_current_routing_without_history_rewrite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_availability.py", line 136, in test_availability_change_after_claim_requires_current_routing_without_history_rewrite
+    self.assertEqual(HumanTask.objects.filter(kind='factory_review',status='open').count(),1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 3 tests in 74.043s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 12 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

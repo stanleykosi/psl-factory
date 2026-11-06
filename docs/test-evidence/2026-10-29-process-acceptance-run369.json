@@ -1,0 +1,21 @@
+{
+  "run": 369,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_role_eligibility",
+    "tests.test_authority_recovery",
+    "tests.test_controlled_documents",
+    "tests.test_pilot_bindings.NativeGuardTests",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-369-process-acceptance.txt",
+  "started_at": "2026-10-29T13:54:28.082812+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 271.015
+}

@@ -1,0 +1,1 @@
+Synthetic closure 1, notice receipt 5, go-live receipt 6; actual internal application services used, no remote deployment or business approval.

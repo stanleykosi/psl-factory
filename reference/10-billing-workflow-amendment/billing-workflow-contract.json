@@ -1,0 +1,3388 @@
+{
+  "version": "0.5",
+  "status": "Proposed specification, not operational system or permission grant",
+  "source_claims": [
+    "U01",
+    "U02",
+    "U03",
+    "U04",
+    "U05",
+    "U06"
+  ],
+  "reuses_execution_primitives": [
+    "X01",
+    "X02",
+    "X03",
+    "X04",
+    "X05",
+    "X06",
+    "X07",
+    "X08"
+  ],
+  "commands": [
+    {
+      "action": "schedule.record",
+      "actor": "Authorized commercial/PMO/Finance role under configured grant",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "type": "object",
+            "properties": {
+              "schedule_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contract_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contract_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "currency": {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$",
+                "minLength": 3,
+                "maxLength": 3
+              },
+              "contract_value": {
+                "$ref": "#/$defs/Money"
+              },
+              "stages": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Stage"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "effective_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "approval_evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "schedule_id",
+              "contract_ref",
+              "contract_version",
+              "currency",
+              "contract_value",
+              "stages",
+              "effective_at",
+              "approval_evidence_refs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "schedule"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "schedule_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "configuration_incomplete"
+            ]
+          }
+        },
+        "required": [
+          "schedule_ref",
+          "state"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "New draft -> active or configuration_incomplete",
+      "guard": "One versioned contract basis and three distinct stage kinds. Do not invent missing terms; incomplete schedules allow evidence capture but block affected issuance. Activation checks approved source terms, not a new approval role."
+    },
+    {
+      "action": "milestone.complete",
+      "actor": "PMO",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "milestone": {
+            "type": "object",
+            "properties": {
+              "milestone_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "project_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "schedule_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "stage_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "completed_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "milestone_id",
+              "project_ref",
+              "schedule_ref",
+              "stage_id",
+              "completed_at",
+              "evidence_refs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "milestone"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "milestone_version_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "finance_handoff_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "milestone_version_ref",
+          "finance_handoff_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "planned/evidence_pending -> complete",
+      "guard": "PMO authority, matching project/stage, signed-SOW or configured UAT/completion evidence. No Finance approval. Commit milestone and one correlated durable Finance handoff/outbox record atomically; external notification delivery is asynchronous and separately receipted."
+    },
+    {
+      "action": "milestone.revise",
+      "actor": "PMO",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "milestone_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "milestone_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "requested_transition": {
+            "type": "string",
+            "enum": [
+              "dispute",
+              "supersede_with_replacement"
+            ]
+          },
+          "replacement_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "milestone_ref",
+          "milestone_version",
+          "requested_transition",
+          "replacement_evidence_refs",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "new_milestone_version_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "affected_invoice_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "new_milestone_version_ref",
+          "affected_invoice_refs"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "complete -> disputed or superseded with replacement",
+      "guard": "Never erase completion history. Existing invoices/payments remain; notify Finance for separate correction. Invalidate pending issuance based on old milestone version."
+    },
+    {
+      "action": "invoice.prepare",
+      "actor": "Finance or specifically permitted Finance preparation agent",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "invoice": {
+            "type": "object",
+            "properties": {
+              "invoice_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "obligation_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "corrects_invoice_ref": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "contract_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "schedule_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "stage_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "milestone_version_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "amount": {
+                "$ref": "#/$defs/Money"
+              },
+              "document_version_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "invoice_id",
+              "obligation_key",
+              "corrects_invoice_ref",
+              "contract_ref",
+              "schedule_ref",
+              "stage_id",
+              "milestone_version_ref",
+              "amount",
+              "document_version_ref",
+              "evidence_refs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "invoice"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "invoice_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "validation_state": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "draft"
+            ]
+          }
+        },
+        "required": [
+          "invoice_ref",
+          "validation_state"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "new/draft -> ready or draft",
+      "guard": "Approved schedule amount/tax/due terms and PMO completion evidence required. Unique primary issuance intent per contract+schedule+stage+milestone revision; revision cannot silently create duplicate invoice."
+    },
+    {
+      "action": "invoice.issue",
+      "actor": "Finance under configured issuance grant",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "invoice_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invoice_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "destination_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "invoice_ref",
+          "invoice_version",
+          "destination_ref"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "operation_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issuance_state": {
+            "type": "string",
+            "enum": [
+              "issuance_pending",
+              "issued",
+              "outcome_unknown"
+            ]
+          }
+        },
+        "required": [
+          "operation_ref",
+          "issuance_state"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "ready -> issuance_pending -> issued or outcome_unknown",
+      "guard": "Revalidate exact amount/document/milestone versions before side effect. No external invoice is issued by this specification. Runtime agents require separately configured Finance issuance permission; no default autonomous financial grant."
+    },
+    {
+      "action": "invoice.reconcile",
+      "actor": "Authorized Finance reconciler",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "operation_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "external_observation_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "operation_ref",
+          "external_observation_ref"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "invoice_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resolved_state": {
+            "type": "string",
+            "enum": [
+              "issued",
+              "ready",
+              "outcome_unknown"
+            ]
+          }
+        },
+        "required": [
+          "invoice_ref",
+          "resolved_state"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "outcome_unknown -> issued or ready or remains outcome_unknown",
+      "guard": "Trusted destination proves accepted invoice or definitive absence. Never retry when outcome unknown. Reuse original operation key for proven safe retry; no new invoice identity."
+    },
+    {
+      "action": "invoice.delivery_record",
+      "actor": "Authorized Finance adapter or Finance operator",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "invoice_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invoice_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "attempt_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_hash": {
+            "type": "string",
+            "minLength": 1
+          },
+          "destination_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "delivery_evidence_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "delivery_state": {
+            "type": "string",
+            "enum": [
+              "delivered",
+              "failed",
+              "outcome_unknown"
+            ]
+          }
+        },
+        "required": [
+          "invoice_ref",
+          "invoice_version",
+          "attempt_id",
+          "artifact_hash",
+          "destination_ref",
+          "delivery_evidence_ref",
+          "delivery_state"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "delivery_receipt_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "delivery_receipt_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "issued delivery pending -> delivered/failed/outcome_unknown",
+      "guard": "Delivery is distinct from issuance and payment. Attempt identity binds exact invoice/artifact/destination. Aggregate delivered is monotone once proven for that version/destination; late failure on another attempt cannot overwrite it. Contradictory observations for the same attempt require reconciliation. Duplicate delivery evidence has no money effect; retry delivery only, not invoice creation."
+    },
+    {
+      "action": "receipt.record",
+      "actor": "Finance",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "receipt": {
+            "type": "object",
+            "properties": {
+              "receipt_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "customer_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contract_ref": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "amount": {
+                "$ref": "#/$defs/Money"
+              },
+              "received_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "source_system_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "external_transaction_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "receipt_id",
+              "customer_ref",
+              "contract_ref",
+              "amount",
+              "received_at",
+              "source_system_ref",
+              "external_transaction_ref"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "receipt"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verification_state": {
+            "type": "string",
+            "enum": [
+              "reported",
+              "verification_pending"
+            ]
+          }
+        },
+        "required": [
+          "receipt_ref",
+          "verification_state"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "new -> reported/verification_pending",
+      "guard": "Unique source-system+external-transaction identity per tenant; conflicting amount is review, not overwrite. May arrive at any project stage and before an invoice. Customer reports do not equal verified cash."
+    },
+    {
+      "action": "receipt.verify",
+      "actor": "Authorized Finance verifier",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "receipt_ref",
+          "receipt_version",
+          "evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "verified_receipt_version_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "verified_receipt_version_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "reported/verification_pending -> verified",
+      "guard": "Actual trusted funds evidence and same-currency exact amount; atomically create immutable cash_lot_ref bound to receipt version and gross amount, with at most one unreversed active lot per logical transaction lineage. Mark verified only under configured verification rule. This does not post a ledger, move money or allocate automatically."
+    },
+    {
+      "action": "receipt.assign",
+      "actor": "Finance under configured customer/contract matching policy",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "contract_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assignment_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "receipt_ref",
+          "receipt_version",
+          "contract_ref",
+          "assignment_evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "assigned_receipt_version_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "assigned_receipt_version_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "unassigned -> assigned; reassignment creates new version",
+      "guard": "One receipt assigned to at most one contract in this bounded design. Verify same customer, currency and evidence. Existing invoice allocations must be reversed atomically before reassignment; no silent transfer of cash or double counting. Multi-contract remittances remain unmatched pending separately authorized split records and conservation rules, not arbitrary duplication."
+    },
+    {
+      "action": "allocation.apply",
+      "actor": "Finance under configured allocation policy",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "allocation": {
+            "type": "object",
+            "properties": {
+              "allocation_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "receipt_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "receipt_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "invoice_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contract_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "amount": {
+                "$ref": "#/$defs/Money"
+              },
+              "policy_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "allocation_id",
+              "receipt_ref",
+              "receipt_version",
+              "invoice_ref",
+              "contract_ref",
+              "amount",
+              "policy_ref",
+              "evidence_refs"
+            ],
+            "additionalProperties": false
+          },
+          "invoice_expected_version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "allocation",
+          "invoice_expected_version"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "allocation_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "balance_snapshot_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "allocation_ref",
+          "balance_snapshot_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "proposed -> applied",
+      "guard": "Verified receipt only; lock/CAS receipt capacity and invoice capacity atomically. Same tenant/customer/contract/currency and basis. Positive amount cannot exceed unallocated receipt or open invoice. Contract assignment is a separate receipt.assign operation, not an invoice allocation. Unapplied cash remains available without a null-invoice allocation. No FIFO default."
+    },
+    {
+      "action": "adjustment.record",
+      "actor": "Finance with configured correction authority",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "adjustment": {
+            "type": "object",
+            "properties": {
+              "adjustment_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "credit_note",
+                  "debit_note",
+                  "receipt_reversal",
+                  "allocation_reversal"
+                ]
+              },
+              "subject_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "amount": {
+                "$ref": "#/$defs/Money"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "authority_evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "external_document_ref": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "adjustment_id",
+              "kind",
+              "subject_ref",
+              "amount",
+              "reason",
+              "authority_evidence_refs",
+              "external_document_ref"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "adjustment"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "adjustment_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "affected_record_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "adjustment_ref",
+          "affected_record_refs"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "proposed -> authorized -> applied or rejected",
+      "guard": "Append linked compensating entry, never edit history. Actual policy/legal documentation required. Full receipt reversal equals original gross amount and is unique per immutable verified cash_lot_ref, including across different adjustment IDs; atomically reverse all associated allocations; credit/debit changes receivable only. Cash refund is outside these commands; no funds transfer permission."
+    },
+    {
+      "action": "allocation.reverse",
+      "actor": "Finance under configured correction policy",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "allocation_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allocation_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "allocation_ref",
+          "allocation_version",
+          "reason",
+          "evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "reversal_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "balance_snapshot_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "reversal_ref",
+          "balance_snapshot_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "applied -> reversed",
+      "guard": "At most one full reversal per allocation version; correction is reversal then new allocation. Reverse invoice allocation restores invoice open balance and receipt capacity in one commit. Replay returns original receipt."
+    },
+    {
+      "action": "balance.compute",
+      "actor": "Deterministic calculation service",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "contract_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_versions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "computation_rule_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "contract_ref",
+          "source_versions",
+          "as_of",
+          "computation_rule_ref"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "$ref": "#/$defs/Balance"
+          }
+        },
+        "required": [
+          "balance"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "snapshot -> new immutable snapshot",
+      "guard": "Exact decimal arithmetic by currency and agreed basis; no LLM arithmetic. Missing price, currency or source state is not zero. Invoice receivable and remaining contract cash are distinct views, not additive."
+    },
+    {
+      "action": "deployment.assess",
+      "actor": "Deterministic service with Finance evidence and PMO visibility",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "contract_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_versions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "policy_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "contract_ref",
+          "source_versions",
+          "as_of",
+          "policy_ref"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "assessment": {
+            "$ref": "#/$defs/Assessment"
+          }
+        },
+        "required": [
+          "assessment"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "new evidence -> refreshed advisory assessment",
+      "guard": "Show80% expectation; unknown numerator/denominator yields unknown. Current policy is unresolved. Never return release authorization, create a hard stop or assign an exception approver from this testimony. All existing release gates remain."
+    },
+    {
+      "action": "schedule.revise",
+      "actor": "Authorized contract schedule owner under existing commercial authority",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schedule_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_schedule_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "replacement_schedule": {
+            "type": "object",
+            "properties": {
+              "schedule_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contract_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contract_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "currency": {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$",
+                "minLength": 3,
+                "maxLength": 3
+              },
+              "contract_value": {
+                "$ref": "#/$defs/Money"
+              },
+              "stages": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Stage"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "effective_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "approval_evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "schedule_id",
+              "contract_ref",
+              "contract_version",
+              "currency",
+              "contract_value",
+              "stages",
+              "effective_at",
+              "approval_evidence_refs"
+            ],
+            "additionalProperties": false
+          },
+          "amendment_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "schedule_ref",
+          "expected_schedule_version",
+          "replacement_schedule",
+          "amendment_evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "new_schedule_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "superseded_schedule_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "affected_invoice_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "new_schedule_ref",
+          "superseded_schedule_ref",
+          "affected_invoice_refs"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "active/configuration_incomplete -> superseded; replacement draft -> active/configuration_incomplete",
+      "guard": "Validate approved amendment; atomically switch current pointer, invalidate undispatched obsolete intents and retain old obligations. No automatic invoice reissue or receipt reassignment. Known external effects reconcile separately."
+    },
+    {
+      "action": "schedule.cancel",
+      "actor": "Authorized contract owner under configured cancellation authority",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schedule_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_schedule_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "authority_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "schedule_ref",
+          "expected_schedule_version",
+          "reason",
+          "authority_evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "cancellation_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "affected_invoice_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "cancellation_ref",
+          "affected_invoice_refs"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "draft/configuration_incomplete/active -> cancelled",
+      "guard": "Sticky stop for future dispatch. Cancellation does not extinguish issued obligations, reverse cash or approve refunds; retain and route unresolved obligations to Finance. No cancellation-policy grant is created here."
+    },
+    {
+      "action": "invoice.cancel",
+      "actor": "Finance under configured cancellation authority",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "invoice_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invoice_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "invoice_ref",
+          "invoice_version",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "operation_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resolved_state": {
+            "type": "string",
+            "enum": [
+              "voided",
+              "outcome_unknown",
+              "issued"
+            ]
+          },
+          "correction_required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "operation_ref",
+          "resolved_state",
+          "correction_required"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "draft/ready -> voided; pending/unknown -> reconciliation; issued -> issued with correction_required",
+      "guard": "Before any external dispatch cancel local intent. Race with external acceptance uses X03 query/reconcile; confirmed issued remains issued and requires authorized correction, never disappears. No retries after sticky cancellation except reconciliation."
+    },
+    {
+      "action": "invoice.correct",
+      "actor": "Finance under configured correction authority",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "invoice_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invoice_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "authorized_adjustment_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "replacement_document_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "correction_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "invoice_ref",
+          "invoice_version",
+          "authorized_adjustment_ref",
+          "replacement_document_ref",
+          "correction_evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "correction_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invoice_state": {
+            "type": "string",
+            "enum": [
+              "issued",
+              "superseded",
+              "voided"
+            ]
+          },
+          "correction_state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "applied",
+              "outcome_unknown"
+            ]
+          }
+        },
+        "required": [
+          "correction_ref",
+          "invoice_state",
+          "correction_state"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "issued -> issued/superseded/voided only with verified authorized correction; external uncertainty -> correction outcome_unknown while original invoice stays issued",
+      "guard": "Apply approved legal/accounting correction via X03 with unique semantic key and evidence. Canonical obligation_key plus corrects_invoice_ref links original and successor. Count one current obligation only. Unknown correction retains known original issued obligation and marks net balance requires_adjustment_review until reconciled; never drop it by changing issuance state to unknown. Superseded presentation retains outstanding obligation linkage; do not double-count successor invoice. Existing allocations must be reconciled atomically before reducing face below allocated amount. Authorized adjustment alone is not proof external correction succeeded."
+    },
+    {
+      "action": "receipt.reject",
+      "actor": "Finance verifier",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rejection_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "receipt_ref",
+          "receipt_version",
+          "reason",
+          "rejection_evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_version_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "receipt_version_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "reported/verification_pending -> rejected",
+      "guard": "Only before verification. Retain rejected evidence and source identity; no money effect. Verified receipt needs authorized full reversal, not rejection."
+    },
+    {
+      "action": "receipt.correct",
+      "actor": "Finance under configured correction authority",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "corrected_amount": {
+            "$ref": "#/$defs/Money"
+          },
+          "corrected_received_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "correction_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "receipt_ref",
+          "receipt_version",
+          "corrected_amount",
+          "corrected_received_at",
+          "reason",
+          "correction_evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "new_receipt_version_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "new_receipt_version_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "reported/verification_pending/rejected -> reported corrected revision; reversed -> reported successor only with approved correction evidence",
+      "guard": "Preserve original source transaction and logical receipt identity; new immutable revision, not duplicate cash. Cannot edit verified active receipt: full reversal first. A reversed receipt correction creates an explicitly linked successor under one transaction lineage with exactly one active verified gross amount. correction_of_version links the prior immutable receipt version. Verification and contract matching run again; verification creates a new immutable cash_lot_ref. Receipt-reversal Adjustment.subject_ref must target that verified cash lot; uniqueness and amount guards are per lot. Previous reversal cannot reverse the successor lot. Exactly one unreversed active verified lot per logical transaction lineage; snapshots sum all gross lots minus lot reversals once."
+    },
+    {
+      "action": "milestone.resolve",
+      "actor": "PMO",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "milestone_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "milestone_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "reinstate_complete",
+              "supersede"
+            ]
+          },
+          "resolution_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "milestone_ref",
+          "milestone_version",
+          "resolution",
+          "resolution_evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "new_milestone_version_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "finance_handoff_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "new_milestone_version_ref",
+          "finance_handoff_ref"
+        ],
+        "additionalProperties": false
+      },
+      "transition": "disputed -> complete or superseded with new evidence/version",
+      "guard": "Re-establish configured business predicate under PMO authority. Preserve original invoice intent lineage: resolution cannot create another stage invoice by itself. Finance reconciles existing invoice before any authorized corrective issuance."
+    }
+  ],
+  "records": {
+    "Money": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "basis_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "amount",
+        "currency",
+        "basis_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Stage": {
+      "type": "object",
+      "properties": {
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "signed_sow",
+            "uat",
+            "completion"
+          ]
+        },
+        "trigger_rule_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_terms_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "stage_id",
+        "kind",
+        "trigger_rule_ref",
+        "amount",
+        "due_terms_ref",
+        "contract_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Schedule": {
+      "type": "object",
+      "properties": {
+        "schedule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "contract_value": {
+          "$ref": "#/$defs/Money"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "configuration_incomplete",
+            "active",
+            "superseded",
+            "cancelled"
+          ]
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approval_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schedule_id",
+        "version",
+        "contract_ref",
+        "contract_version",
+        "currency",
+        "contract_value",
+        "stages",
+        "state",
+        "effective_at",
+        "approval_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Milestone": {
+      "type": "object",
+      "properties": {
+        "milestone_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "evidence_pending",
+            "complete",
+            "disputed",
+            "superseded"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pmo_actor_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "milestone_id",
+        "project_ref",
+        "schedule_ref",
+        "stage_id",
+        "state",
+        "version",
+        "completed_at",
+        "pmo_actor_ref",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Invoice": {
+      "type": "object",
+      "properties": {
+        "invoice_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obligation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corrects_invoice_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_state": {
+          "type": "string",
+          "enum": [
+            "none",
+            "pending",
+            "applied",
+            "outcome_unknown"
+          ]
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "milestone_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "document_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready",
+            "issuance_pending",
+            "issued",
+            "outcome_unknown",
+            "superseded",
+            "voided"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "external_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delivery_state": {
+          "type": "string",
+          "enum": [
+            "not_sent",
+            "pending",
+            "delivered",
+            "failed",
+            "outcome_unknown"
+          ]
+        },
+        "settlement_state": {
+          "type": "string",
+          "enum": [
+            "unpaid",
+            "partially_settled",
+            "settled",
+            "adjustment_review"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "invoice_id",
+        "obligation_key",
+        "corrects_invoice_ref",
+        "correction_state",
+        "contract_ref",
+        "schedule_ref",
+        "stage_id",
+        "milestone_version_ref",
+        "amount",
+        "document_version_ref",
+        "state",
+        "version",
+        "external_ref",
+        "delivery_state",
+        "settlement_state",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Receipt": {
+      "type": "object",
+      "properties": {
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cash_lot_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_of_version": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "customer_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verification_state": {
+          "type": "string",
+          "enum": [
+            "reported",
+            "verification_pending",
+            "verified",
+            "rejected",
+            "reversed"
+          ]
+        },
+        "allocation_state": {
+          "type": "string",
+          "enum": [
+            "unallocated",
+            "partially_allocated",
+            "fully_allocated"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_system_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external_transaction_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verification_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "receipt_id",
+        "cash_lot_ref",
+        "correction_of_version",
+        "customer_ref",
+        "contract_ref",
+        "amount",
+        "received_at",
+        "verification_state",
+        "allocation_state",
+        "version",
+        "source_system_ref",
+        "external_transaction_ref",
+        "verification_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Allocation": {
+      "type": "object",
+      "properties": {
+        "allocation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "invoice_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "applied",
+            "reversed"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "finance_actor_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reversal_of": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "allocation_id",
+        "receipt_ref",
+        "receipt_version",
+        "invoice_ref",
+        "contract_ref",
+        "amount",
+        "state",
+        "version",
+        "finance_actor_ref",
+        "policy_ref",
+        "reversal_of",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Adjustment": {
+      "type": "object",
+      "properties": {
+        "adjustment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "credit_note",
+            "debit_note",
+            "receipt_reversal",
+            "allocation_reversal"
+          ]
+        },
+        "subject_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "authorized",
+            "applied",
+            "rejected"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authority_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "external_document_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "adjustment_id",
+        "kind",
+        "subject_ref",
+        "amount",
+        "reason",
+        "state",
+        "version",
+        "authority_evidence_refs",
+        "external_document_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Assessment": {
+      "type": "object",
+      "properties": {
+        "assessment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "policy_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "qualifying_paid": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "threshold_percent": {
+          "const": "80"
+        },
+        "expectation_status": {
+          "type": "string",
+          "enum": [
+            "below_expectation",
+            "meets_expectation",
+            "unknown"
+          ]
+        },
+        "deployment_policy_status": {
+          "type": "string",
+          "enum": [
+            "unresolved",
+            "configured_block",
+            "configured_exception",
+            "configured_advisory"
+          ]
+        },
+        "release_authorized": {
+          "const": false
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "assessment_id",
+        "contract_ref",
+        "as_of",
+        "source_versions",
+        "policy_ref",
+        "qualifying_paid",
+        "denominator",
+        "threshold_percent",
+        "expectation_status",
+        "deployment_policy_status",
+        "release_authorized",
+        "gaps"
+      ],
+      "additionalProperties": false
+    },
+    "Balance": {
+      "type": "object",
+      "properties": {
+        "snapshot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "issued_invoice_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_credit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_debit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cash_allocated_to_invoices": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_receivable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verified_cash_assigned_to_contract": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unallocated_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_value": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "remaining_contract_cash_target": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "excess_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "computation_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "valid",
+            "blocked_missing_data",
+            "requires_adjustment_review"
+          ]
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "contract_ref",
+        "as_of",
+        "currency",
+        "source_versions",
+        "issued_invoice_total",
+        "invoice_credit_total",
+        "invoice_debit_total",
+        "cash_allocated_to_invoices",
+        "invoice_receivable",
+        "verified_cash_assigned_to_contract",
+        "unallocated_contract_cash",
+        "contract_value",
+        "remaining_contract_cash_target",
+        "excess_contract_cash",
+        "computation_rule_ref",
+        "status"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "Money": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "basis_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "amount",
+        "currency",
+        "basis_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Stage": {
+      "type": "object",
+      "properties": {
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "signed_sow",
+            "uat",
+            "completion"
+          ]
+        },
+        "trigger_rule_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_terms_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "stage_id",
+        "kind",
+        "trigger_rule_ref",
+        "amount",
+        "due_terms_ref",
+        "contract_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Schedule": {
+      "type": "object",
+      "properties": {
+        "schedule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "contract_value": {
+          "$ref": "#/$defs/Money"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "configuration_incomplete",
+            "active",
+            "superseded",
+            "cancelled"
+          ]
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approval_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schedule_id",
+        "version",
+        "contract_ref",
+        "contract_version",
+        "currency",
+        "contract_value",
+        "stages",
+        "state",
+        "effective_at",
+        "approval_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Milestone": {
+      "type": "object",
+      "properties": {
+        "milestone_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "evidence_pending",
+            "complete",
+            "disputed",
+            "superseded"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pmo_actor_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "milestone_id",
+        "project_ref",
+        "schedule_ref",
+        "stage_id",
+        "state",
+        "version",
+        "completed_at",
+        "pmo_actor_ref",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Invoice": {
+      "type": "object",
+      "properties": {
+        "invoice_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obligation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corrects_invoice_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_state": {
+          "type": "string",
+          "enum": [
+            "none",
+            "pending",
+            "applied",
+            "outcome_unknown"
+          ]
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "milestone_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "document_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready",
+            "issuance_pending",
+            "issued",
+            "outcome_unknown",
+            "superseded",
+            "voided"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "external_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delivery_state": {
+          "type": "string",
+          "enum": [
+            "not_sent",
+            "pending",
+            "delivered",
+            "failed",
+            "outcome_unknown"
+          ]
+        },
+        "settlement_state": {
+          "type": "string",
+          "enum": [
+            "unpaid",
+            "partially_settled",
+            "settled",
+            "adjustment_review"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "invoice_id",
+        "obligation_key",
+        "corrects_invoice_ref",
+        "correction_state",
+        "contract_ref",
+        "schedule_ref",
+        "stage_id",
+        "milestone_version_ref",
+        "amount",
+        "document_version_ref",
+        "state",
+        "version",
+        "external_ref",
+        "delivery_state",
+        "settlement_state",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Receipt": {
+      "type": "object",
+      "properties": {
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cash_lot_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_of_version": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "customer_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verification_state": {
+          "type": "string",
+          "enum": [
+            "reported",
+            "verification_pending",
+            "verified",
+            "rejected",
+            "reversed"
+          ]
+        },
+        "allocation_state": {
+          "type": "string",
+          "enum": [
+            "unallocated",
+            "partially_allocated",
+            "fully_allocated"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_system_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external_transaction_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verification_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "receipt_id",
+        "cash_lot_ref",
+        "correction_of_version",
+        "customer_ref",
+        "contract_ref",
+        "amount",
+        "received_at",
+        "verification_state",
+        "allocation_state",
+        "version",
+        "source_system_ref",
+        "external_transaction_ref",
+        "verification_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Allocation": {
+      "type": "object",
+      "properties": {
+        "allocation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "invoice_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "applied",
+            "reversed"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "finance_actor_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reversal_of": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "allocation_id",
+        "receipt_ref",
+        "receipt_version",
+        "invoice_ref",
+        "contract_ref",
+        "amount",
+        "state",
+        "version",
+        "finance_actor_ref",
+        "policy_ref",
+        "reversal_of",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Adjustment": {
+      "type": "object",
+      "properties": {
+        "adjustment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "credit_note",
+            "debit_note",
+            "receipt_reversal",
+            "allocation_reversal"
+          ]
+        },
+        "subject_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "authorized",
+            "applied",
+            "rejected"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authority_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "external_document_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "adjustment_id",
+        "kind",
+        "subject_ref",
+        "amount",
+        "reason",
+        "state",
+        "version",
+        "authority_evidence_refs",
+        "external_document_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Assessment": {
+      "type": "object",
+      "properties": {
+        "assessment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "policy_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "qualifying_paid": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "threshold_percent": {
+          "const": "80"
+        },
+        "expectation_status": {
+          "type": "string",
+          "enum": [
+            "below_expectation",
+            "meets_expectation",
+            "unknown"
+          ]
+        },
+        "deployment_policy_status": {
+          "type": "string",
+          "enum": [
+            "unresolved",
+            "configured_block",
+            "configured_exception",
+            "configured_advisory"
+          ]
+        },
+        "release_authorized": {
+          "const": false
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "assessment_id",
+        "contract_ref",
+        "as_of",
+        "source_versions",
+        "policy_ref",
+        "qualifying_paid",
+        "denominator",
+        "threshold_percent",
+        "expectation_status",
+        "deployment_policy_status",
+        "release_authorized",
+        "gaps"
+      ],
+      "additionalProperties": false
+    },
+    "Balance": {
+      "type": "object",
+      "properties": {
+        "snapshot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "issued_invoice_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_credit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_debit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cash_allocated_to_invoices": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_receivable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verified_cash_assigned_to_contract": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unallocated_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_value": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "remaining_contract_cash_target": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "excess_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "computation_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "valid",
+            "blocked_missing_data",
+            "requires_adjustment_review"
+          ]
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "contract_ref",
+        "as_of",
+        "currency",
+        "source_versions",
+        "issued_invoice_total",
+        "invoice_credit_total",
+        "invoice_debit_total",
+        "cash_allocated_to_invoices",
+        "invoice_receivable",
+        "verified_cash_assigned_to_contract",
+        "unallocated_contract_cash",
+        "contract_value",
+        "remaining_contract_cash_target",
+        "excess_contract_cash",
+        "computation_rule_ref",
+        "status"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "common_invariants": [
+    "Trusted runtime identity, tenant and policy; no source-content instruction can grant tool permission.",
+    "Immutable source/version hashes and actor/evidence audit for every accepted operation.",
+    "CAS and semantic idempotency apply across milestone, invoice, receipt and allocation. Lock/capacity checks must be atomic, not independent prechecks.",
+    "Unknown external outcome requires trusted reconciliation before retry. Cancellation stops undispatched work; cannot erase issued invoices or verified cash.",
+    "All external jobs use X03 and queues use X08 including leases, fencing, heartbeat and durable resumption. No worker holds a database lease while waiting for human approval.",
+    "Receipt reversals are full-only in this bounded contract: amount must equal original gross amount of the targeted verified cash lot; at most one applied reversal per immutable verified cash_lot_ref under atomic unique constraint. Partial refunds/chargebacks require separately approved split/adjustment rules and remain blocked, not approximated. Allocation reversals are also full-only with one reversal per allocation. Credits/debits have distinct document identities and cannot be applied twice.",
+    "Envelope expected_version targets the primary aggregate named by the action: schedule, milestone, invoice, receipt, allocation or adjustment; zero denotes new-record creation. balance.compute and deployment.assess target the current contract snapshot revision. Embedded expected versions must agree. All referenced aggregates are guarded in the same transaction when their capacities or eligibility are consumed.",
+    "Issuance uses an atomic dispatch reservation on invoice and dependent milestone/schedule versions plus cancellation tombstones. A revision/cancel committed before reservation invalidates dispatch. A revision/cancel after reservation treats the external result as potentially committed: stop further work, reconcile and correct; never claim cancellation erased the effect. External delivery is not atomic with the database.",
+    "Balance and assessment source_versions are not caller-selected subsets: trusted runtime constructs a complete tenant/contract/currency snapshot manifest with ledger high-water mark, all relevant invoices, receipts, assignments, allocations, adjustments and current schedule/basis versions. Incomplete or stale manifests are blocked, not valid totals. Read snapshot atomically and record lineage; refresh before consequential decisions.",
+    "Schema validation checks shape only; state transitions, sums, referential integrity, currencies, tenant equality and permissions require deterministic guards.",
+    "AI may gather evidence, identify mismatches and propose allocations/corrections; it cannot choose accounting policy, invent payments, certify milestone completion or grant deployment authority.",
+    "Quoted PMO testimony is source evidence for design, not a live action authorization."
+  ],
+  "calculation_spec": {
+    "invoice_open": "For each invoice: issued face + applied debit notes - applied credit notes - active verified-cash invoice allocations. Must not be negative; excess credit or reversal conflicts require adjustment_review, not clamp-and-hide.",
+    "invoice_receivable": "Sum nonnegative open amounts for issued invoices in one currency and basis; no draft/pending/unknown invoices. If data incomplete expose blocked_missing_data rather than a valid total.",
+    "contract_cash": "Sum gross immutable verified cash lots assigned to this contract at the snapshot, including later-reversed lots, minus each applied lot reversal exactly once. Count each cash lot once regardless of invoice allocations. A100 lot reversed then corrected successor80 lot yields100-100+80=80. Never filter reversed lots out and subtract them again.",
+    "unallocated_contract_cash": "Contract cash less active invoice cash allocations. Contract-level assignment establishes ownership, not invoice settlement. A receipt cannot be assigned twice; assignment moves conserve capacity.",
+    "contract_remaining": "max(contract value - contract cash,0), explicitly a cash-target view, not accounts receivable or overdue debt.",
+    "excess_contract_cash": "max(contract cash - contract value,0); report unapplied excess, do not auto-refund, recognize revenue or credit another contract.",
+    "paid_percentage": "Only with approved qualifying-cash and contract-value basis and strictly positive denominator: qualifying paid / agreed denominator *100. Credits, tax withholding, chargebacks, FX and fee treatment require policy. Use exact comparison 5*qualifying_paid >= 4*denominator for80%, not rounded display. Do not infer eligibility from invoice settlement."
+  }
+}

@@ -1,0 +1,20 @@
+Found 2 test(s).
+Using existing test database for alias 'default'...
+
+System check identified no issues (0 silenced).
+.F
+======================================================================
+FAIL: test_receipt_database_permission_error_is_sanitised (tests.test_publication_readiness_concurrency.PublicationReadinessConcurrencyTests.test_receipt_database_permission_error_is_sanitised)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_publication_readiness_concurrency.py", line 50, in test_receipt_database_permission_error_is_sanitised
+    with self.assertRaisesRegex(ConnectionError,'^Scoped native publication receipt lookup unavailable$'):FinancePublicationReadinessAdapter().receipts(f['job'])
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ConnectionError not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 129.862s
+
+FAILED (failures=1)
+Preserving test database for alias 'default'...
+

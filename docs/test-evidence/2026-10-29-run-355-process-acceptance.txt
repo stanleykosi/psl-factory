@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_csrf_ui_source_choices_agent_and_sql_native_identity_guards (tests.test_native_validation.NativeValidationTests.test_csrf_ui_source_choices_agent_and_sql_native_identity_guards) ... ok
+test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment (tests.test_native_validation.NativeValidationTests.test_current_source_permissions_and_recorder_revocation_protect_history_and_reassessment) ... ok
+test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance (tests.test_native_validation.NativeValidationTests.test_late_reservation_pending_unknown_and_supplied_actuals_cannot_establish_native_acceptance) ... ok
+test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance (tests.test_native_validation.NativeValidationTests.test_native_criteria_missing_revoked_expired_and_synthetic_promotion_hold_only_acceptance) ... ok
+test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance (tests.test_native_validation.NativeValidationTests.test_operational_flagged_fixture_uses_native_evidence_without_claiming_live_or_external_acceptance) ... ok
+test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance (tests.test_native_validation.NativeValidationTests.test_real_native_positive_and_negative_workers_feed_independent_owner_acceptance) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 67.969s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

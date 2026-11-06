@@ -1,0 +1,17 @@
+{
+  "main_version": "0027_reconstitution_guards",
+  "original_main_tables_preserved": 286,
+  "old_functions_preserved": 59,
+  "old_triggers_preserved": 311,
+  "old_constraints_preserved": 1515,
+  "functions": 60,
+  "triggers": 315,
+  "constraints": 1538,
+  "old_migration_sources": 157,
+  "frozen_sources": 41,
+  "interfaces": 109,
+  "supplements": 52,
+  "processes_partial": 122,
+  "families": 13,
+  "actual_authority_or_policy_installed": false
+}

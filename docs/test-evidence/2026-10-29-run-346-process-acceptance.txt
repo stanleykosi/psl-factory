@@ -1,0 +1,185 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_corrections (unittest.loader._FailedTest.test_corrections) ... ERROR
+test_closed_binding_validator_and_foreign_sources (tests.test_pilot_bindings.NativeGuardTests.test_closed_binding_validator_and_foreign_sources) ... ok
+test_csrf_ui_binding_selection_review_web_observation_and_agent (tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent) ... ok
+test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage) ... ok
+test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates (tests.test_pilot_bindings.NativeGuardTests.test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates) ... ok
+test_missing_revoked_authority_and_observer_rights_are_distinct (tests.test_pilot_bindings.NativeGuardTests.test_missing_revoked_authority_and_observer_rights_are_distinct) ... ok
+test_sequence_signature_and_milestone_guards_use_actual_native_services (tests.test_pilot_bindings.NativeGuardTests.test_sequence_signature_and_milestone_guards_use_actual_native_services) ... ok
+test_shared_guard_matches_actual_decision_and_does_not_write_domain_records (tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records) ... ok
+test_sql_history_identity_and_self_review_guards (tests.test_pilot_bindings.NativeGuardTests.test_sql_history_identity_and_self_review_guards) ... ok
+test_actual_native_receipts_same_process_is_insufficient (tests.test_pilot_bindings.RuntimeBindingTests.test_actual_native_receipts_same_process_is_insufficient) ... ok
+test_all_sixteen_native_worker_entrypoints_support_observe_only (tests.test_pilot_bindings.RuntimeBindingTests.test_all_sixteen_native_worker_entrypoints_support_observe_only) ... ok
+test_expired_rotated_revoked_and_bad_signatures_never_use_older_success (tests.test_pilot_bindings.RuntimeBindingTests.test_expired_rotated_revoked_and_bad_signatures_never_use_older_success) ... ok
+test_no_role_alias_secret_installation_or_cross_family_claim (tests.test_pilot_bindings.RuntimeBindingTests.test_no_role_alias_secret_installation_or_cross_family_claim) ... ok
+test_correction_apply_and_note_delivery_preserve_native_controls (tests.test_pilot_domain_guards.FinanceGuardTests.test_correction_apply_and_note_delivery_preserve_native_controls) ... ERROR
+test_issue_and_delivery_use_actual_native_review_reservation_and_receipts (tests.test_pilot_domain_guards.FinanceGuardTests.test_issue_and_delivery_use_actual_native_review_reservation_and_receipts) ... ok
+test_private_release_reuses_current_human_authority_and_packet_guards (tests.test_pilot_domain_guards.PrivateBaaSGuardTests.test_private_release_reuses_current_human_authority_and_packet_guards) ... FAIL
+test_actual_readiness_health_review_and_revision_change_without_probe_or_write (tests.test_pilot_preflight.NativePilotTests.test_actual_readiness_health_review_and_revision_change_without_probe_or_write) ... ok
+test_actual_unknown_handoff_receipt_head_is_observed_without_replay (tests.test_pilot_preflight.NativePilotTests.test_actual_unknown_handoff_receipt_head_is_observed_without_replay) ... ok
+test_current_scoped_policy_source_rights_are_required_to_export (tests.test_pilot_preflight.NativePilotTests.test_current_scoped_policy_source_rights_are_required_to_export) ... ok
+test_foreign_integration_and_domain_job_denied (tests.test_pilot_preflight.NativePilotTests.test_foreign_integration_and_domain_job_denied) ... ok
+test_private_response_job_access_is_native_and_export_rechecks_it (tests.test_pilot_preflight.NativePilotTests.test_private_response_job_access_is_native_and_export_rechecks_it) ... ok
+test_selected_protection_proof_metadata_never_claims_native_restore (tests.test_pilot_preflight.NativePilotTests.test_selected_protection_proof_metadata_never_claims_native_restore) ... ok
+test_synthetic_provider_evaluation_is_classified_without_new_network_calls (tests.test_pilot_preflight.NativePilotTests.test_synthetic_provider_evaluation_is_classified_without_new_network_calls) ... ok
+test_actual_csrf_ui_capture_export_agent_and_no_get_writes (tests.test_pilot_preflight.PilotTests.test_actual_csrf_ui_capture_export_agent_and_no_get_writes) ... ok
+test_author_revocation_source_changes_contract_successors_and_expiry (tests.test_pilot_preflight.PilotTests.test_author_revocation_source_changes_contract_successors_and_expiry) ... ok
+test_case_lookup_boundary_and_foreign_participants (tests.test_pilot_preflight.PilotTests.test_case_lookup_boundary_and_foreign_participants) ... ok
+test_current_participant_grants_and_inactive_users_are_holds (tests.test_pilot_preflight.PilotTests.test_current_participant_grants_and_inactive_users_are_holds) ... ok
+test_inactive_archived_style_actor_cannot_read_history_or_regain_authority (tests.test_pilot_preflight.PilotTests.test_inactive_archived_style_actor_cannot_read_history_or_regain_authority) ... ok
+test_only_selected_dependencies_and_policy_heads_invalidate (tests.test_pilot_preflight.PilotTests.test_only_selected_dependencies_and_policy_heads_invalidate) ... ok
+test_postgresql_history_and_identity_guards (tests.test_pilot_preflight.PilotTests.test_postgresql_history_and_identity_guards) ... ok
+test_selected_read_only_pack_idempotence_unknowns_and_no_business_writes (tests.test_pilot_preflight.PilotTests.test_selected_read_only_pack_idempotence_unknowns_and_no_business_writes) ... ok
+test_technical_findings_are_observed_and_redacted (tests.test_pilot_preflight.PilotTests.test_technical_findings_are_observed_and_redacted) ... ok
+test_typed_validator_rejects_unknowns_effects_duplicates_and_budgets (tests.test_pilot_preflight.PilotTests.test_typed_validator_rejects_unknowns_effects_duplicates_and_budgets) ... ok
+test_admin_flag_does_not_grant_record_access (tests.test_application.ApplicationTests.test_admin_flag_does_not_grant_record_access) ... ok
+test_agent_rejects_uncited_output_and_cross_scope_read (tests.test_application.ApplicationTests.test_agent_rejects_uncited_output_and_cross_scope_read) ... ok
+test_agent_source_instructions_are_cited_data_only (tests.test_application.ApplicationTests.test_agent_source_instructions_are_cited_data_only) ... ok
+test_all_122_original_ids_visible_in_coverage (tests.test_application.ApplicationTests.test_all_122_original_ids_visible_in_coverage) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_cost_revision_cannot_reuse_decisions (tests.test_application.ApplicationTests.test_cost_revision_cannot_reuse_decisions) ... ok
+test_cross_case_evidence_cannot_form_baseline (tests.test_application.ApplicationTests.test_cross_case_evidence_cannot_form_baseline) ... ok
+test_csrf_and_template_escaping (tests.test_application.ApplicationTests.test_csrf_and_template_escaping) ... ok
+test_database_blocks_history_rewrites_even_via_queryset (tests.test_application.ApplicationTests.test_database_blocks_history_rewrites_even_via_queryset) ... ok
+test_duplicate_milestone_has_one_outbox_intent (tests.test_application.ApplicationTests.test_duplicate_milestone_has_one_outbox_intent) ... ok
+test_expired_worker_cannot_finish_after_reclaim (tests.test_application.ApplicationTests.test_expired_worker_cannot_finish_after_reclaim) ... ok
+test_human_costing_order_and_separate_review (tests.test_application.ApplicationTests.test_human_costing_order_and_separate_review) ... ok
+test_lookup_failure_does_not_dispatch (tests.test_application.ApplicationTests.test_lookup_failure_does_not_dispatch) ... ok
+test_no_signature_before_plan_and_cost_decisions (tests.test_application.ApplicationTests.test_no_signature_before_plan_and_cost_decisions) ... ok
+test_policy_expiry_invalid_timezone_and_synthetic_isolation (tests.test_application.ApplicationTests.test_policy_expiry_invalid_timezone_and_synthetic_isolation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+test_policy_partial_activation_stale_revoke_and_version_history (tests.test_application.ApplicationTests.test_policy_partial_activation_stale_revoke_and_version_history) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_requires_postgresql (tests.test_application.ApplicationTests.test_requires_postgresql) ... ok
+test_reserved_effect_payload_and_confirmed_receipt_are_immutable (tests.test_application.ApplicationTests.test_reserved_effect_payload_and_confirmed_receipt_are_immutable) ... ok
+test_review_binds_exact_version_and_does_not_review_next_revision (tests.test_application.ApplicationTests.test_review_binds_exact_version_and_does_not_review_next_revision) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_stale_command_has_no_mutation (tests.test_application.ApplicationTests.test_stale_command_has_no_mutation) ... ok
+test_superseded_role_policy_can_be_reapproved_without_rewriting_history (tests.test_application.ApplicationTests.test_superseded_role_policy_can_be_reapproved_without_rewriting_history) ... ok
+test_support_response_resolution_reopen_preserve_history (tests.test_application.ApplicationTests.test_support_response_resolution_reopen_preserve_history) ... ok
+test_unknown_external_result_is_reconciled_without_resend (tests.test_application.ApplicationTests.test_unknown_external_result_is_reconciled_without_resend) ... ok
+test_worker_rechecks_revoked_grant (tests.test_application.ApplicationTests.test_worker_rechecks_revoked_grant) ... ok
+test_agent_match_suggestions_are_individual_alternatives_and_never_execute (tests.test_settlement.SettlementTests.test_agent_match_suggestions_are_individual_alternatives_and_never_execute) ... ok
+test_allocation_reversal_preserves_cash_and_full_reversal_later_does_not_double_reverse (tests.test_settlement.SettlementTests.test_allocation_reversal_preserves_cash_and_full_reversal_later_does_not_double_reverse) ... ok
+test_both_capacities_precision_and_operation_identity_are_enforced (tests.test_settlement.SettlementTests.test_both_capacities_precision_and_operation_identity_are_enforced) ... ok
+test_bounded_agent_cites_cash_and_review_sources_without_execution_tools (tests.test_settlement.SettlementTests.test_bounded_agent_cites_cash_and_review_sources_without_execution_tools) ... ok
+test_cancel_is_sticky_and_does_not_cancel_a_proven_obligation (tests.test_settlement.SettlementTests.test_cancel_is_sticky_and_does_not_cancel_a_proven_obligation) ... ok
+test_cash_before_invoice_unmatched_assignment_and_partial_allocation (tests.test_settlement.SettlementTests.test_cash_before_invoice_unmatched_assignment_and_partial_allocation) ... ok
+test_cash_sql_history_guards_cover_amounts_and_source_identity (tests.test_settlement.SettlementTests.test_cash_sql_history_guards_cover_amounts_and_source_identity) ... ok
+test_configured_due_terms_and_usage_completeness_hold_only_issuance (tests.test_settlement.SettlementTests.test_configured_due_terms_and_usage_completeness_hold_only_issuance) ... ok
+test_configured_independent_provenance_locator_is_required_but_not_bank_authenticity (tests.test_settlement.SettlementTests.test_configured_independent_provenance_locator_is_required_but_not_bank_authenticity) ... ok
+test_configured_separation_and_admin_flags_never_manufacture_human_authority (tests.test_settlement.SettlementTests.test_configured_separation_and_admin_flags_never_manufacture_human_authority) ... ok
+test_cross_case_and_stale_revision_are_denied (tests.test_settlement.SettlementTests.test_cross_case_and_stale_revision_are_denied) ... ok
+test_duplicate_receipt_identity_is_idempotent_changed_amount_is_investigation (tests.test_settlement.SettlementTests.test_duplicate_receipt_identity_is_idempotent_changed_amount_is_investigation) ... ok
+test_full_cash_staff_path_calls_real_services_including_full_reversal (tests.test_settlement.SettlementTests.test_full_cash_staff_path_calls_real_services_including_full_reversal) ... ok
+test_full_lot_reversal_reopens_debt_and_subtracts_cash_exactly_once (tests.test_settlement.SettlementTests.test_full_lot_reversal_reopens_debt_and_subtracts_cash_exactly_once) ... ok
+test_generation_review_issuance_delivery_are_separate_real_facts (tests.test_settlement.SettlementTests.test_generation_review_issuance_delivery_are_separate_real_facts) ... ok
+test_invoice_policy_draft_ui_uses_versioned_semantic_lifecycle (tests.test_settlement.SettlementTests.test_invoice_policy_draft_ui_uses_versioned_semantic_lifecycle) ... ok
+test_missing_correction_policy_does_not_block_receipt_capture_or_independent_snapshot (tests.test_settlement.SettlementTests.test_missing_correction_policy_does_not_block_receipt_capture_or_independent_snapshot) ... ok
+test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash (tests.test_settlement.SettlementTests.test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash) ... ok
+test_mixed_currency_cannot_allocate_and_snapshot_keeps_dimensions_separate (tests.test_settlement.SettlementTests.test_mixed_currency_cannot_allocate_and_snapshot_keeps_dimensions_separate) ... ok
+test_multiple_receipts_settle_one_invoice_and_excess_stays_unallocated (tests.test_settlement.SettlementTests.test_multiple_receipts_settle_one_invoice_and_excess_stays_unallocated) ... ok
+test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt (tests.test_settlement.SettlementTests.test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt) ... ok
+test_one_receipt_can_settle_multiple_invoices_without_creating_cash (tests.test_settlement.SettlementTests.test_one_receipt_can_settle_multiple_invoices_without_creating_cash) ... ok
+test_policy_semantics_reject_unknown_effects_and_bad_reversal_shapes (tests.test_settlement.SettlementTests.test_policy_semantics_reject_unknown_effects_and_bad_reversal_shapes) ... ok
+test_postgresql_guards_protect_history_and_reserved_intent (tests.test_settlement.SettlementTests.test_postgresql_guards_protect_history_and_reserved_intent) ... ok
+test_reassignment_reverses_existing_allocations_atomically_before_contract_move (tests.test_settlement.SettlementTests.test_reassignment_reverses_existing_allocations_atomically_before_contract_move) ... ok
+test_reassignment_without_correction_policy_rolls_back_all_allocations_and_ownership (tests.test_settlement.SettlementTests.test_reassignment_without_correction_policy_rolls_back_all_allocations_and_ownership) ... ok
+test_receivable_as_of_and_scope_are_not_caller_subsets_or_invented_zeros (tests.test_settlement.SettlementTests.test_receivable_as_of_and_scope_are_not_caller_subsets_or_invented_zeros) ... ok
+test_recipient_revocation_holds_delivery_but_never_removes_issued_debt (tests.test_settlement.SettlementTests.test_recipient_revocation_holds_delivery_but_never_removes_issued_debt) ... ok
+test_reported_unknown_and_unverified_cash_never_settle_debt (tests.test_settlement.SettlementTests.test_reported_unknown_and_unverified_cash_never_settle_debt) ... ok
+test_returned_review_holds_worker_then_explicit_intent_replacement_resumes (tests.test_settlement.SettlementTests.test_returned_review_holds_worker_then_explicit_intent_replacement_resumes) ... ok
+test_source_policy_revocation_holds_verification_without_erasing_historical_cash (tests.test_settlement.SettlementTests.test_source_policy_revocation_holds_verification_without_erasing_historical_cash) ... ok
+test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection (tests.test_settlement.SettlementTests.test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection) ... ok
+test_transaction_identity_cannot_create_duplicate_cash_in_another_case (tests.test_settlement.SettlementTests.test_transaction_identity_cannot_create_duplicate_cash_in_another_case) ... ok
+test_unknown_after_accept_reconciles_before_later_grant_revocation (tests.test_settlement.SettlementTests.test_unknown_after_accept_reconciles_before_later_grant_revocation) ... ok
+test_unknown_without_acceptance_has_bounded_reconciliation_and_no_blind_operator_retry (tests.test_settlement.SettlementTests.test_unknown_without_acceptance_has_bounded_reconciliation_and_no_blind_operator_retry) ... ok
+test_wide_exact_decimal_statement_is_not_rounded_by_default_decimal_context (tests.test_settlement.SettlementTests.test_wide_exact_decimal_statement_is_not_rounded_by_default_decimal_context) ... ok
+test_adapter_success_without_receipt_does_not_confirm (tests.test_support_release.SupportReleaseTests.test_adapter_success_without_receipt_does_not_confirm) ... ok
+test_changed_policy_stales_prepared_release (tests.test_support_release.SupportReleaseTests.test_changed_policy_stales_prepared_release) ... ok
+test_connected_projection_human_release_receipt_and_no_clock_or_funds (tests.test_support_release.SupportReleaseTests.test_connected_projection_human_release_receipt_and_no_clock_or_funds) ... ok
+test_current_source_revocation_holds_new_send_and_historical_read (tests.test_support_release.SupportReleaseTests.test_current_source_revocation_holds_new_send_and_historical_read) ... ok
+test_duplicate_key_changed_selected_fields_and_cancellation (tests.test_support_release.SupportReleaseTests.test_duplicate_key_changed_selected_fields_and_cancellation) ... ok
+test_expired_release_holds (tests.test_support_release.SupportReleaseTests.test_expired_release_holds) ... ok
+test_fenced_worker_and_attempt_budget_hold_before_effect (tests.test_support_release.SupportReleaseTests.test_fenced_worker_and_attempt_budget_hold_before_effect) ... ok
+test_intent_idempotency_case_scope_and_sql_guards (tests.test_support_release.SupportReleaseTests.test_intent_idempotency_case_scope_and_sql_guards) ... ok
+test_metadata_only_projection_excludes_reviewed_body (tests.test_support_release.SupportReleaseTests.test_metadata_only_projection_excludes_reviewed_body) ... ok
+test_missing_release_policy_holds_packet_but_leaves_draft_and_support (tests.test_support_release.SupportReleaseTests.test_missing_release_policy_holds_packet_but_leaves_draft_and_support) ... ok
+test_native_context_changes_hold_without_mutating_existing_packet (tests.test_support_release.SupportReleaseTests.test_native_context_changes_hold_without_mutating_existing_packet) ... ok
+test_owner_cannot_grant_own_release_and_tool_does_not_release (tests.test_support_release.SupportReleaseTests.test_owner_cannot_grant_own_release_and_tool_does_not_release) ... ok
+test_private_ui_forms_report_receipt_and_revoked_access (tests.test_support_release.SupportReleaseTests.test_private_ui_forms_report_receipt_and_revoked_access) ... ok
+test_protected_receipt_rejects_changed_destination (tests.test_support_release.SupportReleaseTests.test_protected_receipt_rejects_changed_destination) ... ok
+test_revoked_source_or_recipient_blocks_effect (tests.test_support_release.SupportReleaseTests.test_revoked_source_or_recipient_blocks_effect) ... ok
+test_stale_revision_and_unknown_fields_are_atomic (tests.test_support_release.SupportReleaseTests.test_stale_revision_and_unknown_fields_are_atomic) ... ok
+test_typed_invalid_policy_and_actual_principal_validation (tests.test_support_release.SupportReleaseTests.test_typed_invalid_policy_and_actual_principal_validation) ... ok
+test_unknown_receipt_recovers_after_revocation_without_resending (tests.test_support_release.SupportReleaseTests.test_unknown_receipt_recovers_after_revocation_without_resending) ... ok
+test_unreviewed_or_superseded_draft_cannot_be_projected (tests.test_support_release.SupportReleaseTests.test_unreviewed_or_superseded_draft_cannot_be_projected) ... ok
+test_withdrawal_blocks_send_but_history_is_retained (tests.test_support_release.SupportReleaseTests.test_withdrawal_blocks_send_but_history_is_retained) ... ok
+test_independent_actual_worker_process_observes_without_claiming_pending_work (tests.test_pilot_bindings.NativeProcessTests.test_independent_actual_worker_process_observes_without_claiming_pending_work) ... ok
+test_concurrent_captures_deduplicate_and_successors_require_explicit_head (tests.test_pilot_preflight.PilotConcurrencyTests.test_concurrent_captures_deduplicate_and_successors_require_explicit_head) ... ok
+test_staff_handoff_survives_worker_process_exit_and_restart (tests.test_application.WorkerConcurrencyTests.test_staff_handoff_survives_worker_process_exit_and_restart) ... ok
+test_two_workers_claim_one_intent_once (tests.test_application.WorkerConcurrencyTests.test_two_workers_claim_one_intent_once) ... ok
+
+======================================================================
+ERROR: test_corrections (unittest.loader._FailedTest.test_corrections)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_corrections
+Traceback (most recent call last):
+  File "C:\Python313\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'tests.test_corrections'
+
+
+======================================================================
+ERROR: test_correction_apply_and_note_delivery_preserve_native_controls (tests.test_pilot_domain_guards.FinanceGuardTests.test_correction_apply_and_note_delivery_preserve_native_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_pilot_domain_guards.py", line 49, in test_correction_apply_and_note_delivery_preserve_native_controls
+    a,c,coverage,e,invoice,issue=fixture();correction=note(a,c,issue,e);review(a,c,correction,e)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+
+======================================================================
+FAIL: test_private_release_reuses_current_human_authority_and_packet_guards (tests.test_pilot_domain_guards.PrivateBaaSGuardTests.test_private_release_reuses_current_human_authority_and_packet_guards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_pilot_domain_guards.py", line 69, in test_private_release_reuses_current_human_authority_and_packet_guards
+    self.assertEqual(result['state'],'READY_AT_OBSERVATION');self.assertNotIn('payload',result);self.assertEqual(support_release.Job.objects.count(),0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'HELD' != 'READY_AT_OBSERVATION'
+- HELD
++ READY_AT_OBSERVATION
+
+
+----------------------------------------------------------------------
+Ran 121 tests in 728.894s
+
+FAILED (failures=1, errors=2)
+Preserving test database for alias 'default' ('test_psl')...
+Found 121 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).
+Native worker identity observed #15; business worker not invoked
+Native worker identity observed #16; business worker not invoked
+Native worker identity observed #17; business worker not invoked
+Native worker identity observed #18; business worker not invoked
+Native worker identity observed #19; business worker not invoked
+Native worker identity observed #20; business worker not invoked
+Native worker identity observed #21; business worker not invoked
+Native worker identity observed #22; business worker not invoked
+Native worker identity observed #23; business worker not invoked
+Native worker identity observed #24; business worker not invoked
+Native worker identity observed #25; business worker not invoked
+Native worker identity observed #26; business worker not invoked
+Native worker identity observed #27; business worker not invoked
+Native worker identity observed #28; business worker not invoked
+Native worker identity observed #29; business worker not invoked
+Native worker identity observed #30; business worker not invoked

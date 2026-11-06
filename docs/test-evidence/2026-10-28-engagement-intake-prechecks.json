@@ -1,0 +1,10 @@
+{
+  "applied": false,
+  "preserved_main_rowsets": 310,
+  "preserved_migration_files": 178,
+  "frozen_sources": 41,
+  "functions": 70,
+  "triggers": 335,
+  "constraints": 1639,
+  "actual_principals_or_policy_installed": false
+}

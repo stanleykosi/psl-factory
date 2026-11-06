@@ -1,0 +1,12 @@
+{
+  "classification": "Synthetic example only; no actual principal, expiry, source key or grant installation",
+  "value": {
+    "format": "psl.tenant-access/v2",
+    "create_cases": true,
+    "manage_access": true,
+    "kinds": ["project"],
+    "allowed_actions": ["case.read", "approval.read", "approval.source.read:synthetic-qa"],
+    "initial_actions": ["case.read"],
+    "classification": "synthetic"
+  }
+}

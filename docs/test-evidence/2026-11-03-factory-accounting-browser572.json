@@ -1,0 +1,52 @@
+{
+  "source_run": 572,
+  "regression_run": 573,
+  "browser": "Codex native browser 5",
+  "tab": "5",
+  "database": "psl_factory_accounting_ui_08cf999821ca",
+  "work": 1,
+  "actual_browser_commands": [
+    "prepare until human output wait",
+    "claim exact native Finance task",
+    "approve exact output with cited evidence/reason",
+    "continue native report publication and receipt verification"
+  ],
+  "native_output_approvals": 1,
+  "publications": 1,
+  "recipient_receipts": 1,
+  "budget_used": 1100,
+  "budget_limit": 30000,
+  "pbt": "609.99",
+  "bu_pbt_difference": "0.00",
+  "get_only_fingerprints": {
+    "rowsets": 329,
+    "unchanged": true
+  },
+  "keyboard_search_and_return_context": true,
+  "narrow": {
+    "viewport": 390,
+    "document": 375,
+    "scroll": 375,
+    "heading_wrapping": "Cramped beside action link; follow-up UI correction required"
+  },
+  "desktop_viewport": 1280,
+  "cdp_deadlines": [
+    "preparation snapshot",
+    "publication snapshot",
+    "verified queue navigation"
+  ],
+  "commands_replayed": false,
+  "configuration_lifecycle_exercised_in_browser": false,
+  "classification": "Actual native browser with synthetic fixture and real internal recipient inbox; not live external/provider/UAT evidence",
+  "screenshots": [
+    "configuration",
+    "configuration-narrow",
+    "claimed",
+    "decision",
+    "decision-visible",
+    "review-panel",
+    "verified",
+    "verified-narrow"
+  ],
+  "screenshot_notes": "decision and decision-visible are intermediate scroll captures; review-panel shows the actual decision controls"
+}

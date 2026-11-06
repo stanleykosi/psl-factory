@@ -1,0 +1,20 @@
+{
+  "run": 374,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_role_guard",
+    "tests.test_role_eligibility",
+    "tests.test_controlled_documents",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-374-process-acceptance.txt",
+  "started_at": "2026-10-29T15:11:50.424350+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 84.6
+}

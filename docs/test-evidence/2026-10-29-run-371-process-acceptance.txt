@@ -1,0 +1,86 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 47 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0011_document_native_guard...test_binding_ui_and_engineering_review_cannot_publish_and_source_drift_stales_pack (tests.test_document_guard.DocumentGuardTests.test_binding_ui_and_engineering_review_cannot_publish_and_source_drift_stales_pack) ... ok
+test_closed_sql_contract_rejects_unknown_keys_foreign_subjects_nonintegers_and_unselected_people (tests.test_document_guard.DocumentGuardTests.test_closed_sql_contract_rejects_unknown_keys_foreign_subjects_nonintegers_and_unselected_people) ... ERROR
+test_guard_is_read_only_and_actual_reservation_uses_exact_same_current_requirements (tests.test_document_guard.DocumentGuardTests.test_guard_is_read_only_and_actual_reservation_uses_exact_same_current_requirements) ... ok
+test_missing_policy_holds_only_publication_and_missing_actor_grant_cannot_be_replaced_by_observer (tests.test_document_guard.DocumentGuardTests.test_missing_policy_holds_only_publication_and_missing_actor_grant_cannot_be_replaced_by_observer) ... ok
+test_observer_access_precedes_selected_version_lookup_and_current_heads_hold_old_versions (tests.test_document_guard.DocumentGuardTests.test_observer_access_precedes_selected_version_lookup_and_current_heads_hold_old_versions) ... ok
+test_closed_binding_validator_and_foreign_sources (tests.test_pilot_bindings.NativeGuardTests.test_closed_binding_validator_and_foreign_sources) ... ok
+test_csrf_ui_binding_selection_review_web_observation_and_agent (tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent) ... ok
+test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage) ... FAIL
+test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates (tests.test_pilot_bindings.NativeGuardTests.test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates) ... ok
+test_missing_revoked_authority_and_observer_rights_are_distinct (tests.test_pilot_bindings.NativeGuardTests.test_missing_revoked_authority_and_observer_rights_are_distinct) ... ok
+test_report_and_native_guard_enforce_case_access_before_record_lookup (tests.test_pilot_bindings.NativeGuardTests.test_report_and_native_guard_enforce_case_access_before_record_lookup) ... ok
+test_sequence_signature_and_milestone_guards_use_actual_native_services (tests.test_pilot_bindings.NativeGuardTests.test_sequence_signature_and_milestone_guards_use_actual_native_services) ... ok
+test_shared_guard_matches_actual_decision_and_does_not_write_domain_records (tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records) ... ok
+test_sql_history_identity_and_self_review_guards (tests.test_pilot_bindings.NativeGuardTests.test_sql_history_identity_and_self_review_guards) ... ok
+test_actual_native_receipts_same_process_is_insufficient (tests.test_pilot_bindings.RuntimeBindingTests.test_actual_native_receipts_same_process_is_insufficient) ... ok
+test_all_sixteen_native_worker_entrypoints_support_observe_only (tests.test_pilot_bindings.RuntimeBindingTests.test_all_sixteen_native_worker_entrypoints_support_observe_only) ... ok
+test_expired_rotated_revoked_and_bad_signatures_never_use_older_success (tests.test_pilot_bindings.RuntimeBindingTests.test_expired_rotated_revoked_and_bad_signatures_never_use_older_success) ... ok
+test_no_role_alias_secret_installation_or_cross_family_claim (tests.test_pilot_bindings.RuntimeBindingTests.test_no_role_alias_secret_installation_or_cross_family_claim) ... ok
+test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads (tests.test_pilot_bindings.RuntimeBindingTests.test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads) ... ok
+test_startup_build_pin_rejects_changed_source_and_legacy_receipts (tests.test_pilot_bindings.RuntimeBindingTests.test_startup_build_pin_rejects_changed_source_and_legacy_receipts) ... ok
+test_agent_has_cited_draft_and_independent_check_but_no_approval (tests.test_controlled_documents.ControlledDocumentTests.test_agent_has_cited_draft_and_independent_check_but_no_approval) ... ok
+test_agent_rejects_forged_citation_or_authority_and_rechecks_grant (tests.test_controlled_documents.ControlledDocumentTests.test_agent_rejects_forged_citation_or_authority_and_rechecks_grant) ... ok
+test_changed_pmo_baseline_holds_old_document (tests.test_controlled_documents.ControlledDocumentTests.test_changed_pmo_baseline_holds_old_document) ... ok
+test_changed_policy_snapshot_holds_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_changed_policy_snapshot_holds_delivery) ... ok
+test_client_template_cannot_configure_internal_note_leak (tests.test_controlled_documents.ControlledDocumentTests.test_client_template_cannot_configure_internal_note_leak) ... ok
+test_database_protects_document_history_and_task_identity (tests.test_controlled_documents.ControlledDocumentTests.test_database_protects_document_history_and_task_identity) ... ok
+test_delegation_is_explicit_scoped_and_rechecked_at_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_delegation_is_explicit_scoped_and_rechecked_at_delivery) ... ok
+test_drafting_and_review_continue_without_publication_configuration (tests.test_controlled_documents.ControlledDocumentTests.test_drafting_and_review_continue_without_publication_configuration) ... ok
+test_duplicate_publication_and_stale_requests_do_not_mutate (tests.test_controlled_documents.ControlledDocumentTests.test_duplicate_publication_and_stale_requests_do_not_mutate) ... ok
+test_expired_fence_cannot_deliver_or_finalize (tests.test_controlled_documents.ControlledDocumentTests.test_expired_fence_cannot_deliver_or_finalize) ... ok
+test_held_transport_retry_revalidates_and_records_operator_rationale (tests.test_controlled_documents.ControlledDocumentTests.test_held_transport_retry_revalidates_and_records_operator_rationale) ... ok
+test_internal_template_can_explicitly_avoid_an_invented_pmo_lead_gate (tests.test_controlled_documents.ControlledDocumentTests.test_internal_template_can_explicitly_avoid_an_invented_pmo_lead_gate) ... ok
+test_invalid_policy_artifacts_are_rejected (tests.test_controlled_documents.ControlledDocumentTests.test_invalid_policy_artifacts_are_rejected) ... ok
+test_lookups_fail_closed_and_operator_can_retry_or_cancel (tests.test_controlled_documents.ControlledDocumentTests.test_lookups_fail_closed_and_operator_can_retry_or_cancel) ... ok
+test_missing_sections_and_citations_hold_only_review_request (tests.test_controlled_documents.ControlledDocumentTests.test_missing_sections_and_citations_hold_only_review_request) ... ok
+test_new_revision_obsoletes_open_wait_and_held_publication (tests.test_controlled_documents.ControlledDocumentTests.test_new_revision_obsoletes_open_wait_and_held_publication) ... ok
+test_publication_independent_from_hypercare_and_payment_policy (tests.test_controlled_documents.ControlledDocumentTests.test_publication_independent_from_hypercare_and_payment_policy) ... ok
+test_receipt_access_is_rechecked_after_delivery_and_revocation (tests.test_controlled_documents.ControlledDocumentTests.test_receipt_access_is_rechecked_after_delivery_and_revocation) ... ok
+test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case (tests.test_controlled_documents.ControlledDocumentTests.test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case) ... ok
+test_reject_and_withdraw_are_configured_distinct_terminal_events (tests.test_controlled_documents.ControlledDocumentTests.test_reject_and_withdraw_are_configured_distinct_terminal_events) ... ok
+test_return_needs_configured_authority_then_revision_gets_new_review (tests.test_controlled_documents.ControlledDocumentTests.test_return_needs_configured_authority_then_revision_gets_new_review) ... ok
+test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox (tests.test_controlled_documents.ControlledDocumentTests.test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox) ... ok
+test_staff_draft_review_publication_and_recipient_projection (tests.test_controlled_documents.ControlledDocumentTests.test_staff_draft_review_publication_and_recipient_projection) ... ok
+test_timeout_after_accept_is_reconciled_before_revoked_authority (tests.test_controlled_documents.ControlledDocumentTests.test_timeout_after_accept_is_reconciled_before_revoked_authority) ... ok
+test_independent_actual_worker_process_observes_without_claiming_pending_work (tests.test_pilot_bindings.NativeProcessTests.test_independent_actual_worker_process_observes_without_claiming_pending_work) ... ok
+test_publication_worker_recovers_after_separate_process_exit (tests.test_controlled_documents.PublicationProcessTests.test_publication_worker_recovers_after_separate_process_exit) ... ok
+test_two_actual_connections_claim_one_publication_once (tests.test_controlled_documents.PublicationProcessTests.test_two_actual_connections_claim_one_publication_once) ... ok
+
+======================================================================
+ERROR: test_closed_sql_contract_rejects_unknown_keys_foreign_subjects_nonintegers_and_unselected_people (tests.test_document_guard.DocumentGuardTests.test_closed_sql_contract_rejects_unknown_keys_foreign_subjects_nonintegers_and_unselected_people)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_document_guard.py", line 119, in test_closed_sql_contract_rejects_unknown_keys_foreign_subjects_nonintegers_and_unselected_people
+    next_contract=pilot.configure(a,c.pk,dict(selected.payload),selected.version)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\pilot.py", line 83, in configure
+    if (current.pk if current else None)!=predecessor:raise ValidationError('Refresh the current pilot contract predecessor')
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Refresh the current pilot contract predecessor']
+
+======================================================================
+FAIL: test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_pilot_bindings.py", line 114, in test_exact_contract_binding_and_unknown_operation_coverage
+    self.assertIn('Nine native',d.report(f['a'],f['c'],f['contract'])['coverage'])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Nine native' not found in '10 declared native PMO/Finance/BaaS/publication operations and sixteen native worker entry points only'
+
+----------------------------------------------------------------------
+Ran 47 tests in 228.029s
+
+FAILED (failures=1, errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

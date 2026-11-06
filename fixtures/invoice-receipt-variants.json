@@ -1,0 +1,5 @@
+{
+  "classification": "synthetic example only; no installed business policy or owner",
+  "variants": {"variants": ["issue", "deliver", "adjust", "adjust_deliver"], "identifier_contract": "exact_incumbent_ids_v1"},
+  "followup_template": {"owner_id": null, "owner_role": "Finance", "resolutions": ["investigate", "link_current_intent", "decline"], "request_valid_seconds": 3600, "allow_synthetic": true}
+}

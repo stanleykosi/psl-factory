@@ -1,0 +1,25 @@
+{
+  "runs": [
+    {
+      "run": 327,
+      "tests": 7,
+      "unittest_seconds": 30.174,
+      "process_seconds": 36.103,
+      "returncode": 0
+    },
+    {
+      "run": 328,
+      "tests": 66,
+      "unittest_seconds": 296.607,
+      "process_seconds": 308.607,
+      "returncode": 0
+    },
+    {
+      "run": 329,
+      "tests": 96,
+      "unittest_seconds": 366.93,
+      "process_seconds": 374.734,
+      "returncode": 0
+    }
+  ]
+}

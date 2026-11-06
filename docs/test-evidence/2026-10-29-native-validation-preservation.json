@@ -1,0 +1,11 @@
+{
+  "prior_main_rowsets_preserved": 326,
+  "prior_migration_files_preserved": 192,
+  "functions": 79,
+  "triggers": 363,
+  "constraints": 1719,
+  "changed_definition": "psl_pilot_guard forward v2; added native evaluation insert guard",
+  "main_test_definitions_identical": true,
+  "owner_values_installed": false,
+  "live_pilot_performed": false
+}

@@ -1,0 +1,12 @@
+{
+  "status": "APPLIED",
+  "source_fingerprints": 1044,
+  "runtime_sha256": "6e0e431649a8094ac82a3a51d451c1a4e628519b5e37a1366607ec85639b092c",
+  "coverage_only_changes_after_run289": [
+    "contracts/implementation-coverage.json"
+  ],
+  "next_run": 290,
+  "backlog_items": 57,
+  "processes_partial": 122,
+  "interfaces": 113
+}

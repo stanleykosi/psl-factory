@@ -1,0 +1,32 @@
+{
+  "browser": "2",
+  "tab": "2",
+  "viewer": "studio-demo",
+  "case": "62cbee2d-13c1-4117-bb40-97253e62f1e1",
+  "observed": [
+    "B14.channel_receipts and B14.channel_clock ACTIVE",
+    "clock enrollment yes/manual bypass held",
+    "private protocol evidence625",
+    "claim1/packet3/check1 confirmed",
+    "synthetic_authenticated_http/protocol verified/current reviewed delivery no",
+    "human confirm decision1 and withdraw decision2 by reviewer58",
+    "historical human attestation1/ordered response event17 preserved",
+    "read-only/no mutation forms"
+  ],
+  "missing_case": "989f1a03-e0a4-43cc-8ee4-852d9885f280",
+  "missing_observed": [
+    "both new policies MISSING",
+    "clock enrollment no",
+    "private source contract640 captured",
+    "no claims/read-only workbench"
+  ],
+  "guidance_without_agent_operations": "403 Forbidden",
+  "screenshots": [
+    "2026-10-23-support-channels-workbench.png",
+    "2026-10-23-support-channels-policy-missing.png",
+    "2026-10-23-support-channels-review-history.png"
+  ],
+  "tab_marked_handoff": true,
+  "native_vendor_customer_channel_tested": false,
+  "real_model_evaluated": false
+}

@@ -1,0 +1,65 @@
+{
+  "source_run": 558,
+  "parent_checkpoint": 554,
+  "changed_paths": [
+    "apps/finance/analysis.py",
+    "apps/policy/factory_routing_validators.py",
+    "apps/policy/operator_drafts.py",
+    "apps/policy/operator_validators.py",
+    "apps/workflows/factory_routing.py",
+    "apps/workflows/factory_views.py",
+    "contracts/operator-policy-components.json",
+    "templates/factory/responsibility.html",
+    "templates/factory/responsibility_wait.html"
+  ],
+  "added_paths": [
+    "apps/policy/availability_forms.py",
+    "apps/policy/reviewer_availability.py",
+    "apps/policy/reviewer_availability_validators.py",
+    "fixtures/factory-reviewer-availability.json",
+    "templates/factory/reviewer_availability_configuration.html",
+    "tests/test_factory_availability.py"
+  ],
+  "native_factory_commands_invoice_effects_adapters_models_migrations_dependencies_unchanged": true,
+  "other_finance_analysis_bytes_reconstruct_parent": true,
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "operational_policy_values_added": false
+}

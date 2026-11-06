@@ -1,0 +1,9 @@
+{
+  "previous_run": 664,
+  "followup_run": 665,
+  "application_source_identical": true,
+  "changed_paths": [
+    "tests/test_factory_rfp_canceled_publication.py"
+  ],
+  "change": "Claim-aware cancellation setup permits only real elapsed expiry and diagnoses every other false tick; no application guard changed"
+}

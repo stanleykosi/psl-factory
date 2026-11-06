@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "--noinput"
+  ],
+  "returncode": 0,
+  "stdout": "Operations to perform:\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\nRunning migrations:\n  Applying pmo.0038_engagement_intake... OK\n  Applying pmo.0039_engagement_guard... OK\n",
+  "stderr": "",
+  "final_test_run": 311,
+  "connected_regression_run": 309,
+  "changes_since_connected_regression": [
+    "adapters/project_identity.py",
+    "apps/core/views.py",
+    "templates/case.html",
+    "templates/home.html",
+    "tests/test_engagement_intake.py",
+    "tests/test_product_intake.py"
+  ]
+}

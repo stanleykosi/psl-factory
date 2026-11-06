@@ -1,0 +1,19 @@
+{
+  "classification": "Fresh synthetic additive-schema refusal rehearsal; not full rollback or active-factory restore acceptance",
+  "database": "psl_factory_commercial_rollback_349acdf967dd",
+  "source_database": "psl_factory_commercial_ui_adfb2436259a",
+  "clone_equals_unchanged_source": true,
+  "refused_targets": [
+    "documents0014_native_subject_identity",
+    "workflows0040_factory_planning"
+  ],
+  "both_commands_nonzero_with_IrreversibleError": true,
+  "per_command_row_and_guard_comparisons_passed_before_recording_assertion": true,
+  "readback_rowsets_preserved": 329,
+  "retained_verified_commercial_work": 1,
+  "retained_recipient_receipts": 1,
+  "recording_helper_error": "Original helper counted both traceback raise lines and final exception lines, then stopped after both successful preservation checks. Corrected the assertion; this read-only continuation records the existing clone/log without rerunning or overwriting them.",
+  "rollback_requirement": "Retain expanded schema, native publication scope and current family/private reader guards; old code is unsupported for active commercial work",
+  "external_effects": false,
+  "log": "docs/test-evidence/2026-11-01-factory-commercial-rollback.txt"
+}

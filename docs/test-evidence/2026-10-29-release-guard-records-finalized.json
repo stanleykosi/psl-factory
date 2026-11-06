@@ -1,0 +1,33 @@
+{
+  "status": "APPLIED",
+  "runs": [
+    {
+      "run": 381,
+      "tests": 69,
+      "unittest_seconds": 388.154,
+      "process_seconds": 393.338,
+      "returncode": 1
+    },
+    {
+      "run": 382,
+      "tests": 33,
+      "unittest_seconds": 238.515,
+      "process_seconds": 244.803,
+      "returncode": 0
+    }
+  ],
+  "main_preservation": {
+    "prior_main_rowsets_preserved": 326,
+    "prior_migration_files_preserved": 200,
+    "functions": 79,
+    "triggers": 363,
+    "constraints": 1719,
+    "changed_definition": "psl_pilot_binding_guard forward closed native operation/subject contracts",
+    "main_test_definitions_identical": true,
+    "owner_values_installed": false,
+    "live_pilot_performed": false
+  },
+  "full_product_complete": false,
+  "owner_values_installed": false,
+  "next_step": "Remaining engineering: 78of92 declared operations lack shared native preview guards; concrete indirect/private input/report and other receipt consumers beyond16 declared impact adapters; verified source/target variants not yet implemented. Continue through actual domain services; unknown coverage is not completion. Owner nominations/eligibility/financial/calendar/audience values remain deferred. Vendor/source access/contracts, production identity/keys/SSO/monitoring, business oracles and supervised Security/load/UAT are separate operational inputs/evidence. All122 acceptance rows remain partial; no full-product/no-code-gaps or live-pilot claim."
+}

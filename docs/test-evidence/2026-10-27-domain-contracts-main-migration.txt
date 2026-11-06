@@ -1,0 +1,5 @@
+Operations to perform:
+  Target specific migration: 0029_domain_contract_guards, from workflows
+Running migrations:
+  Applying workflows.0028_domain_contracts... OK
+  Applying workflows.0029_domain_contract_guards... OK

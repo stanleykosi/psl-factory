@@ -1,0 +1,14 @@
+{
+  "phase": "before",
+  "main_rowsets_unchanged": 329,
+  "old_guards_unchanged_except_reviewed_factory_function": true,
+  "old_migration_sources_unchanged": 208,
+  "source_snapshots_unchanged": true,
+  "main_factory_records": 0,
+  "operational_owner_values_installed": false,
+  "added_nullable_publication_columns_excluded_from_old_row_fingerprint": false,
+  "forward_migrations": [
+    "workflows0041_factory_commercial",
+    "documents0015_factory_publication_scope"
+  ]
+}

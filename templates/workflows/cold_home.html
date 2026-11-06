@@ -1,0 +1,3 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}<h1>Independent recovery control plane</h1>
+<p>Fresh identities and human decisions govern exact sealed archive recovery. Recovered application authority remains disabled.</p>
+<ul>{% for case in cases %}<li><a href="{% url 'cold_recovery' case.id %}">{{ case|workspace_name }}</a></li>{% empty %}<li>No authorised control cases.</li>{% endfor %}</ul>{% endblock %}

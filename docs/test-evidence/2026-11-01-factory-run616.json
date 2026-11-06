@@ -1,0 +1,20 @@
+{
+  "run": 616,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_operational_invoice",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T17:18:30.007910+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run616.txt",
+  "status": "finished",
+  "database": "test_psl_factory_execution_contention_c19aaafd118a; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 16.152
+}

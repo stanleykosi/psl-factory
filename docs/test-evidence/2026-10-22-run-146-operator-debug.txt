@@ -1,0 +1,32 @@
+Using existing test database for alias 'default'...
+
+E
+======================================================================
+ERROR: test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review (tests.test_operator_recovery.OperatorRecoveryTests.test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_operator_recovery.py", line 25, in test_real_metadata_export_sealed_backup_and_separate_postgres_restore_review
+    f=self.f;e,b,r=connected(f);self.assertEqual(e.sha256,b.sha256);self.assertEqual(r.sha256,e.sha256);self.assertTrue(r.receipt['native_isolated_postgres_write']);self.assertFalse(r.receipt['full_database_restore'])
+                   ~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 51, in connected
+    j,e=effect(f,'export');j,b=effect(f,'backup',e.pk);j,r=effect(f,'restore',b.pk);return e,b,r
+                                                           ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\operator_helpers.py", line 47, in effect
+    NativeMetadataProtectionAdapter().deliver(j)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\operator_protection.py", line 82, in deliver
+    if not restore_receipt(job):
+           ~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\operator_protection.py", line 55, in restore_receipt
+    if row[0]!=digest(job.intent['manifest']) or row[1]!=job.intent['manifest']:raise ValidationError('Prior isolated receipt differs; investigate without another restore')
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Prior isolated receipt differs; investigate without another restore']
+
+----------------------------------------------------------------------
+Ran 1 test in 2.715s
+
+FAILED (errors=1)
+Preserving test database for alias 'default'...
+
+Found 1 test(s).
+System check identified no issues (0 silenced).

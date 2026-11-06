@@ -1,0 +1,21 @@
+{
+  "run": 596,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_human_independence",
+    "tests.test_factory_routing.FactoryRoutingTests",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T13:15:38.429935+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run596.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 128.807
+}

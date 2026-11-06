@@ -1,0 +1,23 @@
+{
+  "run": 458,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_handover.FactoryHandoverTests.test_held_original_retry_uses_same_publication_and_lifetime_allowance",
+    "tests.test_factory_handover.FactoryHandoverTests.test_cancelled_unreceived_reservation_has_reviewed_same_source_successor",
+    "tests.test_factory_handover.FactoryHandoverTests.test_current_owner_projection_does_not_assign_a_revoked_recipient",
+    "tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T10:46:05.630857+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run458.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 275.952
+}

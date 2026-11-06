@@ -1,0 +1,19 @@
+{
+  "classification": "Synthetic unsupported-downgrade refusal, not active-factory restore acceptance",
+  "database": "psl_factory_archive_rollback_f94d1ea3b3cb",
+  "source_database": "psl_factory_archive_ui_4d94433baaad",
+  "source_unchanged": true,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "workflows",
+    "0043_factory_hypercare",
+    "--noinput"
+  ],
+  "returncode": 1,
+  "rowsets_and_guards_unchanged": 329,
+  "retained_verified_archive_work": 1,
+  "rollback_requirement": "Retain0044 guards/schema/native interfaces; active-factory fresh-authority restore is separate engineering",
+  "log": "docs/test-evidence/2026-11-02-factory-archive-rollback.txt"
+}

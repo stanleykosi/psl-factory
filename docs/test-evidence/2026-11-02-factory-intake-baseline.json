@@ -1,0 +1,26 @@
+{
+  "parent": "checkpoint465",
+  "verified_files": 2308,
+  "requirements": [
+    "REQ-13",
+    "REQ-14",
+    "REQ-21"
+  ],
+  "disposition": "EXTEND existing authenticated console and native forms; KEEP current scoped command authority",
+  "process_bindings": "Existing seven bounded definitions; no process promoted",
+  "paths": [
+    "apps/workflows/factory_views.py:index/create",
+    "templates/factory/queue.html",
+    "config/urls.py"
+  ],
+  "gap": "Seven stacked start links crowd the work queue and do not explain the intended output",
+  "change": "One Start work action opens a keyboard-accessible responsive outcome chooser, filtered by current same-project grants; preserve queue/search back link and legacy direct forms",
+  "compatibility": "Add GET-only route; native POST/services/policies unchanged; no migration/dependency/default business policy",
+  "tests": [
+    "Current and revoked/inactive grants",
+    "No cross-project permission union",
+    "Queue/search escaping and method rejection",
+    "Existing console/native form regression"
+  ],
+  "policy_slots": "Existing business and execution configuration; absent values do not hide independently authorised intake"
+}

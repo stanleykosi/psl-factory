@@ -1,0 +1,15 @@
+{
+  "parent_checkpoint": 530,
+  "verified_files": 2895,
+  "parent_manifest": "docs/test-evidence/2026-11-03-factory-checkpoint530-source-manifest.json",
+  "classification": "Primary stale-review state/queue explanation from current native task predicates, no policy values",
+  "intended_scope": [
+    "Clear state/blocker/action",
+    "No invented current decision owner",
+    "Authorised queue visibility",
+    "Original unsettled effects, active leases, cancellation and verified history retain priority"
+  ],
+  "native_command_changes_proposed": false,
+  "migration_or_dependency_proposed": false,
+  "full_product_complete": false
+}

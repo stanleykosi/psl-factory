@@ -1,0 +1,26 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying documents.0015_factory_publication_scope...test_accepted_receipt_survives_cancellation_and_reconciles_without_new_send (tests.test_factory_commercial.FactoryCommercialTests.test_accepted_receipt_survives_cancellation_and_reconciles_without_new_send) ... ok
+test_agent_publication_is_bound_and_lost_response_reconciles_original_receipt (tests.test_factory_commercial.FactoryCommercialTests.test_agent_publication_is_bound_and_lost_response_reconciles_original_receipt) ... ok
+test_cancellation_before_selected_publication_send_preserves_the_unpublished_document (tests.test_factory_commercial.FactoryCommercialTests.test_cancellation_before_selected_publication_send_preserves_the_unpublished_document) ... ok
+test_capture_is_idempotent_and_private_agent_results_stay_out_of_generic_workspace (tests.test_factory_commercial.FactoryCommercialTests.test_capture_is_idempotent_and_private_agent_results_stay_out_of_generic_workspace) ... ok
+test_changed_execution_profile_is_rechecked_by_the_native_publication_worker (tests.test_factory_commercial.FactoryCommercialTests.test_changed_execution_profile_is_rechecked_by_the_native_publication_worker) ... ok
+test_intake_before_execution_policy_and_forged_source_false_verification_are_blocked (tests.test_factory_commercial.FactoryCommercialTests.test_intake_before_execution_policy_and_forged_source_false_verification_are_blocked) ... ok
+test_native_calculation_proposal_human_decisions_controlled_review_and_receipts (tests.test_factory_commercial.FactoryCommercialTests.test_native_calculation_proposal_human_decisions_controlled_review_and_receipts) ... ok
+test_primary_commercial_intake_and_configuration_use_plain_native_source_choices (tests.test_factory_commercial.FactoryCommercialTests.test_primary_commercial_intake_and_configuration_use_plain_native_source_choices) ... ok
+test_unknown_sources_hold_only_calculation_and_source_successor_retains_allowance (tests.test_factory_commercial.FactoryCommercialTests.test_unknown_sources_hold_only_calculation_and_source_successor_retains_allowance) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 140.724s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

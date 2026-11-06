@@ -1,0 +1,201 @@
+{
+  "classification": "Current source readback of retained native synthetic cohorts; no command replay/server refresh/schema acceptance",
+  "source_run": 519,
+  "verified_source_files": 1319,
+  "outcomes": [
+    {
+      "family": "planning",
+      "returncode": 1,
+      "result": "Traceback (most recent call last):\n  File \"C:\\Users\\USER\\Desktop\\psl-agent build\\.runtime\\readback_factory_retained_go_live_source.py\", line 32, in <module>\n    proof=getattr(module,'verified_output' if family=='planning' else 'verify')(w)\n  File \"C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\workflows\\factory_planning.py\", line 190, in verified_output\n    return NativePlanningAdapter().verify(work,ready,source)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\USER\\Desktop\\psl-agent build\\adapters\\factory_planning.py\", line 27, in verify\n    value=planning.current_readiness(work.case,ready.pk)\n  File \"C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\planning.py\", line 198, in current_readiness\n    if value['packet_sha256']!=e.sha256 or value['inputs']!=inputs(c,e,value['comparison_required'],item.created_by):raise ValidationError('Current planning readiness source/criteria/authority changed')\n                                                            ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\USER\\Desktop\\psl-agent build\\apps\\pmo\\planning.py\", line 173, in inputs\n    if not m or not 0<=(timezone.now()-m.occurred_at).total_seconds()<=rules['alignment_max_age_seconds']:raise ValidationError('Current actually held alignment meeting within configured age required')\n                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ndjango.core.exceptions.ValidationError: ['Current actually held alignment meeting within configured age required']\n"
+    },
+    {
+      "family": "commercial",
+      "returncode": 0,
+      "result": {
+        "database": "psl_factory_commercial_ui_adfb2436259a",
+        "work": 323,
+        "status": "verified",
+        "budget_limit": 20000,
+        "budget_used": 700,
+        "proof": {
+          "verified": true,
+          "verification_scope": "declared_costing_and_reviewed_commercial_submission",
+          "head": 96601,
+          "costing_run": 129,
+          "commercial_revision": 373,
+          "document_version": 1560,
+          "publication": 1059,
+          "receipt_ids": [
+            609
+          ],
+          "native_workbook_verified": false,
+          "signed_baseline_adopted": false,
+          "invoice_created": false,
+          "environment": "synthetic_internal_receipt"
+        },
+        "unchanged": true
+      }
+    },
+    {
+      "family": "delivery",
+      "returncode": 0,
+      "result": {
+        "database": "psl_factory_delivery_ui_a31fd74f85e4",
+        "work": 381,
+        "status": "verified",
+        "budget_limit": 20000,
+        "budget_used": 1200,
+        "proof": {
+          "head": 97815,
+          "dossier": 129,
+          "release_ready": 821,
+          "verified": true,
+          "verification_scope": "synthetic_native_release_evidence_readiness",
+          "deployment_authorized": false,
+          "deployment_dispatched": false,
+          "financial_release_granted": false,
+          "external_authenticity_verified": false
+        },
+        "unchanged": true
+      }
+    },
+    {
+      "family": "hypercare",
+      "returncode": 0,
+      "result": {
+        "database": "psl_factory_hypercare_ui_ab92faf193e4",
+        "work": 479,
+        "status": "verified",
+        "budget_limit": 20000,
+        "budget_used": 1200,
+        "proof": {
+          "head": 99438,
+          "dossier": 204,
+          "hypercare": 1090,
+          "verified": true,
+          "qualified": true,
+          "verification_scope": "synthetic_native_hypercare_qualification",
+          "deployment_authorized": false,
+          "deployment_dispatched": false,
+          "financial_release_granted": false,
+          "closure_approved": false,
+          "external_authenticity_verified": false
+        },
+        "unchanged": true
+      }
+    },
+    {
+      "family": "archive",
+      "returncode": 0,
+      "result": {
+        "database": "psl_factory_archive_ui_4d94433baaad",
+        "work": 570,
+        "status": "verified",
+        "budget_limit": 20000,
+        "budget_used": 900,
+        "proof": {
+          "head": 101269,
+          "dossier": 283,
+          "archive": 1532,
+          "verified": true,
+          "verification_scope": "synthetic_native_archive_index",
+          "external_bytes_verified": false,
+          "external_authenticity_verified": false,
+          "physical_purge_performed": false,
+          "support_handover_received": false,
+          "closure_approved": false,
+          "financial_release_granted": false,
+          "deployment_authorized": false
+        },
+        "unchanged": true
+      }
+    },
+    {
+      "family": "handover",
+      "returncode": 0,
+      "result": {
+        "database": "psl_factory_handover_ui_8a327205ea9a",
+        "work": 615,
+        "status": "verified",
+        "budget_limit": 20000,
+        "budget_used": 1300,
+        "proof": {
+          "verified": true,
+          "verification_scope": "synthetic_native_handover_and_actual_recipient_acknowledgement",
+          "head": 102550,
+          "document_version": 1808,
+          "publication": 1274,
+          "receipt_ids": [
+            790
+          ],
+          "handover_ids": [
+            1876
+          ],
+          "separate_handover_approval": false,
+          "closure_approved": false,
+          "financial_release_granted": false,
+          "deployment_authorized": false,
+          "external_authenticity_verified": false
+        },
+        "unchanged": true
+      }
+    },
+    {
+      "family": "closure",
+      "returncode": 0,
+      "result": {
+        "database": "psl_factory_closure_ui_e63d1dc3b212",
+        "work": 641,
+        "status": "verified",
+        "budget_limit": 20000,
+        "budget_used": 1100,
+        "proof": {
+          "verified": true,
+          "head": 103390,
+          "dossier": 335,
+          "closure": 2061,
+          "document_version": 1851,
+          "decision": 2060,
+          "verification_scope": "synthetic_native_project_closure",
+          "debt_waived": false,
+          "deployment_authorized": false,
+          "external_authenticity_verified": false,
+          "separate_retrospective_approval": false,
+          "finance_attestation_inferred": false
+        },
+        "unchanged": true
+      }
+    },
+    {
+      "family": "go-live",
+      "returncode": 0,
+      "result": {
+        "database": "psl_factory_go_live_ui_d7cbfe7f08a6",
+        "work": 1,
+        "status": "verified",
+        "budget_limit": 20000,
+        "budget_used": 1500,
+        "proof": {
+          "verified": true,
+          "verification_scope": "synthetic_native_go_live_delivery_and_human_signature_attestation",
+          "head": 18,
+          "document_version": 2,
+          "publication": 2,
+          "receipt_ids": [
+            2
+          ],
+          "acceptance": 7,
+          "pm_signature": 19,
+          "client_signature": 20,
+          "sign_off_inferred": false,
+          "deployment_authorized": false,
+          "financial_release_granted": false,
+          "external_authenticity_verified": false
+        },
+        "unchanged": true
+      }
+    }
+  ],
+  "business_actions_replayed": false,
+  "migrations_performed": false
+}

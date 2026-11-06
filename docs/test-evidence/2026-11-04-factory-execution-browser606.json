@@ -1,0 +1,86 @@
+{
+  "status": "BOUNDED_NATIVE_BROWSER_VERIFIED",
+  "source_run": 606,
+  "fixture_source_run": 606,
+  "browser": "Codex native in-app browser; tab7",
+  "database": "psl_factory_execution_ui_009444c84974",
+  "observed_sequence": [
+    "Absent authority holds replacement only",
+    "Native draft, validation, activation from structured screen",
+    "Separate exact reviewer replacement decision",
+    "Current worker differs from immutable starter",
+    "Useful evidence investigation and PMO-fact work under replacement",
+    "Next action held by missing existing grant; no fallback impersonation"
+  ],
+  "native_readback": {
+    "source_run": 606,
+    "fixture_source_run": 606,
+    "database": "psl_factory_execution_ui_009444c84974",
+    "synthetic": true,
+    "work": 1,
+    "starter_id": 1,
+    "binding_id": 1,
+    "bindings": [
+      {
+        "id": 1,
+        "principal_id": 2,
+        "reviewer_id": 1,
+        "configuration_id": 18,
+        "sequence": 1,
+        "work_revision": 2
+      }
+    ],
+    "budget_used": 300,
+    "budget_limit": 20000,
+    "status": "blocked",
+    "agent_actor_ids": [
+      2,
+      2,
+      2
+    ],
+    "invoice_jobs": 0,
+    "invoice_reviews": 0,
+    "recovery_policy_revisions": [
+      1
+    ],
+    "live_provider_evaluation": "NOT_EVALUATED"
+  },
+  "fresh_migration_count": 232,
+  "get_preservation": {
+    "rowsets": 331,
+    "indexes": 1562,
+    "unchanged": true
+  },
+  "layout_observations": {
+    "desktop": {
+      "viewport": 1280,
+      "document": 1265,
+      "scroll": 1265
+    },
+    "work_review_and_settings_narrow": {
+      "viewport": 390,
+      "document": 375,
+      "scroll": 375
+    },
+    "viewport_reset": true
+  },
+  "screenshots": {
+    "docs\\test-evidence\\2026-11-04-factory-execution-browser606-unconfigured.jpg": "7e14ed875fdf20400fe576e5a90dfca1fa057fc1b42fc9f530d6c45f29c38930",
+    "docs\\test-evidence\\2026-11-04-factory-execution-browser606-settings.jpg": "afe2cd96c5f255a58844813957c07aeda0f5dc941cd4dbe30e86df8faa096ef6",
+    "docs\\test-evidence\\2026-11-04-factory-execution-browser606-bound.jpg": "e12c61fe127a854f43e0ebfcae45fc9a27e956fd83cc24fa5b595c6524eebc3c",
+    "docs\\test-evidence\\2026-11-04-factory-execution-browser606-scoped-stop.jpg": "542f1d8de1541fa66a9dde6c6cfc73dbb11b82d410f6aaa0c6e385759f9925f4",
+    "docs\\test-evidence\\2026-11-04-factory-execution-browser606-narrow.jpg": "001e58572724cfddf8d808e0c4363f9e9d2382358556bf222d9a8273d61d4c39",
+    "docs\\test-evidence\\2026-11-04-factory-execution-browser606-review-narrow.jpg": "be12ea03d3bea4dd76277f658cafd72c0387a77c6b033dd152d19e6a81fbca6c",
+    "docs\\test-evidence\\2026-11-04-factory-execution-browser606-settings-narrow.jpg": "31acc09bd1886e2284eb157bd2efb25b2fcc94b21b6acf9503e3f2e626ce05bf"
+  },
+  "helper_failure_retained_in_tool_history": "Readback initially queried InvoiceJob.case instead of invoice__case; helper-only lookup corrected, no application source or business action replayed",
+  "real_provider": "NOT_EVALUATED",
+  "live_policy_values_added": false,
+  "full_product_complete": false,
+  "remaining_verification": [
+    "607 broader legacy compatibility result",
+    "608 actual contention/expiry result",
+    "Retained database migration preservation",
+    "Cross-family bound-worker end-to-end acceptance"
+  ]
+}

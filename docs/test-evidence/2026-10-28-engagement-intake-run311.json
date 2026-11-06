@@ -1,0 +1,20 @@
+{
+  "run": 311,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_engagement_intake",
+    "tests.test_product_intake",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-311-engagement-intake.txt",
+  "started_at": "2026-10-28T12:12:31.580584+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 224.292
+}

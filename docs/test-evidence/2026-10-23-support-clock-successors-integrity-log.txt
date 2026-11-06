@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\verify_support_clock_successors.py", line 283, in <module>
+    w=ScheduleWork.objects.get(pk=info['corrected_schedule']);r=LocalPPEReportAdapter().read(viewer,w)
+                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\ppe.py", line 19, in read
+    ppe.locked(actor,work.case_id,'ppe.report');ppe.current(work);r=ppe.approved(work,'schedule')
+                                                ~~~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\ppe.py", line 57, in current
+    if w.kind=='ppe_schedule' and calculate(w.case,w.payload,w.snapshot,w.parent)!=w.result:raise ValidationError('PPE current calculation/freshness differs; preserve history and rebuild')
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['PPE current calculation/freshness differs; preserve history and rebuild']

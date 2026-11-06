@@ -1,0 +1,32 @@
+Using existing test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+test_governed_synthetic_case_exercises_the_same_native_investigator (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_governed_synthetic_case_exercises_the_same_native_investigator) ... ok
+test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance) ... ok
+test_native_investigation_permission_cannot_fall_back_to_generic_extraction (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_native_investigation_permission_cannot_fall_back_to_generic_extraction) ... ok
+test_binding_preserves_the_original_starter_and_grants_and_budget (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_binding_preserves_the_original_starter_and_grants_and_budget) ... ok
+test_database_preserves_binding_and_starter_identity_and_refuses_pointer_reset (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_database_preserves_binding_and_starter_identity_and_refuses_pointer_reset) ... ok
+test_database_refuses_a_forged_rule_not_present_in_the_registered_policy (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_database_refuses_a_forged_rule_not_present_in_the_registered_policy) ... ok
+test_execute_permission_alone_cannot_review_recovery (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_execute_permission_alone_cannot_review_recovery) ... ok
+test_failed_claim_cannot_overwrite_a_successful_replacement_claim (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_failed_claim_cannot_overwrite_a_successful_replacement_claim) ... ok
+test_operator_reviews_exact_current_replacement_and_rejects_stale_post (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_operator_reviews_exact_current_replacement_and_rejects_stale_post) ... ok
+test_recovery_settings_preserve_other_rules_and_refuse_stale_draft (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_recovery_settings_preserve_other_rules_and_refuse_stale_draft) ... ok
+test_useful_invoice_agent_work_uses_replacement_and_not_the_starter (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_useful_invoice_agent_work_uses_replacement_and_not_the_starter) ... ok
+test_withdrawn_binding_never_falls_back_to_the_original_starter (tests.test_factory_execution_binding.FactoryExecutionBindingTests.test_withdrawn_binding_never_falls_back_to_the_original_starter) ... ok
+test_changed_native_routing_still_invalidates_the_old_subject (tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_changed_native_routing_still_invalidates_the_old_subject) ... ok
+test_current_finance_permission_is_still_required (tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_current_finance_permission_is_still_required) ... ok
+test_exact_native_review_continues_but_no_agent_or_invoice_effect_is_authorised (tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_exact_native_review_continues_but_no_agent_or_invoice_effect_is_authorised) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 46.488s
+
+OK
+Preserving test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

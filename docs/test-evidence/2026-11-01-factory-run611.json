@@ -1,0 +1,27 @@
+{
+  "run": 611,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_archive.FactoryArchiveTests.test_stopped_work_with_a_superseded_unsigned_baseline_cannot_offer_or_execute_restart",
+    "tests.test_factory_handover",
+    "tests.test_factory_handover_current",
+    "tests.test_factory_closure",
+    "tests.test_factory_closure_recovery",
+    "tests.test_factory_go_live",
+    "tests.test_factory_console",
+    "tests.test_factory_execution_concurrency",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T16:30:59.421966+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run611.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 3869.665
+}

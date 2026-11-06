@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants) ... ok
+test_database_immutable_exact_lineage_fresh_scope_and_bidirectional_source_cycles (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_database_immutable_exact_lineage_fresh_scope_and_bidirectional_source_cycles) ... ok
+test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review (tests.test_protection_acceptance.ProtectionAcceptanceTests.test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review) ... ok
+test_duplicate_packet_review_foreign_revocation_and_fresh_process_acceptance_reads (tests.test_protection_acceptance_concurrency.ProtectionAcceptanceConcurrencyTests.test_duplicate_packet_review_foreign_revocation_and_fresh_process_acceptance_reads) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 956.188s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

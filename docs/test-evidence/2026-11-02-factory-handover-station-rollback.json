@@ -1,0 +1,19 @@
+{
+  "classification": "Synthetic unsupported-downgrade refusal; active-factory restore remains unaccepted",
+  "database": "psl_factory_handover_rollback_d6a112f6b4d7",
+  "source_database": "psl_factory_handover_ui_8a327205ea9a",
+  "source_unchanged": true,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "workflows",
+    "0044_factory_archive",
+    "--noinput"
+  ],
+  "returncode": 1,
+  "rowsets_and_guards_unchanged": 329,
+  "retained_verified_handover_work": 1,
+  "rollback_requirement": "Retain0045/0016 expanded guards/schema; restore with fresh authority and uncertain-effect reconciliation is separate",
+  "log": "docs/test-evidence/2026-11-02-factory-handover-station-rollback.txt"
+}

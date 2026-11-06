@@ -1,0 +1,42 @@
+{
+  "runs": {
+    "223": {
+      "path": "docs/test-evidence/2026-10-24-run-223-protection-acceptance-baseline.txt",
+      "tests": 2,
+      "seconds": 472.077,
+      "result": "FAILED (errors=1)"
+    },
+    "224": {
+      "path": "docs/test-evidence/2026-10-24-run-224-protection-acceptance-baseline-corrected.txt",
+      "tests": 2,
+      "seconds": 498.899,
+      "result": "OK"
+    },
+    "225": {
+      "path": "docs/test-evidence/2026-10-24-run-225-protection-owner-acceptance.txt",
+      "tests": 13,
+      "seconds": 1586.806,
+      "result": "OK"
+    },
+    "226": {
+      "path": "docs/test-evidence/2026-10-24-run-226-protection-owner-final.txt",
+      "tests": 4,
+      "seconds": 956.188,
+      "result": "OK"
+    },
+    "227": {
+      "path": "docs/test-evidence/2026-10-24-run-227-protection-owner-connected.txt",
+      "tests": 116,
+      "seconds": 1444.555,
+      "result": "OK"
+    },
+    "228": {
+      "path": "docs/test-evidence/2026-10-24-run-228-protection-owner-review-ui.txt",
+      "tests": 1,
+      "seconds": 338.935,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "real_provider_or_owner_operational_acceptance": false
+}

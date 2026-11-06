@@ -1,0 +1,24 @@
+{
+  "run": 481,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_closure.FactoryClosureTests.test_invalid_execution_configuration_cannot_appoint_or_expand_a_closure_operator",
+    "tests.test_factory_closure.FactoryClosureTests.test_provider_cannot_self_approve_select_finalisation_early_or_invent_citations",
+    "tests.test_factory_closure.FactoryClosureTests.test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect",
+    "tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_two_real_connections_capture_one_private_intake_for_the_same_dossier",
+    "tests.test_factory_closure_recovery.FactoryClosureRecoveryTests.test_stop_after_committed_closure_records_followup_and_never_claims_it_was_cancelled",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T14:29:46.205788+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run481.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 36.842
+}

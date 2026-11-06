@@ -1,0 +1,19 @@
+{
+  "run": 310,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_product_intake",
+    "tests.test_engagement_intake.EngagementIntakeTests.test_capture_before_policy_assignment_registration_alias_export_and_current_holds",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-310-engagement-intake.txt",
+  "started_at": "2026-10-28T12:10:09.597670+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 95.321
+}

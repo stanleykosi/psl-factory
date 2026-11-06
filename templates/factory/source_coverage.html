@@ -1,0 +1,7 @@
+{% if coverage %}
+<p>This view shows current source records and the documents used by current delivery decisions. Earlier versions remain in delivery history.</p>
+<details><summary>Source coverage</summary>
+<p>{{ coverage.selected.sources }} current source records selected from {{ coverage.retained_history.sources }} retained source records.</p>
+<p>{{ coverage.selected.document_bindings }} current or decision-linked reports selected from {{ coverage.retained_history.document_bindings }} retained reports. Source bodies remain limited by your access.</p>
+</details>
+{% endif %}

@@ -1,0 +1,4034 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PSL execution receipt v0.4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_id",
+    "command_id",
+    "operation_key",
+    "request_hash",
+    "contract_version",
+    "prior_version",
+    "result_version",
+    "state",
+    "outcome",
+    "result_refs",
+    "audit_ref",
+    "recorded_at",
+    "contract_id",
+    "action",
+    "tenant_id",
+    "case_id",
+    "result"
+  ],
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "command_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operation_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prior_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "result_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "state": {
+      "enum": [
+        "accepted",
+        "accepted_snapshot",
+        "applied",
+        "approved",
+        "armed",
+        "authenticated",
+        "authorized",
+        "blocked_configuration",
+        "blocked_rule",
+        "cancel_requested",
+        "cancelled",
+        "claimed",
+        "completed",
+        "completed_unverified",
+        "correlated",
+        "created",
+        "dead_letter",
+        "draft",
+        "due",
+        "duplicate",
+        "expired",
+        "failed",
+        "failed_terminal",
+        "fired",
+        "in_progress",
+        "invalidated",
+        "leased",
+        "manual_reconciliation",
+        "not_created",
+        "offered",
+        "outcome_unknown",
+        "overdue",
+        "parsed",
+        "partially_completed",
+        "partially_decided",
+        "prepared",
+        "quarantined",
+        "queued",
+        "reassigned",
+        "received",
+        "reconciled",
+        "rejected",
+        "release_pending",
+        "released",
+        "requested",
+        "retry_wait",
+        "returned",
+        "review_required",
+        "reviewed",
+        "running",
+        "submitting",
+        "succeeded",
+        "superseded",
+        "unchanged",
+        "uploaded",
+        "validated",
+        "verified",
+        "waiting_external",
+        "withdrawn"
+      ]
+    },
+    "outcome": {
+      "enum": [
+        "accepted",
+        "completed",
+        "duplicate",
+        "validation_failed",
+        "permission_denied",
+        "stale_version",
+        "blocked_configuration",
+        "outcome_unknown",
+        "rejected",
+        "cancelled"
+      ]
+    },
+    "result_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ref"
+      }
+    },
+    "audit_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "contract_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "result": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "content_hash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.create"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schedule_version",
+              "state",
+              "calculated_due_at"
+            ],
+            "properties": {
+              "schedule_version": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "calculated_due_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.revise"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "new_schedule_ref",
+              "superseded_ref"
+            ],
+            "properties": {
+              "new_schedule_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "superseded_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.claim_due"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "occurrence_ref",
+              "fencing_token"
+            ],
+            "properties": {
+              "occurrence_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "fencing_token": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.fire"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "outbox_receipt_ref"
+            ],
+            "properties": {
+              "outbox_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.cancel"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cancellation_receipt_ref"
+            ],
+            "properties": {
+              "cancellation_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.reconcile"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "missing_occurrence_refs",
+              "reconciliation_ref"
+            ],
+            "properties": {
+              "missing_occurrence_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              },
+              "reconciliation_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.advance_recurrence"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "next_schedule_ref",
+              "next_due_at"
+            ],
+            "properties": {
+              "next_schedule_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "next_due_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X01"
+        },
+        "action": {
+          "const": "schedule.reclaim"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "armed",
+            "due",
+            "claimed",
+            "fired",
+            "superseded",
+            "cancelled",
+            "blocked_configuration",
+            "overdue",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reclaim_receipt_ref"
+            ],
+            "properties": {
+              "reclaim_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.receive"
+        },
+        "state": {
+          "enum": [
+            "received",
+            "authenticated",
+            "validated",
+            "quarantined",
+            "duplicate",
+            "correlated",
+            "applied",
+            "superseded",
+            "rejected",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ingress_receipt_ref",
+              "state"
+            ],
+            "properties": {
+              "ingress_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.validate"
+        },
+        "state": {
+          "enum": [
+            "received",
+            "authenticated",
+            "validated",
+            "quarantined",
+            "duplicate",
+            "correlated",
+            "applied",
+            "superseded",
+            "rejected",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "validation_ref",
+              "reasons"
+            ],
+            "properties": {
+              "validation_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.correlate"
+        },
+        "state": {
+          "enum": [
+            "received",
+            "authenticated",
+            "validated",
+            "quarantined",
+            "duplicate",
+            "correlated",
+            "applied",
+            "superseded",
+            "rejected",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "correlation_ref",
+              "resolved_subject_ref"
+            ],
+            "properties": {
+              "correlation_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "resolved_subject_ref": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ref"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.apply"
+        },
+        "state": {
+          "enum": [
+            "received",
+            "authenticated",
+            "validated",
+            "quarantined",
+            "duplicate",
+            "correlated",
+            "applied",
+            "superseded",
+            "rejected",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "transition_receipt_ref",
+              "resulting_subject_ref"
+            ],
+            "properties": {
+              "transition_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "resulting_subject_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X02"
+        },
+        "action": {
+          "const": "event.reconcile_source"
+        },
+        "state": {
+          "enum": [
+            "received",
+            "authenticated",
+            "validated",
+            "quarantined",
+            "duplicate",
+            "correlated",
+            "applied",
+            "superseded",
+            "rejected",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reconciliation_ref",
+              "missing_event_refs"
+            ],
+            "properties": {
+              "reconciliation_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "missing_event_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.prepare"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "authorized",
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "succeeded",
+            "failed",
+            "outcome_unknown",
+            "cancel_requested",
+            "cancelled",
+            "manual_reconciliation",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "job_request_ref",
+              "validation_ref"
+            ],
+            "properties": {
+              "job_request_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "validation_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.start"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "authorized",
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "succeeded",
+            "failed",
+            "outcome_unknown",
+            "cancel_requested",
+            "cancelled",
+            "manual_reconciliation",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "submission_receipt_ref",
+              "external_run_id"
+            ],
+            "properties": {
+              "submission_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "external_run_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.query"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "authorized",
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "succeeded",
+            "failed",
+            "outcome_unknown",
+            "cancel_requested",
+            "cancelled",
+            "manual_reconciliation",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status_receipt_ref",
+              "item_result_refs"
+            ],
+            "properties": {
+              "status_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "item_result_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.callback"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "authorized",
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "succeeded",
+            "failed",
+            "outcome_unknown",
+            "cancel_requested",
+            "cancelled",
+            "manual_reconciliation",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reconciliation_ref"
+            ],
+            "properties": {
+              "reconciliation_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.cancel"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "authorized",
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "succeeded",
+            "failed",
+            "outcome_unknown",
+            "cancel_requested",
+            "cancelled",
+            "manual_reconciliation",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cancel_request_receipt_ref"
+            ],
+            "properties": {
+              "cancel_request_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X03"
+        },
+        "action": {
+          "const": "job.reconcile"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "authorized",
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "succeeded",
+            "failed",
+            "outcome_unknown",
+            "cancel_requested",
+            "cancelled",
+            "manual_reconciliation",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reconciliation_ref",
+              "resolved_state"
+            ],
+            "properties": {
+              "reconciliation_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "resolved_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.request"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "requested",
+            "partially_decided",
+            "approved",
+            "rejected",
+            "returned",
+            "withdrawn",
+            "invalidated",
+            "expired",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "request_ref",
+              "eligible_role_refs"
+            ],
+            "properties": {
+              "request_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "eligible_role_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.submit"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "requested",
+            "partially_decided",
+            "approved",
+            "rejected",
+            "returned",
+            "withdrawn",
+            "invalidated",
+            "expired",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "decision_receipt_ref",
+              "aggregate_state"
+            ],
+            "properties": {
+              "decision_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "aggregate_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.withdraw"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "requested",
+            "partially_decided",
+            "approved",
+            "rejected",
+            "returned",
+            "withdrawn",
+            "invalidated",
+            "expired",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "withdrawal_receipt_ref",
+              "affected_readiness_refs"
+            ],
+            "properties": {
+              "withdrawal_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "affected_readiness_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.invalidate"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "requested",
+            "partially_decided",
+            "approved",
+            "rejected",
+            "returned",
+            "withdrawn",
+            "invalidated",
+            "expired",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "invalidation_receipt_ref",
+              "affected_task_refs"
+            ],
+            "properties": {
+              "invalidation_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "affected_task_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.record_external"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "requested",
+            "partially_decided",
+            "approved",
+            "rejected",
+            "returned",
+            "withdrawn",
+            "invalidated",
+            "expired",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "verified_prerequisite_ref"
+            ],
+            "properties": {
+              "verified_prerequisite_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.cancel_request"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "requested",
+            "partially_decided",
+            "approved",
+            "rejected",
+            "returned",
+            "withdrawn",
+            "invalidated",
+            "expired",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cancellation_receipt_ref"
+            ],
+            "properties": {
+              "cancellation_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X04"
+        },
+        "action": {
+          "const": "decision.expire"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "requested",
+            "partially_decided",
+            "approved",
+            "rejected",
+            "returned",
+            "withdrawn",
+            "invalidated",
+            "expired",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "expiry_receipt_ref"
+            ],
+            "properties": {
+              "expiry_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.ingest"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "artifact_ref",
+              "quarantine_state"
+            ],
+            "properties": {
+              "artifact_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "quarantine_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.validate_import"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "validation_ref",
+              "parsed_dataset_ref",
+              "error_refs"
+            ],
+            "properties": {
+              "validation_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "parsed_dataset_ref": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ref"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "error_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.accept_snapshot"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "snapshot_ref",
+              "lineage_ref"
+            ],
+            "properties": {
+              "snapshot_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "lineage_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.assemble"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "draft_ref",
+              "render_validation_ref"
+            ],
+            "properties": {
+              "draft_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "render_validation_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.request_review"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "decision_request_ref"
+            ],
+            "properties": {
+              "decision_request_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.release"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "release_receipt_ref",
+              "delivery_state"
+            ],
+            "properties": {
+              "release_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "delivery_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.supersede"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lineage_ref",
+              "invalidated_dependency_refs"
+            ],
+            "properties": {
+              "lineage_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "invalidated_dependency_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.record_review"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reviewed_artifact_ref"
+            ],
+            "properties": {
+              "reviewed_artifact_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X05"
+        },
+        "action": {
+          "const": "artifact.reconcile_release"
+        },
+        "state": {
+          "enum": [
+            "uploaded",
+            "quarantined",
+            "validated",
+            "parsed",
+            "accepted_snapshot",
+            "draft",
+            "review_required",
+            "reviewed",
+            "released",
+            "superseded",
+            "rejected",
+            "release_pending",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "release_receipt_ref",
+              "resolved_state"
+            ],
+            "properties": {
+              "release_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "resolved_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.create"
+        },
+        "state": {
+          "enum": [
+            "created",
+            "validated",
+            "blocked_rule",
+            "running",
+            "partially_completed",
+            "completed",
+            "failed",
+            "superseded",
+            "reconciled",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "batch_ref",
+              "validation_ref"
+            ],
+            "properties": {
+              "batch_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "validation_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.validate"
+        },
+        "state": {
+          "enum": [
+            "created",
+            "validated",
+            "blocked_rule",
+            "running",
+            "partially_completed",
+            "completed",
+            "failed",
+            "superseded",
+            "reconciled",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "validation_ref",
+              "blocked_items"
+            ],
+            "properties": {
+              "validation_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "blocked_items": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.calculate_item"
+        },
+        "state": {
+          "enum": [
+            "created",
+            "validated",
+            "blocked_rule",
+            "running",
+            "partially_completed",
+            "completed",
+            "failed",
+            "superseded",
+            "reconciled",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "result_ref",
+              "lineage_ref",
+              "item_state"
+            ],
+            "properties": {
+              "result_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "lineage_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "item_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.reconcile"
+        },
+        "state": {
+          "enum": [
+            "created",
+            "validated",
+            "blocked_rule",
+            "running",
+            "partially_completed",
+            "completed",
+            "failed",
+            "superseded",
+            "reconciled",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reconciliation_ref",
+              "unmatched_items"
+            ],
+            "properties": {
+              "reconciliation_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "unmatched_items": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.correct"
+        },
+        "state": {
+          "enum": [
+            "created",
+            "validated",
+            "blocked_rule",
+            "running",
+            "partially_completed",
+            "completed",
+            "failed",
+            "superseded",
+            "reconciled",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "successor_batch_ref",
+              "affected_item_keys"
+            ],
+            "properties": {
+              "successor_batch_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "affected_item_keys": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X06"
+        },
+        "action": {
+          "const": "batch.cancel_remaining"
+        },
+        "state": {
+          "enum": [
+            "created",
+            "validated",
+            "blocked_rule",
+            "running",
+            "partially_completed",
+            "completed",
+            "failed",
+            "superseded",
+            "reconciled",
+            "cancelled",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cancellation_receipt_ref",
+              "completed_item_refs"
+            ],
+            "properties": {
+              "cancellation_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "completed_item_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ref"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.offer"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "delivery_receipt_ref",
+              "handoff_ref"
+            ],
+            "properties": {
+              "delivery_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "handoff_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.accept"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "acceptance_receipt_ref"
+            ],
+            "properties": {
+              "acceptance_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.return"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "return_receipt_ref"
+            ],
+            "properties": {
+              "return_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.reassign"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "assignment_receipt_ref"
+            ],
+            "properties": {
+              "assignment_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.record_completion"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "completion_receipt_ref",
+              "state"
+            ],
+            "properties": {
+              "completion_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.verify"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "verification_receipt_ref"
+            ],
+            "properties": {
+              "verification_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.cancel"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cancellation_receipt_ref"
+            ],
+            "properties": {
+              "cancellation_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.start"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "start_receipt_ref"
+            ],
+            "properties": {
+              "start_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.mark_overdue"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "overdue_receipt_ref"
+            ],
+            "properties": {
+              "overdue_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X07"
+        },
+        "action": {
+          "const": "handoff.reconcile_delivery"
+        },
+        "state": {
+          "enum": [
+            "prepared",
+            "offered",
+            "accepted",
+            "in_progress",
+            "returned",
+            "reassigned",
+            "completed_unverified",
+            "verified",
+            "overdue",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "delivery_resolution_ref",
+              "resolved_state"
+            ],
+            "properties": {
+              "delivery_resolution_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "resolved_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.enqueue"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "queue_item_ref",
+              "enqueue_receipt_ref"
+            ],
+            "properties": {
+              "queue_item_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "enqueue_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.claim"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lease_id",
+              "fencing_token",
+              "lease_expires_at"
+            ],
+            "properties": {
+              "lease_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fencing_token": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "lease_expires_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.heartbeat"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lease_expires_at"
+            ],
+            "properties": {
+              "lease_expires_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.complete"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "completion_receipt_ref"
+            ],
+            "properties": {
+              "completion_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.fail"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "next_state",
+              "retry_at"
+            ],
+            "properties": {
+              "next_state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "retry_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.cancel"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cancel_receipt_ref"
+            ],
+            "properties": {
+              "cancel_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.redrive"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "new_attempt_ref",
+              "redrive_receipt_ref"
+            ],
+            "properties": {
+              "new_attempt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "redrive_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.park"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "wait_checkpoint_ref"
+            ],
+            "properties": {
+              "wait_checkpoint_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.resume"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resume_receipt_ref"
+            ],
+            "properties": {
+              "resume_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.reclaim_expired"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reclaim_receipt_ref",
+              "next_state"
+            ],
+            "properties": {
+              "reclaim_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "next_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "contract_id": {
+          "const": "X08"
+        },
+        "action": {
+          "const": "queue.reconcile_outcome"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "leased",
+            "running",
+            "waiting_external",
+            "retry_wait",
+            "succeeded",
+            "failed_terminal",
+            "dead_letter",
+            "cancel_requested",
+            "cancelled",
+            "outcome_unknown",
+            "unchanged",
+            "not_created"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resolution_receipt_ref",
+              "next_state"
+            ],
+            "properties": {
+              "resolution_receipt_ref": {
+                "$ref": "#/$defs/ref"
+              },
+              "next_state": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "classification": "Current source readback of retained synthetic UI closure; no business action replay or new acceptance",
+  "read_at": "2026-11-02T14:53:22.744943+00:00",
+  "runtime": 486,
+  "verified_source_files": 1295,
+  "database": "psl_factory_closure_ui_e63d1dc3b212",
+  "work": 641,
+  "proof_unchanged": true,
+  "budget_used": 1100,
+  "budget_limit": 20000,
+  "closed_scope_status": "closed",
+  "ready_to_prepare": false,
+  "current_human_decision_or_reopen_buttons": false,
+  "original_versions_and_private_heads_retained": true,
+  "screenshots": [
+    "docs/test-evidence/2026-11-02-factory-closure-verified-runtime486.jpg",
+    "docs/test-evidence/2026-11-02-factory-closure-verified-narrow-runtime486.jpg"
+  ],
+  "keyboard_and_queue_context": "Actual Enter search retained active/query; active empty after verified; verified/query showed one record and opened same work; back retained verified/query.",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 900,
+      "document_width": 1265,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "document_width": 375,
+      "overflow": false
+    }
+  ],
+  "preview": {
+    "pid": 7152,
+    "path": "C:\\Python313\\python.exe",
+    "start_utc": "2026-11-02T14:48:11.8333782Z",
+    "port": 8011,
+    "session": 52956
+  },
+  "prior_browser_evidence": "docs/test-evidence/2026-11-02-factory-closure-station-browser.json",
+  "independent_human_UAT": false,
+  "real_model_evaluation": false
+}

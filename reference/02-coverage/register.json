@@ -1,0 +1,978 @@
+[
+  {
+    "id": "B01",
+    "department": "BaaS",
+    "family": "Support case management",
+    "title": "Customer complaint handling across channels",
+    "classification": "Existing workflow",
+    "source_owner": "Support"
+  },
+  {
+    "id": "B02",
+    "department": "BaaS",
+    "family": "Support case management",
+    "title": "Support complaint summaries",
+    "classification": "Proposed improvement",
+    "source_owner": "Support (proposed reporting)"
+  },
+  {
+    "id": "B03",
+    "department": "BaaS",
+    "family": "Support case management",
+    "title": "First response and resolution measurement",
+    "classification": "Proposed improvement",
+    "source_owner": "Support (proposed metrics)"
+  },
+  {
+    "id": "B04",
+    "department": "BaaS",
+    "family": "Reconciliation and corrective funds",
+    "title": "Settlement confirmation during reconciliation",
+    "classification": "Substep / control",
+    "source_owner": "Reconciliation; Support"
+  },
+  {
+    "id": "B05",
+    "department": "BaaS",
+    "family": "Reconciliation and corrective funds",
+    "title": "Engineering-mediated corrective credit",
+    "classification": "Existing workflow",
+    "source_owner": "Engineering executes; Support / Reconciliation requests"
+  },
+  {
+    "id": "B06",
+    "department": "BaaS",
+    "family": "Reconciliation and corrective funds",
+    "title": "Fund movement and queue request handling",
+    "classification": "Substep / control",
+    "source_owner": "Reconciliation; Engineering"
+  },
+  {
+    "id": "B07",
+    "department": "BaaS",
+    "family": "Reconciliation and corrective funds",
+    "title": "Reconciliation Excel and pending-queue checks",
+    "classification": "Mixed current + proposed",
+    "source_owner": "Reconciliation (second-hand description)"
+  },
+  {
+    "id": "B08",
+    "department": "BaaS",
+    "family": "Partner agreement renewals",
+    "title": "Partner SLA expiry and renewal",
+    "classification": "Mixed current + proposed",
+    "source_owner": "BaaS stakeholder; holder unconfirmed"
+  },
+  {
+    "id": "B09",
+    "department": "BaaS",
+    "family": "Customer onboarding",
+    "title": "Manual customer onboarding tracker",
+    "classification": "Existing workflow",
+    "source_owner": "BaaS stakeholder; stage holders unconfirmed"
+  },
+  {
+    "id": "B10",
+    "department": "BaaS",
+    "family": "Customer onboarding",
+    "title": "Onboarding ageing and follow-up",
+    "classification": "Proposed improvement",
+    "source_owner": "BaaS holder to be confirmed"
+  },
+  {
+    "id": "B11",
+    "department": "BaaS",
+    "family": "Partner activity reporting",
+    "title": "Partner product-usage and active-user reporting",
+    "classification": "Report / output",
+    "source_owner": "BaaS; Data / admin inputs"
+  },
+  {
+    "id": "B12",
+    "department": "BaaS",
+    "family": "BaaS billing preparation",
+    "title": "Pricing and BaaS billing data preparation",
+    "classification": "Substep / control",
+    "source_owner": "Finance; Data / BaaS pricing contributors"
+  },
+  {
+    "id": "B14",
+    "department": "BaaS",
+    "family": "Support case management",
+    "title": "Support case-flow standardisation",
+    "classification": "Proposed improvement",
+    "source_owner": "Support (proposed flow)"
+  },
+  {
+    "id": "F01",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Individual transaction posting in QuickBooks",
+    "classification": "Existing workflow",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F02",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Trial-balance extraction from QuickBooks",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F03",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Trial-balance lookup alignment in management-account workbook",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F04",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Trial-balance adjustments movement and total check",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F05",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Notes aggregation for income cost and expenses",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F06",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Cash and other-asset note aggregation and scaling",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F07",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Property plant equipment and depreciation schedule",
+    "classification": "Report / output",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F08",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Liability note aggregation and sign reversal",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F09",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Balance-sheet construction and equity linkage",
+    "classification": "Report / output",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F10",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Income-statement actuals and comparison presentation",
+    "classification": "Report / output",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F11",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Manual management-account budget import and monthly update",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F12",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Detailed income breakdown and manual supplemental adjustments",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F13",
+    "department": "Finance",
+    "family": "Accounting and management accounts",
+    "title": "Other management-account workbook schedules",
+    "classification": "Report / output",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F14",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "BU revenue classification from management accounts",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F15",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "BU cost-of-sales and direct cost attribution",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F16",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Combine two payroll inputs into a finance working sheet",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F17",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Match payroll to HR staff and BU membership",
+    "classification": "Substep / control",
+    "source_owner": "Finance; HR supplies staff data"
+  },
+  {
+    "id": "F18",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Filter BU staff costs and manually bring totals into BU report",
+    "classification": "Substep / control",
+    "source_owner": "Finance; HR staff input"
+  },
+  {
+    "id": "F19",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Allocate other staff costs by headcount",
+    "classification": "Substep / control",
+    "source_owner": "Finance; HR headcount input"
+  },
+  {
+    "id": "F20",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Standard shared-service staff allocation",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F21",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Individual executive and exceptional shared-service allocation",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F22",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Operating-expense sharing across BUs",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F23",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Monthly BU totals and comparison with management accounts",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F24",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "BU year-to-date aggregation",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F25",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "BU year-to-date budget linkage and prorating",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F26",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "BU performance metrics and bar-chart presentation",
+    "classification": "Report / output",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F27",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Business-unit reporting scope change and historical rework",
+    "classification": "Change request",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F28",
+    "department": "Finance",
+    "family": "BaaS billing preparation",
+    "title": "BaaS monthly client-usage report handoff",
+    "classification": "Substep / control",
+    "source_owner": "Data team supplies usage; Finance receives"
+  },
+  {
+    "id": "F29",
+    "department": "Finance",
+    "family": "BaaS billing preparation",
+    "title": "Manual client pricing and invoice amount calculation",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F30",
+    "department": "Finance",
+    "family": "BaaS billing preparation",
+    "title": "Invoice generation with existing Power Automate work",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F31",
+    "department": "Finance",
+    "family": "Service billing and receivables",
+    "title": "IT service client-list and mixed billing cadence",
+    "classification": "Existing workflow",
+    "source_owner": "IT maintains clients; Finance invoices"
+  },
+  {
+    "id": "F32",
+    "department": "Finance",
+    "family": "Service billing and receivables",
+    "title": "Receivable paid/unpaid tracking and IT collection issues",
+    "classification": "Current method unverified",
+    "source_owner": "Finance; IT collection context"
+  },
+  {
+    "id": "F33",
+    "department": "Finance",
+    "family": "Project-to-Finance handoff",
+    "title": "Manual project-progress handoff for revenue recognition",
+    "classification": "Existing workflow",
+    "source_owner": "Finance; project managers"
+  },
+  {
+    "id": "F34",
+    "department": "Finance",
+    "family": "Project-to-Finance handoff",
+    "title": "PMO finance-layer integration and milestone notifications",
+    "classification": "Mixed documented + proposed",
+    "source_owner": "Finance; Project Manager/PMO supplies milestone and costing information"
+  },
+  {
+    "id": "F35",
+    "department": "Finance",
+    "family": "HR-to-Finance data interface",
+    "title": "HR-to-finance information interface and proposed HR integration",
+    "classification": "Mixed current + proposed",
+    "source_owner": "HR; Finance"
+  },
+  {
+    "id": "F36",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Select expected cash inflows from receivables and other sources",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F37",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Estimate recurring and newly reported cash outflows",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F38",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Establish cash opening balance and near-term obligation view",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F39",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Calculate projected monthly cash balance and carry forward",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F40",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Management cash prioritization and client follow-up decisions",
+    "classification": "Existing workflow",
+    "source_owner": "Management decides; Finance prepares"
+  },
+  {
+    "id": "F41",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Update forecast after actual receipts and payments",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F42",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Roll unresolved cash items to next month and adjust horizon",
+    "classification": "Substep / control",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F43",
+    "department": "Finance",
+    "family": "Cash forecasting and reporting",
+    "title": "Separate internal and group cash-flow reporting",
+    "classification": "Report / output",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F44",
+    "department": "Finance",
+    "family": "Business-unit performance and allocations",
+    "title": "Transaction-level BU attribution and company roll-up",
+    "classification": "Proposed improvement",
+    "source_owner": "Finance"
+  },
+  {
+    "id": "F45",
+    "department": "Finance",
+    "family": "Service billing and receivables",
+    "title": "Business-line client/service register and billing-period coverage",
+    "classification": "Proposed improvement",
+    "source_owner": "Finance; business-line contributors to confirm"
+  },
+  {
+    "id": "P01",
+    "department": "PMO",
+    "family": "Pre-SOW and pricing approvals",
+    "title": "Confirm required approvals before an SOW is shared",
+    "classification": "SOP-prescribed control",
+    "source_owner": "PMO; Project Manager; Head of PMO; CEO"
+  },
+  {
+    "id": "P02",
+    "department": "PMO",
+    "family": "Pre-SOW and pricing approvals",
+    "title": "Automate routing and visibility without taking over other teams’ approvals",
+    "classification": "Proposed improvement",
+    "source_owner": "PMO coordinates; referenced departments retain approval ownership"
+  },
+  {
+    "id": "P03",
+    "department": "PMO",
+    "family": "Project records and reporting",
+    "title": "Record engagements and register projects with linked identifiers",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO; assigned Project Manager"
+  },
+  {
+    "id": "P04",
+    "department": "PMO",
+    "family": "Project records and reporting",
+    "title": "Maintain PMO tracking and prepare periodic reports",
+    "classification": "SOP-prescribed output",
+    "source_owner": "PMO; Project Manager; PMO leadership"
+  },
+  {
+    "id": "P05",
+    "department": "PMO",
+    "family": "Project records and reporting",
+    "title": "Provide a permissioned shared project view for PMO, management and engineering",
+    "classification": "Proposed improvement",
+    "source_owner": "PMO; Management and Engineering as permitted audiences"
+  },
+  {
+    "id": "P06",
+    "department": "PMO",
+    "family": "Project costing and pricing",
+    "title": "Maintain resource-driven project costing, including engineering and security effort",
+    "classification": "Substep / control",
+    "source_owner": "PMO; Engineering and Security supply estimates"
+  },
+  {
+    "id": "P07",
+    "department": "PMO",
+    "family": "Project costing and pricing",
+    "title": "Prepare SOW costing and milestones from the engagement requirements",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "Project Manager; PMO; Product where applicable"
+  },
+  {
+    "id": "P08",
+    "department": "PMO",
+    "family": "Project costing and pricing",
+    "title": "Control cost-changing revisions and proposed pricing-model updates",
+    "classification": "Mixed documented + proposed",
+    "source_owner": "PMO; Project Manager; Head of PMO; CEO"
+  },
+  {
+    "id": "P09",
+    "department": "PMO",
+    "family": "Pre-SOW and pricing approvals",
+    "title": "Route SOW costing for Project Manager → Head of PMO → CEO approval",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Project Manager → Head of PMO → CEO (final)"
+  },
+  {
+    "id": "P10",
+    "department": "PMO",
+    "family": "SOW and shared templates",
+    "title": "Select the applicable SOW or other controlled document template",
+    "classification": "Existing workflow",
+    "source_owner": "PMO; document owners to confirm"
+  },
+  {
+    "id": "P11",
+    "department": "PMO",
+    "family": "SOW and shared templates",
+    "title": "Standardise templates and maintain governed repository references",
+    "classification": "Mixed documented + proposed",
+    "source_owner": "PMO; Project Managers; PMO Lead for external-document review"
+  },
+  {
+    "id": "P12",
+    "department": "PMO",
+    "family": "Project-to-Finance handoff",
+    "title": "Share signed costs and milestones, notify completion and confirm closure handoffs",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "Project Manager sends; Finance invoices and follows up"
+  },
+  {
+    "id": "P16",
+    "department": "PMO",
+    "family": "Initiation",
+    "title": "Log client engagement, record Route A/B/C and assign the PM",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO; assigned Project Manager"
+  },
+  {
+    "id": "P17",
+    "department": "PMO",
+    "family": "Initiation",
+    "title": "Define requirements and map required delivery stakeholders",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO coordinates; Product prepares product paper/PRD; delivery teams contribute"
+  },
+  {
+    "id": "P18",
+    "department": "PMO",
+    "family": "Initiation and planning",
+    "title": "Collect Engineering and Security effort/timeline estimates",
+    "classification": "SOP-prescribed control",
+    "source_owner": "PMO coordinates; Engineering and Security supply estimates"
+  },
+  {
+    "id": "P19",
+    "department": "PMO",
+    "family": "Initiation",
+    "title": "Submit approved client documents and manage feedback/revisions",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "Project Manager; PMO; Client"
+  },
+  {
+    "id": "P20",
+    "department": "PMO",
+    "family": "Initiation",
+    "title": "Obtain client-signed SOW and PRD and hand the signed baseline to Finance",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Client signs; Project Manager shares with Finance"
+  },
+  {
+    "id": "P21",
+    "department": "PMO",
+    "family": "Planning",
+    "title": "Run both PRD alignment sessions and resolve scope/dependency gaps",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO coordinates; Product and cross-functional delivery teams"
+  },
+  {
+    "id": "P22",
+    "department": "PMO",
+    "family": "Planning",
+    "title": "Confirm referenced UI design sign-off before UI development",
+    "classification": "Referenced prerequisite",
+    "source_owner": "Product/Design own; Design Lead and Client if applicable sign; PMO confirms"
+  },
+  {
+    "id": "P23",
+    "department": "PMO",
+    "family": "Planning",
+    "title": "Confirm referenced technical-design sign-off before development",
+    "classification": "Referenced prerequisite",
+    "source_owner": "Engineering owns; Engineering Lead approves; PMO confirms"
+  },
+  {
+    "id": "P24",
+    "department": "PMO",
+    "family": "Planning",
+    "title": "Confirm test-strategy and UAT-approach sign-offs",
+    "classification": "Referenced prerequisite",
+    "source_owner": "QA/Product own; QA Lead and Product Owner sign; PMO confirms"
+  },
+  {
+    "id": "P25",
+    "department": "PMO",
+    "family": "Planning",
+    "title": "Approve scope and effort/timeline estimate baselines",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Product Owner approves scope; Engineering Lead approves estimates"
+  },
+  {
+    "id": "P26",
+    "department": "PMO",
+    "family": "Planning",
+    "title": "Create the detailed project plan and obtain Planning exit approval",
+    "classification": "SOP-prescribed control",
+    "source_owner": "PMO prepares; PMO Lead approves"
+  },
+  {
+    "id": "P27",
+    "department": "PMO",
+    "family": "Execution",
+    "title": "Hold delivery kick-off and document agreed expectations",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO; Product; Engineering; QA; Infra; Security"
+  },
+  {
+    "id": "P28",
+    "department": "PMO",
+    "family": "Execution",
+    "title": "Track delivery, dependencies, blockers and scope changes",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO tracks; Engineering and QA execute under their SOPs"
+  },
+  {
+    "id": "P29",
+    "department": "PMO",
+    "family": "Execution",
+    "title": "Confirm QA exit with no critical defects before Product UAT",
+    "classification": "Referenced prerequisite",
+    "source_owner": "QA Lead signs; PMO confirms"
+  },
+  {
+    "id": "P30",
+    "department": "PMO",
+    "family": "Execution",
+    "title": "Validate UAT and collect the prescribed UAT approvals",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Product Manager; Product Owner; client contact person"
+  },
+  {
+    "id": "P31",
+    "department": "PMO",
+    "family": "Execution",
+    "title": "Confirm Engineering pre-production Go / No-Go before GLPI request",
+    "classification": "Referenced prerequisite",
+    "source_owner": "Engineering decides; PMO confirms"
+  },
+  {
+    "id": "P32",
+    "department": "PMO",
+    "family": "Execution and change control",
+    "title": "Raise and verify GLPI deployment approval before production release",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Project Manager raises; Security, CTO and CEO approve; Infra/DevOps releases"
+  },
+  {
+    "id": "P33",
+    "department": "PMO",
+    "family": "Execution",
+    "title": "Obtain post-release go-live and business-acceptance sign-off",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Project Manager and Client"
+  },
+  {
+    "id": "P34",
+    "department": "PMO",
+    "family": "Project-to-Finance handoff",
+    "title": "Record milestone completion and notify Finance",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "Project Manager notifies; Finance invoices or follows up"
+  },
+  {
+    "id": "P35",
+    "department": "PMO",
+    "family": "Closure",
+    "title": "Confirm referenced hypercare stability before closure",
+    "classification": "Referenced prerequisite",
+    "source_owner": "Engineering/Infrastructure confirm; PMO verifies"
+  },
+  {
+    "id": "P36",
+    "department": "PMO",
+    "family": "Closure",
+    "title": "Finalize technical-document evidence and archive project artifacts",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "Engineering finalizes technical documentation; PMO archives"
+  },
+  {
+    "id": "P37",
+    "department": "PMO",
+    "family": "Closure",
+    "title": "Hand over to support/operations with escalation documentation",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO/Project Manager; Support/Operations receive"
+  },
+  {
+    "id": "P38",
+    "department": "PMO",
+    "family": "Closure",
+    "title": "Conduct retrospective and capture improvement actions",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO; relevant project participants"
+  },
+  {
+    "id": "P39",
+    "department": "PMO",
+    "family": "Closure",
+    "title": "Prepare closure report, confirm Finance notifications and approve/archive closure",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Project Manager prepares; Finance confirms notifications; Head of PMO approves"
+  },
+  {
+    "id": "P40",
+    "department": "PMO",
+    "family": "Communication and reporting",
+    "title": "Hold Tuesday internal PMO status meeting and produce summary",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO only"
+  },
+  {
+    "id": "P41",
+    "department": "PMO",
+    "family": "Communication and reporting",
+    "title": "Prepare and distribute reviewed weekly client status report",
+    "classification": "SOP-prescribed output",
+    "source_owner": "PMO/Project Manager; PMO Lead reviews external document"
+  },
+  {
+    "id": "P42",
+    "department": "PMO",
+    "family": "Communication and reporting",
+    "title": "Prepare monthly executive delivery report",
+    "classification": "SOP-prescribed output",
+    "source_owner": "PMO leadership; external stakeholders only where required"
+  },
+  {
+    "id": "P43",
+    "department": "PMO",
+    "family": "Communication and reporting",
+    "title": "Record formal meeting minutes with decisions, actions, owners and deadlines",
+    "classification": "SOP-prescribed output",
+    "source_owner": "PMO; meeting action owners"
+  },
+  {
+    "id": "P44",
+    "department": "PMO",
+    "family": "Communication and escalation",
+    "title": "Escalate blockers and obtain approval for client escalation/de-escalation",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO or CTO; PMO Lead / Head of PMO approves client communication"
+  },
+  {
+    "id": "P45",
+    "department": "PMO",
+    "family": "RFP lifecycle",
+    "title": "Receive and log every RFP and assign a PM",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO; CEO typically assigns; Project Manager"
+  },
+  {
+    "id": "P46",
+    "department": "PMO",
+    "family": "RFP lifecycle",
+    "title": "Analyse RFP requirements, define solution approach and estimate effort/cost",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO; Engineering; QA; Security; Product"
+  },
+  {
+    "id": "P47",
+    "department": "PMO",
+    "family": "RFP lifecycle",
+    "title": "Coordinate the technical/commercial response and obtain internal review",
+    "classification": "SOP-prescribed control",
+    "source_owner": "PM coordinates; PMO Lead and Engineering Lead approve"
+  },
+  {
+    "id": "P48",
+    "department": "PMO",
+    "family": "RFP lifecycle",
+    "title": "Obtain commercial costing sign-off and submit the approved RFP response",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Project Manager → Head of PMO → CEO; PMO submits"
+  },
+  {
+    "id": "P49",
+    "department": "PMO",
+    "family": "RFP lifecycle",
+    "title": "Convert won RFPs to Route A projects or archive losses with lessons",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO; Project Manager"
+  },
+  {
+    "id": "P50",
+    "department": "PMO",
+    "family": "Issue governance",
+    "title": "Maintain the authoritative issue lifecycle with owners, next actions and timestamps",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PM/assigned team logs; PM sets severity; responsible owner resolves; QA and PM close"
+  },
+  {
+    "id": "P51",
+    "department": "PMO",
+    "family": "Referenced risk and incident boundaries",
+    "title": "Reference the Security-owned risk register without creating a PMO risk master",
+    "classification": "Referenced prerequisite",
+    "source_owner": "Security owns company/client/product risk register; PMO references"
+  },
+  {
+    "id": "P52",
+    "department": "PMO",
+    "family": "Documentation governance",
+    "title": "Maintain versioned, owned and structurally compliant project documents",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Project Managers; document owners"
+  },
+  {
+    "id": "P53",
+    "department": "PMO",
+    "family": "Documentation governance",
+    "title": "Review and quality-gate every external document and sanitize external issue reports",
+    "classification": "SOP-prescribed control",
+    "source_owner": "PMO Lead reviews; PM/author prepares"
+  },
+  {
+    "id": "P54",
+    "department": "PMO",
+    "family": "Post-go-live governance",
+    "title": "Track production issue visibility, severity, resolution timing and critical root cause",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "Engineering owns incident process; PMO tracks reporting requirements"
+  },
+  {
+    "id": "P55",
+    "department": "PMO",
+    "family": "Referenced risk and incident boundaries",
+    "title": "Reference Engineering incident management and link required production changes",
+    "classification": "Referenced prerequisite",
+    "source_owner": "Engineering owns; Incident Lead is Security Lead or Engineering Lead"
+  },
+  {
+    "id": "P56",
+    "department": "PMO",
+    "family": "Change management",
+    "title": "Log each change request and classify Standard, Normal or Emergency",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "Requestor; Project Manager classifies"
+  },
+  {
+    "id": "P57",
+    "department": "PMO",
+    "family": "Change management",
+    "title": "Coordinate cross-functional change-impact assessment",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO coordinates; Engineering; QA; Infra; Security"
+  },
+  {
+    "id": "P58",
+    "department": "PMO",
+    "family": "Change management",
+    "title": "Obtain change approvals, conditional cost approval and timeline agreement",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Product; Engineering; Client if client-facing; PM → Head of PMO → CEO if cost impact; Engineering Lead and Security Manager for timelines"
+  },
+  {
+    "id": "P59",
+    "department": "PMO",
+    "family": "Change management",
+    "title": "Update plans, implement approved changes and communicate impact",
+    "classification": "SOP-prescribed workflow",
+    "source_owner": "PMO coordinates; Engineering/QA execute; stakeholders receive"
+  },
+  {
+    "id": "P60",
+    "department": "PMO",
+    "family": "Change management",
+    "title": "Close changes after validation, updated documentation and signed change go-live",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Project Manager and Client sign go-live; PMO tracks completeness"
+  },
+  {
+    "id": "P61",
+    "department": "PMO",
+    "family": "Emergency change handling",
+    "title": "Authorize emergency implementation with the prescribed incident/engineering roles",
+    "classification": "SOP-prescribed control",
+    "source_owner": "Incident Lead and Engineering Lead; CTO additionally for P1"
+  },
+  {
+    "id": "P62",
+    "department": "PMO",
+    "family": "Emergency change handling",
+    "title": "Log emergency changes within 24h and complete review/retrospective approval",
+    "classification": "SOP-prescribed control",
+    "source_owner": "PMO coordinates; Product and Engineering Lead approve retrospectively"
+  },
+  {
+    "id": "P63",
+    "department": "PMO",
+    "family": "Cross-phase delivery governance",
+    "title": "Enforce documented phase entry/exit gates and traceable decisions",
+    "classification": "SOP-prescribed control",
+    "source_owner": "PMO owns delivery governance; named approvers and other teams retain their decisions"
+  },
+  {
+    "id": "B13",
+    "department": "BaaS",
+    "family": "Discovery and owner validation",
+    "title": "Operating-procedure evidence collection",
+    "classification": "Discovery / validation",
+    "source_owner": "BaaS; Support; Reconciliation"
+  },
+  {
+    "id": "P13",
+    "department": "PMO",
+    "family": "Discovery and owner validation",
+    "title": "Maintain PMO SOP and document approval points; v1.1 received",
+    "classification": "Discovery / validation",
+    "source_owner": "Head of PMO (document owner); PMO"
+  },
+  {
+    "id": "P14",
+    "department": "PMO",
+    "family": "Discovery and owner validation",
+    "title": "Walk through the pricing calculator and gather remaining operational evidence",
+    "classification": "Discovery / validation",
+    "source_owner": "PMO; Engineering; Security; other documentation holders as relevant"
+  },
+  {
+    "id": "P15",
+    "department": "PMO",
+    "family": "Discovery and owner validation",
+    "title": "Validate documented workflows and automation with process users",
+    "classification": "Discovery / validation",
+    "source_owner": "Departmental process users; PMO; automation team"
+  }
+]

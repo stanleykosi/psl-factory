@@ -1,0 +1,18 @@
+{
+  "source_run": 610,
+  "fixture_source_run": 606,
+  "observed_at": "2026-11-04T17:02:22.226845+00:00",
+  "authority_ended_at": "2026-11-04T17:00:00+00:00",
+  "real_elapsed_expiry": true,
+  "backdated": false,
+  "starter_still_permitted": true,
+  "no_fallback": true,
+  "all_business_rows_guards_indexes_unchanged": true,
+  "rowsets": 331,
+  "indexes": 1562,
+  "budget_used": 300,
+  "budget_limit": 20000,
+  "screenshot": "docs\\test-evidence\\2026-11-04-factory-execution-browser610-expired.jpg",
+  "screenshot_sha256": "21b9743383ec754366335d436d89dddb9c1ca08d9998f5092722486f8038d3c1",
+  "live_provider": "NOT_EVALUATED"
+}

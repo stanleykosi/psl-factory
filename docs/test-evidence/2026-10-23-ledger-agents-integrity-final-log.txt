@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\verify_ledger_agents.py", line 482, in <module>
+    for k in ['current_issue_assessment','current_delivery_assessment']:assert billing_domain.report(viewer,case.pk,info[k])['current_evidence_ready']
+                                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

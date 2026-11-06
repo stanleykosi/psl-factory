@@ -1,0 +1,30 @@
+{
+  "run": 457,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_handover.FactoryHandoverTests.test_current_publisher_revocation_before_send_holds_original_job_and_source_edits",
+    "tests.test_factory_handover.FactoryHandoverTests.test_superseded_document_false_publication_sql_and_reviewed_same_source_recovery",
+    "tests.test_factory_handover.FactoryHandoverTests.test_cancelled_expired_delivery_is_reconciled_without_send_then_settled_by_native_operator",
+    "tests.test_controlled_documents",
+    "tests.test_delivery",
+    "tests.test_factory_console",
+    "tests.test_factory_flow",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "tests.test_agent_source_visibility",
+    "tests.test_factory_commercial.FactoryCommercialTests.test_agent_publication_is_bound_and_lost_response_reconciles_original_receipt",
+    "tests.test_factory_commercial.FactoryCommercialTests.test_changed_execution_profile_is_rechecked_by_the_native_publication_worker",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T10:31:00.946485+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run457.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 529.363
+}

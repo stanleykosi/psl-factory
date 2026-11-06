@@ -1,0 +1,19 @@
+{
+  "run": 413,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_coverage.FactoryCoverageTests",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T19:43:37.672406+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run413.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 3.194
+}

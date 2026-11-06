@@ -1,0 +1,20 @@
+{
+  "run": 545,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_delegation.FactoryDelegationTests.test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-03T02:33:07.860250+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run545.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 18.383
+}

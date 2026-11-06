@@ -1,0 +1,29 @@
+Using existing test database for alias 'default'...
+
+E.....E....
+======================================================================
+ERROR: test_enrolled_unready_blocks_only_new_send (tests.test_ledger_operations.LedgerOperationsTests.test_enrolled_unready_blocks_only_new_send)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_ledger_operations.py", line 58, in test_enrolled_unready_blocks_only_new_send
+    j=self.reserve();enroll(f,j,False);worker.run_once(f['case'].pk);j.refresh_from_db();self.assertEqual(j.status,'held');self.assertEqual(remote['private_inputs'],[]);self.assertFalse(gateway.Receipt.objects.filter(job=j).exists())
+                                                                                                                                            ~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'private_inputs'
+
+======================================================================
+ERROR: test_native_inventory_metadata_and_local_receipt_probe_never_send (tests.test_ledger_operations.LedgerOperationsTests.test_native_inventory_metadata_and_local_receipt_probe_never_send)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_ledger_operations.py", line 28, in test_native_inventory_metadata_and_local_receipt_probe_never_send
+    self.assertEqual(IntegrationObservation.objects.get(contract=f['native_contract'],payload__kind='receipt').payload['business_receipt'],'not_found');self.assertEqual(remote['private_inputs'],[]);worker.run_once(f['case'].pk);self.assertIsNotNone(rd.lookup_source('ledgerdata',j));self.assertEqual(len(remote['private_inputs']),1)
+                                                                                                                                                                         ~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'private_inputs'
+
+----------------------------------------------------------------------
+Ran 11 tests in 62.189s
+
+FAILED (errors=2)
+Preserving test database for alias 'default'...
+
+Found 11 test(s).
+System check identified no issues (0 silenced).

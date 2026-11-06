@@ -1,0 +1,23 @@
+{
+  "verified_at": "2026-10-22",
+  "browser": "IAB 2 / tab 2",
+  "authenticated_user": "studio-demo",
+  "case": "65272f3a-a207-42e1-9763-5c85774ac0e4",
+  "server_session": 20277,
+  "final_url": "http://127.0.0.1:8000/cases/65272f3a-a207-42e1-9763-5c85774ac0e4/finance/assets/12/report/",
+  "observations": {
+    "all_three_ppe_policies_active": true,
+    "source_opening_life_residual_fraction_classification_and_events_visible_for_human_review": true,
+    "original_march_label_preserved_with_october_reporting_period": true,
+    "distinct_register_basis_and_schedule_reviews_visible": true,
+    "corrected_charge_50_book_value_500_and_finance_mapping_13_visible": true,
+    "previous_versions_marked_historical": true,
+    "unknown_asset_and_dependent_totals_display_unknown": true,
+    "held_unreviewed_population_report_returns_held_without_rows": true,
+    "read_only_viewer_has_no_decision_commands": true,
+    "native_source_verification_unavailable": true,
+    "screenshot_visually_inspected": true
+  },
+  "screenshot": "docs/test-evidence/2026-10-22-ppe-report.png",
+  "evidence_class": "local synthetic supplied data; read-only browser verification; no native/provider/actual owner acceptance"
+}

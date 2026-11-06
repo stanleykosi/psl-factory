@@ -1,0 +1,36 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_configured_native_document_review_is_exact_and_separate_from_receiving (tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving) ... ERROR
+
+======================================================================
+ERROR: test_configured_native_document_review_is_exact_and_separate_from_receiving (tests.test_factory_handover.FactoryHandoverTests.test_configured_native_document_review_is_exact_and_separate_from_receiving)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_handover.py", line 223, in test_configured_native_document_review_is_exact_and_separate_from_receiving
+    f=setup(review=True);ready(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();v=handover.document(f.work)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_handover.py", line 39, in setup
+    t=register_template(f.actor,f.case.pk,'Reviewed support handover',dict(f.t.definition,internal_review_required=True,required_fields=['scope','next_steps'],
+        audience_fields=dict(f.t.definition['audience_fields'],internal=['scope','next_steps'])),f.e['policy_decision'].pk,rev(f.case));f.inputs['template_id']=t.pk
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\controlled.py", line 22, in register_template
+    validate_template(definition)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\documents\contracts.py", line 34, in validate_template
+    raise ValidationError('Client templates require an executive summary and cannot expose internal notes')
+django.core.exceptions.ValidationError: ['Client templates require an executive summary and cannot expose internal notes']
+
+----------------------------------------------------------------------
+Ran 1 test in 2.019s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

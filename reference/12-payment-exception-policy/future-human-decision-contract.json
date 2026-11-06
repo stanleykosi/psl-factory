@@ -1,0 +1,37 @@
+{
+  "status": "proposed_future_contract_inactive_until_authority_configured",
+  "authority_source": "Trusted identity/authorization service and owner-approved policy; no request-controlled role claim",
+  "decision_fields": [
+    "request_id_and_version",
+    "authenticated_human_actor",
+    "configured_authority_policy_version",
+    "project_contract_deployment_bindings",
+    "current_payment_snapshot_manifest",
+    "decision_approved_or_rejected",
+    "reason_and_evidence",
+    "valid_from_and_until",
+    "decision_version",
+    "audit_receipt",
+    "revocation_and_reassessment_links"
+  ],
+  "states": [
+    "requested",
+    "approved",
+    "rejected",
+    "withdrawn",
+    "revoked",
+    "expired",
+    "needs_reassessment"
+  ],
+  "guards": [
+    "Current role is UNCONFIGURED: approval is blocked, even for an authenticated human.",
+    "Agent/service principal cannot approve, impersonate approver or configure its own authority.",
+    "All requested bindings and source versions rechecked atomically before acceptance; distinct principal checks only if actual owner policy requires them, not an invented dual-approval rule.",
+    "Approval applies only to the bound deployment and validity window, not another project/release.",
+    "Any material change triggers reassessment and disables automatic reuse until policy resolves it.",
+    "Current configuration change and decision are separate authorized operations; no permission to configure authority is granted by this document.",
+    "Existing Engineering/Security/Go-No-Go/GLPI controls independently enforced.",
+    "Revocation/expiry before dispatch reservation prevents use; after reservation treat external release as potentially committed and use existing reconciliation/incident controls, not automatic rollback.",
+    "No debt waiver, credit, receipt alteration, write-off or cash transfer follows from exception approval."
+  ]
+}

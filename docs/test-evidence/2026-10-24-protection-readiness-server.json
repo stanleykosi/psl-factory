@@ -1,0 +1,10 @@
+{
+  "server_session": 40066,
+  "url": "http://127.0.0.1:8000/cases/5b533c39-910f-412c-9290-44ee69f0c9c9/integrations/",
+  "unauthenticated_login_redirect": true,
+  "final_source_loaded": true,
+  "case_data_mutated": false,
+  "new_browser_demo": false,
+  "runtime_drill_db_ref": "psl_drill_operator_demo",
+  "readiness_database_revision": "fixture-v1"
+}

@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification (tests.test_factory_flow.FactoryFlowTests.test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification) ... ok
+test_database_protects_identity_history_budget_and_false_verification (tests.test_factory_flow.FactoryFlowTests.test_database_protects_identity_history_budget_and_false_verification) ... ok
+test_exact_native_packet_changes_require_fresh_human_review (tests.test_factory_flow.FactoryFlowTests.test_exact_native_packet_changes_require_fresh_human_review) ... ok
+test_model_cannot_choose_dispatch_or_fabricate_citations (tests.test_factory_flow.FactoryFlowTests.test_model_cannot_choose_dispatch_or_fabricate_citations) ... ok
+test_same_key_changed_payload_and_cross_case_scope_fail (tests.test_factory_flow.FactoryFlowTests.test_same_key_changed_payload_and_cross_case_scope_fail) ... ok
+test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance (tests.test_factory_flow.FactoryFlowTests.test_shared_budget_missing_policy_and_revocation_do_not_reset_allowance) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 23.464s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 6 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

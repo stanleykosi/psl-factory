@@ -1,0 +1,53 @@
+{
+  "source_run": 598,
+  "parent_checkpoint": 594,
+  "changed_paths": [
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_routing.py",
+    "apps/workflows/factory_views.py"
+  ],
+  "added_paths": [
+    "tests/test_factory_human_independence.py"
+  ],
+  "all_other_native_services_authority_arithmetic_worker_effect_and_schema_bytes_unchanged": true,
+  "source_reconstruction": "Human profile calls skip only coordinator dependency; exact parent bytes reconstructed, preserving all per-action/subject/role guards",
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

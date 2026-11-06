@@ -1,0 +1,93 @@
+{
+  "classification": "Supplemental F35 engineering interfaces; no actual HR disclosure or appointments supplied",
+  "components": [
+    {
+      "id": "F35.authority_rules",
+      "parent_decision_id": "F35",
+      "schema_ref": "schema:psl/policy-component/F35.authority_rules/v1",
+      "subject_scope": "Exact Finance case, purpose, source view, fields and actual recipients",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F35.disclosure_rules",
+      "parent_decision_id": "F35",
+      "schema_ref": "schema:psl/policy-component/F35.disclosure_rules/v1",
+      "subject_scope": "Exact Finance case, purpose, source view, fields and actual recipients",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "hrfinance.authorize",
+      "required_components": [
+        "F35.authority_rules",
+        "F35.disclosure_rules"
+      ]
+    },
+    {
+      "operation": "hrfinance.snapshot",
+      "required_components": [
+        "F35.authority_rules",
+        "F35.disclosure_rules"
+      ]
+    }
+  ]
+}

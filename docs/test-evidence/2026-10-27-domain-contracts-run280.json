@@ -1,0 +1,18 @@
+{
+  "run": 280,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_domain_contracts.DomainContractTests.test_11_contract_guards_binding_expiry_privacy_and_revocation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-27-run-280-domain-contracts.txt",
+  "started_at": "2026-10-27T14:44:13.227355+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 245.131
+}

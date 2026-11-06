@@ -1,0 +1,24 @@
+{% load static studio_ui %}<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fbfaf8"><title>{% block title %}PSL Product Studio{% endblock %}</title><link rel="stylesheet" href="{% static 'studio.css' %}?v=4"></head>
+<body class="{% if not user.is_authenticated %}signed-out{% endif %}"><a class="skip-link" href="#main-content">Skip to content</a>
+{% if user.is_authenticated %}<aside class="app-sidebar" aria-label="Main navigation">
+<a class="brand" href="/"><span class="brand-mark" aria-hidden="true">p<span></span></span><span>PSL<span class="brand-subtitle">Product Studio</span></span></a>
+<form class="mobile-signout" action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="icon-button" aria-label="Sign out" title="Sign out">{% include 'ui/icon.html' with icon='logout' %}</button></form>
+<p class="nav-caption">OPERATIONS FACTORY</p><nav class="primary-nav">
+{% if control_plane %}<a href="{% url 'home' %}">{% include 'ui/icon.html' with icon='work' %}Recovery work</a>{% else %}
+<a href="/" {% if request.resolver_match.url_name == 'home' and not request.GET.kind and not request.GET.area and not request.GET.queue %}aria-current="page"{% endif %}>{% include 'ui/icon.html' with icon='work' %}Work queue</a>
+<a href="{% url 'home' %}?queue=needs_me" {% if request.GET.queue == 'needs_me' %}aria-current="page"{% endif %}>{% include 'ui/icon.html' with icon='work' %}My work</a>
+<a href="/?queue=exceptions">{% include 'ui/icon.html' with icon='report' %}Exceptions</a>
+<a href="/?queue=verified">{% include 'ui/icon.html' with icon='document' %}Verified outcomes</a>
+<a href="{% url 'workspace_overview' %}">{% include 'ui/icon.html' with icon='overview' %}Workspaces</a>
+<details class="reference-navigation"><summary>Workspace tools</summary>
+<a href="/?kind=project" {% if request.GET.kind == 'project' and not request.GET.area %}aria-current="page"{% endif %}>{% include 'ui/icon.html' with icon='project' %}Projects</a>
+<a href="/?kind=support" {% if request.GET.kind == 'support' and not request.GET.area %}aria-current="page"{% endif %}>{% include 'ui/icon.html' with icon='customers' %}Customers</a>
+<a href="/?area=finance" {% if request.GET.area == 'finance' %}aria-current="page"{% endif %}>{% include 'ui/icon.html' with icon='report' %}Finance</a>
+<a href="/documents/inbox/">{% include 'ui/icon.html' with icon='document' %}Documents</a>
+<a href="/project-views/">{% include 'ui/icon.html' with icon='report' %}Project reports</a><a href="{% url 'work_inbox' %}">Recorded assignments</a></details>{% endif %}</nav>
+<div class="sidebar-bottom">{% if not control_plane %}<a href="{% url 'case_create' %}" class="sidebar-create">{% include 'ui/icon.html' with icon='plus' %}New workspace</a>{% if user.is_superuser %}<a href="{% url 'tenant_access' %}" class="settings-link">Organization settings</a>{% endif %}{% endif %}
+<div class="account"><span class="avatar">{{ user.username|first|upper }}</span><div><strong>{{ user.get_short_name|default:user.username }}</strong><span>My account</span></div><form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="icon-button" aria-label="Sign out" title="Sign out">{% include 'ui/icon.html' with icon='logout' %}</button></form></div></div></aside>{% endif %}
+<div class="app-frame"><header class="app-topbar"><div class="breadcrumb">{% if control_plane %}<a href="{% url 'home' %}">Recovery work</a>{% if case %}<span>/</span><span>{{ case|workspace_name }}</span>{% endif %}{% elif case %}<a href="{% url 'workspace_overview' %}">Workspaces</a><span>/</span><a href="{% url 'case' case.pk %}">{{ case|workspace_name }}</a>{% else %}<span class="topbar-brand">Product Studio</span><span>/</span><strong>{{ request.resolver_match.url_name|page_name }}</strong>{% endif %}</div>{% if user.is_authenticated and not control_plane %}<a class="topbar-search" href="{% url 'workspace_overview' %}#workspace-search">{% include 'ui/icon.html' with icon='search' %}<span>Find a workspace</span></a>{% endif %}</header>
+<main id="main-content" class="page-content">{% if messages %}<div class="messages" role="status">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}{% if row.work %}{% factory_coordination_status row.work %}{% factory_execution_status row.work %}{% endif %}</main>
+<footer class="app-footer"><span>PSL Product Studio</span>{% if case.synthetic or sample_mode %}<span>Sample data</span>{% endif %}</footer></div></body></html>

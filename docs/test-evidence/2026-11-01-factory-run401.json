@@ -1,0 +1,27 @@
+{
+  "run": 401,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_flow",
+    "tests.test_factory_controls",
+    "tests.test_factory_console",
+    "tests.test_factory_coverage",
+    "tests.test_ui_layout",
+    "tests.test_settlement.SettlementTests.test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash",
+    "tests.test_settlement.SettlementTests.test_configured_due_terms_and_usage_completeness_hold_only_issuance",
+    "tests.test_controlled_documents.ControlledDocumentTests.test_staff_draft_review_publication_and_recipient_projection",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-01T17:24:02.786134+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run401.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 148.202
+}

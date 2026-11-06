@@ -1,0 +1,27 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_review_remains_visible_and_records_native_decision_without_planning_or_publication (tests.test_factory_coordinator_review.IndependentFinanceReviewTests.test_review_remains_visible_and_records_native_decision_without_planning_or_publication) ... ok
+test_withdrawal_does_not_widen_current_human_review_authority (tests.test_factory_coordinator_review.IndependentFinanceReviewTests.test_withdrawal_does_not_widen_current_human_review_authority) ... ok
+test_unknown_mode_holds_only_coordination_and_cannot_inject_test_provider (tests.test_factory_coordinator.FactoryCoordinatorTests.test_unknown_mode_holds_only_coordination_and_cannot_inject_test_provider) ... ok
+test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown (tests.test_factory_accounting.AccountingOperatorTests.test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown) ... ok
+test_claim_does_not_survive_withdrawn_native_review_grant (tests.test_factory_accounting.AccountingOperatorTests.test_claim_does_not_survive_withdrawn_native_review_grant) ... ok
+test_database_refuses_verified_status_without_native_report_and_recipient_receipts (tests.test_factory_accounting.AccountingOperatorTests.test_database_refuses_verified_status_without_native_report_and_recipient_receipts) ... ok
+test_intake_requires_explicit_adjustment_inventory_and_uses_current_native_source (tests.test_factory_accounting.AccountingOperatorTests.test_intake_requires_explicit_adjustment_inventory_and_uses_current_native_source) ... ok
+test_native_source_review_outside_console_reuses_the_same_decision_and_retires_wait (tests.test_factory_accounting.AccountingOperatorTests.test_native_source_review_outside_console_reuses_the_same_decision_and_retires_wait) ... ok
+test_source_rule_decisions_have_current_ui_authority_csrf_and_no_context_override (tests.test_factory_accounting.AccountingOperatorTests.test_source_rule_decisions_have_current_ui_authority_csrf_and_no_context_override) ... ok
+test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker (tests.test_factory_accounting.AccountingOperatorTests.test_withdrawn_execution_profile_surfaces_in_shared_exceptions_without_running_a_worker) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 233.952s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

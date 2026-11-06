@@ -1,0 +1,59 @@
+{
+  "classification": "Actual native readback after synthetic browser UI commands; mock connector, no external authenticity or independent UAT",
+  "database": "psl_factory_go_live_ui_d7cbfe7f08a6",
+  "work": 1,
+  "case": "9935e8c5-bfa7-49e0-a456-41f899975067",
+  "dossier": 1,
+  "status": "verified",
+  "source_runtime": 491,
+  "documents": [
+    1,
+    2
+  ],
+  "receipts": [
+    {
+      "pk": 1,
+      "publication_id": 1,
+      "payload_sha256": "9c61f488ba6b680908a16d76e175845d114b22ccdf9f35e6287d80fe9b1b507b",
+      "recipient_id": 1
+    },
+    {
+      "pk": 2,
+      "publication_id": 2,
+      "payload_sha256": "1bbfa1057ca226dc6df1bd7b47567b3b5ae453e70a5cecb5d6ea438305207f6a",
+      "recipient_id": 1
+    }
+  ],
+  "anchor": 6,
+  "reaffirmation": 7,
+  "reaffirmation_parent": 6,
+  "budget_limit": 20000,
+  "budget_used": 1500,
+  "proof": {
+    "verified": true,
+    "verification_scope": "synthetic_native_go_live_delivery_and_human_signature_attestation",
+    "head": 18,
+    "document_version": 2,
+    "publication": 2,
+    "receipt_ids": [
+      2
+    ],
+    "acceptance": 7,
+    "pm_signature": 19,
+    "client_signature": 20,
+    "sign_off_inferred": false,
+    "deployment_authorized": false,
+    "financial_release_granted": false,
+    "external_authenticity_verified": false
+  },
+  "native_human_actor_ids": [
+    1,
+    1
+  ],
+  "publisher_actor_ids": [
+    2,
+    2
+  ],
+  "signoff_helper_created_acceptance": false,
+  "owner_operational_values_added": false
+}

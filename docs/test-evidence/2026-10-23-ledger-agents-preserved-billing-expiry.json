@@ -1,0 +1,78 @@
+[
+  {
+    "assessment": 6,
+    "snapshot": {
+      "profile": 2,
+      "statement_policy": 268,
+      "controls_policy": 269,
+      "statement_review": 3,
+      "contract_review": 4,
+      "invoice_sha256": "5dd953a2b969630fa674307aec8ab14d554e21f26bf8ef922129d90228aa35d2",
+      "preparation_key": "07907e43d11b8d0ead6c084ee8140d82bde984053aa710bc3832d92d2e123650",
+      "controls": [
+        [
+          "source_ready",
+          6
+        ]
+      ]
+    },
+    "recorded_result": {
+      "sent": false,
+      "posted": false,
+      "findings": [],
+      "debt_waived": false,
+      "evidence_ready": true,
+      "implementation": "internal_invoice_register_v1",
+      "invoice_approved": false,
+      "native_flow_verified": false,
+      "deployment_authorized": false,
+      "signature_gate_inferred": false
+    },
+    "current_findings": [
+      "Control evidence expired: source_ready"
+    ],
+    "control": 6,
+    "control_sha256": "5274558ff740e248559ad80d3f46b5db42a9610548090aa6b521fda36f147984",
+    "age_seconds": 90589.240693,
+    "max_age_seconds": 86400,
+    "refreshed_or_reauthorised": false
+  },
+  {
+    "assessment": 7,
+    "snapshot": {
+      "profile": 2,
+      "statement_policy": 268,
+      "controls_policy": 269,
+      "statement_review": 3,
+      "contract_review": 4,
+      "invoice_sha256": "5dd953a2b969630fa674307aec8ab14d554e21f26bf8ef922129d90228aa35d2",
+      "preparation_key": "07907e43d11b8d0ead6c084ee8140d82bde984053aa710bc3832d92d2e123650",
+      "controls": [
+        [
+          "source_ready",
+          7
+        ]
+      ]
+    },
+    "recorded_result": {
+      "sent": false,
+      "posted": false,
+      "findings": [],
+      "debt_waived": false,
+      "evidence_ready": true,
+      "implementation": "internal_invoice_register_v1",
+      "invoice_approved": false,
+      "native_flow_verified": false,
+      "deployment_authorized": false,
+      "signature_gate_inferred": false
+    },
+    "current_findings": [
+      "Control evidence expired: source_ready"
+    ],
+    "control": 7,
+    "control_sha256": "ca5ccddb70c926c6d06ec6d73856926d9b66c99965a8e75f61a48a8a502b4530",
+    "age_seconds": 90587.443128,
+    "max_age_seconds": 86400,
+    "refreshed_or_reauthorised": false
+  }
+]

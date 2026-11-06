@@ -1,0 +1,30 @@
+{
+  "browser": "iab",
+  "browser_id": "2",
+  "tab_id": "2",
+  "principal": "studio-demo",
+  "case": "0ddb0771-16c2-4b2e-bb3d-5ac0580fccaa",
+  "workbench_url": "http://127.0.0.1:8000/cases/0ddb0771-16c2-4b2e-bb3d-5ac0580fccaa/support/",
+  "report_url": "http://127.0.0.1:8000/cases/0ddb0771-16c2-4b2e-bb3d-5ac0580fccaa/support/reports/2/",
+  "visually_inspected": [
+    "configured state/ownership and flow review",
+    "explicit Teams/WhatsApp evidence links",
+    "received-response-investigation-specialist-resolution-reopening history",
+    "exact specialist result reference",
+    "reviewed reopened summary with unknown metric and coverage limitation",
+    "unlinked intake visible without silent merge",
+    "preserved merged source and permitted canonical link",
+    "missing policy leaves captured intake visible",
+    "read-only viewer sees no mutation forms"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-support-workbench.png",
+    "docs/test-evidence/2026-10-22-support-report.png",
+    "docs/test-evidence/2026-10-22-support-merge.png",
+    "docs/test-evidence/2026-10-22-support-unconfigured.png"
+  ],
+  "server_session": 22552,
+  "native_channel_verified": false,
+  "financial_execution_authorized": false,
+  "owner_acceptance_level": "synthetic definition only"
+}

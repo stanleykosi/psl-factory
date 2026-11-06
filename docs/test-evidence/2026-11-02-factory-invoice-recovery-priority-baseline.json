@@ -1,0 +1,47 @@
+{
+  "parent": "docs/test-evidence/2026-11-02-factory-checkpoint513-source-manifest.json",
+  "verified_parent_files": 2768,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "requirements": [
+    "REQ-10",
+    "REQ-11",
+    "REQ-16",
+    "REQ-20",
+    "REQ-24",
+    "REQ-25"
+  ],
+  "activities": [
+    "ACT08",
+    "ACT11",
+    "ACT12",
+    "ACT13"
+  ],
+  "observed_source_fact": "Factory eligibility checks stale evidence, investigation and preparation-currentness before looking for uncertain InvoiceJob; jobs are selected by the current Work.invoice head. Native invoice worker looks up first but can proceed to dispatch when lookup returns no receipt. Factory act groups ACT12 with a current executor prerequisite. Operator reconciliation currently selects unknown only, not expired leased jobs.",
+  "gap_to_reproduce": "A real accepted mock effect with response lost, followed by changed stage terms, may cause a new invoice head before original uncertainty is reconciled. Expired native worker leases and revoked approval may strand accepted proof.",
+  "classification": "KEEP native invoices, InvoiceJob fencing/idempotency, receipts, current approvals, shared allowance and typed policies; EXTEND receipt-only original-job recovery before rework, with current send gates retained",
+  "paths": [
+    "apps/workflows/factory.py:eligible/act/snapshot/reconcile",
+    "apps/finance/invoice_delivery.py:claim/run_once/dispatch_context/record_accepted_mock",
+    "apps/finance/invoices.py:factory_binding",
+    "adapters/factory_invoices.py:lookup/deliver",
+    "apps/workflows/factory_views.py:presentation"
+  ],
+  "proposed_scope": "Reproduce first. If confirmed, prioritise unknown/expired leased original jobs before draft replacement/review gates; add a closed receipt-only worker mode so a negative/incomplete lookup never sends from the lookup activity. Preserve ordinary authorised send behavior and add the configured factory source freshness check at the native bound dispatch boundary. Keep current actor/profile/scope checks and no fabricated absence proof.",
+  "compatibility": "No operational policy/principal values or default rules; no second job/approval ledger, reset, new dependency or migration expected. Original intents/receipts/targets/attempts remain. A changed already-issued obligation uses native correction, never regenerated draft.",
+  "tests": [
+    "Native lost-response acceptance then changed stage terms without invoice-head replacement",
+    "Changed/revoked Finance authority still permits prior positive receipt observation",
+    "Actual separate-process exit after provider acceptance and real lease expiry",
+    "Lookup-only negative/unresolved result never dispatches",
+    "Configured source age enforced for new factory sends; prior accepted proof remains observable",
+    "Shared original allowance, exact job identity, cancellation and browser/operator capability parity"
+  ],
+  "deferred_next": "Relevant Finance rule/role packet bindings and explicit historical authority compatibility, then wider ACT10 delegation/stages/FX/expiry and remaining offline gaps",
+  "authority": "User consolidation request uncertainty/failure semantics and native source inspection; engineering proposal pending reproduction, not new financial/business policy",
+  "owner_values_deferred": true,
+  "full_product_complete": false
+}

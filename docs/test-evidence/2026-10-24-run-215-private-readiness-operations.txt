@@ -1,0 +1,125 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+setUpClass (tests.test_private_readiness_operations.PrivateReadinessOperationsTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (tests.test_private_readiness_operations.PrivateReadinessOperationsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedFunction: operator does not exist: boolean -> unknown
+LINE 1: ...ase_id AND p.payload->'process_ids' <@ NEW.payload->'process...
+                                                             ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+QUERY:  NOT EXISTS(SELECT 1 FROM finance_privatereadinesspacket b JOIN documents_validationpackage p ON p.id=b.package_id WHERE b.id::text=item::text AND b.case_id=NEW.case_id AND p.payload->'process_ids' <@ NEW.payload->'process_ids')
+CONTEXT:  PL/pgSQL function psl_private_readiness_plan() line 5 at IF
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_private_readiness_operations.py", line 34, in setUpTestData
+    cls.enterClassContext(endpoint());provision_test_database();tmp=cls.enterClassContext(TemporaryDirectory(prefix='accepted-private-ops-',dir=settings.BASE_DIR/'.runtime'));cls.enterClassContext(patch('adapters.operator_protection.storage_root',return_value=Path(tmp)));cls.base=fixture()
+                                                                                                                                                                                                                                                                                         ~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\private_operations_helpers.py", line 14, in fixture
+    plan(f);f['ops_review_evidence']=evidence(f,'ops_review');return f
+    ~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\private_operations_helpers.py", line 20, in plan
+    row=p.capture_plan(f['actor'],f['case'].pk,reference,payload,evidence(f,'ops_plan').pk,predecessor=predecessor)
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\protection.py", line 34, in capture_plan
+    r=RecoveryPlan.objects.create(case=c,reference=reference,version=old.version+1 if old else 1,payload=payload,sha256=digest(payload),evidence=e,actor=a);private.audit(a,c,r,'plan_captured',plan=r.pk);bump(c);return r
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\core\models.py", line 24, in save
+    return super().save(*args, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1873, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.ProgrammingError: operator does not exist: boolean -> unknown
+LINE 1: ...ase_id AND p.payload->'process_ids' <@ NEW.payload->'process...
+                                                             ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+QUERY:  NOT EXISTS(SELECT 1 FROM finance_privatereadinesspacket b JOIN documents_validationpackage p ON p.id=b.package_id WHERE b.id::text=item::text AND b.case_id=NEW.case_id AND p.payload->'process_ids' <@ NEW.payload->'process_ids')
+CONTEXT:  PL/pgSQL function psl_private_readiness_plan() line 5 at IF
+
+----------------------------------------------------------------------
+Ran 0 tests in 72.394s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying workflows.0008_private_readiness_protection_guards... OK
+System check identified no issues (0 silenced).

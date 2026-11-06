@@ -1,0 +1,138 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_binding_ui_typed_validation_sql_foreign_sources_and_valid_control (tests.test_clock_guard.ClockGuardTests.test_binding_ui_typed_validation_sql_foreign_sources_and_valid_control) ... ok
+test_elapsed_needs_only_used_policies_and_preview_has_no_effects_or_private_body (tests.test_clock_guard.ClockGuardTests.test_elapsed_needs_only_used_policies_and_preview_has_no_effects_or_private_body) ... ok
+test_exact_original_meeting_and_assignment_survive_meeting_correction_and_anchor_change (tests.test_clock_guard.ClockGuardTests.test_exact_original_meeting_and_assignment_survive_meeting_correction_and_anchor_change) ... ok
+test_legacy_exact_selected_anchor_can_be_reassessed_but_new_anchor_is_not_invented (tests.test_clock_guard.ClockGuardTests.test_legacy_exact_selected_anchor_can_be_reassessed_but_new_anchor_is_not_invented) ... ok
+test_observer_current_rights_are_checked_before_subject_lookup (tests.test_clock_guard.ClockGuardTests.test_observer_current_rights_are_checked_before_subject_lookup) ... ok
+test_pause_extension_stays_stored_while_preview_is_base_only_and_terminal_or_stale_is_held (tests.test_clock_guard.ClockGuardTests.test_pause_extension_stays_stored_while_preview_is_base_only_and_terminal_or_stale_is_held) ... ok
+test_reviewed_evidence_and_agent_cannot_adopt_deadline_and_action_drift_stales_pack (tests.test_clock_guard.ClockGuardTests.test_reviewed_evidence_and_agent_cannot_adopt_deadline_and_action_drift_stales_pack) ... ok
+test_working_calendar_and_revocation_hold_only_calculation (tests.test_clock_guard.ClockGuardTests.test_working_calendar_and_revocation_hold_only_calculation) ... ok
+setUpClass (tests.test_cold_recovery.ColdRecoveryTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (tests.test_cold_recovery.ColdRecoveryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 61, in setUpClass
+    archive = cls.child('source', cls.value, cls.source, cold=False)
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cold_recovery.py", line 26, in child
+    raise AssertionError(f'{stage} failed\n{result.stdout}\n{result.stderr}')
+AssertionError: source failed
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UniqueViolation: duplicate key value violates unique constraint "auth_user_username_key"
+DETAIL:  Key (username)=(human) already exists.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 470, in <module>
+    if stage=='source':result=source()
+                              ~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\cold_recovery_scenario.py", line 149, in source
+    person,scope,proof,notes,_,_,meeting,_=meetings_fixture()
+                                           ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\meeting_helpers.py", line 16, in meetings_fixture
+    actor,case,owner,source,report_template,recipient,_,_=publication_fixture()
+                                                          ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\document_helpers.py", line 20, in publication_fixture
+    actor,case=setup_case()
+               ~~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\helpers.py", line 16, in setup_case
+    actor = get_user_model().objects.create_user(username=username, password='test-only-password')
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\models.py", line 175, in create_user
+    return self._create_user(username, email, password, **extra_fields)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\models.py", line 163, in _create_user
+    user.save(using=self._db)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\contrib\auth\base_user.py", line 65, in save
+    super().save(*args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 1873, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.IntegrityError: duplicate key value violates unique constraint "auth_user_username_key"
+DETAIL:  Key (username)=(human) already exists.
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 125.995s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

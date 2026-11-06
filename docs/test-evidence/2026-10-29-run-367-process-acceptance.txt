@@ -1,0 +1,46 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_policy (unittest.loader._FailedTest.test_policy) ... ERROR
+test_workflow (unittest.loader._FailedTest.test_workflow) ... ERROR
+test_csrf_typed_ui_drafts_only_and_agent_rechecks_current_scope (tests.test_role_eligibility.RoleEligibilityTests.test_csrf_typed_ui_drafts_only_and_agent_rechecks_current_scope) ... ok
+test_eligibility_cannot_grant_action_or_waive_native_reviewer_independence (tests.test_role_eligibility.RoleEligibilityTests.test_eligibility_cannot_grant_action_or_waive_native_reviewer_independence) ... ok
+test_exact_explicit_bundle_runs_native_decisions_and_baseline_without_new_gates (tests.test_role_eligibility.RoleEligibilityTests.test_exact_explicit_bundle_runs_native_decisions_and_baseline_without_new_gates) ... ok
+test_expiry_is_half_open_actor_specific_and_stales_unsigned_approval_use (tests.test_role_eligibility.RoleEligibilityTests.test_expiry_is_half_open_actor_specific_and_stales_unsigned_approval_use) ... ok
+test_invalid_bundles_remain_drafts_and_cannot_replace_active_nomination (tests.test_role_eligibility.RoleEligibilityTests.test_invalid_bundles_remain_drafts_and_cannot_replace_active_nomination) ... ok
+test_missing_eligibility_holds_only_multirole_decision_and_capture_remains_available (tests.test_role_eligibility.RoleEligibilityTests.test_missing_eligibility_holds_only_multirole_decision_and_capture_remains_available) ... ok
+test_policy_successor_and_revocation_require_fresh_native_authority (tests.test_role_eligibility.RoleEligibilityTests.test_policy_successor_and_revocation_require_fresh_native_authority) ... ok
+
+======================================================================
+ERROR: test_policy (unittest.loader._FailedTest.test_policy)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_policy
+Traceback (most recent call last):
+  File "C:\Python313\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'tests.test_policy'
+
+
+======================================================================
+ERROR: test_workflow (unittest.loader._FailedTest.test_workflow)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_workflow
+Traceback (most recent call last):
+  File "C:\Python313\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'tests.test_workflow'
+
+
+----------------------------------------------------------------------
+Ran 9 tests in 14.624s
+
+FAILED (errors=2)
+Preserving test database for alias 'default' ('test_psl')...
+Found 9 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,9 @@
+Operations to perform:
+  Target specific migration: 0038_factory_guards, from workflows
+Running migrations:
+  Rendering model states... DONE
+  Unapplying workflows.0039_factory_business_identity... OK
+Operations to perform:
+  Target specific migration: 0039_factory_business_identity, from workflows
+Running migrations:
+  Applying workflows.0039_factory_business_identity... OK

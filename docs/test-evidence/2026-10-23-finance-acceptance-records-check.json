@@ -1,0 +1,13 @@
+{
+  "records_consistent": true,
+  "frozen_source_hashes": 41,
+  "exact_processes": 122,
+  "families": 13,
+  "all_partial": true,
+  "backlog_items": 41,
+  "runtime_interfaces": 100,
+  "new_main_handoff_records": 0,
+  "pending_support_jobs_3_6_unchanged": true,
+  "source_unchanged_after_RUN195": true,
+  "next_run": 196
+}

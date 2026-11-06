@@ -1,0 +1,42 @@
+{
+  "case": "8307c942-d4e9-4d3d-b728-f4e1b2352fb7",
+  "missing_case": "eec44a22-5e96-414d-89b8-7fa154d989c6",
+  "principals": {
+    "actor": 48,
+    "reviewer": 49,
+    "specialist": 50
+  },
+  "missing_principals": [
+    51,
+    52,
+    53
+  ],
+  "release_policy": 306,
+  "draft": 3,
+  "packet": 1,
+  "decision": 1,
+  "job": 1,
+  "receipt": 1,
+  "payload_fields": [
+    "body",
+    "issue_ref"
+  ],
+  "mock_provider_requests": 1,
+  "receipt_classification": "internal_storage_only",
+  "receipt_recovered_after_release_revocation": true,
+  "customer_delivery_verified": false,
+  "response_clock_attested": false,
+  "financial_effect": false,
+  "viewer_read_grants": [
+    "case.read",
+    "support.read",
+    "support.private.read",
+    "support.agent.read",
+    "agent.data.read",
+    "agent.data.source",
+    "integration.read",
+    "support.response.read"
+  ],
+  "runtime_provider_registry_after_context": "empty",
+  "fixture_hygiene": "One-shot final assertion identified helper-created usable synthetic passwords; targeted completion disabled all six new fixture accounts. Existing users untouched."
+}

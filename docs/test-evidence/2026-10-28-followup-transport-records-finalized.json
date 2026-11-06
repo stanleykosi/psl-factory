@@ -1,0 +1,9 @@
+{
+  "status": "APPLIED",
+  "final_test_run": 306,
+  "next_run": 307,
+  "source_fingerprints": 1133,
+  "interfaces": 117,
+  "processes_partial": 122,
+  "backlog_items": 60
+}

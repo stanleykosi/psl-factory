@@ -1,0 +1,42 @@
+{
+  "source_run": 552,
+  "browser": "Codex native browser",
+  "browser_id": "5",
+  "tab": "3",
+  "database": "psl_factory_delegation_ui_7de03a500dbf",
+  "work": 1516,
+  "configuration": "native fixture services; not browser lifecycle or operating policy",
+  "actual_browser_steps": [
+    "executor agent preparation",
+    "source-authorised configuration GET inspection",
+    "narrow configuration and work layout",
+    "keyboard return to selected work",
+    "separate delegate login and claim",
+    "source evidence expansion and exact packet approval",
+    "delegate execution unavailable",
+    "configured executor continuation",
+    "two verified mock receipts",
+    "filtered verified queue and keyboard reopen"
+  ],
+  "get_preservation": "329 table fingerprints plus guards/indexes identical; after fixture sign-in and before approval",
+  "narrow": {
+    "documentWidth": 375,
+    "scrollWidth": 375,
+    "width": 390
+  },
+  "approval_state": {
+    "buttons": [
+      "",
+      ""
+    ],
+    "delegateLabel": true,
+    "executorUnavailable": true,
+    "rawPrivateLimitVisible": false,
+    "url": "http://127.0.0.1:8020/work/1516/?queue=needs_me&q="
+  },
+  "protocol_notes": [
+    "First keyboard return after viewport reset reported focus timeout; fresh state confirmed successful return; no replay.",
+    "Original continuation snapshot timed out; fresh state confirmed verified outcome; original POST was not replayed."
+  ],
+  "classification": "Actual browser interaction with synthetic fixture and external mock; not real provider, independent UAT or whole-process acceptance"
+}

@@ -1,0 +1,45 @@
+{
+  "global_workers_started": false,
+  "sessions": {
+    "commercial": 2367,
+    "main": 33936,
+    "delivery": 95466,
+    "planning": 13886
+  },
+  "classification": "Tested runtime430 previews; all retained business rows/credentials preserved; legacy8002 unchanged",
+  "previews": [
+    {
+      "start_utc": "2026-11-01T22:25:32.3277182Z",
+      "port": 8000,
+      "login_http_status": 200,
+      "pid": 828,
+      "executable": "C:\\Python313\\python.exe"
+    },
+    {
+      "start_utc": "2026-11-01T22:25:33.7847681Z",
+      "port": 8003,
+      "login_http_status": 200,
+      "pid": 576,
+      "executable": "C:\\Python313\\python.exe"
+    },
+    {
+      "start_utc": "2026-11-01T22:25:34.8658615Z",
+      "port": 8004,
+      "login_http_status": 200,
+      "pid": 6236,
+      "executable": "C:\\Python313\\python.exe"
+    },
+    {
+      "start_utc": "2026-11-01T22:17:47.5937262Z",
+      "port": 8005,
+      "login_http_status": 200,
+      "pid": 15968,
+      "executable": "C:\\Python313\\python.exe"
+    }
+  ],
+  "schema": "through workflows0042 and documents0015",
+  "main_environment": {
+    "PSL_READINESS_DATABASE_REVISION": "fixture-v1",
+    "PSL_OPERATOR_DRILL_DB": "psl_drill_operator_demo"
+  }
+}

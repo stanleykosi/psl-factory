@@ -1,0 +1,39 @@
+{
+  "225": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_protection_acceptance --keepdb --noinput --verbosity 2",
+    "result": "13/OK/1586.806s"
+  },
+  "226": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_protection_acceptance.ProtectionAcceptanceTests.test_policy_validates_exact_inventory_owner_scope_authority_and_private_grants tests.test_protection_acceptance.ProtectionAcceptanceTests.test_database_immutable_exact_lineage_fresh_scope_and_bidirectional_source_cycles tests.test_protection_acceptance.ProtectionAcceptanceTests.test_private_live_agent_generic_omissions_and_real_http_typed_prepare_policy_review tests.test_protection_acceptance_concurrency --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "session_id": 45148,
+    "result": "4/OK/956.188s"
+  },
+  "227": {
+    "script": ".runtime/run_protection_owner_connected.ps1",
+    "status": "completed",
+    "expected_count": 116,
+    "session_id": 30809,
+    "result": "116/OK/1444.555s"
+  },
+  "228": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_protection_acceptance.ProtectionAcceptanceTests.test_http_review_form_requires_granted_actions_and_limits_decision_types --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "session_id": 42645,
+    "result": "1/OK/338.935s"
+  },
+  "223": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_exact_native_health_receipt_independent_review_and_restore_changes_provenance tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_revoked_source_denies_cached_reads_forms_and_private_guidance --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "result": "FAILED (errors=1)",
+    "tests": 2,
+    "seconds": 472.077
+  },
+  "224": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_exact_native_health_receipt_independent_review_and_restore_changes_provenance tests.test_private_protection_readiness.PrivateProtectionReadinessTests.test_revoked_source_denies_cached_reads_forms_and_private_guidance --keepdb --noinput --verbosity 2",
+    "status": "completed",
+    "result": "OK",
+    "tests": 2,
+    "seconds": 498.899
+  }
+}

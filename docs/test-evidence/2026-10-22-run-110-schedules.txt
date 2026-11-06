@@ -1,0 +1,46 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+Found 26 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0034_schedulework_schedulereview_scheduleadjustment_and_more... OK
+test_already_represented_and_unassessed_additions_hold (tests.test_schedules.IncomeTests.test_already_represented_and_unassessed_additions_hold) ... ok
+test_converted_adjustment_only_export_is_held (tests.test_schedules.IncomeTests.test_converted_adjustment_only_export_is_held) ... ok
+test_duplicate_exports_across_references_and_corrected_lineage (tests.test_schedules.IncomeTests.test_duplicate_exports_across_references_and_corrected_lineage) ... ok
+test_exact_validation_scope_duplicates_nonfinite_and_precision (tests.test_schedules.IncomeTests.test_exact_validation_scope_duplicates_nonfinite_and_precision) ... ok
+test_f12_e01_source_overlap_requires_human_resolution (tests.test_schedules.IncomeTests.test_f12_e01_source_overlap_requires_human_resolution) ... ok
+test_f12_n01_additive_and_controlled_adjustment_bridge (tests.test_schedules.IncomeTests.test_f12_n01_additive_and_controlled_adjustment_bridge) ... ok
+test_f12_n03_single_explicit_conversion (tests.test_schedules.IncomeTests.test_f12_n03_single_explicit_conversion) ... ok
+test_policy_missing_holds_only_dependent_result (tests.test_schedules.IncomeTests.test_policy_missing_holds_only_dependent_result) ... ok
+test_policy_semantic_oracles_and_unknown_fields (tests.test_schedules.IncomeTests.test_policy_semantic_oracles_and_unknown_fields) ... ok
+test_post_extra_fields_stale_revision_and_cross_case (tests.test_schedules.IncomeTests.test_post_extra_fields_stale_revision_and_cross_case) ... ok
+test_postgresql_and_f12_n02_children_do_not_double_parent (tests.test_schedules.IncomeTests.test_postgresql_and_f12_n02_children_do_not_double_parent) ... ok
+test_reclassification_conserves_and_does_not_add (tests.test_schedules.IncomeTests.test_reclassification_conserves_and_does_not_add) ... ok
+test_review_independence_revocation_and_access_rechecked (tests.test_schedules.IncomeTests.test_review_independence_revocation_and_access_rechecked) ... ok
+test_sql_guards_and_unique_immutability (tests.test_schedules.IncomeTests.test_sql_guards_and_unique_immutability) ... ok
+test_supersession_policy_changes_and_source_reviews_invalidate (tests.test_schedules.IncomeTests.test_supersession_policy_changes_and_source_reviews_invalidate) ... ok
+test_ui_csrf_scope_policy_form_report_and_agent (tests.test_schedules.IncomeTests.test_ui_csrf_scope_policy_form_report_and_agent) ... ok
+test_unknowns_and_child_residual_cannot_be_approved (tests.test_schedules.IncomeTests.test_unknowns_and_child_residual_cannot_be_approved) ... ok
+test_acceptance_must_bind_all_schedule_sources_and_actual_owner (tests.test_schedules.ScheduleInventoryTests.test_acceptance_must_bind_all_schedule_sources_and_actual_owner) ... ok
+test_changed_discovery_source_requires_revised_package (tests.test_schedules.ScheduleInventoryTests.test_changed_discovery_source_requires_revised_package) ... ok
+test_explicit_monthly_decision_and_bounded_complete_inventory (tests.test_schedules.ScheduleInventoryTests.test_explicit_monthly_decision_and_bounded_complete_inventory) ... ok
+test_f13_e01_named_schedules_excluded_without_invented_rules (tests.test_schedules.ScheduleInventoryTests.test_f13_e01_named_schedules_excluded_without_invented_rules) ... ok
+test_f13_n01_exact_definition_acceptance_and_remaining_exclusion (tests.test_schedules.ScheduleInventoryTests.test_f13_n01_exact_definition_acceptance_and_remaining_exclusion) ... ok
+test_missing_policy_does_not_block_inventory_capture (tests.test_schedules.ScheduleInventoryTests.test_missing_policy_does_not_block_inventory_capture) ... ok
+test_missing_required_dependency_exclusion_and_cycles (tests.test_schedules.ScheduleInventoryTests.test_missing_required_dependency_exclusion_and_cycles) ... ok
+test_revoked_af13_review_invalidates_exact_inventory (tests.test_schedules.ScheduleInventoryTests.test_revoked_af13_review_invalidates_exact_inventory) ... ok
+test_strict_adapter_duplicate_fields_nonfinite_and_extra_authority (tests.test_schedules.ScheduleInventoryTests.test_strict_adapter_duplicate_fields_nonfinite_and_extra_authority) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 222.472s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+  Applying finance.0035_schedule_guards... OK
+System check identified no issues (0 silenced).

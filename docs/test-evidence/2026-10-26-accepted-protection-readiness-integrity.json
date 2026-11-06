@@ -1,0 +1,144 @@
+{
+  "old_main_application_tables_preserved": 269,
+  "frozen_source_pack_files": 41,
+  "prior_migration_source_files_preserved": 148,
+  "exact_partial_processes": 122,
+  "families": 13,
+  "policy_interfaces": 106,
+  "original_interfaces": 57,
+  "supplements": 49,
+  "backlog_items": 51,
+  "schemas": {
+    "psl": {
+      "workflows": "0020_af13_native_closed_shapes",
+      "documents": "0011_native_file_acceptance",
+      "finance": "0053_private_readiness_guards",
+      "new_native_triggers": 8,
+      "legacy_file_guards": 7,
+      "prior_boundary_guards": 3,
+      "prior_operator_lineage_guards": 6,
+      "original_native_guards": 6,
+      "original_packet_guards": 2,
+      "original_cycle_guards": 2,
+      "original_packet_uniques": 3
+    },
+    "test_psl": {
+      "workflows": "0020_af13_native_closed_shapes",
+      "documents": "0011_native_file_acceptance",
+      "finance": "0053_private_readiness_guards",
+      "new_native_triggers": 8,
+      "legacy_file_guards": 7,
+      "prior_boundary_guards": 3,
+      "prior_operator_lineage_guards": 6,
+      "original_native_guards": 6,
+      "original_packet_guards": 2,
+      "original_cycle_guards": 2,
+      "original_packet_uniques": 3
+    }
+  },
+  "identical_main_test_function_hashes": {
+    "psl": {
+      "psl_af13_no_readiness_cycle": "abb897dc42ac0189223adf63a77faf7b5b5bcde9ab33ce9013d19c8220cdf78f",
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143",
+      "psl_private_protection_binding": "b8ccf4006b15f941d095698a6708bfd86a031b1f160499df9c1e930312adfa06",
+      "psl_private_protection_probe": "f142245e480453883112e8e96470894fc460bade5ca88b3bb19d2533fa774021",
+      "psl_private_protection_observation": "61448b5d3b494107e0819ebcba695c6ba38e991d370685f9d7ba2c902322b91a",
+      "psl_private_protection_prior_history": "2349835b926815ceb4eaa24b0519a26c8cac32acd102ff0a0e8383a9f3ca6c45",
+      "psl_no_protection_acceptance_cycle": "6a1903d96487cf8e6ea52d074904c9fdf9de0f93c6c8f252890593b70ff97d84",
+      "psl_private_file_binding": "69b66a31e387390b565896ed33b17d7b2f3f9a580f02655e7a41902c9a77ecc2",
+      "psl_private_file_other_binding": "04906ce526767bad96a2bb28c755c0c4f77e6f5a210f5a0504df5d31e1c61d95",
+      "psl_private_file_probe": "3e9828f22ea43f28614d96118f3fc0b909fc2b0c689d57c68ca52fc39b07b866",
+      "psl_private_file_observation": "e3d8acbb5e52c5b58e1e9f45a1e220e1e3c64deae9e72d56bea909e3489ff1d0",
+      "psl_private_file_history_lock": "8503cc2cdc493dcd490f89bd06c3a973726c58c73b932db6bda69e3c9a4cc0bd",
+      "psl_accepted_protection_sources": "0eef7115003d8e57e094d061ee1edcda9ea68d932765a4c06c142cd46c371042",
+      "psl_accepted_protection_plan": "3065c7cd284ad895c1a0c510da0ba915f29b69efac680dfc7b2999190bfffca1",
+      "psl_private_file_acceptance_valid": "81e783dd369868f0fc3f21f4be1c63e3470e9fa8569de6927655d3a00acf8a00",
+      "psl_protection_acceptance_packet": "574d9c870ef86aa2c7cff7acb706d2f9b50a224f9b1bf7ea8495f292079fa4c0",
+      "psl_accepted_protection_effect": "a1f00c0ea4a3de9204d3abfc1456a673f92cc39ff028efa6f34a0f8ca1b7c39a",
+      "psl_af13_native_binding": "f28f6183d2ef4e1d5d331c6bdb50122f4f56ed7f3a77e4ca47ebb37ac400ec64",
+      "psl_af13_native_exclusive": "184ebaa6d87c07aceed09388a02f477e700b41486e6e0d32b3680127b9ac099c",
+      "psl_af13_native_observation": "0252421c52a4f3f84b95ba4dd0d9f588236c7851cea34430d849ed0de7437a53",
+      "psl_accepted_protection_native_boundary": "762c5560df827e0a6d9392187feeded338d15d86cfd8125c1d52fb6c578df97c",
+      "psl_private_protection_source": "86e8d85484d176f02f505bccb6fe25d52668416ed839bcdf7eaeb1309da58a48",
+      "psl_af13_native_probe": "c9a26cbd6013cc2c562f8cb939dd2eab0d22aa6c0b5c43231d3f1d64f844896b"
+    },
+    "test_psl": {
+      "psl_accepted_protection_sources": "0eef7115003d8e57e094d061ee1edcda9ea68d932765a4c06c142cd46c371042",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143",
+      "psl_private_protection_prior_history": "2349835b926815ceb4eaa24b0519a26c8cac32acd102ff0a0e8383a9f3ca6c45",
+      "psl_private_protection_source": "86e8d85484d176f02f505bccb6fe25d52668416ed839bcdf7eaeb1309da58a48",
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_protection_binding": "b8ccf4006b15f941d095698a6708bfd86a031b1f160499df9c1e930312adfa06",
+      "psl_private_protection_probe": "f142245e480453883112e8e96470894fc460bade5ca88b3bb19d2533fa774021",
+      "psl_private_protection_observation": "61448b5d3b494107e0819ebcba695c6ba38e991d370685f9d7ba2c902322b91a",
+      "psl_no_protection_acceptance_cycle": "6a1903d96487cf8e6ea52d074904c9fdf9de0f93c6c8f252890593b70ff97d84",
+      "psl_private_file_binding": "69b66a31e387390b565896ed33b17d7b2f3f9a580f02655e7a41902c9a77ecc2",
+      "psl_private_file_other_binding": "04906ce526767bad96a2bb28c755c0c4f77e6f5a210f5a0504df5d31e1c61d95",
+      "psl_private_file_probe": "3e9828f22ea43f28614d96118f3fc0b909fc2b0c689d57c68ca52fc39b07b866",
+      "psl_private_file_observation": "e3d8acbb5e52c5b58e1e9f45a1e220e1e3c64deae9e72d56bea909e3489ff1d0",
+      "psl_private_file_history_lock": "8503cc2cdc493dcd490f89bd06c3a973726c58c73b932db6bda69e3c9a4cc0bd",
+      "psl_private_file_acceptance_valid": "81e783dd369868f0fc3f21f4be1c63e3470e9fa8569de6927655d3a00acf8a00",
+      "psl_protection_acceptance_packet": "574d9c870ef86aa2c7cff7acb706d2f9b50a224f9b1bf7ea8495f292079fa4c0",
+      "psl_accepted_protection_plan": "3065c7cd284ad895c1a0c510da0ba915f29b69efac680dfc7b2999190bfffca1",
+      "psl_accepted_protection_effect": "a1f00c0ea4a3de9204d3abfc1456a673f92cc39ff028efa6f34a0f8ca1b7c39a",
+      "psl_af13_native_binding": "f28f6183d2ef4e1d5d331c6bdb50122f4f56ed7f3a77e4ca47ebb37ac400ec64",
+      "psl_af13_native_exclusive": "184ebaa6d87c07aceed09388a02f477e700b41486e6e0d32b3680127b9ac099c",
+      "psl_af13_native_probe": "c9a26cbd6013cc2c562f8cb939dd2eab0d22aa6c0b5c43231d3f1d64f844896b",
+      "psl_af13_native_observation": "0252421c52a4f3f84b95ba4dd0d9f588236c7851cea34430d849ed0de7437a53",
+      "psl_af13_no_readiness_cycle": "abb897dc42ac0189223adf63a77faf7b5b5bcde9ab33ce9013d19c8220cdf78f",
+      "psl_accepted_protection_native_boundary": "762c5560df827e0a6d9392187feeded338d15d86cfd8125c1d52fb6c578df97c"
+    }
+  },
+  "intentional_prior_function_extensions": [
+    "psl_accepted_protection_native_boundary",
+    "psl_private_protection_source"
+  ],
+  "other_prior_functions_unchanged": 17,
+  "main_new_native_bindings_policies_plans_packets": 0,
+  "original_document_receipts": 16,
+  "pending_support": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "runtime_test_source_manifest": "docs/test-evidence/2026-10-26-accepted-protection-readiness-run251-source.json",
+  "source_fingerprints": 904,
+  "runs": {
+    "2026-10-26-run-245-accepted-protection-readiness-baseline.txt": {
+      "tests": 2,
+      "seconds": 1283.491,
+      "result": "OK"
+    },
+    "2026-10-26-run-246-accepted-protection-readiness.txt": {
+      "tests": 0,
+      "seconds": 9.145,
+      "result": "FAILED (errors=1)"
+    },
+    "2026-10-26-run-247-accepted-protection-readiness.txt": {
+      "tests": 3,
+      "seconds": 3110.491,
+      "result": "OK"
+    },
+    "2026-10-26-run-248-accepted-protection-readiness.txt": {
+      "runner_summary": false,
+      "classification": "retained process/migration failure or unfinished; inspect actual per-run metadata"
+    },
+    "2026-10-26-run-249-accepted-protection-readiness.txt": {
+      "tests": 1,
+      "seconds": 1107.014,
+      "result": "OK"
+    },
+    "2026-10-26-run-250-accepted-protection-readiness.txt": {
+      "tests": 184,
+      "seconds": 13921.909,
+      "result": "OK"
+    },
+    "2026-10-26-run-251-accepted-protection-readiness.txt": {
+      "tests": 1,
+      "seconds": 858.857,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "business_effects_authority_renewal_provider_operational_acceptance": false
+}

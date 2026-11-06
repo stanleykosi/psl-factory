@@ -1,0 +1,10 @@
+{
+  "phase": "before",
+  "main_rowsets_unchanged": 329,
+  "old_guards_preserved_except_reviewed_factory_function": true,
+  "old_migration_sources_unchanged": 211,
+  "source_snapshots_unchanged": true,
+  "main_factory_work": 0,
+  "owner_values_installed": false,
+  "forward_migration": "workflows0043_factory_hypercare"
+}

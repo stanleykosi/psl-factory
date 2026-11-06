@@ -1,0 +1,27 @@
+{
+  "source_identity": "05f7d99b303b71045ac41dfbf755d1525fe7b7aaed00df88b0ac653c3647a89b",
+  "source_snapshot": "docs/test-evidence/2026-11-01-factory-run404-source.json",
+  "main": {
+    "url": "http://127.0.0.1:8000",
+    "pid": 13172,
+    "path": "C:/Python313/python.exe",
+    "start_utc": "2026-11-01T17:48:52.6764449Z",
+    "session": 28606,
+    "database": "psl",
+    "operator_drill_database": "psl_drill_operator_demo",
+    "readiness_database_revision": "fixture-v1"
+  },
+  "synthetic_b": {
+    "url": "http://127.0.0.1:8002",
+    "pid": 13308,
+    "path": "C:/Python313/python.exe",
+    "start_utc": "2026-11-01T17:48:52.6492355Z",
+    "session": 61275,
+    "database": "psl_factory_ui_026a98f9ab47",
+    "context": ".runtime/factory-ui-context-b.json"
+  },
+  "synthetic_a_stopped": "docs/test-evidence/2026-11-01-factory-ui-a-stop.json",
+  "global_workers_started": false,
+  "main_factory_or_owner_records_created": false,
+  "restart_rule": "Fresh PID/path/start/listener verification before stopping; this record is historical after the next restart."
+}

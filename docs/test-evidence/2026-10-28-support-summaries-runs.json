@@ -1,0 +1,26 @@
+{
+  "classification": "Actual overlapping supplied/synthetic-source runs; no live-provider or owner acceptance",
+  "runs": [
+    {
+      "run": 314,
+      "tests": 5,
+      "unittest_seconds": 138.996,
+      "process_seconds": 156.026,
+      "returncode": 0
+    },
+    {
+      "run": 315,
+      "tests": 9,
+      "unittest_seconds": 201.241,
+      "process_seconds": 215.921,
+      "returncode": 0
+    },
+    {
+      "run": 316,
+      "tests": 10,
+      "unittest_seconds": 174.827,
+      "process_seconds": 183.228,
+      "returncode": 0
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 13 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0005_pilot_preflight...test_actual_readiness_health_review_and_revision_change_without_probe_or_write (tests.test_pilot_preflight.NativePilotTests.test_actual_readiness_health_review_and_revision_change_without_probe_or_write) ... ERROR
+test_actual_unknown_handoff_receipt_head_is_observed_without_replay (tests.test_pilot_preflight.NativePilotTests.test_actual_unknown_handoff_receipt_head_is_observed_without_replay) ... ok
+test_foreign_integration_and_domain_job_denied (tests.test_pilot_preflight.NativePilotTests.test_foreign_integration_and_domain_job_denied) ... ok
+test_actual_csrf_ui_capture_export_agent_and_no_get_writes (tests.test_pilot_preflight.PilotTests.test_actual_csrf_ui_capture_export_agent_and_no_get_writes) ... ok
+test_author_revocation_source_changes_contract_successors_and_expiry (tests.test_pilot_preflight.PilotTests.test_author_revocation_source_changes_contract_successors_and_expiry) ... ok
+test_case_lookup_boundary_and_foreign_participants (tests.test_pilot_preflight.PilotTests.test_case_lookup_boundary_and_foreign_participants) ... ok
+test_current_participant_grants_and_inactive_users_are_holds (tests.test_pilot_preflight.PilotTests.test_current_participant_grants_and_inactive_users_are_holds) ... ok
+test_only_selected_dependencies_and_policy_heads_invalidate (tests.test_pilot_preflight.PilotTests.test_only_selected_dependencies_and_policy_heads_invalidate) ... ok
+test_postgresql_history_and_identity_guards (tests.test_pilot_preflight.PilotTests.test_postgresql_history_and_identity_guards) ... ok
+test_selected_read_only_pack_idempotence_unknowns_and_no_business_writes (tests.test_pilot_preflight.PilotTests.test_selected_read_only_pack_idempotence_unknowns_and_no_business_writes) ... ok
+test_technical_findings_are_observed_and_redacted (tests.test_pilot_preflight.PilotTests.test_technical_findings_are_observed_and_redacted) ... ok
+test_typed_validator_rejects_unknowns_effects_duplicates_and_budgets (tests.test_pilot_preflight.PilotTests.test_typed_validator_rejects_unknowns_effects_duplicates_and_budgets) ... ok
+test_concurrent_captures_deduplicate_and_successors_require_explicit_head (tests.test_pilot_preflight.PilotConcurrencyTests.test_concurrent_captures_deduplicate_and_successors_require_explicit_head) ... ok
+
+======================================================================
+ERROR: test_actual_readiness_health_review_and_revision_change_without_probe_or_write (tests.test_pilot_preflight.NativePilotTests.test_actual_readiness_health_review_and_revision_change_without_probe_or_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_pilot_preflight.py", line 151, in test_actual_readiness_health_review_and_revision_change_without_probe_or_write
+    f=fixture(prefix='pilot-integration');ready(f)
+                                          ~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 38, in ready
+    probe(f);r=d.assess(f['actor'],f['case'].pk,f['contract'].pk,key);d.review(f['reviewer'],f['case'].pk,r.pk,'confirm',key,f['review_evidence'].pk);return r
+    ~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\readiness_helpers.py", line 34, in probe
+    j=w.reserve(f['actor'],f['case'].pk,f['contract'].pk,key or kind,kind,source_id);w.run_once();j.refresh_from_db()
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness_delivery.py", line 47, in reserve
+    c=d.locked(a,case_id,'integration.probe',expected);r=d.contract_for(c,contract_id);validate(KEY,key);v=intent(a,r,kind,source_id);old=IntegrationProbe.objects.filter(contract=r,intent_key=key).first()
+                                                                                                           ~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\acceptance_evaluation.py", line 13, in call
+    try:return function(*args,**kwargs)
+               ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\readiness_delivery.py", line 18, in intent
+    d.current_contract(r);auth=d.authority(a,r,'probe');p,v=d.rules(r);b,_=binding(r)
+                                                                           ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\adapters\readiness.py", line 23, in binding
+    if v['kind']!='adapter' or v['target_key']!='internal:'+v['family'] or v['credential_ref']!='runtime:postgres' or not settings.READINESS_DATABASE_REVISION or v['credential_revision']!=settings.READINESS_DATABASE_REVISION:raise ValidationError('Reviewed runtime database reference/version required')
+                                                                                                                                                                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Reviewed runtime database reference/version required']
+
+----------------------------------------------------------------------
+Ran 13 tests in 81.638s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

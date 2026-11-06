@@ -1,0 +1,24 @@
+{
+  "run": 347,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_pilot_bindings",
+    "tests.test_pilot_domain_guards",
+    "tests.test_financial_corrections",
+    "tests.test_financial_correction_workers",
+    "tests.test_settlement_workers",
+    "tests.test_support_release_workers",
+    "tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-347-process-acceptance.txt",
+  "started_at": "2026-10-29T00:27:16.087509+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 880.705
+}

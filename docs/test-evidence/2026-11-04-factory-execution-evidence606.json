@@ -1,0 +1,90 @@
+{
+  "status": "IMPLEMENTED_POSTGRES_TESTED_NOT_ACCEPTED",
+  "source_run": 606,
+  "results": {
+    "600": {
+      "returncode": 0,
+      "tests_run": 2,
+      "unittest_seconds": 2.021,
+      "process_seconds": 9.086,
+      "source_manifest": "docs/test-evidence/2026-11-01-factory-run600-source.json"
+    },
+    "601": {
+      "returncode": 0,
+      "tests_run": 5,
+      "unittest_seconds": 7.019,
+      "process_seconds": 73.469,
+      "source_manifest": "docs/test-evidence/2026-11-01-factory-run601-source.json"
+    },
+    "602": {
+      "returncode": 0,
+      "tests_run": 4,
+      "unittest_seconds": 11.514,
+      "process_seconds": 30.657,
+      "source_manifest": "docs/test-evidence/2026-11-01-factory-run602-source.json"
+    },
+    "603": {
+      "returncode": 0,
+      "tests_run": 15,
+      "unittest_seconds": 173.167,
+      "process_seconds": 187.153,
+      "source_manifest": "docs/test-evidence/2026-11-01-factory-run603-source.json"
+    },
+    "604": {
+      "returncode": 1,
+      "tests_run": 19,
+      "unittest_seconds": 50.119,
+      "process_seconds": 57.017,
+      "source_manifest": "docs/test-evidence/2026-11-01-factory-run604-source.json"
+    },
+    "605": {
+      "returncode": 0,
+      "tests_run": 40,
+      "unittest_seconds": 154.131,
+      "process_seconds": 162.975,
+      "source_manifest": "docs/test-evidence/2026-11-01-factory-run605-source.json"
+    },
+    "606": {
+      "returncode": 0,
+      "tests_run": 11,
+      "unittest_seconds": 20.786,
+      "process_seconds": 39.061,
+      "source_manifest": "docs/test-evidence/2026-11-01-factory-run606-source.json"
+    }
+  },
+  "retained_failure604": "Obsolete existing Finance heading/link expectations; assertions corrected without calculation changes",
+  "implemented": [
+    "Typed nullable versioned recovery authority and fixture",
+    "Append-only exact-registered-rule binding; starter and lifetime allowance preserved",
+    "Current worker identity through ten native factory adapters",
+    "Useful invoice evidence extraction under replacement worker",
+    "Read-authorised Finance policy metadata separate from native calculation authority",
+    "Configuration and accountable replacement UI with stale-edit and permission guards",
+    "Failed claim cannot overwrite a changed fence/revision or current lease"
+  ],
+  "current_two_connection_recovery_test": "NOT_EVALUATED;606 claim guard uses injected native competing claim",
+  "cross_family_bound_worker_acceptance": "NOT_EVALUATED",
+  "broader_legacy_regression": "607 running, no final result claimed",
+  "retained_database_migrations": "0052/0053 NOT_APPLIED; read-only baseline607 covers eleven existing databases",
+  "current_native_browser": "NOT_EVALUATED; fresh synthetic database provisioning separately",
+  "source593_browser": "Historical accounting evidence only; not relabelled",
+  "real_provider": "NOT_EVALUATED",
+  "owner_values_added": false,
+  "permissions_granted_to_actual_people": false,
+  "full_product_complete": false,
+  "original_process_rows_preserved": 122,
+  "release_processes": 108,
+  "deferred_baas_processes": 14,
+  "remaining_engineering": [
+    "Broader bound-worker and real contention proof",
+    "Preserved migrations and native-browser recovery proof",
+    "Reviewed receipt credential/binding rotation without resend",
+    "Operational invoice extraction wiring",
+    "Remaining108 connected production paths"
+  ],
+  "policy_slots": [
+    "Actual current nominees and native responsibilities",
+    "Owner independence and validity decisions",
+    "Live provider and external target activation"
+  ]
+}

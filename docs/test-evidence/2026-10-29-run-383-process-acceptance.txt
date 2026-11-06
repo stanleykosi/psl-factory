@@ -1,0 +1,97 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 63 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying policy.0015_cash_native_guards...test_allocation_matches_actual_capacity_precision_and_exact_retry_identity (tests.test_cash_guards.CashGuardTests.test_allocation_matches_actual_capacity_precision_and_exact_retry_identity) ... ok
+test_current_policy_and_reporter_separation_hold_only_verification_not_capture (tests.test_cash_guards.CashGuardTests.test_current_policy_and_reporter_separation_hold_only_verification_not_capture) ... ok
+test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash (tests.test_cash_guards.CashGuardTests.test_review_ui_agent_and_new_allocation_stale_old_pack_without_creating_cash) ... ok
+test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls (tests.test_cash_guards.CashGuardTests.test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls) ... ERROR
+test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt (tests.test_cash_guards.CashGuardTests.test_verification_preview_is_read_only_and_real_service_preserves_idempotent_receipt) ... ok
+test_agent_match_suggestions_are_individual_alternatives_and_never_execute (tests.test_settlement.SettlementTests.test_agent_match_suggestions_are_individual_alternatives_and_never_execute) ... ok
+test_allocation_reversal_preserves_cash_and_full_reversal_later_does_not_double_reverse (tests.test_settlement.SettlementTests.test_allocation_reversal_preserves_cash_and_full_reversal_later_does_not_double_reverse) ... ok
+test_both_capacities_precision_and_operation_identity_are_enforced (tests.test_settlement.SettlementTests.test_both_capacities_precision_and_operation_identity_are_enforced) ... ok
+test_bounded_agent_cites_cash_and_review_sources_without_execution_tools (tests.test_settlement.SettlementTests.test_bounded_agent_cites_cash_and_review_sources_without_execution_tools) ... ok
+test_cancel_is_sticky_and_does_not_cancel_a_proven_obligation (tests.test_settlement.SettlementTests.test_cancel_is_sticky_and_does_not_cancel_a_proven_obligation) ... ok
+test_cash_before_invoice_unmatched_assignment_and_partial_allocation (tests.test_settlement.SettlementTests.test_cash_before_invoice_unmatched_assignment_and_partial_allocation) ... ok
+test_cash_sql_history_guards_cover_amounts_and_source_identity (tests.test_settlement.SettlementTests.test_cash_sql_history_guards_cover_amounts_and_source_identity) ... ok
+test_configured_due_terms_and_usage_completeness_hold_only_issuance (tests.test_settlement.SettlementTests.test_configured_due_terms_and_usage_completeness_hold_only_issuance) ... ok
+test_configured_independent_provenance_locator_is_required_but_not_bank_authenticity (tests.test_settlement.SettlementTests.test_configured_independent_provenance_locator_is_required_but_not_bank_authenticity) ... ok
+test_configured_separation_and_admin_flags_never_manufacture_human_authority (tests.test_settlement.SettlementTests.test_configured_separation_and_admin_flags_never_manufacture_human_authority) ... ok
+test_cross_case_and_stale_revision_are_denied (tests.test_settlement.SettlementTests.test_cross_case_and_stale_revision_are_denied) ... ok
+test_duplicate_receipt_identity_is_idempotent_changed_amount_is_investigation (tests.test_settlement.SettlementTests.test_duplicate_receipt_identity_is_idempotent_changed_amount_is_investigation) ... ok
+test_full_cash_staff_path_calls_real_services_including_full_reversal (tests.test_settlement.SettlementTests.test_full_cash_staff_path_calls_real_services_including_full_reversal) ... ok
+test_full_lot_reversal_reopens_debt_and_subtracts_cash_exactly_once (tests.test_settlement.SettlementTests.test_full_lot_reversal_reopens_debt_and_subtracts_cash_exactly_once) ... ok
+test_generation_review_issuance_delivery_are_separate_real_facts (tests.test_settlement.SettlementTests.test_generation_review_issuance_delivery_are_separate_real_facts) ... ok
+test_invoice_policy_draft_ui_uses_versioned_semantic_lifecycle (tests.test_settlement.SettlementTests.test_invoice_policy_draft_ui_uses_versioned_semantic_lifecycle) ... ok
+test_missing_correction_policy_does_not_block_receipt_capture_or_independent_snapshot (tests.test_settlement.SettlementTests.test_missing_correction_policy_does_not_block_receipt_capture_or_independent_snapshot) ... ok
+test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash (tests.test_settlement.SettlementTests.test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash) ... ok
+test_mixed_currency_cannot_allocate_and_snapshot_keeps_dimensions_separate (tests.test_settlement.SettlementTests.test_mixed_currency_cannot_allocate_and_snapshot_keeps_dimensions_separate) ... ok
+test_multiple_receipts_settle_one_invoice_and_excess_stays_unallocated (tests.test_settlement.SettlementTests.test_multiple_receipts_settle_one_invoice_and_excess_stays_unallocated) ... ok
+test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt (tests.test_settlement.SettlementTests.test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt) ... ok
+test_one_receipt_can_settle_multiple_invoices_without_creating_cash (tests.test_settlement.SettlementTests.test_one_receipt_can_settle_multiple_invoices_without_creating_cash) ... ok
+test_policy_semantics_reject_unknown_effects_and_bad_reversal_shapes (tests.test_settlement.SettlementTests.test_policy_semantics_reject_unknown_effects_and_bad_reversal_shapes) ... ok
+test_postgresql_guards_protect_history_and_reserved_intent (tests.test_settlement.SettlementTests.test_postgresql_guards_protect_history_and_reserved_intent) ... ok
+test_reassignment_reverses_existing_allocations_atomically_before_contract_move (tests.test_settlement.SettlementTests.test_reassignment_reverses_existing_allocations_atomically_before_contract_move) ... ok
+test_reassignment_without_correction_policy_rolls_back_all_allocations_and_ownership (tests.test_settlement.SettlementTests.test_reassignment_without_correction_policy_rolls_back_all_allocations_and_ownership) ... ok
+test_receivable_as_of_and_scope_are_not_caller_subsets_or_invented_zeros (tests.test_settlement.SettlementTests.test_receivable_as_of_and_scope_are_not_caller_subsets_or_invented_zeros) ... ok
+test_recipient_revocation_holds_delivery_but_never_removes_issued_debt (tests.test_settlement.SettlementTests.test_recipient_revocation_holds_delivery_but_never_removes_issued_debt) ... ok
+test_reported_unknown_and_unverified_cash_never_settle_debt (tests.test_settlement.SettlementTests.test_reported_unknown_and_unverified_cash_never_settle_debt) ... ok
+test_returned_review_holds_worker_then_explicit_intent_replacement_resumes (tests.test_settlement.SettlementTests.test_returned_review_holds_worker_then_explicit_intent_replacement_resumes) ... ok
+test_source_policy_revocation_holds_verification_without_erasing_historical_cash (tests.test_settlement.SettlementTests.test_source_policy_revocation_holds_verification_without_erasing_historical_cash) ... ok
+test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection (tests.test_settlement.SettlementTests.test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection) ... ok
+test_transaction_identity_cannot_create_duplicate_cash_in_another_case (tests.test_settlement.SettlementTests.test_transaction_identity_cannot_create_duplicate_cash_in_another_case) ... ok
+test_unknown_after_accept_reconciles_before_later_grant_revocation (tests.test_settlement.SettlementTests.test_unknown_after_accept_reconciles_before_later_grant_revocation) ... ok
+test_unknown_without_acceptance_has_bounded_reconciliation_and_no_blind_operator_retry (tests.test_settlement.SettlementTests.test_unknown_without_acceptance_has_bounded_reconciliation_and_no_blind_operator_retry) ... ok
+test_wide_exact_decimal_statement_is_not_rounded_by_default_decimal_context (tests.test_settlement.SettlementTests.test_wide_exact_decimal_statement_is_not_rounded_by_default_decimal_context) ... ok
+test_closed_binding_validator_and_foreign_sources (tests.test_pilot_bindings.NativeGuardTests.test_closed_binding_validator_and_foreign_sources) ... ok
+test_csrf_ui_binding_selection_review_web_observation_and_agent (tests.test_pilot_bindings.NativeGuardTests.test_csrf_ui_binding_selection_review_web_observation_and_agent) ... ok
+test_exact_contract_binding_and_unknown_operation_coverage (tests.test_pilot_bindings.NativeGuardTests.test_exact_contract_binding_and_unknown_operation_coverage) ... ok
+test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates (tests.test_pilot_bindings.NativeGuardTests.test_independent_engineering_review_is_not_business_approval_and_revocation_invalidates) ... ok
+test_missing_revoked_authority_and_observer_rights_are_distinct (tests.test_pilot_bindings.NativeGuardTests.test_missing_revoked_authority_and_observer_rights_are_distinct) ... ok
+test_report_and_native_guard_enforce_case_access_before_record_lookup (tests.test_pilot_bindings.NativeGuardTests.test_report_and_native_guard_enforce_case_access_before_record_lookup) ... ok
+test_sequence_signature_and_milestone_guards_use_actual_native_services (tests.test_pilot_bindings.NativeGuardTests.test_sequence_signature_and_milestone_guards_use_actual_native_services) ... ok
+test_shared_guard_matches_actual_decision_and_does_not_write_domain_records (tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records) ... ok
+test_sql_history_identity_and_self_review_guards (tests.test_pilot_bindings.NativeGuardTests.test_sql_history_identity_and_self_review_guards) ... ok
+test_actual_native_receipts_same_process_is_insufficient (tests.test_pilot_bindings.RuntimeBindingTests.test_actual_native_receipts_same_process_is_insufficient) ... ok
+test_all_sixteen_native_worker_entrypoints_support_observe_only (tests.test_pilot_bindings.RuntimeBindingTests.test_all_sixteen_native_worker_entrypoints_support_observe_only) ... ok
+test_expired_rotated_revoked_and_bad_signatures_never_use_older_success (tests.test_pilot_bindings.RuntimeBindingTests.test_expired_rotated_revoked_and_bad_signatures_never_use_older_success) ... ok
+test_no_role_alias_secret_installation_or_cross_family_claim (tests.test_pilot_bindings.RuntimeBindingTests.test_no_role_alias_secret_installation_or_cross_family_claim) ... ok
+test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads (tests.test_pilot_bindings.RuntimeBindingTests.test_physical_schema_drift_invalidates_receipts_with_unchanged_migration_heads) ... ok
+test_startup_build_pin_rejects_changed_source_and_legacy_receipts (tests.test_pilot_bindings.RuntimeBindingTests.test_startup_build_pin_rejects_changed_source_and_legacy_receipts) ... ok
+test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks (tests.test_cash_guards.CashAutocommitGuardTests.test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks) ... ok
+test_competing_allocations_share_both_capacities (tests.test_settlement_workers.SettlementWorkerTests.test_competing_allocations_share_both_capacities) ... ok
+test_competing_full_reversals_remove_cash_only_once (tests.test_settlement_workers.SettlementWorkerTests.test_competing_full_reversals_remove_cash_only_once) ... ok
+test_cross_case_concurrent_report_reserves_one_tenant_transaction (tests.test_settlement_workers.SettlementWorkerTests.test_cross_case_concurrent_report_reserves_one_tenant_transaction) ... ok
+test_old_fence_cannot_deliver_after_reclaim (tests.test_settlement_workers.SettlementWorkerTests.test_old_fence_cannot_deliver_after_reclaim) ... ok
+test_separate_os_worker_reconciles_accepted_invoice_after_lost_lease_and_revocation (tests.test_settlement_workers.SettlementWorkerTests.test_separate_os_worker_reconciles_accepted_invoice_after_lost_lease_and_revocation) ... ok
+test_independent_actual_worker_process_observes_without_claiming_pending_work (tests.test_pilot_bindings.NativeProcessTests.test_independent_actual_worker_process_observes_without_claiming_pending_work) ... ok
+
+======================================================================
+ERROR: test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls (tests.test_cash_guards.CashGuardTests.test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_cash_guards.py", line 104, in test_source_access_before_lookup_and_typed_sql_foreign_and_pattern_controls
+    lot=self.lot();g=self.allocation_g(lot);contract,value=contract_payload(self.a,self.c,g);binding=pilot_bindings.configure(self.a,self.c.pk,contract.pk,value)
+                                                           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_release_evaluation_guards.py", line 33, in contract_payload
+    p=selection(a,c);p['operations']=[g['operation']];contract=pilot.configure(a,c.pk,p)
+                                                               ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\pilot.py", line 83, in configure
+    if (current.pk if current else None)!=predecessor:raise ValidationError('Refresh the current pilot contract predecessor')
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Refresh the current pilot contract predecessor']
+
+----------------------------------------------------------------------
+Ran 63 tests in 350.518s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

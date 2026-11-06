@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<a href="{% url 'policy_impact' case.pk %}">Policy impact</a><h1>Selected read-only pilot preflight</h1>
+<p>Choose one case's original process IDs, registered operations, participants and existing integration contracts/jobs. These selections declare a rehearsal boundary. They do not certify operation permissions or appoint owners. Each selected operation checks only its registered required business rules.</p>
+<p>The preflight records local metadata only. It never probes providers, installs values or grants, dispatches, publishes, retries or restores. Owner values remain deferred; domain services must enforce all runtime guards. Worker, source/reference example and supervised staff acceptance require separate evidence.</p>
+{% if latest %}<p><a href="{% url 'pilot_contract' case.pk latest.pk %}">Current contract v{{ latest.version }}</a></p>{% endif %}
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Save selected contract version</button></form>{% endblock %}

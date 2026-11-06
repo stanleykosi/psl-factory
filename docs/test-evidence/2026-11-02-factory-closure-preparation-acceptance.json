@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "process_ids": [
+    "P38",
+    "P39"
+  ],
+  "paths": [
+    "apps/pmo/delivery_closure.py",
+    "adapters/delivery.py",
+    "apps/agents/delivery.py",
+    "apps/pmo/closure_views.py",
+    "templates/pmo/closure_preparation.html",
+    "apps/workflows/factory_handover_views.py",
+    "templates/factory/handover_detail.html",
+    "tests/test_closure_preparation.py"
+  ],
+  "passing_runs": [
+    470,
+    471
+  ],
+  "tested_scope": "Independent current native closure prerequisites, exact typed nullable retrospective/report selections, metadata-only adapter, durable agent investigation and connected current-authority UI; no autonomous drafting/decision/finalisation claim",
+  "source_boundary": "PM prepares; Finance confirms actual notification inventory; Head of PMO decides exact closure report; actual post-release retrospective required",
+  "main_preserved_rowsets": 329,
+  "main_guards_match_test": true,
+  "migration_sources_unchanged": true,
+  "schema_changed": false,
+  "new_policy_interfaces": 0,
+  "operational_values_added": false,
+  "dependencies_added": [],
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-02-factory-closure-preflight-baseline.json",
+    "docs/test-evidence/2026-11-02-factory-closure-preparation-browser.json",
+    "docs/test-evidence/2026-11-02-factory-handover-station-static471.json"
+  ]
+}

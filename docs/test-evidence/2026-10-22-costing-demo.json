@@ -1,0 +1,32 @@
+{
+  "classification": "EXPLICIT SYNTHETIC declared calculator/independent examples and principals; actual local decimal calculation, no native workbook or real owner acceptance",
+  "case": "3ac70625-2594-4014-a2f5-0db0d05a7e25",
+  "principals": {
+    "actor": 33,
+    "owner": 34,
+    "tester": 35
+  },
+  "rule": 1,
+  "mismatch_oracle": 2,
+  "corrected_oracle": 3,
+  "initial_run": 1,
+  "current_run": 2,
+  "unknown_run": 3,
+  "cost_bindings": [
+    1,
+    2
+  ],
+  "signed_costing": 484,
+  "AF13_package": 9,
+  "AF13_binding": 2,
+  "held_agent": 50,
+  "agent": 51,
+  "unconfigured_case": "20f89ec5-bceb-4b49-9d42-071cf73d76f5",
+  "unconfigured_rule": 2,
+  "native_workbook_verified": false,
+  "acceptance_granted": false,
+  "invoice_created": false,
+  "archived_AF13_package": 8,
+  "archived_AF13_binding": 1,
+  "final_agent": 52
+}

@@ -1,0 +1,63 @@
+{
+  "classification": "EXPLICIT SYNTHETIC B14 local supplied-record projection and authenticated mock; no actual channel/model/owner acceptance",
+  "case": "9e4b0061-a3d2-4bbe-9036-337e1fd5de48",
+  "principals": {
+    "projector_owner": 42,
+    "reviewer": 43,
+    "specialist": 44
+  },
+  "native_policy": 290,
+  "intake": 7,
+  "source_binding": 1,
+  "projection": 2,
+  "source_evidence": 556,
+  "receipt": 3,
+  "draft": 1,
+  "revision": 2,
+  "draft_review": 2,
+  "recovery_job": 4,
+  "private_executions": 2,
+  "fields": [
+    "case_type",
+    "issue_ref"
+  ],
+  "content_reference_fetched": false,
+  "excluded_fields_sent": false,
+  "native_channel_verified": false,
+  "real_model_evaluated": false,
+  "recorded_draft_approval": true,
+  "current_approval_after_revocation_flow_change_registry_removal": false,
+  "first_response_unchanged": true,
+  "draft_auto_changed_state": false,
+  "manual_investigation_event": 11,
+  "source_permission_revoked": true,
+  "generic_agent_output_created": false,
+  "responses_sent": 0,
+  "financial_effects": false,
+  "old_handoff_states": [
+    {
+      "id": 1,
+      "state_sha256": "52b3e8cb2ecc00924f06468dda1064190d549849668930ae6fe060b4edf77239"
+    },
+    {
+      "id": 2,
+      "state_sha256": "c8a25b6c6154002393f77a40e0d9e60e555178cb46552783efa2f7cfeeb59baa"
+    },
+    {
+      "id": 3,
+      "state_sha256": "d034248dcf7ae8e56eeaf3ec78083aaee035d12eb7159e152a148d54a0e10209"
+    },
+    {
+      "id": 4,
+      "state_sha256": "7df1a5baf3b2dfbe6244e98556f31b10aefe0e9d3bfcdb276fada09521becc5e"
+    }
+  ],
+  "missing_case": "1a627fa5-0706-4083-bb34-39c986b27ee7",
+  "missing_intake": 8,
+  "missing_principals": [
+    45,
+    46,
+    47
+  ],
+  "mock_registry_removed": true
+}

@@ -1,0 +1,36 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_incorrect_independent_planning_canary_holds_only_factory_planning (tests.test_factory_planner_gateway.FactoryPlannerGatewayTests.test_incorrect_independent_planning_canary_holds_only_factory_planning) ... ok
+test_cancellation_keeps_original_planning_uncertainty_until_receipt_is_observed (tests.test_factory_planner_gateway.FactoryPlannerGatewayTests.test_cancellation_keeps_original_planning_uncertainty_until_receipt_is_observed) ... ok
+test_malformed_nonfinite_provider_response_remains_unknown_without_resend (tests.test_factory_planner_gateway.FactoryPlannerGatewayTests.test_malformed_nonfinite_provider_response_remains_unknown_without_resend) ... ok
+test_original_department_request_receipt_recovers_without_model_invocation (tests.test_factory_coordinator_recovery.BusinessReceiptRecoveryTests.test_original_department_request_receipt_recovers_without_model_invocation) ... ok
+test_original_invoice_receipt_recovers_after_coordinator_policy_withdrawal (tests.test_factory_coordinator_recovery.BusinessReceiptRecoveryTests.test_original_invoice_receipt_recovers_after_coordinator_policy_withdrawal) ... ok
+test_database_refuses_a_forged_choice_and_current_access_controls_lookup (tests.test_factory_planner_gateway.FactoryPlannerConcurrencyTests.test_database_refuses_a_forged_choice_and_current_access_controls_lookup) ... ok
+test_forbidden_choice_is_rejected_without_raw_output_or_business_action (tests.test_factory_planner_gateway.FactoryPlannerConcurrencyTests.test_forbidden_choice_is_rejected_without_raw_output_or_business_action) ... ok
+test_no_receipt_cannot_dispatch_business_work (tests.test_factory_planner_gateway.FactoryPlannerConcurrencyTests.test_no_receipt_cannot_dispatch_business_work) ... ok
+test_operator_ui_recovers_receipt_after_policy_withdrawal_without_new_authority (tests.test_factory_planner_gateway.FactoryPlannerConcurrencyTests.test_operator_ui_recovers_receipt_after_policy_withdrawal_without_new_authority) ... ok
+test_two_actual_connections_share_one_live_planning_request_and_reservation (tests.test_factory_planner_gateway.FactoryPlannerConcurrencyTests.test_two_actual_connections_share_one_live_planning_request_and_reservation) ... ERROR
+
+======================================================================
+ERROR: test_two_actual_connections_share_one_live_planning_request_and_reservation (tests.test_factory_planner_gateway.FactoryPlannerConcurrencyTests.test_two_actual_connections_share_one_live_planning_request_and_reservation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_planner_gateway.py", line 94, in test_two_actual_connections_share_one_live_planning_request_and_reservation
+    self.assertEqual(work.status,'ready');self.assertEqual(work.budget_used,spent)
+                                                                            ^^^^^
+NameError: name 'spent' is not defined. Did you mean: 'Event'?
+
+----------------------------------------------------------------------
+Ran 10 tests in 172.967s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 10 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "--noinput"
+  ],
+  "returncode": 0,
+  "stdout": "Operations to perform:\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\nRunning migrations:\n  Applying finance.0056_followup_successors... OK\n  Applying finance.0057_followup_successor_guards... OK\n  Applying finance.0058_native_successor_metadata_guard... OK\n  Applying finance.0059_native_successor_json_precedence... OK\n",
+  "stderr": "",
+  "final_test_run": 302
+}

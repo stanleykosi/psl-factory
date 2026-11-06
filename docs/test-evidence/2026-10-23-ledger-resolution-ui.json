@@ -1,0 +1,27 @@
+{
+  "browser": "in-app browser 2/tab3",
+  "principal": "studio-demo; existing session; exact case.read/finance.read/ledger.read only",
+  "workbench": "http://127.0.0.1:8000/cases/2841db53-7970-4aee-92a8-75108eaea14f/finance/ledger/",
+  "observed": [
+    "F01 verification/review/conflict rules ACTIVE",
+    "TX-001 corrected QB-102 current reviewed yes",
+    "TX-002 retained QB-101 current reviewed yes",
+    "TX-003 unknown current reviewed no",
+    "Resolution2 reference_correction current independently reviewed yes",
+    "Resolution1 duplicate_alias preserved; current independently reviewed no",
+    "Original claims8/9 retired; claim10 selected; claim11 retained",
+    "No mutation commands available to scoped viewer",
+    "Missing-policy case conflict_rules MISSING; original verification/review ACTIVE; normal TX-001 current reviewed yes"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-23-ledger-resolution-workbench.png",
+    "docs/test-evidence/2026-10-23-ledger-resolution-dispositions.png",
+    "docs/test-evidence/2026-10-23-ledger-resolution-missing-policy.png",
+    "docs/test-evidence/2026-10-23-ledger-preserved-clock-expiry.png"
+  ],
+  "browser_mutations": false,
+  "test_classification": "Synthetic persisted evidence and real rendered server UI; no native vendor or owner acceptance",
+  "handoff": "ledgerTab and ledgerFs; tab3 marked for handoff",
+  "final_server_reload": "94391 final source; current reviewed corrected/retained F01 mappings and old packet noncurrent visibly confirmed",
+  "previous_increment_expiry": "B14 case6beec8aa current reviewed delivery no, current projection clock_correction_not_current; historical event21/time retained; no mutations"
+}

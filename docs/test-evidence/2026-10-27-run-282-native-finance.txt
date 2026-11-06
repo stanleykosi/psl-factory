@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_10_exact_native_receipts_unknown_conflict_mapping_and_ui (tests.test_native_finance.NativeFinanceTests.test_10_exact_native_receipts_unknown_conflict_mapping_and_ui) ... ok
+test_11_native_scope_guards_rotation_expiry_and_revocation (tests.test_native_finance.NativeFinanceTests.test_11_native_scope_guards_rotation_expiry_and_revocation) ... ok
+test_12_reviewed_publication_crash_and_fresh_reconciliation (tests.test_native_finance.NativeFinanceTests.test_12_reviewed_publication_crash_and_fresh_reconciliation) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1136.659s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,9 @@
+{
+  "source_run": 593,
+  "other_processes_stopped": false,
+  "port": 8023,
+  "submitted_utc": "2026-11-04T12:54:10.4533632Z",
+  "launcher_pid": 11308,
+  "status": "PENDING",
+  "database": "psl_factory_coordinator_ui_98ae90c203b0"
+}

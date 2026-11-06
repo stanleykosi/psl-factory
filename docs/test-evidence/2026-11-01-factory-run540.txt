@@ -1,0 +1,24 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts) ... ok
+test_restored_valid_rule_preserves_claim_history_when_retiring_obsolete_wait (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_preserves_claim_history_when_retiring_obsolete_wait) ... ok
+test_restored_valid_review_points_to_agent_continuation_not_another_decision (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_review_points_to_agent_continuation_not_another_decision) ... ok
+test_read_only_account_can_inspect_restored_approval_without_execution_control (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_read_only_account_can_inspect_restored_approval_without_execution_control) ... ok
+test_restored_approval_does_not_override_current_original_pending_job (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_approval_does_not_override_current_original_pending_job) ... ok
+test_restored_approval_keeps_unknown_executor_unassigned_without_inventing_an_owner (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_approval_keeps_unknown_executor_unassigned_without_inventing_an_owner) ... ok
+test_verification_serializes_with_actual_claim_release_without_losing_revision (tests.test_factory_review_authority.FactoryReviewRetirementConcurrencyTests.test_verification_serializes_with_actual_claim_release_without_losing_revision) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 117.646s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,22 @@
+{
+  "classification": "Fresh synthetic irreversible-guard boundary rehearsal; not full rollback or active-factory restore acceptance",
+  "database": "psl_factory_delivery_rollback_773256b4d56f",
+  "source_database": "psl_factory_delivery_ui_a31fd74f85e4",
+  "source_unchanged": true,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "migrate",
+    "workflows",
+    "0041_factory_commercial",
+    "--noinput"
+  ],
+  "returncode": 1,
+  "expected_refusal": "IrreversibleError before row/guard change",
+  "rowsets_and_guards_unchanged": 329,
+  "retained_verified_delivery_work": 1,
+  "retained_release_ready_records": 1,
+  "deployment_dispatched": false,
+  "rollback_requirement": "Retain0042 and current delivery/family/private projections. The old guard rejects delivery rows and is unsupported.",
+  "log": "docs/test-evidence/2026-11-01-factory-delivery-rollback.txt"
+}

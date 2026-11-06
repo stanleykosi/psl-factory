@@ -1,0 +1,88 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_v2_shared_security_engineering_requires_explicit_current_bundle_and_fresh_decisions (tests.test_role_eligibility.EmergencyBundleTests.test_v2_shared_security_engineering_requires_explicit_current_bundle_and_fresh_decisions) ... ERROR
+test_csrf_typed_ui_drafts_only_and_agent_rechecks_current_scope (tests.test_role_eligibility.RoleEligibilityTests.test_csrf_typed_ui_drafts_only_and_agent_rechecks_current_scope) ... ok
+test_eligibility_cannot_grant_action_or_waive_native_reviewer_independence (tests.test_role_eligibility.RoleEligibilityTests.test_eligibility_cannot_grant_action_or_waive_native_reviewer_independence) ... ok
+test_exact_explicit_bundle_runs_native_decisions_and_baseline_without_new_gates (tests.test_role_eligibility.RoleEligibilityTests.test_exact_explicit_bundle_runs_native_decisions_and_baseline_without_new_gates) ... ok
+test_expiry_is_half_open_actor_specific_and_stales_unsigned_approval_use (tests.test_role_eligibility.RoleEligibilityTests.test_expiry_is_half_open_actor_specific_and_stales_unsigned_approval_use) ... ok
+test_invalid_bundles_remain_drafts_and_cannot_replace_active_nomination (tests.test_role_eligibility.RoleEligibilityTests.test_invalid_bundles_remain_drafts_and_cannot_replace_active_nomination) ... ok
+test_missing_eligibility_holds_only_multirole_decision_and_capture_remains_available (tests.test_role_eligibility.RoleEligibilityTests.test_missing_eligibility_holds_only_multirole_decision_and_capture_remains_available) ... ok
+test_policy_successor_and_revocation_require_fresh_native_authority (tests.test_role_eligibility.RoleEligibilityTests.test_policy_successor_and_revocation_require_fresh_native_authority) ... ok
+test_candidate_packet_connects_gate_adapter_human_review_and_publication (tests.test_pmo_gates.PMOGateTests.test_candidate_packet_connects_gate_adapter_human_review_and_publication) ... ok
+test_duplicate_source_and_cross_case_capture_are_rejected (tests.test_pmo_gates.PMOGateTests.test_duplicate_source_and_cross_case_capture_are_rejected) ... ok
+test_new_gate_or_verification_invalidates_existing_packet (tests.test_pmo_gates.PMOGateTests.test_new_gate_or_verification_invalidates_existing_packet) ... ok
+test_operational_source_capture_does_not_use_synthetic_verification (tests.test_pmo_gates.PMOGateTests.test_operational_source_capture_does_not_use_synthetic_verification) ... ok
+test_reported_evidence_is_not_source_verified_or_release_authority (tests.test_pmo_gates.PMOGateTests.test_reported_evidence_is_not_source_verified_or_release_authority) ... ok
+test_staff_gate_form_and_candidate_preflight (tests.test_pmo_gates.PMOGateTests.test_staff_gate_form_and_candidate_preflight) ... ok
+test_unknown_critical_defects_never_become_zero_or_qa_exit_approval (tests.test_pmo_gates.PMOGateTests.test_unknown_critical_defects_never_become_zero_or_qa_exit_approval) ... ok
+test_wrong_candidate_or_owner_from_adapter_is_rejected (tests.test_pmo_gates.PMOGateTests.test_wrong_candidate_or_owner_from_adapter_is_rejected) ... ok
+test_coexist_needs_verified_current_glpi_not_just_text_or_old_acceptance (tests.test_emergencies.EmergencyTests.test_coexist_needs_verified_current_glpi_not_just_text_or_old_acceptance) ... ok
+test_coexist_preauthorization_review_retrospective_and_reviewed_publication (tests.test_emergencies.EmergencyTests.test_coexist_preauthorization_review_retrospective_and_reviewed_publication) ... ok
+test_deadline_policy_change_requires_human_reaffirmation_and_preserves_history (tests.test_emergencies.EmergencyTests.test_deadline_policy_change_requires_human_reaffirmation_and_preserves_history) ... ok
+test_defer_needs_exception_decision_and_later_glpi_before_reconciliation (tests.test_emergencies.EmergencyTests.test_defer_needs_exception_decision_and_later_glpi_before_reconciliation) ... ok
+test_distinct_engineering_principal_revocation_holds_publisher_with_unchanged_access (tests.test_emergencies.EmergencyTests.test_distinct_engineering_principal_revocation_holds_publisher_with_unchanged_access) ... ok
+test_distinct_people_rule_does_not_silently_count_one_actor_twice (tests.test_emergencies.EmergencyTests.test_distinct_people_rule_does_not_silently_count_one_actor_twice) ... ok
+test_expired_future_relationship_and_late_decision_classification (tests.test_emergencies.EmergencyTests.test_expired_future_relationship_and_late_decision_classification) ... ok
+test_late_log_and_later_authority_never_become_preauthorization (tests.test_emergencies.EmergencyTests.test_late_log_and_later_authority_never_become_preauthorization) ... ok
+test_missing_calendar_holds_only_deadline_reconciliation_not_human_decisions (tests.test_emergencies.EmergencyTests.test_missing_calendar_holds_only_deadline_reconciliation_not_human_decisions) ... ok
+test_missing_or_unknown_incident_priority_is_not_inferred_from_critical (tests.test_emergencies.EmergencyTests.test_missing_or_unknown_incident_priority_is_not_inferred_from_critical) ... ok
+test_new_review_holds_queued_source_bound_report (tests.test_emergencies.EmergencyTests.test_new_review_holds_queued_source_bound_report) ... ok
+test_new_source_or_revoked_source_grant_holds_queued_report (tests.test_emergencies.EmergencyTests.test_new_source_or_revoked_source_grant_holds_queued_report) ... ok
+test_p1_needs_cto_and_non_p1_still_needs_both_prescribed_roles (tests.test_emergencies.EmergencyTests.test_p1_needs_cto_and_non_p1_still_needs_both_prescribed_roles) ... ok
+test_policy_validation_rejects_inferred_priority_overlap_waiver_and_wrong_deadlines (tests.test_emergencies.EmergencyTests.test_policy_validation_rejects_inferred_priority_overlap_waiver_and_wrong_deadlines) ... ok
+test_prescribed_decisions_and_actual_outcomes_do_not_require_glpi_or_calendar_policy (tests.test_emergencies.EmergencyTests.test_prescribed_decisions_and_actual_outcomes_do_not_require_glpi_or_calendar_policy) ... ok
+test_replace_is_explicit_human_exception_and_never_financial_or_dispatch_permission (tests.test_emergencies.EmergencyTests.test_replace_is_explicit_human_exception_and_never_financial_or_dispatch_permission) ... ok
+test_reporting_manifest_and_cited_agent_bind_actual_sources_without_effects (tests.test_emergencies.EmergencyTests.test_reporting_manifest_and_cited_agent_bind_actual_sources_without_effects) ... ok
+test_return_rejection_and_current_authority_are_not_ignored (tests.test_emergencies.EmergencyTests.test_return_rejection_and_current_authority_are_not_ignored) ... ok
+test_review_revision_invalidates_old_retrospective_decisions (tests.test_emergencies.EmergencyTests.test_review_revision_invalidates_old_retrospective_decisions) ... ok
+test_staff_ui_draft_investigation_stale_scope_admin_and_postgres_history (tests.test_emergencies.EmergencyTests.test_staff_ui_draft_investigation_stale_scope_admin_and_postgres_history) ... ok
+test_superseded_or_revoked_policy_keeps_history_but_holds_reconciliation (tests.test_emergencies.EmergencyTests.test_superseded_or_revoked_policy_keeps_history_but_holds_reconciliation) ... ok
+test_working_days_holiday_and_elapsed_log_boundary (tests.test_emergencies.EmergencyTests.test_working_days_holiday_and_elapsed_log_boundary) ... ok
+test_actual_pmo_decisions_pin_local_policy_and_revoked_origin_holds_signature_only (tests.test_policy_scopes.PolicyScopeTests.test_actual_pmo_decisions_pin_local_policy_and_revoked_origin_holds_signature_only) ... ok
+test_archived_scope_history_cannot_restore_authority (tests.test_policy_scopes.PolicyScopeTests.test_archived_scope_history_cannot_restore_authority) ... ok
+test_binding_protocol_is_finite_closed_and_scalar (tests.test_policy_scopes.PolicyScopeTests.test_binding_protocol_is_finite_closed_and_scalar) ... ok
+test_committed_uncertain_effect_reconciles_after_scope_revocation (tests.test_policy_scopes.PolicyScopeTests.test_committed_uncertain_effect_reconciles_after_scope_revocation) ... ok
+test_current_source_target_access_and_classification (tests.test_policy_scopes.PolicyScopeTests.test_current_source_target_access_and_classification) ... ok
+test_explicit_application_preserves_local_fk_and_narrow_holds (tests.test_policy_scopes.PolicyScopeTests.test_explicit_application_preserves_local_fk_and_narrow_holds) ... ok
+test_four_scope_identities_and_no_cross_case_precedence (tests.test_policy_scopes.PolicyScopeTests.test_four_scope_identities_and_no_cross_case_precedence) ... ok
+test_invalid_scope_and_unrecorded_contract_rejected (tests.test_policy_scopes.PolicyScopeTests.test_invalid_scope_and_unrecorded_contract_rejected) ... ok
+test_new_drafts_do_not_displace_published_source_and_stale_draft_cannot_publish (tests.test_policy_scopes.PolicyScopeTests.test_new_drafts_do_not_displace_published_source_and_stale_draft_cannot_publish) ... ok
+test_postgresql_immutable_history_and_edge_guards (tests.test_policy_scopes.PolicyScopeTests.test_postgresql_immutable_history_and_edge_guards) ... ok
+test_registered_reference_binding_revalidates_real_target_schema (tests.test_policy_scopes.PolicyScopeTests.test_registered_reference_binding_revalidates_real_target_schema) ... ok
+test_revoked_superseded_expired_and_explicit_local_successor (tests.test_policy_scopes.PolicyScopeTests.test_revoked_superseded_expired_and_explicit_local_successor) ... ok
+test_source_lifecycle_staleness_and_activation_rechecks_origin (tests.test_policy_scopes.PolicyScopeTests.test_source_lifecycle_staleness_and_activation_rechecks_origin) ... ok
+test_ui_csrf_authority_errors_and_bounded_agent (tests.test_policy_scopes.PolicyScopeTests.test_ui_csrf_authority_errors_and_bounded_agent) ... ok
+test_actual_repeated_process_resumes_cursor_without_duplicate_signal (tests.test_emergencies.EmergencyProcessTests.test_actual_repeated_process_resumes_cursor_without_duplicate_signal) ... ok
+test_two_real_connections_signal_once (tests.test_emergencies.EmergencyProcessTests.test_two_real_connections_signal_once) ... ok
+test_revocation_waits_for_runtime_transaction_boundary (tests.test_policy_scopes.ScopeConcurrencyTests.test_revocation_waits_for_runtime_transaction_boundary) ... ok
+test_two_applications_serialize_local_revisions (tests.test_policy_scopes.ScopeConcurrencyTests.test_two_applications_serialize_local_revisions) ... ok
+
+======================================================================
+ERROR: test_v2_shared_security_engineering_requires_explicit_current_bundle_and_fresh_decisions (tests.test_role_eligibility.EmergencyBundleTests.test_v2_shared_security_engineering_requires_explicit_current_bundle_and_fresh_decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_role_eligibility.py", line 154, in test_v2_shared_security_engineering_requires_explicit_current_bundle_and_fresh_decisions
+    self.glpi()
+    ~~~~~~~~~^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_emergencies.py", line 72, in glpi
+    record=record_gate(self.actor,self.case.pk,self.candidate.pk,kind,'synthetic:'+kind,self.source.pk,rev(self.case))
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\gates.py", line 38, in record_gate
+    raise ValidationError('This exact gate source was already captured')
+django.core.exceptions.ValidationError: ['This exact gate source was already captured']
+
+----------------------------------------------------------------------
+Ran 56 tests in 191.160s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 56 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,30 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts) ... FAIL
+
+======================================================================
+FAIL: test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts (tests.test_factory_review_authority.FactoryReviewAuthorityTests.test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_review_authority.py", line 47, in test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts
+    self.assertEqual(obsolete.status,'returned','Verified output must retire the obsolete coordination wait without another approval')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'open' != 'returned'
+- open
++ returned
+ : Verified output must retire the obsolete coordination wait without another approval
+
+----------------------------------------------------------------------
+Ran 1 test in 18.716s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

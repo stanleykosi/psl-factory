@@ -1,0 +1,24 @@
+Using existing test database for alias 'default'...
+
+....................E.........................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_priority_uses_configured_human_and_existing_owned_action_lifecycle (tests.test_forecast.ForecastTests.test_priority_uses_configured_human_and_existing_owned_action_lifecycle)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_forecast.py", line 151, in test_priority_uses_configured_human_and_existing_owned_action_lifecycle
+    priority=forecast.prioritize(self.a,self.c.pk,r.pk,'Finance','FOLLOWUP-1','Confirm expected receipt date',self.a.pk,timezone.now()+timedelta(days=2),proof.pk,'Explicit priority, not authority to pay',rev(self.c))
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\finance\forecast.py", line 301, in prioritize
+    event(actor,case,'forecast.priority_recorded',priority=binding.pk,review=review.pk,action=item.pk,execution_authorized=False);return binding
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: event() got multiple values for argument 'action'
+
+----------------------------------------------------------------------
+Ran 254 tests in 1179.306s
+
+FAILED (errors=1)
+Preserving test database for alias 'default'...
+
+Found 254 test(s).
+System check identified no issues (0 silenced).

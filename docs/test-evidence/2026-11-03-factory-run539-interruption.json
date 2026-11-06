@@ -1,0 +1,13 @@
+{
+  "status": "INTERRUPTED",
+  "run": 539,
+  "observed_at_utc": "2026-11-03T01:32:02Z",
+  "original_record": "docs/test-evidence/2026-11-01-factory-run539.json",
+  "original_log": "docs/test-evidence/2026-11-01-factory-run539.txt",
+  "original_record_and_log_retained": true,
+  "final_result": "NOT_EVALUATED",
+  "observation": "No test runner, PostgreSQL or preview Python processes remain; prior unified session9150 is unavailable; no55432 listener. Last test log entry is incomplete, without a final unittest result.",
+  "cause": "NOT_ESTABLISHED; runtime/tool availability changed during the run",
+  "no_passing_suite_claim": true,
+  "required_followup": "Recover existing PostgreSQL data directory; verify durable cohort/main fingerprints; rerun under a fresh number. Retain537/538 focused results and538 browser evidence with their original source scope."
+}

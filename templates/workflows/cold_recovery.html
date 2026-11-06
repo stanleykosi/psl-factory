@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}<h1>Fresh-authority application recovery</h1>
+<p>{{ case|workspace_name }} · <a href="{% url 'policy' case.id %}">Versioned configuration lifecycle</a> · <a href="{% url 'reconstitution' case.id %}">Reviewed reconstitution and unresolved effects</a></p>
+<p>Decisions use this independent control database and fresh deployment identities. Archived people, grants and decisions grant no authority. The source database is not needed. Only separately provisioned empty isolated targets are supported.</p>
+<p>Independent criteria: <strong>{{ policy_status }}</strong>. Capture and investigation remain available before dependent criteria are configured.</p>
+<details><summary>Typed criteria schema</summary><pre>{{ value_schema }}</pre></details>
+{% for action,label,form in commands %}<section><h2>{{ label }}</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button>{{ label }}</button></form></section>{% endfor %}
+<section class="workflow-panel"><h2>Exact requests</h2><ul>{% for p in plans %}<li><a href="{% url 'cold_recovery_report' case.id p.id %}">{{ p }}</a> · sealed SHA-256 {{ p.payload.archive_sha256 }}</li>{% empty %}<li>No captured requests.</li>{% endfor %}</ul>
+</section><section class="workflow-panel"><h2>Durable intents</h2><ul>{% for j in jobs %}<li>#{{ j.id }} · {{ j.status }} · attempts {{ j.attempts }}</li>{% empty %}<li>No queued effects.</li>{% endfor %}</ul>
+<p>Recovery does not activate authentication, outbound work or operational acceptance. Normal application startup on recovered targets is prohibited.</p></section>{% endblock %}

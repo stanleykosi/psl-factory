@@ -1,0 +1,180 @@
+{
+  "classification": "Supplemental AF13 engineering interfaces for unresolved actual owner/acceptance authority and acceptance criteria; not new consolidated D groups or real appointments.",
+  "components": [
+    {
+      "id": "AF13.owner_validation_rules",
+      "parent_decision_id": "AF13",
+      "schema_ref": "schema:psl/policy-component/AF13.owner_validation_rules/v1",
+      "subject_scope": "Exact case and selected original process IDs",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "AF13.acceptance_rules",
+      "parent_decision_id": "AF13",
+      "schema_ref": "schema:psl/policy-component/AF13.acceptance_rules/v1",
+      "subject_scope": "Exact case and selected acceptance scope",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "AF13.protection_acceptance_rules",
+      "parent_decision_id": "AF13",
+      "schema_ref": "schema:psl/policy-component/AF13.protection_acceptance_rules/v1",
+      "subject_scope": "Exact selected private protection package/assessment acceptance criteria; independent of source criteria",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "AF13.protection_owner_rules",
+      "parent_decision_id": "AF13",
+      "schema_ref": "schema:psl/policy-component/AF13.protection_owner_rules/v1",
+      "subject_scope": "Independent private protection process-owner authority; original source owners unchanged",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "validation.capture",
+      "required_components": []
+    },
+    {
+      "operation": "validation.owner_review",
+      "required_components": [
+        "AF13.owner_validation_rules"
+      ]
+    },
+    {
+      "operation": "validation.accept",
+      "required_components": [
+        "AF13.owner_validation_rules",
+        "AF13.acceptance_rules"
+      ]
+    },
+    {
+      "operation": "validation.protection.acceptance",
+      "required_components": [
+        "AF13.protection_acceptance_rules"
+      ]
+    },
+    {
+      "operation": "validation.protection.owner_review",
+      "required_components": [
+        "AF13.protection_owner_rules"
+      ]
+    }
+  ]
+}

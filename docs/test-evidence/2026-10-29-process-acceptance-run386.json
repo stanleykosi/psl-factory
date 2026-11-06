@@ -1,0 +1,23 @@
+{
+  "run": 386,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_cash_guards",
+    "tests.test_financial_corrections.FinancialCorrectionTests.test_successor_after_full_reversal_counts_only_new_verified_lot",
+    "tests.test_financial_corrections.FinancialCorrectionTests.test_successor_unmatched_policy_explicitly_clears_assignment_without_allocating",
+    "tests.test_financial_corrections.FinancialCorrectionTests.test_successor_unknown_or_mismatched_verification_cannot_create_cash",
+    "tests.test_financial_correction_workers.FinancialCorrectionWorkerTests.test_competing_successor_branches_accept_only_one_new_cash_lot",
+    "tests.test_settlement_workers.SettlementWorkerTests.test_competing_allocations_share_both_capacities",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-386-process-acceptance.txt",
+  "started_at": "2026-10-29T16:30:09.963366+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 103.85
+}

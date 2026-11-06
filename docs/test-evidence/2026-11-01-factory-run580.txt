@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected (tests.test_factory_coordinator.CoordinatorConfigurationTests.test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected) ... ok
+test_profile_ui_persists_explicit_v2_provider_and_preserves_v1_scope_guard (tests.test_factory_coordinator.CoordinatorConfigurationTests.test_profile_ui_persists_explicit_v2_provider_and_preserves_v1_scope_guard) ... ok
+test_structured_unknown_settings_have_native_draft_validate_activate_lifecycle_and_csrf (tests.test_factory_coordinator.CoordinatorConfigurationTests.test_structured_unknown_settings_have_native_draft_validate_activate_lifecycle_and_csrf) ... ok
+test_unknown_mode_holds_only_coordination_and_cannot_inject_test_provider (tests.test_factory_coordinator.FactoryCoordinatorTests.test_unknown_mode_holds_only_coordination_and_cannot_inject_test_provider) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 5.467s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

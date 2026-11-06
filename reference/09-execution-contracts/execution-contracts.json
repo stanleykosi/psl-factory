@@ -1,0 +1,2696 @@
+{
+  "version": "0.4",
+  "common": {
+    "design_status": "Proposed implementable documentation, not deployed software or an authority grant",
+    "authority": "Every command authenticates actor and tenant from trusted runtime context; validates grant/purpose/resource, expected version, policy version and exact input hashes. Agents can request only explicitly permitted task operations; human commands remain human-only.",
+    "command_envelope": {
+      "command_id": "id",
+      "contract_id": "id",
+      "contract_version": "string",
+      "tenant_id": "id",
+      "case_id": "id",
+      "process_ids": "strings",
+      "subject_ref": "ref",
+      "expected_version": "version",
+      "principal_ref": "ref",
+      "grant_ref": "ref",
+      "policy_ref": "ref",
+      "operation_key": "id",
+      "issued_at": "datetime",
+      "evidence_refs": "refs",
+      "payload": "object"
+    },
+    "commit_semantics": "Mutating commands validate and append state/event/receipt with optimistic concurrency and transactional outbox where applicable. Same operation key and same intent hash returns prior receipt; same key/different hash rejects conflict. An HTTP/network response alone is not business completion.",
+    "common_outcomes": [
+      "accepted",
+      "completed",
+      "duplicate",
+      "validation_failed",
+      "permission_denied",
+      "stale_version",
+      "blocked_configuration",
+      "outcome_unknown",
+      "rejected",
+      "cancelled"
+    ],
+    "receipt_fields": {
+      "receipt_id": "id",
+      "command_id": "id",
+      "operation_key": "id",
+      "request_hash": "hash",
+      "contract_version": "string",
+      "prior_version": "version",
+      "result_version": "version",
+      "state": "string",
+      "outcome": "string",
+      "result_refs": "refs",
+      "audit_ref": "ref",
+      "recorded_at": "datetime"
+    },
+    "no_silent_migration": "Published contract/policy/rule versions are immutable. In-flight cases pin versions. Migration requires an explicit reviewed mapping, preconditions, affected-approval analysis and rollback/forward-recovery plan; the model cannot migrate itself.",
+    "intent_hashing": "Canonical semantic-intent hash uses tenant, contract/action/version, subject identity, business payload and input content versions, destination and purpose. It excludes transport attempt ID, request timestamp and retry counter. Transport request hash additionally records those fields. Validate before reserving a business operation: a failed guard returns an attempt receipt but does not permanently consume the key. Identical unchanged intent may revalidate with fresh expected version/grant after a stale-state failure; changed semantic payload must use a new operation key. Accepted/committed operations return their durable receipt rather than executing again.",
+    "unknowns": "Unspecified business permission, rule or source identity fails closed for the dependent action; independent permitted evidence gathering may continue.",
+    "state_model": "Listed success transitions are representative explicit commands; rejected guards leave state unchanged with a failure receipt. Unknown/permanent failures use the stated failure paths. Query commands do not mutate business state except through a separately validated reconciliation transition."
+  },
+  "contracts": [
+    {
+      "id": "X01",
+      "name": "Schedules and deadlines",
+      "summary": "Make due work reliable without allowing a clock to grant approval or silently alter a business deadline.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "draft",
+        "armed",
+        "due",
+        "claimed",
+        "fired",
+        "superseded",
+        "cancelled",
+        "blocked_configuration",
+        "overdue"
+      ],
+      "commands": [
+        {
+          "action": "schedule.create",
+          "actor": "Authorized workflow service",
+          "input_fields": {
+            "schedule_id": "id",
+            "subject_ref": "ref",
+            "rule_ref": "ref",
+            "timezone": "string",
+            "calendar_ref": "nullable_ref",
+            "anchor_at": "datetime",
+            "due_at": "datetime",
+            "occurrence_key": "id",
+            "action_template_ref": "ref",
+            "clock_kind": "enum:elapsed,working_calendar,recurrence"
+          },
+          "output_fields": {
+            "schedule_version": "version",
+            "state": "string",
+            "calculated_due_at": "datetime"
+          }
+        },
+        {
+          "action": "schedule.revise",
+          "actor": "Authorized workflow service",
+          "input_fields": {
+            "schedule_ref": "ref",
+            "replacement_rule_ref": "ref",
+            "replacement_due_at": "datetime",
+            "reason": "string"
+          },
+          "output_fields": {
+            "new_schedule_ref": "ref",
+            "superseded_ref": "ref"
+          }
+        },
+        {
+          "action": "schedule.claim_due",
+          "actor": "Scheduler worker",
+          "input_fields": {
+            "schedule_ref": "ref",
+            "observed_now": "datetime",
+            "lease_id": "id"
+          },
+          "output_fields": {
+            "occurrence_ref": "ref",
+            "fencing_token": "version"
+          }
+        },
+        {
+          "action": "schedule.fire",
+          "actor": "Scheduler worker",
+          "input_fields": {
+            "occurrence_ref": "ref",
+            "fencing_token": "version",
+            "delivery_operation_key": "id"
+          },
+          "output_fields": {
+            "outbox_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "schedule.cancel",
+          "actor": "Authorized workflow service",
+          "input_fields": {
+            "schedule_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "cancellation_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "schedule.reconcile",
+          "actor": "Scheduler worker",
+          "input_fields": {
+            "schedule_ref": "ref",
+            "last_observed_occurrence": "id"
+          },
+          "output_fields": {
+            "missing_occurrence_refs": "refs",
+            "reconciliation_ref": "ref"
+          }
+        },
+        {
+          "action": "schedule.advance_recurrence",
+          "actor": "Scheduler service",
+          "input_fields": {
+            "schedule_ref": "ref",
+            "previous_occurrence_ref": "ref",
+            "recurrence_rule_ref": "ref",
+            "next_occurrence_key": "id"
+          },
+          "output_fields": {
+            "next_schedule_ref": "ref",
+            "next_due_at": "datetime"
+          }
+        },
+        {
+          "action": "schedule.reclaim",
+          "actor": "Scheduler reconciler",
+          "input_fields": {
+            "schedule_ref": "ref",
+            "expired_lease_ref": "ref",
+            "observed_now": "datetime"
+          },
+          "output_fields": {
+            "reclaim_receipt_ref": "ref"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "draft",
+            "blocked_configuration"
+          ],
+          "action": "schedule.create",
+          "to_state": "armed",
+          "guard": "All source-required timing parameters resolved; valid timezone/calendar; due_at recomputed, not trusted from model"
+        },
+        {
+          "from_states": [
+            "armed",
+            "due",
+            "overdue"
+          ],
+          "action": "schedule.revise",
+          "to_state": "superseded",
+          "guard": "Expected version matches; new version created atomically; historical due date retained"
+        },
+        {
+          "from_states": [
+            "armed",
+            "due",
+            "overdue"
+          ],
+          "action": "schedule.claim_due",
+          "to_state": "claimed",
+          "guard": "Authoritative clock >= due_at and occurrence not cancelled/fired; acquire fenced lease"
+        },
+        {
+          "from_states": [
+            "claimed"
+          ],
+          "action": "schedule.fire",
+          "to_state": "fired",
+          "guard": "Valid fencing token; transaction records occurrence and outbox intent once"
+        },
+        {
+          "from_states": [
+            "draft",
+            "armed",
+            "due",
+            "overdue",
+            "claimed"
+          ],
+          "action": "schedule.cancel",
+          "to_state": "cancelled",
+          "guard": "CAS version check; already committed delivery is not recalled"
+        },
+        {
+          "from_states": [
+            "armed",
+            "overdue",
+            "claimed"
+          ],
+          "action": "schedule.reconcile",
+          "to_state": "due",
+          "guard": "Missing occurrence is due; reconcile ledger before replay; unchanged fired occurrence stays fired"
+        },
+        {
+          "from_states": [
+            "fired"
+          ],
+          "action": "schedule.advance_recurrence",
+          "to_state": "armed",
+          "guard": "Only recurring rule; previous occurrence immutable; next due computed from anchored calendar, not last processing time; unique next occurrence key. One-shot schedules remain fired."
+        },
+        {
+          "from_states": [
+            "armed",
+            "due"
+          ],
+          "action": "schedule.claim_due",
+          "to_state": "overdue",
+          "guard": "Due time passed but capacity unavailable; persist overdue visibility, never silently discard."
+        },
+        {
+          "from_states": [
+            "claimed"
+          ],
+          "action": "schedule.reclaim",
+          "to_state": "due",
+          "guard": "Expired lease and no committed fire receipt; increment fence and recheck current schedule version. If committed, retain fired state and return existing receipt."
+        },
+        {
+          "from_states": [
+            "fired"
+          ],
+          "action": "schedule.cancel",
+          "to_state": "fired",
+          "guard": "Cancel parent future recurrence only; immutable prior fired occurrence/delivery retained. Return cancellation receipt referencing parent."
+        }
+      ],
+      "invariants": [
+        "Store UTC instants plus source timezone/calendar/rule version; preserve event time and computation time separately.",
+        "Business days, working hours, deadline inclusivity and pause rules are explicit configuration, never inferred from server locale.",
+        "A due-event is a request to evaluate current workflow prerequisites, not permission to advance business state.",
+        "Unique tenant+schedule version+occurrence key prevents duplicate firing. Revision versus fire is serialized; a committed earlier reminder remains auditable.",
+        "Downtime recovery emits one catch-up control event per missed occurrence, not a burst of external messages; disposition records every missed recurrence.",
+        "A received completion and deadline crossing use one serialized state check. Late evidence does not erase the fact that a deadline was missed.",
+        "State is occurrence-scoped. The parent schedule definition has active/cancelled/superseded status; fired occurrence evidence is never overwritten by advancing recurrence. schedule.advance_recurrence atomically creates the next occurrence and returns its armed state, while the prior occurrence remains fired.",
+        "calendar_ref is required semantically only for working-calendar calculations or calendar-based recurrence; elapsed24h timing uses exact elapsed seconds and does not wait for a holiday calendar.",
+        "Claim expires after the configured lease; stale fencing tokens cannot fire after cancellation/revision/reclaim."
+      ],
+      "technical_defaults": [
+        "Proposed storage default UTC; display uses configured business timezone. No default business timezone, holiday calendar or reminder lead time.",
+        "Scheduler scan interval 60 seconds is a proposed operational target, not a business SLA. Due conditions use actual timestamps, not scan counts.",
+        "Catch-up work enters a bounded queue. External reminder delivery is not included in schedule.fire; a separately authorized notification route is required."
+      ],
+      "owner_configuration": [
+        "Exact IANA timezone, calendar and start/stop/pause conditions for each source deadline.",
+        "For stated ranges such as 1\u20132 working days, preserve range until an authorized selection rule exists; do not silently choose 2.",
+        "Confirmed reminder recipient/action template; notification authority independent of timer creation."
+      ],
+      "mock_cases": [
+        {
+          "id": "X01-M01",
+          "given": "B08 agreement amended before reminder fires",
+          "when": "revise schedule concurrently with claim",
+          "then": "Only current version may commit a new reminder; previous version retained as superseded.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X01-M02",
+          "given": "P40 Tuesday recurrence during downtime",
+          "when": "scheduler restarts Wednesday",
+          "then": "One recorded missed occurrence is queued for disposition; no fabricated meeting or repeated external messages.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X01-M03",
+          "given": "P62 implementation timestamp known but working calendar absent",
+          "when": "configure retrospective deadline",
+          "then": "24h logging rule remains separately evaluable; working-day timer blocks with missing calendar.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X01-M04",
+          "given": "P44 resolution and escalation race",
+          "when": "both attempt state update",
+          "then": "CAS selects one committed ordering; escalation checks actual unresolved status before dispatch.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X01-M05",
+          "given": "A previously fired occurrence repeats",
+          "when": "same operation key delivered",
+          "then": "Return existing receipt without duplicate intent.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X01-M06",
+          "given": "Cancellation follows committed send",
+          "when": "cancel schedule",
+          "then": "Stop future work; retain prior delivery and do not claim it was recalled.",
+          "status": "Specified, not executed"
+        }
+      ]
+    },
+    {
+      "id": "X02",
+      "name": "Inbound events and correlation",
+      "summary": "Turn external or human-submitted facts into traceable workflow signals without treating messages as authority.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "received",
+        "authenticated",
+        "validated",
+        "quarantined",
+        "duplicate",
+        "correlated",
+        "applied",
+        "superseded",
+        "rejected"
+      ],
+      "commands": [
+        {
+          "action": "event.receive",
+          "actor": "Authenticated adapter or authorized human ingress",
+          "input_fields": {
+            "event_id": "id",
+            "producer_ref": "ref",
+            "event_type": "string",
+            "subject_key": "string",
+            "occurred_at": "datetime",
+            "received_at": "datetime",
+            "payload_ref": "ref",
+            "schema_ref": "ref",
+            "source_sequence": "nullable_integer",
+            "supersedes_event_id": "nullable_id"
+          },
+          "output_fields": {
+            "ingress_receipt_ref": "ref",
+            "state": "string"
+          }
+        },
+        {
+          "action": "event.validate",
+          "actor": "Ingress validation service",
+          "input_fields": {
+            "event_ref": "ref",
+            "producer_policy_ref": "ref"
+          },
+          "output_fields": {
+            "validation_ref": "ref",
+            "reasons": "strings"
+          }
+        },
+        {
+          "action": "event.correlate",
+          "actor": "Identity resolver with bounded grant",
+          "input_fields": {
+            "event_ref": "ref",
+            "candidate_subject_refs": "refs"
+          },
+          "output_fields": {
+            "correlation_ref": "ref",
+            "resolved_subject_ref": "nullable_ref"
+          }
+        },
+        {
+          "action": "event.apply",
+          "actor": "Workflow service",
+          "input_fields": {
+            "event_ref": "ref",
+            "correlation_ref": "ref",
+            "expected_subject_version": "version"
+          },
+          "output_fields": {
+            "transition_receipt_ref": "ref",
+            "resulting_subject_ref": "ref"
+          }
+        },
+        {
+          "action": "event.reconcile_source",
+          "actor": "Authorized adapter",
+          "input_fields": {
+            "producer_ref": "ref",
+            "checkpoint_ref": "ref",
+            "source_snapshot_ref": "ref"
+          },
+          "output_fields": {
+            "reconciliation_ref": "ref",
+            "missing_event_refs": "refs"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "received",
+            "authenticated"
+          ],
+          "action": "event.validate",
+          "to_state": "validated",
+          "guard": "Producer authentication and schema/access checks pass; failed checks quarantine/reject, never apply"
+        },
+        {
+          "from_states": [
+            "validated"
+          ],
+          "action": "event.correlate",
+          "to_state": "correlated",
+          "guard": "All producer authentication, schema, access and semantic validation pass again; exactly one authoritative identity match or authenticated human resolution. Authentication/schema failure cannot be bypassed by correlation."
+        },
+        {
+          "from_states": [
+            "correlated"
+          ],
+          "action": "event.apply",
+          "to_state": "applied",
+          "guard": "Correct version, source ordering and business prerequisites; stale event cannot overwrite newer state"
+        },
+        {
+          "from_states": [
+            "received",
+            "validated"
+          ],
+          "action": "event.receive",
+          "to_state": "duplicate",
+          "guard": "Same producer/event ID and same payload hash; changed hash is conflict quarantine, not duplicate success"
+        },
+        {
+          "from_states": [
+            "applied"
+          ],
+          "action": "event.receive",
+          "to_state": "superseded",
+          "guard": "A separately validated correcting event links previous event; earlier evidence remains immutable"
+        },
+        {
+          "from_states": [
+            "quarantined"
+          ],
+          "action": "event.correlate",
+          "to_state": "correlated",
+          "guard": "All producer authentication, schema, access and semantic validation pass again; exactly one authoritative identity match or authenticated human resolution. Authentication/schema failure cannot be bypassed by correlation."
+        },
+        {
+          "from_states": [
+            "received",
+            "authenticated"
+          ],
+          "action": "event.validate",
+          "to_state": "quarantined",
+          "guard": "Authentication/schema/identity failure retains restricted evidence; no business application."
+        },
+        {
+          "from_states": [
+            "received"
+          ],
+          "action": "event.validate",
+          "to_state": "authenticated",
+          "guard": "Transport identity verified; schema validation still required before correlation."
+        },
+        {
+          "from_states": [
+            "received"
+          ],
+          "action": "event.receive",
+          "to_state": "received",
+          "guard": "Initial ingress durably stores evidence and server received_at; subsequent duplicate receipts leave canonical state unchanged."
+        }
+      ],
+      "invariants": [
+        "Producer authentication is obtained from trusted adapter transport and credentials outside model context; producer_ref alone is not authentication.",
+        "Uniqueness key is tenant+producer+event_id. Same key/different hash is a security or source-integrity conflict.",
+        "occurred_at is a source assertion; received_at is server stamped. Delayed events retain both. No last-arrival-wins business state.",
+        "Source sequence is used only where the source guarantees it; otherwise version/hash checks and authoritative reconciliation resolve ordering.",
+        "Event authenticity does not prove business approval. A signed-document event still needs the prescribed evidence checks.",
+        "Correction invalidates dependent readiness/approval according to owner policy; it never silently changes an already executed financial effect.",
+        "Canonical event state is separate from each delivery-attempt disposition. Duplicate or conflicting receipt does not overwrite applied canonical state.",
+        "Quarantine records typed reasons: authentication_failed/schema_invalid/identity_ambiguous/hash_conflict/out_of_order. Release requires every original failure resolved and all ingress validations repeated.",
+        "Initial receive stores received state and ingress receipt before acknowledgement. Source reconciliation writes observed missing events via event.receive and advances checkpoint atomically only through a contiguous durably stored source position; gaps retain prior checkpoint.",
+        "Correcting events have their own identity and normal validation/correlation/application; applying one links supersedes_event_id to the old canonical event and marks its derived readiness stale. Original bytes/events remain immutable."
+      ],
+      "technical_defaults": [
+        "Proposed default: quarantine ambiguous identities and unknown event schemas, preserve metadata and restricted payload, continue unrelated cases.",
+        "No polling interval or connector access is assumed. Reconciliation checkpoints advance only after durably storing all accepted items."
+      ],
+      "owner_configuration": [
+        "Actual source producer IDs, supported webhook/poll/export route, subject keys and source sequencing guarantees.",
+        "Authorized correction and approval-invalidation policy for business records."
+      ],
+      "mock_cases": [
+        {
+          "id": "X02-M01",
+          "given": "P34 event delivered twice",
+          "when": "event.apply repeats",
+          "then": "One internal state transition and one handoff intent; same receipt returned.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X02-M02",
+          "given": "F28 corrected usage arrives after invoice generation",
+          "when": "apply correcting event",
+          "then": "New usage version and exception task; do not overwrite or regenerate invoice automatically.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X02-M03",
+          "given": "Two clients share a display name",
+          "when": "correlate event",
+          "then": "Quarantine ambiguous identity, do not merge.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X02-M04",
+          "given": "Older milestone message arrives last",
+          "when": "apply event",
+          "then": "Retain late evidence; do not regress newer authoritative state.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X02-M05",
+          "given": "Payload tells agent to skip approval",
+          "when": "validate/extract",
+          "then": "Treat text as data; no authority change.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X02-M06",
+          "given": "Same producer/event ID has different payload",
+          "when": "receive",
+          "then": "Conflict quarantine with both hashes and no business transition.",
+          "status": "Specified, not executed"
+        }
+      ]
+    },
+    {
+      "id": "X03",
+      "name": "External job lifecycle",
+      "summary": "Coordinate verified incumbent services without confusing job acceptance, completion and business effects.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "prepared",
+        "authorized",
+        "submitting",
+        "accepted",
+        "running",
+        "partially_completed",
+        "succeeded",
+        "failed",
+        "outcome_unknown",
+        "cancel_requested",
+        "cancelled",
+        "manual_reconciliation"
+      ],
+      "commands": [
+        {
+          "action": "job.prepare",
+          "actor": "Authorized adapter preflight",
+          "input_fields": {
+            "adapter_contract_ref": "ref",
+            "input_batch_ref": "ref",
+            "intended_effects": "strings",
+            "destination_ref": "ref"
+          },
+          "output_fields": {
+            "job_request_ref": "ref",
+            "validation_ref": "ref"
+          }
+        },
+        {
+          "action": "job.start",
+          "actor": "Effect gateway only",
+          "input_fields": {
+            "job_request_ref": "ref",
+            "approval_refs": "refs",
+            "external_idempotency_key": "id"
+          },
+          "output_fields": {
+            "submission_receipt_ref": "ref",
+            "external_run_id": "nullable_id"
+          }
+        },
+        {
+          "action": "job.query",
+          "actor": "Authorized adapter",
+          "input_fields": {
+            "job_ref": "ref",
+            "external_run_id": "nullable_id"
+          },
+          "output_fields": {
+            "status_receipt_ref": "ref",
+            "item_result_refs": "refs"
+          }
+        },
+        {
+          "action": "job.callback",
+          "actor": "Authenticated adapter",
+          "input_fields": {
+            "job_ref": "ref",
+            "callback_event_ref": "ref",
+            "external_run_id": "id",
+            "item_result_refs": "refs"
+          },
+          "output_fields": {
+            "reconciliation_ref": "ref"
+          }
+        },
+        {
+          "action": "job.cancel",
+          "actor": "Authorized gateway",
+          "input_fields": {
+            "job_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "cancel_request_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "job.reconcile",
+          "actor": "Authorized adapter or accountable human",
+          "input_fields": {
+            "job_ref": "ref",
+            "destination_snapshot_ref": "ref",
+            "resolution_evidence_refs": "refs"
+          },
+          "output_fields": {
+            "reconciliation_ref": "ref",
+            "resolved_state": "string"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "prepared"
+          ],
+          "action": "job.start",
+          "to_state": "submitting",
+          "guard": "Verified adapter contract, actual grant and source-required prerequisites/approvals pass atomically; no unknown connector effects"
+        },
+        {
+          "from_states": [
+            "submitting"
+          ],
+          "action": "job.query",
+          "to_state": "accepted",
+          "guard": "Destination confirms accepted run identity; accepted is not succeeded"
+        },
+        {
+          "from_states": [
+            "accepted",
+            "running"
+          ],
+          "action": "job.callback",
+          "to_state": "succeeded",
+          "guard": "Trusted callback plus required per-item/output reconciliation proves intended completion"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running"
+          ],
+          "action": "job.query",
+          "to_state": "outcome_unknown",
+          "guard": "Timeout or ambiguous result; retry of mutation prohibited until reconciled"
+        },
+        {
+          "from_states": [
+            "accepted",
+            "running",
+            "partially_completed"
+          ],
+          "action": "job.cancel",
+          "to_state": "cancel_requested",
+          "guard": "Adapter supports cancellation; request does not undo prior effects"
+        },
+        {
+          "from_states": [
+            "cancel_requested"
+          ],
+          "action": "job.query",
+          "to_state": "cancelled",
+          "guard": "Destination confirms stopped remainder and known completed items"
+        },
+        {
+          "from_states": [
+            "outcome_unknown",
+            "partially_completed"
+          ],
+          "action": "job.reconcile",
+          "to_state": "manual_reconciliation",
+          "guard": "No trustworthy identity/lookup or conflicting effects; human/source owner must resolve"
+        },
+        {
+          "from_states": [
+            "outcome_unknown",
+            "partially_completed"
+          ],
+          "action": "job.reconcile",
+          "to_state": "succeeded",
+          "guard": "All intended item effects verified; preserve earlier unknown state in audit"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.query",
+          "to_state": "running",
+          "guard": "Trusted destination confirms active run and same input identity"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.query",
+          "to_state": "partially_completed",
+          "guard": "Trusted per-item evidence distinguishes completed, failed and unknown items"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.query",
+          "to_state": "failed",
+          "guard": "Destination definitively rejects/fails and effects are fully accounted; otherwise outcome_unknown"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.query",
+          "to_state": "succeeded",
+          "guard": "Every intended effect/output confirmed against declared completion contract"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.callback",
+          "to_state": "running",
+          "guard": "Trusted destination confirms active run and same input identity"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.callback",
+          "to_state": "partially_completed",
+          "guard": "Trusted per-item evidence distinguishes completed, failed and unknown items"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.callback",
+          "to_state": "failed",
+          "guard": "Destination definitively rejects/fails and effects are fully accounted; otherwise outcome_unknown"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.callback",
+          "to_state": "succeeded",
+          "guard": "Every intended effect/output confirmed against declared completion contract"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.reconcile",
+          "to_state": "running",
+          "guard": "Trusted destination confirms active run and same input identity"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.reconcile",
+          "to_state": "partially_completed",
+          "guard": "Trusted per-item evidence distinguishes completed, failed and unknown items"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.reconcile",
+          "to_state": "failed",
+          "guard": "Destination definitively rejects/fails and effects are fully accounted; otherwise outcome_unknown"
+        },
+        {
+          "from_states": [
+            "submitting",
+            "accepted",
+            "running",
+            "partially_completed",
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.reconcile",
+          "to_state": "succeeded",
+          "guard": "Every intended effect/output confirmed against declared completion contract"
+        },
+        {
+          "from_states": [
+            "prepared"
+          ],
+          "action": "job.prepare",
+          "to_state": "prepared",
+          "guard": "Idempotent preparation with no external invocation; exact version and source evidence retained."
+        },
+        {
+          "from_states": [
+            "outcome_unknown",
+            "failed",
+            "manual_reconciliation"
+          ],
+          "action": "job.reconcile",
+          "to_state": "prepared",
+          "guard": "Trusted definitive nonacceptance/no-effect evidence; fresh grant and source-required prerequisites; existing operation identity retained for identical intent.; only if no cancellation intent exists."
+        },
+        {
+          "from_states": [
+            "accepted",
+            "running",
+            "partially_completed",
+            "cancel_requested",
+            "outcome_unknown",
+            "manual_reconciliation"
+          ],
+          "action": "job.reconcile",
+          "to_state": "cancelled",
+          "guard": "Trusted destination confirms cancelled remainder and all completed/failed items accounted; no unclassified unknown effects."
+        },
+        {
+          "from_states": [
+            "outcome_unknown",
+            "manual_reconciliation",
+            "cancel_requested"
+          ],
+          "action": "job.reconcile",
+          "to_state": "cancelled",
+          "guard": "Sticky cancellation and definitive no-effect or confirmed stopped remainder; no unclassified effects remain."
+        },
+        {
+          "from_states": [
+            "outcome_unknown",
+            "manual_reconciliation"
+          ],
+          "action": "job.cancel",
+          "to_state": "outcome_unknown",
+          "guard": "Persist cancellation intent; do not erase unknown effect; reconcile to actual known effects or cancelled with no effect."
+        }
+      ],
+      "invariants": [
+        "Adapter contract enumerates whether a flow creates, posts, sends or updates; unknown side effects block invocation.",
+        "Stable business operation key and payload hash survive transport retry; attempts have distinct IDs. Changed payload requires new operation/version and fresh grant/precondition checks; approvals are invalidated/recollected only where actual source policy requires them.",
+        "Never restart whole batch to repair one failed item; identify confirmed, rejected and unknown items first.",
+        "External effect confirmation requires trusted receipt or authoritative observation, not model narrative or HTTP202 alone.",
+        "Running jobs hold no permanent worker lease: persist external_run_id then resume on callback/poll.",
+        "Cancellation and compensation are distinct. Invoice cancellation, credit or reversal stays with the authorized owning route.",
+        "job.query obtains a trusted observation, then an internal reconciliation transaction applies the listed transition only after validating run identity, payload and permitted state progression. A raw poll response never directly changes business state.",
+        "Late callbacks after timeout or cancel request are reconciled by item. Confirmed earlier effects remain true; cancellation cannot suppress a later verified success. A cancellation-confirmed run reporting new effects becomes a conflict exception.",
+        "Definitive nonacceptance means trusted destination evidence that no request/effect exists, not a timeout or HTTP error alone. Only then may the same semantic intent retry under fresh authorization.",
+        "Cancellation intent is sticky and versioned independently of observed destination status. A late success is recorded truthfully, but cancellation forbids starting/retrying remaining work. Definitive no-effect after cancellation resolves cancelled, never prepared."
+      ],
+      "technical_defaults": [
+        "Proposed safe-query retries: up to5 with jittered exponential backoff, subject to adapter limits. Mutation retry only if adapter proves idempotency or definitive nonacceptance.",
+        "No generic arbitrary URL, shell or credential tool is exposed to agents."
+      ],
+      "owner_configuration": [
+        "Verified Power Automate F30 flow definition/environment/connection owner, exact input/output and generated/posting/sending effects.",
+        "GLPI/other incumbent integration contract and actual permitted route; no inferred access grant."
+      ],
+      "mock_cases": [
+        {
+          "id": "X03-M01",
+          "given": "F30 start times out after acceptance",
+          "when": "retry requested",
+          "then": "Lookup stable key/run first; no duplicate invoice batch.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X03-M02",
+          "given": "Batch has7 confirmed,2 failed,1 unknown item",
+          "when": "reconcile",
+          "then": "Keep all10 statuses; retry only definitively safe failed items under same business identity.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X03-M03",
+          "given": "Callback forged by document text",
+          "when": "job.callback",
+          "then": "Reject producer authentication; no success state.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X03-M04",
+          "given": "Cancel accepted after some items completed",
+          "when": "job.query",
+          "then": "Record cancelled remainder and retained effects; no claim of rollback.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X03-M05",
+          "given": "Destination lacks lookup/idempotency",
+          "when": "submission times out",
+          "then": "Park manual reconciliation; do not guess safe retry.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X03-M06",
+          "given": "Input pricing changes after authorization",
+          "when": "job.start",
+          "then": "Reject stale approval/version and create revised request.",
+          "status": "Specified, not executed"
+        }
+      ]
+    },
+    {
+      "id": "X04",
+      "name": "Human decisions and prerequisite evidence",
+      "summary": "Record prescribed decisions as authenticated commands, without making an agent an approver or adding approval gates.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "draft",
+        "requested",
+        "partially_decided",
+        "approved",
+        "rejected",
+        "returned",
+        "withdrawn",
+        "invalidated",
+        "expired",
+        "cancelled"
+      ],
+      "commands": [
+        {
+          "action": "decision.request",
+          "actor": "Workflow service",
+          "input_fields": {
+            "request_id": "id",
+            "subject_ref": "ref",
+            "decision_policy_ref": "ref",
+            "required_role_refs": "refs",
+            "ordering": "enum:serial,unordered",
+            "evidence_refs": "refs"
+          },
+          "output_fields": {
+            "request_ref": "ref",
+            "eligible_role_refs": "refs"
+          }
+        },
+        {
+          "action": "decision.submit",
+          "actor": "Authenticated eligible human only",
+          "input_fields": {
+            "request_ref": "ref",
+            "subject_ref": "ref",
+            "outcome": "enum:approve,reject,return",
+            "reason": "string",
+            "evidence_refs": "refs"
+          },
+          "output_fields": {
+            "decision_receipt_ref": "ref",
+            "aggregate_state": "string"
+          }
+        },
+        {
+          "action": "decision.withdraw",
+          "actor": "Original actor or explicitly authorized authority",
+          "input_fields": {
+            "decision_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "withdrawal_receipt_ref": "ref",
+            "affected_readiness_refs": "refs"
+          }
+        },
+        {
+          "action": "decision.invalidate",
+          "actor": "Deterministic dependency service",
+          "input_fields": {
+            "request_ref": "ref",
+            "changed_subject_ref": "ref",
+            "invalidation_rule_ref": "ref"
+          },
+          "output_fields": {
+            "invalidation_receipt_ref": "ref",
+            "affected_task_refs": "refs"
+          }
+        },
+        {
+          "action": "decision.record_external",
+          "actor": "Trusted adapter or verified human recorder",
+          "input_fields": {
+            "request_ref": "ref",
+            "external_decision_ref": "ref",
+            "issuer_ref": "ref",
+            "verification_evidence_refs": "refs"
+          },
+          "output_fields": {
+            "verified_prerequisite_ref": "ref"
+          }
+        },
+        {
+          "action": "decision.cancel_request",
+          "actor": "Authorized workflow owner",
+          "input_fields": {
+            "request_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "cancellation_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "decision.expire",
+          "actor": "Deterministic timer service",
+          "input_fields": {
+            "request_ref": "ref",
+            "expiry_policy_ref": "ref",
+            "due_occurrence_ref": "ref"
+          },
+          "output_fields": {
+            "expiry_receipt_ref": "ref"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "draft"
+          ],
+          "action": "decision.request",
+          "to_state": "requested",
+          "guard": "Policy specifies applicable gate and actual eligible roles; do not create approvals for source no-approval activities"
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.submit",
+          "to_state": "partially_decided",
+          "guard": "Outcome approve only, valid actor/current subject/serial predecessor; no rejection or return, and required positive decisions remain missing."
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.submit",
+          "to_state": "approved",
+          "guard": "All required current decisions valid under policy; no unresolved negative outcome"
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.submit",
+          "to_state": "rejected",
+          "guard": "Eligible human rejects; dependant transition stays blocked"
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.submit",
+          "to_state": "returned",
+          "guard": "Eligible human requests revision; no implied rejection/approval substitution"
+        },
+        {
+          "from_states": [
+            "approved",
+            "partially_decided"
+          ],
+          "action": "decision.withdraw",
+          "to_state": "withdrawn",
+          "guard": "Actual withdrawal entitlement validated; completed effects are not undone"
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided",
+            "approved"
+          ],
+          "action": "decision.invalidate",
+          "to_state": "invalidated",
+          "guard": "Dependency version changed and configured invalidation rule applies; missing policy blocks affected progression"
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.record_external",
+          "to_state": "partially_decided",
+          "guard": "Verified positive external approval only; no negative/return outcome; required gates remain missing."
+        },
+        {
+          "from_states": [
+            "draft",
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.cancel_request",
+          "to_state": "cancelled",
+          "guard": "Authorized cancellation; preserve submitted decisions and completed effects"
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.record_external",
+          "to_state": "approved",
+          "guard": "Verified final required external decision satisfies all current policy gates; no remaining rejection/missing decision."
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.record_external",
+          "to_state": "rejected",
+          "guard": "Authenticated applicable external rejection is recorded; dependent action blocked."
+        },
+        {
+          "from_states": [
+            "returned",
+            "rejected",
+            "withdrawn",
+            "invalidated",
+            "expired"
+          ],
+          "action": "decision.request",
+          "to_state": "requested",
+          "guard": "Explicit new request version; same or revised subject per policy, old decisions never silently inherited."
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided"
+          ],
+          "action": "decision.record_external",
+          "to_state": "returned",
+          "guard": "Verified external return-for-revision outcome; record reason and subject version."
+        },
+        {
+          "from_states": [
+            "requested",
+            "partially_decided",
+            "approved"
+          ],
+          "action": "decision.expire",
+          "to_state": "expired",
+          "guard": "Only explicitly configured applicable expiry/invalidation policy; no expiry assumed by default, and expiry never approves or reverses completed effects."
+        }
+      ],
+      "invariants": [
+        "Actor identity, role entitlement and delegation are server-verified; a model-supplied role or approval string cannot submit a decision.",
+        "For P09/P48 costing, enforce PM then Head of PMO then CEO; cost-changing revisions restart that exact chain. Do not apply serial ordering to all other multi-party gates.",
+        "One request binds one exact subject/content hash and policy version. Duplicate identical submissions return original receipt; conflicting submissions require explicit withdrawal/new decision, not overwrite.",
+        "Joint roles are evaluated as prescribed, with dual-role satisfaction blocked until policy defines it.",
+        "External prerequisite recording does not transfer authority from QA, Design, Security, Engineering or GLPI to PMO.",
+        "Do not add approval to P37 operational handover, P45 RFP intake, P50 issue closure or P56 classification where the SOP explicitly says none.",
+        "Withdrawal/invalidation prevents future dependent commands; completed downstream effects become review exceptions, never retroactive silent deletion.",
+        "Aggregate projection is deterministic: applicable rejection\u2192rejected, return\u2192returned, otherwise all required valid positives\u2192approved, otherwise at least one valid positive\u2192partially_decided, otherwise requested. No partial branch can swallow rejection/return."
+      ],
+      "technical_defaults": [
+        "No invented approval timeout or automatic approval. Missing person/role mapping blocks submission, not evidence gathering.",
+        "Append-only decision ledger with CAS aggregate request version. Request resubmission creates a new version, retains previous outcomes and reevaluates applicability."
+      ],
+      "owner_configuration": [
+        "Named actors, delegation/absence and dual-role rules; rejection/return/withdrawal rights and non-cost revision invalidation.",
+        "Resolve emergency versus general GLPI wording and Standard preapproved catalogue without invented waivers."
+      ],
+      "mock_cases": [
+        {
+          "id": "X04-M01",
+          "given": "P09 CEO attempts decision before PM and Head",
+          "when": "submit",
+          "then": "Reject out-of-order command; no approval event.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X04-M02",
+          "given": "Two valid unordered P58 roles approve concurrently",
+          "when": "submit with same request version",
+          "then": "One CAS succeeds; other rereads and safely reapplies distinct role decision, not duplicate business effect.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X04-M03",
+          "given": "Cost changes after all approvals",
+          "when": "invalidate",
+          "then": "Old approvals remain historical; PM\u2192Head\u2192CEO must repeat for new cost version.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X04-M04",
+          "given": "Agent writes approved in a document",
+          "when": "record external",
+          "then": "Reject as unauthenticated claim.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X04-M05",
+          "given": "P37 handover has complete required evidence",
+          "when": "request extra approval",
+          "then": "No invented approval gate; apply source workflow.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X04-M06",
+          "given": "Actor withdraws after downstream action completed",
+          "when": "withdraw",
+          "then": "Stop remaining dependent work and open review exception; do not claim reversal.",
+          "status": "Specified, not executed"
+        }
+      ]
+    },
+    {
+      "id": "X05",
+      "name": "Files spreadsheets and controlled documents",
+      "summary": "Import immutable evidence and produce traceable versions, rather than letting agents edit uncontrolled financial or project masters.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "uploaded",
+        "quarantined",
+        "validated",
+        "parsed",
+        "accepted_snapshot",
+        "draft",
+        "review_required",
+        "reviewed",
+        "released",
+        "superseded",
+        "rejected",
+        "release_pending",
+        "outcome_unknown"
+      ],
+      "commands": [
+        {
+          "action": "artifact.ingest",
+          "actor": "Authorized source adapter or human uploader",
+          "input_fields": {
+            "artifact_id": "id",
+            "content_hash": "hash",
+            "media_type": "string",
+            "source_ref": "ref",
+            "classification": "string",
+            "size_bytes": "integer",
+            "period_ref": "nullable_ref"
+          },
+          "output_fields": {
+            "artifact_ref": "ref",
+            "quarantine_state": "string"
+          }
+        },
+        {
+          "action": "artifact.validate_import",
+          "actor": "Deterministic parser",
+          "input_fields": {
+            "artifact_ref": "ref",
+            "import_schema_ref": "ref",
+            "parser_version": "string",
+            "calculation_policy_ref": "ref"
+          },
+          "output_fields": {
+            "validation_ref": "ref",
+            "parsed_dataset_ref": "nullable_ref",
+            "error_refs": "refs"
+          }
+        },
+        {
+          "action": "artifact.accept_snapshot",
+          "actor": "Authorized workflow service",
+          "input_fields": {
+            "artifact_ref": "ref",
+            "validation_ref": "ref",
+            "dataset_ref": "ref"
+          },
+          "output_fields": {
+            "snapshot_ref": "ref",
+            "lineage_ref": "ref"
+          }
+        },
+        {
+          "action": "artifact.assemble",
+          "actor": "Deterministic renderer with bounded agent content",
+          "input_fields": {
+            "template_ref": "ref",
+            "input_refs": "refs",
+            "audience_policy_ref": "ref",
+            "render_policy_ref": "ref"
+          },
+          "output_fields": {
+            "draft_ref": "ref",
+            "render_validation_ref": "ref"
+          }
+        },
+        {
+          "action": "artifact.request_review",
+          "actor": "Workflow service",
+          "input_fields": {
+            "artifact_ref": "ref",
+            "review_policy_ref": "ref"
+          },
+          "output_fields": {
+            "decision_request_ref": "ref"
+          }
+        },
+        {
+          "action": "artifact.release",
+          "actor": "Authorized human or gateway under actual release policy",
+          "input_fields": {
+            "artifact_ref": "ref",
+            "review_receipt_refs": "refs",
+            "destination_ref": "ref",
+            "audience_policy_ref": "ref"
+          },
+          "output_fields": {
+            "release_receipt_ref": "ref",
+            "delivery_state": "string"
+          }
+        },
+        {
+          "action": "artifact.supersede",
+          "actor": "Authorized source owner",
+          "input_fields": {
+            "artifact_ref": "ref",
+            "replacement_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "lineage_ref": "ref",
+            "invalidated_dependency_refs": "refs"
+          }
+        },
+        {
+          "action": "artifact.record_review",
+          "actor": "Decision-verification service",
+          "input_fields": {
+            "artifact_ref": "ref",
+            "decision_receipt_ref": "ref"
+          },
+          "output_fields": {
+            "reviewed_artifact_ref": "ref"
+          }
+        },
+        {
+          "action": "artifact.reconcile_release",
+          "actor": "Authorized destination adapter or human owner",
+          "input_fields": {
+            "artifact_ref": "ref",
+            "operation_key": "id",
+            "destination_evidence_refs": "refs"
+          },
+          "output_fields": {
+            "release_receipt_ref": "ref",
+            "resolved_state": "string"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "uploaded"
+          ],
+          "action": "artifact.validate_import",
+          "to_state": "validated",
+          "guard": "File identity/type/size/access and required schema pass; failures quarantine"
+        },
+        {
+          "from_states": [
+            "validated"
+          ],
+          "action": "artifact.validate_import",
+          "to_state": "parsed",
+          "guard": "Parser produces typed values, cell locations and formula/cached-value lineage without executing macros"
+        },
+        {
+          "from_states": [
+            "parsed"
+          ],
+          "action": "artifact.accept_snapshot",
+          "to_state": "accepted_snapshot",
+          "guard": "Completeness/entity/period/schema checks pass; errors are not coerced to zero"
+        },
+        {
+          "from_states": [
+            "accepted_snapshot",
+            "draft"
+          ],
+          "action": "artifact.assemble",
+          "to_state": "draft",
+          "guard": "Pinned template and allowed input projection; rendered output hash/version recorded"
+        },
+        {
+          "from_states": [
+            "draft"
+          ],
+          "action": "artifact.request_review",
+          "to_state": "review_required",
+          "guard": "Exact version queued to prescribed reviewer"
+        },
+        {
+          "from_states": [
+            "accepted_snapshot",
+            "draft",
+            "reviewed",
+            "released",
+            "review_required",
+            "release_pending",
+            "outcome_unknown"
+          ],
+          "action": "artifact.supersede",
+          "to_state": "superseded",
+          "guard": "Replacement is a new immutable version; dependent readiness marked stale; prior release not recalled"
+        },
+        {
+          "from_states": [
+            "review_required"
+          ],
+          "action": "artifact.record_review",
+          "to_state": "reviewed",
+          "guard": "Authentic prescribed review applies to exact current content hash/version."
+        },
+        {
+          "from_states": [
+            "review_required",
+            "reviewed"
+          ],
+          "action": "artifact.release",
+          "to_state": "release_pending",
+          "guard": "Actual source-required review/grant/preconditions pass; record effect intent before send."
+        },
+        {
+          "from_states": [
+            "release_pending"
+          ],
+          "action": "artifact.release",
+          "to_state": "outcome_unknown",
+          "guard": "Possible destination acceptance with lost response; no blind resend."
+        },
+        {
+          "from_states": [
+            "release_pending",
+            "outcome_unknown"
+          ],
+          "action": "artifact.reconcile_release",
+          "to_state": "released",
+          "guard": "Trusted destination receipt proves correct artifact and audience delivery; acceptance/completion distinguished by destination contract."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "artifact.reconcile_release",
+          "to_state": "reviewed",
+          "guard": "Definitive nonacceptance, no effects; retain valid review only if exact content/policy unchanged; fresh send still rechecks grant."
+        },
+        {
+          "from_states": [
+            "quarantined",
+            "rejected"
+          ],
+          "action": "artifact.validate_import",
+          "to_state": "validated",
+          "guard": "Corrected evidence is new immutable version; repeat every applicable validation; never release quarantined bytes directly."
+        },
+        {
+          "from_states": [
+            "draft"
+          ],
+          "action": "artifact.release",
+          "to_state": "release_pending",
+          "guard": "Applicable policy explicitly requires no review, actual grant/destination checks pass, and send intent is persisted. Not available for PMO external documents requiring review."
+        }
+      ],
+      "invariants": [
+        "Preserve original bytes and content hash; parsing creates a derived dataset, never replaces the source. Identical bytes can have different provenance records.",
+        "Workbook import schema names workbook/sheet/table/range, row keys, types, period, entity, units and required fields. Unknown layout enters quarantine.",
+        "Track formula expression, cached value, parsed value and independently recalculated value distinctly; never assume a cached result is current.",
+        "Do not execute macros, external links or embedded code. External references require explicit resolved snapshots; unresolved links remain errors.",
+        "Reject duplicate keys or retain them as explicit exceptions according to an approved import policy; never silently aggregate duplicates.",
+        "Two payroll inputs remain separately versioned; overlap resolution requires declared identity and source semantics. HR source remains read-only to Finance.",
+        "External PMO documents require owner/version, prescribed sections and PMO Lead review; strip forbidden raw logs/internal commentary, comments and placeholders before release.",
+        "A changed document invalidates exact-version review. External publication is a distinct action; draft generation never grants send permission.",
+        "Source artifact/snapshot, derived draft and delivery each have separate versioned identities. Transition states refer to the applicable aggregate, not mutation of original source bytes.",
+        "Review applicability is policy-specific. PMO external sharing requires PMO Lead review as sourced; internal or other-domain release does not acquire an invented human gate. artifact.release may proceed without review receipts only when an explicit applicable policy says no review is required.",
+        "Superseding an unknown delivery does not erase its pending reconciliation; old delivery operation continues reconciliation independently of new artifact version."
+      ],
+      "technical_defaults": [
+        "Proposed import safety: immutable upload \u2192 quarantine checks \u2192 typed parse \u2192 accepted snapshot. No automatic formula execution.",
+        "UTF-8 text exports and explicit decimal/date serialization; spreadsheet export must preserve display units and distinguish missing from zero.",
+        "Technical hash algorithm SHA-256; content lineage includes parser/template/render versions. Retention duration remains configured, not invented."
+      ],
+      "owner_configuration": [
+        "Actual source workbook/export/template schemas, account/employee keys, permitted fields and repository/destination grants.",
+        "Approved recalculation engine/rule equivalence and external-link resolution policy; actual report audience projection."
+      ],
+      "mock_cases": [
+        {
+          "id": "X05-M01",
+          "given": "F02 workbook has missing period",
+          "when": "validate import",
+          "then": "Quarantine metadata gap; no default current month.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X05-M02",
+          "given": "F16 employee appears in both payroll files",
+          "when": "parse",
+          "then": "Keep both lineage records; flag overlap until source-specific rule supplied.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X05-M03",
+          "given": "Formula has stale cached value and external link",
+          "when": "validate",
+          "then": "No silent use/recalculation; require resolved snapshot and approved rule.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X05-M04",
+          "given": "P53 reviewed document edited after review",
+          "when": "release",
+          "then": "Reject stale version; request new review.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X05-M05",
+          "given": "Client report contains raw issue log",
+          "when": "assemble/release",
+          "then": "Audience projection excludes forbidden fields; release check fails if leakage remains.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X05-M06",
+          "given": "Corrected TB arrives after report release",
+          "when": "supersede",
+          "then": "New snapshot and impacted-report review; preserve published version and correction trail.",
+          "status": "Specified, not executed"
+        }
+      ]
+    },
+    {
+      "id": "X06",
+      "name": "Numeric rules batches and corrections",
+      "summary": "Run exact, source-qualified calculations with explicit dimensions and traceable corrections, not model-generated accounting policy.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "created",
+        "validated",
+        "blocked_rule",
+        "running",
+        "partially_completed",
+        "completed",
+        "failed",
+        "superseded",
+        "reconciled",
+        "cancelled"
+      ],
+      "commands": [
+        {
+          "action": "batch.create",
+          "actor": "Authorized Finance/domain workflow",
+          "input_fields": {
+            "batch_id": "id",
+            "rule_set_ref": "ref",
+            "input_snapshot_refs": "refs",
+            "entity_ref": "ref",
+            "period_ref": "ref",
+            "dimension_policy_ref": "ref",
+            "item_keys": "strings"
+          },
+          "output_fields": {
+            "batch_ref": "ref",
+            "validation_ref": "ref"
+          }
+        },
+        {
+          "action": "batch.validate",
+          "actor": "Deterministic domain service",
+          "input_fields": {
+            "batch_ref": "ref",
+            "oracle_ref": "ref"
+          },
+          "output_fields": {
+            "validation_ref": "ref",
+            "blocked_items": "strings"
+          }
+        },
+        {
+          "action": "batch.calculate_item",
+          "actor": "Deterministic domain worker",
+          "input_fields": {
+            "batch_ref": "ref",
+            "item_key": "id",
+            "rule_ref": "ref",
+            "input_refs": "refs",
+            "numeric_policy_ref": "ref"
+          },
+          "output_fields": {
+            "result_ref": "ref",
+            "lineage_ref": "ref",
+            "item_state": "string"
+          }
+        },
+        {
+          "action": "batch.reconcile",
+          "actor": "Deterministic domain service",
+          "input_fields": {
+            "batch_ref": "ref",
+            "result_refs": "refs",
+            "control_total_refs": "refs",
+            "oracle_ref": "ref"
+          },
+          "output_fields": {
+            "reconciliation_ref": "ref",
+            "unmatched_items": "strings"
+          }
+        },
+        {
+          "action": "batch.correct",
+          "actor": "Authorized source owner/workflow",
+          "input_fields": {
+            "batch_ref": "ref",
+            "replacement_input_refs": "refs",
+            "correction_kind": "enum:split,reclassify,additive,replace",
+            "reason": "string",
+            "approved_rule_ref": "ref"
+          },
+          "output_fields": {
+            "successor_batch_ref": "ref",
+            "affected_item_keys": "strings"
+          }
+        },
+        {
+          "action": "batch.cancel_remaining",
+          "actor": "Authorized workflow owner",
+          "input_fields": {
+            "batch_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "cancellation_receipt_ref": "ref",
+            "completed_item_refs": "refs"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "created"
+          ],
+          "action": "batch.validate",
+          "to_state": "validated",
+          "guard": "Batch identity/rule/coverage schema and item inventory valid. Missing global rule blocks batch; isolated missing item data flags that item and permits provisional independent item computation. Final reconciliation requires complete declared coverage."
+        },
+        {
+          "from_states": [
+            "validated",
+            "running",
+            "partially_completed"
+          ],
+          "action": "batch.calculate_item",
+          "to_state": "running",
+          "guard": "Pinned numeric policy and immutable input hashes; item uniqueness key not already completed; apply the mutually exclusive aggregate inventory projection, not multiple target transitions."
+        },
+        {
+          "from_states": [
+            "validated",
+            "running",
+            "partially_completed"
+          ],
+          "action": "batch.calculate_item",
+          "to_state": "partially_completed",
+          "guard": "Some items failed or blocked; explicit statuses retained and totals cannot imply full completeness; apply the mutually exclusive aggregate inventory projection, not multiple target transitions."
+        },
+        {
+          "from_states": [
+            "running",
+            "partially_completed"
+          ],
+          "action": "batch.reconcile",
+          "to_state": "reconciled",
+          "guard": "All required items present and declared controls pass; otherwise failed/partial with exact variances"
+        },
+        {
+          "from_states": [
+            "validated",
+            "running",
+            "partially_completed"
+          ],
+          "action": "batch.cancel_remaining",
+          "to_state": "cancelled",
+          "guard": "Stop unstarted items; retain completed calculations/effects and explicit cancelled statuses"
+        },
+        {
+          "from_states": [
+            "validated",
+            "running",
+            "partially_completed"
+          ],
+          "action": "batch.calculate_item",
+          "to_state": "completed",
+          "guard": "All declared items have valid deterministic results; reconciliation controls still required.; apply the mutually exclusive aggregate inventory projection, not multiple target transitions."
+        },
+        {
+          "from_states": [
+            "completed"
+          ],
+          "action": "batch.reconcile",
+          "to_state": "reconciled",
+          "guard": "All required control totals and source-specific exact/approved comparisons pass."
+        },
+        {
+          "from_states": [
+            "blocked_rule"
+          ],
+          "action": "batch.validate",
+          "to_state": "validated",
+          "guard": "Approved rule/config now supplied as new pinned batch version; revalidate full inventory."
+        },
+        {
+          "from_states": [
+            "completed",
+            "reconciled",
+            "partially_completed",
+            "failed",
+            "cancelled"
+          ],
+          "action": "batch.correct",
+          "to_state": "superseded",
+          "guard": "One atomic command creates exactly one successor batch keyed by predecessor+correction operation; returns prior successor on duplicate. Prior results remain immutable; required correction authority/rules present."
+        }
+      ],
+      "invariants": [
+        "Represent quantities as signed decimal strings with currency/unit/scale, entity, account/BU, period and precision metadata. Binary floating point is not the monetary oracle.",
+        "No implicit cross-currency sum, sign inversion or thousand scaling. Transformations are named versioned rules with input/output dimensions.",
+        "Value status is present/missing/not_applicable/error; present zero remains a value. Null/error never becomes zero by default.",
+        "F23 intended company/BU tie-out is exact equality to management accounts, per FIN P0111. Comparison occurs only after approved mappings and unit/precision normalization; do not invent a nonzero tolerance.",
+        "F25 narrated annual budget/12\u00d7elapsed months is recorded as known method; applicability, fiscal periods and exact workbook must be confirmed, not formula re-invented.",
+        "F19 headcount allocation is limited to the described other-staff pool. Shared-service, executive and OPEX rules remain distinct, not inferred from it.",
+        "F12 split/reclassification preserves original totals unless explicitly additive treatment is established. No duplicate revenue from manual detail.",
+        "Correction dependency graph identifies affected monthly/YTD/report outputs; historical restatement and released-report treatment require actual policy.",
+        "Cash forecasts are partial coverage by source description; reconciliation must not assert all receivables were included.",
+        "Cancellation atomically stops dispatch and marks every unstarted item cancelled; completed results remain attached. Cancelled batch cannot calculate more items; a separately authorized successor is required.",
+        "Batch corrections are atomic successor creation, not a two-command reuse of batch.correct. Readiness invalidation and successor linkage commit together with the outbox.",
+        "After item commit, project aggregate in this order: sticky cancellation\u2192cancelled; any blocked/failed/error item\u2192partially_completed; all required items valid\u2192completed; otherwise remaining eligible items\u2192running. Reconciled is a later explicit control-total success. These mutually exclusive inventory conditions govern calculate_item transitions."
+      ],
+      "technical_defaults": [
+        "Proposed canonical decimal representation, no implicit rounding; numeric_policy must name scale, rounding mode/stage and residual disposition before affected result can be finalized.",
+        "Pure calculation retry uses same rule+input hashes+item key and returns prior result; no financial write is part of calculate_item.",
+        "Per-item execution permits safe recomputation of affected items, but dependent aggregates wait for complete declared coverage."
+      ],
+      "owner_configuration": [
+        "Native account/BU/employee maps, exact rates/private ratios, currency/sign/scale, fiscal calendar and independently approved expected examples.",
+        "Rounding/residual method, permitted non-F23 tolerances, correction/restatement treatment and missing-match policy.",
+        "F07 complete depreciation schedule; full F09/F39 dependency rules and opening balance; source-bound observed cells are not full production oracles."
+      ],
+      "mock_cases": [
+        {
+          "id": "X06-M01",
+          "given": "F12 detail splits100 into60+40",
+          "when": "calculate/reconcile",
+          "then": "Total remains100, not200; lineage identifies parent split.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X06-M02",
+          "given": "F23 standardized result differs by0.01",
+          "when": "reconcile",
+          "then": "Exact tie-out fails; no invented tolerance silently passes.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X06-M03",
+          "given": "F19 headcount denominator missing",
+          "when": "calculate",
+          "then": "Block that allocation; do not substitute last month or zero.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X06-M04",
+          "given": "Known F25 annual method but fiscal month count absent",
+          "when": "calculate",
+          "then": "Retain method; block operational result pending period configuration.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X06-M05",
+          "given": "One of100 billing items missing currency",
+          "when": "calculate/reconcile",
+          "then": "99 may have provisional results; batch not fully releasable and missing item explicit.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X06-M06",
+          "given": "Corrected prior month changes YTD",
+          "when": "correct",
+          "then": "Create successor and affected-output list; do not silently overwrite released report.",
+          "status": "Specified, not executed"
+        }
+      ]
+    },
+    {
+      "id": "X07",
+      "name": "Accountable manual handoffs",
+      "summary": "Keep human or incumbent-system work visible and resumable without pretending notification equals completion.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "prepared",
+        "offered",
+        "accepted",
+        "in_progress",
+        "returned",
+        "reassigned",
+        "completed_unverified",
+        "verified",
+        "overdue",
+        "cancelled",
+        "outcome_unknown"
+      ],
+      "commands": [
+        {
+          "action": "handoff.offer",
+          "actor": "Authorized workflow service",
+          "input_fields": {
+            "handoff_id": "id",
+            "subject_ref": "ref",
+            "recipient_role_ref": "ref",
+            "task_contract_ref": "ref",
+            "evidence_refs": "refs",
+            "completion_requirements_ref": "ref",
+            "due_rule_ref": "nullable_ref"
+          },
+          "output_fields": {
+            "delivery_receipt_ref": "ref",
+            "handoff_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.accept",
+          "actor": "Authenticated recipient or verified adapter",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "acceptance_note": "string"
+          },
+          "output_fields": {
+            "acceptance_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.return",
+          "actor": "Assigned recipient",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "reason": "string",
+            "missing_evidence_refs": "refs"
+          },
+          "output_fields": {
+            "return_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.reassign",
+          "actor": "Authorized owner under routing policy",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "new_recipient_role_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "assignment_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.record_completion",
+          "actor": "Assigned actor or trusted owning-system adapter",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "completion_evidence_refs": "refs",
+            "owning_system_record_ref": "nullable_ref",
+            "asserted_outcome": "string"
+          },
+          "output_fields": {
+            "completion_receipt_ref": "ref",
+            "state": "string"
+          }
+        },
+        {
+          "action": "handoff.verify",
+          "actor": "Deterministic verifier or prescribed reviewer",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "verification_rule_ref": "ref",
+            "observed_evidence_refs": "refs"
+          },
+          "output_fields": {
+            "verification_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.cancel",
+          "actor": "Authorized workflow owner",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "cancellation_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.start",
+          "actor": "Assigned authenticated actor",
+          "input_fields": {
+            "handoff_ref": "ref"
+          },
+          "output_fields": {
+            "start_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.mark_overdue",
+          "actor": "Deterministic timer service",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "due_occurrence_ref": "ref"
+          },
+          "output_fields": {
+            "overdue_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "handoff.reconcile_delivery",
+          "actor": "Trusted destination adapter or authorized owner",
+          "input_fields": {
+            "handoff_ref": "ref",
+            "operation_key": "id",
+            "destination_evidence_refs": "refs"
+          },
+          "output_fields": {
+            "delivery_resolution_ref": "ref",
+            "resolved_state": "string"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "prepared"
+          ],
+          "action": "handoff.offer",
+          "to_state": "offered",
+          "guard": "Recipient/purpose/data grant valid; required packet version complete"
+        },
+        {
+          "from_states": [
+            "offered",
+            "reassigned"
+          ],
+          "action": "handoff.accept",
+          "to_state": "accepted",
+          "guard": "Recipient identity and responsibility confirmed; acceptance is task ownership, not business approval"
+        },
+        {
+          "from_states": [
+            "offered",
+            "accepted",
+            "in_progress",
+            "reassigned",
+            "overdue"
+          ],
+          "action": "handoff.record_completion",
+          "to_state": "completed_unverified",
+          "guard": "Assigned authorized actor supplies required evidence; acknowledgement is required only where actual workflow policy prescribes it, otherwise completion may arrive directly from offered/reassigned. Verify effect separately."
+        },
+        {
+          "from_states": [
+            "offered",
+            "accepted",
+            "in_progress"
+          ],
+          "action": "handoff.return",
+          "to_state": "returned",
+          "guard": "Reason retained; prerequisites reopen without erasing history"
+        },
+        {
+          "from_states": [
+            "offered",
+            "accepted",
+            "returned",
+            "overdue"
+          ],
+          "action": "handoff.reassign",
+          "to_state": "reassigned",
+          "guard": "Routing authority and recipient grant valid; previous actor loses unexecuted claim"
+        },
+        {
+          "from_states": [
+            "completed_unverified",
+            "outcome_unknown"
+          ],
+          "action": "handoff.verify",
+          "to_state": "verified",
+          "guard": "Required independent evidence/owning record establishes requested completion"
+        },
+        {
+          "from_states": [
+            "prepared",
+            "offered",
+            "accepted",
+            "returned",
+            "overdue",
+            "in_progress",
+            "reassigned"
+          ],
+          "action": "handoff.cancel",
+          "to_state": "cancelled",
+          "guard": "Persist sticky stop intent; no remaining uncertain external work/effect. If external progress/effect is uncertain, retain outcome_unknown for reconciliation instead of claiming cancellation completed."
+        },
+        {
+          "from_states": [
+            "prepared",
+            "offered"
+          ],
+          "action": "handoff.offer",
+          "to_state": "outcome_unknown",
+          "guard": "Delivery may have been accepted; reconcile stable operation key before retry."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "handoff.verify",
+          "to_state": "offered",
+          "guard": "Trusted delivery evidence found, but business completion not yet established."
+        },
+        {
+          "from_states": [
+            "accepted",
+            "offered",
+            "reassigned"
+          ],
+          "action": "handoff.start",
+          "to_state": "in_progress",
+          "guard": "Actual assignment valid; acknowledgement prerequisite only if source policy requires it."
+        },
+        {
+          "from_states": [
+            "offered",
+            "accepted",
+            "in_progress",
+            "reassigned"
+          ],
+          "action": "handoff.mark_overdue",
+          "to_state": "overdue",
+          "guard": "Configured deadline passed and completion not verified; source escalation rules checked separately."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "handoff.reconcile_delivery",
+          "to_state": "offered",
+          "guard": "Trusted destination proves delivery; business completion still independent."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "handoff.reconcile_delivery",
+          "to_state": "prepared",
+          "guard": "Definitive no-delivery/no-effect evidence; fresh grant and recipient checks before identical-intent offer retry.; only without cancellation intent."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "handoff.cancel",
+          "to_state": "outcome_unknown",
+          "guard": "Persist cancellation intent; reconcile delivery/effects without resending or losing unresolved evidence."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "handoff.reconcile_delivery",
+          "to_state": "cancelled",
+          "guard": "Sticky cancellation and trusted no-delivery/no-effect evidence; no offer retry."
+        },
+        {
+          "from_states": [
+            "accepted",
+            "in_progress",
+            "reassigned",
+            "overdue"
+          ],
+          "action": "handoff.cancel",
+          "to_state": "outcome_unknown",
+          "guard": "Persist sticky stop intent where external activity/effect cannot yet be confirmed stopped; retain evidence and reconcile."
+        }
+      ],
+      "invariants": [
+        "Delivery receipt, recipient acceptance, business approval and verified task completion are four different facts.",
+        "Do not turn proposed acknowledgement into a new source business gate. Where no acknowledgement is prescribed, it is an operational visibility field only.",
+        "B04\u2013B06 route correction through the described Engineering channel; generic case permissions do not add queue/credit access to Support or Reconciliation.",
+        "F01 QuickBooks posting remains the authorized Finance/source-system action; receipt linkage does not authorize the agent to post.",
+        "P37 operational handover and P50 issue closure must not acquire an extra approval gate through this protocol.",
+        "Reassignment uses actual routing policy; agents cannot choose new approvers or broaden recipient data.",
+        "An overdue handoff creates visibility/escalation under configured rule, never assumed approval or fabricated completion.",
+        "Every offer, accept, start, reassign, completion and retry rechecks sticky cancellation intent. Cancellation forbids new work/reassignment; late evidence is accepted only for reconciliation of already-existing work. An active external effect remains outcome_unknown until accounted."
+      ],
+      "technical_defaults": [
+        "Proposed checkpoint after offer, acceptance, evidence submission and verification; durable resume never resends an already receipted offer automatically.",
+        "No automatic completion or universal acknowledgement deadline; source workflow decides required evidence and due conditions."
+      ],
+      "owner_configuration": [
+        "Confirmed recipient/role resolution and actual owning-system completion evidence.",
+        "Whether acknowledgement is a business prerequisite or visibility only; reassignment authority and permitted escalation route."
+      ],
+      "mock_cases": [
+        {
+          "id": "X07-M01",
+          "given": "P34 notification delivered",
+          "when": "handoff receipt stored",
+          "then": "Record notification; do not claim recognized revenue or paid invoice.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X07-M02",
+          "given": "B05 Engineering accepted request",
+          "when": "verify credit",
+          "then": "Acceptance alone is insufficient; settlement and applied credit remain separate evidence.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X07-M03",
+          "given": "Recipient changes while previous actor submits completion",
+          "when": "record completion",
+          "then": "CAS checks assignment version; conflict retained for authorized reconciliation.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X07-M04",
+          "given": "P37 complete operational handover",
+          "when": "verify",
+          "then": "No invented approval; verify prescribed documentation and ownership evidence only.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X07-M05",
+          "given": "Manual posting claimed without QuickBooks reference",
+          "when": "record completion",
+          "then": "Keep completed_unverified and request specific owning-system evidence.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X07-M06",
+          "given": "Delivery times out",
+          "when": "offer retry",
+          "then": "Reconcile operation key first; no duplicate financial request.",
+          "status": "Specified, not executed"
+        }
+      ]
+    },
+    {
+      "id": "X08",
+      "name": "Execution queues leases and recovery",
+      "summary": "Make background task execution durable while keeping infrastructure queues distinct from BaaS financial queues.",
+      "status": "Proposed technical execution contract; source rules and required owner configuration are separately bound",
+      "states": [
+        "queued",
+        "leased",
+        "running",
+        "waiting_external",
+        "retry_wait",
+        "succeeded",
+        "failed_terminal",
+        "dead_letter",
+        "cancel_requested",
+        "cancelled",
+        "outcome_unknown"
+      ],
+      "commands": [
+        {
+          "action": "queue.enqueue",
+          "actor": "Workflow runtime",
+          "input_fields": {
+            "task_ref": "ref",
+            "task_type": "string",
+            "priority": "integer",
+            "partition_key": "string",
+            "not_before": "datetime",
+            "retry_policy_ref": "ref"
+          },
+          "output_fields": {
+            "queue_item_ref": "ref",
+            "enqueue_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "queue.claim",
+          "actor": "Authorized worker",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "worker_ref": "ref",
+            "lease_seconds": "integer"
+          },
+          "output_fields": {
+            "lease_id": "id",
+            "fencing_token": "version",
+            "lease_expires_at": "datetime"
+          }
+        },
+        {
+          "action": "queue.heartbeat",
+          "actor": "Lease holder",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "lease_id": "id",
+            "fencing_token": "version"
+          },
+          "output_fields": {
+            "lease_expires_at": "datetime"
+          }
+        },
+        {
+          "action": "queue.complete",
+          "actor": "Lease holder",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "lease_id": "id",
+            "fencing_token": "version",
+            "result_ref": "ref",
+            "effect_receipt_refs": "refs"
+          },
+          "output_fields": {
+            "completion_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "queue.fail",
+          "actor": "Current lease holder",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "failure_class": "enum:transient,permanent,policy,validation,unknown_effect",
+            "failure_evidence_ref": "ref",
+            "lease_id": "id",
+            "fencing_token": "version"
+          },
+          "output_fields": {
+            "next_state": "string",
+            "retry_at": "nullable_datetime"
+          }
+        },
+        {
+          "action": "queue.cancel",
+          "actor": "Authorized runtime owner",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "reason": "string"
+          },
+          "output_fields": {
+            "cancel_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "queue.redrive",
+          "actor": "Authorized operations role",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "remediation_ref": "ref",
+            "expected_task_ref": "ref"
+          },
+          "output_fields": {
+            "new_attempt_ref": "ref",
+            "redrive_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "queue.park",
+          "actor": "Current lease holder",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "lease_id": "id",
+            "fencing_token": "version",
+            "correlation_ref": "ref",
+            "wait_reason": "enum:human,external_job,event,timer"
+          },
+          "output_fields": {
+            "wait_checkpoint_ref": "ref"
+          }
+        },
+        {
+          "action": "queue.resume",
+          "actor": "Authenticated workflow event handler",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "correlated_event_ref": "ref"
+          },
+          "output_fields": {
+            "resume_receipt_ref": "ref"
+          }
+        },
+        {
+          "action": "queue.reclaim_expired",
+          "actor": "Queue reconciler",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "expired_lease_id": "id",
+            "observed_now": "datetime"
+          },
+          "output_fields": {
+            "reclaim_receipt_ref": "ref",
+            "next_state": "string"
+          }
+        },
+        {
+          "action": "queue.reconcile_outcome",
+          "actor": "Authorized effect reconciler",
+          "input_fields": {
+            "queue_item_ref": "ref",
+            "reconciliation_receipt_ref": "ref"
+          },
+          "output_fields": {
+            "resolution_receipt_ref": "ref",
+            "next_state": "string"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "from_states": [
+            "queued",
+            "retry_wait"
+          ],
+          "action": "queue.claim",
+          "to_state": "leased",
+          "guard": "not_before reached; concurrency/quota available; atomically increment fencing token"
+        },
+        {
+          "from_states": [
+            "leased"
+          ],
+          "action": "queue.heartbeat",
+          "to_state": "running",
+          "guard": "Current unexpired lease and matching fencing token; stale holder rejected"
+        },
+        {
+          "from_states": [
+            "leased",
+            "running"
+          ],
+          "action": "queue.complete",
+          "to_state": "succeeded",
+          "guard": "Current lease, validated result and required trusted effect receipts; unknown effect cannot complete"
+        },
+        {
+          "from_states": [
+            "running",
+            "leased"
+          ],
+          "action": "queue.fail",
+          "to_state": "retry_wait",
+          "guard": "Transient and replay-safe; attempt limit not exhausted; record scheduled backoff"
+        },
+        {
+          "from_states": [
+            "running",
+            "leased"
+          ],
+          "action": "queue.fail",
+          "to_state": "outcome_unknown",
+          "guard": "Any possible unconfirmed effect; no automatic replay"
+        },
+        {
+          "from_states": [
+            "running",
+            "leased"
+          ],
+          "action": "queue.fail",
+          "to_state": "dead_letter",
+          "guard": "Poison/terminal or exhausted safe retries; preserve failure evidence and notify operational inbox"
+        },
+        {
+          "from_states": [
+            "leased",
+            "running"
+          ],
+          "action": "queue.cancel",
+          "to_state": "cancel_requested",
+          "guard": "Stop new dispatch; running worker cooperatively stops; external committed effects separately reconciled"
+        },
+        {
+          "from_states": [
+            "cancel_requested"
+          ],
+          "action": "queue.complete",
+          "to_state": "cancelled",
+          "guard": "No unaccounted side effect; completed work recorded even if cancellation raced"
+        },
+        {
+          "from_states": [
+            "dead_letter"
+          ],
+          "action": "queue.redrive",
+          "to_state": "queued",
+          "guard": "Remediation and policy approved; same business operation key retained if retrying identical intent, new attempt ID only"
+        },
+        {
+          "from_states": [
+            "running"
+          ],
+          "action": "queue.heartbeat",
+          "to_state": "running",
+          "guard": "Current unexpired lease/fencing token; heartbeat extends expiry within versioned policy."
+        },
+        {
+          "from_states": [
+            "leased",
+            "running"
+          ],
+          "action": "queue.park",
+          "to_state": "waiting_external",
+          "guard": "Persist correlation/checkpoint and release lease atomically; no unaccounted local commit."
+        },
+        {
+          "from_states": [
+            "waiting_external"
+          ],
+          "action": "queue.resume",
+          "to_state": "queued",
+          "guard": "Authenticated correlated event; workflow preconditions/current version verified; duplicate event returns original resume receipt."
+        },
+        {
+          "from_states": [
+            "leased",
+            "running"
+          ],
+          "action": "queue.reclaim_expired",
+          "to_state": "queued",
+          "guard": "Lease expired and no unconfirmed effect intent; increment fence before safe reclaim."
+        },
+        {
+          "from_states": [
+            "leased",
+            "running"
+          ],
+          "action": "queue.reclaim_expired",
+          "to_state": "outcome_unknown",
+          "guard": "Lease expired with possible unconfirmed effect; reconcile through X03/X05/X07 before any retry."
+        },
+        {
+          "from_states": [
+            "queued",
+            "retry_wait",
+            "waiting_external"
+          ],
+          "action": "queue.cancel",
+          "to_state": "cancelled",
+          "guard": "No running worker/effect; atomically mark cancelled and invalidate future dispatch/wakeup."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "queue.reconcile_outcome",
+          "to_state": "succeeded",
+          "guard": "Verified intended effect and valid result; no replay."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "queue.reconcile_outcome",
+          "to_state": "queued",
+          "guard": "Definitive no-effect evidence plus fresh policy check; safe replay only.; no cancellation intent exists."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "queue.reconcile_outcome",
+          "to_state": "dead_letter",
+          "guard": "Unable to establish safe replay; accountable manual remediation required."
+        },
+        {
+          "from_states": [
+            "cancel_requested"
+          ],
+          "action": "queue.reclaim_expired",
+          "to_state": "cancelled",
+          "guard": "Expired lease and definitive no-effect evidence; sticky cancellation prevents redispatch."
+        },
+        {
+          "from_states": [
+            "cancel_requested"
+          ],
+          "action": "queue.reclaim_expired",
+          "to_state": "outcome_unknown",
+          "guard": "Expired lease and possible effect; preserve sticky cancellation during reconciliation."
+        },
+        {
+          "from_states": [
+            "outcome_unknown"
+          ],
+          "action": "queue.reconcile_outcome",
+          "to_state": "cancelled",
+          "guard": "Sticky cancellation and definitive no-effect; do not enqueue."
+        }
+      ],
+      "invariants": [
+        "Task delivery may be at least once; fenced commits and business operation ledger provide deduplication. Do not promise arbitrary external exactly-once execution.",
+        "Lease expiry does not prove a remote effect failed. Reclaim reads durable effect intent before deciding whether replay is safe.",
+        "Fencing token must be enforced at local commits and passed to adapters where supported; unsupported downstream fencing requires idempotency/reconciliation.",
+        "No worker holds database locks or live leases while waiting on a human or external job. Persist wait state/correlation then release capacity.",
+        "Ordering is per declared subject/partition where needed, not global. Cross-partition dependencies use workflow state, not queue arrival order.",
+        "Priority and quotas cannot bypass policy/approval. No automatic dropping of financial tasks during overload.",
+        "Infrastructure dead-letter handling never changes B06 business queue or grants queue-add authority.",
+        "queue.fail validates current lease/fencing token for worker updates; reconciler uses queue.reclaim_expired or queue.reconcile_outcome, never impersonates worker failure.",
+        "queue.redrive is identical semantic-intent retry only after remediation that leaves payload unchanged. Corrected payload creates a new task/version/operation key through workflow validation; prior failed item retains successor link.",
+        "On cancellation while a worker runs, current worker reports any committed effect before cancellation completion. No report/expired lease with possible effect becomes outcome_unknown, not cancelled.",
+        "Cancellation tombstone survives lease expiry, redrive, reconciliation and callback. Any replay/resume checks it. Completed effects remain recorded; cancellation never fabricates reversal."
+      ],
+      "technical_defaults": [
+        "Proposed operational defaults:60s lease,20s heartbeat,5 safe attempts; backoff min(60s,2^(attempt-1)s) plus uniform0\u20131s jitter. Values versioned and tunable without changing business deadlines.",
+        "Proposed per-tenant/per-adapter concurrency quotas must be configured before activation; no unbounded fanout. Backpressure rejects/defer-enqueues with explicit receipt, never silent loss.",
+        "Policy/validation failures do not retry unchanged; unknown effects park for X03/X07 reconciliation; terminal items require authorized redrive."
+      ],
+      "owner_configuration": [
+        "Actual connector rate/concurrency limits and operational capacity targets, set by implementation operators.",
+        "Separate B06/B07 financial queue contract, states, authority and evidence from its owning team; generic runtime cannot supply them."
+      ],
+      "mock_cases": [
+        {
+          "id": "X08-M01",
+          "given": "Worker crashes after external acceptance before completion",
+          "when": "lease expires",
+          "then": "New worker sees effect intent and reconciles; no blind replay.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X08-M02",
+          "given": "Old worker resumes after new lease issued",
+          "when": "complete with stale fence",
+          "then": "Reject stale commit; preserve attempt evidence.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X08-M03",
+          "given": "Permanent malformed payload repeats",
+          "when": "queue.fail",
+          "then": "Dead-letter after classification without five pointless retries.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X08-M04",
+          "given": "Tenant floods queue",
+          "when": "enqueue",
+          "then": "Apply tenant quota/backpressure without starving other tenants or dropping accepted work.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X08-M05",
+          "given": "Human decision takes days",
+          "when": "task waits",
+          "then": "Persist waiting state, release lease, resume only on authenticated correlated decision.",
+          "status": "Specified, not executed"
+        },
+        {
+          "id": "X08-M06",
+          "given": "Operator redrives corrected input",
+          "when": "redrive",
+          "then": "Changed payload is new task/version and approval check; not disguised same-intent retry.",
+          "status": "Specified, not executed"
+        }
+      ]
+    }
+  ]
+}

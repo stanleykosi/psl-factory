@@ -1,0 +1,1490 @@
+[
+  {
+    "id": "B01",
+    "title": "Customer complaint handling across channels",
+    "classification": "Existing workflow",
+    "source_owner": "Support",
+    "family": "Support case management",
+    "summary": "Support handles complaints across channel conversations and backend/API work. A proposed case record can connect evidence and ownership without pretending a ticketing system already exists.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A7:F7 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A6:J6 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0030 at 10:10; BAAS:document:P0032 at 11:34; BAAS:document:P0034 at 11:54. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E01; baseline_BaaS_Finance_evidence_reconciliation.csv, B01. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B01, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Support handles customer complaints using backend/API processes; Temitayo describes having to open individual Teams/WhatsApp channels to see the work (10:10, 11:34).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): A consistent monitorable/ticketing-like flow is requested at 11:54, not reported as already implemented."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Support handles complaints across channel conversations and backend/API work. A proposed case record can connect evidence and ownership without pretending a ticketing system already exists.",
+      "Inherited 11 October design recommendation, not policy: Capture or link authorised channel complaints; deduplicate and assign stable case IDs. AI may propose categorisation. Support retains resolution decisions; channel access and sensitive customer content must be scoped. Ticketing is proposed, not established.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Which channels are in scope and who can access them?",
+      "What defines one complaint versus multiple issues/messages?",
+      "Who may resolve/reopen cases and what evidence is required?"
+    ],
+    "trigger": "A customer complaint is received through an authorised support channel.",
+    "inputs": [
+      "Original channel message/reference and received time",
+      "Customer/partner and issue context limited to authorised fields",
+      "Existing backend/API investigation references",
+      "Support ownership and channel access rules"
+    ],
+    "outputs": [
+      "Linked complaint evidence and proposed stable case reference",
+      "Assigned investigation/action owner",
+      "Resolution evidence or a documented handoff"
+    ],
+    "steps": [
+      "Capture or reference the complaint without copying unnecessary customer data.",
+      "Identify whether it duplicates or relates to an existing issue across channels.",
+      "Assign an accountable support owner under an agreed rule.",
+      "Investigate using existing authorised backend/API access.",
+      "Route settlement/corrective-credit needs through B04-B06 without extending Support rights.",
+      "Record resolution evidence and, if appropriate, reopening while retaining original messages."
+    ],
+    "states": [
+      "Proposed: received",
+      "Triaged",
+      "Investigating",
+      "Awaiting customer",
+      "Awaiting specialist",
+      "Resolved",
+      "Reopened"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Support must confirm case assignment, closure/reopening, summary review and metric/flow ownership. No case status or support approval grants financial execution rights.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Authorised channels/cases only, with customer content scoped to assigned support functions. Summary/search/log outputs inherit source restrictions.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: A support case needs corrective credit. Expected handling: Keep the case open/awaiting specialist and route evidence to the authorised process; Support receives no new credit-execution permission.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "B01 supplies case evidence to proposed B02/B03/B14; B04-B06 own any financial correction handoff."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: After owner validation: reference capture, exact-ID duplicate candidates, event logging and queue routing."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Support determines complaint identity, investigation and resolution; engineering retains its stated execution restriction."
+      ],
+      "ai_proposed": [
+        "Later outside V1: propose case categories with cited source messages and review, never resolve or execute financial actions."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B01-N01",
+        "scenario": "Mock complaint in Teams and a later WhatsApp message refer to the same transaction and issue.",
+        "expected": "A proposed case links both source references and one accountable owner; it does not erase or silently merge distinct issues.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B01-E01",
+        "scenario": "A support case needs corrective credit.",
+        "expected": "Keep the case open/awaiting specialist and route evidence to the authorised process; Support receives no new credit-execution permission.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Not included in November baseline. Preserve original discovery and validation needs for a later scope. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B02",
+    "title": "Support complaint summaries",
+    "classification": "Proposed improvement",
+    "source_owner": "Support (proposed reporting)",
+    "family": "Support case management",
+    "summary": "Create a reviewed summary of permitted support complaints for an explicit period and audience. This is a requested improvement, not established current reporting practice.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A8:F8 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A7:J7 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0051 at 18:39; BAAS:document:P0053 at 19:20. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Primary-source text directly read in v0.2: Call with Temitayo Akerele (1).docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/TEM/full_extract.txt and paragraphs.json; TEM:document:P0015 at 1:49; TEM:document:P0017 at 2:00. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E01; baseline_BaaS_Finance_evidence_reconciliation.csv, B02. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B02, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Stanley proposes summaries of cross-channel activity at 18:39/19:20; Temitayo says a summary of frequent complaints would help (TEM 1:49).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Summary accuracy and channel-derived performance insight are qualified, not guaranteed or established current reporting."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Create a reviewed summary of permitted support complaints for an explicit period and audience. This is a requested improvement, not established current reporting practice.",
+      "Inherited 11 October design recommendation, not policy: Summarise only permitted cases with links and time coverage; reviewer checks omitted / merged complaints before wider reporting. Do not present this requested output as current practice.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Who receives the summary and what content may each audience see?",
+      "Are categories and counts based on cases, transactions or messages?",
+      "What review standard and reporting cadence are required?"
+    ],
+    "trigger": "An authorised reviewer requests a complaint summary for a defined period/scope.",
+    "inputs": [
+      "Permission-filtered B01 cases/channel references",
+      "Included period and selection criteria",
+      "Case status and unresolved/reopened evidence",
+      "Intended audience and review owner"
+    ],
+    "outputs": [
+      "Draft summary with case/source links and coverage statement",
+      "Omission/merge uncertainty list",
+      "Reviewed summary version"
+    ],
+    "steps": [
+      "Fix time range, channels/case population and audience.",
+      "Enforce source permissions before selecting evidence.",
+      "Count and group using approved case identity, not message count.",
+      "Summarise issue, action and unresolved status with links.",
+      "Review omitted, merged and reopened complaints.",
+      "Keep a distinct reviewed version before any wider distribution."
+    ],
+    "states": [
+      "Scope selected",
+      "Evidence incomplete",
+      "Draft",
+      "Reviewer changes",
+      "Reviewed"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Support must confirm case assignment, closure/reopening, summary review and metric/flow ownership. No case status or support approval grants financial execution rights.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Authorised channels/cases only, with customer content scoped to assigned support functions. Summary/search/log outputs inherit source restrictions.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: One case is inaccessible or ambiguous duplicate messages cannot be resolved. Expected handling: State coverage limitation/uncertainty; do not claim exhaustive totals or leak restricted text through a summary.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "Uses B01 authoritative case/message references and B14 future states; metrics from B03 remain separately defined."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Permission filtering, case population selection and approved counts."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Support reviewer confirms completeness, interpretation and disclosure."
+      ],
+      "ai_proposed": [
+        "Later outside V1: draft complaint summary from permitted evidence with citations; human checks omissions and merging."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B02-N01",
+        "scenario": "Mock scope contains three permitted cases, one reopened.",
+        "expected": "Summary covers all three, explicitly labels reopened status, cites each case and states the period.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B02-E01",
+        "scenario": "One case is inaccessible or ambiguous duplicate messages cannot be resolved.",
+        "expected": "State coverage limitation/uncertainty; do not claim exhaustive totals or leak restricted text through a summary.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Not included in November baseline. Preserve original discovery and validation needs for a later scope. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B03",
+    "title": "First response and resolution measurement",
+    "classification": "Proposed improvement",
+    "source_owner": "Support (proposed metrics)",
+    "family": "Support case management",
+    "summary": "Measure first response and resolution only after the event and clock rules are agreed. Example times in the meeting are not service-level commitments.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A9:F9 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A8:J8 (15 October 2026).",
+      "Primary-source text directly read in v0.2: Call with Temitayo Akerele (1).docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/TEM/full_extract.txt and paragraphs.json; TEM:document:P0017 at 2:00; TEM:document:P0019 at 2:25; TEM:document:P0021 at 2:28; TEM:document:P0023 at 2:50. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E01; baseline_BaaS_Finance_evidence_reconciliation.csv, B03. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B03, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Temitayo requests insight into first-response and resolution timing at 2:00 and explicitly says it may not be fully accurate.",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): The 30-minute/50-minute comparison at 2:28 is illustrative, not an approved SLA, averaging definition or personnel-performance rule."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Measure first response and resolution only after the event and clock rules are agreed. Example times in the meeting are not service-level commitments.",
+      "Inherited 11 October design recommendation, not policy: Define complaint start, first response, reopen and resolution events, clock / calendar rules and exclusions before computing metrics. Transcript example times are not SLAs.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Does the clock use calendar or business time?",
+      "Do bot acknowledgements, handoffs, customer waits and reopening affect it?",
+      "What are actual targets, if any, and who approves them?"
+    ],
+    "trigger": "A defined reporting period or individual case metric is requested.",
+    "inputs": [
+      "Case received, first-response, resolution and reopen events",
+      "Approved qualifying-response definition",
+      "Time zone/calendar/business-hour/exclusion policy",
+      "Missing-event and reopened-case treatment"
+    ],
+    "outputs": [
+      "Reproducible duration metrics with event lineage",
+      "Cases excluded/undefined with reasons",
+      "Metric definition/version and coverage"
+    ],
+    "steps": [
+      "Define what starts the clock for each complaint.",
+      "Identify which response qualifies and whether automated acknowledgements count.",
+      "Apply agreed calendar, pauses and time zone.",
+      "Handle unresolved and reopened cases under the approved definition.",
+      "Separate valid durations from missing/invalid event records.",
+      "Publish aggregate metrics only with population and definition version."
+    ],
+    "states": [
+      "Definition pending",
+      "Events captured",
+      "Duration computable",
+      "Missing/invalid events",
+      "Reviewed metric"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Support must confirm case assignment, closure/reopening, summary review and metric/flow ownership. No case status or support approval grants financial execution rights.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Authorised channels/cases only, with customer content scoped to assigned support functions. Summary/search/log outputs inherit source restrictions.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Resolution precedes receipt because of a bad timestamp, or a case is reopened with no rule. Expected handling: Mark metric invalid/undefined and route correction; do not take an absolute value or silently choose a clock.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "Consumes B01/B14 events; B02 may reference certified metrics without recalculating or inventing targets."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Approved event selection and time calculations."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Support owner approves clock, exclusions, target definitions and edge-case treatment."
+      ],
+      "ai_proposed": [
+        "None proposed for this activity."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B03-N01",
+        "scenario": "Synthetic fixture explicitly defines elapsed clock time, receipt 09:00 and qualifying response 09:15.",
+        "expected": "First-response duration is 15 minutes under fixture rule, with no claim that 15 minutes is PSL SLA.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B03-E01",
+        "scenario": "Resolution precedes receipt because of a bad timestamp, or a case is reopened with no rule.",
+        "expected": "Mark metric invalid/undefined and route correction; do not take an absolute value or silently choose a clock.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Not included in November baseline. Preserve original discovery and validation needs for a later scope. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B04",
+    "title": "Settlement confirmation during reconciliation",
+    "classification": "Substep / control",
+    "source_owner": "Reconciliation; Support",
+    "family": "Reconciliation and corrective funds",
+    "summary": "Confirm settlement evidence before a corrective-credit proposal progresses. Settlement confirmation is a control, not permission to move funds.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A10:F10 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A9:J9 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0020 at 6:33; BAAS:document:P0030 at 10:10. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E02; baseline_BaaS_Finance_evidence_reconciliation.csv, B04. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B04, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Erhime describes an unapplied-credit case where settlement reports for the transaction date confirm the transaction succeeded before an Engineering update is requested (6:33).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Successful transaction settlement and successful application of customer credit are distinct facts; no formal settlement certification/approval matrix is supplied."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Confirm settlement evidence before a corrective-credit proposal progresses. Settlement confirmation is a control, not permission to move funds.",
+      "Inherited 11 October design recommendation, not policy: Match settlement evidence before any credit proposal. Confirm keys, tolerances and authority with reconciliation; missing confirmation blocks onward action.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Which system/status proves settlement and at what cut-off?",
+      "What keys and tolerances apply, including partial/late settlement?",
+      "Who can certify the finding and approve onward correction?"
+    ],
+    "trigger": "A complaint or reconciliation discrepancy suggests a corrective credit may be needed.",
+    "inputs": [
+      "Transaction and partner identifiers",
+      "Authoritative settlement evidence/status and as-of time",
+      "Reconciliation investigation and applicable matching keys",
+      "Formal approval/tolerance rules, still unverified"
+    ],
+    "outputs": [
+      "Settlement-confirmed, not-confirmed or ambiguous finding",
+      "Evidence-linked handoff to B05",
+      "Discrepancy/authority exceptions"
+    ],
+    "steps": [
+      "Identify the transaction/settlement under investigation.",
+      "Retrieve permitted authoritative settlement evidence.",
+      "Match only on owner-confirmed keys, amounts, currency and relevant timing.",
+      "Record confirmed, unmatched or ambiguous outcome rather than assume success.",
+      "Require appropriate reconciliation review before any corrective-credit request.",
+      "Keep the settlement finding separate from correction approval/execution."
+    ],
+    "states": [
+      "Evidence requested",
+      "Matching underway",
+      "Settlement confirmed",
+      "Not confirmed",
+      "Ambiguous",
+      "Correction review pending"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Confirm who validates settlement/reconciliation evidence and who approves each credit, fund or queue action, with actual limits and prerequisites. Reconciliation evidence validation is a proposed responsibility allocation, not a source-prescribed certification gate. Preserve the inherited stated Engineering execution restriction; this specification grants no execution permission.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Support/Reconciliation may request only within established scope; Engineering retains stated execution access. No new privileged queue, bank or credit credentials are implied.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Two possible settlements match or the authoritative status is pending. Expected handling: Keep confirmation ambiguous/not established and block any automated corrective action.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "B01/B07 discrepancy enters B04; evidenced result feeds B05 within the same reconciliation/corrective-funds family."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: After validation: exact-key matching, freshness and duplicate checks."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Reconciliation is the proposed settlement-evidence reviewer; confirm actual certification authority and exception ownership. Financial execution stays separately authorised."
+      ],
+      "ai_proposed": [
+        "None proposed for settlement judgment or financial execution."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B04-N01",
+        "scenario": "Mock transaction T1 has a unique matching authoritative settled record S1 under approved keys.",
+        "expected": "Record settlement confirmation with S1 reference; B05 still requires its own authority and execution steps.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B04-E01",
+        "scenario": "Two possible settlements match or the authoritative status is pending.",
+        "expected": "Keep confirmation ambiguous/not established and block any automated corrective action.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Consequential financial operations remain outside V1; no changes to posting, settlement, credit or payment authority. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B05",
+    "title": "Engineering-mediated corrective credit",
+    "classification": "Existing workflow",
+    "source_owner": "Engineering executes; Support / Reconciliation requests",
+    "family": "Reconciliation and corrective funds",
+    "summary": "Support or Reconciliation requests a corrective credit, while Engineering performs the restricted execution. A future request portal must not silently grant Support the same rights.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A11:F11 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A10:J10 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0020 at 6:33; BAAS:document:P0030 at 10:10. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E02; baseline_BaaS_Finance_evidence_reconciliation.csv, B05. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B05, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Reconciliation/Support send update requests to Engineering to apply corrective credit; Temitayo names Mohammed’s team as the current route (10:10).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Giving Support direct portal capability is a request, not an existing permission. Engineering may not see or complete the request the same day; no execution receipt or post-action verification contract is demonstrated."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Support or Reconciliation requests a corrective credit, while Engineering performs the restricted execution. A future request portal must not silently grant Support the same rights.",
+      "Inherited 11 October design recommendation, not policy: Preserve engineering restriction. A future request portal may collect evidence and route approval; it must not grant support credit execution by implication. Define authority, limits and verification before any automation.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Who approves corrective credits and within what limits?",
+      "What exactly is the Engineering action and how is success verified?",
+      "How are duplicate, wrong-account, partial or reversed corrections recovered?"
+    ],
+    "trigger": "An evidenced discrepancy has passed the required settlement and correction review.",
+    "inputs": [
+      "B04 settlement finding and transaction/customer identifiers",
+      "Requested corrective amount/currency and rationale from authorised owner",
+      "Actual approval/limit matrix and engineering execution route",
+      "Existing destination status and execution receipts"
+    ],
+    "outputs": [
+      "Versioned correction request",
+      "Approval decision and Engineering handoff",
+      "Verified execution receipt or unresolved outcome",
+      "Linked support/reconciliation disposition"
+    ],
+    "steps": [
+      "Capture the requested correction and its evidence without executing it.",
+      "Validate that settlement review and mandatory information are complete.",
+      "Route to the actual authorised approver; the policy/limits must be established first.",
+      "Engineering performs any permitted correction through the existing restricted route.",
+      "Verify destination state and receipt independently of request status.",
+      "Resolve failure/uncertainty before closing the case or retrying."
+    ],
+    "states": [
+      "Request draft",
+      "Evidence incomplete",
+      "Approval pending",
+      "Approved request",
+      "With Engineering",
+      "Execution verified",
+      "Outcome uncertain",
+      "Rejected"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Confirm who validates settlement/reconciliation evidence and who approves each credit, fund or queue action, with actual limits and prerequisites. Reconciliation evidence validation is a proposed responsibility allocation, not a source-prescribed certification gate. Preserve the inherited stated Engineering execution restriction; this specification grants no execution permission.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status.",
+      "Formal credit approval rules are not established by the sources. Any actual financial correction remains outside V1 and outside this documentation task."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Support/Reconciliation may request only within established scope; Engineering retains stated execution access. No new privileged queue, bank or credit credentials are implied.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation.",
+      "Primary-source described boundary (BAAS P0020/P0030, now read as extracts; actual entitlements not independently tested): Engineering performs the restricted correction/queue action; Support/Reconciliation depend on that route. Formal approval gates and entitlements are not established by this description."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Engineering call times out after possible success or the request amount changes after approval. Expected handling: Mark uncertain/stale approval, inspect destination first, and prevent blind retry or use of old approval for a changed amount.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "B04 evidence to B05; B06 queue/action reference and B01 support case share IDs, not separate credit actions."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Proposed request completeness, payload versioning, duplicate detection and receipt reconciliation only."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Authorised approver decides credit; Engineering retains stated execution access."
+      ],
+      "ai_proposed": [
+        "None; no model may approve or execute corrective credits."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B05-N01",
+        "scenario": "Mock request CR1 has approved payload/version and Engineering receipt EC1 with verified destination result.",
+        "expected": "Track requested, approved and executed as distinct events and close only under agreed evidence; no new Support execution right.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B05-E01",
+        "scenario": "Engineering call times out after possible success or the request amount changes after approval.",
+        "expected": "Mark uncertain/stale approval, inspect destination first, and prevent blind retry or use of old approval for a changed amount.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Consequential financial operations remain outside V1; no changes to posting, settlement, credit or payment authority. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B06",
+    "title": "Fund movement and queue request handling",
+    "classification": "Substep / control",
+    "source_owner": "Reconciliation; Engineering",
+    "family": "Reconciliation and corrective funds",
+    "summary": "Track requests to Engineering for fund or queue handling, keeping requested state separate from executed state. Reconciliation cannot directly insert the stated queue requests.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A12:F12 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A11:J11 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0020 at 6:33. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E02; baseline_BaaS_Finance_evidence_reconciliation.csv, B06. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B06, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Erhime describes product fund movement and adding a request to a queue, and states Reconciliation does not have queue-add access and sends Engineering update queries (6:33).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): The exact query, queue states and distinction between bookkeeping/queue operations and actual fund movement remain unspecified; faster direct action is requested, not authorised."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Track requests to Engineering for fund or queue handling, keeping requested state separate from executed state. Reconciliation cannot directly insert the stated queue requests.",
+      "Inherited 11 October design recommendation, not policy: Track requested versus executed queue action, receipt and external state. Do not automate money movement or queue insertion until state rules and authorisation are established.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "What queue is meant and what do its states/actions mean?",
+      "Which actions move funds versus only update workflow state?",
+      "Who approves each transition and what are cancellation/reversal procedures?"
+    ],
+    "trigger": "Reconciliation identifies a fund/queue action needing Engineering access.",
+    "inputs": [
+      "Transaction/queue item identifiers",
+      "Current authoritative queue and fund state",
+      "Exact requested action and rationale",
+      "Approved state-transition and financial authority rules",
+      "Engineering receipt/status evidence"
+    ],
+    "outputs": [
+      "Versioned request with allowed target transition",
+      "Engineering action/status reference",
+      "Verified result or unresolved/rejected request"
+    ],
+    "steps": [
+      "Identify the current item and authoritative state.",
+      "Describe the exact requested operation without treating a generic request as unrestricted authority.",
+      "Confirm prerequisites, approval and allowed transition with the owning team.",
+      "Route to Engineering under existing access controls.",
+      "Record accepted/rejected/executed statuses distinctly.",
+      "Verify resulting queue/fund state and resolve uncertainty before retry."
+    ],
+    "states": [
+      "Proposed: request prepared",
+      "Prerequisites missing",
+      "Awaiting Engineering",
+      "Accepted",
+      "Executed verified",
+      "Rejected",
+      "Outcome uncertain"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Confirm who validates settlement/reconciliation evidence and who approves each credit, fund or queue action, with actual limits and prerequisites. Reconciliation evidence validation is a proposed responsibility allocation, not a source-prescribed certification gate. Preserve the inherited stated Engineering execution restriction; this specification grants no execution permission.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Support/Reconciliation may request only within established scope; Engineering retains stated execution access. No new privileged queue, bank or credit credentials are implied.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation.",
+      "Primary-source described boundary (BAAS P0020/P0030, now read as extracts; actual entitlements not independently tested): Engineering performs the restricted correction/queue action; Support/Reconciliation depend on that route. Formal approval gates and entitlements are not established by this description."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Q1 has already changed state before Engineering acts or result is uncertain. Expected handling: Recheck authoritative state and require valid current action; no repeat queue insertion or assumed money movement.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "B05 corrective request may reference B06 execution; B07 pending checks read resulting states; one financial effect must not be counted twice."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: After rule validation: request/state checks, deduplication and status evidence tracking."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Reconciliation explains need; authorised authority approves; Engineering executes within actual scope."
+      ],
+      "ai_proposed": [
+        "None proposed for funds movement or queue execution."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B06-N01",
+        "scenario": "Mock queue item Q1 has an approved specific transition requested and Engineering later verifies Q2-state.",
+        "expected": "Record the requested transition and receipt separately, with no direct Reconciliation insertion right.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B06-E01",
+        "scenario": "Q1 has already changed state before Engineering acts or result is uncertain.",
+        "expected": "Recheck authoritative state and require valid current action; no repeat queue insertion or assumed money movement.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Consequential financial operations remain outside V1; no changes to posting, settlement, credit or payment authority. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B07",
+    "title": "Reconciliation Excel and pending-queue checks",
+    "classification": "Mixed current + proposed",
+    "source_owner": "Reconciliation (second-hand description)",
+    "family": "Reconciliation and corrective funds",
+    "summary": "Validate the second-hand description of Excel reconciliation and pending-queue checks before designing rules. A suggestion from another stakeholder is not owner-confirmed practice.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A13:F13 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A12:J12 (15 October 2026).",
+      "Primary-source text directly read in v0.2: Call with Temitayo Akerele (1).docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/TEM/full_extract.txt and paragraphs.json; TEM:document:P0025 at 3:08; TEM:document:P0027 at 3:27; TEM:document:P0029 at 3:48; TEM:document:P0035 at 4:06. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E03; baseline_BaaS_Finance_evidence_reconciliation.csv, B07. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B07, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Temitayo describes recurring Excel/queue review and proposes spotting non-tallying information and transactions pending too long (3:08/3:27).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): He explicitly says he cannot speak for Reconciliation and will ask for documentation. Reading the original resolves provenance, not the second-hand nature or missing owner validation."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Validate the second-hand description of Excel reconciliation and pending-queue checks before designing rules. A suggestion from another stakeholder is not owner-confirmed practice.",
+      "Inherited 11 October design recommendation, not policy: Confirm the second-hand account with the owner; document match keys, pending states and ageing before implementing reconciliation or alerts.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Who owns the workbook and queue check?",
+      "What are matching keys, pending states, retry rules and actual ageing thresholds?",
+      "Is Excel authoritative, an export or a working reconciliation view?"
+    ],
+    "trigger": "Discovery requests the reconciliation owner’s walkthrough, or a validated future reconciliation run begins.",
+    "inputs": [
+      "Reconciliation owner walkthrough",
+      "Actual Excel and queue samples with matching identifiers",
+      "Complete/pending/failed examples",
+      "Approved matching, timing and ageing rules"
+    ],
+    "outputs": [
+      "Validated current-state map or corrected account",
+      "Reconciliation/pending exception list once rules are approved",
+      "Evidence and unresolved-rule register"
+    ],
+    "steps": [
+      "Ask the actual reconciliation owner to confirm the second-hand description.",
+      "Inspect the real workbook and authoritative queue states.",
+      "Define matching population, keys, completeness and timing.",
+      "Walk through a settled item and one pending/failed item.",
+      "Specify checks and alerts only from confirmed rules.",
+      "Keep proposals distinct from any current manual controls discovered."
+    ],
+    "states": [
+      "Second-hand evidence",
+      "Owner walkthrough pending",
+      "Rules evidenced",
+      "Sample reconciled",
+      "Exceptions unresolved"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Confirm who validates settlement/reconciliation evidence and who approves each credit, fund or queue action, with actual limits and prerequisites. Reconciliation evidence validation is a proposed responsibility allocation, not a source-prescribed certification gate. Preserve the inherited stated Engineering execution restriction; this specification grants no execution permission.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Support/Reconciliation may request only within established scope; Engineering retains stated execution access. No new privileged queue, bank or credit credentials are implied.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Queue state meanings or match keys are not supplied. Expected handling: Definition stays blocked for executable reconciliation/alerts; no threshold or settlement interpretation is invented.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "Feeds validated discrepancies to B04/B06; evidence collection is coordinated with B13, not a separate production automation saving."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Only confirmed matching/coverage/pending checks after owner validation."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Reconciliation owner confirms current practice and exception interpretation."
+      ],
+      "ai_proposed": [
+        "None proposed for this activity."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B07-N01",
+        "scenario": "Owner provides a synthetic queue export with Q1 pending and a validated rule that pending is not settled.",
+        "expected": "Future check reports Q1 pending, linked to source time and owner, without initiating a fund movement.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B07-E01",
+        "scenario": "Queue state meanings or match keys are not supplied.",
+        "expected": "Definition stays blocked for executable reconciliation/alerts; no threshold or settlement interpretation is invented.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Consequential financial operations remain outside V1; no changes to posting, settlement, credit or payment authority. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B08",
+    "title": "Partner SLA expiry and renewal",
+    "classification": "Mixed current + proposed",
+    "source_owner": "BaaS stakeholder; holder unconfirmed",
+    "family": "Partner agreement renewals",
+    "summary": "Track partner agreement dates after the actual terms and renewal ownership are verified. An expiry date alone does not mean a contract ends, especially where it auto-renews.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A14:F14 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A13:J13 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0040 at 14:07; BAAS:document:P0041 at 15:27. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E04; baseline_BaaS_Finance_evidence_reconciliation.csv, B08. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B08, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Oluwaseun says earlier SLAs usually auto-renewed, while a new bank SLA creates a need to track expiry (14:07).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): A general-mailbox notification a few days or a month before expiry and contacting partners for new copies/review are suggested, not an agreed notice period, mailbox address or authorised renewal procedure."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Track partner agreement dates after the actual terms and renewal ownership are verified. An expiry date alone does not mean a contract ends, especially where it auto-renews.",
+      "Inherited 11 October design recommendation, not policy: Extract proposed dates / clauses for review; deterministic reminders only from validated terms. Renewal / notice decisions remain with the accountable owner. Do not infer non-renewal from expiry where auto-renewal applies.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Who holds each agreement and monitors notices?",
+      "What are actual auto-renewal and notice rules, and how are amendments prioritised?",
+      "Which reminders and external actions are authorised?"
+    ],
+    "trigger": "An agreement is registered/amended or an approved notice/renewal review date approaches.",
+    "inputs": [
+      "Executed agreement and amendments",
+      "Owner-validated term, auto-renewal, notice and termination clauses",
+      "Named contract owner and permitted mailbox/document access",
+      "Approved reminder recipients/timing"
+    ],
+    "outputs": [
+      "Validated contract-date record",
+      "Internal reminder/review task",
+      "Recorded owner renewal/notice decision, not automatic acceptance"
+    ],
+    "steps": [
+      "Identify the current executed agreement and all applicable amendments.",
+      "Extract proposed dates/clauses with exact source references.",
+      "Have the accountable owner validate renewal semantics and calendar rules.",
+      "Calculate only approved reminder dates.",
+      "Route internal review to the validated owner.",
+      "Treat renewal acceptance, notice or termination as a separately authorised action."
+    ],
+    "states": [
+      "Agreement received",
+      "Terms unverified",
+      "Dates validated",
+      "Review due",
+      "Decision recorded",
+      "Superseded agreement"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Named business/legal agreement owner validates terms and decisions. Reminders do not accept renewal, terminate a contract or authorise an external notice.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Use only authorised contract/mailbox access and a validated owner audience; contracts/renewal terms are not company-wide data.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Only an expiry date is available with no notice/renewal clause. Expected handling: Mark renewal interpretation unresolved and avoid invented alerts implying non-renewal or automatic termination.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "Contract record/owner supplies renewal review; this is separate from pricing approval B12 and support SLA metrics B03."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: After validation: effective-term tracking and date/reminder calculations."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Business/legal owner interprets terms and decides renewal/notice actions."
+      ],
+      "ai_proposed": [
+        "Later outside V1: propose contract-date/clause extraction with citations; human validates before any reminder or decision."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B08-N01",
+        "scenario": "Synthetic agreement explicitly auto-renews unless notice is given by a specified validated date.",
+        "expected": "Internal tracker highlights the notice deadline and auto-renewal status; it does not label the agreement terminated at expiry.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B08-E01",
+        "scenario": "Only an expiry date is available with no notice/renewal clause.",
+        "expected": "Mark renewal interpretation unresolved and avoid invented alerts implying non-renewal or automatic termination.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Not included in November baseline. Preserve original discovery and validation needs for a later scope. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B09",
+    "title": "Manual customer onboarding tracker",
+    "classification": "Existing workflow",
+    "source_owner": "BaaS stakeholder; stage holders unconfirmed",
+    "family": "Customer onboarding",
+    "summary": "Track customer onboarding status and document references after stages and owners are agreed. Centralising status is not permission to approve onboarding or expose every document.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A15:F15 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A14:J14 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0044 at 16:01; BAAS:document:P0046 at 16:26. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Primary-source text directly read in v0.2: Call with Temitayo Akerele (1).docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/TEM/full_extract.txt and paragraphs.json; TEM:document:P0005 at 0:03; TEM:document:P0007 at 0:22. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E05; baseline_BaaS_Finance_evidence_reconciliation.csv, B09. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B09, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Temitayo says the customer tracker is manual (16:01) and proposes centralized onboarding status/documentation tracking (16:26).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): TEM 0:03/0:22 discusses portal-based customer information capture as an aspiration/uncertain product feature, not a demonstrated existing automated onboarding portal."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Track customer onboarding status and document references after stages and owners are agreed. Centralising status is not permission to approve onboarding or expose every document.",
+      "Inherited 11 October design recommendation, not policy: Centralise stage / status / doc references only after stages and owners are confirmed. Retain review gates and avoid broad exposure of onboarding documents.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "What are actual stages, approval gates and stage holders?",
+      "What information is captured through the portal versus tracker?",
+      "Which documents and statuses may each role see?"
+    ],
+    "trigger": "A customer onboarding case is initiated or an authorised stage owner records a transition.",
+    "inputs": [
+      "Existing manual tracker and portal context",
+      "Approved onboarding stages, entry/exit criteria and owners",
+      "Customer/case identifiers and permitted document references",
+      "Evidence of actual stage-entry dates"
+    ],
+    "outputs": [
+      "Validated stage/status record",
+      "Missing document or owner exception",
+      "Auditable stage transition history"
+    ],
+    "steps": [
+      "Inspect the existing tracker and any portal information capture.",
+      "Confirm the complete stage model and authoritative owner per transition.",
+      "Register a case using minimum permitted identity data.",
+      "Record evidence-backed stage entry/exit without assuming dates from file creation.",
+      "Keep document content at its authorised source and expose only permitted references.",
+      "Route incomplete/rejected/returned cases under the agreed rules."
+    ],
+    "states": [
+      "Proposed labels pending owner validation: new",
+      "In stage",
+      "Awaiting information",
+      "Under review",
+      "Returned",
+      "Completed",
+      "Withdrawn"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Named stage holders and any approval gates must be validated. Status/age visibility does not grant onboarding approval or external follow-up authority.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Status access and sensitive onboarding-document access are separate. Keep documents behind source permissions and avoid copying unnecessary customer identity details.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: A case is marked complete but required stage evidence or owner approval is absent. Expected handling: Flag inconsistent status and require owner correction; do not fabricate a completed journey.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "B09 owns the future onboarding state contract used by B10; existing portal/tracker remains authoritative until an explicit migration decision."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: After validation: required-field, transition and reference checks."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Stage holders decide actual completion/approval; BaaS confirms ownership and access."
+      ],
+      "ai_proposed": [
+        "None proposed for this activity."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B09-N01",
+        "scenario": "Synthetic owner-approved stages A then B have entry evidence at known dates and named owners.",
+        "expected": "Tracker records A-to-B transition and references without granting new document or onboarding-approval rights.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B09-E01",
+        "scenario": "A case is marked complete but required stage evidence or owner approval is absent.",
+        "expected": "Flag inconsistent status and require owner correction; do not fabricate a completed journey.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Conditional; primary package: C02. Conditional basic onboarding status only, with stages and owner validated by 6 November. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B10",
+    "title": "Onboarding ageing and follow-up",
+    "classification": "Proposed improvement",
+    "source_owner": "BaaS holder to be confirmed",
+    "family": "Customer onboarding",
+    "summary": "Show how long onboarding cases have been in their current stage using reliable dates. Follow-up thresholds and external messages are separate decisions.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A16:F16 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A15:J15 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0046 at 16:26. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Primary-source text directly read in v0.2: Call with Temitayo Akerele (1).docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/TEM/full_extract.txt and paragraphs.json; TEM:document:P0005 at 0:03. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E05; baseline_BaaS_Finance_evidence_reconciliation.csv, B10. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B10, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Temitayo proposes seeing long stage stays and documentation backlogs to prompt follow-up or process investigation (16:26).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Neither an actual stage taxonomy nor clocks, thresholds, owners, mandatory documents or escalation rules are provided."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Show how long onboarding cases have been in their current stage using reliable dates. Follow-up thresholds and external messages are separate decisions.",
+      "Inherited 11 October design recommendation, not policy: Use validated stage-entry timestamps; agree follow-up thresholds and escalation owner. Requested improvement, not current measured control.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Calendar or business-time ageing?",
+      "Does returning to a stage reset or accumulate age?",
+      "Who owns thresholds, escalations and any customer contact?"
+    ],
+    "trigger": "An authorised status-age review is requested, or the approved future internal review cadence runs.",
+    "inputs": [
+      "B09 validated stage history and current state",
+      "Trusted as-of time/time zone",
+      "Approved pause/re-entry/completion clock rules",
+      "Thresholds and escalation owner, if separately approved"
+    ],
+    "outputs": [
+      "Stage-age visibility with source timestamps",
+      "Unknown-age/inconsistent-history exceptions",
+      "Optional approved internal follow-up queue"
+    ],
+    "steps": [
+      "Select cases and stage definitions within access scope.",
+      "Validate current stage entry time and any returns/re-entry.",
+      "Apply the approved calendar/pause rule.",
+      "Display age and as-of time, distinguishing unknown from zero.",
+      "Apply thresholds only if owners have explicitly defined them.",
+      "Do not send external follow-ups or assert an SLA from age alone."
+    ],
+    "states": [
+      "Age definable",
+      "Entry time missing",
+      "History inconsistent",
+      "Current age displayed",
+      "Internal review flagged if approved"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Named stage holders and any approval gates must be validated. Status/age visibility does not grant onboarding approval or external follow-up authority.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Status access and sensitive onboarding-document access are separate. Keep documents behind source permissions and avoid copying unnecessary customer identity details.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Stage-entry date is unknown, but a tracker file was created last week. Expected handling: Show age unknown; do not use file-created date or initiate a customer reminder.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "Consumes B09 stage events; no independent onboarding approval or communication system."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Approved date/duration computation and completeness checks."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): BaaS/stage owner approves clock and follow-up policy."
+      ],
+      "ai_proposed": [
+        "None proposed for this activity."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B10-N01",
+        "scenario": "Synthetic fixture defines elapsed days, stage entry 1 October 10:00 and as-of 3 October 10:00.",
+        "expected": "Display two days under fixture rule with source time, without assigning an SLA breach.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B10-E01",
+        "scenario": "Stage-entry date is unknown, but a tracker file was created last week.",
+        "expected": "Show age unknown; do not use file-created date or initiate a customer reminder.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Conditional; primary package: C02. Conditional age visibility only; no external follow-up or assumed SLA. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B11",
+    "title": "Partner product-usage and active-user reporting",
+    "classification": "Report / output",
+    "source_owner": "BaaS; Data / admin inputs",
+    "family": "Partner activity reporting",
+    "summary": "Report partner product usage and active users from reproducible snapshots. Reporting activity is not automatically the same as billable usage.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A17:F17 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A16:J16 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0047 at 17:14; BAAS:document:P0048 at 18:27. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E06; baseline_BaaS_Finance_evidence_reconciliation.csv, B11. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B11, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Joy describes manually reconstructing active partner/user history, asking admin what products are consumed and working through Data-team information (17:14).",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): A directly downloadable partner/product-consumption report is proposed. Active-user and billable-usage definitions are not given or equated."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Report partner product usage and active users from reproducible snapshots. Reporting activity is not automatically the same as billable usage.",
+      "Inherited 11 October design recommendation, not policy: Reproducible period snapshots and completeness checks; define active users and partner scope. This report need not share the same metric definition as billable usage.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "What counts as active, including test users, suspended users and multiple accounts?",
+      "Which time zone/cut-off and history are available?",
+      "What download capability exists and who may receive partner-level details?"
+    ],
+    "trigger": "A partner activity report is requested for a defined period and audience.",
+    "inputs": [
+      "Historical activity data and admin/Data-team inputs",
+      "Partner/product identity map",
+      "Approved active-user definition, exclusions and time basis",
+      "Data completeness and permission scope"
+    ],
+    "outputs": [
+      "Period partner/product activity report",
+      "Coverage and metric-definition statement",
+      "Missing/duplicate/activity-definition exceptions"
+    ],
+    "steps": [
+      "Define partner, product, reporting period and active-user population.",
+      "Obtain the authorised source snapshot and extraction context.",
+      "Deduplicate events/users using approved keys and metric semantics.",
+      "Apply the exact active-user rule and exclusions.",
+      "Check completeness against source controls.",
+      "Publish only reviewed, permissioned output with metric/version lineage."
+    ],
+    "states": [
+      "Definition pending",
+      "Data received",
+      "Coverage exception",
+      "Metrics calculated",
+      "Reviewed report"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: BaaS/Data owner approves metric meaning, coverage and recipient audience before release; partner reporting is not billing approval.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Partner-scoped source/report access; active-user identifiers should be aggregated or minimised under the approved audience contract.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: Billing uses transaction volume while the activity report uses unique users. Expected handling: Keep both metric definitions separate; do not reuse active-user count as billable usage or vice versa.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "Data/admin sources feed reporting; B12/F28 billing may share source references only when metric contracts match explicitly."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Approved deduplication, filtering, metric computation and completeness checks."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): BaaS/Data owner defines activity semantics and publication."
+      ],
+      "ai_proposed": [
+        "None proposed for this activity."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B11-N01",
+        "scenario": "Synthetic owner-approved rule counts unique users with qualifying event type X in the month; U1 has two X events and U2 one.",
+        "expected": "Active users=2 with the declared rule and event coverage.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B11-E01",
+        "scenario": "Billing uses transaction volume while the activity report uses unique users.",
+        "expected": "Keep both metric definitions separate; do not reuse active-user count as billable usage or vice versa.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Not included in November baseline. Preserve original discovery and validation needs for a later scope. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B12",
+    "title": "Pricing and BaaS billing data preparation",
+    "classification": "Substep / control",
+    "source_owner": "Finance; Data / BaaS pricing contributors",
+    "family": "BaaS billing preparation",
+    "summary": "Coordinate the availability of usage and pricing information for BaaS billing. This is the cross-team preparation boundary shared with F28-F30, not a second pricing calculator.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A18:F18 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A17:J17 (15 October 2026).",
+      "Primary-source text directly read in v0.2: Call with Temitayo Akerele (1).docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/TEM/full_extract.txt and paragraphs.json; TEM:document:P0007 at 0:22; TEM:document:P0009 at 0:53; TEM:document:P0011 at 1:10; TEM:document:P0013 at 1:28. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Primary-source text directly read in v0.2: Finance Process Automation Discovery.docx (7 October 2026), recovered extract 01-sources/recovered/01 Source Extracts/FIN/full_extract.txt and paragraphs.json; FIN:document:P0017 at 2:26; FIN:document:P0020 at 3:40; FIN:document:P0023 at 4:27; FIN:document:P0024 at 4:42; FIN:document:P0025 at 4:55. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Derived recording text directly read: 01-sources/recovered/03 Transcription/Finance_timestamped_transcript.txt and .json, VID:U0034-U0083, 01:54-05:05; no invoicing screen demonstration. Machine ASR from the deliberately redacted audio, not a certified verbatim transcript or manual word-by-word listening; speaker numbers are not verified identities.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E07; baseline_BaaS_Finance_evidence_reconciliation.csv, B12. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B12, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such.",
+      "Source conflict, unresolved: FIN:document:P0023 at 4:27 says the report has prices on it (\"I have prices on it\"); machine transcript VID:U0079 at 04:36.895-04:41.055 instead says \"after I sign it\". Do not infer a signature, review or release gate from that ASR wording. Confirm the actual pricing/release controls with the owner."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): TEM 0:53-1:28 says pricing needs a correct stored source/report-template/database input before automation can use it.",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): FIN 2:26 describes current Data-provided client names/usage and Finance manual pricing; FIN 3:40/4:27 describes planned BaaS-platform pricing in the report. Victoria explicitly does not need a separate duplicate price platform if that report provides prices.",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Ownership of pricing between Data/Product and actual integration deployment are unresolved; optional price cross-checking is suggested, not an established approval policy.",
+      "Source conflict, unresolved: FIN:document:P0023 at 4:27 says the report has prices on it (\"I have prices on it\"); machine transcript VID:U0079 at 04:36.895-04:41.055 instead says \"after I sign it\". Do not infer a signature, review or release gate from that ASR wording. Confirm the actual pricing/release controls with the owner."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Coordinate the availability of usage and pricing information for BaaS billing. This is the cross-team preparation boundary shared with F28-F30, not a second pricing calculator.",
+      "Inherited 11 October design recommendation, not policy: Join validated usage with approved, effective-dated prices. Reconcile with F28–F30 as one cross-team chain; establish rate owner and integration status.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Who approves rate versions and database/template changes?",
+      "What integration work is actually live and who supports it?",
+      "Which fields and reconciliation checks make a batch complete?",
+      "Resolve the FIN P0023 versus VID U0079 wording conflict with Finance before claiming any signature/release step; no new approval gate is inferred from ASR."
+    ],
+    "trigger": "A monthly billing preparation cycle or proposed pricing integration change is reviewed.",
+    "inputs": [
+      "Data-owned usage/report-template contract",
+      "Approved Finance/BaaS client-product price source and effective dates",
+      "Integration deployment status and actual field ownership",
+      "Accepted usage/candidate references from F28/F29"
+    ],
+    "outputs": [
+      "Agreed usage/pricing data contract",
+      "Readiness and missing-data exceptions",
+      "Single billing-batch lineage across teams"
+    ],
+    "steps": [
+      "Confirm which team owns usage, rates, client keys and output templates.",
+      "Verify whether the discussed database/report integration is actually deployed.",
+      "Reconcile units and client/product identifiers across usage and prices.",
+      "Hand accepted usage to F28 and approved price references to F29.",
+      "Review missing/invalid pricing without substituting model or default values.",
+      "Reuse F30 incumbent generation and record its verified status."
+    ],
+    "states": [
+      "Ownership/contract pending",
+      "Integration unverified",
+      "Usage ready",
+      "Pricing incomplete",
+      "Preparation ready",
+      "Incumbent handoff"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Confirm whether Data is accountable for usage validation, identify the authoritative rate owner, and establish which role approves pricing or release, if required. Generation, accounting posting and customer sending are three distinct action boundaries; their required approvals may differ and must be confirmed from the actual process. Do not infer three approval gates or a Finance release matrix. Inspect the incumbent Power Automate controls.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Scope usage and prices by authorised client/product and role; keep contract/rate approvals separate from generation/posting/sending credentials.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: A database contains prices but no approval/effective-date evidence or deploy status is unknown. Expected handling: Mark pricing/integration readiness unresolved; do not treat stored values as authorised billable terms.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "One family with F28 usage intake, F29 calculation and F30 incumbent generation; distinct from PMO project pricing."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Approved contract/key/unit validation and cross-team readiness tracking."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Finance/rate owner validates pricing; Data validates usage; BaaS coordinates dependencies."
+      ],
+      "ai_proposed": [
+        "None proposed for this activity."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B12-N01",
+        "scenario": "Mock batch B1 has one accepted usage version and one approved effective price set.",
+        "expected": "B12 records preparation readiness and references the same B1 processed by F28/F29/F30, not a duplicate batch.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B12-E01",
+        "scenario": "A database contains prices but no approval/effective-date evidence or deploy status is unknown.",
+        "expected": "Mark pricing/integration readiness unresolved; do not treat stored values as authorised billable terms.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      },
+      {
+        "id": "B12-E02",
+        "scenario": "An extractor proposes a mandatory Finance signature step solely from VID U0079, while FIN P0023 describes prices being present on the report.",
+        "expected": "Record a source conflict and mark the approval step unverified. No signature state, release gate or approver is established until the responsible owner confirms it.",
+        "basis": "FIN P0023 at 4:27 versus VID U0079 at 04:36.895-04:41.055; source-reconciliation test. Not run. No live source values or PSL policy are inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Not included in November baseline. Preserve original discovery and validation needs for a later scope. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B13",
+    "title": "Operating-procedure evidence collection",
+    "classification": "Discovery / validation",
+    "source_owner": "BaaS; Support; Reconciliation",
+    "family": "Discovery and owner validation",
+    "summary": "Collect and validate operational evidence with BaaS, Support and Reconciliation. This is discovery work, not an independent operational automation or proven saving.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A125:F125 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A124:J124 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0011 at 3:02; BAAS:document:P0012 at 4:32; BAAS:document:P0013 at 5:30; BAAS:document:P0020 at 6:33; BAAS:document:P0027 at 9:51. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Primary-source text directly read in v0.2: Call with Temitayo Akerele (1).docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/TEM/full_extract.txt and paragraphs.json; TEM:document:P0029 at 3:48; TEM:document:P0033 at 4:03; TEM:document:P0035 at 4:06; TEM:document:P0037 at 4:16. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E08; baseline_BaaS_Finance_evidence_reconciliation.csv, B13. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B13, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Discovery asks for existing operating procedures (3:02); Temitayo references a Support document, and Erhime/participants reference a brief shared with Henry.",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): TEM 3:48-4:16 commits to ask Product, Reconciliation and Support for proper documents. The recovered meeting transcripts are now read, but the referenced Support SOP and Henry/Reconciliation brief are not included among the supplied four original files."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Collect and validate operational evidence with BaaS, Support and Reconciliation. This is discovery work, not an independent operational automation or proven saving.",
+      "Inherited 11 October design recommendation, not policy: Obtain missing product / support / reconciliation SOPs and validate process maps. No automation benefit counted for this discovery entry.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Who owns the product, support and reconciliation SOPs?",
+      "Are source documents current and approved?",
+      "Which normal/exception artefacts can be shared safely for validation?"
+    ],
+    "trigger": "A definition lacks primary documents, actual examples or accountable owner validation.",
+    "inputs": [
+      "Existing process register and inherited review",
+      "Product/support/reconciliation SOPs and walkthroughs",
+      "Recovered full BAAS/TEM/FIN text extracts and redacted Finance machine transcript, now reviewed; the referenced Support SOP and Henry/Reconciliation brief remain outstanding",
+      "Normal/exception examples and owner confirmations"
+    ],
+    "outputs": [
+      "Source/evidence register",
+      "Corrected current-state definitions and open decisions",
+      "Owner validation record and revised readiness"
+    ],
+    "steps": [
+      "List precise missing evidence by process family and affected rule.",
+      "Obtain authorised source copies while preserving versions and provenance.",
+      "Distinguish current stated practice, documented policy and proposals.",
+      "Reconcile source conflicts with the accountable owner.",
+      "Capture one normal and one exception walkthrough for each candidate family.",
+      "Update definitions/readiness without treating receipt of a document as approval."
+    ],
+    "states": [
+      "Evidence requested",
+      "Recovered meeting sources read",
+      "Referenced procedure/sample pending",
+      "Owner validation pending",
+      "Validated or still disputed"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Process owners validate current practice and rules. Evidence receipt or meeting participation is not implementation, financial action or production approval.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Collect only authorised, necessary source evidence. Use synthetic or appropriately redacted examples; never place secrets or unnecessary production personal data in the package.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific source gap: the recovered meeting transcripts are now read, but the referenced Support SOP and Henry/Reconciliation brief have not been supplied. Expected handling: track those specific procedures and owner validation as outstanding; do not claim the meeting narratives replace them or that the procedures do not exist elsewhere.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "Feeds all BaaS definitions and related Finance family decisions; shares discovery practice with PMO validation entries without double-counting benefits."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Evidence indexing, version comparison and coverage tracking."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Process owners validate practice and resolve conflicts."
+      ],
+      "ai_proposed": [
+        "Later optional assistance may index/summarise permitted source passages; it cannot certify completeness or owner approval."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B13-N01",
+        "scenario": "Owner supplies a current reconciliation SOP and a synthetic failed-credit example.",
+        "expected": "Link them to B04-B07, record corroborations/conflicts and update open questions; no financial action occurs.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B13-E01",
+        "scenario": "All three meeting extracts are available, but the Support SOP and Henry/Reconciliation brief mentioned in the meetings are not in the supplied source set.",
+        "expected": "Mark those specific procedures outstanding and keep affected operational rules unvalidated. Do not claim the recovered transcripts replace the missing SOPs or that the SOPs do not exist elsewhere.",
+        "basis": "Primary-source references BAAS P0012/P0020/P0027 and TEM P0035; documented supplied-source gap, not run."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Discovery; primary package: GOV01 / DEC01. Evidence/rule validation only; not a software capability or independent automation saving. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  },
+  {
+    "id": "B14",
+    "title": "Support case-flow standardisation",
+    "classification": "Proposed improvement",
+    "source_owner": "Support (proposed flow)",
+    "family": "Support case management",
+    "summary": "Design a consistent support case flow only after the current channel work and owner transitions are confirmed. Ticketing is an example of the proposed improvement, not an existing platform fact.",
+    "evidence": [
+      "Baseline identity verified: PSL_Process_Automation_Register_Updated_2026-10-15.xlsx, 'Process list'!A19:F19 (15 October 2026); exact title, classification, owner and workflow group retained.",
+      "Scope verified: PSL_V1_Scope_and_Testing_Tracker_2026-10-15.xlsx, 'Process scope'!A18:J18 (15 October 2026).",
+      "Primary-source text directly read in v0.2: BaaS Process Automation Flow Discovery.docx (29 September 2026), recovered extract 01-sources/recovered/01 Source Extracts/BAAS/full_extract.txt and paragraphs.json; BAAS:document:P0030 at 10:10; BAAS:document:P0032 at 11:34; BAAS:document:P0034 at 11:54. These are OOXML body-paragraph and meeting-time locators, not rendered page numbers. Meeting descriptions do not establish formal policy or actual compliance.",
+      "Recording limit: no BaaS recording was supplied. BaaS/TEM findings come from the directly read Word text extracts, not a video review.",
+      "Local review cross-check: 01-sources/recovered/04 Evidence Review/process_evidence_groups.json, E01; baseline_BaaS_Finance_evidence_reconciliation.csv, B14. These derived groupings corroborate the original text; they are not independent primary-source authority.",
+      "Review coverage and limits: 01-sources/recovered/04 Evidence Review/review_coverage.json reports 243 body paragraphs across the three Word sources, 163 sampled Finance frame records (144 scene/interval plus 19 targeted; overlaps possible), with 18 selected images inspected at native resolution by the local reviewer. The full redacted machine transcript has been read in this reconciliation. No continuous video review, every-frame review, certified transcript or native Excel recalculation is claimed. Audio 42:50-43:18 was intentionally muted; omitted content is not reconstructed.",
+      "Remaining evidence limits: native management-account, BU/WK, budget and authorised payroll/allocation workbooks; complete source/rule maps and owner-approved examples; approval/access matrices; actual Power Automate/IT/PMO integration behaviour; and referenced Support SOP/Reconciliation brief remain unavailable or unverified. Documentation and source reconciliation do not equal owner validation, build permission or production readiness.",
+      "Historical secondary baseline: PSL_Product_Studio_Automation_and_Architecture_Review.docx (11 October 2026), Appendix C and Section 4 B14, remains provenance for the original register/design. New direct text and the later PMO SOP take precedence where explicitly distinguished; older unreconfirmed visual claims remain labelled as such."
+    ],
+    "facts": [
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): Temitayo requests a particular monitorable Support flow, possibly ticketing, at 11:54.",
+      "Primary-source transcript statement (directly read extracted text; meeting description, not operational/owner sign-off): The source establishes channel-monitoring difficulty and a proposed standardisation requirement, not current ticket statuses, transitions, ownership or a deployed ticketing tool."
+    ],
+    "proposed_design": [
+      "Purpose/boundary: Design a consistent support case flow only after the current channel work and owner transitions are confirmed. Ticketing is an example of the proposed improvement, not an existing platform fact.",
+      "Inherited 11 October design recommendation, not policy: Proposed consistent, monitorable support flow, with ticketing as an example. Confirm case states, owners, transitions and exception rules before implementation. Keep separate from current channel handling, summaries and measurement.",
+      "Proposed design in this definition: detailed steps and states below specify a reviewable future/manual control path. They are not assertions that PSL already follows this exact sequence. CTRL-FB-01 to CTRL-FB-07 apply; unresolved owner decisions block executable rules.",
+      "Actors: source responsibility is preserved exactly in source_owner; each action below names its proposed/known role. Named individuals, delegations and role-to-system entitlements remain to be validated.",
+      "v0.2 evidence boundary: the facts section identifies direct transcript statements versus local sampled-frame observations. Detailed future controls, actor allocations, approvals and permissions remain proposed/owner-confirmation items except explicitly source-prescribed SOP duties; recovered evidence does not silently approve them."
+    ],
+    "decisions": [
+      "Which case types require different paths?",
+      "Who can change states, merge cases or declare resolution?",
+      "What does a ticketing capability need to preserve from Teams/WhatsApp and backend activity?"
+    ],
+    "trigger": "Support agrees to define or revise a standard case flow.",
+    "inputs": [
+      "B01 current complaint/channel evidence",
+      "Approved case types, owners and transition rules",
+      "Normal, specialist-handoff, duplicate, reopened and unresolved examples",
+      "B03 event/clock definitions"
+    ],
+    "outputs": [
+      "Proposed versioned support state model",
+      "Owner/transition/exception matrix",
+      "Acceptance examples and migration decision"
+    ],
+    "steps": [
+      "Map current complaint handling without forcing every case into one simple path.",
+      "Define stable case identity and permitted state transitions.",
+      "Assign an accountable next-action owner for each transition.",
+      "Preserve specialist/financial handoffs and evidence gates.",
+      "Define reopening, merging, cancellation and unresolved-case handling.",
+      "Validate against real-owner examples before selecting/configuring a tool."
+    ],
+    "states": [
+      "Design draft",
+      "Owner review",
+      "Exception model incomplete",
+      "Validated specification",
+      "Implementation separately authorised"
+    ],
+    "approvals": [
+      "Proposed responsibility allocation / owner confirmation required, not an established approval matrix: Support must confirm case assignment, closure/reopening, summary review and metric/flow ownership. No case status or support approval grants financial execution rights.",
+      "Proposed controls CTRL-FB-02 and CTRL-FB-03: establish exact authority and version-bound review; do not infer approval from access, source ownership, a receipt or a dashboard status."
+    ],
+    "permissions": [
+      "Proposed least-privilege design, with actual role entitlements to be confirmed: Authorised channels/cases only, with customer content scoped to assigned support functions. Summary/search/log outputs inherit source restrictions.",
+      "Proposed control CTRL-FB-04: enforce source/record/field/audience restrictions in all outputs and retrieval. Expanding access is not part of documentation."
+    ],
+    "exceptions": [
+      "Entry-specific exception: A user attempts specialist pending → resolved without specialist result, or merges unrelated transactions. Expected handling: Reject the unsupported transition/merge and retain the case histories; no silent closure.",
+      "CTRL-FB-03: revised source/rule/payload creates a new traceable version; reopen affected review rather than reuse stale approval.",
+      "CTRL-FB-05: retain unresolved state and source evidence; resolve unknown outcomes before retry and preserve the authorised manual/incumbent route."
+    ],
+    "handoffs": [
+      "B01 remains current channel handling; B14 defines future state model; B02 summaries and B03 metrics consume that same model."
+    ],
+    "automation": {
+      "deterministic": [
+        "Proposed deterministic capability, contingent on validated inputs and owner-approved rules: Once validated: state-transition validation, event logging and ownership routing."
+      ],
+      "human": [
+        "Proposed responsibility allocation, requiring owner confirmation (not an established approval/certification matrix): Support owns flow design, case decisions and exception approval."
+      ],
+      "ai_proposed": [
+        "Later optional categorisation only; no authority to close cases or perform financial corrections."
+      ]
+    },
+    "tests": [
+      {
+        "id": "B14-N01",
+        "scenario": "Synthetic approved flow allows received → investigating → specialist pending → resolved after evidence.",
+        "expected": "A mock case follows the allowed path with owner/evidence at each step and supplies B03 timestamps.",
+        "basis": "Synthetic design acceptance example; not run; subject to owner-approved rules."
+      },
+      {
+        "id": "B14-E01",
+        "scenario": "A user attempts specialist pending → resolved without specialist result, or merges unrelated transactions.",
+        "expected": "Reject the unsupported transition/merge and retain the case histories; no silent closure.",
+        "basis": "Proposed exception safeguard; not run; no business rule inferred."
+      }
+    ],
+    "scope": "Inherited V1 disposition: Deferred; primary package: Later release. Not included in November baseline. Preserve original discovery and validation needs for a later scope. This is the dated 15 October planning baseline, not new build authority; AI remains outside that baseline.",
+    "readiness": "v0.2 source reconciliation: all three full primary-source text extracts and the full redacted Finance machine transcript have been read; this entry is linked to direct paragraph/time evidence and the bounded local sampled-frame review where relevant. Owner validation, full operational rules and source-native numerical oracles remain pending. No continuous video review, native workbook recalculation, application build, external/production write or mock-test execution is claimed."
+  }
+]

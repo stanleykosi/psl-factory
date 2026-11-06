@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block content %}
+<h1>Finance receipt follow-up — {{ case|workspace_name }}</h1>
+<nav><a href="{% url 'finance_settlement' case.pk %}">Normal invoice actions, receipts and corrections</a> · <a href="{% url 'policy' case.pk %}">Validate and activate owner configuration</a> · <a href="{% url 'case' case.pk %}">Shared case evidence</a></nav>
+<p>Companion metadata is imported evidence. A current Finance owner investigates, declines or links an explicit current intent. Links grant no execution authority, waive no debt and prove no financial effect.</p>
+{% for action,label,form in commands %}<section><h2>{{ label }}</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">{{ label }}</button></form></section>{% endfor %}
+<details><summary>Versioned owner configuration schema</summary><pre>{{ schema }}</pre></details>
+<details><summary>Authenticated intake configuration schema</summary><pre>{{ intake_schema }}</pre></details>
+<section class="workflow-panel"><h2>Authenticated intake receipt history</h2>{% for r in intake_receipts %}<p>#{{ r.pk }} request {{ r.followup_id }} / {{ r.sender_ref }} → {{ r.destination_ref }} / {{ r.sha256 }}. Delivery acknowledgement grants no decision or financial authority.</p>{% empty %}<p>No authenticated intake receipts. Manual intake remains available.</p>{% endfor %}
+<details><summary>Versioned successor history configuration schema</summary><pre>{{ successor_schema }}</pre></details>
+</section><section class="workflow-panel"><h2>Successor proposal history</h2>{% for p in proposals %}<p>#{{ p.pk }} request {{ p.followup_id }} / {{ p.relation }} / original job {{ p.original_id }} → successor job {{ p.successor_id }}. Current status requires live investigation.</p>{% empty %}<p>No successor proposals.</p>{% endfor %}
+</section><section class="workflow-panel"><h2>Independent history review history</h2>{% for r in successor_reviews %}<p>#{{ r.pk }} proposal {{ r.proposal_id }} / {{ r.verdict }} / {{ r.created_at }}. Recorded history grants no dispatch authority.</p>{% empty %}<p>No history reviews.</p>{% endfor %}
+</section><section class="workflow-panel"><h2>Received requests</h2>{% for r in requests %}<p>#{{ r.pk }} {{ r.projection.variant }} / {{ r.projection.outcome }} / {{ r.sha256 }}</p>{% empty %}<p>No requests received.</p>{% endfor %}
+</section><section class="workflow-panel"><h2>Human disposition history</h2>{% for d in decisions %}<p>#{{ d.pk }} request {{ d.followup_id }}: {{ d.verdict }} / job {{ d.job_id|default:'none' }} / {{ d.created_at }}</p>{% empty %}<p>No decisions recorded.</p>{% endfor %}
+</section>{% endblock %}

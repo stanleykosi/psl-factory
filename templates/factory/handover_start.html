@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'home' %}">← Work queue</a>
+<div class="page-heading"><div><p class="eyebrow">SUPPORT AND OPERATIONS</p><h1>Start a project handover</h1><p class="lede">Prepare the support and escalation package, deliver its current controlled version, and track actual receipt or gaps.</p></div></div>
+<section class="card"><h2>Choose a project</h2><form method="get"><input type="hidden" name="definition" value="delivery-handover/v1"><label>Project{{ form.case }}</label><button>Open handover sources</button></form></section>
+{% if case %}<section class="card"><h2>Handover sources</h2><p>Leave unknown items unprovided. Archive prerequisites, configured document review and actual recipient acknowledgement remain separate.</p><form method="post">{% csrf_token %}{{ form.definition }}{{ form.key }}{{ form.revision }}{{ form.non_field_errors }}<input type="hidden" name="case" value="{{ case.pk }}">{{ form.dossier.as_field_group }}{{ form.reference.as_field_group }}{{ inputs_form.as_p }}<button>Start handover work</button></form></section>{% else %}{{ form.errors }}<p>Select an available project to prepare its handover.</p>{% endif %}
+{% endblock %}

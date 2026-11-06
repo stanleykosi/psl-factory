@@ -1,0 +1,28 @@
+{
+  "browser": "2",
+  "tab": "2",
+  "viewer": "studio-demo",
+  "case": "3bed19d8-6453-4a66-9f6f-8ed7b8349540",
+  "operator_observed": [
+    "ACTIVE OPS.operator_rules and OPS.protection_rules",
+    "supportresponse job2 confirmed, attempts/fence2/2",
+    "scoped source controls link",
+    "inventory3 historical metadata",
+    "read-only access/no recovery forms"
+  ],
+  "readiness_observed": [
+    "native contract8/enrollment7",
+    "health and receipt observations18/19 passed/native_database_session",
+    "assessment10 currently ready and reviewed",
+    "synthetic provider history separately labelled and currently held after registry removal",
+    "read-only access/no mutation forms"
+  ],
+  "live_private_diagnostics_as_viewer": "403 without agent.operations",
+  "screenshots": [
+    "2026-10-23-support-response-operations-workbench.png",
+    "2026-10-23-support-response-operations-readiness.png"
+  ],
+  "tab_marked_handoff": true,
+  "native_customer_channel_verified": false,
+  "real_model_evaluated": false
+}

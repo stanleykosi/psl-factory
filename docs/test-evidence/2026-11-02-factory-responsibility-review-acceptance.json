@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "classification": "Bounded authorised responsibility review and navigation; no native behavior or full-process promotion",
+  "source_run": 512,
+  "parent_checkpoint": 511,
+  "process_ids": [
+    "P34",
+    "F29",
+    "F30"
+  ],
+  "requirements": [
+    "REQ-16",
+    "REQ-20",
+    "REQ-24",
+    "REQ-25"
+  ],
+  "tested_scope": "Named same-workspace current/historical nominations, unknown and revoked access, no foreign-name disclosure, NULL draft readability, actual native policy lifecycle HTTP context, current permission/CSRF checks, hostile return target ignored, selected work/queue/search preserved",
+  "passing_runs": [
+    512
+  ],
+  "tests": 16,
+  "unittest_seconds": 157.845,
+  "process_seconds": 173.001,
+  "native_services_policies_permissions_agents_adapters_migrations_unchanged": true,
+  "dependencies_added": [],
+  "browser": "Retained accepted509 fixture; GET-only named/history/unknown views, direct contextual return and keyboard queue/search/reopen,390px/document375/no overflow, viewport reset",
+  "retained_browser_rowsets_unchanged": 329,
+  "main_rowsets_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "preview_count": 13,
+  "preview_source_run": 512,
+  "native_business_commands_replayed": false,
+  "operational_owner_values_added": false,
+  "real_provider": "NOT_EVALUATED",
+  "independent_human_UAT": "NOT_EVALUATED",
+  "full_process_acceptance": "NOT_EVALUATED",
+  "full_product_complete": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-02-factory-responsibility-review-baseline.json",
+    "docs/test-evidence/2026-11-02-factory-responsibility-review-static512.json",
+    "docs/test-evidence/2026-11-02-factory-responsibility-review-browser512-after.json",
+    "docs/test-evidence/2026-11-02-factory-routing-main-after-ui512.json",
+    "docs/test-evidence/2026-11-02-factory-responsibility-review-previews512-after.json"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "status": 200,
+  "final_url": "http://127.0.0.1:8000/accounts/login/?next=/cases/5b533c39-910f-412c-9290-44ee69f0c9c9/finance/acceptance/",
+  "server_session": 24850,
+  "authenticated": false,
+  "new_route_registered": true,
+  "case_mutation": false
+}

@@ -1,0 +1,10 @@
+{
+  "classification": "Retained tooling failure before actual main DDL; not an application test or migration failure",
+  "argv": [".venv/Scripts/python.exe", "manage.py", "migrate", "--plan", "--noinput"],
+  "child_returncode": 0,
+  "log_reader_returncode": 1,
+  "failure": "Windows child stdout used a non-UTF8 ellipsis byte 0x85. The UTF8 subprocess reader raised UnicodeDecodeError, leaving stdout None; subsequent plan parsing raised AttributeError before the actual migrate command was invoked.",
+  "main_ddl_ran_during_failed_reader": false,
+  "correction": "Set PYTHONIOENCODING=utf-8 for child commands; retried read-only plan matched only workflows0017-0020, then actual main migrate completed with returncode0. Actual commands/output are in main-migration.json.",
+  "application_fixture_policy_migration_source_changed": false
+}

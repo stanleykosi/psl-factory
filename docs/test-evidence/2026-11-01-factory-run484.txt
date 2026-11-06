@@ -1,0 +1,49 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect (tests.test_factory_closure.FactoryClosureTests.test_http_typed_denied_csrf_and_invalid_dossier_requests_have_no_effect) ... ok
+test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head (tests.test_factory_closure.FactoryClosureDistinctAuthorityTests.test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head) ... ERROR
+
+======================================================================
+ERROR: test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head (tests.test_factory_closure.FactoryClosureDistinctAuthorityTests.test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_closure.py", line 36, in test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head
+    with self.assertRaises(ValidationError):approve(f)
+                                            ~~~~~~~^^^
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_closure.py", line 85, in approve
+    return closure.decide(f.actor,f.work.pk,f.work.revision,rev(f.case),v.pk,'approve',f.e['requirements'].pk,'Synthetic Head of PMO reviewed the exact report and current native prerequisites')
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\workflows\factory_closure.py", line 280, in decide
+    return closure.decide_closure(actor,w.case_id,v.pk,verdict,evidence_id,note,case_expected)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\pmo\delivery_closure.py", line 271, in decide_closure
+    authority=decision_authority(actor,case,'Head of PMO',verdict)
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 346, in decision_authority
+    role_policy(actor,case,role)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\services.py", line 302, in role_policy
+    assert_assigned(actor,case,reference_values(result.configuration),role)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\apps\policy\role_assignments.py", line 74, in assert_assigned
+    if not any(v['role']==role and v['user_id']==actor.pk for v in values):raise PermissionDenied('Human role is not assigned by current policy')
+                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.PermissionDenied: Human role is not assigned by current policy
+
+----------------------------------------------------------------------
+Ran 2 tests in 107.757s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,11 @@
+{"components":[],"operation_dependencies":[
+ {"operation":"pmo.baseline.prepare","required_components":[]},
+ {"operation":"pmo.decision.record","required_components":["D05.role_principal_assignments"]},
+ {"operation":"pmo.baseline.sign","required_components":["D05.role_principal_assignments"]},
+ {"operation":"pmo.milestone.complete","required_components":[]},
+ {"operation":"finance.invoice.issue","required_components":["D08.adapter_contract_ref","D08.duplicate_correction_rules","D05.role_principal_assignments"]},
+ {"operation":"finance.invoice.deliver","required_components":["D08.adapter_contract_ref","D08.duplicate_correction_rules"]},
+ {"operation":"finance.invoice.correct","required_components":["D08.adapter_contract_ref","D08.duplicate_correction_rules","D05.role_principal_assignments"]},
+ {"operation":"finance.invoice.correction_deliver","required_components":["D08.adapter_contract_ref","D08.duplicate_correction_rules"]},
+ {"operation":"baas.response.decide","required_components":["B14.response_release","D05.role_principal_assignments"]}
+],"interpretation":"Engineering native guard identifiers. Generated-costing/source/evidence/commercial/revision guards remain conditional native service checks, not invented global prerequisites."}

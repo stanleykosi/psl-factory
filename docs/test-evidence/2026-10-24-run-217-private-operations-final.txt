@@ -1,0 +1,34 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_actual_backup_receipt_recovery_precedes_revoked_source_and_owner_authority (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_backup_receipt_recovery_precedes_revoked_source_and_owner_authority) ... ok
+test_actual_export_backup_restore_and_independent_protection_review (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_actual_export_backup_restore_and_independent_protection_review) ... ok
+test_database_exact_private_plan_and_effect_lineage (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_database_exact_private_plan_and_effect_lineage) ... ok
+test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_generic_agent_and_timeline_omit_private_ops_and_live_guidance_has_no_effect_tools) ... ok
+test_http_selected_packet_plan_policy_ui_and_historical_artifact_download (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_http_selected_packet_plan_policy_ui_and_historical_artifact_download) ... ok
+test_missing_private_policy_holds_only_selected_private_effects (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_missing_private_policy_holds_only_selected_private_effects) ... ok
+test_owner_withdrawal_preserves_historical_download_but_holds_new_copy_and_current_review (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_owner_withdrawal_preserves_historical_download_but_holds_new_copy_and_current_review) ... ok
+test_policy_and_plan_validate_exact_case_inventory_and_source_principals (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_policy_and_plan_validate_exact_case_inventory_and_source_principals) ... ok
+test_private_operator_retry_and_replacement_cannot_reset_original_budget (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_private_operator_retry_and_replacement_cannot_reset_original_budget) ... ok
+test_private_receipt_cannot_enter_a_public_readiness_contract (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_private_receipt_cannot_enter_a_public_readiness_contract) ... ok
+test_private_reference_cannot_be_downgraded_or_body_added_to_metadata (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_private_reference_cannot_be_downgraded_or_body_added_to_metadata) ... ok
+test_revoked_source_denies_cached_artifact_plan_inventory_and_http_choices (tests.test_private_readiness_operations.PrivateReadinessOperationsTests.test_revoked_source_denies_cached_artifact_plan_inventory_and_http_choices) ... ok
+test_foreign_source_revocation_precedes_cached_http_artifact_download (tests.test_private_operations_concurrency.PrivateOperationsConcurrencyTests.test_foreign_source_revocation_precedes_cached_http_artifact_download) ... ok
+test_new_process_reconciles_actual_restore_after_owner_and_source_revocation (tests.test_private_operations_concurrency.PrivateOperationsConcurrencyTests.test_new_process_reconciles_actual_restore_after_owner_and_source_revocation) ... ok
+test_two_connections_reserve_and_workers_confirm_one_export (tests.test_private_operations_concurrency.PrivateOperationsConcurrencyTests.test_two_connections_reserve_and_workers_confirm_one_export) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 897.572s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

@@ -1,0 +1,76 @@
+{
+  "classification": "Synthetic native archive index browser journey; not full P36/external-byte/live/UAT acceptance",
+  "database": "psl_factory_archive_ui_4d94433baaad",
+  "case": "395ec129-8476-4fee-ae2e-3b33fbe43cbe",
+  "work": 570,
+  "dossier": 283,
+  "profile": 61470,
+  "source_head": 101269,
+  "fixture": "tests.test_factory_archive.setup(known=False), ready with explicit native synthetic inventory; fresh fixture human/test-only-password",
+  "operator": 15451,
+  "current_output": {
+    "head": 101269,
+    "dossier": 283,
+    "archive": 1532,
+    "verified": true,
+    "verification_scope": "synthetic_native_archive_index",
+    "external_bytes_verified": false,
+    "external_authenticity_verified": false,
+    "physical_purge_performed": false,
+    "support_handover_received": false,
+    "closure_approved": false,
+    "financial_release_granted": false,
+    "deployment_authorized": false
+  },
+  "retained_indexes": [
+    {
+      "id": 1531,
+      "actor_id": 15451,
+      "data": {
+        "note": "Native archive index from exact declared inventory; factory work 570, execution profile 61470. No separate archive approval or physical purge.",
+        "inventory": {
+          "test_results": 101259,
+          "project_artifact": 101260,
+          "technical_document": 101258
+        }
+      }
+    },
+    {
+      "id": 1532,
+      "actor_id": 15451,
+      "data": {
+        "note": "Native archive index from exact declared inventory; factory work 570, execution profile 61470. No separate archive approval or physical purge.",
+        "inventory": {
+          "test_results": 101266,
+          "project_artifact": 101260,
+          "technical_document": 101258
+        }
+      }
+    }
+  ],
+  "budget": {
+    "limit": 20000,
+    "used": 900
+  },
+  "parallel_archive_approval_tasks": 0,
+  "closure": 0,
+  "invoice": 0,
+  "browser_actions": [
+    "Queue search and work detail",
+    "Continue with unknown inventory to a real hold",
+    "Exact public inventory correction and reason",
+    "Continue agent work to verified native index",
+    "Record successor test-results correction",
+    "Stop idle local-index work",
+    "Fresh reasoned human restart and verification of one successor index",
+    "Return to original filtered queue",
+    "Narrow-screen and keyboard interaction"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-11-02-factory-archive-verified.jpg",
+    "docs/test-evidence/2026-11-02-factory-archive-narrow.jpg"
+  ],
+  "independent_human_UAT": false,
+  "real_model_provider": false,
+  "external_source_authenticity": false
+}

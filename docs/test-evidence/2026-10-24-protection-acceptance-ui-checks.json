@@ -1,0 +1,13 @@
+{
+  "system": {
+    "chunk_id": "65c45d",
+    "wall_time_seconds": 4.8645874,
+    "exit_code": 0,
+    "original_token_count": 13,
+    "output": "System check identified no issues (0 silenced).\r\n"
+  },
+  "compile": {
+    "command": ".venv/Scripts/python.exe -m compileall -q apps/documents/protection_acceptance_views.py apps/finance/readiness_acceptance_views.py tests/test_protection_acceptance.py",
+    "exit_code": 0
+  }
+}

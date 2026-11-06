@@ -1,0 +1,3 @@
+{% csrf_token %}<input type="hidden" name="revision" value="{{ case.revision }}">
+<label>Delivery dossier <select name="dossier">{% for d in dossiers %}<option value="{{ d.pk }}">{{ d }}</option>{% endfor %}</select></label>
+{% if evidence_fields %}<label>Source evidence <select name="evidence">{% for e in evidence %}<option value="{{ e.pk }}">{{ e }}</option>{% endfor %}</select></label><label>Rationale or gaps <textarea name="note" maxlength="4000" required></textarea></label>{% endif %}

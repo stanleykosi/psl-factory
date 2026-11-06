@@ -1,0 +1,23 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_policy_catalogue_and_missing_policy_does_not_become_zero (unittest.loader._FailedTest.test_policy_catalogue_and_missing_policy_does_not_become_zero) ... ERROR
+
+======================================================================
+ERROR: test_policy_catalogue_and_missing_policy_does_not_become_zero (unittest.loader._FailedTest.test_policy_catalogue_and_missing_policy_does_not_become_zero)
+----------------------------------------------------------------------
+AttributeError: type object 'ApplicationTests' has no attribute 'test_policy_catalogue_and_missing_policy_does_not_become_zero'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+Found 7 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

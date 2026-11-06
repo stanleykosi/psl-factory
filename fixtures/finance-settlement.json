@@ -1,0 +1,87 @@
+{
+  "scope": "synthetic_test_only",
+  "adapter": {
+    "implementation": "internal_invoice_register_v1",
+    "require_due_date": true,
+    "allow_partial_usage": true,
+    "issuer_roles": [
+      "Finance"
+    ],
+    "payable_basis": "gross_including_tax"
+  },
+  "identity": {
+    "implementation": "single_obligation_v1",
+    "on_unknown": "reconcile_first",
+    "max_attempts": 3,
+    "lease_seconds": 30,
+    "cancellation": "sticky_before_effect"
+  },
+  "source": {
+    "source": "synthetic-bank",
+    "implementation": "supplied_statement_v1",
+    "currency": "NGN",
+    "amount_basis": "gross_including_tax",
+    "decimal_places": 2,
+    "require_independent_evidence": false
+  },
+  "recorder": {
+    "roles": [
+      "Finance"
+    ],
+    "allow_reporter_verify": true
+  },
+  "matching": {
+    "implementation": "explicit_human_v1",
+    "roles": [
+      "Finance"
+    ],
+    "allow_reassignment": true,
+    "allow_verifier_allocation": true,
+    "overdue_definition": "due_date_before_as_of",
+    "decimal_places": 2
+  },
+  "reversals": [
+    {
+      "target": "lot",
+      "implementation": "full_once_v1",
+      "roles": [
+        "Finance"
+      ],
+      "require_distinct_verifier": false
+    },
+    {
+      "target": "allocation",
+      "implementation": "full_once_v1",
+      "roles": [
+        "Finance"
+      ],
+      "require_distinct_verifier": false
+    }
+  ],
+  "legal": [
+    {
+      "target": "lot",
+      "evidence_kind": "cash_correction",
+      "reason_required": true
+    },
+    {
+      "target": "allocation",
+      "evidence_kind": "cash_correction",
+      "reason_required": true
+    }
+  ],
+  "review": {
+    "finance": [
+      {
+        "purpose": "invoice",
+        "role": "Finance",
+        "actions": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "allow_preparer_review": true
+      }
+    ]
+  }
+}

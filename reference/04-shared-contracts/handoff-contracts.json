@@ -1,0 +1,255 @@
+{
+  "version": "0.2",
+  "status": "Proposed field contracts for owner review; not installed interfaces or approved execution policy",
+  "contracts": [
+    {
+      "id": "H01",
+      "name": "PMO to Finance",
+      "process_ids": [
+        "P12",
+        "P20",
+        "P26",
+        "P34",
+        "P39",
+        "F33",
+        "F34"
+      ],
+      "source_facts": [
+        "PM shares signed costs and milestones with Finance.",
+        "PM notifies Finance of completed milestones and records completion/notification.",
+        "Closure confirms all milestones were notified."
+      ],
+      "source": "PMO_SOP_v1.1.pdf: Phase 1 step 7 p.3; Phase 2 step 9 p.5; Phase 3 step 10 p.7; Phase 4 steps 5-6 p.8",
+      "proposed_minimum_fields": [
+        "event_id",
+        "event_type",
+        "stable_engagement_or_business_subject_reference",
+        "source_milestone_id_if_applicable",
+        "signed_baseline_version",
+        "effective_at",
+        "recorded_at",
+        "sender_role_reference",
+        "evidence_references",
+        "prior_event_id_if_correction"
+      ],
+      "conditional_fields_for_owner_decision": [
+        "formal_project_id_once_assigned_in_Planning",
+        "amount",
+        "currency",
+        "invoice_due_date",
+        "accounting_period",
+        "client_reference"
+      ],
+      "proposed_delivery_states": [
+        "prepared",
+        "validated",
+        "queued",
+        "sent",
+        "acknowledged",
+        "failed_retry_required",
+        "outcome_unknown",
+        "rejected",
+        "superseded"
+      ],
+      "independent_business_states": [
+        "milestone completion",
+        "Finance business acceptance",
+        "invoice issuance",
+        "revenue recognition",
+        "cash receipt"
+      ],
+      "proposed_recovery": [
+        "Reconcile a destination receipt before retrying an outcome-unknown event.",
+        "Use the same event ID for retry; a correction has a new ID linked to the prior event.",
+        "Hold out-of-order completion if the baseline cannot be resolved.",
+        "Share the signed baseline using the engagement reference before the formal project ID exists; link the later project ID without rewriting the original event. The handoff must not wait for a Planning-stage ID."
+      ],
+      "decisions": [
+        "Q10",
+        "Q06",
+        "Q09",
+        "Q16"
+      ],
+      "forbidden_inference": "Delivery or acknowledgement does not authorise invoice posting, recognition or payment.",
+      "additional_acceptance_example": {
+        "id": "H01-EARLY-ID",
+        "scenario": "Client signs the SOW/PRD at Initiation exit; engagement ENG-01 exists but formal project ID is assigned only in Planning.",
+        "expected": "Share the signed baseline linked to ENG-01 without blocking for project registration; later link project PROJ-01 to the same engagement/event, preserving its identity.",
+        "basis": "SOP phase 1 step7 p.3 and phase2 step1 p.4; proposed linkage safeguard, not run."
+      },
+      "additional_finance_evidence": {
+        "source": "FIN P0062\u2013P0066; VID U0306\u2013U0341",
+        "fact": "Finance describes calling PMs for price/progress; Finance layer and completion notifications proposed, not demonstrated. Recognition and invoicing decisions remain separate.",
+        "limit": "Narrated percentages are examples, not approved recognition policy; this account does not replace later SOP requirements."
+      }
+    },
+    {
+      "id": "H02",
+      "name": "Usage and pricing to Finance",
+      "process_ids": [
+        "B11",
+        "B12",
+        "F28",
+        "F29",
+        "F30",
+        "F45"
+      ],
+      "evidence_status": "Primary redacted extracts TEM P0007\u2013P0013/FIN P0013\u2013P0025 and machine transcript U0034\u2013U0083 reviewed; actual usage/prices/Power Automate implementation not supplied.",
+      "proposed_minimum_fields": [
+        "usage_batch_id",
+        "source_version",
+        "billing_period",
+        "client_reference",
+        "service_reference",
+        "usage_measure_and_unit",
+        "price_version_reference",
+        "completeness_evidence"
+      ],
+      "owner_decisions": [
+        "Actual usage schema and expected client population",
+        "Rate authority/effective dates",
+        "Currency, taxes, discounts and rounding",
+        "Corrected usage and rebilling rules",
+        "Existing Power Automate input/output and duplicate handling"
+      ],
+      "forbidden_inference": "Missing prices cannot become zero; project resource-cost rates cannot be substituted for BaaS tariffs."
+    },
+    {
+      "id": "H03",
+      "name": "HR staff facts to Finance allocations",
+      "process_ids": [
+        "F16",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22",
+        "F35"
+      ],
+      "evidence_status": "Primary redacted FIN P0058\u2013P0069/P0113\u2013P0121 and machine transcript reviewed; private allocation workbook withheld. Headcount pooling and individual ratios distinct; approved rules unverified.",
+      "proposed_minimum_fields": [
+        "input_version",
+        "payroll_period",
+        "approved_employee_reference",
+        "effective_BU_membership_reference",
+        "input_owner",
+        "control_totals",
+        "approved_allocation_rule_reference"
+      ],
+      "owner_decisions": [
+        "Minimum permitted payroll fields",
+        "Join key and duplicate/missing matches",
+        "Leavers/joiners and historical membership",
+        "Allocation basis and executive exceptions",
+        "Retention and role-scoped access"
+      ],
+      "forbidden_inference": "Do not infer a BU for an unmatched employee or expose raw payroll through general project views."
+    },
+    {
+      "id": "H04",
+      "name": "Other-team prerequisite receipts to PMO",
+      "process_ids": [
+        "P22",
+        "P23",
+        "P24",
+        "P29",
+        "P31",
+        "P32",
+        "P35",
+        "P51",
+        "P55"
+      ],
+      "source": "PMO_SOP_v1.1.pdf: phases 2-4 pp.4-8; approval structure p.11; risk/incident boundaries pp.12,15",
+      "proposed_minimum_fields": [
+        "receipt_kind_approval_prerequisite_or_status_reference",
+        "owning_system",
+        "external_record_id",
+        "subject_id",
+        "subject_version_or_build",
+        "owning_role",
+        "permissioned_reference"
+      ],
+      "owner_decisions": [
+        "Authoritative tools",
+        "Version/freshness rules",
+        "Invalidation and revalidation",
+        "Access classes and evidence format"
+      ],
+      "forbidden_inference": "PMO visibility is not transfer of Design, Engineering, QA, Security or GLPI decision authority.",
+      "conditional_decision_fields": {
+        "applies_when": "receipt_kind is approval_prerequisite and the governing source actually prescribes a decision",
+        "fields": [
+          "decision_type",
+          "decision_evidence",
+          "decision_time"
+        ]
+      },
+      "status_reference_rule": "P51 risk and P55 incident references point to R11/owning registers. They need permissioned identity/status evidence, not an invented PMO approval or mandatory decision receipt."
+    },
+    {
+      "id": "H05",
+      "name": "Reviewed document to external audience",
+      "process_ids": [
+        "P01",
+        "P19",
+        "P41",
+        "P42",
+        "P43",
+        "P48",
+        "P52",
+        "P53"
+      ],
+      "source": "PMO_SOP_v1.1.pdf: documentation governance sections 9.3-9.8 pp.12-15",
+      "proposed_minimum_fields": [
+        "document_id",
+        "reviewed_version",
+        "document_owner",
+        "PMO_Lead_review_evidence",
+        "approved_audience_reference",
+        "publisher_authority",
+        "distribution_record"
+      ],
+      "owner_decisions": [
+        "Publisher and recipients",
+        "Channel",
+        "Allowed fields and redactions",
+        "Revision re-review policy",
+        "Retention"
+      ],
+      "forbidden_inference": "Cost approval alone does not authorise external distribution; an internal report is not automatically client-safe."
+    },
+    {
+      "id": "H06",
+      "name": "Support or Reconciliation corrective request to Engineering",
+      "process_ids": [
+        "B01",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B14"
+      ],
+      "evidence_status": "Primary BAAS P0020/P0030: settlement-confirmed corrective request, Engineering executes; no new money-movement authority or verified return confirmation.",
+      "proposed_minimum_fields": [
+        "case_reference",
+        "request_reference",
+        "transaction_or_settlement_reference",
+        "reported_anomaly",
+        "investigation_evidence",
+        "requested_action",
+        "requester_role",
+        "execution_reference_when_available"
+      ],
+      "owner_decisions": [
+        "Who may request, approve and execute",
+        "Required verification",
+        "Duplicate request handling",
+        "Rejection and reversal controls",
+        "Execution confirmation"
+      ],
+      "forbidden_inference": "A request or resolved support status does not create money-movement authority."
+    }
+  ],
+  "addendum_handoff_namespace": "SRC-H01\u2013SRC-H10 refer to recovered cross_department_handoffs.csv; these do not rename package H01\u2013H06."
+}

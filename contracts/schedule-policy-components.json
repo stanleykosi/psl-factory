@@ -1,0 +1,114 @@
+{
+  "classification": "Supplemental engineering interfaces, no real appointments or invented workbook formulas",
+  "components": [
+    {
+      "id": "F12.detail_rules",
+      "parent_decision_id": "SCHEDULES",
+      "schema_ref": "schema:psl/policy-component/F12.detail_rules/v1",
+      "subject_scope": "Exact case income-note scope or selected schedule inventory and actual human review",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F13.inventory_rules",
+      "parent_decision_id": "SCHEDULES",
+      "schema_ref": "schema:psl/policy-component/F13.inventory_rules/v1",
+      "subject_scope": "Exact case income-note scope or selected schedule inventory and actual human review",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "SCHEDULES.review_authority",
+      "parent_decision_id": "SCHEDULES",
+      "schema_ref": "schema:psl/policy-component/SCHEDULES.review_authority/v1",
+      "subject_scope": "Exact case income-note scope or selected schedule inventory and actual human review",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": []
+}

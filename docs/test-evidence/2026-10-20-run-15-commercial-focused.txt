@@ -1,0 +1,78 @@
+Creating test database for alias 'default' ('test_psl')...
+
+Found 19 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying core.0001_initial... OK
+  Applying agents.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying baas.0001_initial... OK
+  Applying policy.0001_initial... OK
+  Applying pmo.0001_initial... OK
+  Applying documents.0001_initial... OK
+  Applying core.0002_append_only_history... OK
+  Applying workflows.0001_initial... OK
+  Applying finance.0001_initial... OK
+  Applying workflows.0002_effect_identity... OK
+  Applying documents.0002_controlledreview_document_publication_publicationjob_and_more... OK
+  Applying workflows.0003_humantask_taskevent... OK
+  Applying documents.0003_immutable_controlled_documents... OK
+  Applying documents.0004_alter_publication_review... OK
+  Applying finance.0002_financialimport_importvalidation_invoicepreparation_and_more... OK
+  Applying finance.0003_immutable_intake... OK
+  Applying identity.0001_initial... OK
+  Applying pmo.0002_remove_decision_decision_subject_role_and_more... OK
+  Applying pmo.0003_deliverycandidate_gatedocumentbinding_gaterecord_and_more... OK
+  Applying pmo.0004_immutable_gate_history... OK
+  Applying pmo.0005_gaterecord_gate_source_identity... OK
+  Applying pmo.0006_actionitem_actionstate_actionitem_current_meeting_and_more... OK
+  Applying pmo.0007_meetingactionlink_and_more... OK
+  Applying pmo.0008_immutable_minutes_actions_reports... OK
+  Applying pmo.0009_changerequest_changeversion_changerequest_current_and_more... OK
+  Applying pmo.0010_immutable_commercial_changes... OK
+test_bounded_agent_compares_sources_without_decisions (tests.test_commercial_changes.CommercialTests.test_bounded_agent_compares_sources_without_decisions) ... ok
+test_changed_cost_never_inherits_cost_chain (tests.test_commercial_changes.CommercialTests.test_changed_cost_never_inherits_cost_chain) ... ok
+test_decision_revocation_holds_outward_version (tests.test_commercial_changes.CommercialTests.test_decision_revocation_holds_outward_version) ... ok
+test_drafting_needs_no_policy_but_order_and_submission_do (tests.test_commercial_changes.CommercialTests.test_drafting_needs_no_policy_but_order_and_submission_do) ... ok
+test_explicit_delegation_current_and_expired (tests.test_commercial_changes.CommercialTests.test_explicit_delegation_current_and_expired) ... ok
+test_grants_staleness_and_history_protection (tests.test_commercial_changes.CommercialTests.test_grants_staleness_and_history_protection) ... ok
+test_invalid_reuse_rule_and_cross_case_source (tests.test_commercial_changes.CommercialTests.test_invalid_reuse_rule_and_cross_case_source) ... ok
+test_legacy_actions_cannot_bypass_versioned_workbench (tests.test_commercial_changes.CommercialTests.test_legacy_actions_cannot_bypass_versioned_workbench) ... ok
+test_new_proposal_invalidates_queued_document_and_keeps_old_response_capture (tests.test_commercial_changes.CommercialTests.test_new_proposal_invalidates_queued_document_and_keeps_old_response_capture) ... ok
+test_optional_reuse_is_typed_current_and_independent (tests.test_commercial_changes.CommercialTests.test_optional_reuse_is_typed_current_and_independent) ... ok
+test_return_reject_and_withdraw_require_config_and_new_revision (tests.test_commercial_changes.CommercialTests.test_return_reject_and_withdraw_require_config_and_new_revision) ... ok
+test_staff_proposal_decisions_review_delivery_and_signed_adoption (tests.test_commercial_changes.CommercialTests.test_staff_proposal_decisions_review_delivery_and_signed_adoption) ... ok
+test_change_ui_and_access_and_immutable_records (tests.test_commercial_changes.ControlledChangeTests.test_change_ui_and_access_and_immutable_records) ... ok
+test_changed_assessment_invalidates_decisions_and_authorization (tests.test_commercial_changes.ControlledChangeTests.test_changed_assessment_invalidates_decisions_and_authorization) ... ok
+test_cost_impact_requires_approved_commercial_context (tests.test_commercial_changes.ControlledChangeTests.test_cost_impact_requires_approved_commercial_context) ... ok
+test_no_cost_timeline_or_client_impact_needs_only_source_roles (tests.test_commercial_changes.ControlledChangeTests.test_no_cost_timeline_or_client_impact_needs_only_source_roles) ... ok
+test_signed_scope_replacement_requires_current_controlled_change (tests.test_commercial_changes.ControlledChangeTests.test_signed_scope_replacement_requires_current_controlled_change) ... ok
+test_standard_emergency_intake_does_not_invent_a_waiver (tests.test_commercial_changes.ControlledChangeTests.test_standard_emergency_intake_does_not_invent_a_waiver) ... ok
+test_unknowns_and_missing_contributors_hold_only_authorization (tests.test_commercial_changes.ControlledChangeTests.test_unknowns_and_missing_contributors_hold_only_authorization) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 57.165s
+
+OK
+Destroying test database for alias 'default' ('test_psl')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

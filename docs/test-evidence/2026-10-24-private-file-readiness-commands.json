@@ -1,0 +1,45 @@
+{
+  "229": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_protection_acceptance.ProtectionAcceptanceTests.test_closed_native_packet_three_human_reviews_export_and_source_policy_independence tests.test_protection_acceptance.ProtectionAcceptanceTests.test_http_review_form_requires_granted_actions_and_limits_decision_types --keepdb --noinput --verbosity 2",
+    "result": "2/OK/338.555s"
+  },
+  "230": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_private_file_readiness --keepdb --noinput --verbosity 2",
+    "result": "13/OK/1228.882s",
+    "note": "Initial suite before final diagnostics and added targeted tests; final source captured separately."
+  },
+  "231": {
+    "command": ".venv/Scripts/python.exe manage.py test tests.test_private_file_readiness.PrivateFileReadinessTests.test_pending_export_enrollment_checks_current_proof_then_records_sql_artifact tests.test_private_file_readiness.PrivateFileReadinessTests.test_http_missing_case_and_agent_action_permission tests.test_private_file_readiness.PrivateFileReadinessTests.test_actual_windows_file_sharing_denial_holds_current_not_history tests.test_private_file_readiness.PrivateFileReadinessTests.test_live_agent_generic_omissions_and_actual_http_capture_and_policy tests.test_private_file_concurrency --keepdb --noinput --verbosity 2",
+    "result": "5/OK/1101.944s"
+  },
+  "232": {
+    "script": ".runtime/run_private_file_connected.ps1",
+    "status": "completed",
+    "session_id": 88318,
+    "expected_count": 98,
+    "result": "98/OK/1187.071s"
+  },
+  "structural": [
+    ".venv/Scripts/python.exe manage.py check",
+    ".venv/Scripts/python.exe manage.py makemigrations --check --dry-run",
+    ".venv/Scripts/python.exe -m compileall -q apps adapters config tests",
+    ".venv/Scripts/python.exe -m pip check"
+  ],
+  "main_migrations": {
+    "command": ".venv/Scripts/python.exe manage.py migrate --noinput",
+    "result": "exit0; workflows0013 and0014 applied; no new business data/policies"
+  },
+  "final_audit": {
+    "command": ".venv/Scripts/python.exe .runtime/verify_private_file_readiness.py",
+    "status": "completed",
+    "result": "exit0; integrity.json"
+  },
+  "classification": "Real internal PostgreSQL/services/HTTP/native temporary files; synthetic authenticated upstream fixtures. No real-provider or actual owner/operational acceptance. Test counts overlap.",
+  "records": {
+    "finalizer": "exit0",
+    "narrative_initial": "UnicodeDecodeError in temporary Windows-encoded header; no writes",
+    "repair": "Discard temporary header as intended; preserve original UTF-8 history",
+    "narrative_final": "exit0",
+    "consistency": "exit0; records-check.json"
+  }
+}

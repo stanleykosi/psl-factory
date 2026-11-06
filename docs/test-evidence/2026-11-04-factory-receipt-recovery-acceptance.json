@@ -1,0 +1,33 @@
+{
+  "status": "BOUNDED_IMPLEMENTATION_VERIFIED",
+  "source_run": 644,
+  "implementation": "Typed nullable receipt-recovery authority, structured configuration and human review, append-only original-request recovery and actual transport provenance, same-provider successor lookup with no send or fallback",
+  "actual_tests": {
+    "640": "4PASS/56.407s unittest/63.207s process; actual expiry, withdrawal, redirect, independence, cancellation, no resend",
+    "641": "5PASS/486.071s/492.590s; native recovery through fresh planning, required Finance decision and final internal receipt; true PostgreSQL review contention",
+    "643": "3PASS/53.192s/61.709s; actual lookup lease blocks another review, original same-credential recovery, settings controls",
+    "644": "7PASS/88.099s/99.861s; native form messages, access, forbidden provider choices, no receipt/no command and retained coverage"
+  },
+  "preservation": "2026-11-04-factory-receipt-recovery-preservation644-after.json",
+  "retained_application_databases": 13,
+  "prior_rowsets_preserved_per_database": 331,
+  "prior_indexes_preserved_per_database": 1562,
+  "all_prior_guards_preserved": true,
+  "new_tables_empty_in_retained_databases": true,
+  "current_schema": "workflows0058/documents0018",
+  "current_tables": 333,
+  "current_indexes": 1572,
+  "fresh_template0_proof": "2026-11-04-factory-receipt-fresh644-result.json",
+  "fresh_migrations_passed": 237,
+  "fresh_seeded_business_rows": 0,
+  "preview_application_readback": "2026-11-04-factory-source-browser644-native.json",
+  "preview_get_preservation": "2026-11-04-factory-source-browser644-get-after.json",
+  "native_browser644": "UNAVAILABLE; no successful native reload or screenshot claimed",
+  "static_checks": ["manage.py check PASS", "manage.py makemigrations --check --dry-run PASS/no changes"],
+  "provider_evidence": "Explicit synthetic loopback provider only; native domain, permissions, policy, workflows, decisions and receipts tested on PostgreSQL",
+  "owner_values_added": false,
+  "external_services_activated": false,
+  "full108_internal_handoff_gate": "NOT_MET",
+  "whole_process_acceptance": "NOT_EVALUATED",
+  "next_engineering": ["Delivery/hypercare explicit fresh source authority", "Remaining108 connected workflows and internal recovery variants"]
+}

@@ -1,0 +1,43 @@
+{
+  "classification": "Current-source actual browser reload and PostgreSQL read-only native verification; no human decision, effect or receipt replay",
+  "source_run": 498,
+  "verified_source_files": 1308,
+  "database": "psl_factory_go_live_ui_d7cbfe7f08a6",
+  "work": 1,
+  "proof_unchanged": true,
+  "native_go_live_anchors": 1,
+  "native_reaffirmations": 1,
+  "budget_used": 1500,
+  "budget_limit": 20000,
+  "proof": {
+    "verified": true,
+    "verification_scope": "synthetic_native_go_live_delivery_and_human_signature_attestation",
+    "head": 18,
+    "document_version": 2,
+    "publication": 2,
+    "receipt_ids": [
+      2
+    ],
+    "acceptance": 7,
+    "pm_signature": 19,
+    "client_signature": 20,
+    "sign_off_inferred": false,
+    "deployment_authorized": false,
+    "financial_release_granted": false,
+    "external_authenticity_verified": false
+  },
+  "current_ui_state": "Verified",
+  "current_ui_requires_action": false,
+  "exact_receipts": [
+    1,
+    2
+  ],
+  "templates_and_static_unchanged_since_browser491": true,
+  "prior_browser_journey": "docs/test-evidence/2026-11-02-factory-go-live-browser491.json",
+  "screenshots": [
+    "docs/test-evidence/2026-11-02-factory-go-live-verified498.png"
+  ],
+  "business_actions_replayed": false,
+  "independent_human_UAT": false,
+  "real_provider": false
+}

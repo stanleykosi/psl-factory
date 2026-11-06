@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "classification": "Preservation instrumentation used an earlier GET-only fingerprint as though it followed the explicit browser reroute",
+  "failed_comparison": ".runtime/factory-review-status-ui-context.json against factory-review-status-browser533-after.json",
+  "reason": "533-after records unchanged GET inspection before the subsequently documented native agent transition1797 to1798; that transition legitimately changed native rows",
+  "retained_script": "docs/test-evidence/2026-11-03-factory-review-retirement-preservation539-first-attempt.py",
+  "application_regression_established": false,
+  "correction": "Compare three earlier cohorts with actual post-transition fingerprints; validate533 selected final native facts and establish its post-transition full fingerprint now. Do not claim its whole database unchanged since533. Compare0049 function with its retained applied hash and all other main definitions exactly."
+}

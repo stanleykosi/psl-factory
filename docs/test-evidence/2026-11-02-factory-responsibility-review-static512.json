@@ -1,0 +1,57 @@
+{
+  "source_run": 512,
+  "parent": 511,
+  "changed_paths": [
+    "apps/workflows/factory_views.py",
+    "templates/factory/responsibility.html",
+    "templates/factory/responsibility_wait.html",
+    "tests/factory_helpers.py"
+  ],
+  "added_paths": [
+    "templates/factory/responsibility_context.html",
+    "templates/factory/responsibility_names.html",
+    "tests/test_factory_responsibility_review.py"
+  ],
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "returncode": 0,
+      "stdout": "System check identified no issues (0 silenced).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "returncode": 0,
+      "stdout": "No changes detected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "apps",
+        "adapters",
+        "config",
+        "tests"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "native_services_policies_permissions_agents_adapters_migrations_unchanged": true,
+  "dependencies_added": [],
+  "operational_policy_or_principal_changes": false
+}

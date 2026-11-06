@@ -1,0 +1,18 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying workflows.0051_factory_planning_receipt...test_lost_response_recovers_original_receipt_and_reservation_without_another_send (tests.test_factory_planner_gateway.FactoryPlannerGatewayTests.test_lost_response_recovers_original_receipt_and_reservation_without_another_send) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 11.250s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

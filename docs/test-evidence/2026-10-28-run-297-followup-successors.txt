@@ -1,0 +1,34 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying finance.0056_followup_successors... OK
+  Applying finance.0057_followup_successor_guards...test_capture_policy_review_ui_agent_revocation_and_sql_history (tests.test_followup_successors.FollowupSuccessorTests.test_capture_policy_review_ui_agent_revocation_and_sql_history) ... ok
+test_duplicate_ownership_scope_policy_successor_and_decline (tests.test_followup_successors.FollowupSuccessorTests.test_duplicate_ownership_scope_policy_successor_and_decline) ... ok
+test_normal_generation_replacement_unknown_receipt_and_successor (tests.test_followup_successors.FollowupSuccessorTests.test_normal_generation_replacement_unknown_receipt_and_successor) ... FAIL
+test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent (tests.test_invoice_variants.InvoiceVariantTests.test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent) ... ok
+
+======================================================================
+FAIL: test_normal_generation_replacement_unknown_receipt_and_successor (tests.test_followup_successors.FollowupSuccessorTests.test_normal_generation_replacement_unknown_receipt_and_successor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_followup_successors.py", line 88, in test_normal_generation_replacement_unknown_receipt_and_successor
+    invoice_delivery.run_once();self.assertEqual(d.report(a,c.pk,r.pk)['lineage'][0]['successor_receipt'],'present')
+                                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'unknown' != 'present'
+- unknown
++ present
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 70.336s
+
+FAILED (failures=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

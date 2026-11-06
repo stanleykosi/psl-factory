@@ -1,0 +1,71 @@
+{
+  "status": "PASS",
+  "definition": "delivery-closure/v1",
+  "process_ids": [
+    "P38",
+    "P39"
+  ],
+  "paths": [
+    "apps/workflows/factory_closure.py",
+    "apps/workflows/factory_closure_views.py",
+    "apps/workflows/factory.py",
+    "apps/workflows/factory_views.py",
+    "apps/policy/factory_validators.py",
+    "apps/core/read_observation.py",
+    "apps/core/services.py",
+    "apps/pmo/delivery_closure.py",
+    "apps/pmo/delivery.py",
+    "apps/pmo/closure_views.py",
+    "adapters/delivery.py",
+    "apps/workflows/migrations/0046_factory_closure.py",
+    "templates/factory/closure_detail.html",
+    "templates/factory/closure_start.html",
+    "templates/pmo/closure_preparation.html",
+    "fixtures/factory-closure.json",
+    "tests/test_factory_closure.py",
+    "tests/test_factory_closure_recovery.py",
+    "tests/test_delivery_observation.py",
+    "tests/factory_worker_scenario.py"
+  ],
+  "tested_scope": "Synthetic typed private intake, actual P38 evidence selection, native report/template-required quality review, exact Head-PMO human decision and configured current PM finalisation, current native verification, corrections, process termination before/after commit, real first-intake race and original allowance recovery",
+  "source_boundary": "P38 meeting occurrence remains actual recorded evidence; no separate retrospective approval. Finance confirms inventory/notifications, Head decides exact report, PM finalises. Closure does not settle debt or authorise deployment.",
+  "passing_runs": [
+    479,
+    480,
+    485,
+    486
+  ],
+  "failed_or_interrupted_runs_retained": [
+    475,
+    476,
+    477,
+    478,
+    481,
+    482,
+    483,
+    484
+  ],
+  "browser_runtime": 480,
+  "browser_readback_runtime": 486,
+  "browser_work": 641,
+  "main_preserved_rowsets": 329,
+  "prior_migrations_preserved": 215,
+  "schema": [
+    "workflows0046",
+    "documents0016"
+  ],
+  "technical_interface_count": 132,
+  "operational_policy_values_added": false,
+  "full_process_acceptance": "NOT_EVALUATED",
+  "active_factory_restore": "NOT_EVALUATED",
+  "external_authenticity_verified": false,
+  "independent_human_UAT": false,
+  "real_model_evaluation": false,
+  "evidence": [
+    "docs/test-evidence/2026-11-02-factory-closure-station-browser.json",
+    "docs/test-evidence/2026-11-02-factory-closure-readback486.json",
+    "docs/test-evidence/2026-11-02-factory-closure-station-static486.json",
+    "docs/test-evidence/2026-11-02-factory-closure-station-rollback.json",
+    "docs/test-evidence/2026-11-02-factory-closure-main-after.json"
+  ]
+}

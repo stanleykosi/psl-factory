@@ -1,0 +1,20 @@
+"""Closed engineering envelopes; native departments retain decision authority."""
+from django.core.exceptions import ValidationError
+
+DEFINITIONS={
+    'rfp-response/v1':{'component':'OPS.factory_rfp_execution','read':'rfp.read','title':'RFP response and project handoff'},
+    'finance-accounts/v1':{'component':'OPS.factory_accounting_execution','read':'finance.read','title':'Accounting preparation and reviewed reports'},
+    'pmo-finance/v1':{'component':'OPS.factory_execution','read':'finance.read','title':'Invoice preparation and delivery'},
+    'planning/v1':{'component':'OPS.factory_planning_execution','read':'planning.read','title':'Planning and delivery handoff'},
+    'commercial/v1':{'component':'OPS.factory_commercial_execution','read':'case.read','title':'Costing and commercial submission'},
+    'delivery-release/v1':{'component':'OPS.factory_delivery_execution','read':'delivery.read','title':'Delivery gates and release evidence'},
+    'delivery-hypercare/v1':{'component':'OPS.factory_hypercare_execution','read':'delivery.read','title':'Release observations and hypercare'},
+    'delivery-archive/v1':{'component':'OPS.factory_archive_execution','read':'delivery.read','title':'Project artifact archive'},
+    'delivery-handover/v1':{'component':'OPS.factory_handover_execution','read':'delivery.read','title':'Support and Operations handover'},
+    'delivery-closure/v1':{'component':'OPS.factory_closure_execution','read':'delivery.read','title':'Project closure'},
+    'delivery-go-live/v1':{'component':'OPS.factory_go_live_execution','read':'delivery.read','title':'Go-live acceptance'},
+}
+
+def definition(name):
+    try:return DEFINITIONS[name]
+    except KeyError:raise ValidationError('unknown_case: no registered factory definition')

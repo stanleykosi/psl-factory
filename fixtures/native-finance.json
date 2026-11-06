@@ -1,0 +1,1 @@
+{"classification":"Structural interface only; no actual principals, credentials, provider, mappings or store installed","component":"OPS.native_finance_receipts","schema_ref":"schema:psl/native-finance-receipts/v1","value":null,"deployment":{"providers":{},"stores":{}},"activation_enabled":false}

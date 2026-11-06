@@ -1,0 +1,87 @@
+{
+  "source_run": 593,
+  "databases": [
+    {
+      "database": "psl",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_routing_ui_c87774ebaed7",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_review_authority_ui_f4ef78667cad",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_review_status_ui_82525e1a8333",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_review_retirement_ui_7036019b48ae",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_review_restore_ui_0c64ab3f2a4f",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_delegation_ui_7de03a500dbf",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_availability_ui_f599e39e4e5e",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    },
+    {
+      "database": "psl_factory_accounting_ui_08cf999821ca",
+      "prior_rowsets_preserved": 329,
+      "prior_indexes_preserved": 1550,
+      "new_receipt_table_empty": true,
+      "only_new_rows": "One migration, one content type, four standard permissions; no Grants",
+      "all_prior_functions_triggers_constraints_preserved": true
+    }
+  ],
+  "business_records_receipts_budgets_history_preserved": true,
+  "commands_replayed": false
+}

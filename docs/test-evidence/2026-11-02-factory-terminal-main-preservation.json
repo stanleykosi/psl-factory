@@ -1,0 +1,10 @@
+{
+  "old_rowsets_unchanged": 329,
+  "indexes_unchanged": 1550,
+  "functions_triggers_constraints_unchanged": true,
+  "main_factory_work": 0,
+  "main_users_policies_grants_and_business_data_unchanged": true,
+  "fixture_parent_stopped_before_migration_finished": true,
+  "fresh_database": "psl_factory_terminal_ui_4eb1bdeb4ddb",
+  "no_main_fixture_values_added": true
+}

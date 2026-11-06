@@ -1,0 +1,54 @@
+{
+  "status": "APPLIED",
+  "runs": [
+    {
+      "run": 389,
+      "tests": 51,
+      "returncode": 1,
+      "unittest_seconds": 273.397,
+      "process_seconds": 278.919
+    },
+    {
+      "run": 390,
+      "tests": 52,
+      "returncode": 0,
+      "unittest_seconds": 286.298,
+      "process_seconds": 291.359
+    },
+    {
+      "run": 391,
+      "tests": 81,
+      "returncode": 1,
+      "unittest_seconds": 497.9,
+      "process_seconds": 505.436
+    },
+    {
+      "run": 392,
+      "tests": 8,
+      "returncode": 0,
+      "unittest_seconds": 7.571,
+      "process_seconds": 14.483
+    },
+    {
+      "run": 393,
+      "tests": 2,
+      "returncode": 0,
+      "unittest_seconds": 23.38,
+      "process_seconds": 28.381
+    }
+  ],
+  "main_preservation": {
+    "main_rowsets_unchanged": 326,
+    "applied_migration_sources_unchanged": 203,
+    "functions": 79,
+    "triggers": 363,
+    "constraints": 1719,
+    "main_test_definitions_identical": true,
+    "source_records_unchanged": true,
+    "owner_values_installed": false,
+    "live_pilot_performed": false
+  },
+  "full_product_complete": false,
+  "owner_values_installed": false,
+  "next_step": "Continue the remaining native invoice preparation/correction/release guard variants through actual services, then uncovered policy-impact consumers. Preserve the staff layout and keep source codes and diagnostics secondary. Do not confuse this UI verification with completion of all122 workflows."
+}

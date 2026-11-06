@@ -1,0 +1,16 @@
+{
+  "source_run": 644,
+  "database": "test_psl_factory_receipt_schema_5008efff9ff9",
+  "migration_count": 237,
+  "table_count": 333,
+  "schema": "workflows0058/documents0018",
+  "seeded_business_rows": {
+    "core_case": 0,
+    "policy_configuration": 0,
+    "identity_grant": 0,
+    "workflows_factorywork": 0,
+    "workflows_factoryplanningrecovery": 0,
+    "workflows_factoryplanningreceiptuse": 0
+  },
+  "returncode": 0
+}

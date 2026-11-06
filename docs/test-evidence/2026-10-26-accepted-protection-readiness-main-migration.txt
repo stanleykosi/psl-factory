@@ -1,0 +1,7 @@
+Operations to perform:
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Running migrations:
+  Applying workflows.0017_acceptedprotectionreadiness... OK
+  Applying workflows.0018_accepted_protection_native_guards... OK
+  Applying workflows.0019_af13_native_alias... OK
+  Applying workflows.0020_af13_native_closed_shapes... OK

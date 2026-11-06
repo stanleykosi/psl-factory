@@ -1,0 +1,15 @@
+# Domain receipt and destination contracts
+
+Implementation checkpoint27 October2026: bounded PSL authenticated metadata protocols, source-owned contract/observation review, destination preflight, policy/UI/agents and actual PostgreSQL controls are implemented and verified by RUN279 (3/OK). RUN277 rechecked the preceding increment; RUN278's restart-test transaction failure is retained. Current details and limits: docs/runbooks/domain-contracts.md and BUILD-TESTS.md. Provider responses and people/criteria in tests are synthetic; direct native/vendor-specific verification and physical provisioning remain separate engineering work. Next proposal: docs/design/native-domain-receipt-verification.md.
+
+## Original engineering proposal
+
+Engineering proposal only. Reviewed inert reconstitution plans do not verify vendor transactions, provision operational identities or enable archived queues. Keep the current unconditional startup quarantine and source business ownership. Current signed gateway observations are explicitly gateway attestations; source archive/effect bindings prevent reuse across scopes but do not supply missing vendor semantics.
+
+Build reviewed versioned contracts for per-family authoritative receipt verification and intended operational destinations. Reuse existing authenticated integration/secret-reference facilities where their contracts match, with exact provider/principal/credential revision, source operation/payload version and evidence semantics. A health response is not transaction confirmation. Use actual documented provider contracts; unknown versions, reference mappings and ownership remain explicit typed inputs. Do not invent QuickBooks, Engineering, GLPI, customer-channel or deployment behaviour.
+
+Current provider observations must bind exact archive, case/family/effect and original source intent. Preserve UNKNOWN absence/uncertain outcomes, distinguish gateway attestation, historical internal storage and directly verified provider evidence, and require independent human source-owned decisions. Build real adapter/provider fixture contracts and actual PostgreSQL/privacy/restart tests before claiming live evidence. Do not mutate archived jobs or replay business effects as a verification method.
+
+Capture destination identity/database/store/provisioning requests and reviewed activation prerequisites through typed versioned interfaces and a useful human workbench. Actual identity/session creation, outbound enablement or provisioning effects require separately reviewed supported adapters, current human authority and independently provisioned access. Keep planning/preflight work available when those dependent contracts are missing. No checkbox or restored principal may bypass quarantine, billing debt, independent release controls or PMO/Finance/Engineering responsibilities.
+
+Actual provider credentials/access, owner/SOP evidence, production least privilege/SSO/TLS/security/load/UAT and larger/external archive variants remain separate. All122 process IDs and13 workflow families retain their current partial status.

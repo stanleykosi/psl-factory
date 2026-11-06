@@ -1,0 +1,199 @@
+{
+  "classification": "Supplemental engineering interfaces, no real appointment or native acceptance inferred",
+  "components": [
+    {
+      "id": "INT.adapter_readiness",
+      "parent_decision_id": "INT",
+      "schema_ref": "schema:psl/policy-component/INT.adapter_readiness/v1",
+      "subject_scope": "Exact case authenticated readiness evidence, not business approval",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "INT.provider_readiness",
+      "parent_decision_id": "INT",
+      "schema_ref": "schema:psl/policy-component/INT.provider_readiness/v1",
+      "subject_scope": "Exact case authenticated readiness evidence, not business approval",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "INT.agent_data",
+      "parent_decision_id": "INT",
+      "schema_ref": "schema:psl/policy-component/INT.agent_data/v1",
+      "subject_scope": "Exact case source/process/purpose reviewed private extraction, never business authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "INT.private_protection_readiness",
+      "parent_decision_id": "INT",
+      "schema_ref": "schema:psl/policy-component/INT.private_protection_readiness/v1",
+      "subject_scope": "Exact private restore v1 or export/file backup v2 capability inventory, independent of source publication readiness; changed versions require fresh affected reviews",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "INT.accepted_protection_readiness",
+      "parent_decision_id": "INT",
+      "schema_ref": "schema:psl/policy-component/INT.accepted_protection_readiness/v1",
+      "subject_scope": "Exact AF13 protection operator health/receipt inventory; independent finite capability proof, no recursive owner acceptance",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "integration.private_protection.probe",
+      "required_components": [
+        "INT.private_protection_readiness"
+      ]
+    },
+    {
+      "operation": "integration.accepted_protection.probe",
+      "required_components": [
+        "INT.accepted_protection_readiness"
+      ]
+    }
+  ]
+}

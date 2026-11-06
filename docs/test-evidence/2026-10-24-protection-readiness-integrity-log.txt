@@ -1,0 +1,87 @@
+{
+  "verified_at": "2026-10-24T08:09:54.661973+00:00",
+  "frozen_sources": 41,
+  "exact_processes_titles_partial_plan_rows": 122,
+  "families": 13,
+  "policy_interfaces": 102,
+  "supplements": 45,
+  "backlog_items": 46,
+  "preserved_main_tables": 266,
+  "schemas": {
+    "psl": {
+      "private_binding_uniqueness": 1,
+      "private_protection_guards": 6,
+      "workflow_migration": "0012_private_protection_boundaries",
+      "finance_migration": "0053_private_readiness_guards",
+      "private_lineage_triggers": 3,
+      "original_immutable_guards": 2,
+      "original_intent_guard": 1
+    },
+    "test_psl": {
+      "private_binding_uniqueness": 1,
+      "private_protection_guards": 6,
+      "workflow_migration": "0012_private_protection_boundaries",
+      "finance_migration": "0053_private_readiness_guards",
+      "private_lineage_triggers": 3,
+      "original_immutable_guards": 2,
+      "original_intent_guard": 1
+    }
+  },
+  "identical_guard_function_hashes": {
+    "psl": {
+      "psl_private_protection_binding": "b8ccf4006b15f941d095698a6708bfd86a031b1f160499df9c1e930312adfa06",
+      "psl_private_protection_observation": "61448b5d3b494107e0819ebcba695c6ba38e991d370685f9d7ba2c902322b91a",
+      "psl_private_protection_prior_history": "2349835b926815ceb4eaa24b0519a26c8cac32acd102ff0a0e8383a9f3ca6c45",
+      "psl_private_protection_probe": "f142245e480453883112e8e96470894fc460bade5ca88b3bb19d2533fa774021",
+      "psl_private_protection_source": "ad6b4f0ad792fcc9dad158718960277a416ab14227fcf13af8f886c281ca8b74",
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143"
+    },
+    "test_psl": {
+      "psl_private_protection_binding": "b8ccf4006b15f941d095698a6708bfd86a031b1f160499df9c1e930312adfa06",
+      "psl_private_protection_observation": "61448b5d3b494107e0819ebcba695c6ba38e991d370685f9d7ba2c902322b91a",
+      "psl_private_protection_prior_history": "2349835b926815ceb4eaa24b0519a26c8cac32acd102ff0a0e8383a9f3ca6c45",
+      "psl_private_protection_probe": "f142245e480453883112e8e96470894fc460bade5ca88b3bb19d2533fa774021",
+      "psl_private_protection_source": "ad6b4f0ad792fcc9dad158718960277a416ab14227fcf13af8f886c281ca8b74",
+      "psl_private_readiness_effect": "398bae0048dad824bb4b71a6d33160c45b78d1af42187d801e22355accb7f486",
+      "psl_private_readiness_plan": "fdbb48385227e87ff66bce076e19cc1ce040c3c3cdb547489fa0c91ea51c5143"
+    }
+  },
+  "main_private_operator_plans_jobs_artifacts_and_v2_policies": 0,
+  "main_new_packets": 0,
+  "main_new_private_acceptance_policies": 0,
+  "old_document_receipts": 16,
+  "pending_support_jobs": {
+    "3": "pending",
+    "6": "pending"
+  },
+  "source_fingerprints_matched": 852,
+  "runs": {
+    "2026-10-24-run-219-protection-readiness-baseline.txt": {
+      "tests": 2,
+      "seconds": 222.926,
+      "result": "OK"
+    },
+    "2026-10-24-run-220-private-protection-readiness.txt": {
+      "tests": 11,
+      "seconds": 1000.931,
+      "result": "FAILED (failures=1)"
+    },
+    "2026-10-24-run-221-private-protection-final.txt": {
+      "tests": 15,
+      "seconds": 1639.255,
+      "result": "OK"
+    },
+    "2026-10-24-run-222-protection-readiness-connected.txt": {
+      "tests": 90,
+      "seconds": 954.828,
+      "result": "OK"
+    }
+  },
+  "counts_overlap": true,
+  "private_protection_bindings_main": 0,
+  "real_owner_or_operational_acceptance": false,
+  "real_provider_evaluation": false,
+  "evidence_renewed": false,
+  "unrelated_jobs_drained": false
+}

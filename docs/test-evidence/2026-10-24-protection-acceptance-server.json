@@ -1,0 +1,17 @@
+{
+  "session_id": 68483,
+  "url": "http://127.0.0.1:8000/cases/5b533c39-910f-412c-9290-44ee69f0c9c9/validation/protection/",
+  "status": 302,
+  "unauthenticated_login_redirect": true,
+  "final_source_loaded": true,
+  "case_data_mutated": false,
+  "new_browser_demo": false,
+  "runtime_drill_db_ref": "psl_drill_operator_demo",
+  "readiness_database_revision": "fixture-v1",
+  "final_ui_source_loaded": true,
+  "server_pid": 22176,
+  "server_started_local": "2026-10-24 10:51:48",
+  "sole_listener_verified": true,
+  "old_server_pid": 3436,
+  "old_listener_stopped": true
+}

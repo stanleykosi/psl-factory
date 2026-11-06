@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PSL typed quantity and calculation result v0.4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "decimal_value",
+    "currency",
+    "unit",
+    "scale",
+    "entity_ref",
+    "period_ref",
+    "dimensions",
+    "rounding_policy_ref",
+    "rule_ref",
+    "input_refs",
+    "lineage_ref"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "present",
+        "missing",
+        "not_applicable",
+        "error"
+      ]
+    },
+    "decimal_value": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+    },
+    "currency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Z]{3}$"
+    },
+    "unit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scale": {
+      "type": "integer",
+      "minimum": -18,
+      "maximum": 18
+    },
+    "entity_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "period_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "rounding_policy_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "rule_ref": {
+      "$ref": "#/$defs/ref"
+    },
+    "input_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/ref"
+      }
+    },
+    "lineage_ref": {
+      "$ref": "#/$defs/ref"
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "content_hash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "status": {
+        "const": "present"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "decimal_value": {
+        "type": "string"
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "decimal_value": {
+        "type": "null"
+      }
+    }
+  }
+}

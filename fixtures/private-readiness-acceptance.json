@@ -1,0 +1,17 @@
+{
+  "classification": "Unset interface example; no actual principals or inventory appointed",
+  "rules": {
+    "allowed_levels": [
+      "definition",
+      "synthetic_implementation"
+    ],
+    "independent_tester": true,
+    "independent_acceptor": true,
+    "private_readiness": {
+      "inventory": [],
+      "freshness_seconds": null,
+      "receipt_requirement": null,
+      "independent_transport_acceptor": true
+    }
+  }
+}

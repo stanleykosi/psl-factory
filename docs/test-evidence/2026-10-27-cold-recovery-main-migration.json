@@ -1,0 +1,21 @@
+{
+  "plan": [
+    [
+      "workflows",
+      "0023_cold_recovery",
+      false
+    ],
+    [
+      "workflows",
+      "0024_cold_recovery_guards",
+      false
+    ],
+    [
+      "workflows",
+      "0025_cold_authorization_expression",
+      false
+    ]
+  ],
+  "applied": true,
+  "business_or_authority_rows_created": false
+}

@@ -1,0 +1,8 @@
+{
+  "path": "C:\\Python313\\python.exe",
+  "start_utc": "2026-11-03T18:26:43.8518260Z",
+  "id": 7084,
+  "all_intended_targets_checked": true,
+  "port": 8022,
+  "reason": "Reload versioned static asset and current template cache; same isolated database"
+}

@@ -1,0 +1,115 @@
+{
+  "source_run": 573,
+  "databases": [
+    {
+      "database": "psl",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_routing_ui_c87774ebaed7",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_invoice_recovery_ui_7747254cf467",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_review_authority_ui_f4ef78667cad",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_review_status_ui_82525e1a8333",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_review_retirement_ui_7036019b48ae",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_review_restore_ui_0c64ab3f2a4f",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_delegation_ui_7de03a500dbf",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    },
+    {
+      "database": "psl_factory_availability_ui_f599e39e4e5e",
+      "rowsets_unchanged": 329,
+      "indexes_unchanged": 1550,
+      "only_added_rows": "Exact two django_migrations records",
+      "only_function_changes": [
+        "psl_factory_identity",
+        "psl_factory_task_identity",
+        "psl_publication_factory_scope"
+      ],
+      "all_other_guards_exact": true
+    }
+  ],
+  "business_records_receipts_budgets_and_history_preserved": true,
+  "commands_replayed": false
+}

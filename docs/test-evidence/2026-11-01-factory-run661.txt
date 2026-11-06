@@ -1,0 +1,53 @@
+Using existing test database for alias 'default' ('test_psl')...
+Found 11 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying documents.0019_factory_rfp_scope... OK
+  Applying workflows.0061_rfp_exact_verification...test_idempotency_scope_exact_types_permission_and_sql_output_guards (tests.test_factory_rfp.FactoryRFPTests.test_idempotency_scope_exact_types_permission_and_sql_output_guards) ... ok
+test_intake_useful_agent_human_reviews_receipt_and_won_route_a (tests.test_factory_rfp.FactoryRFPTests.test_intake_useful_agent_human_reviews_receipt_and_won_route_a) ... ok
+test_lost_outcome_requires_declared_lessons_before_verified_archive (tests.test_factory_rfp.FactoryRFPTests.test_lost_outcome_requires_declared_lessons_before_verified_archive) ... ERROR
+test_primary_response_decision_uses_native_review_and_rejects_stale_csrf_and_revoked_grants (tests.test_factory_rfp.FactoryRFPTests.test_primary_response_decision_uses_native_review_and_rejects_stale_csrf_and_revoked_grants) ... ok
+test_return_requires_explicit_source_successor_and_fresh_native_decisions (tests.test_factory_rfp.FactoryRFPTests.test_return_requires_explicit_source_successor_and_fresh_native_decisions) ... ok
+test_uncertain_publication_reconciles_exact_receipts_before_cancellation (tests.test_factory_rfp.FactoryRFPTests.test_uncertain_publication_reconciles_exact_receipts_before_cancellation) ... FAIL
+test_unknown_inputs_get_useful_investigation_then_source_owned_correction (tests.test_factory_rfp.FactoryRFPTests.test_unknown_inputs_get_useful_investigation_then_source_owned_correction) ... ok
+test_withdrawn_execution_profile_preserves_current_native_human_response_review (tests.test_factory_rfp_recovery.FactoryRFPAuthorityBoundaryTests.test_withdrawn_execution_profile_preserves_current_native_human_response_review) ... ok
+test_withdrawn_source_author_holds_new_publication_without_creating_receipts (tests.test_factory_rfp_recovery.FactoryRFPAuthorityBoundaryTests.test_withdrawn_source_author_holds_new_publication_without_creating_receipts) ... ok
+test_two_workers_share_the_same_reservation_and_do_not_duplicate_response (tests.test_factory_rfp.FactoryRFPConcurrencyTests.test_two_workers_share_the_same_reservation_and_do_not_duplicate_response) ... ok
+test_expired_native_lease_recovers_committed_receipt_after_source_author_withdrawal (tests.test_factory_rfp_recovery.FactoryRFPCrashRecoveryTests.test_expired_native_lease_recovers_committed_receipt_after_source_author_withdrawal) ... ok
+
+======================================================================
+ERROR: test_lost_outcome_requires_declared_lessons_before_verified_archive (tests.test_factory_rfp.FactoryRFPTests.test_lost_outcome_requires_declared_lessons_before_verified_archive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_rfp.py", line 75, in test_lost_outcome_requires_declared_lessons_before_verified_archive
+    submission=RFPSubmission.objects.get(response=response)
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    raise self.model.DoesNotExist(
+        "%s matching query does not exist." % self.model._meta.object_name
+    )
+apps.pmo.rfp_models.RFPSubmission.DoesNotExist: RFPSubmission matching query does not exist.
+
+======================================================================
+FAIL: test_uncertain_publication_reconciles_exact_receipts_before_cancellation (tests.test_factory_rfp.FactoryRFPTests.test_uncertain_publication_reconciles_exact_receipts_before_cancellation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\tests\test_factory_rfp.py", line 125, in test_uncertain_publication_reconciles_exact_receipts_before_cancellation
+    self.assertTrue(factory.run_once(work.pk));work.refresh_from_db()
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 11 tests in 577.935s
+
+FAILED (failures=1, errors=1)
+Preserving test database for alias 'default' ('test_psl')...
+ OK
+System check identified no issues (0 silenced).

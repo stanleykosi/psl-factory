@@ -1,0 +1,20 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_selected_synthetic_implementation_needs_independent_tester_and_all_af13_scope (tests.test_private_readiness_acceptance.PrivateReadinessAcceptanceTests.test_selected_synthetic_implementation_needs_independent_tester_and_all_af13_scope) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 83.439s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

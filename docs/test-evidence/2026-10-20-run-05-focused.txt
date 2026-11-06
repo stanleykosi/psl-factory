@@ -1,0 +1,72 @@
+Creating test database for alias 'default' ('test_psl')...
+
+Found 22 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying core.0001_initial... OK
+  Applying agents.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying baas.0001_initial... OK
+  Applying policy.0001_initial... OK
+  Applying pmo.0001_initial... OK
+  Applying documents.0001_initial... OK
+  Applying core.0002_append_only_history... OK
+  Applying workflows.0001_initial... OK
+  Applying finance.0001_initial... OK
+  Applying workflows.0002_effect_identity... OK
+  Applying documents.0002_controlledreview_document_publication_publicationjob_and_more... OK
+  Applying workflows.0003_humantask_taskevent... OK
+  Applying documents.0003_immutable_controlled_documents... OK
+  Applying finance.0002_financialimport_importvalidation_invoicepreparation_and_more... OK
+  Applying finance.0003_immutable_intake... OK
+  Applying identity.0001_initial... OK
+  Applying pmo.0002_remove_decision_decision_subject_role_and_more... OK
+test_agent_has_cited_draft_and_independent_check_but_no_approval (tests.test_controlled_documents.ControlledDocumentTests.test_agent_has_cited_draft_and_independent_check_but_no_approval) ... ok
+test_agent_rejects_forged_citation_or_authority_and_rechecks_grant (tests.test_controlled_documents.ControlledDocumentTests.test_agent_rejects_forged_citation_or_authority_and_rechecks_grant) ... ok
+test_changed_pmo_baseline_holds_old_document (tests.test_controlled_documents.ControlledDocumentTests.test_changed_pmo_baseline_holds_old_document) ... ok
+test_changed_policy_snapshot_holds_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_changed_policy_snapshot_holds_delivery) ... ok
+test_client_template_cannot_configure_internal_note_leak (tests.test_controlled_documents.ControlledDocumentTests.test_client_template_cannot_configure_internal_note_leak) ... ok
+test_database_protects_document_history_and_task_identity (tests.test_controlled_documents.ControlledDocumentTests.test_database_protects_document_history_and_task_identity) ... ok
+test_delegation_is_explicit_scoped_and_rechecked_at_delivery (tests.test_controlled_documents.ControlledDocumentTests.test_delegation_is_explicit_scoped_and_rechecked_at_delivery) ... ok
+test_drafting_and_review_continue_without_publication_configuration (tests.test_controlled_documents.ControlledDocumentTests.test_drafting_and_review_continue_without_publication_configuration) ... ok
+test_duplicate_publication_and_stale_requests_do_not_mutate (tests.test_controlled_documents.ControlledDocumentTests.test_duplicate_publication_and_stale_requests_do_not_mutate) ... ok
+test_expired_fence_cannot_deliver_or_finalize (tests.test_controlled_documents.ControlledDocumentTests.test_expired_fence_cannot_deliver_or_finalize) ... ok
+test_invalid_policy_artifacts_are_rejected (tests.test_controlled_documents.ControlledDocumentTests.test_invalid_policy_artifacts_are_rejected) ... ok
+test_lookups_fail_closed_and_operator_can_retry_or_cancel (tests.test_controlled_documents.ControlledDocumentTests.test_lookups_fail_closed_and_operator_can_retry_or_cancel) ... ok
+test_missing_sections_and_citations_hold_only_review_request (tests.test_controlled_documents.ControlledDocumentTests.test_missing_sections_and_citations_hold_only_review_request) ... ok
+test_new_revision_obsoletes_open_wait_and_held_publication (tests.test_controlled_documents.ControlledDocumentTests.test_new_revision_obsoletes_open_wait_and_held_publication) ... ok
+test_publication_independent_from_hypercare_and_payment_policy (tests.test_controlled_documents.ControlledDocumentTests.test_publication_independent_from_hypercare_and_payment_policy) ... ok
+test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case (tests.test_controlled_documents.ControlledDocumentTests.test_recipient_cannot_read_internal_workbench_and_staff_cannot_cross_case) ... ok
+test_reject_and_withdraw_are_configured_distinct_terminal_events (tests.test_controlled_documents.ControlledDocumentTests.test_reject_and_withdraw_are_configured_distinct_terminal_events) ... ok
+test_return_needs_configured_authority_then_revision_gets_new_review (tests.test_controlled_documents.ControlledDocumentTests.test_return_needs_configured_authority_then_revision_gets_new_review) ... ok
+test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox (tests.test_controlled_documents.ControlledDocumentTests.test_revoked_selected_recipient_prevents_new_effect_and_hides_old_inbox) ... ok
+test_staff_draft_review_publication_and_recipient_projection (tests.test_controlled_documents.ControlledDocumentTests.test_staff_draft_review_publication_and_recipient_projection) ... ok
+test_timeout_after_accept_is_reconciled_before_revoked_authority (tests.test_controlled_documents.ControlledDocumentTests.test_timeout_after_accept_is_reconciled_before_revoked_authority) ... ok
+test_publication_worker_recovers_after_separate_process_exit (tests.test_controlled_documents.PublicationProcessTests.test_publication_worker_recovers_after_separate_process_exit) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 11.919s
+
+OK
+Destroying test database for alias 'default' ('test_psl')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

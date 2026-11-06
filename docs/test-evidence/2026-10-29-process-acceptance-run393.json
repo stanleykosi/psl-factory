@@ -1,0 +1,19 @@
+{
+  "run": 393,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_shared_workbench.SharedWorkbenchTests.test_search_scope_keyset_cursor_binding_active_user_and_escaping",
+    "tests.test_shared_workbench.SharedWorkbenchTests.test_project_references_require_current_engagement_read_and_case_read",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-29-run-393-process-acceptance.txt",
+  "started_at": "2026-10-29T18:36:34.314397+00:00",
+  "status": "finished",
+  "returncode": 0,
+  "elapsed_seconds": 28.381
+}

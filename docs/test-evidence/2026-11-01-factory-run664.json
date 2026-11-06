@@ -1,0 +1,26 @@
+{
+  "run": 664,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_rfp_historical_outcome",
+    "tests.test_rfp_outcome_policy",
+    "tests.test_factory_rfp_historical_outcome",
+    "tests.test_factory_rfp_outcome_console",
+    "tests.test_factory_rfp_operator_recovery",
+    "tests.test_factory_rfp_canceled_publication",
+    "tests.test_factory_rfp_console_flow",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-05T15:31:50.575743+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run664.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 758.594
+}

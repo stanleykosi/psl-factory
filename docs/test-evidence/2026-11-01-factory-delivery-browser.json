@@ -1,0 +1,91 @@
+{
+  "classification": "Synthetic browser integration proof of native release-evidence readiness, not full process/live deployment/source authenticity or independent-human UAT",
+  "context": {
+    "database": "psl_factory_delivery_ui_a31fd74f85e4",
+    "case": "4528c6e7-864e-4650-b2a8-ad37a232ef1b",
+    "actor": "human",
+    "work": 381,
+    "dossier": 129,
+    "candidate": 530,
+    "head": 97815,
+    "profile": 59713,
+    "evidence": {
+      "requirements": 97806,
+      "engineering_estimate": 97807,
+      "security_estimate": 97808,
+      "plan": 97809,
+      "costing": 97810,
+      "sow": 97811,
+      "signature": 97812,
+      "completion": 97813,
+      "policy_decision": 97814
+    },
+    "synthetic": true,
+    "fixture": "tests.test_factory_delivery.setup plus synthetic source adapter receipts; new actor created with tests.helpers.setup_case fixture password",
+    "planning_decision_recorded": false,
+    "external_source_authenticity": false
+  },
+  "source_snapshot": "docs/test-evidence/2026-11-01-factory-run426-source.json",
+  "source_sha256": "00737bb695c332b00183d21d08e726fadc9444da6d4e7b5967d7bb9b712f1b67",
+  "journey": [
+    "Primary queue to delivery detail",
+    "Agent investigated current gates and waited for Planning exit",
+    "Inspected exact plan/source references; native evidence selector and keyboard Planning decision",
+    "Agent waited for actual kickoff and GLPI references",
+    "Explicit synthetic native source observations supplied after the browser decision",
+    "Agent prepared and verified the native release-evidence record",
+    "Narrow verified queue, keyboard search and retained work context"
+  ],
+  "actual_output": {
+    "head": 97815,
+    "dossier": 129,
+    "release_ready": 817,
+    "verified": true,
+    "verification_scope": "synthetic_native_release_evidence_readiness",
+    "deployment_authorized": false,
+    "deployment_dispatched": false,
+    "financial_release_granted": false,
+    "external_authenticity_verified": false
+  },
+  "native_record_counts": {
+    "planning_decision": 1,
+    "kickoff": 1,
+    "glpi_request": 1,
+    "release_ready": 1,
+    "release_outcome": 0
+  },
+  "source_verifications": 6,
+  "gate_verifications": 8,
+  "budget_used": 600,
+  "original_budget_limit": 20000,
+  "invoices": 0,
+  "parallel_factory_reviews": 0,
+  "source_observations": "docs/test-evidence/2026-11-01-factory-delivery-source-observations.json",
+  "fixture_limits": [
+    "Intake, signed baseline, execution profile and synthetic source receipts were provisioned through fixture services",
+    "Source authenticity/real GLPI/QA/UAT/Engineering authority is not established by synthetic adapters",
+    "Browser Planning reviewer is a configured synthetic principal; not independent-human UAT"
+  ],
+  "tool_notes": [
+    "Playwright evidence-label selector found no match; inspected the native selector and chose its actual Plan option",
+    "Focus-emulation timeout occurred after successful final action; native AX showed verified output and the POST was not repeated",
+    "Raw prerequisite wording observed before final presentation correction; original screenshots are retained as historical source426 evidence"
+  ],
+  "narrow_viewport": {
+    "width": 390,
+    "height": 844,
+    "document_width": 375,
+    "client_width": 375,
+    "document_overflow": false
+  },
+  "viewport_reset": true,
+  "screenshots": {
+    "docs/test-evidence/2026-11-01-factory-delivery-planning-review.jpg": "6d406050f3e592cb43a96e9bfcf60fb1bbbedd457c65d834bb42ef5148a534fa",
+    "docs/test-evidence/2026-11-01-factory-delivery-waiting.jpg": "ac22f43371846467011f9e85a3ee52ea3a99219151e811fc525a529433e958e7",
+    "docs/test-evidence/2026-11-01-factory-delivery-verified-desktop.jpg": "3a33c8a8a90a042ddbe13c8f9b89f5cee952867f63c728207c345ece96d89c17",
+    "docs/test-evidence/2026-11-01-factory-delivery-verified-narrow.jpg": "9362420a57f13f74072a3732c9a3e1c9d8f8617387c42e6d30f4a86fa7693a75",
+    "docs/test-evidence/2026-11-01-factory-delivery-narrow-context.jpg": "735be99a82f42e407b45729015bbe666dde564ce0dd3c33a8eaf36f699d5e65a"
+  },
+  "main_business_data_changed": false,
+  "live_provider": false
+}

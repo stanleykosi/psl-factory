@@ -1,0 +1,6 @@
+{
+  "database": "psl_factory_review_retirement_ui_7036019b48ae",
+  "returncode": 0,
+  "stdout": "Operations to perform:\n  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows\nRunning migrations:\n  Applying workflows.0056_factory_planning_recovery... OK\n  Applying workflows.0057_planning_recovery_guards... OK\n  Applying workflows.0058_planning_recovery_authority... OK\n",
+  "stderr": ""
+}

@@ -1,0 +1,22 @@
+{
+  "run": 597,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_human_independence.IndependentResponsibilityTests",
+    "tests.test_factory_human_independence.IndependentResponsibilityConcurrencyTests",
+    "tests.test_factory_console",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-04T13:21:49.245648+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run597.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 1,
+  "elapsed_seconds": 16.165
+}

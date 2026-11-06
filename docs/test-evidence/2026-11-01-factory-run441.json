@@ -1,0 +1,21 @@
+{
+  "run": 441,
+  "command": [
+    "C:\\Users\\USER\\Desktop\\psl-agent build\\.venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_factory_current_heads.FactoryCurrentHeadTests.test_long_lived_native_history_qualifies_current_observations_but_never_falls_back_after_successor",
+    "tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context",
+    "--failfast",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "started_at": "2026-11-02T07:48:59.190786+00:00",
+  "log": "docs/test-evidence/2026-11-01-factory-run441.txt",
+  "status": "finished",
+  "database": "test_psl; PostgreSQL127.0.0.1:55432",
+  "returncode": 0,
+  "elapsed_seconds": 133.119
+}

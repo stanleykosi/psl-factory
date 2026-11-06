@@ -1,0 +1,23 @@
+{
+  "classification": "Actual local browser inspection of synthetic walkthrough; no operational acceptance",
+  "browser_id": "2",
+  "tab_id": "2",
+  "principal": "studio-demo",
+  "case": "2d5576d8-10b7-4ff8-ba52-caa58c5fb3b1",
+  "observed": [
+    "Current assessment 3: documentary checks and independent readiness reviews current; native migration execution remains unverified",
+    "Earlier unknown restore assessment 2 and historical assessment 1 remain visible and require reassessment",
+    "AF13 package 7: migration documentary readiness reviewed, meaning/expectations approved, operational acceptance pending",
+    "Read-only viewer has no migration or AF13 decision/configuration forms",
+    "Unconfigured case d77a8c5d-f51e-4c35-af04-243b9d139b2a retains plan 2 with expected count unknown and no assessments"
+  ],
+  "screenshots": [
+    "docs/test-evidence/2026-10-22-migration-workbench.png",
+    "docs/test-evidence/2026-10-22-migration-af13.png",
+    "docs/test-evidence/2026-10-22-migration-unconfigured.png"
+  ],
+  "native_inventory_read": "Actual bounded PostgreSQL metadata read; no evidence bodies",
+  "migration_executed": false,
+  "restore_executed": false,
+  "handoff": "approvalsTab on migration workbench"
+}

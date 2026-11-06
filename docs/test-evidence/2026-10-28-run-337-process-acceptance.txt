@@ -1,0 +1,64 @@
+Using existing test database for alias 'default' ('test_psl')...
+test_actual_pmo_decisions_pin_local_policy_and_revoked_origin_holds_signature_only (tests.test_policy_scopes.PolicyScopeTests.test_actual_pmo_decisions_pin_local_policy_and_revoked_origin_holds_signature_only) ... ok
+test_archived_scope_history_cannot_restore_authority (tests.test_policy_scopes.PolicyScopeTests.test_archived_scope_history_cannot_restore_authority) ... ok
+test_binding_protocol_is_finite_closed_and_scalar (tests.test_policy_scopes.PolicyScopeTests.test_binding_protocol_is_finite_closed_and_scalar) ... ok
+test_committed_uncertain_effect_reconciles_after_scope_revocation (tests.test_policy_scopes.PolicyScopeTests.test_committed_uncertain_effect_reconciles_after_scope_revocation) ... ok
+test_current_source_target_access_and_classification (tests.test_policy_scopes.PolicyScopeTests.test_current_source_target_access_and_classification) ... ok
+test_explicit_application_preserves_local_fk_and_narrow_holds (tests.test_policy_scopes.PolicyScopeTests.test_explicit_application_preserves_local_fk_and_narrow_holds) ... ok
+test_four_scope_identities_and_no_cross_case_precedence (tests.test_policy_scopes.PolicyScopeTests.test_four_scope_identities_and_no_cross_case_precedence) ... ok
+test_invalid_scope_and_unrecorded_contract_rejected (tests.test_policy_scopes.PolicyScopeTests.test_invalid_scope_and_unrecorded_contract_rejected) ... ok
+test_new_drafts_do_not_displace_published_source_and_stale_draft_cannot_publish (tests.test_policy_scopes.PolicyScopeTests.test_new_drafts_do_not_displace_published_source_and_stale_draft_cannot_publish) ... ok
+test_postgresql_immutable_history_and_edge_guards (tests.test_policy_scopes.PolicyScopeTests.test_postgresql_immutable_history_and_edge_guards) ... ok
+test_registered_reference_binding_revalidates_real_target_schema (tests.test_policy_scopes.PolicyScopeTests.test_registered_reference_binding_revalidates_real_target_schema) ... ok
+test_revoked_superseded_expired_and_explicit_local_successor (tests.test_policy_scopes.PolicyScopeTests.test_revoked_superseded_expired_and_explicit_local_successor) ... ok
+test_source_lifecycle_staleness_and_activation_rechecks_origin (tests.test_policy_scopes.PolicyScopeTests.test_source_lifecycle_staleness_and_activation_rechecks_origin) ... ok
+test_ui_csrf_authority_errors_and_bounded_agent (tests.test_policy_scopes.PolicyScopeTests.test_ui_csrf_authority_errors_and_bounded_agent) ... ok
+test_admin_flag_does_not_grant_record_access (tests.test_application.ApplicationTests.test_admin_flag_does_not_grant_record_access) ... ok
+test_agent_rejects_uncited_output_and_cross_scope_read (tests.test_application.ApplicationTests.test_agent_rejects_uncited_output_and_cross_scope_read) ... ok
+test_agent_source_instructions_are_cited_data_only (tests.test_application.ApplicationTests.test_agent_source_instructions_are_cited_data_only) ... ok
+test_all_122_original_ids_visible_in_coverage (tests.test_application.ApplicationTests.test_all_122_original_ids_visible_in_coverage) ... ok
+test_all_components_accept_drafts_and_reject_invalid_activation (tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation) ... ok
+test_cost_revision_cannot_reuse_decisions (tests.test_application.ApplicationTests.test_cost_revision_cannot_reuse_decisions) ... ok
+test_cross_case_evidence_cannot_form_baseline (tests.test_application.ApplicationTests.test_cross_case_evidence_cannot_form_baseline) ... ok
+test_csrf_and_template_escaping (tests.test_application.ApplicationTests.test_csrf_and_template_escaping) ... ok
+test_database_blocks_history_rewrites_even_via_queryset (tests.test_application.ApplicationTests.test_database_blocks_history_rewrites_even_via_queryset) ... ok
+test_duplicate_milestone_has_one_outbox_intent (tests.test_application.ApplicationTests.test_duplicate_milestone_has_one_outbox_intent) ... ok
+test_expired_worker_cannot_finish_after_reclaim (tests.test_application.ApplicationTests.test_expired_worker_cannot_finish_after_reclaim) ... ok
+test_human_costing_order_and_separate_review (tests.test_application.ApplicationTests.test_human_costing_order_and_separate_review) ... ok
+test_lookup_failure_does_not_dispatch (tests.test_application.ApplicationTests.test_lookup_failure_does_not_dispatch) ... ok
+test_no_signature_before_plan_and_cost_decisions (tests.test_application.ApplicationTests.test_no_signature_before_plan_and_cost_decisions) ... ok
+test_policy_expiry_invalid_timezone_and_synthetic_isolation (tests.test_application.ApplicationTests.test_policy_expiry_invalid_timezone_and_synthetic_isolation) ... ok
+test_policy_missing_holds_only_dependent_actions (tests.test_application.ApplicationTests.test_policy_missing_holds_only_dependent_actions) ... ok
+test_policy_partial_activation_stale_revoke_and_version_history (tests.test_application.ApplicationTests.test_policy_partial_activation_stale_revoke_and_version_history) ... ok
+test_real_staff_to_finance_and_agent_path (tests.test_application.ApplicationTests.test_real_staff_to_finance_and_agent_path) ... ok
+test_requires_postgresql (tests.test_application.ApplicationTests.test_requires_postgresql) ... ok
+test_reserved_effect_payload_and_confirmed_receipt_are_immutable (tests.test_application.ApplicationTests.test_reserved_effect_payload_and_confirmed_receipt_are_immutable) ... ok
+test_review_binds_exact_version_and_does_not_review_next_revision (tests.test_application.ApplicationTests.test_review_binds_exact_version_and_does_not_review_next_revision) ... ok
+test_revoked_authority_invalidates_unsigned_decision_use (tests.test_application.ApplicationTests.test_revoked_authority_invalidates_unsigned_decision_use) ... ok
+test_role_text_and_admin_cannot_forge_approval (tests.test_application.ApplicationTests.test_role_text_and_admin_cannot_forge_approval) ... ok
+test_stale_command_has_no_mutation (tests.test_application.ApplicationTests.test_stale_command_has_no_mutation) ... ok
+test_superseded_role_policy_can_be_reapproved_without_rewriting_history (tests.test_application.ApplicationTests.test_superseded_role_policy_can_be_reapproved_without_rewriting_history) ... ok
+test_support_response_resolution_reopen_preserve_history (tests.test_application.ApplicationTests.test_support_response_resolution_reopen_preserve_history) ... ok
+test_unknown_external_result_is_reconciled_without_resend (tests.test_application.ApplicationTests.test_unknown_external_result_is_reconciled_without_resend) ... ok
+test_worker_rechecks_revoked_grant (tests.test_application.ApplicationTests.test_worker_rechecks_revoked_grant) ... ok
+test_revocation_waits_for_runtime_transaction_boundary (tests.test_policy_scopes.ScopeConcurrencyTests.test_revocation_waits_for_runtime_transaction_boundary) ... ok
+test_two_applications_serialize_local_revisions (tests.test_policy_scopes.ScopeConcurrencyTests.test_two_applications_serialize_local_revisions) ... ok
+test_staff_handoff_survives_worker_process_exit_and_restart (tests.test_application.WorkerConcurrencyTests.test_staff_handoff_survives_worker_process_exit_and_restart) ... ok
+test_two_workers_claim_one_intent_once (tests.test_application.WorkerConcurrencyTests.test_two_workers_claim_one_intent_once) ... ok
+test_duplicate_reservations_workers_and_independent_recovered_review (tests.test_cold_recovery.ColdRecoveryTests.test_duplicate_reservations_workers_and_independent_recovered_review) ... ok
+
+----------------------------------------------------------------------
+Ran 47 tests in 318.272s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+Found 47 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

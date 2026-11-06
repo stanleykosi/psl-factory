@@ -1,0 +1,21 @@
+{
+  "run": 305,
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "manage.py",
+    "test",
+    "tests.test_finance_followup_intake",
+    "tests.test_followup_transport_recovery.FollowupTransportRecoveryTests",
+    "tests.test_followup_successors",
+    "tests.test_application.ApplicationTests.test_all_components_accept_drafts_and_reject_invalid_activation",
+    "--keepdb",
+    "--noinput",
+    "--verbosity",
+    "2"
+  ],
+  "log": "docs\\test-evidence\\2026-10-28-run-305-followup-transport.txt",
+  "started_at": "2026-10-28T11:14:38.837617+00:00",
+  "status": "finished",
+  "returncode": 1,
+  "elapsed_seconds": 720.213
+}

@@ -1,0 +1,61 @@
+{
+  "case": "65272f3a-a207-42e1-9763-5c85774ac0e4",
+  "principals": {
+    "actor": 13,
+    "reviewer": 15,
+    "recipient": 14
+  },
+  "initial_register": 7,
+  "ambiguous_register": 8,
+  "held_date_schedule": 9,
+  "initial_schedule": 10,
+  "corrected_register": 11,
+  "corrected_schedule": 12,
+  "unknown_register": 13,
+  "unknown_schedule": 14,
+  "AF13_package": 4,
+  "Finance_mapping": 13,
+  "agent": 44,
+  "report": {
+    "work_id": 12,
+    "review_id": 12,
+    "sha256": "b0a4345b645b80ddb21404f2dbed60680dab82978fa501a1d2b36ac9d5eaf556",
+    "result": {
+      "status": "ready",
+      "findings": [],
+      "rows": [
+        {
+          "asset_id": "A1",
+          "category": "equipment",
+          "closing_cost": "1000",
+          "charge": "50.00",
+          "closing_accumulated": "500.00",
+          "book_value": "500.00",
+          "event_refs": [],
+          "findings": []
+        }
+      ],
+      "totals": {
+        "cost": "1000",
+        "accumulated": "500.00",
+        "book_value": "500.00",
+        "charge": "50.00"
+      },
+      "scope": {
+        "entity": "synthetic-company",
+        "currency": "NGN",
+        "unit": "major_currency",
+        "period_start": "2026-10-01",
+        "period_end": "2026-10-20",
+        "label_as_of": "2026-03-31"
+      },
+      "coverage": "selected_supplied_population",
+      "native_source_verified": false,
+      "ledger_posted": false
+    },
+    "native_source_verified": false,
+    "ledger_posted": false
+  },
+  "native_verified": false,
+  "ledger_posted": false
+}

@@ -1,0 +1,21 @@
+Using existing test database for alias 'default' ('test_psl')...
+
+test_exact_backup_not_found_and_database_export_found_closed_scope (tests.test_private_file_readiness.PrivateFileReadinessTests.test_exact_backup_not_found_and_database_export_found_closed_scope) ... ok
+test_v2_file_inventory_preserves_finance_source_and_requires_affected_restore_reassessment (tests.test_private_file_readiness.PrivateFileReadinessTests.test_v2_file_inventory_preserves_finance_source_and_requires_affected_restore_reassessment) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 554.436s
+
+OK
+Preserving test database for alias 'default' ('test_psl')...
+
+Found 2 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

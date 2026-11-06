@@ -1,0 +1,45 @@
+Using existing test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance) ... ERROR
+
+======================================================================
+ERROR: test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance (tests.test_factory_operational_invoice.OperationalInvoiceTests.test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\tests\test_factory_operational_invoice.py", line 13, in test_internal_coordination_uses_native_billing_investigation_then_waits_for_finance
+    f=fixture(username='operational-shaped-invoice-worker',synthetic=False,provider='governed_factory_v1')
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\tests\factory_helpers.py", line 15, in fixture
+    a,c=setup_case(username=username,synthetic=synthetic);e=signed(a,c)
+                                                            ~~~~~~^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\tests\helpers.py", line 72, in signed
+    decide(actor,case.pk,role,rev(case))
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\apps\pmo\services.py", line 75, in decide
+    target, policy = guard_decide(actor,case,role)
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\apps\pmo\services.py", line 51, in guard_decide
+    policy = role_policy(actor, case, role)
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\apps\policy\services.py", line 302, in role_policy
+    assert_assigned(actor,case,reference_values(result.configuration),role)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\psl-agent build\.runtime\source616\apps\policy\role_assignments.py", line 77, in assert_assigned
+    if result['eligibility']=='owner_eligibility_unconfigured':raise ValidationError('Operational dual-role eligibility is not configured for this exact bundle')
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.core.exceptions.ValidationError: ['Operational dual-role eligibility is not configured for this exact bundle']
+
+----------------------------------------------------------------------
+Ran 1 test in 2.548s
+
+FAILED (errors=1)
+Preserving test database for alias 'default' ('test_psl_factory_execution_contention_c19aaafd118a')...
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: agents, auth, baas, contenttypes, core, documents, finance, identity, pmo, policy, sessions, workflows
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  No migrations to apply.
+System check identified no issues (0 silenced).

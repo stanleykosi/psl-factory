@@ -1,0 +1,4149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:psl:v05:billing-result",
+  "$defs": {
+    "Money": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "basis_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "amount",
+        "currency",
+        "basis_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Stage": {
+      "type": "object",
+      "properties": {
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "signed_sow",
+            "uat",
+            "completion"
+          ]
+        },
+        "trigger_rule_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_terms_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "stage_id",
+        "kind",
+        "trigger_rule_ref",
+        "amount",
+        "due_terms_ref",
+        "contract_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Schedule": {
+      "type": "object",
+      "properties": {
+        "schedule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "contract_value": {
+          "$ref": "#/$defs/Money"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "configuration_incomplete",
+            "active",
+            "superseded",
+            "cancelled"
+          ]
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approval_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schedule_id",
+        "version",
+        "contract_ref",
+        "contract_version",
+        "currency",
+        "contract_value",
+        "stages",
+        "state",
+        "effective_at",
+        "approval_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Milestone": {
+      "type": "object",
+      "properties": {
+        "milestone_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "evidence_pending",
+            "complete",
+            "disputed",
+            "superseded"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pmo_actor_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "milestone_id",
+        "project_ref",
+        "schedule_ref",
+        "stage_id",
+        "state",
+        "version",
+        "completed_at",
+        "pmo_actor_ref",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Invoice": {
+      "type": "object",
+      "properties": {
+        "invoice_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obligation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corrects_invoice_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_state": {
+          "type": "string",
+          "enum": [
+            "none",
+            "pending",
+            "applied",
+            "outcome_unknown"
+          ]
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schedule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "milestone_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "document_version_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready",
+            "issuance_pending",
+            "issued",
+            "outcome_unknown",
+            "superseded",
+            "voided"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "external_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delivery_state": {
+          "type": "string",
+          "enum": [
+            "not_sent",
+            "pending",
+            "delivered",
+            "failed",
+            "outcome_unknown"
+          ]
+        },
+        "settlement_state": {
+          "type": "string",
+          "enum": [
+            "unpaid",
+            "partially_settled",
+            "settled",
+            "adjustment_review"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "invoice_id",
+        "obligation_key",
+        "corrects_invoice_ref",
+        "correction_state",
+        "contract_ref",
+        "schedule_ref",
+        "stage_id",
+        "milestone_version_ref",
+        "amount",
+        "document_version_ref",
+        "state",
+        "version",
+        "external_ref",
+        "delivery_state",
+        "settlement_state",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Receipt": {
+      "type": "object",
+      "properties": {
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cash_lot_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_of_version": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "customer_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verification_state": {
+          "type": "string",
+          "enum": [
+            "reported",
+            "verification_pending",
+            "verified",
+            "rejected",
+            "reversed"
+          ]
+        },
+        "allocation_state": {
+          "type": "string",
+          "enum": [
+            "unallocated",
+            "partially_allocated",
+            "fully_allocated"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_system_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external_transaction_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verification_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "receipt_id",
+        "cash_lot_ref",
+        "correction_of_version",
+        "customer_ref",
+        "contract_ref",
+        "amount",
+        "received_at",
+        "verification_state",
+        "allocation_state",
+        "version",
+        "source_system_ref",
+        "external_transaction_ref",
+        "verification_evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Allocation": {
+      "type": "object",
+      "properties": {
+        "allocation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "invoice_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "applied",
+            "reversed"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "finance_actor_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reversal_of": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "allocation_id",
+        "receipt_ref",
+        "receipt_version",
+        "invoice_ref",
+        "contract_ref",
+        "amount",
+        "state",
+        "version",
+        "finance_actor_ref",
+        "policy_ref",
+        "reversal_of",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Adjustment": {
+      "type": "object",
+      "properties": {
+        "adjustment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "credit_note",
+            "debit_note",
+            "receipt_reversal",
+            "allocation_reversal"
+          ]
+        },
+        "subject_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "authorized",
+            "applied",
+            "rejected"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authority_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "external_document_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "adjustment_id",
+        "kind",
+        "subject_ref",
+        "amount",
+        "reason",
+        "state",
+        "version",
+        "authority_evidence_refs",
+        "external_document_ref"
+      ],
+      "additionalProperties": false
+    },
+    "Assessment": {
+      "type": "object",
+      "properties": {
+        "assessment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "policy_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "qualifying_paid": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "threshold_percent": {
+          "const": "80"
+        },
+        "expectation_status": {
+          "type": "string",
+          "enum": [
+            "below_expectation",
+            "meets_expectation",
+            "unknown"
+          ]
+        },
+        "deployment_policy_status": {
+          "type": "string",
+          "enum": [
+            "unresolved",
+            "configured_block",
+            "configured_exception",
+            "configured_advisory"
+          ]
+        },
+        "release_authorized": {
+          "const": false
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "assessment_id",
+        "contract_ref",
+        "as_of",
+        "source_versions",
+        "policy_ref",
+        "qualifying_paid",
+        "denominator",
+        "threshold_percent",
+        "expectation_status",
+        "deployment_policy_status",
+        "release_authorized",
+        "gaps"
+      ],
+      "additionalProperties": false
+    },
+    "Balance": {
+      "type": "object",
+      "properties": {
+        "snapshot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "source_versions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "issued_invoice_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_credit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_debit_total": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cash_allocated_to_invoices": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoice_receivable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verified_cash_assigned_to_contract": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unallocated_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contract_value": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "remaining_contract_cash_target": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "excess_contract_cash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "computation_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "valid",
+            "blocked_missing_data",
+            "requires_adjustment_review"
+          ]
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "contract_ref",
+        "as_of",
+        "currency",
+        "source_versions",
+        "issued_invoice_total",
+        "invoice_credit_total",
+        "invoice_debit_total",
+        "cash_allocated_to_invoices",
+        "invoice_receivable",
+        "verified_cash_assigned_to_contract",
+        "unallocated_contract_cash",
+        "contract_value",
+        "remaining_contract_cash_target",
+        "excess_contract_cash",
+        "computation_rule_ref",
+        "status"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "schedule.record"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "schedule_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "configuration_incomplete"
+                  ]
+                }
+              },
+              "required": [
+                "schedule_ref",
+                "state"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "schedule_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "configuration_incomplete"
+                    ]
+                  }
+                },
+                "required": [
+                  "schedule_ref",
+                  "state"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "milestone.complete"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "milestone_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "finance_handoff_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "milestone_version_ref",
+                "finance_handoff_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "milestone_version_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "finance_handoff_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "milestone_version_ref",
+                  "finance_handoff_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "milestone.revise"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "new_milestone_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_invoice_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "new_milestone_version_ref",
+                "affected_invoice_refs"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "new_milestone_version_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "affected_invoice_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 0
+                  }
+                },
+                "required": [
+                  "new_milestone_version_ref",
+                  "affected_invoice_refs"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "invoice.prepare"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "invoice_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "validation_state": {
+                  "type": "string",
+                  "enum": [
+                    "ready",
+                    "draft"
+                  ]
+                }
+              },
+              "required": [
+                "invoice_ref",
+                "validation_state"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "invoice_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "validation_state": {
+                    "type": "string",
+                    "enum": [
+                      "ready",
+                      "draft"
+                    ]
+                  }
+                },
+                "required": [
+                  "invoice_ref",
+                  "validation_state"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "invoice.issue"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "issuance_state": {
+                  "type": "string",
+                  "enum": [
+                    "issuance_pending",
+                    "issued",
+                    "outcome_unknown"
+                  ]
+                }
+              },
+              "required": [
+                "operation_ref",
+                "issuance_state"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "operation_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "issuance_state": {
+                    "type": "string",
+                    "enum": [
+                      "issuance_pending",
+                      "issued",
+                      "outcome_unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "operation_ref",
+                  "issuance_state"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "invoice.reconcile"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "invoice_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "resolved_state": {
+                  "type": "string",
+                  "enum": [
+                    "issued",
+                    "ready",
+                    "outcome_unknown"
+                  ]
+                }
+              },
+              "required": [
+                "invoice_ref",
+                "resolved_state"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "invoice_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "resolved_state": {
+                    "type": "string",
+                    "enum": [
+                      "issued",
+                      "ready",
+                      "outcome_unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "invoice_ref",
+                  "resolved_state"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "invoice.delivery_record"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "delivery_receipt_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "delivery_receipt_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "delivery_receipt_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "delivery_receipt_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "receipt.record"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "receipt_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "verification_state": {
+                  "type": "string",
+                  "enum": [
+                    "reported",
+                    "verification_pending"
+                  ]
+                }
+              },
+              "required": [
+                "receipt_ref",
+                "verification_state"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "receipt_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "verification_state": {
+                    "type": "string",
+                    "enum": [
+                      "reported",
+                      "verification_pending"
+                    ]
+                  }
+                },
+                "required": [
+                  "receipt_ref",
+                  "verification_state"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "receipt.verify"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "verified_receipt_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "verified_receipt_version_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "verified_receipt_version_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "verified_receipt_version_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "receipt.assign"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "assigned_receipt_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "assigned_receipt_version_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "assigned_receipt_version_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "assigned_receipt_version_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "allocation.apply"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "allocation_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "balance_snapshot_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "allocation_ref",
+                "balance_snapshot_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "allocation_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "balance_snapshot_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "allocation_ref",
+                  "balance_snapshot_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "adjustment.record"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "adjustment_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_record_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "adjustment_ref",
+                "affected_record_refs"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "adjustment_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "affected_record_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "adjustment_ref",
+                  "affected_record_refs"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "allocation.reverse"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "reversal_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "balance_snapshot_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "reversal_ref",
+                "balance_snapshot_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "reversal_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "balance_snapshot_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "reversal_ref",
+                  "balance_snapshot_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "balance.compute"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "balance": {
+                  "$ref": "#/$defs/Balance"
+                }
+              },
+              "required": [
+                "balance"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "balance": {
+                    "$ref": "#/$defs/Balance"
+                  }
+                },
+                "required": [
+                  "balance"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "deployment.assess"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "assessment": {
+                  "$ref": "#/$defs/Assessment"
+                }
+              },
+              "required": [
+                "assessment"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "assessment": {
+                    "$ref": "#/$defs/Assessment"
+                  }
+                },
+                "required": [
+                  "assessment"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "schedule.revise"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "new_schedule_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "superseded_schedule_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_invoice_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "new_schedule_ref",
+                "superseded_schedule_ref",
+                "affected_invoice_refs"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "new_schedule_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "superseded_schedule_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "affected_invoice_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 0
+                  }
+                },
+                "required": [
+                  "new_schedule_ref",
+                  "superseded_schedule_ref",
+                  "affected_invoice_refs"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "schedule.cancel"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "cancellation_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_invoice_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "cancellation_ref",
+                "affected_invoice_refs"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "cancellation_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "affected_invoice_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 0
+                  }
+                },
+                "required": [
+                  "cancellation_ref",
+                  "affected_invoice_refs"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "invoice.cancel"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "resolved_state": {
+                  "type": "string",
+                  "enum": [
+                    "voided",
+                    "outcome_unknown",
+                    "issued"
+                  ]
+                },
+                "correction_required": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "operation_ref",
+                "resolved_state",
+                "correction_required"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "operation_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "resolved_state": {
+                    "type": "string",
+                    "enum": [
+                      "voided",
+                      "outcome_unknown",
+                      "issued"
+                    ]
+                  },
+                  "correction_required": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "operation_ref",
+                  "resolved_state",
+                  "correction_required"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "invoice.correct"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "correction_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "invoice_state": {
+                  "type": "string",
+                  "enum": [
+                    "issued",
+                    "superseded",
+                    "voided"
+                  ]
+                },
+                "correction_state": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "applied",
+                    "outcome_unknown"
+                  ]
+                }
+              },
+              "required": [
+                "correction_ref",
+                "invoice_state",
+                "correction_state"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "correction_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "invoice_state": {
+                    "type": "string",
+                    "enum": [
+                      "issued",
+                      "superseded",
+                      "voided"
+                    ]
+                  },
+                  "correction_state": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "applied",
+                      "outcome_unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "correction_ref",
+                  "invoice_state",
+                  "correction_state"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "receipt.reject"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "receipt_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "receipt_version_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "receipt_version_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "receipt_version_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "receipt.correct"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "new_receipt_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "new_receipt_version_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "new_receipt_version_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "new_receipt_version_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "milestone.resolve"
+        },
+        "operation_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "accepted",
+            "duplicate",
+            "validation_failed",
+            "permission_denied",
+            "stale_version",
+            "blocked_configuration",
+            "outcome_unknown"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "new_milestone_version_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "finance_handoff_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "new_milestone_version_ref",
+                "finance_handoff_ref"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit_receipt_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "operation_key",
+        "outcome",
+        "result",
+        "error_ref",
+        "audit_receipt_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completed",
+                  "accepted",
+                  "duplicate"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "new_milestone_version_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "finance_handoff_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "new_milestone_version_ref",
+                  "finance_handoff_ref"
+                ],
+                "additionalProperties": false
+              },
+              "error_ref": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "validation_failed",
+                  "permission_denied",
+                  "stale_version",
+                  "blocked_configuration"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "null"
+              },
+              "error_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
