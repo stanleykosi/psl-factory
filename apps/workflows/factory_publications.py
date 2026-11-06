@@ -7,6 +7,8 @@ def publication_scope(actor,case,version,work_id):
     name=FactoryWork.objects.filter(pk=work_id,case=case).values_list('definition',flat=True).first()
     if name=='finance-forecast/v1':
         from .factory_forecast import publication_scope as check
+    elif name=='pmo-emergency/v1':
+        from .factory_emergency import publication_scope as check
     elif name=='pmo-change/v1':
         from .factory_change import publication_scope as check
     elif name=='rfp-response/v1':

@@ -1,4 +1,4 @@
-"""Final suite requires accepted forecast migrations; provisional subclass is separate."""
+"""Connected forecast tests against the actual accepted predecessor migration graph."""
 import json
 from pathlib import Path
 from django.test import TestCase
@@ -118,6 +118,8 @@ class ForecastFactoryTests(TestCase):
         with self.assertRaises(ValidationError):service.forecast.approved(old)
         with self.assertRaises(ValidationError):service.verify(self.work,self.actor)
         self.assertTrue(service.projection(self.actor,self.work)['readiness_changed'])
+        self.client.force_login(self.actor)
+        self.assertContains(self.client.get(reverse('home')+'?queue=exceptions'),self.work.request['reference'])
         self.assertNotIn(a.evidence_id,self.selected['source_ids'])
         self.assertEqual(service.calculation(self.work,self.actor).pk,old.pk)
         spent=self.work.budget_used

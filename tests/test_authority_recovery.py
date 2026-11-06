@@ -172,7 +172,7 @@ class EmergencyFollowupTests(RecoveryFixture,TestCase):
         original=reconcile_retrospective(self.actor,self.case.pk,outcome.pk,rev(self.case))
         f=self.followup(outcome);self.t=self.old_template
         commercial.change_roles(self.actor,self.case,self.e['policy_decision'])
-        for team in CONTRIBUTORS:assess_change(self.actor,self.case.pk,f.version_id,team,True,False,False,f.version.evidence_id,'Further work impact',rev(self.case))
+        for team in CONTRIBUTORS:assess_change(self.actor,self.case.pk,f.version_id,team,True,False,False,f.version.evidence_id,'Further work impact',rev(self.case),**commercial.impact_fixture(team))
         for role in ['Product','Engineering']:decide_change(self.actor,self.case.pk,f.version_id,role,'approve',f.version.evidence_id,'Ordinary source-bound decision',rev(self.case))
         with self.assertRaisesMessage(ValidationError,'Cost impact'):authorize_change(self.actor,self.case.pk,f.version_id,None,rev(self.case))
         sources={k:self.e[k].pk for k in commercial.SOURCE_KINDS}

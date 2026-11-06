@@ -33,6 +33,8 @@ QUEUES={'needs_me':'Needs my attention','active':'Active work','decisions':'Deci
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
     ('finance-forecast/v1','Prepare a reviewed cash forecast','Connect exact scenario sources, native human decisions and aggregate delivery.',('factory.start','finance.read','evidence.add')),
+    ('finance-payroll/v1','Coordinate restricted payroll','Carry exact native payroll inputs through HR matching, human review and aggregate recipient receipt.',('factory.start','payroll.read','payroll.private.read','evidence.add')),
+    ('pmo-emergency/v1','Coordinate Emergency evidence','Track native preauthorization, actual implementation and reviewed retrospective report receipts.',('factory.start','emergency.read','evidence.add')),
     ('pmo-change/v1','Coordinate a controlled change','Carry exact native change evidence through human decisions, controlled delivery and signed closure.',('factory.start','change.read','evidence.add')),
     ('rfp-response/v1','Prepare an RFP response','Investigate received requirements, prepare the response and track reviewed submission through the actual customer outcome.',('factory.start','rfp.read','evidence.add')),
     ('finance-accounts/v1','Prepare management accounts','Carry a controlled trial balance through Finance review and an aggregate report.',('factory.start','finance.read','finance.calculate','evidence.add')),
@@ -77,6 +79,9 @@ def presentation(actor,work):
     return decorate(actor,work,_presentation(actor,work))
 
 def _presentation(actor,work):
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll_views import presentation as payroll_presentation
+        return payroll_presentation(actor,work)
     if work.definition=='rfp-response/v1':
         from .factory_rfp_views import presentation as rfp_presentation
         return rfp_presentation(actor,work)
@@ -333,6 +338,13 @@ def _presentation(actor,work):
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
         if panel['review_roles']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting native forecast review')
         if panel['readiness_changed']:row['state']='Recorded forecast evidence changed'
+    if work.definition=='pmo-emergency/v1':
+        from .factory_emergency import projection
+        row['emergency']=projection(actor,work);panel=row['emergency'];row['jobs']=panel['jobs']
+        row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
+        row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
+        if panel['readiness_changed']:row['state']='Retrospective evidence needs review'
     if work.definition=='pmo-change/v1':
         from .factory_change import projection
         row['change']=projection(actor,work);panel=row['change'];row['jobs']=panel['jobs']
@@ -394,7 +406,7 @@ def index(request):
     query=visible(request.user)
     if q:query=query.filter(Q(request__reference__icontains=q)|Q(case__title__icontains=q)|Q(key__icontains=q))
     if queue=='verified':query=query.filter(status='verified')
-    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['finance-forecast/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
+    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
     else:query=query.exclude(status__in=['verified','cancelled'])
     query=query.distinct().order_by('-updated_at','-pk');items=[]
@@ -445,6 +457,12 @@ def create(request):
     if envelope=='finance-forecast/v1':
         from .factory_forecast_views import create as create_forecast
         return create_forecast(request)
+    if envelope=='finance-payroll/v1':
+        from .factory_payroll_views import create as create_payroll
+        return create_payroll(request)
+    if envelope=='pmo-emergency/v1':
+        from .factory_emergency_views import create as create_emergency
+        return create_emergency(request)
     if envelope=='pmo-change/v1':
         from .factory_change_views import create as create_change
         return create_change(request)
@@ -488,6 +506,12 @@ def detail(request,work_id):
     if work.definition=='finance-forecast/v1':
         from .factory_forecast_views import detail as forecast_detail
         return forecast_detail(request,work)
+    if work.definition=='finance-payroll/v1':
+        from .factory_payroll_views import detail as payroll_detail
+        return payroll_detail(request,work)
+    if work.definition=='pmo-emergency/v1':
+        from .factory_emergency_views import detail as emergency_detail
+        return emergency_detail(request,work)
     if work.definition=='pmo-change/v1':
         from .factory_change_views import detail as change_detail
         return change_detail(request,work)
@@ -781,12 +805,12 @@ class ProfileForm(forms.Form):
         super().__init__(*args,**kwargs);self.case=case;self.fields['evidence'].queryset=Evidence.objects.filter(case=case,kind='policy_decision')
         for field,action in [('information_resolver_id','factory.information'),('executor_id','factory.execute')]:
             self.fields[field].queryset=get_user_model().objects.filter(is_active=True,grant__case=case,grant__active=True,grant__action=action).distinct()
-        if definition in ['delivery-go-live/v1','pmo-change/v1']:
+        if definition in ['delivery-go-live/v1','pmo-change/v1','pmo-emergency/v1']:
             preparers=get_user_model().objects.filter(is_active=True)
-            for action in ['case.read','change.read' if definition=='pmo-change/v1' else 'delivery.read','factory.execute','change.manage' if definition=='pmo-change/v1' else 'delivery.manage','document.draft','document.request_review']:
+            for action in ['case.read','emergency.read' if definition=='pmo-emergency/v1' else 'change.read' if definition=='pmo-change/v1' else 'delivery.read','factory.execute','emergency.manage' if definition=='pmo-emergency/v1' else 'change.manage' if definition=='pmo-change/v1' else 'delivery.manage','document.draft','document.request_review']:
                 preparers=preparers.filter(grant__case=case,grant__active=True,grant__action=action)
-            self.fields['preparer_id']=forms.ModelChoiceField(queryset=preparers.distinct(),required=False,label='Existing change preparer' if definition=='pmo-change/v1' else 'Existing PM for report preparation',
-                help_text='Selection does not grant change or document permissions.' if definition=='pmo-change/v1' else 'Selection does not confer PM authority. Current business-role assignment is checked again at execution.')
+            self.fields['preparer_id']=forms.ModelChoiceField(queryset=preparers.distinct(),required=False,label='Existing Emergency report preparer' if definition=='pmo-emergency/v1' else 'Existing change preparer' if definition=='pmo-change/v1' else 'Existing PM for report preparation',
+                help_text='Selection does not grant Emergency or document permissions.' if definition=='pmo-emergency/v1' else 'Selection does not grant change or document permissions.' if definition=='pmo-change/v1' else 'Selection does not confer PM authority. Current business-role assignment is checked again at execution.')
 
     def clean_provider(self):
         value=self.cleaned_data['provider']
@@ -811,14 +835,14 @@ def configuration(request,case_id):
         from .factory_rfp_views import RFPProfileForm
         form_class=RFPProfileForm
     form=form_class(case,request.POST if request.method=='POST' else None,definition=envelope)
-    if envelope in ['pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
-        for name in (['executor_id','information_resolver_id'] if envelope in ['planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
+    if envelope in ['finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
+        for name in (['executor_id','information_resolver_id'] if envelope in ['finance-payroll/v1','planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
             form.fields[name].widget=forms.HiddenInput();form.fields[name].disabled=True
-    if envelope in ['pmo-change/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1']:
+    if envelope in ['pmo-emergency/v1','pmo-change/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1']:
         form.fields['executor_id'].label='Controlled document publisher'
         form.fields['executor_id'].queryset=form.fields['executor_id'].queryset.filter(grant__case=case,grant__active=True,grant__action='document.publish').distinct()
-        if envelope in ['pmo-change/v1','delivery-handover/v1','delivery-go-live/v1']:
-            for action in ['case.read','change.read' if envelope=='pmo-change/v1' else 'delivery.read']:
+        if envelope in ['pmo-emergency/v1','pmo-change/v1','delivery-handover/v1','delivery-go-live/v1']:
+            for action in ['case.read','emergency.read' if envelope=='pmo-emergency/v1' else 'change.read' if envelope=='pmo-change/v1' else 'delivery.read']:
                 form.fields['executor_id'].queryset=form.fields['executor_id'].queryset.filter(grant__case=case,grant__active=True,grant__action=action).distinct()
     if envelope in ['delivery-archive/v1','delivery-closure/v1']:
         form.fields['executor_id'].label='Closure finaliser' if envelope=='delivery-closure/v1' else 'Archive operator'
@@ -827,7 +851,7 @@ def configuration(request,case_id):
     if request.method=='POST' and request.POST.get('action')=='draft' and form.is_valid():
         value=dict(form.cleaned_data);proof=value.pop('evidence')
         value['required_evidence_kinds']=[v.strip() for v in value['required_evidence_kinds'].split(',') if v.strip()]
-        for name in ['information_resolver_id','executor_id']+(['preparer_id'] if envelope in ['finance-forecast/v1','delivery-go-live/v1','pmo-change/v1'] else []):value[name]=value[name].pk if value[name] else None
+        for name in ['information_resolver_id','executor_id']+(['preparer_id'] if envelope in ['finance-forecast/v1','delivery-go-live/v1','pmo-change/v1','pmo-emergency/v1'] else []):value[name]=value[name].pk if value[name] else None
         if envelope=='finance-accounts/v1':
             value['template_id']=value['template_id'].pk if value['template_id'] else None
             for name in ['allocation_mode','audience','bu_metrics']:value[name]=value[name] or None
@@ -836,7 +860,7 @@ def configuration(request,case_id):
             value['route_key']=value['route_key'] or None
         selected=value.pop('provider') or None
         if 'provider' not in request.POST:selected='synthetic_factory_v1' if case.synthetic else None
-        value.update(definition=envelope,review_role=None if envelope in ['finance-forecast/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
+        value.update(definition=envelope,review_role=None if envelope in ['finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
         try:
             draft_operator_policy(request.user,case.pk,component,value,proof.pk,timezone.now());messages.success(request,'Draft saved. Validate it before activation.');return redirect(request.path+'?definition='+envelope)
         except ValidationError as exc:form.add_error(None,str(exc))

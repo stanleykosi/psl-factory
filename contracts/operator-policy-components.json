@@ -38,6 +38,78 @@
       }
     },
     {
+      "id": "OPS.factory_payroll_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_payroll_execution/v1",
+      "subject_scope": "F16-F18 exact payroll input references, minimal HR snapshot, native preparation, human review/publication and recipient-owned aggregate receipt. No employee rows in generic coordination; no HR writes, guessed merge or receipt impersonation.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_emergency_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_emergency_execution/v1",
+      "subject_scope": "Exact incident-linked Emergency profile, selected preauthorization and actual outcome; native human P61/P62 decisions and truthful retrospective status. Scoped investigation and controlled retrospective report receipts; no deployment, ordinary change closure or retrospective repair of missing preauthorization.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.factory_change_execution",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.factory_change_execution/v1",
@@ -83,12 +155,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -102,12 +191,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -121,12 +227,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -140,12 +263,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -159,12 +299,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -178,12 +335,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -197,12 +371,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },

@@ -54,10 +54,12 @@ class LocalPMOReportingAdapter:
         delivery_history=reporting_manifest(case)
         from .rfp import reporting_manifest as rfp_manifest
         rfp_history=rfp_manifest(case)
-        manifest={'rfp_history':rfp_history,'delivery_history':delivery_history,'meetings':[[m.pk,m.current_id] for m in meetings],'actions':[[a.pk,a.current_id] for a in actions],
+        from apps.pmo.change_impacts import timeline_snapshot
+        change_timeline=timeline_snapshot(case)
+        manifest={'normal_change_timeline':change_timeline,'rfp_history':rfp_history,'delivery_history':delivery_history,'meetings':[[m.pk,m.current_id] for m in meetings],'actions':[[a.pk,a.current_id] for a in actions],
             'milestones':[m.pk for m in milestones],'gates':list(latest_gates.values()),
             'issues':[[i.pk,i.current_id] for i in issues],'changes':[[c.pk,c.current_id] for c in changes], 'change_history':change_history,
             'escalation_history':escalation_history}
-        return {'rfp_history':rfp_history,'manifest':manifest,'meetings':meetings,'actions':actions,'milestones':milestones,'issues':issues,'changes':changes,
+        return {'change_timeline':change_timeline,'rfp_history':rfp_history,'manifest':manifest,'meetings':meetings,'actions':actions,'milestones':milestones,'issues':issues,'changes':changes,
             'escalation_history':escalation_history,'delivery_history':delivery_history,
             'timings':{a.pk:action_timing(a.current,as_of) for a in actions}}

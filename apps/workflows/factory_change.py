@@ -105,7 +105,8 @@ def published(work,purpose,actor=None):
 
 def report(work,actor=None):
     v,data=source(work,actor);rows=list(v.assessments.order_by('pk'));decisions=list(v.decisions.order_by('pk'))
-    result={'change_version':v.pk,'category':v.category,'assessments':[x.pk for x in rows],'decisions':[x.pk for x in decisions],'authorization':data['inputs']['authorization_id'],'owner_impacts':[{'contributor':x.contributor,'assessment':x.pk,'cost':x.cost_impact,'timeline':x.timeline_impact,'client_facing':x.client_facing,'evidence':x.evidence_id} for x in rows],'stage':'impact','finding':'','deployment_authorized':False}
+    result={'change_version':v.pk,'category':v.category,'assessments':[x.pk for x in rows],'decisions':[x.pk for x in decisions],'authorization':data['inputs']['authorization_id'],'owner_impacts':[{'contributor':x.contributor,'assessment':x.pk,'cost':x.cost_impact,'timeline':x.timeline_impact,'client_facing':x.client_facing,'evidence':x.evidence_id,'impact_details':x.impact_details} for x in rows],'stage':'impact','finding':'','deployment_authorized':False}
+    result['execution_impacts']=list(ChangeAuthorization.objects.get(pk=data['inputs']['authorization_id']).execution.order_by('pk').values('pk','kind','impact_details')) if data['inputs']['authorization_id'] else []
     try:
         if v.category=='Emergency':raise ValidationError('Emergency P61/P62 use native preauthorization, incident, implementation and retrospective controls; ordinary change authorization is not applicable')
         changes.impact(v);result['stage']='authorization';auth=authorization(work,data)
@@ -329,13 +330,14 @@ def projection(actor,work):
     except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
     changed=False
     if work.status=='verified':
-        try:verify(work,actor)
+        try:
+            verify(work,actor);next_action='Inspect the recorded signed closure and exact document receipts';options=[]
         except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     can_correct=False;can_close=False
     if live:
         try:
             require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
-            can_correct=work.status not in ['cancelled','followup_needed'] and not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
+            can_correct=not ChangeClosure.objects.filter(authorization__version_id=v.change.current_id).exists() and work.status not in ['cancelled','followup_needed'] and not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
         except PermissionDenied:pass
         try:
             require(actor,work.case,'change.manage');decision_authority(actor,work.case,'PM');published(work,'notice',actor);published(work,'go_live',actor)
@@ -352,7 +354,11 @@ def projection(actor,work):
         require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
         can_restart=work.cancel_requested and work.status=='cancelled' and not (work.lease_until and work.lease_until>timezone.now()) and not any(j.status in ['pending','unknown','leased','held'] for j in jobs) and not PublicationReceipt.objects.filter(publication__factory_work=work).exists()
     except PermissionDenied:pass
-    return {'can_restart':can_restart,'version':v,'data':data,'status':status,'documents':docs,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_close':can_close}
+    history=[]
+    for a in Attempt.objects.filter(activity__work=work,phase='observed',result__has_key='document_version').exclude(result__head=work.source_head_id).order_by('pk'):
+        identity=(a.result.get('document_version'),a.result.get('head'))
+        if identity not in history:history.append(identity)
+    return {'document_history':history,'can_restart':can_restart,'version':v,'data':data,'status':status,'documents':docs,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_close':can_close}
 
 @transaction.atomic
 def human_action(actor,work_id,expected,case_expected,version_id,action,values):
@@ -362,11 +368,11 @@ def human_action(actor,work_id,expected,case_expected,version_id,action,values):
     access(actor,w.case,'factory.read',DEFINITION);v,data=source(w,actor)
     if type(expected) is not int or w.revision!=expected or v.pk!=version_id or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh exact change work')
     if v.category=='Emergency':raise ValidationError('Use the separate native Emergency preauthorization and retrospective route')
-    if action=='assess':result=changes.assess_change(actor,w.case_id,v.pk,values['contributor'],values['cost_impact'],values['timeline_impact'],values['client_facing'],values['evidence'],values['note'],case_expected)
+    if action=='assess':result=changes.assess_change(actor,w.case_id,v.pk,values['contributor'],values['cost_impact'],values['timeline_impact'],values['client_facing'],values['evidence'],values['note'],case_expected,**{k:values.get(k) for k in ['outputs','production_impact','scope_items']})
     elif action=='decide':result=changes.decide_change(actor,w.case_id,v.pk,values['role'],values['verdict'],values['evidence'],values['note'],case_expected)
     elif action=='authorize':result=changes.authorize_change(actor,w.case_id,v.pk,values.get('commercial'),case_expected)
     elif action=='execution':
-        auth=authorization(w,data);result=native.record_execution(actor,w.case_id,auth.pk,values['kind'],values['evidence'],values['note'],case_expected)
+        auth=authorization(w,data);result=native.record_execution(actor,w.case_id,auth.pk,values['kind'],values['evidence'],values['note'],case_expected,scope_items=values.get('scope_items'),dossier_id=values.get('dossier_id'),candidate_id=values.get('candidate_id'))
     else:raise ValidationError('Choose a native human change action')
     event(actor,w.case,'factory.change_human_action',work=w.pk,change_version=v.pk,native_action=action,native_record=result.pk)
     return result

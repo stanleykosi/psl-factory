@@ -1,4 +1,31 @@
+## Payroll composed checkpoint, final699 pending
+
+Accepted Emergencyca6d1e4 merged as1300977. Actual workflows0066 is additive on exact0065; accepted documents0022 unchanged. Provisional test guard removed. Freeze and run fresh699 before acceptance. Impact702 remains separate and full108 remains held.
+
+## Payroll pre-composition checkpoint520fc09
+
+Frozen native74-test regression and focused fullpath/privacy/read-only/cancellation/uncertain-planner cohorts pass with bounded scope. Original failed and non-frozen diagnostics retained. Await parent acceptance of Emergency0065/0022 before composing0066/final699. No edits during suites, no held performance/sign dependency, no whole-process/browser/live acceptance. See docs/runbooks/payroll-factory.md.
+
+## Independent payroll implementation checkpoint (pending)
+
+New F16–F18 native connection in isolated build/cloud-payroll-f16-f18 on740382c. Static checks pass; new factory PostgreSQL acceptance pending exact accepted Emergency0065 and reserved payroll0066/final699. No placeholder migration, no documents migration and no held performance/sign dependency. See docs/runbooks/payroll-factory.md. Native payroll diagnostics running; no whole-process claim.
+
 # PSL operations factory build state — 6 November 2026
+
+## Current continuation status: 6 November 2026
+
+This section supersedes older status paragraphs below. Current integrated source is c75b0e8: Normal change692 (40 passing tests plus supported cloud-browser proof) and Standard/commercial696 (45 passing tests). Public build/cloud-milestone is e3ca52afc24ef1929227bf274a4a4837b934f0ca, exact tree2f5080a1e2c4d500a8b574ac353c15d13fc9c531. Main05590af is unchanged. All new runtime evidence stays local and is excluded from public trees.
+
+The user explicitly requested all independent PMO and Finance builds continue. The held Finance performance correction/regression remains untouched: do not retry, reconstruct, delegate or route around it. Historical absent local checkpoints and the incomplete sign archive are not current runnable dependencies. Full108 acceptance remains NOT_MET.
+
+Current isolated increments:
+- Emergency P61/P62: initial9-test diagnostic passes; broader timing/recovery and console polish under test. Final697 pending.
+- Normal impact/P32/plan/report: pre-review698104PASS, three review defects fixed and independently rechecked on91b34b2. Run700 preserves two known fixture errors; corrected full cohort702 is required before integration.
+- Payroll F16-F18: focused frozen diagnostic04 passes3 tests,378.478s, unchanged1b11e0a. Covers native chain, private-reader denial and full-rowset preservation for snapshot, preparer GET and recipient GET. Provisional test schema only; final699 requires real0065→0066 migrations. Source-only pending checkpoint build/payroll-checkpoint96f3bcd3aa8ce6521f084f5e29928ddef54ddda1 verified remotely.
+- Forecast F36-F41: foundation45PASS; connected diagnostic3 passes8 on92c7bf2. Review fixes a646580 now under frozen19-test diagnostic. Final701 requires real0067/0023 predecessors. Source-only pending checkpoint build/forecast-checkpointd870d647229629578fce7e6a9132beac53629690 verified remotely. Owner full-chain oracle remains explicit, not fabricated.
+
+Pending branch backups are not accepted integration. Formal whole-process packets and broader browser journeys remain incomplete. No deployment, live integrations or main merge.
+
 
 ## Current integrated PMO checkpoint
 
@@ -57,3 +84,7 @@ Controlled-change factory implementation is isolated on build/pmo-change. It con
 Source branchbuild/factory-forecast in../psl-forecast begins at8eabaf7. Native source foundation45PASS; connected provisional8PASS then reviewed19PASS on a646580. Strict scenario/horizon/source selection is separate from native case-wide actual calculation pins. Source-owned stale-output rework, human actual/match/review/priority actions and aggregate-only publication are connected. Not composed-runtime acceptance: exact shared0065/0066 and documents0022 predecessors are unavailable;0067/0023 and final701 remain pending. No full-chain owner oracle F39-N01, browser acceptance or full108 milestone claim.
 
 Forecast current-flow scope is frozen at source035976a after68/68 passing isolated diagnostic7. Explicit settled restart now preserves identity/history/allowance, refuses unresolved effects/receipts, requires exact current source and operating-policy ID, and requires existing policy-activation permission for changed-policy adoption. Real schema composition and701 remain pending. Parent reports accepted Emergencyca6d1e4 (0065/0022); payrollce0a265 contains actual0066 but699 is still running, so do not compose it yet. No group projection work starts before current-flow integration and701.
+
+6 November Standard/conditional commercial696 integrated: feature27e3495 as172d500, local evidence8eabaf7.45PASS,914.628s tests/917.309s process, source unchanged; all1452 tested runtime hashes match main. Fresh247 migrations/334 tables,331 business tables empty before/after. Covers full Standard route, Normal/Standard conditional commercial approvals/delivery/actual signed adoption, native change.authorize capability and missing-client-signature rejection only after exact valid notice/go-live receipts. Earlier692 supported-browser proof remains historical to its source; this capability change has automated proof, not new browser coverage. No P57/P59 whole-process promotion. New impact candidate is under independent review/correction before700; Emergency697, payroll699 and forecast701 are separate independent tasks. Held performance action remains untouched.
+
+6 November Emergency697 accepted and integrated as ca6d1e4:62PASS,603.633s unittest/606.159s runner. All1463 runtime source hashes exactly match featureb2b8d35. Fresh249 migrations/334 tables,331 business tables empty before and after, identical migration hashes/rowcounts; owned cluster stopped. Actual workflows0065/documents0022 now available for payroll0066/699 and forecast0067/701. Local evidence from2f36ba9 is retained but never included in public source backups. Static check and model dry-run pass; parent offline DB warning is not a new live history check. Emergency verifies native retrospective decisions and exact report receipts, not deployment or ordinary closure. Updated browser/composed-source proof remains pending. Held Finance action remains untouched.
