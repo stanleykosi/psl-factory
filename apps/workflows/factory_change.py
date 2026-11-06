@@ -329,13 +329,14 @@ def projection(actor,work):
     except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
     changed=False
     if work.status=='verified':
-        try:verify(work,actor)
+        try:
+            verify(work,actor);next_action='Inspect the recorded signed closure and exact document receipts';options=[]
         except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     can_correct=False;can_close=False
     if live:
         try:
             require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
-            can_correct=work.status not in ['cancelled','followup_needed'] and not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
+            can_correct=not ChangeClosure.objects.filter(authorization__version_id=v.change.current_id).exists() and work.status not in ['cancelled','followup_needed'] and not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
         except PermissionDenied:pass
         try:
             require(actor,work.case,'change.manage');decision_authority(actor,work.case,'PM');published(work,'notice',actor);published(work,'go_live',actor)
@@ -352,7 +353,11 @@ def projection(actor,work):
         require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
         can_restart=work.cancel_requested and work.status=='cancelled' and not (work.lease_until and work.lease_until>timezone.now()) and not any(j.status in ['pending','unknown','leased','held'] for j in jobs) and not PublicationReceipt.objects.filter(publication__factory_work=work).exists()
     except PermissionDenied:pass
-    return {'can_restart':can_restart,'version':v,'data':data,'status':status,'documents':docs,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_close':can_close}
+    history=[]
+    for a in Attempt.objects.filter(activity__work=work,phase='observed',result__has_key='document_version').exclude(result__head=work.source_head_id).order_by('pk'):
+        identity=(a.result.get('document_version'),a.result.get('head'))
+        if identity not in history:history.append(identity)
+    return {'document_history':history,'can_restart':can_restart,'version':v,'data':data,'status':status,'documents':docs,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_close':can_close}
 
 @transaction.atomic
 def human_action(actor,work_id,expected,case_expected,version_id,action,values):

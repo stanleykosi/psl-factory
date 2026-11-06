@@ -1,4 +1,19 @@
 {
+  "emergency_factory_increment": {
+    "status": "implemented_bounded_tests_passed",
+    "feature": "b2b8d35",
+    "integration": "ca6d1e4",
+    "run": 697,
+    "tests_passed": 62,
+    "runtime_files_exact": 1463,
+    "migrations": 249,
+    "tables": 334,
+    "remaining": [
+      "Composed independent branches and current browser proof",
+      "Whole-process acceptance remains unpromoted"
+    ],
+    "restricted_work": "untouched"
+  },
   "controlled_change_factory_increment": {
     "status": "in_progress",
     "branch": "build/pmo-change",
