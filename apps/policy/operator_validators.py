@@ -68,6 +68,8 @@ from .factory_validators import PAYROLL_COMPONENT as FACTORY_PAYROLL,PAYROLL_SCH
 SCHEMAS[FACTORY_PAYROLL]=(FACTORY_PAYROLL_SCHEMA,FACTORY_PAYROLL_VALUE)
 from .factory_validators import CHANGE_COMPONENT as FACTORY_CHANGE,CHANGE_SCHEMA as FACTORY_CHANGE_SCHEMA,CHANGE_VALUE as FACTORY_CHANGE_VALUE
 SCHEMAS[FACTORY_CHANGE]=(FACTORY_CHANGE_SCHEMA,FACTORY_CHANGE_VALUE)
+from .factory_validators import SCHEDULES_COMPONENT as FACTORY_SCHEDULES,SCHEDULES_SCHEMA as FACTORY_SCHEDULES_SCHEMA,SCHEDULES_VALUE as FACTORY_SCHEDULES_VALUE
+SCHEMAS[FACTORY_SCHEDULES]=(FACTORY_SCHEDULES_SCHEMA,FACTORY_SCHEDULES_VALUE)
 from .factory_validators import PPE_COMPONENT as FACTORY_PPE,PPE_SCHEMA as FACTORY_PPE_SCHEMA,PPE_VALUE as FACTORY_PPE_VALUE
 SCHEMAS[FACTORY_PPE]=(FACTORY_PPE_SCHEMA,FACTORY_PPE_VALUE)
 from .factory_emergency_validators import COMPONENT as FACTORY_EMERGENCY,SCHEMA as FACTORY_EMERGENCY_SCHEMA,VALUE as FACTORY_EMERGENCY_VALUE,validate_reference as validate_emergency_factory
@@ -104,7 +106,7 @@ def validate_reference(component,target,case,runtime=False):
     if component==REVIEW_AVAILABILITY:return validate_review_availability(component,target,case,runtime)
     if component==FACTORY_RESPONSIBILITY:return validate_factory_responsibility(component,target,case,runtime)
     if component==FACTORY_EMERGENCY:return validate_emergency_factory(component,target,case,runtime)
-    if component in [FACTORY_PPE,FACTORY_PAYROLL,FACTORY,FACTORY_PLANNING,FACTORY_COMMERCIAL,FACTORY_DELIVERY,FACTORY_HYPERCARE,FACTORY_ARCHIVE,FACTORY_HANDOVER,FACTORY_CLOSURE,FACTORY_GO_LIVE,FACTORY_CHANGE]:return validate_factory(component,target,case,runtime)
+    if component in [FACTORY_SCHEDULES,FACTORY_PPE,FACTORY_PAYROLL,FACTORY,FACTORY_PLANNING,FACTORY_COMMERCIAL,FACTORY_DELIVERY,FACTORY_HYPERCARE,FACTORY_ARCHIVE,FACTORY_HANDOVER,FACTORY_CLOSURE,FACTORY_GO_LIVE,FACTORY_CHANGE]:return validate_factory(component,target,case,runtime)
     if component==PLANNING:return validate_planning(component,target,case,runtime)
     if component==PROJECT_VIEW:return validate_project_view(component,target,case,runtime)
     if component==IDENTITY_RESOLUTION:return validate_identity_resolution(component,target,case,runtime)

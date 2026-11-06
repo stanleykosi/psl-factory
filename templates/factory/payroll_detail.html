@@ -4,7 +4,8 @@
 {% if row.can_advance %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue permitted agent work</button></form>{% endif %}</section>
 {% if row.payroll.recipient_only %}
 <p><a href="{% url 'payroll_inspect' case.pk 'report' row.payroll.publication %}">Inspect your aggregate report</a></p>
-<form method="post">{% csrf_token %}<input type="hidden" name="action" value="receive"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="publication_id" value="{{ row.payroll.publication }}"><button>Acknowledge receipt as myself</button></form>
+{% if row.payroll.receipt %}<section class="card"><h2>Your receipt is recorded</h2><p>Receipt #{{ row.payroll.receipt.pk }} · Aggregate report #{{ row.payroll.publication }} · <time datetime="{{ row.payroll.receipt.created_at|date:'c' }}">{{ row.payroll.receipt.created_at|date:'j M Y, H:i:s T' }}</time></p><p>You acknowledged this report. No further acknowledgement is needed.</p></section>
+{% else %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="receive"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="publication_id" value="{{ row.payroll.publication }}"><button>Acknowledge receipt as myself</button></form>{% endif %}
 {% else %}
 <p><a href="{% url 'payroll' case.pk %}">Open native payroll source, review and HR-correction tools</a></p>
 <h2>Exact selected sources</h2><p>{{ row.payroll.request }}</p><ul>{% for id in row.payroll.inputs.input_ids %}<li><a href="{% url 'payroll_inspect' case.pk 'input' id %}">Inspect restricted payroll input {{ id }}</a></li>{% endfor %}</ul>

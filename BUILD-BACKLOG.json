@@ -14705,5 +14705,22 @@
     "family_tests_passed": 138,
     "pending_run": 714,
     "whole_process_promotion": false
+  },
+  "schedules_composition": {
+    "status": "integrated_composed_regression_pending",
+    "source": "9239451",
+    "integration": "eb515bc",
+    "family_run": 715,
+    "family_tests_passed": 132,
+    "failed_run": 706,
+    "pending_run": 714,
+    "whole_process_promotion": false
+  },
+  "current_composition714": {
+    "status": "running",
+    "source": "343c46b",
+    "run": 714,
+    "tests": 154,
+    "whole_process_promotion": false
   }
 }

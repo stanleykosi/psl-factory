@@ -1887,3 +1887,7 @@ Independent current work: payroll699111-test actual0066 composition running; sep
 6 November composed711 PASS:109 tests,2514.689s unittest/2517.024s process on303a9d3;1487 runtime and1687 full tracked source hashes unchanged;253 migrations/334 tables/331 empty business tables, schema/rows unchanged, clean owned shutdown. Bounded composition only; full108 remains NOT_MET.
 
 6 November: Current integrated runtime is b2db4d3, adding accepted PPE0068 to the successfully tested303a9d3 composition. PPE703 passed138 tests in isolation; main714 composed proof is pending schedules integration. The109-test711 pass below applies exactly to303a9d3, before PPE. All1493 PPE703 manifest files match main except the four accepted payroll-restart runtime files; the additional restart test is retained. Historical migration bytes are unchanged.
+
+6 November: schedules9239451 integrated as eb515bc with exact0069/fixtures and accepted restart retained; separate715132PASS. Failed706 preserved; main714 pending. Browser8429a59 is bounded to303a9d3, not current runtime.
+
+6 November: Current runtime343c46b adds accepted receipt UX716 to eb515bc. Frozen composed714 is running154 deduplicated tests: prior109,21 PPE,17 schedules and7 receipt tests, excluding provisional modules. No714 result yet. Receipt UX is automated-tested but not browser-verified; the earlier browser proof remains exact to303a9d3.

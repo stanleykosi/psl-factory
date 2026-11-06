@@ -73,6 +73,11 @@ PAYROLL_SCHEMA='schema:psl/factory-payroll-execution/v1'
 PAYROLL_VALUE=deepcopy(PLANNING_VALUE)
 PAYROLL_VALUE['properties']['definition']={'const':'finance-payroll/v1'}
 
+SCHEDULES_COMPONENT='OPS.factory_schedules_execution'
+SCHEDULES_SCHEMA='schema:psl/factory-schedules-execution/v1'
+SCHEDULES_VALUE=deepcopy(PLANNING_VALUE)
+SCHEDULES_VALUE['properties']['definition']={'const':'finance-schedules/v1'}
+
 def validate_reference(component,target,case,runtime=False):
     planning=component==PLANNING_COMPONENT
     commercial=component==COMMERCIAL_COMPONENT
@@ -87,13 +92,13 @@ def validate_reference(component,target,case,runtime=False):
         COMMERCIAL_COMPONENT:(COMMERCIAL_SCHEMA,COMMERCIAL_VALUE),DELIVERY_COMPONENT:(DELIVERY_SCHEMA,DELIVERY_VALUE),
         HYPERCARE_COMPONENT:(HYPERCARE_SCHEMA,HYPERCARE_VALUE),ARCHIVE_COMPONENT:(ARCHIVE_SCHEMA,ARCHIVE_VALUE),
         HANDOVER_COMPONENT:(HANDOVER_SCHEMA,HANDOVER_VALUE),CLOSURE_COMPONENT:(CLOSURE_SCHEMA,CLOSURE_VALUE),
-        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE),PPE_COMPONENT:(PPE_SCHEMA,PPE_VALUE)}.get(component,(SCHEMA,VALUE))
+        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE),PPE_COMPONENT:(PPE_SCHEMA,PPE_VALUE),SCHEDULES_COMPONENT:(SCHEDULES_SCHEMA,SCHEDULES_VALUE)}.get(component,(SCHEMA,VALUE))
     from .factory_provider_profiles import shape_for,scope
     value=typed(target,*shape_for(target,schema,shape));scope(case,value)
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')
     from types import SimpleNamespace
     from apps.core.evidence_access import restricted
-    if any(restricted(SimpleNamespace(kind=k)) for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
+    if any(restricted(SimpleNamespace(kind=k)) and not (component==SCHEDULES_COMPONENT and k=='agent_private_schedules_intake') for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
     from django.contrib.auth import get_user_model
     from apps.identity.models import Grant
     for name in ['information_resolver_id','executor_id']+(['preparer_id'] if go_live else []):

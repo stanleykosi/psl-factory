@@ -56,8 +56,9 @@ def presentation(actor,work):
             try:payroll.native.read_publication(actor,p.pk);readable=True
             except (PermissionDenied,ValidationError):pass
         if readable:
-            row.update(state='Aggregate available',next_action='Inspect the aggregate and acknowledge receipt as yourself',needs_me=True)
-            row['payroll']={'publication':p.pk,'recipient_only':True};return row
+            receipt=payroll.PayrollReportReceipt.objects.filter(publication=p,actor=actor).first()
+            row.update(state='Receipt acknowledged' if receipt else 'Aggregate available',next_action='Your receipt is recorded. You can inspect the aggregate report.' if receipt else 'Inspect the aggregate and acknowledge receipt as yourself',needs_me=not bool(receipt))
+            row['payroll']={'publication':p.pk,'recipient_only':True,'receipt':receipt};return row
         row.update(state='Restricted payroll work',next_action='A current nominated source reader or report recipient is required')
         row['payroll']={'restricted':True};return row
     try:state=payroll.report(work,actor)
@@ -74,7 +75,7 @@ def detail(request,work):
     form=None if recipient else InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,initial={**panel['inputs'],'request_id':panel['request'].pk})
     if request.method=='POST':
         try:
-            p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
+            p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'));notice='Native payroll action recorded'
             if action=='advance':factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form or not form.is_valid():raise ValidationError('Choose exact current payroll sources')
@@ -83,14 +84,15 @@ def detail(request,work):
                 values={}
                 if action=='review':values={'kind':p.get('kind'),'subject_id':int(p.get('subject_id','0')),'verdict':p.get('verdict'),'operation_key':p.get('operation_key',''),'evidence_id':int(p.get('evidence_id','0'))}
                 elif action=='receive':values={'publication_id':int(p.get('publication_id','0'))}
-                payroll.human_action(request.user,work.pk,revision,case_revision,action,values)
+                result=payroll.human_action(request.user,work.pk,revision,case_revision,action,values)
+                if action=='receive':notice=f'Your receipt #{result.pk} for aggregate report #{result.publication_id} is recorded.'
             elif action=='restart':
                 if not form or not form.is_valid():raise ValidationError('Select exact current payroll sources')
                 payroll.restart(request.user,work.pk,revision,case_revision,form.cleaned_data['request_id'].pk,form.inputs(),int(p.get('configuration_id','0')),p.get('instruction_key',''),p.get('reason',''))
             elif action=='cancel':payroll.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,action)
             else:raise ValidationError('Choose a current payroll action')
-            messages.success(request,'Native payroll action recorded');return redirect(request.get_full_path())
+            messages.success(request,notice);return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
     from apps.policy.models import Configuration
