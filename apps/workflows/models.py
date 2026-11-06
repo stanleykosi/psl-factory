@@ -52,3 +52,4 @@ from .followup_transport_models import FinanceFollowupDispatch
 from .factory_models import FactoryWork,FactoryActivity,FactoryAttempt
 from .factory_planning_models import FactoryPlanningReceipt,FactoryPlanningRecovery,FactoryPlanningReceiptUse
 from .factory_execution_models import FactoryExecutionBinding
+from .change_intake_models import ChangeIntakeConfirmation

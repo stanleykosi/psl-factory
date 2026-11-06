@@ -41,7 +41,9 @@ class FactoryCoordinatorTests(TestCase):
         self.assertContains(page,'Choose how this work will be coordinated')
         self.assertContains(page,'Allowance has not been reserved. Configured limit: 30000.')
         self.assertContains(page,'Review work coordination')
-        self.assertNotContains(page,'0 of 0');self.assertNotContains(page,'configuration_needed:')
+        # Budget presentation is distinct from legitimate empty intake coverage.
+        setup=page.content.decode().split('<h2>Execution setup</h2>',1)[1].split('</section>',1)[0]
+        self.assertNotIn('0 of 0',setup);self.assertNotContains(page,'configuration_needed:')
         queue=self.client.get(reverse('home'),{'queue':'exceptions'})
         self.assertIn(work.pk,[row['work'].pk for row in queue.context['rows']])
         class Trap:

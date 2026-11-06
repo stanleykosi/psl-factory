@@ -68,7 +68,7 @@ def run_current(r):
  for pk in r.metadata.get('input_ids',[]):input_current(exact(r.request.case,PayrollInput,pk))
  if r.hr_snapshot_id:
   h=hr.exact(r.request.case,HRReadSnapshot,r.hr_snapshot_id)
-  hr.check_snapshot_access(r.actor,h)
+  hr.snapshot_access(r.actor,h)
   if h.sha256!=r.metadata['hr_sha256']:raise ValidationError('HR source changed')
  return r
 
@@ -76,14 +76,20 @@ def run_current(r):
 def private_input(actor,case_id,pk):
  c=locked(actor,case_id,'payroll.private.read');i=exact(c,PayrollInput,pk);access(i.request,actor,True);input_current(i);return i.payload
 
-@transaction.atomic
-def check_run_access(actor,r):
- locked(actor,r.request.case_id,'payroll.private.read');access(r.request,actor,True);run_current(r)
+def run_access(actor,r):
+ # Pure authority/currentness validation; payload readers retain native locks.
+ for action in ['case.read','payroll.read','payroll.private.read']:require(actor,r.request.case,action)
+ access(r.request,actor,True);run_current(r)
  cursor=r
  while cursor:
-  if cursor.hr_snapshot_id:hr.check_snapshot_access(actor,hr.exact(r.request.case,HRReadSnapshot,cursor.hr_snapshot_id))
+  if cursor.hr_snapshot_id:hr.snapshot_access(actor,hr.exact(r.request.case,HRReadSnapshot,cursor.hr_snapshot_id))
   cursor=exact(r.request.case,PayrollRun,cursor.parent_id) if cursor.parent_id else None
  return r
+
+@transaction.atomic
+def check_run_access(actor,r):
+ locked(actor,r.request.case_id,'payroll.private.read')
+ return run_access(actor,r)
 
 @transaction.atomic
 def private_run(actor,case_id,pk):
@@ -191,7 +197,7 @@ def current_review(item):
  r=item.reviews.order_by('-pk').first()
  if not r or r.verdict!='approve' or r.subject_sha256!=item.sha256:raise ValidationError('Current exact payroll review required')
  q=item.request;require(r.actor,q.case,'payroll.review');access(q,r.actor,True)
- if isinstance(item,PayrollRun):check_run_access(r.actor,item);purpose=item.kind
+ if isinstance(item,PayrollRun):run_access(r.actor,item);purpose=item.kind
  else:input_current(item);purpose='input'
  if authority(r.actor,q,purpose,item.actor_id)!=r.authority:raise ValidationError('Payroll review authority changed')
  if isinstance(item,PayrollRun):

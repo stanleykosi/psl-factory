@@ -100,6 +100,10 @@ from apps.workflows import factory_receipt_recovery_views
 urlpatterns += [path('work/<int:work_id>/response-recovery/',factory_receipt_recovery_views.review,name='factory_receipt_recovery_review'),
     path('cases/<uuid:case_id>/factory/response-recovery/',factory_receipt_recovery_views.configuration,name='factory_receipt_recovery_configuration')]
 
+from apps.workflows import factory_change_intake_views
+urlpatterns += [path('cases/<uuid:case_id>/factory/change-intake/',factory_change_intake_views.create,name='p56_intake'),
+    path('cases/<uuid:case_id>/factory/change-intake/<int:receipt_id>/',factory_change_intake_views.detail,name='p56_intake_detail')]
+
 from apps.workflows import factory_intake_views
 urlpatterns += [path('work/<int:work_id>/project-instruction/',factory_intake_views.review,name='factory_intake_reaffirm')]
 from apps.workflows import factory_rfp_views

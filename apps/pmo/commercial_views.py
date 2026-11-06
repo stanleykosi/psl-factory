@@ -92,10 +92,10 @@ def changes(request,case_id):
             return redirect('changes',case_id=case.pk)
         except (ValidationError,ValueError,KeyError) as exc:
             messages.error(request,str(exc));case.refresh_from_db()
-    versions=ChangeVersion.objects.filter(change__case=case).order_by('-pk')
+    versions=ChangeVersion.objects.filter(change__case=case).select_related('intake_confirmation').order_by('-pk')
     try:entries,gates,policies=catalogue(case);catalogue_error=''
     except ValidationError as exc:entries={};gates=[];policies={};catalogue_error=str(exc)
-    return render(request,'pmo/changes.html',{'case':case,'versions':versions,'evidence':case.evidence.order_by('-pk'),
+    return render(request,'pmo/changes.html',{'case':case,'versions':versions,'evidence':case.evidence.exclude(kind__startswith='agent_private_').order_by('-pk'),
         'standard_entries':entries,'standard_gates':gates,'standard_policies':policies,'standard_error':catalogue_error,
         'standard_policy_form':policy_form,'preapprovals':StandardPreapproval.objects.filter(case=case).order_by('-pk')[:100],
         'standard_bindings':StandardBinding.objects.filter(version__change__case=case).order_by('-pk')[:100],

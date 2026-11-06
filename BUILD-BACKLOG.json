@@ -1,4 +1,28 @@
 {
+  "p56_request_first_intake": {
+    "status": "implemented_diagnostic_guard_correction_pending",
+    "branch": "build/p56-change-intake",
+    "base": "303a9d3",
+    "process_ids": [
+      "P56"
+    ],
+    "diagnostics": {
+      "2": "45PASS",
+      "3": "151PASS on earlier unchanged source",
+      "4": "92 tests;8failure reports/19errors;unsafe JSON cast plus1 invalid label",
+      "5": "running corrected guard"
+    },
+    "migration": "0070 reserved after actual accepted0069; not installed",
+    "final_run": 713,
+    "whole_process_promotion": false,
+    "remaining": [
+      "Corrected diagnostic verification",
+      "Actual0070 migration graph and final713",
+      "Compose complementary F43 privacy edits",
+      "Browser and whole-process evidence"
+    ],
+    "restricted_work": "untouched"
+  },
   "normal_impact_integration": {
     "status": "integrated_composed_regression_pending",
     "source": "297f153",

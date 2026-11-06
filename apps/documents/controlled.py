@@ -38,8 +38,14 @@ def project_payload(title,definition,audience,fields):
         {'heading':key,'text':fields[key]['text']} for key in allowed if key in fields and fields[key]['text'].strip()]}
 
 
-@transaction.atomic
 def create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None):
+    return _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id)
+
+
+@transaction.atomic
+def _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None,*,authorized_restricted_source_ids=()):
+    # Internal storage primitive. Public callers cannot pass a private-source bypass.
+    # Native domain entrypoints must rederive their exact fields and source scope.
     case=lock_case(actor,case_id,'document.draft',expected)
     template=Template.objects.filter(case=case,pk=template_id).first()
     if not template or audience not in AUDIENCES or not title.strip() or len(title)>240:
@@ -50,7 +56,8 @@ def create_version(actor,case_id,template_id,title,audience,fields,expected,docu
         'required':['text','evidence_ids'],'additionalProperties':False} for key in FIELDS},'additionalProperties':False},fields)
     source_ids=sorted({pk for field in fields.values() for pk in field['evidence_ids']})
     sources=[subject(case,pk) for pk in source_ids]
-    if any(restricted(e) for e in sources):raise ValidationError('Restricted source evidence requires its authorized domain interface')
+    if not isinstance(authorized_restricted_source_ids,(list,tuple,set)) or any(type(pk) is not int or pk<1 for pk in authorized_restricted_source_ids) or not set(authorized_restricted_source_ids).issubset(source_ids):raise ValidationError('Exact native projection source scope required')
+    if any(restricted(e) and e.pk not in authorized_restricted_source_ids for e in sources):raise ValidationError('Restricted source evidence requires its authorized domain interface')
     if document_id:
         document=Document.objects.filter(case=case,pk=document_id).first()
         if not document or document.title!=title:

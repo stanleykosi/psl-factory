@@ -1,5 +1,14 @@
 # PSL operations factory cloud handoff — 6 November 2026
 
+## 6 November 2026: isolated P56 request-first candidate
+
+This branch implements raw request provenance, bounded synthetic A01 extraction, accountable PM classification and native controlled-change binding from303a9d3. Original requestor/date remain distinct from capture actor/time. Emergency links to native P61/P62; revisions of existing CRs link to existing work for explicit source correction. Canonical P56 packets stay private to domain readers; native controlled documents use narrowly authorized source IDs. Classification is not approval or implementation authority.
+
+Diagnostic2 passed45 tests. Diagnostic3 passed151 tests (1499.370s process), including the new raw intake through native reviewed receipts and signed closure plus existing Normal/Standard/Emergency regressions, on its unchanged earlier source. Diagnostic4 on later lineage/SQL-pin hardening ran92 tests (134.704s tests/137.058s process):8 failure reports/19 errors. Eighteen errors and all failure reports exposed SQL planner evaluation of plain-text evidence as JSON; the remaining error was an invalid document test label. Both failed runs1/4 remain preserved. A CASE-protected JSON guard correction is now under diagnostic5; no corrected pass is claimed yet.
+
+These are provisional isolated schema diagnostics on253 actual predecessor migrations through workflows0067 plus one provisional table/guard, not accepted0070 or final713. The frozen source guard is docs/design/p56-change-intake-guard.sql; it must be embedded literally in final workflows0070 after actual accepted0069, without mutable runtime imports. Source-only checkpoints exclude runtime evidence. Full108 remains NOT_MET; no P56 whole-process promotion, live-provider evidence, deployment, public runtime data or held Finance work.
+
+
 ## Current continuation status: 6 November 2026
 
 Current integrated runtime is88611fb: Normal692, Standard/commercial696, Emergency697 and reviewed native impact with split702+704 evidence. Combined707 is running; no composed pass yet. Emergency697 also has bounded supported-browser proof. Read the latest dated continuation record below; earlier records remain historical. Public build/cloud-milestone is e3ca52afc24ef1929227bf274a4a4837b934f0ca, exact tree2f5080a1e2c4d500a8b574ac353c15d13fc9c531. Main05590af is unchanged. All new runtime evidence stays local and is excluded from public trees.

@@ -99,7 +99,13 @@ def draft_change_document(actor,case_id,authorization_id,template_id,purpose,exp
     if purpose=='go_live':
         fields['status']={'text':'Completed implementation and validated testing recorded for '+v.change.reference+'. Capture PM and Client acceptance of this exact version.',
             'evidence_ids':sorted(set(auth.execution.filter(pk__in=execution_ids).values_list('evidence_id',flat=True)))}
-    version=create_version(actor,case.pk,template.pk,'Change '+v.change.reference+' v'+str(v.number)+' '+purpose,audience,fields,case.revision)
+    if v.evidence.source=='psl:p56-confirmed-request/v1':
+        from apps.identity.services import require
+        from apps.documents.controlled import _create_version
+        require(actor,case,'change.read')
+        version=_create_version(actor,case.pk,template.pk,'Change '+v.change.reference+' v'+str(v.number)+' '+purpose,audience,fields,case.revision,authorized_restricted_source_ids=(v.evidence_id,))
+    else:
+        version=create_version(actor,case.pk,template.pk,'Change '+v.change.reference+' v'+str(v.number)+' '+purpose,audience,fields,case.revision)
     ChangeDocumentBinding.objects.create(version=version,authorization=auth,purpose=purpose,execution_ids=execution_ids,
         authority_recovery=authorization_recovery(case,auth))
     return version

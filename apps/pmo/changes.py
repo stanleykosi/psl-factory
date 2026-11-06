@@ -26,6 +26,8 @@ def current_change(case, pk, adopted_manifest=None):
 def log_change(actor, case_id, reference, category, module, description, reason, evidence_id, expected, incident_id=None):
     from .commercial import note_required
     case = lock_case(actor, case_id, 'change.manage', expected)
+    from apps.policy.services import role_policy
+    role_policy(actor, case, 'PM')  # Classification ownership, not an approval.
     if case.kind != 'project' or category not in ['Standard', 'Normal', 'Emergency'] or not reference.strip() or len(reference)>160 or not module.strip() or len(module)>160:
         raise ValidationError('A project, unique reference, affected module and exact change category are required')
     note_required(description); note_required(reason)

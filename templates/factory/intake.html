@@ -5,4 +5,5 @@
 {% for option in options %}<a class="card factory-intake-option" href="{% url 'factory_create' %}?definition={{ option.definition|urlencode }}"><h2>{{ option.title }}</h2><p>{{ option.description }}</p><span>Choose project →</span></a>
 {% empty %}<div class="empty-state"><h2>No new work is available for this account</h2><p>Starting work requires the relevant permissions on a project. You can still return to your current work queue.</p></div>{% endfor %}
 </section>
+{% if change_intakes %}<section><h2>Change requests awaiting PM classification</h2>{% for receipt in change_intakes %}<p><a href="{% url 'p56_intake_detail' receipt.case_id receipt.pk %}">Change request receipt #{{ receipt.pk }}</a> · received {{ receipt.created_at }}</p>{% endfor %}</section>{% endif %}
 {% endblock %}
