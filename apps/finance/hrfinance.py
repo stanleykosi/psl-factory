@@ -114,14 +114,19 @@ def current_snapshot(s,for_use=False):
  if for_use and completeness!='complete':raise ValidationError('HR inventory is partial or unknown')
  return s
 
-@transaction.atomic
-def check_snapshot_access(actor,s):
- c=locked(actor,s.contract.need.case_id,'hrfinance.snapshot.read')
+def snapshot_access(actor,s):
+ # Pure currentness/authority checks shared by observations and locked readers.
+ c=s.contract.need.case
  for k in ['case.read','hrfinance.read','hrfinance.snapshot.read']:require(actor,c,k)
  current_snapshot(s)
  if actor.pk not in s.contract.payload['recipient_ids']:raise PermissionDenied('Not an exact HR-authorised Finance recipient')
  authority(actor,c,'receive')
  return s
+
+@transaction.atomic
+def check_snapshot_access(actor,s):
+ locked(actor,s.contract.need.case_id,'hrfinance.snapshot.read')
+ return snapshot_access(actor,s)
 
 @transaction.atomic
 def read_snapshot(actor,s):

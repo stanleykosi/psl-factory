@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Prepare an asset schedule</h1><p>Select a supplied register. Finance retains classification, method, source and output decisions.</p>
+<form method="get"><input type="hidden" name="definition" value="finance-ppe/v1">{{ form.case.as_field_group }}<button>Select case</button></form>
+{% if case %}<p><a href="{% url 'ppe' case.pk %}">Capture a supplied register or configure native PPE policy</a></p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start asset schedule work</button></form>{% endif %}
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Coordinate restricted payroll</h1><p>Select two accepted payroll sources. HR owns staff facts; Finance reviews each native result. Only aggregates reach report recipients.</p>
+<form method="get"><input type="hidden" name="definition" value="finance-payroll/v1">{{ form.case.as_field_group }}<button>Select workspace</button></form>
+{% if case %}<a href="{% url 'payroll' case.pk %}">Capture source-owned payroll versions</a><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start payroll work</button></form>{% endif %}
+{% endblock %}

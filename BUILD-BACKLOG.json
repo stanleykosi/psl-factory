@@ -1,12 +1,19 @@
 {
-  "normal_impact_integration": {
-    "status": "integrated_composed_regression_pending",
-    "source": "297f153",
-    "integration": "88611fb",
-    "evidence": "702119PASS/1fixtureERROR with104nonimpactPASS;70416PASS on corrected module;runtime and non-impact tests identical",
-    "pending_run": 707,
-    "pending_tests": 49,
-    "whole_process_promotion": false
+  "schedules_factory_increment": {
+    "status": "provisional_tests_passed_final_migration_pending",
+    "source": "3647318",
+    "process_ids": [
+      "F12",
+      "F13"
+    ],
+    "tests": 50,
+    "evidence": "Local schedules-provisional diagnostic8; no final acceptance",
+    "next": "Accepted0068, immutable0069, final706 and independent review",
+    "limits": [
+      "Selected supplied scope only",
+      "No native workbook verification or ledger posting",
+      "No held Finance performance work"
+    ]
   },
   "emergency_factory_increment": {
     "status": "implemented_bounded_tests_passed",

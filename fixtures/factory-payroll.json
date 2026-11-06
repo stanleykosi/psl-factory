@@ -1,0 +1,19 @@
+{
+  "classification": "SYNTHETIC execution limits only; native payroll and HR disclosure permissions and human decisions remain required",
+  "definition": "finance-payroll/v1",
+  "max_steps": 40,
+  "max_tokens": 20000,
+  "tokens_per_call": 100,
+  "max_children": 100,
+  "max_depth": 1,
+  "lease_seconds": 120,
+  "max_age_seconds": 86400,
+  "required_evidence_kinds": [
+    "payroll_need"
+  ],
+  "information_resolver_id": null,
+  "executor_id": null,
+  "review_role": null,
+  "provider": "synthetic_factory_v1",
+  "enabled": true
+}
