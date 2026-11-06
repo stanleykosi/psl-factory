@@ -1136,3 +1136,8 @@ pmo-change/v1 coordinates existing native P56-P60 records with exact source pins
 ## 6 November2026 — Normal change impact handoffs
 
 Normal impact records use explicit owner-authored statements and scope comparison identifiers, not machine interpretation or invented department thresholds. Additive pmo0043 preserves immutable history; missing old detail holds new eligibility. Existing report and P32 readiness services remain authoritative. See docs/runbooks/normal-change-impact.md.
+
+
+## 6 November2026 - reviewed Normal impact corrections
+
+698104PASS/302.015s tests and304.262s process on unchanged source; fresh248 migrations/334 tables/331 empty business tables and before/after schema-definition hashes preserved. Independent review found stale timeline labels, omitted rendered notice timelines and missing exact production candidate linkage. Corrections use current-source report snapshots, rendered-text guards and explicit Engineering candidate/P32 dossier equality. Ordering is explicit. Accepted27e3495 Standard/commercial source is composed;700 remains pending. No browser or whole-process acceptance.

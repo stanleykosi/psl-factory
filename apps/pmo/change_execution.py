@@ -55,7 +55,7 @@ def execution_manifest(auth):
 
 
 @transaction.atomic
-def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, expected, *, scope_items=None, dossier_id=None):
+def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, expected, *, scope_items=None, dossier_id=None, candidate_id=None):
     actions={'plan_updated':'change.manage','implemented':'change.progress:Engineering','testing_validated':'change.progress:QA','documentation_updated':'change.manage'}
     if kind not in actions:raise ValidationError('Choose an explicit implementation evidence category')
     case=lock_case(actor,case_id,actions[kind],expected)
@@ -68,7 +68,7 @@ def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, 
     if kind=='implemented' and 'plan_updated' not in prior:raise ValidationError('Record the updated plan before implementation evidence')
     if kind=='testing_validated' and 'implemented' not in prior:raise ValidationError('Record completed implementation before testing validation')
     from .change_impacts import execution_details
-    details,evidence=execution_details(actor,case,auth,kind,evidence,scope_items,dossier_id)
+    details,evidence=execution_details(actor,case,auth,kind,evidence,scope_items,dossier_id,candidate_id)
     result=ChangeExecutionEvent.objects.create(impact_details=details,authorization=auth,kind=kind,evidence=evidence,note=note,actor=actor)
     event(actor,case,'change.execution_evidence',execution=result.pk,authorization=auth.pk,kind=kind)
     bump(case)
@@ -86,8 +86,10 @@ def draft_change_document(actor,case_id,authorization_id,template_id,purpose,exp
     template=Template.objects.filter(case=case,pk=template_id,definition__document_type__in=['status_report','project_artifact']).first()
     if not template:raise ValidationError('Select this case reviewed change template')
     v=auth.version
-    from .change_impacts import timeline_text
+    from .change_impacts import timeline_text, timeline_required
     approved_timeline=timeline_text(auth)
+    if purpose=='notice' and timeline_required(auth) and 'timeline' not in template.definition['audience_fields'].get(audience,[]):
+        raise ValidationError('Timeline-impact notice template must display the approved timeline')
     execution_ids = execution_manifest(auth) if purpose=='go_live' else []
     fields={'executive_summary':{'text':v.description,'evidence_ids':[v.evidence_id]},
         'scope':{'text':v.module+': '+v.description,'evidence_ids':[v.evidence_id]},
@@ -106,6 +108,9 @@ def draft_change_document(actor,case_id,authorization_id,template_id,purpose,exp
 def change_binding_findings(binding):
     try:
         validate_authorization(binding.authorization.version.change.case,binding.authorization)
+        from .change_impacts import notice_has_timeline
+        if binding.purpose=='notice' and not notice_has_timeline(binding.authorization,binding.version):
+            return ['Notice must display the exact approved timeline impact']
         recovered=authorization_recovery(binding.authorization.version.change.case,binding.authorization)
         if binding.authority_recovery_id!=(recovered.pk if recovered else None):
             return ['Historical authority recovery changed; prepare and review a fresh document version']
@@ -131,7 +136,8 @@ def close_change(actor,case_id,authorization_id,receipt_id,pm_signature_id,clien
         publication__version__changedocumentbinding__purpose='notice')
     if flags['client_facing'] or flags['timeline_impact']:
         notices=notices.filter(publication__version__audience='client')
-    notice=notices.exists()
+    from .change_impacts import notice_has_timeline
+    notice=any(notice_has_timeline(auth,r.publication.version) for r in notices.select_related('publication__version'))
     if not receipt or not notice:raise ValidationError('Recorded delivery of change notice and exact change go-live document required')
     binding=ChangeDocumentBinding.objects.get(version=receipt.publication.version)
     if binding.execution_ids!=execution_ids:raise ValidationError('Signed go-live document is stale for current implementation evidence')

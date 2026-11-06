@@ -90,6 +90,19 @@ class ChangeImpactTests(TestCase):
         self.ready(auth)
         with self.assertRaisesRegex(ValidationError,'Extra unapproved scope'):execution_manifest(auth)
         self.assertEqual(auth.execution.filter(pk=deviation.pk).count(),1)
+        # Reassessment authorizes only a new forward revision, never the old deviation.
+        self.cv=log_change(self.actor,self.case.pk,'CR-001','Normal','Delivery','Forward scope includes the extra item','Human requests reassessment',self.source.pk,rev(self.case))
+        self.assessments(False,False,False)
+        self.reassess('Engineering',scope_items=['CR-001/item-1','unapproved-extra'])
+        for role in ['Product','Engineering']:
+            decide_change(self.actor,self.case.pk,self.cv.pk,role,'approve',self.source.pk,'New forward scope decision',rev(self.case))
+        successor=authorize_change(self.actor,self.case.pk,self.cv.pk,None,rev(self.case))
+        for kind,e_kind in [('plan_updated','plan'),('implemented','change_implementation'),('testing_validated','change_validation'),('documentation_updated','document')]:
+            evidence=add_evidence(self.actor,self.case.pk,e_kind,'New forward work after authorization','synthetic:forward')
+            record_execution(self.actor,self.case.pk,successor.pk,kind,evidence.pk,'Fresh owner evidence for successor only',rev(self.case),scope_items=['CR-001/item-1','unapproved-extra'] if kind=='implemented' else None)
+        self.assertEqual(len(execution_manifest(successor)),4)
+        with self.assertRaisesRegex(ValidationError,'Extra unapproved scope'):execution_manifest(auth)
+
 
     def test_unknown_scope_can_be_clarified_but_never_assumed(self):
         auth=self.authorized();self.ready(auth)
@@ -145,3 +158,123 @@ class ChangeImpactTests(TestCase):
         source=add_evidence(self.actor,self.case.pk,'plan','Updated detailed plan','synthetic:later-plan')
         record_execution(self.actor,self.case.pk,auth.pk,'plan_updated',source.pk,'Later plan amendment',rev(self.case))
         with self.assertRaisesRegex(ValidationError,'weekly client report'):execution_manifest(auth)
+
+    def test_assessment_projection_orders_reassessed_owners_explicitly(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        from apps.pmo.change_impacts import authorized_details
+        self.assessments(False,False,False);self.reassess('Engineering')
+        for role in ['Product','Engineering']:
+            decide_change(self.actor,self.case.pk,self.cv.pk,role,'approve',self.source.pk,'Exact reassessed scope',rev(self.case))
+        auth=authorize_change(self.actor,self.case.pk,self.cv.pk,None,rev(self.case))
+        with CaptureQueriesContext(connection) as queries:rows=authorized_details(auth)
+        self.assertEqual(list(rows),['QA','Infra','Security','Engineering'])
+        self.assertEqual([r.pk for r in rows.values()],sorted(auth.assessment_ids))
+        self.assertTrue(any('ORDER BY "pmo_changeassessment"."id" ASC' in q['sql'] for q in queries))
+        self.assertEqual(timeline_text(auth),'\n'.join(team+': No timeline change' for team in rows))
+
+    def approved_report(self):
+        auth=self.authorized();self.ready(auth)
+        report=native_tests.weekly_change_report(self.actor,self.case,self.e['policy_decision'])
+        return auth,report
+
+    def assert_timeline_status(self,report,status):
+        from apps.pmo.change_impacts import timeline_snapshot,report_timeline
+        from apps.pmo.reporting import binding_manifest
+        snapshot=timeline_snapshot(self.case)
+        self.assertEqual(snapshot['rows'][0]['status'],status)
+        self.assertIn(status,report_timeline(snapshot))
+        self.assertNotEqual(binding_manifest(report),report.manifest)
+        self.assertEqual(self.cv.changeauthorization_set.get().execution.filter(kind='plan_updated').count(),1)
+
+    def test_weekly_timeline_marks_superseded_revision_and_invalidates_old_report(self):
+        auth,report=self.approved_report()
+        log_change(self.actor,self.case.pk,'CR-001','Normal','Delivery','Revised scope','Owner revision',self.source.pk,rev(self.case))
+        self.assert_timeline_status(report,'superseded')
+
+    def test_weekly_timeline_marks_later_returned_decision_and_invalidates_old_report(self):
+        auth,report=self.approved_report()
+        native_tests.artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',
+            {'rules':[{'role':'Product','actions':['return']}]},self.e['policy_decision'])
+        decide_change(self.actor,self.case.pk,self.cv.pk,'Product','return',self.source.pk,'Owner returns approved scope for reassessment',rev(self.case))
+        self.assert_timeline_status(report,'held')
+
+    def test_weekly_timeline_marks_revoked_authority_even_without_a_new_decision_row(self):
+        from apps.identity.models import Grant
+        auth,report=self.approved_report()
+        Grant.objects.filter(case=self.case,user=self.actor,action='change.decide').update(active=False)
+        self.assert_timeline_status(report,'held')
+
+    def test_weekly_timeline_marks_scope_deviation_and_retains_original_plan_history(self):
+        auth,report=self.approved_report()
+        source=add_evidence(self.actor,self.case.pk,'change_implementation','Actual extra item','synthetic:extra')
+        record_execution(self.actor,self.case.pk,auth.pk,'implemented',source.pk,'Return for authority',rev(self.case),scope_items=['CR-001/item-1','extra'])
+        self.assert_timeline_status(report,'held')
+
+    def test_report_drafted_while_held_requires_refresh_after_authority_restoration(self):
+        from apps.identity.models import Grant
+        self.assessments(False,True,True)
+        for role in ['Product','Engineering','Client','Engineering Lead','Security Manager']:
+            decide_change(self.actor,self.case.pk,self.cv.pk,role,'approve',self.source.pk,'Owner timeline decision',rev(self.case))
+        auth=authorize_change(self.actor,self.case.pk,self.cv.pk,None,rev(self.case));self.ready(auth)
+        grants=Grant.objects.filter(case=self.case,user=self.actor,action='change.decide')
+        grants.update(active=False)
+        held=native_tests.weekly_change_report(self.actor,self.case,self.e['policy_decision'])
+        self.assertEqual(held.manifest['normal_change_timeline']['rows'][0]['status'],'held')
+        grants.update(active=True)
+        with self.assertRaisesRegex(ValidationError,'weekly client report'):execution_manifest(auth)
+        current=native_tests.weekly_change_report(self.actor,self.case,self.e['policy_decision'])
+        self.assertEqual(current.manifest['normal_change_timeline']['rows'][0]['status'],'current approved')
+        self.assertEqual(len(execution_manifest(auth)),4)
+
+    def test_timeline_notice_cannot_omit_approved_impact_in_rendered_audience(self):
+        from apps.documents.controlled import create_version,preflight
+        from apps.pmo.models import ChangeDocumentBinding
+        self.assessments(False,True,True)
+        for role in ['Product','Engineering','Client','Engineering Lead','Security Manager']:
+            decide_change(self.actor,self.case.pk,self.cv.pk,role,'approve',self.source.pk,'Owner decision',rev(self.case))
+        auth=authorize_change(self.actor,self.case.pk,self.cv.pk,None,rev(self.case))
+        template=register_template(self.actor,self.case.pk,'Narrow notice',{'document_type':'project_artifact','required_fields':['executive_summary','status'],
+            'audience_fields':{'client':['executive_summary','status']}},self.e['policy_decision'].pk,rev(self.case))
+        with self.assertRaisesRegex(ValidationError,'notice template must display'):
+            draft_change_document(self.actor,self.case.pk,auth.pk,template.pk,'notice',rev(self.case))
+        # Existing historical narrow binding still cannot pass current publication preflight.
+        fields={k:{'text':'Historical narrow notice without timeline','evidence_ids':[self.source.pk]} for k in ['executive_summary','status']}
+        old=create_version(self.actor,self.case.pk,template.pk,'Historical incomplete notice','client',fields,rev(self.case))
+        ChangeDocumentBinding.objects.create(version=old,authorization=auth,purpose='notice')
+        self.assertTrue(any('exact approved timeline' in x for x in preflight(old)))
+
+
+from tests import test_delivery as delivery_tests
+
+class ProductionChangeImpactTests(delivery_tests.DeliveryFixture,TestCase):
+
+    def setUp(self):
+        self.setup_delivery();native_tests.change_roles(self.actor,self.case,self.e['policy_decision'])
+        self.change_source=add_evidence(self.actor,self.case.pk,'change_request','Synthetic production change','synthetic:production-change')
+        self.cv=log_change(self.actor,self.case.pk,'CR-001','Normal','Delivery','Approved production scope','Owner request',self.change_source.pk,rev(self.case))
+
+    def test_p32_ready_dossier_must_match_explicit_engineering_candidate(self):
+        from apps.pmo.gates import register_candidate,record_gate
+        self.ready()  # Existing native Planning, UAT/Engineering Go, GLPI and readiness services.
+        for team in ['Engineering','QA','Infra','Security']:
+            data=impact_fixture(team)
+            if team=='Infra':data['production_impact']=True
+            assess_change(self.actor,self.case.pk,self.cv.pk,team,False,False,False,self.change_source.pk,'Owner confirms actual production change impact',rev(self.case),**data)
+        for role in ['Product','Engineering']:
+            decide_change(self.actor,self.case.pk,self.cv.pk,role,'approve',self.change_source.pk,'Owner scope decision',rev(self.case))
+        auth=authorize_change(self.actor,self.case.pk,self.cv.pk,None,rev(self.case))
+        events=native_tests.ChangeExecutionTests.ready(self,auth)
+        other=register_candidate(self.actor,self.case.pk,'unrelated-build-same-baseline',self.e['requirements'].pk,rev(self.case))
+        with self.assertRaisesRegex(ValidationError,'exact Engineering implementation candidate'):
+            record_execution(self.actor,self.case.pk,auth.pk,'implemented',events['implemented'].evidence_id,'Wrong valid ready dossier',rev(self.case),scope_items=['CR-001/item-1'],candidate_id=other.pk,dossier_id=self.d.pk)
+        with self.assertRaisesRegex(ValidationError,'exact Engineering implementation candidate'):
+            record_execution(self.actor,self.case.pk,auth.pk,'implemented',events['implemented'].evidence_id,'Candidate linkage unknown',rev(self.case),scope_items=['CR-001/item-1'],dossier_id=self.d.pk)
+        implementation=record_execution(self.actor,self.case.pk,auth.pk,'implemented',events['implemented'].evidence_id,'Engineering binds actual candidate to approved scope',rev(self.case),scope_items=['CR-001/item-1'],candidate_id=self.candidate.pk,dossier_id=self.d.pk)
+        record_execution(self.actor,self.case.pk,auth.pk,'testing_validated',events['testing_validated'].evidence_id,'QA validates exact latest implementation',rev(self.case))
+        self.assertEqual(implementation.impact_details['candidate_id'],self.candidate.pk)
+        self.assertEqual(len(implementation.impact_details['readiness']['glpi']),3)
+        self.assertEqual(implementation.impact_details['dossier_id'],self.d.pk)
+        self.assertEqual(len(execution_manifest(auth)),4)
+        record_gate(self.actor,self.case.pk,self.candidate.pk,'glpi_security','GLPI-001',self.e['requirements'].pk,rev(self.case))
+        with self.assertRaises(ValidationError):execution_manifest(auth)

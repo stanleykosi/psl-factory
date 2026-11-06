@@ -1471,3 +1471,13 @@ Independent isolated PostgreSQL reproduction confirmed the new convention predic
 ## 6 November2026 — Normal change impact handoffs
 
 Implemented isolated P57/P59 Normal impact details, plan/report/notice propagation, production readiness handoff and permanent extra-scope reassessment condition. Debug49PASS; final698 pending. No source catalogue statuses changed.
+
+
+## 6 November2026 - reviewed Normal impact corrections
+
+698104PASS/302.015s tests and304.262s process on unchanged source; fresh248 migrations/334 tables/331 empty business tables and before/after schema-definition hashes preserved. Independent review found stale timeline labels, omitted rendered notice timelines and missing exact production candidate linkage. Corrections use current-source report snapshots, rendered-text guards and explicit Engineering candidate/P32 dossier equality. Ordering is explicit. Accepted27e3495 Standard/commercial source is composed;700 remains pending. No browser or whole-process acceptance.
+
+
+## 6 November2026 - frozen700 fixture failures
+
+700 finished118PASS/2ERROR in1154.891s tests/1157.365s process with unchanged91b34b2 source. Both errors were new test fixtures: missing explicit Product return-action policy, and Evidence shadowing DeliveryFixture.source(). All5 composed Standard/commercial/signature branches passed. Fresh248 migrations/334 tables/331 empty business tables, migration hashes and column/index/constraint/trigger/function hashes were equal before/after. Fixture-only corrections preserve native policy and runtime behavior;702 will repeat the full120-test cohort. Independent review cleared the corrected runtime paths.

@@ -4,7 +4,7 @@ P57: SOP 9.10.3. P59: SOP 9.10.5–9.10.8. Existing Standard and
 Emergency routes retain their separate contracts. Empty legacy detail is unknown.
 """
 import json
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from apps.documents.controlled import baseline_manifest
 from apps.documents.contracts import validate
 
@@ -49,14 +49,14 @@ def validate_assessments(version, latest):
         raise ValidationError('Engineering approved-scope inventory remains unknown; obtain owner clarification')
 
 def authorized_details(auth):
-    rows={a.contributor:a for a in auth.version.assessments.filter(pk__in=auth.assessment_ids)}
+    rows={a.contributor:a for a in auth.version.assessments.filter(pk__in=auth.assessment_ids).order_by('pk')}
     return rows
 
 def timeline_text(auth):
     if auth.version.category!='Normal':return ''
     return '\n'.join(a.contributor+': '+a.impact_details['outputs']['timeline'] for a in authorized_details(auth).values())
 
-def execution_details(actor,case,auth,kind,evidence,scope_items,dossier_id):
+def execution_details(actor,case,auth,kind,evidence,scope_items,dossier_id,candidate_id):
     if auth.version.category!='Normal':return {},evidence
     rows=authorized_details(auth)
     details={'assessment_ids':auth.assessment_ids,'baseline':baseline_manifest(case)}
@@ -73,11 +73,20 @@ def execution_details(actor,case,auth,kind,evidence,scope_items,dossier_id):
         details.update(scope_items=actual,extra_scope=extra,scope_status='unknown' if actual is None else 'deviation' if extra else 'incomplete' if set(actual)!=set(approved) else 'within_approved_scope')
         production=rows['Infra'].impact_details['production_impact']
         details['production_impact']=production
+        if any(value is not None and type(value) is not int for value in [candidate_id,dossier_id]):
+            raise ValidationError('Exact implementation candidate identifier required')
+        details['candidate_id']=candidate_id
+        if production and candidate_id is not None:
+            from .models import DeliveryCandidate
+            if not DeliveryCandidate.objects.filter(case=case,pk=candidate_id).exists():
+                raise ValidationError('Implementation candidate must belong to this case')
         if production and dossier_id:
             from .delivery import dossier_for,readiness_inputs
             dossier=dossier_for(case,dossier_id)
+            if dossier.candidate_id!=candidate_id:
+                raise ValidationError('P32 dossier must match the exact Engineering implementation candidate')
             details.update(dossier_id=dossier.pk,readiness=readiness_inputs(dossier))
-        elif not production and dossier_id:raise ValidationError('Do not attach production readiness to an owner-confirmed non-production change')
+        elif not production and (dossier_id or candidate_id):raise ValidationError('Do not attach production readiness to an owner-confirmed non-production change')
     return details,evidence
 
 def deviation_hold(auth):
@@ -99,18 +108,25 @@ def validate_execution(auth,latest):
             raise ValidationError('Production change awaits exact P32 delivery dossier/readiness; ordinary approval is not release authority')
         from .delivery import dossier_for,readiness_inputs
         d=dossier_for(auth.version.change.case,implementation['dossier_id'])
+        if d.candidate_id!=implementation.get('candidate_id'):
+            raise ValidationError('P32 dossier must match the exact Engineering implementation candidate')
         if readiness_inputs(d)!=implementation['readiness']:
             raise ValidationError('P32 readiness changed; reconcile exact production evidence')
     if any(a.timeline_impact for a in authorized_details(auth).values()):
         from .models import MinutesReportBinding
         plan=latest['plan_updated']
         reports=MinutesReportBinding.objects.filter(report__case=auth.version.change.case,report__kind='weekly_client')
-        if not any(r.version.document.current_id==r.version_id
-                   and plan.pk in r.manifest.get('change_history',{}).get('execution',[])
-                   and timeline_text(auth) in '\n'.join(s['text'] for s in r.version.payload['sections'])
-                   and f'plan evidence #{plan.evidence_id}' in '\n'.join(s['text'] for s in r.version.payload['sections'])
-                   for r in reports.select_related('version__document')):
+        current=next((r for r in timeline_snapshot(auth.version.change.case)['rows'] if r['authorization_id']==auth.pk),None)
+        if not any(weekly_report_matches(auth,plan,r,current) for r in reports.select_related('version__document')):
             raise ValidationError('Approved timeline amendment must appear in a current weekly client report')
+
+def weekly_report_matches(auth,plan,report,current):
+    pinned=next((r for r in report.manifest.get('normal_change_timeline',{}).get('rows',[]) if r['authorization_id']==auth.pk),None)
+    text='\n'.join(s['text'] for s in report.version.payload['sections'])
+    return bool(current and current['status']=='current approved' and pinned==current
+        and report.version.document.current_id==report.version_id
+        and plan.pk in report.manifest.get('change_history',{}).get('execution',[])
+        and timeline_text(auth) in text and f'plan evidence #{plan.evidence_id}' in text)
 
 def assessment_form(post):
     raw=post.get('production_impact','unknown')
@@ -121,13 +137,36 @@ def assessment_form(post):
 
 def execution_form(post):
     return {'scope_items':post.get('scope_items','').splitlines() if post.get('scope_items','').strip() else None,
-            'dossier_id':int(post['dossier_id']) if post.get('dossier_id') else None}
+            'dossier_id':int(post['dossier_id']) if post.get('dossier_id') else None,
+            'candidate_id':int(post['candidate_id']) if post.get('candidate_id') else None}
 
-def report_timeline(case):
+def timeline_required(auth):
+    return auth.version.category=='Normal' and any(a.timeline_impact for a in authorized_details(auth).values())
+
+def notice_has_timeline(auth,version):
+    return not timeline_required(auth) or timeline_text(auth) in '\n'.join(s['text'] for s in version.payload['sections'])
+
+def timeline_snapshot(case):
     from .models import ChangeExecutionEvent
+    from .change_execution import validate_authorization
     rows=ChangeExecutionEvent.objects.filter(authorization__version__change__case=case,kind='plan_updated').select_related('authorization__version__change').order_by('pk')
     latest={}
     for e in rows:
-        if e.impact_details.get('approved_timeline'):
-            latest[e.authorization_id]=e
-    return '\n'.join(f'{e.authorization.version.change.reference} / approved revision {e.authorization.version.number} / plan evidence #{e.evidence_id}:\n'+e.impact_details['approved_timeline'] for e in latest.values())
+        if e.impact_details.get('approved_timeline'):latest[e.authorization_id]=e
+    result=[]
+    for e in latest.values():
+        auth=e.authorization;version=auth.version;status='current approved';reason='Current source decisions; not deployment authority'
+        if version.change.current_id!=version.pk:
+            status='superseded';reason='A newer CR revision requires its own assessment and authority'
+        else:
+            try:
+                validate_authorization(case,auth);deviation_hold(auth)
+            except (ValidationError,PermissionDenied) as exc:
+                status='held';reason=str(exc)
+        result.append({'authorization_id':auth.pk,'change_version_id':version.pk,'reference':version.change.reference,
+            'revision':version.number,'plan_event_id':e.pk,'plan_evidence_id':e.evidence_id,
+            'timeline':e.impact_details['approved_timeline'],'status':status,'reason':reason})
+    return {'baseline':baseline_manifest(case),'rows':result}
+
+def report_timeline(snapshot):
+    return '\n'.join(f"{r['reference']} / revision {r['revision']} / {r['status']} / plan evidence #{r['plan_evidence_id']}:\n{r['timeline']}\n{r['reason']}" for r in snapshot['rows'])

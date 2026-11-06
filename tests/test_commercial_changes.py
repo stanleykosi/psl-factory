@@ -244,6 +244,16 @@ class CommercialTests(TestCase):
         with self.assertRaises(PolicyHold):valid_approvals(v,['PM'])
 
 
+def weekly_change_report(actor,case,evidence):
+    from datetime import timedelta
+    from django.utils import timezone
+    from apps.pmo.reporting import draft_period_report
+    template=register_template(actor,case.pk,'Synthetic weekly change report',{'document_type':'status_report','required_fields':['executive_summary','status'],
+        'audience_fields':{'client':['executive_summary','status','timeline']}},evidence.pk,rev(case))
+    now=timezone.now()
+    return draft_period_report(actor,case.pk,'weekly_client',now-timedelta(days=7),now,template.pk,'client',rev(case))
+
+
 def impact_fixture(team, timeline=False):
     # Explicit synthetic owner statements, never production defaults.
     return {'outputs':{'discipline':team+' reviewed its synthetic discipline impact',

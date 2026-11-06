@@ -92,9 +92,9 @@ def draft_period_report(actor,case_id,kind,start_at,end_at,template_id,audience,
     values['issue_status']='\n'.join(f'{i.reference}: {i.current.status} / {i.current.severity or "Unknown severity"}' for i in snapshot['issues']) or 'No local issue records'
     values['issue_impact']='\n'.join(f'{i.reference}: {i.current.next_action}' for i in snapshot['issues']) or 'No recorded issue next actions'
     from .change_impacts import report_timeline
-    change_timeline=report_timeline(case)
+    change_timeline=report_timeline(snapshot['change_timeline'])
     values['timeline']=change_timeline or 'No recorded approved change timeline amendments'
-    if change_timeline:values['status']+='\nApproved change timeline amendments:\n'+change_timeline
+    if change_timeline:values['status']+='\nRecorded change timeline amendments:\n'+change_timeline
     values['scope']='\n'.join(f'{c.reference} v{c.current.number}: {c.current.category}; {c.current.module}; {c.current.description}' for c in snapshot['changes']) or 'No recorded change requests'
     values['issue_resolution']='\n'.join(f'{i.reference}: fix evidence #{i.current.fix_id or "Unknown"}; root cause #{i.current.root_cause_id or "Unknown"}' for i in snapshot['issues']) or 'No local resolution records'
     evidence=add_evidence(actor,case.pk,'report_snapshot','\n'.join(k+': '+v for k,v in values.items()),'psl:period-report:'+str(report.pk),expected)
