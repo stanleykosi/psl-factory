@@ -1213,6 +1213,42 @@
         ],
         "additionalProperties": false
       }
+    },
+    {
+      "id": "OPS.factory_ppe_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_ppe_execution/v1",
+      "subject_scope": "Exact supplied PPE register, native human source and output reviews, configured calculation and read-only accounting note reference. No ledger posting or owner acceptance inferred.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
     }
   ],
   "operation_dependencies": [

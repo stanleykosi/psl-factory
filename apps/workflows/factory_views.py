@@ -32,6 +32,7 @@ QUEUES={'needs_me':'Needs my attention','active':'Active work','decisions':'Deci
 
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
+    ('finance-ppe/v1','Prepare an asset schedule','Connect exact asset register reviews, configured calculation and a reviewed read-only accounting note.',('factory.start','ppe.read','finance.read','evidence.add')),
     ('pmo-change/v1','Coordinate a controlled change','Carry exact native change evidence through human decisions, controlled delivery and signed closure.',('factory.start','change.read','evidence.add')),
     ('rfp-response/v1','Prepare an RFP response','Investigate received requirements, prepare the response and track reviewed submission through the actual customer outcome.',('factory.start','rfp.read','evidence.add')),
     ('finance-accounts/v1','Prepare management accounts','Carry a controlled trial balance through Finance review and an aggregate report.',('factory.start','finance.read','finance.calculate','evidence.add')),
@@ -64,7 +65,9 @@ def intake(request):
 def visible(actor):
     active(actor)
     scope=Q(pk__in=[])
-    for name,spec in DEFINITIONS.items():scope|=Q(definition=name,case_id__in=granted(actor,[spec['read'],'factory.read']).values('pk'))
+    for name,spec in DEFINITIONS.items():
+        actions=[spec['read'],'factory.read']+(['finance.read'] if name=='finance-ppe/v1' else [])
+        scope|=Q(definition=name,case_id__in=granted(actor,actions).values('pk'))
     return FactoryWork.objects.filter(scope).select_related('case','actor','invoice','source_head')
 
 def permitted(actor,work,action):
@@ -324,6 +327,14 @@ def _presentation(actor,work):
         if panel['readiness_changed']:row.update(state='Recorded closure needs review',next_action='Review changed native source or authority; recorded closure remains in history',can_advance=False)
         if work.status=='followup_needed':row.update(state='Stopped; recorded closure needs follow-up',next_action='Inspect the existing native closure; stopping work cannot reopen it')
         row['can_reassess']=False
+    if work.definition=='finance-ppe/v1':
+        from .factory_ppe import projection
+        row['ppe']=projection(actor,work);panel=row['ppe']
+        row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
+        row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        if panel['pending_reviews']:
+            row.update(state='Awaiting native Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
+        if panel['readiness_changed']:row['state']='Reviewed asset schedule needs revalidation'
     if work.definition=='pmo-change/v1':
         from .factory_change import projection
         row['change']=projection(actor,work);panel=row['change'];row['jobs']=panel['jobs']
@@ -385,7 +396,7 @@ def index(request):
     query=visible(request.user)
     if q:query=query.filter(Q(request__reference__icontains=q)|Q(case__title__icontains=q)|Q(key__icontains=q))
     if queue=='verified':query=query.filter(status='verified')
-    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
+    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['finance-ppe/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
     else:query=query.exclude(status__in=['verified','cancelled'])
     query=query.distinct().order_by('-updated_at','-pk');items=[]
@@ -433,6 +444,9 @@ def create(request):
     if envelope=='finance-accounts/v1':
         from .factory_accounting_views import create as create_accounting
         return create_accounting(request)
+    if envelope=='finance-ppe/v1':
+        from .factory_ppe_views import create
+        return create(request)
     if envelope=='pmo-change/v1':
         from .factory_change_views import create as create_change
         return create_change(request)
@@ -473,6 +487,9 @@ def detail(request,work_id):
     if work.definition=='finance-accounts/v1':
         from .factory_accounting_views import detail as accounting_detail
         return accounting_detail(request,work)
+    if work.definition=='finance-ppe/v1':
+        from .factory_ppe_views import detail
+        return detail(request,work)
     if work.definition=='pmo-change/v1':
         from .factory_change_views import detail as change_detail
         return change_detail(request,work)
@@ -793,8 +810,8 @@ def configuration(request,case_id):
         from .factory_rfp_views import RFPProfileForm
         form_class=RFPProfileForm
     form=form_class(case,request.POST if request.method=='POST' else None,definition=envelope)
-    if envelope in ['pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
-        for name in (['executor_id','information_resolver_id'] if envelope in ['planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
+    if envelope in ['finance-ppe/v1','pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
+        for name in (['executor_id','information_resolver_id'] if envelope in ['finance-ppe/v1','planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
             form.fields[name].widget=forms.HiddenInput();form.fields[name].disabled=True
     if envelope in ['pmo-change/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1']:
         form.fields['executor_id'].label='Controlled document publisher'
@@ -818,7 +835,7 @@ def configuration(request,case_id):
             value['route_key']=value['route_key'] or None
         selected=value.pop('provider') or None
         if 'provider' not in request.POST:selected='synthetic_factory_v1' if case.synthetic else None
-        value.update(definition=envelope,review_role=None if envelope in ['pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
+        value.update(definition=envelope,review_role=None if envelope in ['finance-ppe/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
         try:
             draft_operator_policy(request.user,case.pk,component,value,proof.pk,timezone.now());messages.success(request,'Draft saved. Validate it before activation.');return redirect(request.path+'?definition='+envelope)
         except ValidationError as exc:form.add_error(None,str(exc))

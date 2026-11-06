@@ -24,6 +24,9 @@ TERMINAL={'verified','cancelled','blocked','owner_needed','configuration_needed'
 def access(actor,case,action='factory.read',envelope='pmo-finance/v1'):
     if not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current active actor required')
     for key in ['case.read',definition(envelope)['read'],action]:require(actor,case,key)
+    if envelope=='finance-ppe/v1':
+        from apps.finance.ppe import readable
+        readable(actor,case)
 
 def profile(work,*,recovery=False):
     config=active_component(definition(work.definition)['component'],work.case);value=reference_values(config)[0]
@@ -99,6 +102,9 @@ def invoice_job_observation(jobs):
     return [(job.pk,job.status,'expired' if job.status=='leased' and uncertain_job(job) else None) for job in jobs]
 
 def _snapshot(work,value,reader=None):
+    if work.definition=='finance-ppe/v1':
+        from . import factory_ppe
+        return factory_ppe.snapshot(work,value,reader=reader)
     if work.definition=='pmo-change/v1':
         from .factory_change import snapshot as change_snapshot
         return change_snapshot(work,value,reader=reader)
@@ -158,6 +164,9 @@ def snapshot(work,value,reader=None):
     return (state,*result[1:])
 
 def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
+    if work.definition=='finance-ppe/v1':
+        from . import factory_ppe
+        return factory_ppe.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
     if work.definition=='rfp-response/v1':
         from .factory_rfp import eligible as rfp_eligible
         return rfp_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
@@ -257,6 +266,9 @@ def task(work,kind,context,resolver=None):
     return row
 
 def act(work,choice,value,latest,missing,tasks,jobs):
+    if work.definition=='finance-ppe/v1':
+        from . import factory_ppe
+        return factory_ppe.act(work,choice,value,latest,missing,tasks,jobs)
     if work.execution_binding_id is not None:
         previous_revision=work.case.revision
         work.case=lock_case(work.execution_actor,work.case_id,'factory.execute')
@@ -497,7 +509,7 @@ def run_once(work_id,provider=None,adapter=None):
             if fresh['hash']!=observed['hash'] or fresh['work_revision']!=observed['work_revision']:raise ValidationError('STALE_VERSION: case/evidence/decision/work changed while planning')
             if not isinstance(answer,dict) or set(answer)!={'activity','citations'} or answer['activity'] not in options:raise PermissionDenied('FORBIDDEN: model choice is outside current capabilities')
             if not isinstance(answer['citations'],list) or not answer['citations'] or any(type(pk) is not int or pk not in context['evidence_ids'] for pk in answer['citations']):raise ValidationError('Unsupported citation')
-            process={'pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
+            process={'finance-ppe/v1':'F07','pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
                 'delivery-hypercare/v1':'P35','delivery-release/v1':'P32','planning/v1':'P26'}.get(work.definition)
             if work.definition=='pmo-change/v1':
                 process='P57' if answer['activity']=='ACT04' else 'P60' if observed['native']['stage'] in ['go_live','signatures','complete'] else 'P59'
@@ -516,7 +528,7 @@ def run_once(work_id,provider=None,adapter=None):
             if work.definition=='rfp-response/v1' and answer['activity']=='ACT04':
                 from .factory_rfp import investigation_key as rfp_investigation_key
                 child_key=rfp_investigation_key(work,observed)
-            if work.definition in ['pmo-change/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] and answer['activity']=='ACT04':
+            if work.definition in ['finance-ppe/v1','pmo-change/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] and answer['activity']=='ACT04':
                 from .factory_delivery import investigation_key
                 child_key=investigation_key(work,observed)
             child,created=Activity.objects.get_or_create(work=work,key=child_key,defaults={'parent':activity,'kind':answer['activity'],'plan_revision':work.plan_revision})
