@@ -45,7 +45,10 @@ class FactoryChangeBranchTests(TestCase):
 
     def finish(self,auth,missing_client=False):
         self.advance();self.review('notice');self.advance();self.assertEqual(change.report(self.work)['stage'],'execution')
-        self.ready(auth);self.advance();self.review('go_live');self.advance();self.assertEqual(change.report(self.work)['stage'],'signatures')
+        self.ready(auth)
+        from apps.pmo.change_impacts import timeline_required
+        if timeline_required(auth):native_tests.weekly_change_report(self.actor,self.case,self.e['policy_decision'])
+        self.advance();self.review('go_live');self.advance();self.assertEqual(change.report(self.work)['stage'],'signatures')
         v=change.document(self.work,'go_live');receipt=PublicationReceipt.objects.get(publication__version=v)
         pm=add_evidence(self.actor,self.case.pk,'signature','Actual synthetic PM signature for exact report '+str(v.pk),'synthetic:pm')
         if missing_client:

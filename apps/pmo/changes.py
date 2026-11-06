@@ -43,7 +43,7 @@ def log_change(actor, case_id, reference, category, module, description, reason,
 
 
 @transaction.atomic
-def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline_impact, client_facing, evidence_id, note, expected):
+def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline_impact, client_facing, evidence_id, note, expected, *, outputs=None, production_impact=None, scope_items=None):
     from .commercial import note_required
     case = lock_case(actor, case_id, 'change.assess:'+contributor, expected)
     version = current_change(case, version_id)
@@ -51,7 +51,9 @@ def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline
     if contributor not in CONTRIBUTORS or any(v is not None and type(v) is not bool for v in [cost_impact, timeline_impact, client_facing]):
         raise ValidationError('Use an explicit contributor and true/false/unknown impact values')
     note_required(note)
-    result = ChangeAssessment.objects.create(version=version, contributor=contributor, cost_impact=cost_impact,
+    from .change_impacts import assessment_details
+    details = assessment_details(version, contributor, outputs, production_impact, scope_items)
+    result = ChangeAssessment.objects.create(impact_details=details, version=version, contributor=contributor, cost_impact=cost_impact,
         timeline_impact=timeline_impact, client_facing=client_facing, evidence=subject(case,evidence_id), note=note, actor=actor)
     event(actor, case, 'change.assessed', assessment=result.pk, version=version.pk, contributor=contributor)
     bump(case)
@@ -63,6 +65,9 @@ def impact(version):
     for a in version.assessments.order_by('pk'): latest[a.contributor] = a
     if set(latest) != set(CONTRIBUTORS): raise ValidationError('Engineering, QA, Infra and Security assessments required')
     values = [latest[r] for r in CONTRIBUTORS]
+    if version.category == 'Normal':
+        from .change_impacts import validate_assessments
+        validate_assessments(version, latest)
     if any(getattr(a, k) is None for a in values for k in ['cost_impact', 'timeline_impact', 'client_facing']):
         raise ValidationError('Impact remains unknown; obtain the contributing owner clarification')
     flags = {k:any(getattr(a,k) for a in values) for k in ['cost_impact', 'timeline_impact', 'client_facing']}
