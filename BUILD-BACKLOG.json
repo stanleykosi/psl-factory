@@ -11,7 +11,7 @@
   },
   "current_recovery_increment": {
     "status": "in_progress",
-    "latest_finished_test_run": 678,
+    "latest_finished_test_run": 679,
     "last_passing_connected_run": 610,
     "current_test_run": null,
     "rfp_increment": {
@@ -27,7 +27,7 @@
       "latest": "668133PASS/701.199s unittest/703.323s process; integrated source unchanged.66661PASS wider RFP recovery baseline. Supported cloud-browser localhost journey active; no process promotion yet.",
       "evidence": "docs/test-evidence/2026-11-01-factory-run668.json",
       "gap_map": "docs/design/2026-11-01/RFP-CONNECTION-GAP-MAP.md",
-      "remaining": "Primary supported-browser journey and GET/Enter proof passed668 source. Seconds/timezone UI fix integrated with6763PASS; narrow/full tab-order checks and per-ID whole-process reconciliation remain. Original desktop DBs untouched.",
+      "remaining": "Primary supported-browser journey and GET/Enter proof passed668 source. Seconds/timezone fix and browser recovery/keyboard/narrow CSS reflow verified;67964PASS. Current-source proof packaging and per-ID whole-process reconciliation remain. Original desktop DBs untouched.",
       "authority": "Consolidation request; existing native source rules, no invented policies/grants",
       "policy_slots": "Existing assignment/review/outcome authorities and real executor/template/route remain owner-controlled; ambiguous actual submissions need configured explicit owner selection; disputed/post-disposition corrections have no invented automatic precedence"
     },

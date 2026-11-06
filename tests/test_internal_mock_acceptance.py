@@ -204,3 +204,21 @@ class InternalMockAcceptanceTests(SimpleTestCase):
     def test_cannot_drop_canonical_source_assertion(self):
         self.row['factory_consolidation']['source_assertion_ids'].pop()
         self.reject()
+
+    def test_empty_package_marker_is_valid_when_present_and_hash_matches(self):
+        marker = 'apps/example/__init__.py'
+        self.write(marker, b'')
+        self.packet['runtime_files'].append(marker)
+        self.files[marker] = hashlib.sha256(b'').hexdigest()
+        self.save('run-source.json', {'files': self.files})
+        self.assertEqual(self.check()['accepted_count'], 1)
+        self.write(marker, 'changed package initializer')
+        self.reject()
+
+    def test_missing_runtime_file_is_rejected(self):
+        (self.root / self.runtime).unlink()
+        self.reject()
+
+    def test_empty_evidence_artifact_still_rejected(self):
+        self.write('screen.png', b'')
+        self.reject()

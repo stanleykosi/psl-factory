@@ -30,13 +30,14 @@ class Evidence:
         for name in self.runtime:
             require(name.startswith(('apps/', 'adapters/', 'config/', 'templates/', 'contracts/', 'static/'))
                     or name in ('requirements.lock', 'requirements.in'), 'Not a runtime file: ' + name)
-            self.path(name)
+            self.path(name, runtime=True)
 
-    def path(self, name):
+    def path(self, name, *, runtime=False):
         require(isinstance(name, str) and bool(name), 'Missing evidence path')
         path = (self.root / name).resolve()
         require(not Path(name).is_absolute() and path.is_relative_to(self.root), 'Unsafe evidence path')
-        require(path.is_file() and path.stat().st_size > 0, 'Missing or empty evidence: ' + name)
+        require(path.is_file() and (runtime or path.stat().st_size > 0),
+                ('Missing runtime file: ' if runtime else 'Missing or empty evidence: ') + name)
         return path
 
     def read(self, name):
@@ -54,7 +55,7 @@ class Evidence:
             before = files.get(name)
             require(isinstance(before, str) and re.fullmatch('[0-9a-f]{64}', before),
                     'Runtime file absent from source manifest: ' + name)
-            after = hashlib.sha256(self.path(name).read_bytes()).hexdigest()
+            after = hashlib.sha256(self.path(name, runtime=True).read_bytes()).hexdigest()
             if before != after:
                 changes[name] = {'before': before, 'after': after}
         if changes:
