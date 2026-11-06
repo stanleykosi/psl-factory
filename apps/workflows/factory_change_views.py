@@ -7,6 +7,7 @@ from django.shortcuts import render,redirect
 from django.views.decorators.http import require_http_methods
 from apps.core.models import Case,Evidence
 from apps.core.workbench import granted
+from apps.core.presentation import workspace_name
 from apps.core.evidence_access import public_evidence
 from apps.documents.models import Template
 from apps.pmo.models import ChangeVersion,ChangeAuthorization
@@ -20,6 +21,7 @@ class InputsForm(forms.Form):
         self.fields['version_id']=forms.ModelChoiceField(queryset=q.order_by('-pk'),label='Exact native change revision')
         self.fields['version_id'].label_from_instance=lambda v:f'{v.change.reference} · {v.category} · revision {v.number}'
         self.fields['authorization_id']=forms.ModelChoiceField(queryset=ChangeAuthorization.objects.filter(version__in=q).order_by('-pk'),required=False,label='Exact human authorization',empty_label='Await human authorization')
+        self.fields['authorization_id'].label_from_instance=lambda a:f'{a.version.change.reference} · revision {a.version.number} · authorization {a.pk} · {a.created_at.isoformat()}'
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['project_artifact','status_report']),required=False,label='Controlled change template')
     def inputs(self):return {k:self.cleaned_data[k].pk if self.cleaned_data[k] else None for k in ['template_id','authorization_id']}
 
@@ -31,7 +33,7 @@ class StartForm(forms.Form):
     revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
     def __init__(self,actor,*args,case_id=None,**kwargs):
         super().__init__(*args,**kwargs)
-        cases=granted(actor,['change.read','factory.start','evidence.add']).filter(kind='project');self.fields['case'].queryset=cases
+        cases=granted(actor,['change.read','factory.start','evidence.add']).filter(kind='project');self.fields['case'].queryset=cases;self.fields['case'].label_from_instance=workspace_name
         self.selected=cases.filter(pk=case_id).first() if case_id else None
         if self.selected:self.fields['case'].initial=self.selected;self.fields['revision'].initial=self.selected.revision
         if not self.is_bound:self.fields['key'].initial='CHANGE-'+uuid4().hex
@@ -86,8 +88,8 @@ def detail(request,work):
             messages.success(request,'Controlled change action recorded');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work);panel=row['change']
-    human_permissions={a:permitted(request.user,work,a) for a in ['change.manage','change.decide','change.progress:Engineering','change.progress:QA']}
+    human_permissions={a:permitted(request.user,work,a) for a in ['change.manage','change.authorize','change.decide','change.progress:Engineering','change.progress:QA']}
     assessors=[c for c in change.changes.CONTRIBUTORS if permitted(request.user,work,'change.assess:'+c)]
     evidence=public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')
     signatures=public_evidence(Evidence.objects.filter(case=work.case,kind='signature')).order_by('-pk') if panel['can_close'] else []
-    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.manage'],'can_execution':any(human_permissions.values()),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES})
+    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.authorize'],'can_execution':any(human_permissions[k] for k in ['change.manage','change.progress:Engineering','change.progress:QA']),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES})

@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 
 DEFINITIONS={
     'finance-payroll/v1':{'component':'OPS.factory_payroll_execution','read':'payroll.read','title':'Restricted payroll and BU staff-cost receipt'},
+    'pmo-emergency/v1':{'component':'OPS.factory_emergency_execution','read':'emergency.read','title':'Emergency preauthorization and retrospective evidence'},
     'pmo-change/v1':{'component':'OPS.factory_change_execution','read':'change.read','title':'Controlled change and signed closure'},
     'rfp-response/v1':{'component':'OPS.factory_rfp_execution','read':'rfp.read','title':'RFP response and project handoff'},
     'finance-accounts/v1':{'component':'OPS.factory_accounting_execution','read':'finance.read','title':'Accounting preparation and reviewed reports'},

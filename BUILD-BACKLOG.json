@@ -47,7 +47,7 @@
   },
   "current_recovery_increment": {
     "status": "in_progress",
-    "latest_finished_test_run": 692,
+    "latest_finished_test_run": 696,
     "last_passing_connected_run": 610,
     "current_test_run": null,
     "rfp_increment": {

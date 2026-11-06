@@ -1,11 +1,7 @@
-"""Disposable-DB diagnostic only. NOT a shared migration or final schema acceptance.
-
-Until Emergency0065 is accepted, apply payroll guard against current0064 only
-when explicitly enabled by the isolated test command. Final0066 must compose
-its accepted predecessor and be tested with this diagnostic route disabled.
-"""
+"""Restricted payroll envelope composed from accepted Emergency697 schema."""
 from importlib import import_module
-PREVIOUS=import_module('apps.workflows.migrations.0064_factory_change').SQL
+from django.db import migrations
+PREVIOUS=import_module('apps.workflows.migrations.0065_factory_emergency').SQL
 SQL=PREVIOUS
 marker="'rfp-response/v1','pmo-change/v1'"
 assert SQL.count(marker)==1
@@ -71,3 +67,9 @@ VERIFIED="""
 """
 assert SQL.count(' RETURN NEW;')==1
 SQL=SQL.replace(' RETURN NEW;',VERIFIED+' RETURN NEW;')
+
+assert SQL.replace(SOURCE,'').replace(VERIFIED,'').replace(",'finance-payroll/v1'",'').replace(" WHEN 'finance-payroll/v1' THEN 'OPS.factory_payroll_execution'",'')==PREVIOUS
+
+class Migration(migrations.Migration):
+    dependencies=[('workflows','0065_factory_emergency')]
+    operations=[migrations.RunSQL(SQL,PREVIOUS)]

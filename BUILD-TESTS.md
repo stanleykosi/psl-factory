@@ -1872,3 +1872,9 @@ The validator now permits existing zero-byte runtime package files only when the
 
 
 Payroll checkpoint: Django system check PASS, Python compilation PASS. Native payroll/concurrency diagnostics running in own PG16 cluster. New factory tests/final699 NOT RUN pending accepted schema predecessor.
+
+
+Payroll frozen diagnostics:04=3PASS/378.478s (full native path and unchanged GET/snapshot rowsets),05=74PASS/183.122s (native payroll/HR and concurrency),06=4PASS/1FAIL retained (deferred generic stop acknowledgement),07=1PASS/138.769s (corrected native stop plus actual recipient readback),08=1PASS/6.301s (one lost planner response, original receipt recovery without resend or source replay). Exact manifests unchanged for each frozen cohort; source520fc09. Earlier overlapping/source-edited diagnostics explicitly not frozen. Shared0066/final699 pending accepted Emergency predecessor; no full milestone claim.
+
+
+6 November Standard/conditional commercial696 integrated: feature27e3495 as172d500, local evidence8eabaf7.45PASS,914.628s tests/917.309s process, source unchanged; all1452 tested runtime hashes match main. Fresh247 migrations/334 tables,331 business tables empty before/after. Covers full Standard route, Normal/Standard conditional commercial approvals/delivery/actual signed adoption, native change.authorize capability and missing-client-signature rejection only after exact valid notice/go-live receipts. Earlier692 supported-browser proof remains historical to its source; this capability change has automated proof, not new browser coverage. No P57/P59 whole-process promotion. New impact candidate is under independent review/correction before700; Emergency697, payroll699 and forecast701 are separate independent tasks. Held performance action remains untouched.

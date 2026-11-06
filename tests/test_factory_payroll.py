@@ -1,5 +1,5 @@
 """Native restricted payroll factory integration; requires accepted payroll schema."""
-import json,os
+import json
 from pathlib import Path
 from django.test import TestCase
 from django.core.exceptions import PermissionDenied,ValidationError
@@ -17,19 +17,6 @@ from tests.payroll_helpers import fixture,approve,capture
 from tests.helpers import rev
 
 class FactoryPayrollTests(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        if os.environ.get('PSL_PAYROLL_DIAGNOSTIC_GUARD')=='1':
-            from tests.payroll_diagnostic_schema import SQL
-            with connection.cursor() as cursor:cursor.execute(SQL)
-        super().setUpClass()
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        if os.environ.get('PSL_PAYROLL_DIAGNOSTIC_GUARD')=='1':
-            from tests.payroll_diagnostic_schema import PREVIOUS
-            with connection.cursor() as cursor:cursor.execute(PREVIOUS)
-
     @classmethod
     def setUpTestData(cls):
         cls.f=fixture();f=cls.f
@@ -187,3 +174,13 @@ class FactoryPayrollTests(TestCase):
             for body in state['planning_inputs']:
                 self.assertEqual(set(body),{'protocol','model_id','data_scope','eligible','citation_handles','tools','token_limit','max_output_chars'})
                 for private in ['E001','E002','employee_id','BU-A',str(case.pk),a.username]:self.assertNotIn(private,json.dumps(body))
+
+    def test_shared_schema_uses_exact_accepted_emergency_predecessor(self):
+        from importlib import import_module
+        migration=import_module('apps.workflows.migrations.0066_factory_payroll')
+        previous=import_module('apps.workflows.migrations.0065_factory_emergency').SQL
+        self.assertEqual(migration.PREVIOUS,previous)
+        self.assertEqual(migration.Migration.dependencies,[('workflows','0065_factory_emergency')])
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT count(*) FROM django_migrations WHERE app='workflows' AND name='0066_factory_payroll'")
+            self.assertEqual(cursor.fetchone()[0],1)
