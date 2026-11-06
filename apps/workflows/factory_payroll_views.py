@@ -84,7 +84,8 @@ def detail(request,work):
                 if action=='review':values={'kind':p.get('kind'),'subject_id':int(p.get('subject_id','0')),'verdict':p.get('verdict'),'operation_key':p.get('operation_key',''),'evidence_id':int(p.get('evidence_id','0'))}
                 elif action=='receive':values={'publication_id':int(p.get('publication_id','0'))}
                 payroll.human_action(request.user,work.pk,revision,case_revision,action,values)
-            elif action in ['cancel','resume']:factory.manage(request.user,work.pk,revision,action)
+            elif action=='cancel':payroll.cancel(request.user,work.pk,revision)
+            elif action=='resume':factory.manage(request.user,work.pk,revision,action)
             else:raise ValidationError('Choose a current payroll action')
             messages.success(request,'Native payroll action recorded');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()

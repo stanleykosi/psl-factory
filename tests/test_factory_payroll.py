@@ -102,9 +102,12 @@ class FactoryPayrollTests(TestCase):
         with self.assertRaises(ValidationError):payroll.verify(self.work)
         self.assertEqual(PayrollReportReceipt.objects.filter(publication=p).count(),1)
     def test_cancel_after_publication_retains_native_effect_and_receipt_route(self):
-        f=self.f;p=self.pipeline();factory.manage(f['preparer'],self.work.pk,self.work.revision,'cancel');self.work.refresh_from_db()
+        f=self.f;p=self.pipeline();payroll.cancel(f['preparer'],self.work.pk,self.work.revision);self.work.refresh_from_db()
         self.assertEqual(self.work.status,'followup_needed');self.assertTrue(PayrollPublication.objects.filter(pk=p.pk).exists())
         self.assertFalse(PayrollReportReceipt.objects.exists())
+        payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':p.pk})
+        self.work.refresh_from_db();self.assertEqual(self.work.status,'followup_needed')
+        self.assertEqual(PayrollReportReceipt.objects.get(publication=p).actor_id,f['manager'].pk)
     def test_returned_work_rebuilds_without_erasing_prior_native_result(self):
         f=self.f;self.start()
         for i in f['inputs']:approve(f,i)
@@ -112,7 +115,7 @@ class FactoryPayrollTests(TestCase):
         payroll.correct(f['preparer'],self.work.pk,self.work.revision,rev(f['case']),f['request'].pk,self.inputs,'Reviewer returned the exact working result for controlled preparation')
         self.work.refresh_from_db();self.assertEqual(self.work.budget_used,spent);self.advance();new=payroll.run(self.work,'combine')
         self.assertNotEqual(new.pk,old.pk);self.assertTrue(old.reviews.filter(verdict='return').exists());self.assertFalse(PayrollPublication.objects.exists())
-    def test_preparer_console_and_profile_are_available_without_get_mutation(self):
+    def test_preparer_console_is_available_without_get_mutation(self):
         f=self.f;self.start();self.client.force_login(f['preparer']);before=self.work.revision
         response=self.client.get(reverse('factory_detail',args=[self.work.pk]));self.assertContains(response,'Continue permitted agent work');self.assertContains(response,'Exactly two accepted provider versions')
         self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
@@ -130,3 +133,57 @@ class FactoryPayrollTests(TestCase):
         self.client.force_login(f['manager']);before=self.rowsets()
         self.assertEqual(self.client.get(reverse('factory_detail',args=[self.work.pk])).status_code,200)
         self.assertEqual(self.rowsets(),before)
+
+    def test_native_operation_identity_is_scoped_to_exact_selected_request(self):
+        from tests.payroll_helpers import body
+        f=self.f;self.start()
+        other=native.request(f['preparer'],f['case'].pk,'other-staff-costs',f['config']['request'],f['e']['payroll_need'].pk,rev(f['case']))
+        inputs=[native.capture(f['owner'],f['case'].pk,other.pk,f['config']['exports'][i]['provider'],'other-input-'+str(i),body(f,i),rev(f['case'])) for i in [0,1]]
+        for i in inputs:approve(f,i)
+        c=native.combine(f['preparer'],f['case'].pk,other.pk,[i.pk for i in inputs],payroll.key(self.work,'combine'),rev(f['case']));approve(f,c)
+        m=native.match(f['preparer'],f['case'].pk,c.pk,f['hr'].pk,'other-match',rev(f['case']));approve(f,m)
+        a=native.aggregate(f['preparer'],f['case'].pk,m.pk,'other-aggregate',rev(f['case']));approve(f,a)
+        p=native.publish(f['preparer'],f['case'].pk,a.pk,payroll.key(self.work,'publish'),rev(f['case']))
+        self.client.force_login(f['manager']);before=self.rowsets()
+        self.assertIsNone(payroll.run(self.work,'combine'));self.assertIsNone(payroll.publication(self.work))
+        response=self.client.get(reverse('factory_detail',args=[self.work.pk]));self.assertIn(response.status_code,[403,404]);self.assertNotContains(response,'BU-A',status_code=response.status_code)
+        with self.assertRaises(ValidationError):payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':p.pk})
+        self.assertEqual(self.rowsets(),before);self.assertFalse(PayrollReportReceipt.objects.exists())
+    def test_uncertain_planning_blocks_replacement_and_recovers_original_receipt_after_cancel(self):
+        from tests.readiness_helpers import endpoint
+        from apps.core.services import add_evidence
+        from apps.policy.readiness_drafts import draft_readiness_policy
+        from apps.policy.readiness_validators import PROVIDER
+        from apps.policy.factory_coordinator_validators import PROTOCOL,SCOPE
+        from apps.workflows import readiness,readiness_delivery
+        from apps.workflows.models import FactoryPlanningReceipt
+        from apps.agents import factory_coordinator as coordinator
+        from apps.finance.payroll_models import PayrollRun
+        f=self.f;a=f['preparer'];case=f['case'];proof=lambda kind:add_evidence(a,case.pk,kind,'Synthetic opaque payroll planner evidence only','synthetic:payroll-planner')
+        with endpoint() as state:
+            state['contract_version']=PROTOCOL
+            rules=json.loads(Path('fixtures/integration-readiness.json').read_text())['rules']
+            rules.update(probe_user_id=a.pk,reviewer_id=a.pk,probe_role='Finance',reviewer_role='Finance',independent_review=False)
+            p=draft_readiness_policy(a,case.pk,PROVIDER,rules,f['e']['policy_decision'].pk,timezone.now())
+            transition(a,p.pk,'validated');transition(a,p.pk,'active')
+            contract=readiness.capture(a,case.pk,'payroll-planner',{'kind':'provider','family':'provider','implementation':'authenticated_json_v1','target_key':'endpoint:fixture','credential_ref':'secret:fixture','credential_revision':'fixture-v1','principal_ref':'principal:fixture','contract_version':PROTOCOL,'model_id':'fixture-model','capabilities':['health','receipt_lookup','evaluation'],'data_scope':'public_canary_and_scoped_receipt_metadata_only'},proof('integration_contract').pk)
+            for kind in ['health','evaluation']:
+                job=readiness_delivery.reserve(a,case.pk,contract.pk,'payroll-planner-'+kind,kind);readiness_delivery.run_once(case_id=case.pk);job.refresh_from_db();self.assertEqual(job.status,'confirmed')
+            assessment=readiness.assess(a,case.pk,contract.pk,'payroll-planner-ready');self.assertTrue(assessment.result['capability_ready'])
+            readiness.review(a,case.pk,assessment.pk,'confirm','payroll-planner-ready',proof('integration_review').pk);readiness.select(a,case.pk,contract.pk,proof('integration_selection').pk)
+            p=draft_operator_policy(a,case.pk,'OPS.factory_coordinator',{'mode':'authenticated_planner_v1','contract_id':contract.pk,'planner_id':a.pk,'data_scope':SCOPE,'max_output_chars':2048},f['e']['policy_decision'].pk,timezone.now())
+            transition(a,p.pk,'validated');transition(a,p.pk,'active')
+            profile=json.loads(Path('fixtures/factory-payroll.json').read_text());profile.pop('classification');profile['provider']='governed_factory_v1'
+            p=draft_operator_policy(a,case.pk,'OPS.factory_payroll_execution',profile,f['e']['policy_decision'].pk,timezone.now());transition(a,p.pk,'validated');transition(a,p.pk,'active')
+            self.start();state['lose_planning_response']=True
+            self.assertFalse(factory.run_once(self.work.pk));self.work.refresh_from_db();self.assertEqual(self.work.status,'waiting_effect',self.work.finding)
+            spent=self.work.budget_used;self.assertEqual(state['planning_calls'],1)
+            new=capture(f,0,'uncertain-source-replacement',source_version='A-v2')
+            with self.assertRaises(ValidationError):payroll.correct(a,self.work.pk,self.work.revision,rev(case),f['request'].pk,dict(self.inputs,input_ids=[new.pk,f['inputs'][1].pk]),'Source owner supplied a new native version')
+            payroll.cancel(a,self.work.pk,self.work.revision);self.work.refresh_from_db();self.assertEqual(self.work.status,'waiting_effect')
+            coordinator.reconcile(a,self.work.pk,self.work.revision);self.work.refresh_from_db()
+            self.assertEqual(self.work.status,'cancelled');self.assertEqual(self.work.budget_used,spent);self.assertEqual(state['planning_calls'],1)
+            self.assertEqual(FactoryPlanningReceipt.objects.count(),1);self.assertFalse(PayrollRun.objects.exists());self.assertFalse(PayrollPublication.objects.exists());self.assertFalse(PayrollReportReceipt.objects.exists())
+            for body in state['planning_inputs']:
+                self.assertEqual(set(body),{'protocol','model_id','data_scope','eligible','citation_handles','tools','token_limit','max_output_chars'})
+                for private in ['E001','E002','employee_id','BU-A',str(case.pk),a.username]:self.assertNotIn(private,json.dumps(body))

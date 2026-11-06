@@ -56,7 +56,10 @@ def source(work,actor=None,current=True):
     if not audit or q.reference!=work.request['payroll_reference']:raise ValidationError('Exact native payroll provenance required')
     # Even history does not turn factory.read into restricted payroll permission.
     if current:native.access(q,actor,True)
-    elif actor.pk not in reference_values(active_component(ACCESS,work.case))[0]['reader_ids']:raise PermissionDenied('Not a current restricted payroll reader')
+    else:
+        rules=reference_values(active_component(ACCESS,work.case))[0]
+        if actor.pk not in rules['reader_ids']:raise PermissionDenied('Not a current restricted payroll reader')
+        if rules['entity']!=q.metadata['entity'] or rules['currency']!=q.metadata['currency'] or not rules['from_period']<=q.metadata['period']<=rules['to_period'] or set(q.metadata['providers'])!={r['provider'] for r in rules['providers']}:raise PermissionDenied('Historical payroll metadata is outside the current source disclosure')
     if current:
         for action in ['case.read','payroll.read','payroll.private.read','evidence.add','factory.start' if audit.action=='factory.payroll_intake' else 'factory.manage']:require(e.created_by,work.case,action)
     input_rows(actor,work.case,q,data['inputs'],current);return q,data
@@ -82,7 +85,9 @@ def start(actor,case_id,key,request_id,inputs,reference,expected=None):
     event(actor,case,'factory.started',work=w.pk,definition=DEFINITION);return w
 
 def key(work,stage):return 'factory-payroll:'+digest([work.pk,work.source_head_id,stage])
-def run(work,kind):return PayrollRun.objects.defer('result').filter(request__case=work.case,operation_key=key(work,kind),kind=kind).first()
+def selected_request(work):
+    data=json.loads(work.source_head.body);validate(SCHEMA,data);return data['request_id']
+def run(work,kind):return PayrollRun.objects.defer('result').filter(request_id=selected_request(work),request__case=work.case,operation_key=key(work,kind),kind=kind).first()
 def checked_run(work,kind,q,data):
     r=run(work,kind)
     if not r:return None
@@ -91,7 +96,7 @@ def checked_run(work,kind,q,data):
     if r.request_id!=q.pk or r.metadata['intent']!=intent or r.parent_id!=(parent.pk if parent else None):raise ValidationError('Native working result differs from exact factory-selected sources')
     return r
 
-def publication(work):return PayrollPublication.objects.defer('payload').filter(request__case=work.case,operation_key=key(work,'publish')).first()
+def publication(work):return PayrollPublication.objects.defer('payload').filter(request_id=selected_request(work),request__case=work.case,operation_key=key(work,'publish')).first()
 
 def verify(work,actor=None):
     actor=actor or work.execution_actor;q,data=source(work,actor);a=checked_run(work,'aggregate',q,data);p=publication(work)
@@ -196,7 +201,7 @@ def human_action(actor,work_id,expected,case_expected,action,values):
     from .factory import access
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION)
-    if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh current payroll work')
+    if type(expected) is not int or w.revision!=expected or (w.cancel_requested and action!='receive') or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh current payroll work')
     # Recipients need aggregate rights, not raw salary access.
     if action=='receive':
         p=publication(w)
@@ -212,3 +217,17 @@ def human_action(actor,work_id,expected,case_expected,action,values):
         if not a:raise ValidationError('Prepare the exact aggregate before human publication')
         return native.publish(actor,w.case_id,a.pk,key(w,'publish'),case_expected)
     raise ValidationError('Choose an explicit native human decision')
+
+@transaction.atomic
+def cancel(actor,work_id,expected):
+    from .factory import access,manage,cancellation_status
+    if type(expected) is not int or expected<1:raise ValidationError('Exact rendered work version required')
+    w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head').get(pk=work_id,definition=DEFINITION)
+    access(actor,w.case,'factory.manage',DEFINITION)
+    if w.revision!=expected:raise ValidationError('STALE_VERSION: refresh payroll work')
+    if w.status in ['verified','followup_needed']:raise ValidationError('Published or verified work requires native follow-up')
+    if w.status=='cancelled':return w
+    if not w.cancel_requested:w=manage(actor,w.pk,w.revision,'cancel')
+    if w.lease_until and w.lease_until>timezone.now():return w
+    w.status=cancellation_status(w);w.finding='Stopping preparation does not undo a published aggregate or recipient receipt.'
+    w.lease_until=None;w.revision+=1;w.save();return w
