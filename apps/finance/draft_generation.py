@@ -5,7 +5,7 @@ Existing D03 confirmation is reused; this is not an extra invoice approval.
 """
 import json
 from django.core.exceptions import ValidationError, PermissionDenied
-from django.db import transaction
+from django.db import connection, transaction
 from django.db.models import Max
 from django.utils import timezone
 from apps.core.services import event, bump
@@ -182,6 +182,9 @@ def observe(actor, case_id, attempt_id, fence, payload):
 
 
 def run_once(actor, case_id, generation_id, adapter=None):
+    # A nested atomic block is a savepoint, not a durable claim before transport.
+    if connection.in_atomic_block or not connection.get_autocommit():
+        raise ValidationError('Draft generation requires an outer autocommit boundary')
     row = DraftGeneration.objects.select_related('case').get(pk=generation_id, case_id=case_id)
     d.readable(actor, row.case)
     require(actor, row.case, 'finance.draft_generation.lookup')

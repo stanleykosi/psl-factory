@@ -74,6 +74,8 @@ class FactoryInvoiceIntakeTests(TestCase):
     def test_explicit_existing_approved_invoice_reuses_review_identity(self):
         f=prepared();a,c,p=f['actor'],f['case'],f['prep']
         i=invoices.draft(a,c.pk,p.pk,'USAGE-INVOICE',date(2026,11,20),rev(c))
+        from tests.obligation_helpers import identified
+        identified(a,c,i)
         r=invoices.review(a,c.pk,i.pk,'Finance','approve',f['proof'].pk,'Exact existing approval',rev(c))
         before=copy.deepcopy(r.publication_packet)
         w=start(f,invoice_id=i.pk);factory.run_until_wait(w.pk);w.refresh_from_db()
@@ -226,6 +228,7 @@ class FactoryFixedPreparationTests(TestCase):
 
 class FactoryInvoicePreparationGuards(TestCase):
     def test_stale_destination_requires_new_review_and_no_unapproved_send(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=prepared();w=start(f);factory.run_until_wait(w.pk);approve(f)
         from apps.policy.services import active_component,reference_values
         value=reference_values(active_component('D08.adapter_contract_ref',f['case']))[0]

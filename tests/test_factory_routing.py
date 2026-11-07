@@ -48,6 +48,7 @@ class FactoryRoutingTests(TestCase):
         spent=w.budget_used;factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.budget_used,spent)
 
     def test_governance_recheck_is_not_approval_and_native_review_reaches_receipts(self):
+        from .obligation_helpers import factory_approve_identified
         f=fixture(responsibility=False);configure(f,process_owner_id=None);w=f['work'];a=f['actor']
         factory.run_until_wait(w.pk);w.refresh_from_db();task=HumanTask.objects.get(kind='factory_governance')
         task=factory.claim_task(a,task.pk,task.revision)
@@ -57,18 +58,20 @@ class FactoryRoutingTests(TestCase):
         self.assertFalse(InvoiceReview.objects.exists());self.assertFalse(InvoiceJob.objects.exists())
         self.assertFalse(TaskEvent.objects.get(action='factory.owners_rechecked').data['approval_granted'])
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertGreater(w.budget_used,spent)
-        review=approve(f);self.assertEqual(review.publication_packet['factory_responsibility']['status'],'ACTIVE')
+        review=factory_approve_identified(f);self.assertEqual(review.publication_packet['factory_responsibility']['status'],'ACTIVE')
         with tempfile.TemporaryDirectory() as directory:factory.run_until_wait(w.pk,adapter=MockFactoryInvoiceAdapter(directory))
         w.refresh_from_db();self.assertEqual(w.status,'verified',w.finding)
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),1)
 
     def test_changed_assignment_invalidates_claim_and_exact_approval_without_erasing_history(self):
+        from .obligation_helpers import factory_approve_identified, identified
         f=fixture();w=f['work'];a=f['actor'];factory.run_until_wait(w.pk)
-        task=HumanTask.objects.get(kind='factory_review');task=factory.claim_task(a,task.pk,task.revision)
+        w.refresh_from_db();identified(a,f['case'],w.invoice);factory.run_until_wait(w.pk)
+        task=HumanTask.objects.get(case=f['case'],kind='factory_review',status='open');task=factory.claim_task(a,task.pk,task.revision)
         first=deepcopy(task.context['packet']);configure(f)
         with self.assertRaises(ValidationError):factory.decide(a,task.pk,task.revision,'approve',f['proof'].pk,'Old packet')
         factory.run_until_wait(w.pk);task.refresh_from_db();self.assertEqual(task.status,'returned')
-        self.assertEqual(task.context['packet'],first);approved=approve(f)
+        self.assertEqual(task.context['packet'],first);approved=factory_approve_identified(f)
         configure(f,policy_owner_id=None)
         with self.assertRaises(ValidationError):invoices.reviewed(approved.invoice)
         with self.assertRaises(ValidationError):invoices.reserve(a,f['case'].pk,approved.invoice_id,'issue','Finance',rev(f['case']),factory_work_id=w.pk)
@@ -111,7 +114,8 @@ class FactoryRoutingTests(TestCase):
         self.assertContains(response,'No action required');self.assertNotContains(response,'name="action" value="responsibility_recheck"')
 
     def test_positive_lost_response_is_reconciled_after_owner_revocation_without_resend(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk);w.refresh_from_db();approve(f)
+        from .obligation_helpers import factory_approve_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);w.refresh_from_db();factory_approve_identified(f)
         with tempfile.TemporaryDirectory() as directory:
             adapter=MockFactoryInvoiceAdapter(directory,lose_response=True)
             factory.run_once(w.pk,adapter=adapter);factory.run_once(w.pk,adapter=adapter)

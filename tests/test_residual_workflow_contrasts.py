@@ -27,6 +27,7 @@ from apps.agents.receivables import investigate
 
 class AmbiguousReceiptContrast(SettlementTests):
     def test_two_real_invoice_candidates_require_choice_and_share_reversible_capacity(self):
+        from tests.obligation_helpers import issue_identified as issue
         first = issue(self.a, self.c, draft(self.a, self.c, self.p), self.e)
         body = json.loads(USAGE_FIXTURE.read_text())['csv'].replace('tx-example-1', 'tx-example-2')
         preparation = prepare(self.a, self.c, self.cov, u=usage(self.a, self.c, self.cov, body))

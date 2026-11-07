@@ -57,9 +57,12 @@ class FixedContractBridgeTests(ContractCoverageTests):
         prep=fixed.prepare(self.b,self.c.pk,charge.pk,rev(self.c))
         return request,charge,prep
 
-    def issued(self, prep, adapter=None, reference='SYNTHETIC-ANNUAL-01'):
+    def issued(self, prep, adapter=None, reference='SYNTHETIC-ANNUAL-01', *, identity=False):
         configured(self.a,self.c)
         invoice=invoices.draft(self.a,self.c.pk,prep.pk,reference,date(2026,11,20),rev(self.c))
+        if identity:
+            from tests.obligation_helpers import identified
+            identified(self.a,self.c,invoice)
         proof=native_evidence(self.a,self.c,'invoice_review','Synthetic exact annual packet reviewed')
         invoices.review(self.a,self.c.pk,invoice.pk,'Finance','approve',proof.pk,'Explicit synthetic packet review',rev(self.c))
         job=invoices.reserve(self.a,self.c.pk,invoice.pk,'issue','Finance',rev(self.c))
@@ -75,7 +78,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         prep=BillingPreparation.objects.get(pk=result['preparation_id'])
         self.assertEqual(prep.result['lines'][0]['tax'],None)
         self.assertEqual(prep.result['total'],'1200.00');self.assertEqual(prep.result['due_date'],'2026-11-20')
-        invoice,job=self.issued(prep);issue=InvoiceIssue.objects.get(invoice=invoice)
+        invoice,job=self.issued(prep,identity=True);issue=InvoiceIssue.objects.get(invoice=invoice)
         self.assertEqual(invoice.payload['contract_period'],ANNUAL)
         self.assertEqual(invoice.amount,1200);self.assertEqual(InvoiceIssue.objects.count(),1)
         src=self.source('invoice-source','invoice',self.payload('invoice',ANNUAL,invoice_reference=invoice.reference,invoice_status='issued',invoice_period=ANNUAL,verification_method='native_invoice_v1'))
@@ -114,7 +117,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         request=self.request();charge=self.charge(request,amount='100',method='configured_net_tax_v1',tax_configuration_id=method.pk)
         prep=fixed.prepare(self.b,self.c.pk,charge.pk,rev(self.c))
         self.assertEqual(prep.result['total'],'107.50');self.assertEqual(prep.result['lines'][0]['tax'],'7.50')
-        invoice,job=self.issued(prep);self.assertEqual(InvoiceIssue.objects.get(invoice=invoice).payload['amount'],'107.50')
+        invoice,job=self.issued(prep, identity=True);self.assertEqual(InvoiceIssue.objects.get(invoice=invoice).payload['amount'],'107.50')
 
     def test_fixed_gross_never_double_taxes_and_precision_never_guessed(self):
         request=self.request()
@@ -145,11 +148,13 @@ class FixedContractBridgeTests(ContractCoverageTests):
         with self.assertRaises(ValidationError):invoices.draft(self.a,self.c.pk,prep.pk,'BAD-DUE',date(2026,10,1),rev(self.c))
         configured(self.a,self.c)
         invoice=invoices.draft(self.a,self.c.pk,prep.pk,'EXACT-DUE',date(2026,11,20),rev(self.c))
+        from .obligation_helpers import identified
+        identified(self.a,self.c,invoice)
         with self.assertRaises(ValidationError):invoices.reserve(self.a,self.c.pk,invoice.pk,'issue','Finance',rev(self.c))
         self.assertEqual(InvoiceIssue.objects.count(),0)
 
     def test_fixed_corrected_amount_has_same_obligation_and_cannot_reissue(self):
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep)
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep, identity=True)
         replacement=self.charge(request,amount='1400.00')
         self.assertEqual(fixed.obligation(charge),fixed.obligation(replacement))
         with self.assertRaises(ValidationError):fixed.prepare(self.b,self.c.pk,replacement.pk,rev(self.c))
@@ -165,7 +170,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         self.assertEqual(InvoiceIssue.objects.count(),0)
 
     def test_fixed_unknown_effect_lookup_survives_later_permission_revocation(self):
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep,TimeoutAfterInvoiceAccept())
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep,TimeoutAfterInvoiceAccept(), identity=True)
         job.refresh_from_db();self.assertEqual(job.status,'unknown')
         self.assertEqual(InvoiceIssue.objects.count(),1)
         self.grant('contract',self.b,[])
@@ -250,7 +255,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         self.assertFalse(assessment.result['debt_waived'])
 
     def test_fixed_revised_source_version_bill_date_and_amount_do_not_duplicate_issue(self):
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep)
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep, identity=True)
         row=dict(ANNUAL,bill_on='2026-10-03')
         # Re-capture both authoritative source versions explicitly. The service period is unchanged.
         for kind in ['register','contract']:
@@ -342,7 +347,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
                 invoice_delivery.record_accepted_mock(job.pk,job.fence,self.observed)
                 return super().lookup(job)
         request,charge,prep=self.prepared();adapter=ExternalBoundaryMock()
-        invoice,job=self.issued(prep,adapter);job.refresh_from_db()
+        invoice,job=self.issued(prep,adapter,identity=True);job.refresh_from_db()
         self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
         Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.issue').update(active=False)
         self.grant('contract',self.b,[])
@@ -371,7 +376,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         return self.charge(request,period=row,amount='1250.00')
 
     def test_fixed_overlapping_corrected_period_holds_without_erasing_original_issue(self):
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep)
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep, identity=True)
         issued=InvoiceIssue.objects.get(invoice=invoice);original=copy.deepcopy(issued.payload)
         new=self.changed_period(dict(ANNUAL,end='2027-08-31'))
         self.assertNotEqual(fixed.obligation(charge),fixed.obligation(new))
@@ -386,7 +391,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         from adapters.invoices import InternalInvoiceAdapter
         class UncertainProvider(InternalInvoiceAdapter):
             def deliver(self,pk,fence):raise TimeoutError('Synthetic uncertain external effect')
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep,UncertainProvider())
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep,UncertainProvider(), identity=True)
         job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
         new=self.changed_period(dict(ANNUAL,end='2027-08-31'))
         with self.assertRaisesMessage(ValidationError,'unresolved'):fixed.prepare(self.b,self.c.pk,new.pk,rev(self.c))
@@ -401,7 +406,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         with self.assertRaises(DatabaseError),transaction.atomic():BillingPreparation.objects.create(**attrs)
 
     def test_fixed_independent_exact_source_service_is_not_blanket_denied_for_same_dates(self):
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep)
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep, identity=True)
         self.cov=coverage(self.a,self.c,reference='independent-service',service='separate-service',contract='separate-contract',
             amount_basis='gross_including_tax',from_period='2026-09',to_period='2027-09')
         register=self.source('register2','register',self.payload('register2'))
@@ -423,7 +428,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         new_charge=self.charge(req,amount='900.00')
         new=fixed.prepare(self.b,self.c.pk,new_charge.pk,rev(self.c))
         self.assertNotEqual(prep.snapshot['native_service'],new.snapshot['native_service'])
-        self.issued(new,reference='SYNTHETIC-SEPARATE-01')
+        self.issued(new,reference='SYNTHETIC-SEPARATE-01', identity=True)
         self.assertEqual(InvoiceIssue.objects.count(),2)
 
     def test_fixed_explicit_same_source_charge_reattestation_recovers_withdrawn_configurator(self):

@@ -16,6 +16,7 @@ from .settlement_helpers import fixture,draft,approve,issue,receipt,assign
 class SettlementWorkerTests(TransactionTestCase):
     def setUp(self):self.a,self.c,self.cov,self.p,self.e=fixture()
     def test_competing_allocations_share_both_capacities(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c,'30.00');assign(self.a,self.c,r,self.cov,self.e)
         def work(n):
             close_old_connections()
@@ -37,6 +38,7 @@ class SettlementWorkerTests(TransactionTestCase):
         with ThreadPoolExecutor(max_workers=2) as pool:outcomes=list(pool.map(work,range(2)))
         self.assertCountEqual(outcomes,['reversed','already-reversed']);self.assertEqual(CashReversal.objects.count(),1)
     def test_separate_os_worker_reconciles_accepted_invoice_after_lost_lease_and_revocation(self):
+        from tests.obligation_helpers import approve_identified as approve
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         pk,fence=invoice_delivery.claim();invoice_delivery.deliver_local(pk,fence)
         InvoiceJob.objects.filter(pk=pk).update(lease_until=timezone.now()-timedelta(seconds=1))

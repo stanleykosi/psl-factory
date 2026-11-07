@@ -60,6 +60,8 @@ class PreparationContinuationTests(FixedContractBridgeTests):
     def test_continuation_reuses_preparation_and_existing_exact_review_without_new_approval(self):
         request,charge,p=self.prepared();original=copy.deepcopy(p.snapshot)
         configured(self.a,self.c);i=invoices.draft(self.a,self.c.pk,p.pk,'CONTINUED',date(2026,11,20),rev(self.c))
+        from .obligation_helpers import identified
+        identified(self.a,self.c,i)
         proof=evidence(self.a,self.c,'invoice_review','Explicit exact original invoice review')
         review=invoices.review(self.a,self.c.pk,i.pk,'Finance','approve',proof.pk,'Original review',rev(self.c));packet=copy.deepcopy(review.publication_packet)
         d=self.recipient();Grant.objects.filter(user=self.b,case=self.c,action='finance.billing.prepare').update(active=False)
@@ -87,7 +89,7 @@ class PreparationContinuationTests(FixedContractBridgeTests):
                 if not self.observed:return None
                 invoice_delivery.record_accepted_mock(job.pk,job.fence,self.observed)
                 return super().lookup(job)
-        request,charge,p=self.prepared();adapter=ExternalBoundaryMock();i,job=self.issued(p,adapter);d=self.recipient()
+        request,charge,p=self.prepared();adapter=ExternalBoundaryMock();i,job=self.issued(p,adapter,identity=True);d=self.recipient()
         job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
         with self.assertRaises(ValidationError):self.assign(request,d)
         self.assertEqual(Continuation.objects.count(),0)
@@ -192,7 +194,7 @@ class PreparationContinuationTests(FixedContractBridgeTests):
 
     def test_continuation_unknown_effect_is_obligation_scoped_across_source_version_requests(self):
         from .test_contract_coverage import ANNUAL
-        request,charge,p=self.prepared();i,job=self.issued(p,TimeoutAfterInvoiceAccept());d=self.recipient()
+        request,charge,p=self.prepared();i,job=self.issued(p,TimeoutAfterInvoiceAccept(), identity=True);d=self.recipient()
         new_charge=self.changed_period(dict(ANNUAL,bill_on='2026-10-03'));new_request=new_charge.request
         self.assertNotEqual(request.pk,new_request.pk);self.assertEqual(fixed.obligation(charge),fixed.obligation(new_charge))
         receipt=cc.receive_preparation(self.b,self.c.pk,new_request.pk,None,rev(self.c))

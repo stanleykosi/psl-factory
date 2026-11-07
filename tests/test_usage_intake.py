@@ -136,6 +136,7 @@ class UsageIntakeTests(TestCase):
         self.assertFalse(UsageIntakeAcceptance.objects.exists())
 
     def test_changed_c1_explicit_correction_preserves_old_partitions_preparations_review_and_obligation(self):
+        from tests.obligation_helpers import approve_identified as approve
         r, accepted, preparations = self.prepared(); configured(self.a, self.c)
         old = draft(self.a, self.c, preparations[0], 'INV-U1-C1')
         proof = evidence(self.a, self.c, 'invoice_review', 'Synthetic exact native review')
@@ -267,6 +268,7 @@ class UsageIntakeTests(TestCase):
         self.assertFalse(BillingUsage.objects.exists())
 
     def test_uncertain_invoice_acceptance_reconciles_receipt_after_source_withdrawal_and_blocks_second_issue(self):
+        from tests.obligation_helpers import approve_identified as approve
         r, accepted, preparations = self.prepared(); configured(self.a, self.c)
         inv = draft(self.a, self.c, preparations[0], 'INV-U1-C1')
         proof = evidence(self.a, self.c, 'invoice_review', 'Synthetic approved exact invoice')

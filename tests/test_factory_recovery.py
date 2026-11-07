@@ -23,7 +23,8 @@ def replacement(f,**changes):
 
 class FactoryRecoveryTests(TestCase):
     def test_native_worker_rechecks_the_reserved_factory_profile_before_sending(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f);factory.run_once(w.pk);w.refresh_from_db()
+        from .obligation_helpers import factory_approve_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_approve_identified(f);factory.run_once(w.pk);w.refresh_from_db()
         job=InvoiceJob.objects.get();self.assertEqual(job.status,'pending')
         self.assertEqual(job.intent['factory_execution'],{'schema':'factory-invoice-execution/v1','work':w.pk,'profile':f['config'].pk,'executor':f['actor'].pk})
         replacement(f,max_age_seconds=7200)
@@ -52,7 +53,8 @@ class FactoryRecoveryTests(TestCase):
         legacy.refresh_from_db();self.assertNotIn('factory_execution',legacy.intent);self.assertEqual(legacy.status,'replaced')
         self.assertEqual(InvoiceIssue.objects.count(),1)
     def test_reviewed_profile_adoption_keeps_lifetime_allowance_and_invalidates_old_review(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f);w.refresh_from_db()
+        from .obligation_helpers import factory_approve_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_approve_identified(f);w.refresh_from_db()
         spent,limit,invoice_id=w.budget_used,w.budget_limit,w.invoice_id;old=InvoiceReview.objects.get()
         config=replacement(f,max_tokens=40000)
         factory.run_once(w.pk);w.refresh_from_db();self.assertEqual(w.status,'blocked')
@@ -95,6 +97,7 @@ class FactoryRecoveryTests(TestCase):
         self.assertFalse(InvoiceReview.objects.exists())
 
     def test_corrupted_remote_proof_remains_unknown_without_another_effect(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f)
         with tempfile.TemporaryDirectory() as directory:
             adapter=MockFactoryInvoiceAdapter(directory,lose_response=True,delayed_reads=1)

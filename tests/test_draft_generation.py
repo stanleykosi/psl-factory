@@ -2,7 +2,9 @@
 import copy
 import json
 import tempfile
-from django.test import TestCase, override_settings
+from pathlib import Path
+from unittest.mock import patch
+from django.test import TransactionTestCase, override_settings
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import connection, transaction, DatabaseError
 from django.utils import timezone
@@ -29,12 +31,9 @@ def setup_generation():
     return f
 
 
-class DraftGenerationTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.f = setup_generation()
-
+class DraftGenerationTests(TransactionTestCase):
     def setUp(self):
+        self.f = setup_generation()
         self.directory = tempfile.TemporaryDirectory(prefix='psl-draft761-')
         self.addCleanup(self.directory.cleanup)
         self.adapter = MockDraftGenerationAdapter(self.directory.name)
@@ -204,3 +203,46 @@ class DraftGenerationTests(TestCase):
         self.assertFalse(observation.accepted)
         self.assertIn('already belongs', observation.finding)
         self.assertIsNone(self.report(second)['generated'])
+
+    def test_outer_transaction_cannot_claim_or_contact_generator(self):
+        row = self.reserve()
+        before = (DraftGenerationAttempt.objects.count(), DraftGenerationObservation.objects.count())
+        with patch.object(generation, 'claim') as claim, patch.object(generation, 'configured_adapter') as adapter:
+            with transaction.atomic():
+                with self.assertRaisesMessage(ValidationError, 'outer autocommit boundary'):
+                    generation.run_once(self.f['actor'], self.f['case'].pk, row.pk)
+            claim.assert_not_called(); adapter.assert_not_called()
+        self.assertEqual((DraftGenerationAttempt.objects.count(), DraftGenerationObservation.objects.count()), before)
+        self.assertEqual(list(Path(self.directory.name).iterdir()), [])
+
+    def test_disabled_autocommit_cannot_claim_or_contact_generator(self):
+        row = self.reserve()
+        before = (DraftGenerationAttempt.objects.count(), DraftGenerationObservation.objects.count())
+        with patch.object(generation, 'claim') as claim, patch.object(generation, 'configured_adapter') as adapter:
+            transaction.set_autocommit(False)
+            try:
+                with self.assertRaisesMessage(ValidationError, 'outer autocommit boundary'):
+                    generation.run_once(self.f['actor'], self.f['case'].pk, row.pk)
+            finally:
+                transaction.rollback()
+                transaction.set_autocommit(True)
+            claim.assert_not_called(); adapter.assert_not_called()
+        self.assertEqual((DraftGenerationAttempt.objects.count(), DraftGenerationObservation.objects.count()), before)
+        self.assertEqual(list(Path(self.directory.name).iterdir()), [])
+
+    def test_normal_billing_post_generates_once_and_reconciles_original(self):
+        row = self.reserve()
+        self.client.force_login(self.f['actor'])
+        url = f"/cases/{self.f['case'].pk}/finance/billing/"
+        with override_settings(DRAFT_GENERATION_MOCK_DIRECTORY=self.directory.name):
+            for action in ['generate', 'lookup']:
+                self.f['case'].refresh_from_db()
+                response = self.client.post(url, {'action':'generation_run', 'generation':row.pk,
+                    'revision':self.f['case'].revision})
+                self.assertEqual(response.status_code, 302)
+                attempt = DraftGenerationAttempt.objects.latest('pk')
+                self.assertEqual(attempt.action, action)
+                self.assertTrue(attempt.observations.get().accepted)
+        self.assertEqual(DraftGenerationAttempt.objects.filter(action='generate').count(), 1)
+        self.assertEqual(len(list(Path(self.directory.name).glob('*.json'))), 1)
+        self.assertFalse(InvoiceIssue.objects.exists()); self.assertFalse(InvoiceDelivery.objects.exists())

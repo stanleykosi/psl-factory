@@ -88,7 +88,8 @@ class FinanceClauseBoundariesTests(TestCase):
         self.assertEqual(effects(), before)
 
     def test_C05_select_one_of_two_native_receivables_with_omitted_coverage(self):
-        from tests.settlement_helpers import fixture, draft, issue
+        from tests.settlement_helpers import fixture, draft
+        from tests.obligation_helpers import issue_identified as issue
         from tests.billing_helpers import usage, prepare, FIXTURE
         from tests.forecast_helpers import configure, payload, scenario
         from apps.finance import forecast

@@ -203,6 +203,8 @@ class ReleaseHandoverExactTests(DeliveryFixture, TestCase):
         first_usage = usage(self.actor, self.case, cov)
         prep = prepare(self.actor, self.case, cov, u=first_usage)
         invoice = draft(self.actor, self.case, prep, 'UNPAID-754')
+        from tests.obligation_helpers import identified
+        identified(self.actor,self.case,invoice)
         review_evidence = self.evidence('invoice_review', 'Synthetic Finance exact invoice review')
         invoices.review(self.actor, self.case.pk, invoice.pk, 'Finance', 'approve', review_evidence.pk,
                         'Approve exact synthetic invoice only', rev(self.case))
