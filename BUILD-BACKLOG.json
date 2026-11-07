@@ -14735,10 +14735,39 @@
     "whole_process_promotion": false
   },
   "current_composition720": {
-    "status": "running",
+    "status": "failed",
     "source": "d2c7edf",
     "run": 720,
     "tests": 282,
+    "whole_process_promotion": false,
+    "tests_passed": 267,
+    "errors": 15,
+    "correction_required": "Group SQL UTC versus Africa/Lagos boundary; exact missing P56 design artifact restored"
+  },
+  "p41_composition": {
+    "status": "integrated_composed_regression_pending",
+    "source": "53e00e8",
+    "integration": "dcea4a5",
+    "family_proof": "717268PASS plus717a populated upgrade",
+    "runtime_hashes_exact": 1535,
+    "pending": "accept datefix725 before composed run",
+    "whole_process_promotion": false
+  },
+  "group_date_correction": {
+    "status": "integrated_composed_regression_pending",
+    "source": "728c249",
+    "integration": "2f54c08",
+    "family_run": 728,
+    "family_tests_passed": 208,
+    "pending": "P41 UI acceptance before new composed run",
+    "whole_process_promotion": false
+  },
+  "p41_ui_composition": {
+    "status": "integrated_composed_regression_pending",
+    "source": "93b21fe",
+    "integration": "42269ac",
+    "proof": "727c134PASS",
+    "pending": "queued accepted families before final composition",
     "whole_process_promotion": false
   }
 }

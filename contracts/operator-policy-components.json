@@ -1513,6 +1513,43 @@
         "additionalProperties": false
       }
     }
+,
+    {
+      "id": "OPS.factory_reporting_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_reporting_execution/v1",
+      "subject_scope": "P41 selected project period and exact native local source inventory; cited substantive client narrative, scoped investigation, native PMO Lead review, exact controlled publication and every configured recipient receipt. No new cadence, recipient, business approval, complete-source or live-delivery claim.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
   ],
   "operation_dependencies": [
     {

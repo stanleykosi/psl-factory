@@ -11,6 +11,21 @@ class PMOReportingAdapter(Protocol):
 
 class LocalPMOReportingAdapter:
     """Actual local PMO records only; no claim of complete Engineering/Finance source coverage."""
+    def read_client_facts(self,case,start_at,end_at,as_of):
+        """Explicit P41 fact subset; no optional delivery/RFP/escalation authority histories."""
+        meetings=list(Meeting.objects.filter(case=case,current__occurred_at__gte=start_at,current__occurred_at__lt=end_at).select_related('current').order_by('pk')[:201])
+        actions=list(ActionItem.objects.filter(case=case).select_related('current__owner').order_by('pk')[:1001])
+        milestones=list(Milestone.objects.filter(case=case,completed_at__gte=start_at,completed_at__lt=end_at).order_by('pk')[:1001])
+        issues=list(Issue.objects.filter(case=case).select_related('current').order_by('pk')[:1001])
+        changes=list(ChangeRequest.objects.filter(case=case).select_related('current').order_by('pk')[:1001])
+        if len(meetings)>200 or max(len(actions),len(milestones),len(issues),len(changes))>1000:
+            raise ValidationError('Client fact snapshot exceeds its bounded source budget; narrow the operational scope')
+        manifest={'source_mode':'weekly_client_facts/v1','meetings':[[m.pk,m.current_id] for m in meetings],
+            'actions':[[a.pk,a.current_id] for a in actions],'milestones':[m.pk for m in milestones],
+            'issues':[[i.pk,i.current_id] for i in issues],'changes':[[c.pk,c.current_id] for c in changes]}
+        return {'manifest':manifest,'meetings':meetings,'actions':actions,'milestones':milestones,'issues':issues,'changes':changes,
+            'timings':{a.pk:action_timing(a.current,as_of) for a in actions}}
+
     def read(self,case,start_at,end_at,as_of):
         meetings=list(Meeting.objects.filter(case=case,current__occurred_at__gte=start_at,current__occurred_at__lt=end_at).select_related('current').order_by('pk')[:201])
         actions=list(ActionItem.objects.filter(case=case).select_related('current__owner').order_by('pk')[:1001])

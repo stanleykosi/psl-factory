@@ -11,7 +11,7 @@ from .controlled import current_version, validate_review, publication_requiremen
 
 
 @transaction.atomic
-def claim_publication(case_id=None,job_id=None):
+def claim_publication(case_id=None,job_id=None,*,include_previous=False):
     now=timezone.now()
     query=PublicationJob.objects.select_for_update(skip_locked=True).filter(
         Q(status__in=['pending','unknown'])|Q(status='leased',lease_until__lte=now))
@@ -20,9 +20,10 @@ def claim_publication(case_id=None,job_id=None):
     job=query.order_by('pk').first()
     if not job:
         return None
+    previous=job.status
     job.status='leased';job.fence+=1;job.attempts+=1;job.lease_until=now+timedelta(seconds=30)
     job.save(update_fields=['status','fence','attempts','lease_until'])
-    return job.pk,job.fence
+    return (job.pk,job.fence,previous) if include_previous else (job.pk,job.fence)
 
 
 def check_fence(job,fence):
@@ -110,16 +111,32 @@ def deliver_internal(job_id,fence):
     return str(p.pk)
 
 
+def receipt_only_recovery(publication):
+    """Recovery contract from immutable native bindings, never request payload."""
+    if publication.factory_work_id and publication.factory_work.definition in {
+        'pmo-escalation/v1','pmo-weekly-report/v1','pmo-minutes/v1'}:
+        return True
+    # Only the selected-facts weekly client mode opts unbound native reports in.
+    # Mutable period-root fields must not erase an uncertain original's protection.
+    from apps.pmo.models import MinutesReportBinding
+    return publication.version.audience=='client' and MinutesReportBinding.objects.filter(
+        version_id=publication.version_id,report_id__isnull=False,
+        manifest__source_mode='weekly_client_facts/v1').exists()
+
+
 def run_publication_once(adapter=None,case_id=None,job_id=None,lookup_only=False):
     from adapters.publications import InternalPublicationAdapter
     adapter=adapter or InternalPublicationAdapter()
-    lease=claim_publication(case_id,job_id)
+    lease=claim_publication(case_id,job_id,include_previous=True)
     if not lease:
         return False
-    job_id,fence=lease
-    job=PublicationJob.objects.select_related('publication__version__document').get(pk=job_id)
+    job_id,fence,previous=lease
+    job=PublicationJob.objects.select_related('publication__version__document','publication__factory_work').get(pk=job_id)
+    # A native immutable factory binding, not caller payload, owns this stricter recovery contract.
+    uncertain_original=previous in ['unknown','leased'] and receipt_only_recovery(job.publication)
+    if uncertain_original:lookup_only=True
     if type(adapter) is not InternalPublicationAdapter and not job.publication.version.document.case.synthetic:
-        finish_publication(job_id,fence,'held','Fault/test adapters are restricted to synthetic cases')
+        finish_publication(job_id,fence,'unknown' if uncertain_original else 'held','Fault/test adapters are restricted to synthetic cases')
         return True
     try:
         # Reconcile persisted effects before checking whether new delivery is still permitted.
@@ -136,7 +153,8 @@ def run_publication_once(adapter=None,case_id=None,job_id=None,lookup_only=False
     except (TimeoutError,ConnectionError):
         finish_publication(job_id,fence,'unknown','Outcome unknown; receipt lookup required before retry')
     except (ValidationError,PermissionDenied,ValueError) as exc:
-        finish_publication(job_id,fence,'held',str(exc))
+        # An unsuccessful lookup cannot turn an uncertain original into safe-to-retry work.
+        finish_publication(job_id,fence,'unknown' if uncertain_original else 'held',str(exc))
     else:
         finish_publication(job_id,fence,'confirmed')
     return True
@@ -159,6 +177,8 @@ def operate_publication(actor,case_id,job_id,action,reason,expected):
         raise ValidationError('Confirmed, cancelled or actively leased publication cannot be changed')
     if InternalPublicationAdapter().lookup(job.publication):
         raise ValidationError('Delivery already has receipts; reconcile it instead of cancelling or retrying')
+    if job.status in ['unknown','leased'] and receipt_only_recovery(job.publication):
+        raise ValidationError('Uncertain original communication requires receipt-only reconciliation; cancellation cannot authorise a replacement')
     if action=='retry':
         if job.status!='held':
             raise ValidationError('Only held jobs need operator retry; unknown jobs reconcile through the worker')

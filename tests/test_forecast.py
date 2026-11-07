@@ -198,10 +198,22 @@ class ForecastSettlementIntegrationTests(TestCase):
         s=scenario(a,c,v);r=forecast.prepare(a,c.pk,s.pk,rev(c));self.assertEqual(r.result['items'][0]['residual'],'27.25')
         too_much=copy.deepcopy(v);too_much['items'][0]['amount']='32.25'
         with self.assertRaisesMessage(ValidationError,'corrected receivable'):scenario(a,c,too_much)
-        reported,lot=receipt(a,c)
+        # This integration requires a same-business-day source. The generic
+        # receipt helper intentionally defaults to a prior UTC hour, which can
+        # predate the current Lagos forecast cutoff near midnight.
+        from django.utils import timezone
+        reported,lot=receipt(a,c,received_at=timezone.localtime().isoformat())
         def imported(l):
             value=cash.lot_payload(l);doc={'entity':'synthetic-company','account':'account-1','currency':value['currency'],'basis':'gross_cash','source':value['source'],'transaction':value['transaction_ref'],'direction':'inflow','amount':str(l.amount),'occurred_on':value['received_at'][:10]}
             proof=evidence(a,c,'forecast_actual',json.dumps(doc));return forecast.capture_actual(a,c.pk,proof.pk,rev(c),l.pk)
+        # An explicitly prior-day verified cash source remains ineligible for
+        # this current-day forecast, regardless of UTC/local midnight overlap.
+        from datetime import timedelta
+        _,prior_lot=receipt(a,c,ref='prior-business-day',received_at=(timezone.localtime()-timedelta(days=1)).isoformat())
+        prior_actual=imported(prior_lot)
+        with self.assertRaisesMessage(ValidationError,'predates original forecast cut-off'):
+            match(a,c,s,prior_actual,'10',op='PRIOR-DAY-REJECTED')
+        self.assertEqual(forecast.matched(s,'receipt-1'),0)
         old=imported(lot);m=match(a,c,s,old,'10');cash.reverse(a,c.pk,'lot',lot.pk,'Finance',e['cash_correction'].pk,'Full source correction',rev(c))
         held=forecast.prepare(a,c.pk,s.pk,rev(c));self.assertIsNone(held.result['periods'][0]['closing'])
         request=successor(a,c,lot,e,'40');correction_review(a,c,request,e,'cash');accepted=cash_successors.apply(a,c.pk,request.pk,'Finance',rev(c));new=imported(accepted.lot)
