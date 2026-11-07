@@ -45,7 +45,9 @@ def validate_sender(value, secrets):
 
 def validate_registry(value):
     try:
-        shape(value, ('endpoints', 'secrets', 'finance_senders'))
+        require(isinstance(value, dict) and set(value) in (
+            {'endpoints', 'secrets', 'finance_senders'},
+            {'endpoints', 'secrets', 'finance_senders', 'quickbooks_reads'}))
         require(all(isinstance(v, dict) and len(v) <= 1024 for v in value.values()))
         for key, endpoint in value['endpoints'].items():
             require(text(key, re.compile(r'endpoint:[a-z][a-z0-9_.-]{0,79}\Z')))
@@ -65,6 +67,10 @@ def validate_registry(value):
             require(text(key, re.compile(r'secret:[a-z][a-z0-9_.-]{0,79}\Z')))
             shape(credential, ('env', 'revision'))
             require(text(credential['env'], ENV) and text(credential['revision']))
+        from adapters.quickbooks_online import validate_binding
+        for key, binding in value.get('quickbooks_reads', {}).items():
+            require(text(key))
+            validate_binding(binding, value['secrets'])
         for key, sender in value['finance_senders'].items():
             require(text(key))
             validate_sender(sender, value['secrets'])
@@ -116,7 +122,8 @@ def preflight(path=None):
     value = load_file(path) if path is not None else {'endpoints': {}, 'secrets': {}, 'finance_senders': {}}
     return {'status': 'references_valid' if path is not None else 'unconfigured',
             'endpoint_aliases': sorted(value['endpoints']), 'credential_aliases': sorted(value['secrets']),
-            'sender_aliases': sorted(value['finance_senders']), 'network_checked': False,
+            'sender_aliases': sorted(value['finance_senders']),
+            'quickbooks_read_aliases': sorted(value.get('quickbooks_reads', {})), 'network_checked': False,
             'credentials_resolved': False, 'operational_readiness': False}
 
 
