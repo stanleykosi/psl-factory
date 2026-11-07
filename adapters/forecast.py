@@ -38,7 +38,10 @@ def day(value):
     except (ValueError,TypeError):raise ValidationError('Use an exact actual calendar date YYYY-MM-DD')
 
 def scenario(body):
-    v=parsed(body,SCENARIO);day(v['as_of'])
+    from copy import deepcopy
+    from .forecast_workbook import SELECTION
+    schema=deepcopy(SCENARIO);schema['properties']['workbook_chain']=SELECTION
+    v=parsed(body,schema);day(v['as_of'])
     months=v['months'];numbers=[int(m[:4])*12+int(m[5:]) for m in months]
     if any(b!=a+1 for a,b in zip(numbers,numbers[1:])):raise ValidationError('Supply ordered contiguous forecast months')
     if any(len({r[k] for r in v[collection]})!=len(v[collection]) for collection,k in [('items','key'),('openings','account'),('rollover','key')]):raise ValidationError('Duplicate forecast item/account/rollover keys')

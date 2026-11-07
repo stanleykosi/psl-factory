@@ -50,7 +50,9 @@ class FactoryChangeTests(TestCase):
         receipt=PublicationReceipt.objects.get(publication__version=change.document(self.work,'go_live'))
         self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
         before=self.work.revision;self.assertContains(self.client.get(url),'Record actual signed closure');self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
-        response=self.client.post(url,{'action':'close','revision':self.work.revision,'case_revision':rev(self.case),'receipt':receipt.pk,'pm_signature':pm.pk,'client_signature':client.pk,'note':'Actual PM attests supplied signatures on this exact delivered version'})
+        from .change_signature_helpers import declaration_for
+        import json
+        response=self.client.post(url,{'attestation':json.dumps(declaration_for(self.actor,auth,receipt,pm,client)),'action':'close','revision':self.work.revision,'case_revision':rev(self.case),'receipt':receipt.pk,'pm_signature':pm.pk,'client_signature':client.pk,'note':'Actual PM attests supplied signatures on this exact delivered version'})
         self.assertEqual(response.status_code,302);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         self.assertEqual(len(change.verify(self.work)['receipt_ids']),2);self.assertFalse(change.verify(self.work)['deployment_authorized'])
         page=self.client.get(url);self.assertContains(page,'Inspect the recorded signed closure');self.assertNotContains(page,'<h2>Review source-owned changes</h2>',html=True);self.assertContains(page,'Executive summary');self.assertContains(page,'within this document')

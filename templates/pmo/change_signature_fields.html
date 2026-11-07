@@ -1,0 +1,5 @@
+<label>Actual source signature declaration<textarea name="attestation" required rows="12" maxlength="24000" spellcheck="false"></textarea></label>
+<p>Supply change-go-live-attestation/v1 JSON with exact change, authorization, execution and report/receipt pins; both PM and Client signature evidence pins, source system/reference, decision ID/version, signer reference, change_go_live_acceptance purpose and actual signed-at with timezone. UAT and other change signatures are not valid. Missing facts cannot be inferred from uploader or upload time. This records existing signatures, not a new approval or external authentication.</p>
+
+<label>Applicability operation reference (required only for explicit applicability capture)<input name="operation_key" maxlength="100"></label>
+<p>An explicit owner-backed change-go-live-applicability-attestation/v1 declaration is the separate alternative. It contains real PM signature facts and exact owner/source/policy pins. not_applicable contains no Client signature; it never means client_signed=true. Existing delivery and recipient controls still apply. Missing or unresolved policy never authorizes unsigned closure.</p>

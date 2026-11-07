@@ -65,6 +65,10 @@ class StandardChangeTests(TestCase):
         return authorize_change(self.actor,self.case.pk,self.cv.pk,None,rev(self.case))
 
     def test_connected_preapproval_execution_review_publication_and_signed_closure(self):
+        from apps.pmo.signatures import assert_current_signed_baseline
+        from .signature_helpers import reaffirm_for
+        with self.assertRaises(ValidationError):assert_current_signed_baseline(self.case)
+        reaffirm_for(self.actor,self.case)
         auth=self.authorized();a,c=self.actor,self.case
         self.assertEqual(connection.vendor,'postgresql')
         self.assertEqual(auth.decision_ids,[])
@@ -73,7 +77,8 @@ class StandardChangeTests(TestCase):
         receipt=self.publish_change(auth,t,'go_live')
         pm=add_evidence(a,c.pk,'signature','PM exact change acceptance','synthetic:PM')
         client=add_evidence(a,c.pk,'signature','Client exact change acceptance','synthetic:Client')
-        close_change(a,c.pk,auth.pk,receipt.pk,pm.pk,client.pk,'PM checked both exact-version signatures',rev(c))
+        from .change_signature_helpers import declaration_for
+        close_change(a,c.pk,auth.pk,receipt.pk,pm.pk,client.pk,'PM checked both exact-version signatures',rev(c),attestation=declaration_for(a,auth,receipt,pm,client))
         with self.assertRaises(ValidationError):bind_standard(a,c.pk,self.cv.pk,'api-maintenance',self.match.pk,'Closed history',rev(c))
 
     def test_no_catalogue_does_not_prevent_intake_assessment_or_investigation(self):

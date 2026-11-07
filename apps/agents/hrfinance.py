@@ -22,7 +22,14 @@ def investigate(actor,case_id,expected):
    for s in d.snapshots.defer('payload').order_by('-pk')[:10]:
     try:current_snapshot(s);state='current'
     except (ValidationError,PermissionDenied):state='held or historical'
-    snapshots.append({'snapshot_id':s.pk,'status':s.status,'current_use':state,'exception_codes':s.manifest['findings']})
+    observation={'snapshot_id':s.pk,'status':s.status,'current_use':state,'exception_codes':s.manifest['findings']}
+    # Proposed engineering safeguard, not disclosure authority or a dispatch route.
+    # Rejected values remain discarded; free-text correction routes nominate nobody.
+    if s.status=='rejected' and 'out_of_contract_fields' in s.manifest['findings']:
+     observation['scope_exception']={'status':'held','reason':'scope_exception_owner_unconfigured'}
+     question='Ask HR to confirm the minimum permitted scope and an authorized scope-exception owner/action route. No typed owner route is configured; no notification was sent. Forbidden fields remain rejected and discarded, not eligible for acceptance through this question.'
+     if question not in questions:questions.append(question)
+    snapshots.append(observation)
    contracts.append({'contract_id':d.pk,'sha256':d.sha256,'status':status,'snapshots':snapshots})
   if not contracts:questions.append('Request HR confirmation of the exact supported source view, fields, recipients, freshness, retention and correction route.')
   findings.append({'need_id':n.pk,'need_evidence_id':n.evidence_id,'purpose':n.payload['purpose'],'requested_fields':n.payload['fields'],'questions':questions,'policy_readiness':policy,'contracts':contracts})

@@ -1,3 +1,4 @@
+from apps.pmo.go_live_attestations import parse_attestation
 """One console for actual go-live sources, native review, delivery and human sign-off."""
 from uuid import uuid4
 from urllib.parse import urlencode
@@ -72,7 +73,7 @@ def detail(request,work):
                 if not form.is_valid():raise ValidationError('Review the selected template and actual source records')
                 go_live.correct(request.user,work.pk,revision,case_revision,form.inputs(),p.get('reason',''))
             elif action=='review':go_live.review(request.user,work.pk,revision,case_revision,int(p.get('version','0')),p.get('verdict',''),p.get('note',''))
-            elif action=='accept':go_live.accept(request.user,work.pk,revision,case_revision,int(p.get('version','0')),int(p.get('receipt','0')),int(p.get('pm_signature','0')),int(p.get('client_signature','0')),p.get('note',''),int(p['previous_acceptance']) if p.get('previous_acceptance') else None)
+            elif action=='accept':go_live.accept(request.user,work.pk,revision,case_revision,int(p.get('version','0')),int(p.get('receipt','0')),int(p.get('pm_signature','0')),int(p.get('client_signature','0')),p.get('note',''),int(p['previous_acceptance']) if p.get('previous_acceptance') else None,attestation=parse_attestation(p.get('attestation','')),mode=p.get('mode','fresh_signatures'))
             elif action in ['cancel','settle_stop']:go_live.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,action)
             elif action=='restart':go_live.restart(request.user,work.pk,revision,case_revision,p.get('reason',''))

@@ -202,7 +202,8 @@ class EmergencyFollowupTests(RecoveryFixture,TestCase):
         self.assertTrue(preflight(notice.publication.version))
         self.publish_change(auth,t,'notice');self.ready(auth);go_live=self.publish_change(auth,t,'go_live')
         pm=self.evidence('signature','PM exact go-live');client=self.evidence('signature','Client exact go-live')
-        closure=close_change(self.actor,self.case.pk,auth.pk,go_live.pk,pm.pk,client.pk,'Both exact acceptance signatures verified',rev(self.case))
+        from .change_signature_helpers import declaration_for
+        closure=close_change(self.actor,self.case.pk,auth.pk,go_live.pk,pm.pk,client.pk,'Both exact acceptance signatures verified',rev(self.case),attestation=declaration_for(self.actor,auth,go_live,pm,client))
         completion=complete_followup(self.actor,self.case.pk,f.pk,closure.pk,'Ordinary signed controls complete',rev(self.case))
         self.assertEqual(completion.closure_id,closure.pk)
         self.assertEqual(EmergencyRetrospectiveRecord.objects.get().pk,original.pk)

@@ -84,7 +84,11 @@ class DeliveryFixture:
         o=self.release();data={k:self.evidence(kind).pk for k,kind in [('checklist','deployment_checklist'),('incident_reporting','incident_reporting'),('rollback','rollback_plan')]}
         v=draft_delivery_document(self.actor,self.case.pk,self.d.pk,'go_live',self.t.pk,data,rev(self.case));receipt=self.publish(v)
         pm=self.evidence('signature','Exact PM go-live signature');client=self.evidence('signature','Exact Client go-live signature')
-        accept_go_live(self.actor,self.case.pk,self.d.pk,receipt.pk,pm.pk,client.pk,'PM attests exact two signatures',rev(self.case));return o
+        accept_go_live(self.actor,self.case.pk,self.d.pk,receipt.pk,pm.pk,client.pk,'PM attests exact two signatures',rev(self.case),attestation=self.attestation(receipt,pm,client));return o
+
+    def attestation(self,receipt,pm,client,actor=None,signed_at=None):
+        from tests.go_live_helpers import attestation
+        return attestation(self,receipt,pm,client,actor,signed_at)
 
     def criteria(self,content=None):
         r=register_reference(self.actor,self.case.pk,'criteria:'+str(self.case.revision),'schema:psl/hypercare-criteria/v1',content or CRITERIA,self.e['policy_decision'].pk)

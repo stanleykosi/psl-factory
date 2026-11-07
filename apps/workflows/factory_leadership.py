@@ -52,6 +52,10 @@ def inventory(actor,case,inputs):
     manifest,sources,gaps=native.inventory(actor,case,start,end,inputs['selections'])
     content=Evidence.objects.filter(case=case,pk=inputs['content_id'],kind=native.CONTENT).first()
     manifest.update(source_mode=native.MODE,selections={k:sorted(ids) for k,ids in inputs['selections'].items()},content={'id':content.pk,'sha256':content.sha256} if content else None)
+    if content:
+        _, sections = native.content(case, inputs['kind'], content.pk, sources)
+        from apps.pmo.incident_reporting import bind
+        bind(actor, case, manifest, sections)
     return {'manifest':manifest,'sources':sources,'gaps':gaps}
 
 def source(work,actor=None,current=True):
@@ -61,6 +65,9 @@ def source(work,actor=None,current=True):
     except (TypeError,ValueError):raise ValidationError('Typed leadership report intake required') from None
     validate(SCHEMA,data);input_rows(work.case,data['inputs'])
     report_source_access(reader,work.case,data['manifest'])
+    if data['manifest'].get('content') and 'incident_claims' not in data['manifest']:
+        from apps.pmo.incident_reporting import legacy_access
+        legacy_access(reader, work.case, data['manifest'], e.created_at)
     for action in data['manifest'].get('source_actions',[]):require(reader,work.case,action)
     native.authorize_sources(reader,work.case,{r['id'] for r in data['manifest']['sources']},{row[2] for row in data['manifest'].get('changes',[])})
     audit=Audit.objects.filter(case=work.case,actor_id=e.created_by_id,action__in=['factory.leadership_intake','factory.leadership_source'],data={'evidence_id':e.pk,'sha256':e.sha256}).first()

@@ -292,6 +292,8 @@ def calculate(s):
     if opening_sources is not None:
         manifest['opening_contract']=OPENING_CONTRACT;manifest['opening_provenance']=opening_sources
         result['opening_contract']=OPENING_CONTRACT;result['opening_provenance']=opening_sources
+    from .forecast_workbook import apply as compare_workbook
+    compare_workbook(s,m,manifest,result)
     return manifest,result
 
 @transaction.atomic

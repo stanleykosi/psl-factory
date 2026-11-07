@@ -159,6 +159,7 @@ class ReleaseHandoverExactTests(DeliveryFixture, TestCase):
         response = self.client.post(reverse('delivery', args=[self.case.pk]), {
             'action': 'accept', 'revision': rev(self.case), 'dossier': self.d.pk,
             'receipt': receipt.pk, 'pm_signature': pm_uat.pk, 'client_signature': client_uat.pk,
+            'attestation': json.dumps(self.attestation(receipt, pm_uat, client_uat)),
             'note': 'Only pre-release UAT evidence is supplied'})
         self.assertContains(response, 'required kind')
         self.assertFalse(self.d.records.filter(kind__in=['go_live', 'go_live_reaffirmation']).exists())

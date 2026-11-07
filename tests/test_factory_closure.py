@@ -29,6 +29,11 @@ class FactoryClosureDistinctAuthorityTests(TestCase):
         ref=register_reference(f.actor,f.case.pk,'closure-head:actual','schema:psl/role-assignment/v1',
             {'role':'Head of PMO','user_id':head.pk},f.e['policy_decision'].pk)
         activate(f.actor,f.case,'D05.role_principal_assignments',['role:0',ref.ref,'role:2','role:3'],f.e['policy_decision'])
+        from apps.pmo.signature_exemptions import assert_current_baseline_assurance
+        from tests.signature_helpers import reaffirm_for
+        with self.assertRaisesMessage(ValidationError,'Signature recorder authority changed'):
+            assert_current_baseline_assurance(f.case)
+        reaffirm_for(f.actor,f.case)  # Explicit same-document current-authority fixture evidence.
         f.closure_selected=f.closing();f=setup(base=f)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();version=closure.document(f.work)
         self.assertIsNotNone(version);url=reverse('factory_detail',args=[f.work.pk])

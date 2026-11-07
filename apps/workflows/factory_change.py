@@ -208,8 +208,10 @@ def verify(work,actor=None):
     _,data=source(work,actor);auth=authorization(work,data)
     notice,np,nr=published(work,'notice',actor);v,p,receipts=published(work,'go_live',actor)
     closure=ChangeClosure.objects.filter(authorization=auth,receipt_id__in=[r.pk for r in receipts]).first()
-    if not closure or closure.execution_ids!=native.execution_manifest(auth):raise ValidationError('Await actual native PM closure with distinct PM and Client signatures for this exact delivered change')
-    return {'verified':True,'verification_scope':'native_controlled_change_delivery_and_human_signature_attestation','head':work.source_head_id,'authorization':auth.pk,'closure':closure.pk,'document_version':v.pk,'notice_version':notice.pk,'receipt_ids':[r.pk for r in nr+receipts],'deployment_authorized':False,'external_authenticity_verified':False}
+    if not closure or closure.execution_ids!=native.execution_manifest(auth):raise ValidationError('Await exact native PM acceptance plus actual Client acceptance or explicit current owner applicability')
+    from apps.pmo.change_signatures import current_closure
+    assurance=current_closure(closure)
+    return {'verified':True,'verification_scope':'native_controlled_change_delivery_and_human_acceptance_assurance','assurance_id':assurance.pk,'client_signature_requirement':getattr(assurance,'requirement','required'),'client_signed':assurance.client_signature_id is not None,'original_closure_client_signed':closure.client_signature_id is not None,'current_client_signature_id':assurance.client_signature_id,'head':work.source_head_id,'authorization':auth.pk,'closure':closure.pk,'document_version':v.pk,'notice_version':notice.pk,'receipt_ids':[r.pk for r in nr+receipts],'deployment_authorized':False,'external_authenticity_verified':False}
 
 @transaction.atomic
 def correct(actor,work_id,expected,case_expected,version_id,inputs,reason):
@@ -296,15 +298,15 @@ def cancel(actor,work_id,expected):
 
 
 @transaction.atomic
-def close(actor,work_id,expected,case_expected,receipt_id,pm_signature_id,client_signature_id,note):
+def close(actor,work_id,expected,case_expected,receipt_id,pm_signature_id,client_signature_id,note,*,attestation=None,operation_key=None):
     from .factory import access
     w=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);require(actor,w.case,'change.manage')
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh exact work')
     _,data=source(w,actor);auth=authorization(w,data);published(w,'notice',actor);_,_,receipts=published(w,'go_live',actor)
     if receipt_id not in [x.pk for x in receipts]:raise ValidationError('Select this exact controlled change receipt')
-    result=native.close_change(actor,w.case_id,auth.pk,receipt_id,pm_signature_id,client_signature_id,note,case_expected)
-    w.status='ready';w.finding='Actual signed closure recorded; verify exact native result';w.revision+=1;w.save();return result
+    result=native.close_change(actor,w.case_id,auth.pk,receipt_id,pm_signature_id,client_signature_id,note,case_expected,attestation=attestation,operation_key=operation_key)
+    w.status='ready';w.finding='Actual closure assurance recorded; verify exact native result';w.revision+=1;w.save();return result
 
 def projection(actor,work):
     from .factory import access,profile
@@ -333,7 +335,7 @@ def projection(actor,work):
     changed=False
     if work.status=='verified':
         try:
-            verify(work,actor);next_action='Inspect the recorded signed closure and exact document receipts';options=[]
+            verified=verify(work,actor);next_action=('Inspect the recorded signed closure and exact document receipts' if verified['client_signed'] else 'Inspect the recorded owner applicability, PM signature and exact document receipts');options=[]
         except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     can_correct=False;can_close=False
     if live:

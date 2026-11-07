@@ -1,7 +1,6 @@
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Q
 from apps.core.services import lock_case,bump,event
 from apps.identity.services import require
 from apps.policy.services import active_component,reference_values,decision_authority
@@ -55,15 +54,25 @@ def go_live_requirements(d,data=None,template_id=None):
 
 @observed_fact
 def accepted_go_live(d):
-    accepted=latest_go_live(d);require(accepted.actor,d.case,'delivery.manage')
+    accepted=latest_go_live(d)
+    if not isinstance(accepted.data.get('attestation'),dict) or accepted.data['attestation'].get('protocol')!='go-live-attestation/v1':
+        raise ValidationError('Historical go-live is legacy_unbound; preserve history and bind actual missing signature facts explicitly')
+    require(accepted.actor,d.case,'delivery.manage')
     authority=decision_authority(accepted.actor,d.case,'PM','reaffirm_go_live' if accepted.kind=='go_live_reaffirmation' else 'approve')
-    if accepted.kind=='go_live_reaffirmation' and accepted.data['authority']!=authority:raise ValidationError('Go-live evidence reaffirmation authority changed; obtain a current exact human attestation')
+    if accepted.data.get('authority')!=authority:raise ValidationError('Go-live evidence reaffirmation authority changed; obtain a current exact human attestation')
     receipt=PublicationReceipt.objects.get(pk=accepted.data['receipt_id'])
     from apps.documents.controlled import current_version
     current_version(d.case,receipt.publication.version_id)
     binding=DeliveryDocumentBinding.objects.get(version=receipt.publication.version)
     if binding.purpose!='go_live' or binding.snapshot!=go_live_inputs(d,binding.data) or accepted.snapshot!=binding.snapshot:
         raise ValidationError('Go-live acceptance source changed; preserve history and reconcile explicitly')
+    go_live_evidence(d.case,d,accepted.data['receipt_id'],accepted.data['pm_signature_id'],accepted.data['client_signature_id'],
+        accepted.data.get('attestation'),accepted.actor_id,previous=accepted.parent if accepted.kind=='go_live_reaffirmation' else None,
+        mode=accepted.data.get('mode','fresh_signatures'),current=accepted)
+    from django.db import connection
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT psl_gl_attestation(r) FROM pmo_deliveryrecord r WHERE id=%s',[accepted.pk])
+        if cursor.fetchone()!=(True,):raise ValidationError('Current typed go-live subject/signature/authority SQL proof required')
     return accepted
 
 def latest_go_live(d,required=True):
@@ -72,7 +81,7 @@ def latest_go_live(d,required=True):
     if required and not current:raise ValidationError('Missing actual go-live sign-off evidence')
     return current
 
-def go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id):
+def go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id,attestation,actor_id,previous=None,mode="fresh_signatures",current=None):
     if any(type(pk) is not int or pk<1 for pk in [receipt_id,pm_signature_id,client_signature_id]):raise ValidationError('Exact actual receipt and signature references required')
     receipt=PublicationReceipt.objects.filter(pk=receipt_id,publication__version__deliverydocumentbinding__dossier=d,
         publication__version__deliverydocumentbinding__purpose='go_live',publication__version__audience='client').first()
@@ -81,32 +90,30 @@ def go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id):
     current_version(case,receipt.publication.version_id)
     pm=subject(case,pm_signature_id,'signature');client=subject(case,client_signature_id,'signature')
     if pm.pk==client.pk:raise ValidationError('PM and Client require distinct exact signature evidence')
-    from .delivery_models import GO_LIVE_KINDS
-    used=DeliveryRecord.objects.filter(kind__in=GO_LIVE_KINDS,dossier__case=case)
-    if used.filter(Q(data__pm_signature_id__in=[pm.pk,client.pk])|Q(data__client_signature_id__in=[pm.pk,client.pk])).exists():
-        raise ValidationError('Go-live signature evidence cannot be reused')
     binding=DeliveryDocumentBinding.objects.get(version=receipt.publication.version)
     if binding.snapshot!=go_live_inputs(d,binding.data):raise ValidationError('Go-live evidence changed; prepare a current exact report')
+    from .go_live_attestations import validate_current_attestation
+    validate_current_attestation(d,receipt,pm,client,binding,valid_release(d),attestation,actor_id,previous,mode,current)
     return receipt,pm,client,binding
 
 
 @transaction.atomic
-def accept_go_live(actor,case_id,dossier_id,receipt_id,pm_signature_id,client_signature_id,note,expected):
-    case=lock_case(actor,case_id,'delivery.manage',expected);d=dossier_for(case,dossier_id);ensure_open(d);decision_authority(actor,case,'PM');note_required(note)
+def accept_go_live(actor,case_id,dossier_id,receipt_id,pm_signature_id,client_signature_id,note,expected,*,attestation=None):
+    case=lock_case(actor,case_id,'delivery.manage',expected);d=dossier_for(case,dossier_id);ensure_open(d);authority=decision_authority(actor,case,'PM');note_required(note)
     if latest_go_live(d,False):raise ValidationError('Go-live is already recorded; reviewed evidence changes need explicitly configured reaffirmation authority')
-    receipt,pm,client,binding=go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id)
-    return record(actor,case,d,'go_live',pm,{'receipt_id':receipt.pk,'pm_signature_id':pm.pk,'client_signature_id':client.pk,'note':note},binding.snapshot,valid_release(d))
+    receipt,pm,client,binding=go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id,attestation,actor.pk)
+    return record(actor,case,d,'go_live',pm,{'receipt_id':receipt.pk,'pm_signature_id':pm.pk,'client_signature_id':client.pk,'note':note,'authority':authority,'attestation':attestation},binding.snapshot,valid_release(d))
 
 @transaction.atomic
-def reaffirm_go_live(actor,case_id,dossier_id,previous_acceptance_id,receipt_id,pm_signature_id,client_signature_id,note,expected):
+def reaffirm_go_live(actor,case_id,dossier_id,previous_acceptance_id,receipt_id,pm_signature_id,client_signature_id,note,expected,*,attestation=None,mode="fresh_signatures"):
     """Explicitly authorised human evidence successor; never a second go-live event."""
     case=lock_case(actor,case_id,'delivery.manage',expected);d=dossier_for(case,dossier_id);ensure_open(d);note_required(note)
     authority=decision_authority(actor,case,'PM','reaffirm_go_live')
     previous=latest_go_live(d)
     if type(previous_acceptance_id) is not int or previous.pk!=previous_acceptance_id:raise ValidationError('STALE_VERSION: review the exact current go-live evidence head')
-    receipt,pm,client,binding=go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id)
+    receipt,pm,client,binding=go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id,attestation,actor.pk,previous,mode)
     return record(actor,case,d,'go_live_reaffirmation',pm,{'receipt_id':receipt.pk,'pm_signature_id':pm.pk,'client_signature_id':client.pk,
-        'previous_acceptance_id':previous.pk,'authority':authority,'note':note},binding.snapshot,previous)
+        'previous_acceptance_id':previous.pk,'authority':authority,'note':note,'attestation':attestation,'mode':mode},binding.snapshot,previous)
 
 
 @observed_fact

@@ -399,7 +399,8 @@ class ChangeExecutionTests(TestCase):
         self.ready(auth);receipt=self.publish_change(auth,t,'go_live')
         pm=add_evidence(self.actor,self.case.pk,'signature','PM signature of exact change go-live','synthetic:PM')
         client=add_evidence(self.actor,self.case.pk,'signature','Client signature of exact change go-live','synthetic:Client')
-        closure=close_change(self.actor,self.case.pk,auth.pk,receipt.pk,pm.pk,client.pk,'PM verified both signatures on receipt version',rev(self.case))
+        from .change_signature_helpers import declaration_for
+        closure=close_change(self.actor,self.case.pk,auth.pk,receipt.pk,pm.pk,client.pk,'PM verified both signatures on receipt version',rev(self.case),attestation=declaration_for(self.actor,auth,receipt,pm,client))
         self.assertEqual(len(closure.execution_ids),4)
         self.assertEqual(ChangeClosure.objects.count(),1)
         with self.assertRaises(ValidationError):assess_change(self.actor,self.case.pk,self.cv.pk,'QA',False,False,False,self.source.pk,'After close',rev(self.case))

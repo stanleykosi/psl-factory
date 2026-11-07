@@ -1,3 +1,4 @@
+from apps.pmo.change_signatures import parse_declaration, declaration_draft
 """Work-centric controlled change console, delegating every decision to native services."""
 from uuid import uuid4
 from django import forms
@@ -66,7 +67,7 @@ def detail(request,work):
                 if not form.is_valid():raise ValidationError('Choose exact current change sources')
                 change.correct(request.user,work.pk,revision,case_revision,form.cleaned_data['version_id'].pk,form.inputs(),p.get('reason',''))
             elif action=='review':change.review(request.user,work.pk,revision,case_revision,int(p.get('version','0')),p.get('verdict',''),p.get('note',''))
-            elif action=='close':change.close(request.user,work.pk,revision,case_revision,int(p.get('receipt','0')),int(p.get('pm_signature','0')),int(p.get('client_signature','0')),p.get('note',''))
+            elif action=='close':change.close(request.user,work.pk,revision,case_revision,int(p.get('receipt','0')),int(p.get('pm_signature','0')),int(p['client_signature']) if p.get('client_signature') else None,p.get('note',''),attestation=parse_declaration(p.get('attestation','')),operation_key=p.get('operation_key'))
             elif action in ['assess','decide','authorize','execution']:
                 values={'note':p.get('note','')}
                 if action in ['assess','decide','execution']:values['evidence']=int(p.get('evidence','0'))
@@ -95,5 +96,12 @@ def detail(request,work):
     human_permissions={a:permitted(request.user,work,a) for a in ['change.manage','change.authorize','change.decide','change.progress:Engineering','change.progress:QA']}
     assessors=[c for c in change.changes.CONTRIBUTORS if permitted(request.user,work,'change.assess:'+c)]
     evidence=public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')
+    for doc in panel.get('documents',[]):
+        for receipt in doc['receipts']:
+            binding=receipt.publication.version.changedocumentbinding
+            receipt.declaration_draft=declaration_draft(binding.authorization,receipt,request.user) if panel['can_close'] and binding.purpose=='go_live' else ''
+            if binding.purpose=='go_live':
+                from apps.pmo.change_applicability import presentation as applicability_presentation
+                receipt.applicability=applicability_presentation(binding.authorization,receipt,request.user)
     signatures=public_evidence(Evidence.objects.filter(case=work.case,kind='signature')).order_by('-pk') if panel['can_close'] else []
     return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.authorize'],'can_execution':any(human_permissions[k] for k in ['change.manage','change.progress:Engineering','change.progress:QA']),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES})

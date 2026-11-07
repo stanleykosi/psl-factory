@@ -14,6 +14,8 @@ def investigate(actor,case_id,run_id,expected):
     try:forecast.ensure_current(run);current=True
     except (ValidationError,PermissionDenied) as exc:findings.append(str(exc));current=False
     sources=[run.scenario.evidence]
+    from apps.finance.forecast_workbook import source_ids
+    sources += list(case.evidence.filter(pk__in=source_ids(run.scenario)))
     provenance=forecast.item_provenance(run.scenario)
     sources += [x.evidence for x in ForecastItemSupport.objects.filter(root=forecast.root_of(run.scenario))]
     for key,p in provenance.items():
@@ -41,6 +43,7 @@ def investigate(actor,case_id,run_id,expected):
         'next_steps':['Review omitted, unknown and out-of-horizon assumptions with Finance.','Reconcile unmatched actuals and source reversals before roll-forward.','Obtain exact human review before audience publication.'],
         'approval_granted':False,'cash_mutated':False,'execution_authorized':False,'tools':['case_evidence_read','forecast_lineage_compare']}
     if 'opening_provenance' in run.result:result['opening_provenance']=run.result['opening_provenance']
+    if 'workbook_comparison' in run.result:result['workbook_comparison']=run.result['workbook_comparison']
     for r in result['actual_links']:r['amount']=str(r['amount'])
     log=AgentRun.objects.create(case=case,actor=actor,evidence=run.scenario.evidence,process_id='F39',provider='deterministic-forecast-v1',result=result)
     event(actor,case,'agent.forecast_investigated',run=run.pk,agent_run=log.pk);bump(case);return log

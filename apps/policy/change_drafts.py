@@ -7,7 +7,8 @@ from apps.pmo.services import subject
 from .registry import components
 from .services import register_reference, save_draft
 
-SCHEMAS = {'D11.client_signature_contract': 'schema:psl/client-signature-contract/v1',
+SCHEMAS = {'D11.change_go_live_client_applicability': 'schema:psl/change-go-live-client-applicability/v1',
+    'D11.client_signature_contract': 'schema:psl/client-signature-contract/v1',
     'D01.change_type_catalogue': 'schema:psl/standard-catalogue-entry/v1',
     'D01.satisfied_gate_map': 'schema:psl/standard-satisfied-gates/v1',
     'D01.emergency_glpi_relationship':'schema:psl/emergency-glpi/v1',

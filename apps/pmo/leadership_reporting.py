@@ -133,6 +133,8 @@ def package(actor, case, kind, start, end, audience, selections, content_id):
     narrative, sections = content(case, kind, content_id, sources)
     manifest.update(source_mode=MODE, selections={key: sorted(ids) for key, ids in selections.items()},
                     content={'id': narrative.pk, 'sha256': narrative.sha256})
+    from .incident_reporting import bind
+    bind(actor, case, manifest, sections)
     return manifest, sources, gaps, sections
 
 
@@ -172,6 +174,8 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
     values['executive_summary'] = (kind.replace('_', ' ').title()+' · '+start.isoformat()+' / '+end.isoformat()+
         '. Selected native PMO evidence only. Unselected records, external systems and Finance reporting are not covered. '
         'Human project-performance statements are not calculated financial performance. Source timestamps do not establish completeness or freshness.')
+    from .incident_reporting import summary
+    values['executive_summary'] += summary(manifest)
     projection = add_evidence(actor, case.pk, 'ops_leadership_report_projection',
         json.dumps(values, sort_keys=True), 'psl:leadership-report:'+str(report.pk))
     case.refresh_from_db()
@@ -191,6 +195,9 @@ def binding_access(actor, version):
     b = MinutesReportBinding.objects.filter(version=version, manifest__source_mode=MODE).select_related('report__case').first()
     if not b: return
     report_source_access(actor, b.report.case, b.manifest)
+    if 'incident_claims' not in b.manifest:
+        from .incident_reporting import legacy_access
+        legacy_access(actor, b.report.case, b.manifest, version.created_at)
     if b.manifest.get('escalations'): require(actor, b.report.case, 'issue.read')
     for action in b.manifest.get('source_actions', []): require(actor, b.report.case, action)
     ids = {s['id'] for s in b.manifest['sources']}

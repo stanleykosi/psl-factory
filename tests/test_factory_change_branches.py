@@ -59,7 +59,8 @@ class FactoryChangeBranchTests(TestCase):
             self.assertEqual(len(change.published(self.work,'go_live')[2]),1)
             self.assertEqual(change.report(self.work)['stage'],'signatures')
         client=add_evidence(self.actor,self.case.pk,'signature','Actual synthetic Client signature for exact report '+str(v.pk),'synthetic:client')
-        self.work.refresh_from_db();change.close(self.actor,self.work.pk,self.work.revision,rev(self.case),receipt.pk,pm.pk,client.pk,'Human attestation of distinct exact-version signatures')
+        from .change_signature_helpers import declaration_for
+        self.work.refresh_from_db();change.close(self.actor,self.work.pk,self.work.revision,rev(self.case),receipt.pk,pm.pk,client.pk,'Human attestation of distinct exact-version signatures',attestation=declaration_for(self.actor,auth,receipt,pm,client))
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         proof=change.verify(self.work);self.assertEqual(proof['authorization'],auth.pk);self.assertEqual(len(proof['receipt_ids']),2)
         self.assertEqual(ChangeClosure.objects.get(authorization=auth).receipt_id,receipt.pk);self.assertFalse(proof['deployment_authorized'])

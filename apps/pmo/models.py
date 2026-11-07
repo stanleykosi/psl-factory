@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from apps.core.models import AppendOnly
 from .commercial_models import CommercialCase, CommercialRevision, CommercialDecision, CommercialDocumentBinding, ClientResponse, BaselineAdoption
-from .change_models import ChangeRequest, ChangeVersion, ChangeAssessment, ChangeDecision, ChangeAuthorization, ChangeDocumentBinding, ChangeExecutionEvent, ChangeClosure
+from .change_models import ChangeRequest, ChangeVersion, ChangeAssessment, ChangeDecision, ChangeAuthorization, ChangeDocumentBinding, ChangeExecutionEvent, ChangeClosure, ChangeClosureSignatureBinding, ChangeClosureApplicability
 from .standard_models import StandardPreapproval, StandardBinding
 from .rfp_models import RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPResponse,RFPReview,RFPDocumentBinding,RFPSubmission,RFPOutcome,RFPDisposition
 from .delivery_models import DeliveryDossier,DeliverySource,DeliverySourceVerification,DeliveryRecord,DeliveryDocumentBinding,DeliverySignal,DeliveryScanCursor

@@ -1,3 +1,4 @@
+from .change_signatures import parse_declaration, bind_historical, declaration_draft
 from .change_impacts import assessment_form, execution_form
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -108,7 +109,11 @@ def changes(request,case_id):
             elif action=='authorize':authorize_change(request.user,case.pk,int(p['version']),int(p['commercial']) if p.get('commercial') else None,expected)
             elif action=='execution':record_execution(request.user,case.pk,int(p['authorization']),p['kind'],int(p['evidence']),p['note'],expected,**execution_form(p))
             elif action=='draft_change':draft_change_document(request.user,case.pk,int(p['authorization']),int(p['template']),p['purpose'],expected,p.get('audience','client'))
-            elif action=='close':close_change(request.user,case.pk,int(p['authorization']),int(p['receipt']),int(p['pm_signature']),int(p['client_signature']),p['note'],expected)
+            elif action=='close':close_change(request.user,case.pk,int(p['authorization']),int(p['receipt']),int(p['pm_signature']),int(p['client_signature']) if p.get('client_signature') else None,p['note'],expected,attestation=parse_declaration(p.get('attestation','')),operation_key=p.get('operation_key'))
+            elif action=='change_applicability':
+                from .change_applicability import record_successor
+                record_successor(request.user,case.pk,int(p['closure']),int(p['client_signature']) if p.get('client_signature') else None,parse_declaration(p.get('attestation','')),p['note'],p['operation_key'],expected,int(p['previous']) if p.get('previous') else None)
+            elif action=='bind_change_metadata':bind_historical(request.user,case.pk,int(p['closure']),parse_declaration(p.get('attestation','')),p['note'],expected,int(p['previous']) if p.get('previous') else None)
             elif action=='standard_approve':preapprove(request.user,case.pk,p['catalogue_key'],p['role'],p['verdict'],int(p['evidence']),p['note'],expected)
             elif action=='standard_bind':bind_standard(request.user,case.pk,int(p['version']),p['catalogue_key'],int(p['evidence']),p['note'],expected)
             elif action=='standard_investigate':investigate_standard(request.user,case.pk,int(p['version']),expected)
@@ -126,12 +131,23 @@ def changes(request,case_id):
     versions=ChangeVersion.objects.filter(change__case=case).select_related('intake_confirmation').order_by('-pk')
     try:entries,gates,policies=catalogue(case);catalogue_error=''
     except ValidationError as exc:entries={};gates=[];policies={};catalogue_error=str(exc)
+    change_receipts=list(PublicationReceipt.objects.filter(publication__version__changedocumentbinding__authorization__version__change__case=case))
+    for receipt in change_receipts:
+        binding=receipt.publication.version.changedocumentbinding
+        receipt.declaration_draft=declaration_draft(binding.authorization,receipt,request.user) if binding.purpose=='go_live' else ''
+    from .change_applicability import presentation as applicability_presentation
+    from apps.policy.change_applicability_validators import OWNER_QUESTION, unresolved_draft
+    import json
+    authorizations=list(ChangeAuthorization.objects.filter(version__change__case=case))
+    for auth in authorizations:
+        receipt=next((r for r in change_receipts if r.publication.version.changedocumentbinding.authorization_id==auth.pk and r.publication.version.changedocumentbinding.purpose=='go_live'),None)
+        auth.applicability=applicability_presentation(auth,receipt,request.user)
     return render(request,'pmo/changes.html',{'case':case,'versions':versions,'evidence':case.evidence.exclude(kind__startswith='agent_private_').order_by('-pk'),
         'standard_entries':entries,'standard_gates':gates,'standard_policies':policies,'standard_error':catalogue_error,
         'standard_policy_form':policy_form,'preapprovals':StandardPreapproval.objects.filter(case=case).order_by('-pk')[:100],
         'standard_bindings':StandardBinding.objects.filter(version__change__case=case).order_by('-pk')[:100],
         'standard_runs':AgentRun.objects.filter(case=case,provider='deterministic-standard-investigation-v1').order_by('-pk')[:10],
         'contributors':CONTRIBUTORS,'roles':DECISION_ROLES,'commercial':CommercialRevision.objects.filter(dossier__case=case),
-        'authorizations':ChangeAuthorization.objects.filter(version__change__case=case),
+        'authorizations':authorizations,'applicability_question':OWNER_QUESTION,'applicability_draft':json.dumps(unresolved_draft(case),indent=2),
         'templates':Template.objects.filter(case=case,definition__document_type__in=['status_report','project_artifact']),
-        'change_receipts':PublicationReceipt.objects.filter(publication__version__changedocumentbinding__authorization__version__change__case=case)})
+        'change_receipts':change_receipts})

@@ -142,6 +142,7 @@ def snapshot(work,value,reader=None):
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     from apps.pmo.progress import optional_report
+    from apps.pmo.phase_evidence import projection as phase_projection
     data['progress_tracking']=optional_report(actor,d)
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'dossier':d.pk,'native':data,'checks':observed,'planning_owners':planning_owners(work.case),
@@ -241,10 +242,11 @@ def projection(actor,work):
     try:intake_authority(work)
     except PermissionDenied:author_current=False
     from apps.pmo.progress import optional_report
+    from apps.pmo.phase_evidence import projection as phase_projection
     return {'dossier':d,'checks':observed,'can_decide':can_decide,'ready':prepared(work),'readiness_changed':changed,
         'can_reaffirm':instruction_packet is not None,'intake_current':current,'intake_authority_current':author_current,
         'planning_owner_names':owner_names,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
-        'progress_tracking':optional_report(actor,d),
+        'progress_tracking':optional_report(actor,d),'phase_evidence':phase_projection(actor,work.case_id,d.pk),
         'decision_evidence':list(public_evidence(Evidence.objects.filter(case=work.case))) if can_decide else []}
 
 @transaction.atomic

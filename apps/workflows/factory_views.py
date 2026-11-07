@@ -1,3 +1,4 @@
+from apps.pmo.go_live_attestations import parse_attestation
 from uuid import uuid4
 from urllib.parse import urlencode
 from django import forms
@@ -771,7 +772,7 @@ def detail(request,work_id):
                         'released_at':request.POST.get('released_at',''),'reference':request.POST.get('reference',''),
                         'evidence':int(request.POST.get('evidence','0')),'note':request.POST.get('note','')}
                 elif kind=='acceptance':data={'receipt':int(request.POST.get('receipt','0')),'pm_signature':int(request.POST.get('pm_signature','0')),
-                    'client_signature':int(request.POST.get('client_signature','0')),'packet':request.POST.get('packet',''),'note':request.POST.get('note','')}
+                    'client_signature':int(request.POST.get('client_signature','0')),'attestation':parse_attestation(request.POST.get('attestation','')),'packet':request.POST.get('packet',''),'note':request.POST.get('note','')}
                 else:raise ValidationError('Choose an actual release or go-live acceptance observation')
                 observe(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),kind,data)
             elif operation=='reconcile':d.reconcile(request.user,work.pk,revision)

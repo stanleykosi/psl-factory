@@ -138,12 +138,19 @@ def change_binding_findings(binding):
 
 
 @transaction.atomic
-def close_change(actor,case_id,authorization_id,receipt_id,pm_signature_id,client_signature_id,note,expected):
+def close_change(actor,case_id,authorization_id,receipt_id,pm_signature_id,client_signature_id,note,expected,*,attestation=None,operation_key=None):
     case=lock_case(actor,case_id,'change.manage',expected)
     auth=get_authorization(case,authorization_id)
     decision_authority(actor,case,'PM')
     note_required(note)
-    if ChangeClosure.objects.filter(authorization=auth).exists():raise ValidationError('Change is already closed')
+    existing=ChangeClosure.objects.filter(authorization=auth).first()
+    if existing:
+        from .change_applicability import PROTOCOL as APPLICABILITY_PROTOCOL, validate_record
+        if isinstance(attestation,dict) and attestation.get('protocol')==APPLICABILITY_PROTOCOL and operation_key:
+            row=auth.applicability_records.filter(operation_key=operation_key).first()
+            if row and row==auth.applicability_records.order_by('-pk').first() and (row.receipt_id,row.pm_signature_id,row.client_signature_id,row.note,row.actor_id,row.declaration)==(receipt_id,pm_signature_id,client_signature_id,note,actor.pk,attestation):
+                validate_record(row);return existing
+        raise ValidationError('Change is already closed; use the exact applicability successor or recover original receipt')
     execution_ids=execution_manifest(auth)
     receipt=PublicationReceipt.objects.filter(pk=receipt_id,publication__version__changedocumentbinding__authorization=auth,
         publication__version__changedocumentbinding__purpose='go_live',publication__version__audience='client').first()
@@ -158,8 +165,20 @@ def close_change(actor,case_id,authorization_id,receipt_id,pm_signature_id,clien
     if not receipt or not notice:raise ValidationError('Recorded delivery of change notice and exact change go-live document required')
     binding=ChangeDocumentBinding.objects.get(version=receipt.publication.version)
     if binding.execution_ids!=execution_ids:raise ValidationError('Signed go-live document is stale for current implementation evidence')
-    pm=subject(case,pm_signature_id,'signature');client=subject(case,client_signature_id,'signature')
-    if pm.pk==client.pk:raise ValidationError('Capture each PM and Client signature reference explicitly')
+    pm=subject(case,pm_signature_id,'signature')
+    from .change_applicability import PROTOCOL as APPLICABILITY_PROTOCOL, owner_requirement
+    explicit=isinstance(attestation,dict) and attestation.get('protocol')==APPLICABILITY_PROTOCOL
+    if explicit or not client_signature_id:
+        policy,entry=owner_requirement(auth)
+        if not explicit:raise ValidationError('Exact explicit applicability declaration required; no unsigned shortcut')
+        client=subject(case,client_signature_id,'signature') if client_signature_id else None
+        from .change_applicability import capture
+        capture(actor,auth,receipt,pm,client,execution_ids,note,attestation,operation_key)
+    else:
+        client=subject(case,client_signature_id,'signature')
+        if pm.pk==client.pk:raise ValidationError('Capture each PM and Client signature reference explicitly')
+        from .change_signatures import capture
+        capture(actor,auth,receipt,pm,client,execution_ids,note,attestation)
     closure=ChangeClosure.objects.create(authorization=auth,receipt=receipt,pm_signature=pm,client_signature=client,
         execution_ids=execution_ids,note=note,actor=actor)
     event(actor,case,'change.closed',closure=closure.pk,authorization=auth.pk,receipt=receipt.pk)

@@ -1,3 +1,4 @@
+from apps.pmo.go_live_attestations import parse_attestation
 import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -51,8 +52,8 @@ def workbench(request,case_id):
                 purpose=p['purpose'];keys={'go_live':['checklist','incident_reporting','rollback'],'handover':['support_document','escalation_document'],'closure':['retrospective_id','report_evidence_id']}
                 if purpose not in keys:raise ValidationError('Unsupported delivery document')
                 draft_delivery_document(request.user,case.pk,d,purpose,int(p['template']),{k:int(p[k]) for k in keys[purpose]},expected)
-            elif action=='accept':accept_go_live(request.user,case.pk,d,int(p['receipt']),int(p['pm_signature']),int(p['client_signature']),note,expected)
-            elif action=='reaffirm':reaffirm_go_live(request.user,case.pk,d,int(p['previous_acceptance']),int(p['receipt']),int(p['pm_signature']),int(p['client_signature']),note,expected)
+            elif action=='accept':accept_go_live(request.user,case.pk,d,int(p['receipt']),int(p['pm_signature']),int(p['client_signature']),note,expected,attestation=parse_attestation(p.get('attestation','')))
+            elif action=='reaffirm':reaffirm_go_live(request.user,case.pk,d,int(p['previous_acceptance']),int(p['receipt']),int(p['pm_signature']),int(p['client_signature']),note,expected,attestation=parse_attestation(p.get('attestation','')),mode=p.get('mode','fresh_signatures'))
             elif action=='hypercare':evaluate_hypercare(request.user,case.pk,d,evidence,note,expected)
             elif action=='archive':archive_artifacts(request.user,case.pk,d,json.loads(p['inventory']),evidence,note,expected)
             elif action=='handover':acknowledge_handover(request.user,case.pk,d,int(p['receipt']),p['status'],evidence,note,expected)
@@ -83,6 +84,10 @@ def workbench(request,case_id):
             except (ValidationError,PermissionDenied):pass
         d.go_live_receipts=PublicationReceipt.objects.filter(publication__version__deliverydocumentbinding__dossier=d,
             publication__version__deliverydocumentbinding__purpose='go_live',publication__version__audience='client').order_by('-pk')[:100]
+        from .go_live_attestations import declaration_draft
+        d.go_live_receipts=list(d.go_live_receipts)
+        for receipt in d.go_live_receipts:receipt.attestation_draft=declaration_draft(d,receipt,request.user)
+        d.go_live_legacy=bool(d.go_live_head and not d.go_live_head.data.get('attestation'))
         d.checks={}
         d.lifecycle='Closure recorded; immutable archive index preserved' if d.records.filter(kind='closure').exists() else 'Release outcome recorded' if d.records.filter(kind='release_outcome').exists() else 'Planning and delivery evidence in progress'
         for key,fn in [('Planning',planning_inputs),('Release evidence',readiness_inputs),('Hypercare',hypercare_inputs)]:

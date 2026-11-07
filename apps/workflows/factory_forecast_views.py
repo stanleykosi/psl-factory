@@ -11,6 +11,7 @@ from apps.documents.models import Template
 from apps.finance.models import ForecastScenario
 from apps.finance.forecast_forms import commands
 from . import factory, factory_forecast as service
+from apps.finance.forecast_workbook import source_ids as workbook_source_ids
 from .factory_forecast_sources import PROTOCOL
 
 
@@ -24,7 +25,7 @@ class InputsForm(forms.Form):
         scenarios=ForecastScenario.objects.filter(case=case)
         if scenario_reference:scenarios=scenarios.filter(reference=scenario_reference)
         self.fields['scenario_id']=forms.ModelChoiceField(queryset=scenarios.order_by('-pk'),label='Exact native scenario revision')
-        self.fields['source_ids']=forms.ModelMultipleChoiceField(queryset=Evidence.objects.filter(case=case,pk__in=set(e for s in scenarios for e in [s.evidence_id]+[r['evidence_id'] for r in s.payload['openings']+s.payload['items']])),label='Complete selected scenario, opening and assumption evidence')
+        self.fields['source_ids']=forms.ModelMultipleChoiceField(queryset=Evidence.objects.filter(case=case,pk__in=set(e for s in scenarios for e in [s.evidence_id]+[r['evidence_id'] for r in s.payload['openings']+s.payload['items']]+list(workbook_source_ids(s)))),label='Complete selected scenario, opening and assumption evidence')
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['finance_report','finance_group_report']),required=False,label='Aggregate forecast report template')
 
     def selection(self):

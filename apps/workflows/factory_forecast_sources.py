@@ -34,7 +34,8 @@ def selection(actor, case, value, *, current=True):
     if value['as_of'] != payload['as_of'] or value['months'] != payload['months']:
         raise ValidationError('Explicit as-of and ordered horizon must equal the selected scenario')
     ids = value['source_ids']
-    expected = {scenario.evidence_id} | {x['evidence_id'] for x in payload['openings'] + payload['items']}
+    from apps.finance.forecast_workbook import source_ids
+    expected = {scenario.evidence_id} | {x['evidence_id'] for x in payload['openings'] + payload['items']} | source_ids(scenario)
     if not isinstance(ids, list) or any(type(x) is not int or x < 1 for x in ids) or len(ids) != len(set(ids)) or set(ids) != expected:
         raise ValidationError('Select the complete exact scenario, opening and assumption source inventory')
     rows = list(Evidence.objects.filter(case=case, pk__in=ids).order_by('pk'))
