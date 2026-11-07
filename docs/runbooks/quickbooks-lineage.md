@@ -78,3 +78,35 @@ Official protocol references used by the feasibility audit:
 - https://static.developer.intuit.com/output_html/qbo/docs/develop/authentication-and-authorization/oauth-2.0.html
 - https://static.developer.intuit.com/output_html/qbo/docs/develop/troubleshooting/error-codes.html
 - https://static.developer.intuit.com/output_html/qbo/docs/learn/limits-and-throttles.html
+
+### Application linkage candidate (782, awaiting native acceptance)
+
+The subsequent `apps.finance.quickbooks_read` service and existing ledger workbench
+now provide reserve and execute commands when a registry entry is enabled. They use
+`ledger.verify` permission without adding a new business approval. An exact typed
+intent binds the current lineage, source payload/evidence, incumbent policy, registry,
+principal and keyed credential revision. Only one execution can claim each intent.
+
+Service-created evidence is anchored to exact immutable Audit evidence ID/hash/actor
+records, not trusted solely by evidence kind. Ordinary evidence capture cannot create
+these fixed Audit anchors. Both new kinds and all native-read events are hidden from
+generic evidence/agent/timeline projections. Current ledger grants govern native status
+visibility. The adapter result remains separate from all LedgerCheck/Decision records.
+
+Post-read revocation or context changes retain the bounded observed fact but mark it
+`stale_or_access_changed`; no current link or business assertion is promoted. Interrupted
+started attempts show unknown/in-progress and cannot be replayed. A user may reserve a
+new read. A returned429 enforces a company/environment-wide60-second retry gate. This
+is a single-object read workflow, not a bulk importer or posting recovery mechanism.
+
+Verification status: pure component/helper tests only. Fourteen native PostgreSQL test
+methods have been written, but NOT RUN. They cover genuine services with only the remote
+transport mocked: immutable intent/provenance, revoked grants before/during the call,
+policy changes, evidence/timeline privacy, throttle, credential rotation, collisions and
+non-promotion to Finance verification. Three HTTP methods add real CSRF/form/revision/permission
+checks and two contention methods exercise independent database connections for once-only
+claim and in-flight revocation. An outer-transaction negative verifies execution is refused before claim/transport; all
+fourteen use TransactionTestCase and await native execution before acceptance. No live QBO acceptance.
+
+Execution requires autocommit outside any enclosing transaction. This makes the claimed
+started audit durable before transport; callers cannot roll back a savepoint and replay.

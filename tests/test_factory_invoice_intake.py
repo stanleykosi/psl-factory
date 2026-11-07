@@ -57,6 +57,7 @@ def start(f,**kwargs):
 
 class FactoryInvoiceIntakeTests(TestCase):
     def test_collective_intake_agent_exact_human_review_issue_delivery(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=prepared();w=start(f);factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'waiting',w.finding);self.assertIsNotNone(w.invoice_id)
         self.assertEqual(w.invoice.amount,20);self.assertEqual(w.invoice.preparation_id,f['prep'].pk)
@@ -85,6 +86,8 @@ class FactoryInvoiceIntakeTests(TestCase):
     def test_existing_issued_invoice_reused_without_another_issue(self):
         f=prepared();a,c,p=f['actor'],f['case'],f['prep']
         i=invoices.draft(a,c.pk,p.pk,'USAGE-INVOICE',date(2026,11,20),rev(c))
+        from tests.obligation_helpers import identified
+        identified(a,c,i)
         r=invoices.review(a,c.pk,i.pk,'Finance','approve',f['proof'].pk,'Exact approved native invoice',rev(c))
         j=invoices.reserve(a,c.pk,i.pk,'issue','Finance',rev(c));invoice_delivery.run_once(case_id=c.pk,job_id=j.pk)
         old=list(InvoiceIssue.objects.values());w=start(f,invoice_id=i.pk)
@@ -123,6 +126,7 @@ class FactoryInvoiceIntakeTests(TestCase):
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.status,'blocked');self.assertFalse(Invoice.objects.exists())
 
     def test_timeout_original_lookup_after_draft_authority_revocation(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=prepared();w=start(f);factory.run_until_wait(w.pk);approve(f)
         with tempfile.TemporaryDirectory() as directory:
             adapter=MockFactoryInvoiceAdapter(directory,lose_response=True)
@@ -181,6 +185,7 @@ class FactoryFixedPreparationTests(TestCase):
         return h,request,charge,prep,proof
 
     def test_post_ack_reassignment_keeps_original_preparer_and_native_receipt(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         h,request,charge,prep,proof=self.fixed()
         from apps.finance.models import CoveragePreparationReceipt
         receipt=list(CoveragePreparationReceipt.objects.values());d=h.recipient('new-factory-preparer');route=h.assign(request,d)
@@ -191,7 +196,7 @@ class FactoryFixedPreparationTests(TestCase):
         self.assertEqual(w.request['preparation']['continuation'],route.pk)
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertIsNotNone(w.invoice_id,w.finding)
         self.assertEqual(w.invoice.amount,1200);self.assertEqual(w.invoice.actor_id,d.pk)
-        approve(dict(actor=h.a,case=h.c,proof=proof))
+        approve(dict(actor=h.a,case=h.c,proof=proof,work=w,binding_actor=d))
         with tempfile.TemporaryDirectory() as directory:factory.run_until_wait(w.pk,adapter=MockFactoryInvoiceAdapter(directory))
         w.refresh_from_db();self.assertEqual(w.status,'verified',w.finding)
         self.assertEqual(list(CoveragePreparationReceipt.objects.values()),receipt)
@@ -255,3 +260,9 @@ class FactoryCompletionCompatibility(TestCase):
         self.assertEqual(w.business_key,billing.digest({'case':str(f['case'].pk),'customer':cov.customer,
             'contract':cov.contract,'kind':'completion','usage':None}))
         self.assertNotIn('mode',w.request)
+        from tests.obligation_helpers import factory_approve_identified
+        factory.run_until_wait(w.pk);factory_approve_identified(f)
+        with tempfile.TemporaryDirectory() as directory:
+            factory.run_until_wait(w.pk,adapter=MockFactoryInvoiceAdapter(directory))
+        w.refresh_from_db();self.assertEqual(w.status,'verified',w.finding)
+        self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),1)

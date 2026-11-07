@@ -17,8 +17,11 @@ def configure(a,c):
     for key,field in [('D14.adjustment_correction_rule_refs','rules'),('D14.legal_document_requirements','legal')]:policy(a,c,key,reference_values(active_component(key,c))+f[field])
     return f
 
-def fixture(case_id=None):
-    a,c,cov,p,e=settlement_fixture(case_id);configure(a,c);iss=issue(a,c,draft(a,c,p),e)
+def fixture(case_id=None, *, identity=False):
+    issue_original=issue
+    if identity:
+        from .obligation_helpers import issue_identified as issue_original
+    a,c,cov,p,e=settlement_fixture(case_id);configure(a,c);iss=issue_original(a,c,draft(a,c,p),e)
     e['review']=evidence(a,c,'financial_correction_review','Synthetic independent review record')
     return a,c,cov,iss,e
 

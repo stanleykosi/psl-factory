@@ -31,7 +31,7 @@ class InvoiceVariantTests(TransactionTestCase):
             return metadata,payload,adapter.receipt(db,metadata,payload)
 
     def test_exact_four_variants_credit_debit_void_and_negative_receipts(self):
-        a,c,iss,e,jobs=documents();seen=[]
+        a,c,iss,e,jobs=documents(identity=True);seen=[]
         for j in jobs:
             m,p,r=self.original(j,c);self.assertEqual(r[0],'present',j.kind);seen.append(m['variant'])
             self.assertNotEqual(m['source_row_sha256'],m['payload_sha256']);self.assertNotEqual(m['source_intent_sha256'],m['payload_sha256'])

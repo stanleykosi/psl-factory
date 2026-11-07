@@ -46,6 +46,7 @@ class SettlementWorkerTests(TransactionTestCase):
         self.assertEqual(result.returncode,0,result.stderr);self.assertIn('Processed 1',result.stdout)
         j.refresh_from_db();self.assertEqual(j.status,'confirmed');self.assertEqual(InvoiceIssue.objects.count(),1)
     def test_old_fence_cannot_deliver_after_reclaim(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         pk,fence=invoice_delivery.claim();InvoiceJob.objects.filter(pk=pk).update(lease_until=timezone.now()-timedelta(seconds=1))
         pk2,fence2=invoice_delivery.claim();self.assertGreater(fence2,fence)

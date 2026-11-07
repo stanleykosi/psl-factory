@@ -10,7 +10,7 @@ from apps.policy.ledger_drafts import draft_ledger_policy
 from apps.policy.services import resolve
 from apps.agents.ledger import investigate
 from apps.agents.models import AgentRun
-from . import ledger as d,ledger_resolution as resolutions
+from . import ledger as d,ledger_resolution as resolutions,quickbooks_read as qbo
 from .ledger_forms import commands
 from .models import LedgerLineage
 @login_required
@@ -23,6 +23,8 @@ def workbench(request,case_id):
    v=f.cleaned_data;a=request.user;k=v['action'];rev=v['revision'];e=v['evidence'].pk if v.get('evidence') else None
    if k=='capture':d.capture(a,c.pk,e,v['predecessor'].pk if v['predecessor'] else None,rev)
    elif k=='verify':d.verify(a,c.pk,v['lineage'].pk,e,rev)
+   elif k=='qbo_reserve':qbo.reserve(a,c.pk,v['lineage'].pk,v['binding'],rev)
+   elif k=='qbo_execute':qbo.execute(a,c.pk,v['intent'],rev)
    elif k=='review':d.review(a,c.pk,v['verification'].pk,e,v['verdict'],rev)
    elif k=='investigate':investigate(a,c.pk,rev)
    elif k=='resolution_evidence':
@@ -38,7 +40,7 @@ def workbench(request,case_id):
  for w in rows:
   try:d.report(request.user,c.pk,w.pk);w.reviewed=True
   except (ValidationError,PermissionDenied):w.reviewed=False
- response=render(request,'finance/ledger.html',{'case':c,'works':rows,'resolutions':resolutions.visible_packets(request.user,c),'resolution_sources':resolutions.visible_evidence(request.user,c),'commands':forms,'policies':[resolve(k,c) for k in SCHEMAS],'policy_schemas':SCHEMAS,'source_schema':d.SOURCE,'response_schema':d.RESPONSE,'agents':AgentRun.objects.filter(case=c,provider='deterministic-ledger-v1').order_by('-pk')[:5]});response['Cache-Control']='no-store';return response
+ response=render(request,'finance/ledger.html',{'case':c,'native_reads':qbo.visible(request.user,c),'works':rows,'resolutions':resolutions.visible_packets(request.user,c),'resolution_sources':resolutions.visible_evidence(request.user,c),'commands':forms,'policies':[resolve(k,c) for k in SCHEMAS],'policy_schemas':SCHEMAS,'source_schema':d.SOURCE,'response_schema':d.RESPONSE,'agents':AgentRun.objects.filter(case=c,provider='deterministic-ledger-v1').order_by('-pk')[:5]});response['Cache-Control']='no-store';return response
 @login_required
 def report(request,case_id,pk):
  c=accessible_case(request.user,case_id);d.readable(request.user,c)

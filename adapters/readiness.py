@@ -17,6 +17,9 @@ TABLES['financefollowup']=['workflows_financefollowupdispatch']
 
 def binding(contract):
  v=contract.payload
+ if v['implementation']=='hosted_mcp_read_v1':
+  from apps.workflows.quickbooks_mcp import binding as mcp_binding
+  return mcp_binding(contract)
  if v['kind']=='provider' and v['model_id'] is None:raise ValidationError('Explicit provider model/version required')
  if any(v[k] is None for k in ['target_key','credential_ref','credential_revision','principal_ref','contract_version']):raise ValidationError('Target/credential/principal/version remains unconfigured')
  if v['implementation']=='internal_postgres_session_v1':
@@ -93,6 +96,9 @@ class ReadinessAdapter:
  def probe(self,job):
   v=job.contract.payload;current,private=binding(job.contract)
   if current!=job.intent['binding']:raise ValidationError('Reserved identity/credential binding changed')
+  if v['implementation']=='hosted_mcp_read_v1':
+   from apps.workflows.quickbooks_mcp import probe
+   return probe(job)
   kind=job.intent['kind'];base={'kind':kind,'classification':current['classification'],'authenticated_transport':True}
   if v['implementation']=='internal_postgres_session_v1':
    args=dict(private['args'],connect_timeout=5)

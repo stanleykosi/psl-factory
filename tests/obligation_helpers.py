@@ -36,3 +36,40 @@ def bind(actor, case, invoice, *, key=None, predecessor=None):
     body = obligations.declaration(invoice, value['namespace'], key, predecessor.pk if predecessor else None)
     e = evidence(actor, case, 'invoice_identity', json.dumps(body))
     return obligations.bind(actor, case.pk, invoice.pk, key, e.pk, rev(case), predecessor_id=predecessor.pk if predecessor else None)
+
+
+def identified(actor, case, invoice, *, configuring_actor=None):
+    """Explicit opt-in for ordinary synthetic fixtures; never repair revoked policy."""
+    if not case.synthetic:
+        raise ValueError('Ordinary identity fixture requires an explicitly synthetic case')
+    from apps.policy.models import Configuration
+    if not Configuration.objects.filter(case=case, component=obligations.COMPONENT).exists():
+        configure(configuring_actor or actor, case)
+    if obligations.latest(invoice):
+        return obligations.current(invoice)
+    return bind(actor, case, invoice)
+
+
+def approve_identified(actor, case, invoice, proofs):
+    from .settlement_helpers import approve
+    identified(actor, case, invoice)
+    return approve(actor, case, invoice, proofs)
+
+
+def issue_identified(actor, case, invoice, proofs):
+    from .settlement_helpers import issue
+    identified(actor, case, invoice)
+    return issue(actor, case, invoice, proofs)
+
+
+def factory_approve_identified(f):
+    from apps.workflows import factory
+    from apps.workflows.models import FactoryWork
+    from .factory_helpers import approve
+    work=f.get('work') or FactoryWork.objects.get(case=f['case'],definition='pmo-finance/v1')
+    work.refresh_from_db()
+    identified(f.get('binding_actor',f['actor']), f['case'], work.invoice,
+        configuring_actor=f['actor'])
+    # Identity is part of the exact packet: regenerate native task, never reuse stale approval.
+    factory.run_until_wait(work.pk)
+    return approve(f)

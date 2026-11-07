@@ -20,7 +20,10 @@ class SettlementTests(TestCase):
     def setUp(self):self.a,self.c,self.cov,self.p,self.e=fixture()
     def snap(self):return receivables.snapshot(self.a,self.c.pk,timezone.localdate(),rev(self.c))
     def test_generation_review_issuance_delivery_are_separate_real_facts(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);self.assertEqual(InvoiceIssue.objects.count(),0)
+        from tests.obligation_helpers import identified
+        identified(self.a,self.c,i)
         with self.assertRaises(ValidationError):invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c));self.assertEqual(InvoiceIssue.objects.count(),0)
         invoice_delivery.run_once();self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),0)
@@ -28,26 +31,34 @@ class SettlementTests(TestCase):
         delivery=InvoiceDelivery.objects.get();self.assertEqual(delivery.payload['amount'],'32.25');self.assertNotIn('preparation_key',delivery.payload)
         self.assertNotIn('rule',delivery.payload['lines'][0]);self.assertEqual(self.snap().result['groups'][0]['receivable'],'32.25000000')
     def test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         config=active_component('D08.adapter_contract_ref',self.c);transition(self.a,config.pk,'revoked')
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e)
         with self.assertRaises(ValidationError):invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         r,_=receipt(self.a,self.c,verify=False);self.assertEqual(CashReceipt.objects.count(),1)
     def test_unknown_after_accept_reconciles_before_later_grant_revocation(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         invoice_delivery.run_once(TimeoutAfterInvoiceAccept());j.refresh_from_db();self.assertEqual(j.status,'unknown')
         self.assertEqual(InvoiceIssue.objects.count(),1)
         Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.issue').update(active=False)
         invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'confirmed');self.assertEqual(InvoiceIssue.objects.count(),1)
     def test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);old=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
+        self.assertEqual(old.attempts,0);self.assertEqual(old.fence,0)
+        invoice_delivery.operate(self.a,self.c.pk,old.pk,'cancel','Explicitly cancel unattempted prior reservation',rev(self.c))
         newer=draft(self.a,self.c,self.p);self.assertEqual(newer.version,2);approve(self.a,self.c,newer,self.e);invoices.reserve(self.a,self.c.pk,newer.pk,'issue','Finance',rev(self.c))
-        invoice_delivery.run_once();old.refresh_from_db();self.assertEqual(old.status,'held');invoice_delivery.run_once()
+        invoice_delivery.run_once();old.refresh_from_db();self.assertEqual(old.status,'cancelled');invoice_delivery.run_once()
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceIssue.objects.get().invoice_id,newer.pk)
         with self.assertRaises(ValidationError):draft(self.a,self.c,self.p)
     def test_returned_review_holds_worker_then_explicit_intent_replacement_resumes(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         invoices.review(self.a,self.c.pk,i.pk,'Finance','return',self.e['invoice_review'].pk,'Return exact document',rev(self.c))
         invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'held')
+        from apps.finance.models import ObligationEffect
+        self.assertGreater(j.attempts,0);self.assertFalse(ObligationEffect.objects.filter(invoice=i).exists())
         approve(self.a,self.c,i,self.e)
         invoice_delivery.operate(self.a,self.c.pk,j.pk,'replace_intent','Fresh current review reservation',rev(self.c))
         self.assertEqual(InvoiceJob.objects.count(),2);invoice_delivery.run_once();self.assertEqual(InvoiceIssue.objects.count(),1)
@@ -67,6 +78,7 @@ class SettlementTests(TestCase):
         with self.assertRaises(ValidationError):cash.verify(self.a,self.c.pk,unknown.pk,'Finance',proof.pk,rev(self.c))
         s=self.snap();self.assertEqual(len(s.result['reported_unverified']),2);self.assertEqual(s.result['groups'][0]['verified_cash'],'0')
     def test_cash_before_invoice_unmatched_assignment_and_partial_allocation(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         r,l=receipt(self.a,self.c);self.assertEqual(self.snap().result['unmatched_cash'][0]['amount'],'50.00000000')
         assign(self.a,self.c,r,self.cov,self.e);iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e)
         a=allocate(self.a,self.c,l,iss,'20.00',self.e);self.assertEqual(allocate(self.a,self.c,l,iss,'20.00',self.e).pk,a.pk)
@@ -140,6 +152,7 @@ class SettlementTests(TestCase):
         self.assertTrue(any(x['kind']=='cash_verification' for x in log.result['citations']))
         receipt(self.a,self.c,ref='new-pending',verify=False);log=investigate(self.a,self.c.pk,s.pk,rev(self.c));self.assertFalse(log.result['current'])
     def test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         self.client.force_login(self.a);url=f'/cases/{self.c.pk}/finance/settlement/'
         response=self.client.post(url,{'action':'draft','preparation':self.p.pk,'reference':'UI-INVOICE','due_date':timezone.localdate().isoformat(),'revision':rev(self.c)})
         self.assertEqual(response.status_code,302);i=Invoice.objects.get();issue(self.a,self.c,i,self.e)
@@ -160,6 +173,7 @@ class SettlementTests(TestCase):
                 with connection.cursor() as cursor:cursor.execute(sql,[i.pk if 'SET amount' in sql else j.pk])
 
     def test_configured_due_terms_and_usage_completeness_hold_only_issuance(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=invoices.draft(self.a,self.c.pk,self.p.pk,'NO-DUE',None,rev(self.c));approve(self.a,self.c,i,self.e)
         with self.assertRaisesMessage(ValidationError,'due terms'):invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         f=json.loads(FIXTURE.read_text(encoding='utf-8'));policy(self.a,self.c,'D08.adapter_contract_ref',dict(f['adapter'],recipient_id=self.a.pk,require_due_date=False,allow_partial_usage=False))

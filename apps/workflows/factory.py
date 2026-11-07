@@ -695,6 +695,9 @@ def run_once(work_id,provider=None,adapter=None):
             if work.status not in TERMINAL:work.status='waiting' if result.get('waiting') else 'ready'
             work.finding=result.get('finding',result.get('waiting',''));work.observation_hash=fresh['hash'];work.revision+=1;work.save()
         # Native worker owns effect retries. No transaction is held across adapter calls.
+        if result.get('mcp_dispatch_intent'):
+            from .quickbooks_mcp import execute as dispatch_mcp
+            dispatch_mcp(work.execution_actor,work.case_id,result['mcp_dispatch_intent'])
         if result.get('dispatch_job'):
             invoice_delivery.run_once(adapter_for(work,adapter),case_id=work.case_id,job_id=result['dispatch_job'],lookup_only=result.get('lookup_only',False))
         if result.get('approval_job'):

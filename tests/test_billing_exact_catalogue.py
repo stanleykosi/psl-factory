@@ -154,6 +154,7 @@ class BillingExactCatalogueTests(TestCase):
         billing.ensure_current(prep)
 
     def test_f32_n01_native_inv1_100_r1_40_leaves_60_with_immutable_lineage(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         actor, case, cov, _, _, batch, prep = self.priced_usage('10', '10', '100.00')
         supplied = configured(actor, case)
         self.assertEqual(supplied['matching']['implementation'], 'explicit_human_v1')
@@ -162,6 +163,8 @@ class BillingExactCatalogueTests(TestCase):
         invoice = draft(actor, case, prep, 'INV1')
         self.assertEqual(invoice.amount, Decimal('100'))
         self.assertEqual(InvoiceIssue.objects.count(), 0)
+        from tests.obligation_helpers import identified
+        identified(actor, case, invoice)
         with self.assertRaisesMessage(ValidationError, 'Finance approval'):
             invoices.reserve(actor, case.pk, invoice.pk, 'issue', 'Finance', rev(case))
         reviewed = approve(actor, case, invoice, proofs)

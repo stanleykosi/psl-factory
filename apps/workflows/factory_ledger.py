@@ -99,6 +99,8 @@ def snapshot(work,value,reader=None):
     data,e,body=source(work,actor);w=lineage(work);n=report(work,actor);latest={KIND:work.source_head,'ledger_source':e}
     missing=[k for k in value['required_evidence_kinds'] if k not in latest];stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(work.source_head_id,work.source_head.sha256)],'native':n,'checks':list(w.checks.values_list('pk',flat=True)) if w else []}
+    from .quickbooks_mcp import factory_state
+    state['mcp']=factory_state(work,w,reader)
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],[]
 
@@ -107,6 +109,9 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if missing or stale:return [],'Current configured supplied evidence required'
     n=state['native']
     if n['stage']=='capture':return ['ACT08'],'Capture supplied incumbent reference without posting'
+    mcp=state.get('mcp')
+    if mcp and mcp.get('status')=='completed' and not Attempt.objects.filter(activity__work=work,phase='observed',result__mcp_intent=mcp['intent'],result__has_key='mcp_result_evidence').exists():return ['ACT12'],'Reconcile the original MCP observation; no new external read'
+    if n['stage']=='observation' and state.get('mcp',{} ) and state['mcp'].get('ready'):return ['ACT11'],'Reserve the configured scoped MCP read; no posting or Finance verification'
     if n['stage']=='complete':return ['ACT13'],'Verify current supplied observation and independent Finance decision'
     return [],n['finding'] or 'Await exact supplied observation or independent Finance decision'
 
@@ -172,6 +177,17 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         w=existing[0] if existing else native.capture(actor,c.pk,e.pk,data['predecessor_id'],c.revision)
         match(work,w,actor)
         return {'head':work.source_head_id,'captured_lineage':w.pk,'reused_existing_lineage':bool(existing),'posting_performed':False}
+    if kind=='ACT11':
+        from .quickbooks_mcp import factory_state,reserve
+        w=match(work,lineage(work),actor);state=factory_state(work,w)
+        if not state or not state.get('ready'):raise ValidationError('Current eligible MCP read reservation required')
+        intent=reserve(actor,c.pk,w.pk,state['contract'],caller_mode='agent',factory_work=work.pk)
+        return {'head':work.source_head_id,'mcp_intent':intent.pk,'mcp_dispatch_intent':intent.pk,'state':'reserved_pending_external_read','posting_performed':False,'finance_verification':False}
+    if kind=='ACT12':
+        from .quickbooks_mcp import factory_state,reconcile
+        w=match(work,lineage(work),actor);state=factory_state(work,w)
+        if not state or state.get('status')!='completed':raise ValidationError('Completed original MCP observation required')
+        return dict(reconcile(actor,c.pk,state['intent']),head=work.source_head_id)
     if kind=='ACT13':result=verify(work,actor);work.status='verified';return result
     raise ValidationError('Ledger posting and human decisions are not agent capabilities')
 

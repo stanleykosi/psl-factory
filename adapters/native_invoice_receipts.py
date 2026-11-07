@@ -22,7 +22,21 @@ def document(db,job_id,case_id,max_bytes):
         raise ValidationError('Exact incumbent invoice operation and document hash required')
     correction=None
     if j['kind'] in ('issue','deliver'):
-        payload=i['payload'] if j['kind']=='issue' else delivery_payload(SimpleNamespace(payload=i['payload']))
+        if j['kind']=='issue':
+            payload=i['payload']
+        else:
+            # This db is the supplied source/archive, not the current application ORM.
+            preparation=db.execute("""SELECT p.id,p.case_id::text,p.kind
+              FROM finance_invoice source_invoice
+              JOIN finance_billingpreparation p ON p.id=source_invoice.preparation_id AND p.case_id=source_invoice.case_id
+              WHERE source_invoice.id=%s AND source_invoice.case_id=%s AND p.id=%s
+                AND octet_length(p.kind)<=30 AND octet_length(p.case_id::text)+octet_length(p.kind)<=%s""",
+              [i['id'],case_id,i['preparation_id'],max_bytes]).fetchone()
+            if (not preparation or len(preparation)!=3 or type(preparation[0]) is not int or
+                preparation[0]!=i['preparation_id'] or preparation[1]!=i['case_id'] or
+                preparation[2] not in ('usage','signed_sow','uat','completion','fixed_contract')):
+                raise ValidationError('Exact bounded source preparation context required for invoice delivery')
+            payload=delivery_payload(SimpleNamespace(payload=i['payload'],preparation=SimpleNamespace(kind=preparation[2])))
     else:
         row=db.execute("""SELECT to_jsonb(c)||jsonb_build_object('amount',c.amount::text),s.obligation_key,e.sha256 FROM finance_invoicecorrection c
           JOIN finance_invoiceissue s ON s.id=c.issue_id JOIN core_evidence e ON e.id=c.evidence_id
