@@ -1,13 +1,15 @@
 # Public source backup
 
-This is a source-only development backup, not a release or deployment. It extends the prior public snapshot with one synthetic recognition fixture precondition repair and this sanitized status note.
+This is a source-only development backup, not a release or deployment. This update changes only this sanitized status note; the previously published runtime and test source remains unchanged and matches accepted source snapshot `9236b7b`.
 
-## Scope
+## Verification status
 
-The recognition fixture now explicitly reaffirms the existing signature after changing its synthetic D05 role roster. It calls the existing helper; no production behavior, test assertions or test IDs change.
+The permitted selected regression is complete: 461 unique test IDs across 95 accepted batches. Actual test executions used source snapshots `c212331` (165 IDs), `3f3a1ed` (115 IDs), and `9236b7b` (181 IDs). Source/helper equivalence was verified for the earlier 280 IDs. This is not a single 461-test run on the latest source snapshot.
 
-Three selected native recognition tests passed. The broader 461-test regression remains incomplete, with 280 accepted source-equivalent test IDs reported so far. This is partial coverage, not a full-regression pass. Hosted CI status is unknown. Full 108-process acceptance remains NOT_MET. Real source authenticity, owner policies and live integration/provider verification remain unresolved.
+Primary data preservation before, after, and across restart was verified. Diagnostic attempts and detailed proof remain private. No hosted CI result is claimed.
+
+Full 108-process acceptance and the "only HOD/owner inputs remain" readiness gate are NOT_MET. Outstanding technical validation, scope holds, and browser verification remain separate from owner policies, source authenticity, and live provider/integration configuration and verification.
 
 ## Publication boundary
 
-No new raw proof evidence, runtime files, screenshots, proof harnesses, local-only documentation, secrets, private operational data, held implementation work or local Git history is included. Existing public documentation and evidence remain unchanged and may describe earlier checkpoints. Main is unchanged. No merge or deployment is performed.
+Only `PUBLIC-BACKUP.md` changes. Previous public source, documentation, and evidence blobs remain unchanged and may describe earlier checkpoints. No new raw proof, private reconciliation/status files, runtime data, screenshots, proof harnesses, secrets, private operational data, or local Git history is published. Main is unchanged. No merge or deployment is performed.
