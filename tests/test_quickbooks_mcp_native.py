@@ -276,3 +276,67 @@ class NativeMCPTests(TransactionTestCase):
         self.client.initialize.assert_not_called()
         self.client.call.assert_not_called()
         self.assertFalse(Audit.objects.filter(case=self.f['case'],action=broker.PREFIX+'started',data__intent=row.pk).exists())
+
+    def assert_no_synthetic_credential_retained(self):
+        from apps.core.models import Evidence
+        from apps.workflows.readiness_models import IntegrationObservation, IntegrationAssessment, IntegrationReview, IntegrationProbe
+        token='SYNTHETIC-NOT-A-CREDENTIAL'
+        collections=[Evidence.objects.filter(case=self.f['case']).values(),Audit.objects.filter(case=self.f['case']).values(),
+            IntegrationObservation.objects.filter(contract__case=self.f['case']).values(),
+            IntegrationAssessment.objects.filter(contract__case=self.f['case']).values(),
+            IntegrationReview.objects.filter(assessment__contract__case=self.f['case']).values(),
+            IntegrationProbe.objects.filter(contract__case=self.f['case']).values()]
+        for rows in collections:
+            self.assertNotIn(token,json.dumps(list(rows),default=str))
+
+    def test_native_discovery_echo_not_retained_in_readiness_state(self):
+        from adapters import quickbooks_mcp as wire
+        from apps.workflows.readiness_models import IntegrationObservation
+        token='SYNTHETIC-NOT-A-CREDENTIAL'
+        job=readiness_delivery.reserve(self.f['actor'],self.f['case'].pk,self.f['contract'].pk,'echo-health','health')
+        def response(method,params):
+            if method=='initialize':return {'protocolVersion':VERSION,'capabilities':{'tools':{}},'serverInfo':{}}
+            self.assertEqual(method,'tools/list')
+            return {'tools':[dict(TOOL,description=token)]}
+        # Keep the real Client discovery/echo guard. Mock only external RPC traffic.
+        with patch.object(broker,'Client',wire.Client),patch.object(wire.Client,'request',side_effect=response) as rpc,patch.object(wire,'transport',return_value=None) as notification:
+            self.assertTrue(readiness_delivery.run_once(case_id=self.f['case'].pk))
+            job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(job.attempts,1)
+            self.assertFalse(IntegrationObservation.objects.filter(job=job).exists())
+            with self.assertRaises(ValidationError) as error:
+                readiness_delivery.operate(self.f['actor'],self.f['case'].pk,job.pk,'retry','No replay of unknown discovery')
+            self.assertNotIn(token,str(error.exception))
+            self.assertEqual(notification.call_count,1)
+            self.assertEqual([call.args[0] for call in rpc.call_args_list],['initialize','tools/list'])
+        self.assert_no_synthetic_credential_retained()
+        self.assertFalse(self.lineage.checks.exists())
+
+    def test_native_schema_valid_projection_echo_records_unknown_once(self):
+        from adapters import quickbooks_mcp as wire
+        # Explicit synthetic reviewed output schema, not an invented Intuit contract.
+        self.entry['output_schema']['properties']['note']={'type':'string','maxLength':100}
+        self.entry['output_schema']['required'].append('note')
+        rh.probe(self.f,key='echo-output-health')
+        assessment=readiness.assess(self.f['actor'],self.f['case'].pk,self.f['contract'].pk,'echo-output-ready')
+        readiness.review(self.f['reviewer'],self.f['case'].pk,assessment.pk,'confirm','echo-output-confirm',self.f['review_evidence'].pk)
+        readiness.select(self.f['actor'],self.f['case'].pk,self.f['contract'].pk,self.f['selection_evidence'].pk)
+        row=self.reserve();token='SYNTHETIC-NOT-A-CREDENTIAL'
+        def response(method,params):
+            if method=='initialize':return {'protocolVersion':VERSION,'capabilities':{'tools':{}},'serverInfo':{}}
+            if method=='tools/list':return {'tools':[copy.deepcopy(TOOL)]}
+            self.assertEqual(method,'tools/call')
+            return {'structuredContent':{'id':self.lineage.payload['target_reference'],'note':token}}
+        with patch.object(broker,'Client',wire.Client),patch.object(wire.Client,'request',side_effect=response) as rpc,patch.object(wire,'transport',return_value=None):
+            result=broker.execute(self.f['actor'],self.f['case'].pk,row.pk)
+            self.assertEqual(json.loads(result.body)['result'],{'status':'unknown','projection':None})
+            self.assertEqual([call.args[0] for call in rpc.call_args_list],['initialize','tools/list','tools/call'])
+            calls=rpc.call_count
+            recovered=broker.reconcile(self.f['actor'],self.f['case'].pk,row.pk)
+            self.assertEqual(recovered['mcp_outcome'],'unknown');self.assertFalse(recovered['finance_verification'])
+            self.assertEqual(rpc.call_count,calls)
+            with self.assertRaises(ValidationError):broker.execute(self.f['actor'],self.f['case'].pk,row.pk)
+            self.assertEqual(rpc.call_count,calls)
+        self.assertEqual(Audit.objects.filter(case=self.f['case'],action=broker.PREFIX+'started',data__intent=row.pk).count(),1)
+        self.assertEqual(Audit.objects.filter(case=self.f['case'],action=broker.PREFIX+'completed',data__intent=row.pk).count(),1)
+        self.assert_no_synthetic_credential_retained()
+        self.assertFalse(self.lineage.checks.exists())

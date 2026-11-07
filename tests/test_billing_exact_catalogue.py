@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 """Literal synthetic F29/F32 examples and bounded F28 same-receipt retry proof.
 
 No owner rate, tax, provider authenticity, collection policy or full process
@@ -50,7 +51,7 @@ def explicit_price(actor, case, cov, quantity, rate, total, *, unit='request'):
     return configs, oracle
 
 
-class BillingExactCatalogueTests(TestCase):
+class BillingExactCatalogueTests(TransactionTestCase):
     def priced_usage(self, quantity='10', rate='2', total='20.00'):
         actor, case = setup_case()
         cov = coverage(actor, case)

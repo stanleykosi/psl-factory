@@ -8,7 +8,7 @@ from django.db import transaction,DatabaseError,close_old_connections
 from django.utils import timezone
 from django.urls import reverse
 from apps.finance import followup_successors as d,receipt_followup as source,invoice_delivery,invoices
-from apps.finance.models import InvoiceIssue,InvoiceJob,CashVerification
+from apps.finance.models import InvoiceIssue,InvoiceJob,CashVerification,ObligationEffect
 from apps.identity.models import Grant
 from apps.agents.receipt_followup import investigate
 from apps.policy.services import transition
@@ -88,14 +88,18 @@ class FollowupSuccessorTests(TransactionTestCase):
 
     def test_normal_generation_replacement_unknown_receipt_and_successor(self):
         from tests.settlement_helpers import fixture as settlement,draft,approve
+        from tests.obligation_helpers import approve_identified as approve
         from adapters.invoices import InternalInvoiceAdapter
         a,c,_,preparation,e=settlement();invoice=draft(a,c,preparation);approve(a,c,invoice,e)
         original=invoices.reserve(a,c.pk,invoice.pk,'issue','Finance',rev(c))
-        with patch.object(InternalInvoiceAdapter,'deliver',side_effect=TimeoutError('Synthetic uncertain external effect')):invoice_delivery.run_once()
-        original.refresh_from_db();self.assertEqual(original.status,'unknown')
-        with self.assertRaises(ValidationError):invoice_delivery.operate(a,c.pk,original.pk,'replace_intent','Unresolved effects cannot be replaced',rev(c))
-        # Real worker lookup then explicit pre-effect hold: no internal workflow mock.
-        with patch.object(InternalInvoiceAdapter,'deliver',side_effect=ValidationError('Synthetic adapter pre-effect rejection')):invoice_delivery.run_once()
+        # Genuine no-effect hold: authority fails before dispatch_context retains an effect.
+        grant=Grant.objects.get(case=c,user=a,action='finance.invoice.issue')
+        grant.active=False;grant.save(update_fields=['active'])
+        invoice_delivery.run_once();original.refresh_from_db()
+        self.assertEqual(original.status,'held')
+        self.assertFalse(ObligationEffect.objects.filter(invoice=invoice).exists())
+        self.assertEqual(InvoiceIssue.objects.count(),0)
+        grant.active=True;grant.save(update_fields=['active'])
         invoice_delivery.operate(a,c.pk,original.pk,'replace_intent','Normal current operator replacement',rev(c))
         target=InvoiceJob.objects.filter(invoice=invoice).order_by('-generation').first()
         r,proof=request(a,c,original);p=d.propose(a,c.pk,r.pk,original.pk,target.pk,'intent_generation',proof.pk,'Normal replacement lineage','generation')
@@ -116,3 +120,28 @@ class FollowupSuccessorTests(TransactionTestCase):
         self.assertEqual(InvoiceIssue.objects.count(),1)
         invoice_delivery.run_once();self.assertEqual(d.report(a,c.pk,r.pk)['lineage'][0]['successor_receipt'],'present')
         self.assertEqual(InvoiceIssue.objects.count(),1)
+
+    def test_ambiguous_attempt_cannot_be_replaced_after_later_adapter_rejection(self):
+        from tests.settlement_helpers import fixture as settlement,draft
+        from tests.obligation_helpers import approve_identified as approve
+        from adapters.invoices import InternalInvoiceAdapter
+        a,c,_,preparation,e=settlement();invoice=draft(a,c,preparation);approve(a,c,invoice,e)
+        original=invoices.reserve(a,c.pk,invoice.pk,'issue','Finance',rev(c))
+        key=original.operation_key;generation=original.generation
+        with patch.object(InternalInvoiceAdapter,'deliver',side_effect=TimeoutError('Synthetic uncertain external effect')) as first_send:
+            invoice_delivery.run_once();first_send.assert_called_once()
+        original.refresh_from_db();self.assertEqual(original.status,'unknown')
+        effect=dict(ObligationEffect.objects.filter(job=original).values().get())
+        with self.assertRaises(ValidationError):invoice_delivery.operate(a,c.pk,original.pk,'replace_intent','Unresolved effects cannot be replaced',rev(c))
+        with patch.object(InternalInvoiceAdapter,'deliver',side_effect=ValidationError('Synthetic later adapter rejection')) as later_rejection:
+            invoice_delivery.run_once();later_rejection.assert_called_once()
+        original.refresh_from_db();self.assertEqual(original.status,'held')
+        with patch.object(InternalInvoiceAdapter,'deliver') as no_new_send:
+            with self.assertRaisesMessage(ValidationError,'Original attempted effect must be reconciled'):
+                invoice_delivery.operate(a,c.pk,original.pk,'replace_intent','Later rejection does not prove original absence',rev(c))
+            no_new_send.assert_not_called()
+        original.refresh_from_db()
+        self.assertEqual(original.operation_key,key);self.assertEqual(original.generation,generation)
+        self.assertEqual(InvoiceJob.objects.filter(invoice=invoice).count(),1)
+        self.assertEqual(dict(ObligationEffect.objects.filter(job=original).values().get()),effect)
+        self.assertEqual(InvoiceIssue.objects.count(),0);self.assertFalse(d.Proposal.objects.exists())

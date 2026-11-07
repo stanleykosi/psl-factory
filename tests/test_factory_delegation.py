@@ -26,7 +26,7 @@ from adapters.factory_invoices import MockFactoryInvoiceAdapter
 from tests.factory_helpers import fixture
 
 
-def configured_delegate(username='factory-maker',window_seconds=None):
+def configured_delegate(username='factory-maker',window_seconds=None,*,identity=False):
     values=json.loads((settings.BASE_DIR/'fixtures/factory-finance-delegation.json').read_text())
     assert values['classification']=='synthetic_test_only'
     f=fixture(username=username);a=f['actor'];case=f['case'];now=timezone.now()
@@ -45,12 +45,15 @@ def configured_delegate(username='factory-maker',window_seconds=None):
         method=values['method'],authority_mode=values['authority_mode'])
     routing=draft_operator_policy(a,case.pk,COMPONENT,owners,f['evidence']['policy_decision'].pk,now)
     transition(a,routing.pk,'validated');transition(a,routing.pk,'active')
+    if identity:
+        from tests.obligation_helpers import factory_identified
+        factory.run_until_wait(f['work'].pk);factory_identified(f)
     return f,delegate,config,deepcopy(record)
 
 
-class FactoryDelegationTests(TestCase):
+class FactoryDelegationTests(TransactionTestCase):
     def test_scoped_delegate_routes_claims_reviews_and_reaches_native_receipts(self):
-        f,delegate,config,record=configured_delegate();w=f['work']
+        f,delegate,config,record=configured_delegate(identity=True);w=f['work']
         with self.assertRaises(PermissionDenied):role_policy(delegate,f['case'],'Finance')
         factory.run_until_wait(w.pk)
         task=HumanTask.objects.get(case=f['case'],kind='factory_review',status='open')
@@ -219,7 +222,7 @@ class FactoryDelegationTests(TestCase):
 
     def test_original_lost_response_is_recovered_after_delegate_revocation_without_new_delivery(self):
         from apps.finance.models import InvoiceJob
-        f,b,config,record=configured_delegate();w=f['work'];factory.run_until_wait(w.pk)
+        f,b,config,record=configured_delegate(identity=True);w=f['work'];factory.run_until_wait(w.pk)
         task=HumanTask.objects.get(kind='factory_review',status='open');task=factory.claim_task(b,task.pk,task.revision)
         factory.decide(b,task.pk,task.revision,'approve',f['proof'].pk,'Synthetic bounded delegation before original effect')
         with TemporaryDirectory() as directory:
@@ -260,7 +263,7 @@ class FactoryDelegationTests(TestCase):
 
 class FactoryDelegationConcurrencyTests(TransactionTestCase):
     def test_review_and_revocation_serialize_without_allowing_a_later_dispatch(self):
-        f,b,config,record=configured_delegate();w=f['work'];factory.run_until_wait(w.pk)
+        f,b,config,record=configured_delegate(identity=True);w=f['work'];factory.run_until_wait(w.pk)
         task=HumanTask.objects.get(kind='factory_review',status='open');task=factory.claim_task(b,task.pk,task.revision)
         def review():
             close_old_connections()

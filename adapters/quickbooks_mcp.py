@@ -49,6 +49,27 @@ def decode(raw):
         raise MCPError('Invalid bounded MCP response') from None
 
 
+def reject_bearer_echo(value, token):
+    """Reject, never redact/reinterpret, a response containing this exact secret.
+
+    Scan decoded string values AND object keys, so JSON escaping cannot hide an
+    echoed credential. This is not a claim to detect arbitrary encoded secrets.
+    """
+    require(isinstance(token, str) and bool(token))
+    bounded(value)
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, str):
+            if token in item:
+                raise MCPError('MCP response rejected')
+        elif isinstance(item, dict):
+            pending.extend(item.keys()); pending.extend(item.values())
+        elif isinstance(item, list):
+            pending.extend(item)
+    return value
+
+
 def fingerprint(value):
     return hashlib.sha256(bounded(value)).hexdigest()
 
@@ -199,7 +220,8 @@ class Client:
 
     def request(self, method, params):
         self.number += 1
-        return transport(self.token, self.app_name, {'jsonrpc':'2.0','id':self.number,'method':method,'params':params})
+        result = transport(self.token, self.app_name, {'jsonrpc':'2.0','id':self.number,'method':method,'params':params})
+        return reject_bearer_echo(result, self.token)
 
     def initialize(self):
         result = self.request('initialize', {'protocolVersion':VERSION,'capabilities':{},
@@ -214,6 +236,7 @@ class Client:
         tools, seen, cursor = [], set(), None
         for _ in range(4):
             result = self.request('tools/list', {} if cursor is None else {'cursor':cursor})
+            reject_bearer_echo(result, self.token)
             require(set(result) <= {'tools','nextCursor','_meta'} and isinstance(result.get('tools'), list))
             for item in result['tools']:
                 require(isinstance(item, dict) and isinstance(item.get('name'), str)
@@ -237,6 +260,7 @@ class Client:
         current = [item for item in self.discover() if item['name'] == READ_TOOL]
         require(len(current) == 1 and fingerprint(current[0]) == fingerprint(reviewed_tool))
         result = self.request('tools/call', {'name':READ_TOOL,'arguments':arguments})
+        reject_bearer_echo(result, self.token)
         require(result.get('isError', False) is False and isinstance(result.get('structuredContent'), dict))
         validate(output_schema, result['structuredContent'])
         # Text, resources and prompts never enter the result projection.

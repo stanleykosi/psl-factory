@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 """Synthetic annual/fixed exact-source bridge, not PSL rates or live IT integration."""
 import copy
 import json
@@ -15,18 +16,17 @@ from apps.agents.models import AgentRun
 from apps.identity.models import Grant
 from adapters.factory_invoice_preparation import NativeFixedContractPreparationAdapter
 from adapters.invoices import TimeoutAfterInvoiceAccept
-from .test_contract_coverage import ContractCoverageTests, ANNUAL
+from .test_contract_coverage import ContractCoverageTests, ContractCoverageFixture, ANNUAL
 from .billing_helpers import coverage, prices, evidence as native_evidence
 from .settlement_helpers import configured
 from .helpers import rev
 
 
-class FixedContractBridgeTests(ContractCoverageTests):
+class FixedContractFixture(ContractCoverageFixture):
     def setUp(self):
         super().setUp()
         self.cov = coverage(self.a, self.c, reference='fixed-gross', amount_basis='gross_including_tax',
             from_period='2026-09', to_period='2027-09')
-
     def request(self, native=False):
         terms = self.terms()
         if native:
@@ -37,7 +37,6 @@ class FixedContractBridgeTests(ContractCoverageTests):
         assessment = self.assess(terms)
         return cc.request_preparation(self.a, self.c.pk, assessment.pk,
             assessment.result['obligations'][0]['key'], self.b.pk, rev(self.c))
-
     def charge(self, request, *, assessment=None, author=None, **changes):
         author=author or self.a
         payload = {'implementation':'exact-fixed-charge/v1', 'period':ANNUAL,
@@ -51,12 +50,10 @@ class FixedContractBridgeTests(ContractCoverageTests):
             'coverage_fixed_charge',json.dumps({'request_id':request.pk,'assessment_id':assessment.pk,'charge':payload}),
             'synthetic:fixed-contract-fixture',rev(self.c))
         return fixed.supply_charge(author,self.c.pk,request.pk,payload,proof.pk,rev(self.c),assessment_id=assessment.pk)
-
     def prepared(self, **changes):
         request=self.request(native=True); charge=self.charge(request,**changes)
         prep=fixed.prepare(self.b,self.c.pk,charge.pk,rev(self.c))
         return request,charge,prep
-
     def issued(self, prep, adapter=None, reference='SYNTHETIC-ANNUAL-01', *, identity=False):
         configured(self.a,self.c)
         invoice=invoices.draft(self.a,self.c.pk,prep.pk,reference,date(2026,11,20),rev(self.c))
@@ -68,6 +65,32 @@ class FixedContractBridgeTests(ContractCoverageTests):
         job=invoices.reserve(self.a,self.c.pk,invoice.pk,'issue','Finance',rev(self.c))
         invoice_delivery.run_once(adapter=adapter,case_id=self.c.pk,job_id=job.pk)
         return invoice,job
+    def changed_period(self, row):
+        from .test_contract_coverage import evidence
+        for kind in ['register','contract']:
+            old=getattr(self.last_terms,kind)
+            self.source(kind,kind,dict(old.payload,external_version='corrected-v2',schedule=[row]))
+        register=cc.CoverageSource.objects.filter(reference='register').order_by('-version').first()
+        contract=cc.CoverageSource.objects.filter(reference='contract').order_by('-version').first()
+        proof=evidence(self.a,self.c,'coverage_schedule_interpretation',json.dumps({
+            'contract_source_id':contract.pk,'contract_source_hash':contract.sha256,'mode':'explicit_source_exception',
+            'attestation':'source_explicitly_specifies_exception','reason':'Source explicitly replaces the period; no proration calculation'}))
+        payload=copy.deepcopy(self.last_terms.payload)
+        payload['schedule_interpretation']={'mode':'explicit_source_exception','attestation':'source_explicitly_specifies_exception','evidence_id':proof.pk}
+        proof=evidence(self.a,self.c,'coverage_terms',json.dumps({'coverage_id':self.cov.pk,'register_id':register.pk,'contract_id':contract.pk,'terms':payload}))
+        terms=cc.draft_terms(self.a,self.c.pk,self.cov.pk,register.pk,contract.pk,payload,proof.pk,rev(self.c))
+        cc.transition(self.a,self.c.pk,terms.pk,'validated',self.decision.pk,rev(self.c))
+        cc.transition(self.a,self.c.pk,terms.pk,'active',self.decision.pk,rev(self.c))
+        assessment=self.assess(terms)
+        request=cc.request_preparation(self.a,self.c.pk,assessment.pk,assessment.result['obligations'][0]['key'],self.b.pk,rev(self.c))
+        return self.charge(request,period=row,amount='1250.00')
+
+
+class FixedContractBridgeTests(FixedContractFixture,ContractCoverageTests):
+
+
+
+
 
     def test_fixed_annual_agent_human_native_issue_period_and_delivery(self):
         request=self.request(native=True);charge=self.charge(request)
@@ -169,14 +192,6 @@ class FixedContractBridgeTests(ContractCoverageTests):
         prep.refresh_from_db();self.assertEqual(prep.snapshot,before)
         self.assertEqual(InvoiceIssue.objects.count(),0)
 
-    def test_fixed_unknown_effect_lookup_survives_later_permission_revocation(self):
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep,TimeoutAfterInvoiceAccept(), identity=True)
-        job.refresh_from_db();self.assertEqual(job.status,'unknown')
-        self.assertEqual(InvoiceIssue.objects.count(),1)
-        self.grant('contract',self.b,[])
-        Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.issue').update(active=False)
-        invoice_delivery.run_once(case_id=self.c.pk,job_id=job.pk,lookup_only=True)
-        job.refresh_from_db();self.assertEqual(job.status,'confirmed');self.assertEqual(InvoiceIssue.objects.count(),1)
 
     def test_fixed_private_authority_is_current_and_generic_runs_do_not_leak(self):
         request,charge,prep=self.prepared()
@@ -329,51 +344,7 @@ class FixedContractBridgeTests(ContractCoverageTests):
         Grant.objects.filter(case=self.c,user=self.b,action='coverage.receive').update(active=False)
         with self.assertRaises(DatabaseError),transaction.atomic():BillingPreparation.objects.create(**attrs)
 
-    def test_fixed_remote_mock_receipt_only_lookup_after_unknown_never_redispatches(self):
-        from adapters.invoices import InternalInvoiceAdapter
-        from apps.finance.models import InvoiceJob
-        class ExternalBoundaryMock(InternalInvoiceAdapter):
-            observed=None
-            calls=0
-            def deliver(self,pk,fence):
-                job,value=invoice_delivery.dispatch_context(pk,fence)
-                self.calls+=1
-                binding={'payload':job.invoice.payload,'destination':value['adapter']['recipient_id'],'target':job.invoice_id,'intent':value}
-                self.observed={'environment':'synthetic_mock','operation_key':job.operation_key,'payload':job.invoice.payload,
-                    'destination':binding['destination'],'fingerprint':billing.digest(binding)}
-                raise TimeoutError('Synthetic provider accepted; local receipt not yet committed')
-            def lookup(self,job):
-                if not self.observed:return None
-                invoice_delivery.record_accepted_mock(job.pk,job.fence,self.observed)
-                return super().lookup(job)
-        request,charge,prep=self.prepared();adapter=ExternalBoundaryMock()
-        invoice,job=self.issued(prep,adapter,identity=True);job.refresh_from_db()
-        self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
-        Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.issue').update(active=False)
-        self.grant('contract',self.b,[])
-        invoice_delivery.run_once(adapter=adapter,case_id=self.c.pk,job_id=job.pk,lookup_only=True)
-        job.refresh_from_db();self.assertEqual(job.status,'confirmed')
-        self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(adapter.calls,1)
 
-    def changed_period(self, row):
-        from .test_contract_coverage import evidence
-        for kind in ['register','contract']:
-            old=getattr(self.last_terms,kind)
-            self.source(kind,kind,dict(old.payload,external_version='corrected-v2',schedule=[row]))
-        register=cc.CoverageSource.objects.filter(reference='register').order_by('-version').first()
-        contract=cc.CoverageSource.objects.filter(reference='contract').order_by('-version').first()
-        proof=evidence(self.a,self.c,'coverage_schedule_interpretation',json.dumps({
-            'contract_source_id':contract.pk,'contract_source_hash':contract.sha256,'mode':'explicit_source_exception',
-            'attestation':'source_explicitly_specifies_exception','reason':'Source explicitly replaces the period; no proration calculation'}))
-        payload=copy.deepcopy(self.last_terms.payload)
-        payload['schedule_interpretation']={'mode':'explicit_source_exception','attestation':'source_explicitly_specifies_exception','evidence_id':proof.pk}
-        proof=evidence(self.a,self.c,'coverage_terms',json.dumps({'coverage_id':self.cov.pk,'register_id':register.pk,'contract_id':contract.pk,'terms':payload}))
-        terms=cc.draft_terms(self.a,self.c.pk,self.cov.pk,register.pk,contract.pk,payload,proof.pk,rev(self.c))
-        cc.transition(self.a,self.c.pk,terms.pk,'validated',self.decision.pk,rev(self.c))
-        cc.transition(self.a,self.c.pk,terms.pk,'active',self.decision.pk,rev(self.c))
-        assessment=self.assess(terms)
-        request=cc.request_preparation(self.a,self.c.pk,assessment.pk,assessment.result['obligations'][0]['key'],self.b.pk,rev(self.c))
-        return self.charge(request,period=row,amount='1250.00')
 
     def test_fixed_overlapping_corrected_period_holds_without_erasing_original_issue(self):
         request,charge,prep=self.prepared();invoice,job=self.issued(prep, identity=True)
@@ -387,15 +358,6 @@ class FixedContractBridgeTests(ContractCoverageTests):
             BillingPreparation.objects.create(case=self.c,coverage=self.cov,fixed_charge=new,kind='fixed_contract',snapshot=snapshot,result=result,operation_key='a'*64,actor=self.b)
         issued.refresh_from_db();self.assertEqual(issued.payload,original);self.assertEqual(InvoiceIssue.objects.count(),1)
 
-    def test_fixed_overlapping_unknown_original_effect_requires_receipt_lookup_first(self):
-        from adapters.invoices import InternalInvoiceAdapter
-        class UncertainProvider(InternalInvoiceAdapter):
-            def deliver(self,pk,fence):raise TimeoutError('Synthetic uncertain external effect')
-        request,charge,prep=self.prepared();invoice,job=self.issued(prep,UncertainProvider(), identity=True)
-        job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
-        new=self.changed_period(dict(ANNUAL,end='2027-08-31'))
-        with self.assertRaisesMessage(ValidationError,'unresolved'):fixed.prepare(self.b,self.c.pk,new.pk,rev(self.c))
-        self.assertEqual(CoverageNativePreparation.objects.count(),1)
 
     def test_fixed_unknown_rule_and_tax_treatment_hold_without_defaulting(self):
         request,charge,prep=self.prepared(rule_reference=None,tax_treatment_reference=None)
@@ -459,3 +421,48 @@ class FixedContractBridgeTests(ContractCoverageTests):
         charge=self.charge(request,assessment=assessment,author=self.b)
         prep=fixed.prepare(self.b,self.c.pk,charge.pk,rev(self.c));self.assertEqual(prep.result['status'],'prepared')
         receipt.refresh_from_db();self.assertEqual(receipt.payload,original)
+
+
+class FixedContractTransactionTests(FixedContractFixture,TransactionTestCase):
+    def test_fixed_unknown_effect_lookup_survives_later_permission_revocation(self):
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep,TimeoutAfterInvoiceAccept(), identity=True)
+        job.refresh_from_db();self.assertEqual(job.status,'unknown')
+        self.assertEqual(InvoiceIssue.objects.count(),1)
+        self.grant('contract',self.b,[])
+        Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.issue').update(active=False)
+        invoice_delivery.run_once(case_id=self.c.pk,job_id=job.pk,lookup_only=True)
+        job.refresh_from_db();self.assertEqual(job.status,'confirmed');self.assertEqual(InvoiceIssue.objects.count(),1)
+    def test_fixed_remote_mock_receipt_only_lookup_after_unknown_never_redispatches(self):
+        from adapters.invoices import InternalInvoiceAdapter
+        from apps.finance.models import InvoiceJob
+        class ExternalBoundaryMock(InternalInvoiceAdapter):
+            observed=None
+            calls=0
+            def deliver(self,pk,fence):
+                job,value=invoice_delivery.dispatch_context(pk,fence)
+                self.calls+=1
+                binding={'payload':job.invoice.payload,'destination':value['adapter']['recipient_id'],'target':job.invoice_id,'intent':value}
+                self.observed={'environment':'synthetic_mock','operation_key':job.operation_key,'payload':job.invoice.payload,
+                    'destination':binding['destination'],'fingerprint':billing.digest(binding)}
+                raise TimeoutError('Synthetic provider accepted; local receipt not yet committed')
+            def lookup(self,job):
+                if not self.observed:return None
+                invoice_delivery.record_accepted_mock(job.pk,job.fence,self.observed)
+                return super().lookup(job)
+        request,charge,prep=self.prepared();adapter=ExternalBoundaryMock()
+        invoice,job=self.issued(prep,adapter,identity=True);job.refresh_from_db()
+        self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
+        Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.issue').update(active=False)
+        self.grant('contract',self.b,[])
+        invoice_delivery.run_once(adapter=adapter,case_id=self.c.pk,job_id=job.pk,lookup_only=True)
+        job.refresh_from_db();self.assertEqual(job.status,'confirmed')
+        self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(adapter.calls,1)
+    def test_fixed_overlapping_unknown_original_effect_requires_receipt_lookup_first(self):
+        from adapters.invoices import InternalInvoiceAdapter
+        class UncertainProvider(InternalInvoiceAdapter):
+            def deliver(self,pk,fence):raise TimeoutError('Synthetic uncertain external effect')
+        request,charge,prep=self.prepared();invoice,job=self.issued(prep,UncertainProvider(), identity=True)
+        job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
+        new=self.changed_period(dict(ANNUAL,end='2027-08-31'))
+        with self.assertRaisesMessage(ValidationError,'unresolved'):fixed.prepare(self.b,self.c.pk,new.pk,rev(self.c))
+        self.assertEqual(CoverageNativePreparation.objects.count(),1)

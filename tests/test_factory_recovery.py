@@ -21,7 +21,7 @@ def replacement(f,**changes):
     c=draft_operator_policy(f['actor'],f['case'].pk,'OPS.factory_execution',{**f['value'],**changes},f['evidence']['policy_decision'].pk,timezone.now())
     transition(f['actor'],c.pk,'validated');transition(f['actor'],c.pk,'active');return c
 
-class FactoryRecoveryTests(TestCase):
+class FactoryRecoveryTests(TransactionTestCase):
     def test_native_worker_rechecks_the_reserved_factory_profile_before_sending(self):
         from .obligation_helpers import factory_approve_identified
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_approve_identified(f);factory.run_once(w.pk);w.refresh_from_db()

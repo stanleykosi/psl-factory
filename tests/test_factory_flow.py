@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 import tempfile
 from datetime import timedelta
 from django.test import TestCase
@@ -14,7 +15,7 @@ from adapters.factory_invoices import MockFactoryInvoiceAdapter
 from tests.factory_helpers import fixture,approve
 from tests.billing_helpers import evidence
 
-class FactoryFlowTests(TestCase):
+class FactoryFlowTests(TransactionTestCase):
     def test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification(self):
         from tests.obligation_helpers import factory_approve_identified as approve
         self.assertEqual(connection.vendor,'postgresql');f=fixture(missing=True);w=f['work']

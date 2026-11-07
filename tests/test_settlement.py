@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 import json,copy
 from datetime import timedelta
 from decimal import Decimal
@@ -16,7 +17,7 @@ from .helpers import rev
 from .billing_helpers import evidence,policy,coverage,usage,prepare,prices,FIXTURE as USAGE_FIXTURE
 from .settlement_helpers import fixture,draft,approve,issue,receipt,assign,allocate,FIXTURE
 
-class SettlementTests(TestCase):
+class SettlementTests(TransactionTestCase):
     def setUp(self):self.a,self.c,self.cov,self.p,self.e=fixture()
     def snap(self):return receivables.snapshot(self.a,self.c.pk,timezone.localdate(),rev(self.c))
     def test_generation_review_issuance_delivery_are_separate_real_facts(self):

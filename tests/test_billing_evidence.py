@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 import copy
 from datetime import timedelta
 from django.test import TestCase
@@ -12,9 +13,8 @@ from apps.policy.services import transition,active_component
 from apps.agents.billing_evidence import investigate
 from .d03_helpers import fixture,source,confirm,policy,observe,bound,evidence,corrected_contract
 from .helpers import rev
-class BillingEvidenceTests(TestCase):
- @classmethod
- def setUpTestData(cls):cls.f=fixture()
+class BillingEvidenceTests(TransactionTestCase):
+ def setUp(self):self.f=fixture()
  def test_connected_billing_source_evidence_issuance_and_separate_delivery(self):
   from tests.obligation_helpers import approve_identified
   approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])

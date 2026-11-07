@@ -1,17 +1,17 @@
 # Public source backup
 
-This source-only development update adds 25 accepted implementation, test and fixture/helper files from frozen local checkpoint `4d5074cb1755061b7bea9adbcccb32565b70e1d8` to prior public backup `c5a5156`. It is not a release, deployment or main-branch merge.
+This source-only development update preserves 29 accepted implementation, test and fixture/helper files from frozen checkpoint `4b3191f9be35dfcf70983a86f3b975cb128510b1` on top of public backup `b06e8ae`. It is not a release, deployment or main-branch merge.
 
 ## Included changes
 
-The draft-generation worker now refuses execution inside an enclosing transaction or with autocommit disabled, so its claim is durable before provider transport. Focused tests cover both rejection paths and ordinary execution/reconciliation. Invoice-related test fixtures explicitly supply synthetic obligation identities rather than bypassing the new identity contract. The test-only process-crash helper checks its exact isolated database target and synthetic job before running.
+Invoice delivery pins canonical local adapter callables and requires an outer autocommit boundary for custom adapters before claiming work or contacting a provider. Related synthetic fixtures explicitly establish invoice identity and refresh the real review packet. QuickBooks MCP rejects decoded responses containing the exact current bearer secret, including object keys; it does not claim detection of arbitrary encodings. Direct QBO transport uses bounded chunk reads with a monotonic body budget, not a strict end-to-end DNS/TLS/header deadline.
 
 ## Verification boundary
 
-The accepted selected native regression comprises 77 tests verified across split runs, not a single uninterrupted full-suite run. A separate 18-test native selection for the draft-generation safeguard and related contrasts was accepted. These selected results do not establish full 108-process acceptance or all caller compatibility. Older public runbooks and checkpoint notes can describe earlier verification states; this note records the boundary for this source snapshot.
+Accepted bounded provider verification covers 35 selected tests. Invoice verification covers 63 selected tests across split runs, not one uninterrupted full-suite execution. These results support the reviewed increments only; they do not establish full 108-process acceptance, all caller compatibility, live provider operation or the only-owner-inputs-remain readiness gate. Older public documents may describe earlier checkpoints. No hosted CI result is claimed.
 
-Newer pending cold-recovery work is excluded and no cold-recovery success is claimed. Browser testing remains excluded by user direction; restricted security/performance work remains held. Real provider setup, operational credentials/accounts, owner policies and source mapping remain separate. The only-owner-inputs-remain readiness gate remains NOT_MET. No hosted CI result is claimed.
+Browser testing remains excluded by user direction. Restricted security/performance work remains held. Pending cold-recovery work and the separate historical test-organization repair are excluded. Real provider setup, accounts, credentials, source mappings and owner policy choices remain separate; none is invented or enabled by this backup.
 
 ## Publication boundary
 
-Only the 25 reviewed source/test/helper files and this sanitized note change. Private BUILD/HANDOFF status, coverage/acceptance coordination records, runtime wrappers, raw proof, logs, screenshots, archives, newer pending changes and local Git history are excluded. All other public blobs and the existing evidence subtree are preserved. Main is unchanged; no deployment or live service action is performed.
+Only the 29 reviewed source/test/helper files and this sanitized note change. Runtime wrapper checks, harnesses, raw proof, logs, screenshots, archives, private coordination and local Git history are excluded. All other public blobs and the existing evidence subtree remain unchanged. Main is unchanged. No deployment or live service action is performed.

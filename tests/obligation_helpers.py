@@ -73,3 +73,16 @@ def factory_approve_identified(f):
     # Identity is part of the exact packet: regenerate native task, never reuse stale approval.
     factory.run_until_wait(work.pk)
     return approve(f)
+
+
+def factory_identified(f):
+    """Bind a synthetic invoice and refresh its real packet without approving it."""
+    from apps.workflows import factory
+    from apps.workflows.models import FactoryWork
+    work=f.get('work') or FactoryWork.objects.get(case=f['case'],definition='pmo-finance/v1')
+    work.refresh_from_db()
+    identified(f.get('binding_actor',f['actor']), f['case'], work.invoice,
+        configuring_actor=f['actor'])
+    factory.run_until_wait(work.pk)
+    work.refresh_from_db()
+    return work

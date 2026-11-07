@@ -26,7 +26,7 @@ def configure(f,**changes):
     config=draft_operator_policy(a,f['case'].pk,COMPONENT,v,f['evidence']['policy_decision'].pk,timezone.now())
     transition(a,config.pk,'validated');transition(a,config.pk,'active');return config
 
-class FactoryRoutingTests(TestCase):
+class FactoryRoutingTests(TransactionTestCase):
     def test_idle_configuration_hold_can_be_stopped_without_worker_or_owner_values(self):
         f=fixture(configure=False,responsibility=False);w=f['work'];factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'configuration_needed');self.assertEqual(w.budget_used,0)

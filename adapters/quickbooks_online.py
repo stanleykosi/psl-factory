@@ -5,12 +5,16 @@ import json
 from http.client import HTTPException
 import math
 import re
+import time
 import urllib.request
 import urllib.error
 
 ORIGINS = {'sandbox': 'https://sandbox-quickbooks.api.intuit.com',
            'production': 'https://quickbooks.api.intuit.com'}
 MAX_BODY = 65536
+SOCKET_TIMEOUT = 5
+BODY_BUDGET_SECONDS = 5
+READ_CHUNK = 4096
 KEY = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}\Z')
 ID = re.compile(r'[0-9]{1,40}\Z')
 
@@ -78,8 +82,22 @@ def transport(url, token):
                                                  'Accept': 'application/json'}, method='GET')
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
     try:
-        with opener.open(request, timeout=5) as response:
-            return response.status, response.headers.get_content_type(), response.read(MAX_BODY + 1)
+        with opener.open(request, timeout=SOCKET_TIMEOUT) as response:
+            # Check a monotonic budget before and after each bounded read1.
+            # Socket timeout is per blocking operation, not a strict overall
+            # deadline for DNS/TLS/headers or HTTP chunk framing inside read1.
+            deadline = time.monotonic() + BODY_BUDGET_SECONDS
+            raw = bytearray()
+            while len(raw) <= MAX_BODY:
+                if time.monotonic() >= deadline:
+                    raise TimeoutError('QBO body budget exhausted')
+                chunk = response.read1(min(READ_CHUNK, MAX_BODY + 1 - len(raw)))
+                if time.monotonic() >= deadline:
+                    raise TimeoutError('QBO body budget exhausted')
+                if not chunk:
+                    break
+                raw.extend(chunk)
+            return response.status, response.headers.get_content_type(), bytes(raw)
     except urllib.error.HTTPError as error:
         # Do not read or expose provider error bodies/headers.
         code = error.code

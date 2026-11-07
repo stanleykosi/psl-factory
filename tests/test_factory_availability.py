@@ -43,7 +43,7 @@ def approve_delegate(f,b):
     task=factory.claim_task(b,task.pk,task.revision)
     return factory.decide(b,task.pk,task.revision,'approve',f['proof'].pk,'Synthetic current availability and exact invoice packet')
 
-class FactoryAvailabilityTests(TestCase):
+class FactoryAvailabilityTests(TransactionTestCase):
     def test_required_but_missing_availability_source_holds_only_review_and_native_bypass(self):
         from apps.finance import invoices
         from tests.helpers import rev
@@ -67,7 +67,7 @@ class FactoryAvailabilityTests(TestCase):
         self.assertEqual(evaluate(f['work'])['eligible_principals'],[b.pk]);self.assertFalse(InvoiceReview.objects.exists())
 
     def test_absent_principal_uses_only_available_qualified_delegate_through_native_receipts(self):
-        f,b,delegation,record=configured_delegate();configure_availability(f,b);w=f['work']
+        f,b,delegation,record=configured_delegate(identity=True);configure_availability(f,b);w=f['work']
         factory.run_until_wait(w.pk)
         task=HumanTask.objects.get(kind='factory_review',status='open')
         self.assertEqual(task.context['routing_at_creation']['eligible_principals'],[b.pk])
@@ -206,7 +206,7 @@ class FactoryAvailabilityTests(TestCase):
 
     def test_original_receipt_reconciles_after_availability_revocation_without_new_delivery(self):
         from apps.finance.models import InvoiceJob
-        f,b,_,_=configured_delegate();configure_availability(f,b);approve_delegate(f,b);w=f['work']
+        f,b,_,_=configured_delegate(identity=True);configure_availability(f,b);approve_delegate(f,b);w=f['work']
         with TemporaryDirectory() as directory:
             adapter=MockFactoryInvoiceAdapter(directory,lose_response=True)
             for _ in range(8):

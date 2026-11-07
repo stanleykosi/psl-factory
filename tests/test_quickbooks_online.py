@@ -122,8 +122,10 @@ class QuickBooksReadTests(unittest.TestCase):
                 def get_content_type(): return 'application/json'
             def __enter__(self): return self
             def __exit__(self,*_): pass
-            def read(self, size):
+            def read1(self, size):
                 self.size = size
+                if getattr(self, 'sent', False):return b''
+                self.sent = True
                 return b'{}'
         response = Response()
         with patch.object(q.urllib.request, 'build_opener') as build:
@@ -136,4 +138,4 @@ class QuickBooksReadTests(unittest.TestCase):
             self.assertEqual(request.get_method(), 'GET')
             self.assertIsNone(request.data)
             self.assertEqual(build.return_value.open.call_args.kwargs, {'timeout':5})
-            self.assertEqual(response.size, q.MAX_BODY+1)
+            self.assertLessEqual(response.size, q.READ_CHUNK)

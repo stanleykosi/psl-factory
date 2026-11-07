@@ -55,7 +55,7 @@ def start(f,**kwargs):
     return f['work']
 
 
-class FactoryInvoiceIntakeTests(TestCase):
+class FactoryInvoiceIntakeTests(TransactionTestCase):
     def test_collective_intake_agent_exact_human_review_issue_delivery(self):
         from tests.obligation_helpers import factory_approve_identified as approve
         f=prepared();w=start(f);factory.run_until_wait(w.pk);w.refresh_from_db()
@@ -179,7 +179,7 @@ class FactoryInvoiceIntakeConcurrencyTests(TransactionTestCase):
         w.refresh_from_db();self.assertEqual(w.preparation_id,p.pk)
 
 
-class FactoryFixedPreparationTests(TestCase):
+class FactoryFixedPreparationTests(TransactionTestCase):
     def fixed(self):
         from tests.test_preparation_continuation import PreparationContinuationTests
         h=PreparationContinuationTests();h.setUp();request,charge,prep=h.prepared()
@@ -256,7 +256,7 @@ class FactoryInvoicePreparationGuards(TestCase):
             FactoryWork.objects.create(case=c,actor=a,key='FORGED',business_key='f'*64,request=w.request,request_hash=w.request_hash,preparation=f['prep'])
 
 
-class FactoryCompletionCompatibility(TestCase):
+class FactoryCompletionCompatibility(TransactionTestCase):
     def test_completion_business_key_remains_exact_original_contract(self):
         from tests.factory_helpers import fixture as completion_fixture
         f=completion_fixture();w=f['work'];cov=f['coverage']

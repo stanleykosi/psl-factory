@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 import copy
 import json
 from datetime import timedelta
@@ -19,7 +20,7 @@ from .usage_intake_helpers import fixture, receive, correction, prices
 from .settlement_helpers import configured, draft, approve
 
 
-class UsageIntakeTests(TestCase):
+class UsageIntakeTests(TransactionTestCase):
     def setUp(self):
         self.a, self.c, self.covs, self.payload, self.controls = fixture()
 

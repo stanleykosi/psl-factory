@@ -16,20 +16,20 @@ from apps.core.evidence_access import public_evidence,public_agent_runs
 from apps.core.models import Evidence
 from apps.agents.models import AgentRun
 from adapters.invoices import TimeoutAfterInvoiceAccept
-from .test_fixed_contract_bridge import FixedContractBridgeTests
+from .test_fixed_contract_bridge import FixedContractBridgeTests, FixedContractFixture
+from . import test_fixed_contract_bridge as _fixed_transaction_module
 from .settlement_helpers import configured
 from .billing_helpers import evidence
 from .helpers import rev,setup_case
 
 
-class PreparationContinuationTests(FixedContractBridgeTests):
+class PreparationContinuationFixture(FixedContractFixture):
     def recipient(self,name='continuation-recipient'):
         user=get_user_model().objects.create_user(username=name,password='isolated-only')
         for action in Grant.objects.filter(user=self.a,case=self.c,active=True).values_list('action',flat=True):
             Grant.objects.create(user=user,case=self.c,action=action)
         for reference in ['register','contract']:self.grant(reference,user)
         return user
-
     def continuation_proof(self,request,recipient,*,assessment=None,author=None,reason='Explicit current-authorized handoff'):
         author=author or self.a;assessment=assessment or cc.preparation_route(request)['assessment']
         receipt=CoveragePreparationReceipt.objects.get(request=request);prior=service.latest(request)
@@ -38,10 +38,14 @@ class PreparationContinuationTests(FixedContractBridgeTests):
         proof=cc.supply_evidence(author,self.c.pk,[assessment.terms.register.reference,assessment.terms.contract.reference],['prepare'],
             'coverage_continuation',json.dumps(payload),'synthetic:continuation-test',rev(self.c))
         return proof,payload
-
     def assign(self,request,recipient,**kwargs):
         proof,p=self.continuation_proof(request,recipient,**kwargs)
         return service.assign(kwargs.get('author') or self.a,self.c.pk,request.pk,p['assessment'],recipient.pk,proof.pk,p['reason'],rev(self.c))
+
+
+class PreparationContinuationTests(PreparationContinuationFixture,FixedContractBridgeTests):
+
+
 
     def test_continuation_after_ack_creates_one_preparation_and_preserves_receipt(self):
         request=self.request();receipt=cc.receive_preparation(self.b,self.c.pk,request.pk,None,rev(self.c));original=copy.deepcopy(receipt.payload)
@@ -74,33 +78,6 @@ class PreparationContinuationTests(FixedContractBridgeTests):
         p.refresh_from_db();self.assertEqual(p.actor_id,self.b.pk);self.assertEqual(p.snapshot,original)
         self.assertEqual(BillingPreparation.objects.filter(kind='fixed_contract').count(),1)
 
-    def test_continuation_unknown_effect_requires_original_lookup_then_reuses_issued_preparation(self):
-        from adapters.invoices import InternalInvoiceAdapter
-        class ExternalBoundaryMock(InternalInvoiceAdapter):
-            observed=None
-            calls=0
-            def deliver(self,pk,fence):
-                job,value=invoice_delivery.dispatch_context(pk,fence);self.calls+=1
-                binding={'payload':job.invoice.payload,'destination':value['adapter']['recipient_id'],'target':job.invoice_id,'intent':value}
-                self.observed={'environment':'synthetic_mock','operation_key':job.operation_key,'payload':job.invoice.payload,
-                    'destination':binding['destination'],'fingerprint':billing.digest(binding)}
-                raise TimeoutError('Synthetic provider accepted before local receipt commit')
-            def lookup(self,job):
-                if not self.observed:return None
-                invoice_delivery.record_accepted_mock(job.pk,job.fence,self.observed)
-                return super().lookup(job)
-        request,charge,p=self.prepared();adapter=ExternalBoundaryMock();i,job=self.issued(p,adapter,identity=True);d=self.recipient()
-        job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
-        with self.assertRaises(ValidationError):self.assign(request,d)
-        self.assertEqual(Continuation.objects.count(),0)
-        Grant.objects.filter(user=self.b,case=self.c,action='finance.billing.prepare').update(active=False)
-        Grant.objects.filter(user=self.a,case=self.c,action='finance.invoice.issue').update(active=False)
-        self.grant('contract',self.b,[])
-        invoice_delivery.run_once(adapter=adapter,case_id=self.c.pk,job_id=job.pk,lookup_only=True)
-        job.refresh_from_db();self.assertEqual(job.status,'confirmed')
-        self.assign(request,d);self.assertEqual(fixed.prepare(d,self.c.pk,charge.pk,rev(self.c)).pk,p.pk)
-        self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(CoverageNativePreparation.objects.count(),1)
-        self.assertEqual(fixed.recovered(d,p).receipt.request_id,request.pk);self.assertEqual(adapter.calls,1)
 
     def test_continuation_source_and_recipient_revocation_hold_new_effect_not_lookup(self):
         request,charge,p=self.prepared();d=self.recipient();route=self.assign(request,d)
@@ -192,18 +169,6 @@ class PreparationContinuationTests(FixedContractBridgeTests):
         with connections['default'].cursor() as cur:
             cur.execute('SELECT psl_fixed_preparation_current(%s)',[p.pk]);self.assertFalse(cur.fetchone()[0])
 
-    def test_continuation_unknown_effect_is_obligation_scoped_across_source_version_requests(self):
-        from .test_contract_coverage import ANNUAL
-        request,charge,p=self.prepared();i,job=self.issued(p,TimeoutAfterInvoiceAccept(), identity=True);d=self.recipient()
-        new_charge=self.changed_period(dict(ANNUAL,bill_on='2026-10-03'));new_request=new_charge.request
-        self.assertNotEqual(request.pk,new_request.pk);self.assertEqual(fixed.obligation(charge),fixed.obligation(new_charge))
-        receipt=cc.receive_preparation(self.b,self.c.pk,new_request.pk,None,rev(self.c))
-        proof,body=self.continuation_proof(new_request,d)
-        with self.assertRaises(ValidationError):service.assign(self.a,self.c.pk,new_request.pk,body['assessment'],d.pk,proof.pk,body['reason'],rev(self.c))
-        with self.assertRaises(DatabaseError),transaction.atomic():
-            Continuation.objects.create(receipt=receipt,assessment=new_charge.assessment,recipient=d,previous=None,
-                version=1,payload=body,evidence=proof,actor=self.a)
-        self.assertEqual(Continuation.objects.count(),0);self.assertEqual(InvoiceIssue.objects.count(),1)
 
     def test_continuation_native_http_is_private_and_get_is_read_only(self):
         request,charge,p=self.prepared();d=self.recipient();proof,body=self.continuation_proof(request,d)
@@ -244,3 +209,45 @@ class PreparationContinuationConcurrencyTests(TransactionTestCase):
         self.assertEqual(BillingPreparation.objects.filter(kind='fixed_contract').count(),1)
         self.assertEqual(CoverageNativePreparation.objects.count(),1);self.assertEqual(CoveragePreparationReceipt.objects.count(),1)
         self.assertEqual(fixed.recovered(d,result).receipt.request_id,request.pk)
+
+
+class PreparationContinuationTransactionTests(PreparationContinuationFixture,_fixed_transaction_module.FixedContractTransactionTests):
+    def test_continuation_unknown_effect_requires_original_lookup_then_reuses_issued_preparation(self):
+        from adapters.invoices import InternalInvoiceAdapter
+        class ExternalBoundaryMock(InternalInvoiceAdapter):
+            observed=None
+            calls=0
+            def deliver(self,pk,fence):
+                job,value=invoice_delivery.dispatch_context(pk,fence);self.calls+=1
+                binding={'payload':job.invoice.payload,'destination':value['adapter']['recipient_id'],'target':job.invoice_id,'intent':value}
+                self.observed={'environment':'synthetic_mock','operation_key':job.operation_key,'payload':job.invoice.payload,
+                    'destination':binding['destination'],'fingerprint':billing.digest(binding)}
+                raise TimeoutError('Synthetic provider accepted before local receipt commit')
+            def lookup(self,job):
+                if not self.observed:return None
+                invoice_delivery.record_accepted_mock(job.pk,job.fence,self.observed)
+                return super().lookup(job)
+        request,charge,p=self.prepared();adapter=ExternalBoundaryMock();i,job=self.issued(p,adapter,identity=True);d=self.recipient()
+        job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(InvoiceIssue.objects.count(),0)
+        with self.assertRaises(ValidationError):self.assign(request,d)
+        self.assertEqual(Continuation.objects.count(),0)
+        Grant.objects.filter(user=self.b,case=self.c,action='finance.billing.prepare').update(active=False)
+        Grant.objects.filter(user=self.a,case=self.c,action='finance.invoice.issue').update(active=False)
+        self.grant('contract',self.b,[])
+        invoice_delivery.run_once(adapter=adapter,case_id=self.c.pk,job_id=job.pk,lookup_only=True)
+        job.refresh_from_db();self.assertEqual(job.status,'confirmed')
+        self.assign(request,d);self.assertEqual(fixed.prepare(d,self.c.pk,charge.pk,rev(self.c)).pk,p.pk)
+        self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(CoverageNativePreparation.objects.count(),1)
+        self.assertEqual(fixed.recovered(d,p).receipt.request_id,request.pk);self.assertEqual(adapter.calls,1)
+    def test_continuation_unknown_effect_is_obligation_scoped_across_source_version_requests(self):
+        from .test_contract_coverage import ANNUAL
+        request,charge,p=self.prepared();i,job=self.issued(p,TimeoutAfterInvoiceAccept(), identity=True);d=self.recipient()
+        new_charge=self.changed_period(dict(ANNUAL,bill_on='2026-10-03'));new_request=new_charge.request
+        self.assertNotEqual(request.pk,new_request.pk);self.assertEqual(fixed.obligation(charge),fixed.obligation(new_charge))
+        receipt=cc.receive_preparation(self.b,self.c.pk,new_request.pk,None,rev(self.c))
+        proof,body=self.continuation_proof(new_request,d)
+        with self.assertRaises(ValidationError):service.assign(self.a,self.c.pk,new_request.pk,body['assessment'],d.pk,proof.pk,body['reason'],rev(self.c))
+        with self.assertRaises(DatabaseError),transaction.atomic():
+            Continuation.objects.create(receipt=receipt,assessment=new_charge.assessment,recipient=d,previous=None,
+                version=1,payload=body,evidence=proof,actor=self.a)
+        self.assertEqual(Continuation.objects.count(),0);self.assertEqual(InvoiceIssue.objects.count(),1)

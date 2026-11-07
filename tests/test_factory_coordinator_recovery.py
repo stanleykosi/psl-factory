@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 """Existing business receipt recovery must not depend on a planning provider/mode."""
 from django.test import TestCase,override_settings
 from django.utils import timezone
@@ -11,11 +12,12 @@ def configure(a,c,e):
         'planner_id':a.pk,'data_scope':'eligible_actions_and_opaque_citations_v1','max_output_chars':512},e.pk,timezone.now())
     transition(a,p.pk,'validated');transition(a,p.pk,'active');return p
 
-class BusinessReceiptRecoveryTests(TestCase):
+class BusinessReceiptRecoveryTests(TransactionTestCase):
     def test_original_invoice_receipt_recovers_after_coordinator_policy_withdrawal(self):
         import tempfile
         from pathlib import Path
         from tests.factory_helpers import fixture,approve
+        from tests.obligation_helpers import factory_approve_identified as approve
         from adapters.factory_invoices import MockFactoryInvoiceAdapter
         from apps.finance.models import InvoiceJob,InvoiceIssue,InvoiceDelivery
         f=fixture(provider='governed_factory_v1');w=f['work'];p=configure(f['actor'],f['case'],f['evidence']['policy_decision'])

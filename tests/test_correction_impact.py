@@ -22,8 +22,8 @@ from tests.helpers import rev
 KEY='finance.correction_effects'
 
 
-def pending():
-    a,c,cov,issue,e=fixture();r=note(a,c,issue,e);review(a,c,r,e)
+def pending(*,identity=False):
+    a,c,cov,issue,e=fixture(identity=identity);r=note(a,c,issue,e);review(a,c,r,e)
     e['policy_decision']=evidence(a,c,'policy_decision','Synthetic correction impact reassessment evidence')
     job=corrections.reserve(a,c.pk,r.pk,'adjust','Finance',rev(c))
     old=resolve('D14.adjustment_correction_rule_refs',c).configuration
@@ -34,7 +34,7 @@ def successor(a,c,old):
     return policy(a,c,old.component,reference_values(old))
 
 
-class CorrectionImpactTests(TestCase):
+class CorrectionImpactTests(TransactionTestCase):
     def rows(self,a,c,old):return impact.page(a,c.pk,old.pk,KEY)['records']
 
     def test_actual_correction_and_delivery_inherit_lineage_without_financial_payloads(self):
@@ -62,7 +62,7 @@ class CorrectionImpactTests(TestCase):
         self.assertEqual(impact.page(a,c.pk,old.pk,'finance.invoice_effects')['records'],[])
 
     def test_lost_reply_keeps_debt_and_reconciles_after_policy_change_without_resending(self):
-        a,c,issue,e,r,job,old=pending()
+        a,c,issue,e,r,job,old=pending(identity=True)
         class LostReply(InternalInvoiceAdapter):
             def deliver(self,*args):super().deliver(*args);raise TimeoutError('Synthetic reply loss')
         invoice_delivery.run_once(LostReply())
@@ -86,7 +86,7 @@ class CorrectionImpactTests(TestCase):
         self.assertEqual(ImpactReview.objects.count(),1)
 
     def test_unknown_without_receipt_is_separate_and_cannot_be_accepted_as_delivery(self):
-        a,c,issue,e,r,job,old=pending()
+        a,c,issue,e,r,job,old=pending(identity=True)
         class BeforeAcceptance(InternalInvoiceAdapter):
             def deliver(self,*args):raise TimeoutError('Synthetic transport failure before acceptance')
         invoice_delivery.run_once(BeforeAcceptance())
@@ -97,7 +97,7 @@ class CorrectionImpactTests(TestCase):
         self.assertEqual(InvoiceCorrectionAcceptance.objects.count(),0)
 
     def test_note_delivery_reply_loss_is_separate_from_the_committed_application(self):
-        a,c,issue,e,r,job,old=pending();invoice_delivery.run_once()
+        a,c,issue,e,r,job,old=pending(identity=True);invoice_delivery.run_once()
         delivery=corrections.reserve(a,c.pk,r.pk,'adjust_deliver','Finance',rev(c))
         face=corrections.adjusted_face(issue)
         class LostNoteReply(InternalInvoiceAdapter):

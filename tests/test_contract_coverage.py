@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 """Exact F31/F45 synthetic fixtures; no operational source authenticity claim."""
 import json
 from datetime import date
@@ -34,19 +35,17 @@ def evidence(actor,case,kind,body,reference=None,purposes=None):
 ANNUAL={'start':'2026-10-01','end':'2027-09-30','bill_on':'2026-10-01'}
 SEPTEMBER={'start':'2026-09-01','end':'2026-09-30','bill_on':'2026-09-01'}
 
-class ContractCoverageTests(TestCase):
+class ContractCoverageFixture:
     def setUp(self):
         self.a,self.c=setup_case();self.cov=coverage(self.a,self.c,from_period='2026-09')
         self.b=get_user_model().objects.create_user(username='coverage-verifier',password='isolated-fixture-only')
         for action in Grant.objects.filter(user=self.a,case=self.c).values_list('action',flat=True):
             Grant.objects.create(user=self.b,case=self.c,action=action)
         self.proof=None;self.decision=None
-
     def grant(self,reference,user=None,permissions=None):
         proof=evidence(self.a,self.c,'coverage_access','Explicit synthetic reference permissions',reference=reference)
         return cc.grant_access(self.a,self.c.pk,reference,(user or self.a).pk,
             cc.PERMISSIONS if permissions is None else permissions,proof.pk,rev(self.c))
-
     def payload(self,kind='contract',row=None,**changes):
         row=row or ANNUAL
         p={'system':'synthetic-existing-it','external_id':kind+'-existing-record','external_version':'v1',
@@ -54,13 +53,11 @@ class ContractCoverageTests(TestCase):
             'cadence':'annual','service_state':'active','start':row['start'],'end':row['end'],
             'schedule':[row],'state_treatment':'unknown'}
         p.update(changes);return p
-
     def source(self,reference,kind,payload):
         if not CoverageSource.objects.filter(case=self.c,reference=reference).exists():
             self.grant(reference);self.grant(reference,self.b)
         e=evidence(self.a,self.c,'coverage_source',json.dumps(payload),reference=reference)
         return cc.capture_source(self.a,self.c.pk,reference,kind,payload,e.pk,rev(self.c))
-
     def terms(self,*,row=None,cadence='annual',register_cadence=None,active=True,review='none',reviewer=None,**changes):
         row=row or ANNUAL
         register=self.source('register','register',self.payload('register',row,cadence=register_cadence or cadence))
@@ -74,20 +71,50 @@ class ContractCoverageTests(TestCase):
         if active:cc.transition(self.a,self.c.pk,t.pk,'active',self.decision.pk,rev(self.c))
         self.last_terms=t
         return t
-
     def assess(self,t,actor=None):return cc.assess(actor or self.a,self.c.pk,t.pk,date(2026,11,7),rev(self.c))
-
     def invoice(self,row=None,reference='invoice-source',**changes):
         p=self.payload('invoice',row or SEPTEMBER,cadence='monthly',invoice_reference='INCUMBENT-SEP-01',
             invoice_status='issued',invoice_period=row or SEPTEMBER,verification_method='supplied_readonly_invoice_v1',**changes)
         return self.source(reference,'invoice',p)
-
     def verify(self,source,actor=None,native=None):
         value={'terms_id':self.last_terms.pk,'source_id':source.pk,'source_sha256':source.sha256,'native_issue_id':native,
             'verification':'matched_exact_source_record','invoice_reference':source.payload['invoice_reference'],
             'period':source.payload['invoice_period']}
         e=evidence(self.a,self.c,'coverage_verification',json.dumps(value))
         return cc.verify_invoice(actor or self.b,self.c.pk,source.pk,e.pk,native,rev(self.c),terms_id=self.last_terms.pk)
+    def revised_terms(self,old,payload=None,activate=False):
+        p=dict(old.payload) if payload is None else payload
+        e=evidence(self.a,self.c,'coverage_terms',json.dumps({'coverage_id':self.cov.pk,'register_id':old.register_id,'contract_id':old.contract_id,'terms':p}))
+        t=cc.draft_terms(self.a,self.c.pk,self.cov.pk,old.register_id,old.contract_id,p,e.pk,rev(self.c))
+        if t.pk!=old.pk:
+            cc.transition(self.a,self.c.pk,t.pk,'validated',self.decision.pk,rev(self.c))
+            if activate:cc.transition(self.a,self.c.pk,t.pk,'active',self.decision.pk,rev(self.c))
+        return t
+    def native_invoice_fixture(self):
+        from .billing_helpers import prices,usage,prepare
+        from .settlement_helpers import configured,draft,issue
+        configs=prices(self.a,self.c,self.cov);u=usage(self.a,self.c,self.cov);p=prepare(self.a,self.c,self.cov,u=u)
+        configured(self.a,self.c)
+        e={'invoice_review':evidence(self.a,self.c,'invoice_review','Synthetic native exact invoice review')}
+        i=draft(self.a,self.c,p);issued=issue(self.a,self.c,i,e)
+        row={'start':'2026-10-01','end':'2026-10-31','bill_on':'2026-10-01'}
+        old=self.terms(row=row,cadence='monthly')
+        rule={'method':'native_invoice_v1','verifier_id':self.b.pk,'distinct_capture_actor':False}
+        self.last_terms=t=self.revised_terms(old,dict(old.payload,invoice_verification=rule),activate=True)
+        payload=self.payload('invoice',row,cadence='monthly',invoice_reference=i.reference,invoice_status='issued',
+            invoice_period=row,verification_method='native_invoice_v1')
+        src=self.source('native-invoice','invoice',payload)
+        return t,src,issued,configs
+
+
+class ContractCoverageTests(ContractCoverageFixture,TestCase):
+
+
+
+
+
+
+
 
     def test_f31_annual_october_first_one_obligation_and_idempotent_intake(self):
         t=self.terms();record=self.assess(t);rows=record.result['obligations']
@@ -201,14 +228,6 @@ class ContractCoverageTests(TestCase):
         for model in [CoverageSource,CoverageTerms,CoverageAssessment]:
             with self.assertRaises(DatabaseError),transaction.atomic():model.objects.filter(pk=model.objects.first().pk).update(actor_id=self.b.pk)
 
-    def revised_terms(self,old,payload=None,activate=False):
-        p=dict(old.payload) if payload is None else payload
-        e=evidence(self.a,self.c,'coverage_terms',json.dumps({'coverage_id':self.cov.pk,'register_id':old.register_id,'contract_id':old.contract_id,'terms':p}))
-        t=cc.draft_terms(self.a,self.c.pk,self.cov.pk,old.register_id,old.contract_id,p,e.pk,rev(self.c))
-        if t.pk!=old.pk:
-            cc.transition(self.a,self.c.pk,t.pk,'validated',self.decision.pk,rev(self.c))
-            if activate:cc.transition(self.a,self.c.pk,t.pk,'active',self.decision.pk,rev(self.c))
-        return t
 
     def test_corrected_verified_invoice_successor_does_not_leave_permanent_unknown(self):
         t=self.terms(row=SEPTEMBER,cadence='monthly');src=self.invoice();self.verify(src)
@@ -288,21 +307,6 @@ class ContractCoverageTests(TestCase):
         with self.assertRaises(ValidationError):cc.terms_access(self.a,t)
         t.contract=original
 
-    def native_invoice_fixture(self):
-        from .billing_helpers import prices,usage,prepare
-        from .settlement_helpers import configured,draft,issue
-        configs=prices(self.a,self.c,self.cov);u=usage(self.a,self.c,self.cov);p=prepare(self.a,self.c,self.cov,u=u)
-        configured(self.a,self.c)
-        e={'invoice_review':evidence(self.a,self.c,'invoice_review','Synthetic native exact invoice review')}
-        i=draft(self.a,self.c,p);issued=issue(self.a,self.c,i,e)
-        row={'start':'2026-10-01','end':'2026-10-31','bill_on':'2026-10-01'}
-        old=self.terms(row=row,cadence='monthly')
-        rule={'method':'native_invoice_v1','verifier_id':self.b.pk,'distinct_capture_actor':False}
-        self.last_terms=t=self.revised_terms(old,dict(old.payload,invoice_verification=rule),activate=True)
-        payload=self.payload('invoice',row,cadence='monthly',invoice_reference=i.reference,invoice_status='issued',
-            invoice_period=row,verification_method='native_invoice_v1')
-        src=self.source('native-invoice','invoice',payload)
-        return t,src,issued,configs
 
     def test_native_issued_invoice_survives_unrelated_future_pricing_change(self):
         from apps.policy.services import transition
