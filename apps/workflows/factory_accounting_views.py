@@ -47,6 +47,7 @@ class StartForm(forms.Form):
         self.initial['revision']=case.revision
 
 class SuppliedIntakeForm(forms.Form):
+    unit_declaration=forms.JSONField(required=False,help_text="Exact evidenced finance-source-units/v1 envelope for an existing import; blank is unknown, not assumed major currency.")
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     evidence=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Supplied unchanged CSV evidence')
     source_evidence=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Extraction context evidence')
@@ -95,7 +96,7 @@ def create(request):
             if action=='supplied' and supplied.is_valid():
                 v=supplied.cleaned_data
                 context={k:v[k] for k in ['entity','period','currency','accounting_basis','extracted_at','completeness']}
-                context.update(control_total=v['control_total'] or None,source_evidence_id=v['source_evidence'].pk)
+                context.update(control_total=v['control_total'] or None,source_evidence_id=v['source_evidence'].pk,unit_declaration=v['unit_declaration'])
                 result=intake.submit(request.user,case.pk,v['key'],v['evidence'].pk,context,v['reference'],v['revision'])
             elif action=='resume':
                 try:receipt_id=int(request.POST.get('receipt',''));revision=int(request.POST.get('revision',''))

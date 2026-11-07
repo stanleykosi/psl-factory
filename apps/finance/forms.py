@@ -20,7 +20,7 @@ def commands(case,data=None):
         'capture':('Capture supplied CSV',{'evidence':evidence(['financial_input'])}),
         'validate':('Validate source conventions',{'batch':forms.ModelChoiceField(FinancialImport.objects.filter(case=case))}),
         'source':('Record extraction context',{'batch':forms.ModelChoiceField(FinancialImport.objects.filter(case=case)),'entity':forms.CharField(max_length=100),'accounting_basis':forms.CharField(max_length=100),
-            'extracted_at':forms.DateTimeField(),'completeness':choice(['unknown','partial','complete']),'control_total':forms.CharField(required=False,max_length=64),'evidence':evidence(['finance_source'])}),
+            'extracted_at':forms.DateTimeField(),'completeness':choice(['unknown','partial','complete']),'control_total':forms.CharField(required=False,max_length=64),'unit_declaration':forms.JSONField(required=False,widget=forms.Textarea,help_text='Exact finance-source-units/v1 envelope: batch id/hash, explicit input_key, declarations with feed/unit/evidence id/version/hash. Blank means unknown and holds mapping. Evidence kind finance_source_unit must contain matching finance-source-unit-assertion/v1.'),'evidence':evidence(['finance_source'])}),
         'policy':('Save Finance policy draft',{'component':choice(sorted(set(SCHEMAS)|set(EXTRA))),'content':js('Versioned typed records; no executable workbook expressions or default account/ratio values.'),
             'evidence':evidence(['policy_decision']),'effective_from':forms.DateTimeField()}),
         'review':('Record configured Finance review',{'purpose':choice(['source','mapping','formula','allocation','adjustment','output']),'source':src(),

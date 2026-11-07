@@ -33,7 +33,9 @@ def investigate_finance(actor,case_id,run_id,expected):
                 if component=='D06.rule_oracle_refs':citations.update(x['oracle_evidence_id'] for x in reference_values(c))
                 if component in ['D07.authorized_input_refs','D07.effective_membership_ref']:citations.update(x['evidence_id'] for x in reference_values(c))
     # No raw membership/employee rows or automatic account/BU/policy patches leave this tool.
-    result={'capability':'A03/A05/A07 bounded Finance lineage and exception investigation','run':run.pk,'status':run.result['status'],'current':current,'findings':findings[:100],
+    from apps.finance.source_units import inspect as inspect_units
+    source_units=run.source.unit_state
+    result={'source_units':source_units,'capability':'A03/A05/A07 bounded Finance lineage and exception investigation','run':run.pk,'status':run.result['status'],'current':current,'findings':findings[:100],
         'lineage':chain,'citations':list(case.evidence.filter(pk__in=citations).values('id','kind','sha256')),
         'company_metrics':run.result.get('company',{}),'bu_comparison':run.result.get('bu_comparison',{}),
         'next_work':'Resolve exact unmapped/unknown/source/basis and rule-review findings; rebuild previews after approved changes. Investigate conserved totals and rounding residuals before configured Finance output review.',
@@ -54,3 +56,15 @@ def investigate_mapping_draft(actor, case_id, source_id, configuration_id, expec
     result = preview_mapping_draft(actor, case.pk, source_id, configuration_id, expected)
     return dict(result, capability='F03 deterministic draft mapping exception investigation',
         external_authenticity_verified=False)
+
+
+def inspect_source_units(actor, case_id, source_id):
+    """Read-only typed source investigation, including sources held before mapping."""
+    from apps.core.models import Case
+    from apps.finance.analysis import source_for
+    case=Case.objects.get(pk=case_id)
+    require(actor,case,'case.read');require(actor,case,'finance.read');require(actor,case,'agent.finance')
+    source=source_for(case,source_id)
+    return {'source':source.pk,'batch':source.batch_id,'source_hash':source.batch.source_sha256,
+            'source_units':source.unit_state,'numeric_result':None,'ledger_posted':False,
+            'external_authenticity_verified':False}

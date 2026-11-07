@@ -26,7 +26,7 @@ def workbench(request,case_id):
             d=command['form'].cleaned_data;a=request.user;c=case.pk;v=d['revision'];action=d['action']
             if action=='capture':capture_import(a,c,d['evidence'].pk,v)
             elif action=='validate':validate_import(a,c,d['batch'].pk,v)
-            elif action=='source':analysis.capture_source(a,c,d['batch'].pk,d['entity'],d['accounting_basis'],d['extracted_at'],d['completeness'],d['control_total'] or None,d['evidence'].pk,v)
+            elif action=='source':analysis.capture_source(a,c,d['batch'].pk,d['entity'],d['accounting_basis'],d['extracted_at'],d['completeness'],d['control_total'] or None,d['evidence'].pk,v,unit_declaration=d['unit_declaration'])
             elif action=='policy':draft_finance_policy(a,c,d['component'],d['content'],d['evidence'].pk,d['effective_from'])
             elif action=='review':
                 target=d['source'] if d['purpose']=='source' else d['adjustment'] if d['purpose']=='adjustment' else d['run'] if d['purpose']=='output' else d['configuration']

@@ -57,6 +57,8 @@ def preview_mapping_draft(actor, case_id, source_id, configuration_id, expected)
     require(actor, case, 'finance.read')
     require(actor, case, 'policy.read')
     source = source_for(case, source_id)
+    from .source_units import require_mapping
+    require_mapping(source)
     config, candidates = _draft_candidates(case, configuration_id)
     schema = active_component('D06.source_schema_ref', case)
     convention_config = active_component('D06.unit_sign_currency_period', case)

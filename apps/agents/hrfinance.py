@@ -23,11 +23,15 @@ def investigate(actor,case_id,expected):
     try:current_snapshot(s);state='current'
     except (ValidationError,PermissionDenied):state='held or historical'
     observation={'snapshot_id':s.pk,'status':s.status,'current_use':state,'exception_codes':s.manifest['findings']}
-    # Proposed engineering safeguard, not disclosure authority or a dispatch route.
+    # Proposed internal clarification only; never disclosure authority.
     # Rejected values remain discarded; free-text correction routes nominate nobody.
     if s.status=='rejected' and 'out_of_contract_fields' in s.manifest['findings']:
-     observation['scope_exception']={'status':'held','reason':'scope_exception_owner_unconfigured'}
+     from apps.finance.hr_scope import observation as scope_observation
+     observation['scope_exception']=scope_observation(actor,s)
      question='Ask HR to confirm the minimum permitted scope and an authorized scope-exception owner/action route. No typed owner route is configured; no notification was sent. Forbidden fields remain rejected and discarded, not eligible for acceptance through this question.'
+     if observation['scope_exception']['reason']!='scope_exception_owner_unconfigured':
+      from apps.finance.hr_scope import QUESTION
+      question=QUESTION
      if question not in questions:questions.append(question)
     snapshots.append(observation)
    contracts.append({'contract_id':d.pk,'sha256':d.sha256,'status':status,'snapshots':snapshots})

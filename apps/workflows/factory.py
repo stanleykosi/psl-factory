@@ -746,6 +746,7 @@ def run_until_wait(work_id,provider=None,adapter=None):
 @transaction.atomic
 def claim_task(actor,task_id,expected):
     initial=HumanTask.objects.select_related('case').get(pk=task_id)
+    if initial.context.get('purpose')=='hr_scope_clarification_v1':raise ValidationError('Use the dedicated private HR scope workflow')
     access(actor,initial.case)
     work=Work.objects.select_for_update(of=('self',)).select_related('case','invoice').get(pk=initial.context['work'],case=initial.case)
     t=HumanTask.objects.select_for_update().select_related('case').get(pk=task_id)
@@ -772,6 +773,7 @@ def claim_task(actor,task_id,expected):
 @transaction.atomic
 def decide(actor,task_id,expected,verdict,evidence_id,reason):
     initial=HumanTask.objects.select_related('case').get(pk=task_id)
+    if initial.context.get('purpose')=='hr_scope_clarification_v1':raise ValidationError('Use the dedicated private HR scope workflow')
     access(actor,initial.case)
     if initial.kind!='factory_review':raise ValidationError('Exact factory review task required')
     work=Work.objects.select_for_update(of=('self',)).select_related('case','invoice').get(pk=initial.context['work'],case=initial.case)
@@ -832,6 +834,7 @@ def adopt_profile(actor,work_id,expected,configuration_id,reason):
 @transaction.atomic
 def release_task_claim(actor,task_id,expected,reason):
     task=HumanTask.objects.select_for_update().select_related('case').get(pk=task_id)
+    if task.context.get('purpose')=='hr_scope_clarification_v1':raise ValidationError('Use the dedicated private HR scope workflow')
     access(actor,task.case,'factory.manage')
     if task.kind not in ['factory_information','factory_review','factory_governance','factory_accounting_review'] or task.status!='open' or task.revision!=expected or task.claimed_by_id is None:raise ValidationError('STALE_VERSION: select a currently claimed open factory task')
     work=Work.objects.get(pk=task.context['work'],case=task.case)
@@ -854,6 +857,7 @@ def advance(actor,work_id,expected,provider=None,adapter=None):
 @transaction.atomic
 def provide_information(actor,task_id,expected,case_revision,kind,body,source):
     t=HumanTask.objects.select_for_update().select_related('case').get(pk=task_id)
+    if t.context.get('purpose')=='hr_scope_clarification_v1':raise ValidationError('Use the dedicated private HR scope workflow')
     access(actor,t.case,'factory.information')
     work=Work.objects.select_related('case').get(pk=t.context['work'],case=t.case);_,value=profile(work,recovery=True)
     if t.kind!='factory_information' or t.status!='open' or t.claimed_by_id!=actor.pk or t.revision!=expected:raise ValidationError('STALE_VERSION: current claimed information task required')

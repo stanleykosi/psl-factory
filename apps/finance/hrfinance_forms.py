@@ -10,8 +10,14 @@ def commands(actor,case,data=None):
   q=model.objects.defer('payload') if model==HRReadSnapshot else model.objects
   return forms.ModelChoiceField(q.filter(**{path:case}),required=required)
  def evidence(kind):return forms.ModelChoiceField(case.evidence.filter(kind=kind))
+ from apps.workflows.models import HumanTask
+ from .hr_scope import PURPOSE,REPLIES
+ def scope_task():return forms.ModelChoiceField(HumanTask.objects.filter(case=case,context__purpose=PURPOSE,status='open'))
  key=lambda:forms.CharField(max_length=100)
  defs={
+ 'scope_request':('Assign safe scope question internally',{'snapshot':select(HRReadSnapshot)}),
+ 'scope_reply':('Answer assigned scope question',{'scope_task':scope_task(),'task_revision':forms.IntegerField(min_value=1),'reply':forms.ChoiceField(choices=[(v,v.replace('_',' ')) for v in REPLIES])}),
+ 'scope_cancel':('Cancel original scope question',{'scope_task':scope_task(),'task_revision':forms.IntegerField(min_value=1)}),
  'need':('State Finance reporting need',{'reference':key(),'payload':forms.JSONField(widget=forms.Textarea(attrs={'rows':10})),'evidence':evidence('hr_finance_need')}),
  'contract':('Prepare minimal read-only disclosure',{'need':select(HRFinanceNeed),'operation_key':key(),'evidence':evidence('hr_contract_source')}),
  'authorize':('HR approve, return or revoke disclosure',{'contract':select(HRDisclosure),'verdict':forms.ChoiceField(choices=[(v,v) for v in ['approve','return','revoke']]),'operation_key':key(),'evidence':evidence('hr_disclosure_decision')}),
@@ -24,7 +30,7 @@ def commands(actor,case,data=None):
  'policy':('Draft typed HR disclosure configuration',{'component':forms.ChoiceField(choices=[(k,k) for k in SCHEMAS]),'content':forms.JSONField(widget=forms.Textarea(attrs={'rows':10})),'evidence':evidence('policy_decision'),'effective_from':forms.DateTimeField()})}
  grants=set(Grant.objects.filter(case=case,user=actor,active=True).values_list('action',flat=True));result=[]
  for action,(title,fields) in defs.items():
-  permission='agent.hrfinance' if action=='investigate' else 'policy.configure' if action=='policy' else 'hrfinance.'+action
+  permission='agent.hrfinance' if action in ['investigate','scope_request','scope_cancel'] else 'hrfinance.respond' if action=='scope_reply' else 'policy.configure' if action=='policy' else 'hrfinance.'+action
   if permission not in grants:continue
   f=type('HRFinance'+action,(CommandForm,),fields)(data if data is not None and data.get('action')==action else None,initial={'action':action,'revision':case.revision},auto_id='id_'+action+'_%s')
   result.append({'action':action,'title':title,'form':f})

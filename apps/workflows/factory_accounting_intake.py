@@ -52,7 +52,7 @@ def submit(actor, case_id, key, evidence_id, context, reference, expected):
     if not isinstance(reference, str) or not reference.strip() or len(reference) > 100:
         raise ValidationError('Supply a reporting work reference')
     fields = {'entity', 'period', 'currency', 'accounting_basis', 'extracted_at', 'completeness', 'control_total', 'source_evidence_id'}
-    if not isinstance(context, dict) or set(context) != fields:
+    if not isinstance(context, dict) or set(context) not in [fields, fields | {'unit_declaration'}]:
         raise ValidationError('Exact extraction and reporting context required')
     if not isinstance(context['entity'], str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}', context['entity']):
         raise ValidationError('Explicit entity identifier required')
@@ -104,8 +104,8 @@ def resume(actor, case_id, receipt_id, expected):
     if evidence.sha256 != payload['sha256']:
         raise ValidationError('Intake source hash changed')
     prior = latest(receipt)
-    if prior['status'] == 'started':
-        # Observation only. Never create a successor or reset completed work on retry.
+    if prior['status'] in ['started', 'source_units_needed']:
+        # Observation only. Never promote a held receipt or reset completed work on retry.
         return prior
     if receipt.data['parser_findings']:
         return record(actor, case, receipt, 'quarantined', receipt.data['parser_findings'])
@@ -127,14 +127,22 @@ def resume(actor, case_id, receipt_id, expected):
         return record(actor, case, receipt, 'quarantined', validation.findings, batch=batch.pk, validation=validation.pk)
     source_fields = {k: payload[k] for k in ['entity', 'accounting_basis', 'completeness', 'control_total']}
     source_fields.update(extracted_at=datetime.fromisoformat(payload['extracted_at']), evidence_id=payload['source_evidence_id'])
-    source = FinanceSource.objects.filter(case=case, batch=batch, **source_fields).order_by('-pk').first()
+    from apps.finance.source_units import capture as capture_units
+    units = capture_units(batch, payload.get('unit_declaration'))
+    source = FinanceSource.objects.filter(case=case, batch=batch, unit_declaration=units, **source_fields).order_by('-pk').first()
     if source and batch.contexts.order_by('-pk').first().pk != source.pk:
         return record(actor, case, receipt, 'followup_needed', ['This extraction context was superseded; select current source-owned inputs.'], batch=batch.pk)
     if not source:
         source = analysis.capture_source(actor, case.pk, batch.pk, payload['entity'], payload['accounting_basis'],
                                         source_fields['extracted_at'], payload['completeness'], payload['control_total'],
-                                        payload['source_evidence_id'], case.revision)
+                                        payload['source_evidence_id'], case.revision, unit_declaration=units)
         case.refresh_from_db()
+    from apps.finance.source_units import require_mapping
+    try:
+        require_mapping(source)
+    except ValidationError as exc:
+        return record(actor, case, receipt, 'source_units_needed', exc.messages, batch=batch.pk,
+                      validation=validation.pk, source=source.pk, source_units=source.unit_state)
     try:
         work = accounting.start(actor, case.pk, 'intake:' + str(receipt.pk), source.pk, [], payload['reference'], case.revision)
     except ValidationError as exc:

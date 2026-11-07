@@ -72,6 +72,42 @@
         ],
         "additionalProperties": false
       }
+    },
+    {
+      "id": "F35.scope_clarification_route",
+      "parent_decision_id": "F35",
+      "schema_ref": "schema:psl/policy-component/F35.scope_clarification_route/v1",
+      "subject_scope": "Optional internal metadata-only rejected-snapshot question; no disclosure approval",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
     }
   ],
   "operation_dependencies": [

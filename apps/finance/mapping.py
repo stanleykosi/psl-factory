@@ -8,6 +8,8 @@ from .rules import decimal,number,total,evaluate,formula_order
 def effective(values,entity,period):return [v for v in values if v['entity']==entity and v['from_period']<=period<=v['to_period']]
 
 def map_rows(source,data,configs,adjustments):
+    from .source_units import require_mapping
+    require_mapping(source)
     convention=reference_values(configs['D06.unit_sign_currency_period'])[0];period=convention['period'];currency=convention['currency']
     maps=effective(reference_values(configs['D06.account_bu_maps']),source.entity,period)
     rows=[];findings=[];counts=Counter(x['account'] for x in data['rows']);seen=set()
