@@ -1,12 +1,12 @@
 # Public source backup
 
-This is a source-only development backup, not a release or deployment. It extends the prior public snapshot with one synthetic accounting-intake fixture precondition repair and this sanitized status note.
+This is a source-only development backup, not a release or deployment. It extends the prior public snapshot with one synthetic recognition fixture precondition repair and this sanitized status note.
 
 ## Scope
 
-The supplied-file accounting intake fixture now binds explicit source-unit evidence to the exact supplied import. Malformed-source cases retain their intended validation path. No production behavior, test assertions or test IDs change.
+The recognition fixture now explicitly reaffirms the existing signature after changing its synthetic D05 role roster. It calls the existing helper; no production behavior, test assertions or test IDs change.
 
-The focused native accounting-intake check reported 10 passing tests. Broader regression verification remains incomplete; no full-regression pass or hosted CI success is claimed. Full 108-process acceptance remains NOT_MET. Real source authenticity, owner policies and live integration/provider verification remain unresolved.
+Three selected native recognition tests passed. The broader 461-test regression remains incomplete, with 280 accepted source-equivalent test IDs reported so far. This is partial coverage, not a full-regression pass. Hosted CI status is unknown. Full 108-process acceptance remains NOT_MET. Real source authenticity, owner policies and live integration/provider verification remain unresolved.
 
 ## Publication boundary
 
