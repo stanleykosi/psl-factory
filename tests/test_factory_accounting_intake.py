@@ -8,11 +8,12 @@ from django.utils import timezone
 from apps.core.models import Audit
 from apps.core.services import add_evidence
 from apps.finance.models import FinancialImport, FinanceSource, FinanceRun, ImportValidation
+from apps.finance.services import capture_import
 from apps.identity.models import Grant
 from apps.policy.services import transition
 from apps.workflows import factory_accounting_intake as intake, factory_accounting as accounting, factory
 from apps.workflows.models import FactoryWork, HumanTask
-from tests.finance_analysis_helpers import fixture, policy, METRICS
+from tests.finance_analysis_helpers import fixture, policy, METRICS, declared_units
 from tests.helpers import rev
 
 
@@ -21,16 +22,20 @@ class AccountingSuppliedIntakeTests(TestCase):
     def setUpTestData(cls):
         cls.data=fixture(username='supplied-maker',recipient_username='supplied-reader')
 
-    def supplied(self,body=None):
+    def supplied(self,body=None,with_units=False):
         a,c,e,values,configs,source,template,recipient=self.data
         evidence=add_evidence(a,c.pk,'financial_input',body if body is not None else values['csv']+'\n','synthetic:supplied-export',rev(c))
         context={'entity':source.entity,'period':'2026-10','currency':source.batch.rows[0]['currency'],
                  'accounting_basis':source.accounting_basis,'extracted_at':source.extracted_at,
                  'completeness':'complete','control_total':source.control_total,'source_evidence_id':source.evidence_id}
+        if with_units:
+            # Bind explicit synthetic units to this exact supplied import, not the old source.
+            batch=capture_import(a,c.pk,evidence.pk,rev(c))
+            context['unit_declaration']=declared_units(a,c,batch)
         return evidence,context
 
-    def submit(self,key='submission-1',body=None,changes=None):
-        a,c,*_=self.data;evidence,context=self.supplied(body)
+    def submit(self,key='submission-1',body=None,changes=None,with_units=True):
+        a,c,*_=self.data;evidence,context=self.supplied(body,with_units=with_units)
         context.update(changes or {})
         return intake.submit(a,c.pk,key,evidence.pk,context,'Supplied report',rev(c)),evidence,context
 
@@ -74,9 +79,9 @@ class AccountingSuppliedIntakeTests(TestCase):
 
     def test_malformed_source_has_durable_receipt_and_unknown_is_not_zero(self):
         a,c,*_=self.data
-        result,_,_=self.submit(body='wrong,columns\n1,2')
+        result,_,_=self.submit(body='wrong,columns\n1,2',with_units=False)
         self.assertEqual(result['status'],'quarantined');self.assertIsNone(Audit.objects.get(pk=result['receipt']).data['batch'])
-        result,_,_=self.submit(key='unknown',body='account,amount,currency,period\nA,,USD,2026-10\n',changes={'currency':'USD'})
+        result,_,_=self.submit(key='unknown',body='account,amount,currency,period\nA,,USD,2026-10\n',changes={'currency':'USD'},with_units=False)
         self.assertEqual(result['status'],'quarantined')
         self.assertIsNone(FinancialImport.objects.get(pk=result['batch']).rows[0]['amount'])
         self.assertFalse(FactoryWork.objects.exists())
@@ -115,13 +120,14 @@ class AccountingSuppliedIntakeTests(TestCase):
         value.update(information_resolver_id=a.pk,executor_id=a.pk,template_id=template.pk,bu_metrics=METRICS)
         profile=draft_operator_policy(a,c.pk,'OPS.factory_accounting_execution',value,e['policy_decision'].pk,timezone.now())
         transition(a,profile.pk,'validated');transition(a,profile.pk,'active')
-        evidence,context=self.supplied();client=Client();client.force_login(a)
+        evidence,context=self.supplied(with_units=True);client=Client();client.force_login(a)
         url=reverse('factory_create')+'?definition=finance-accounts/v1&case='+str(c.pk)
         before=(Audit.objects.count(),FinancialImport.objects.count(),FinanceSource.objects.count())
         response=client.get(url);self.assertContains(response,'Start from a supplied trial balance')
         self.assertEqual(before,(Audit.objects.count(),FinancialImport.objects.count(),FinanceSource.objects.count()))
         data={'action':'supplied','supplied-key':'http-intake','supplied-evidence':evidence.pk,
               'supplied-source_evidence':context.pop('source_evidence_id'),'supplied-reference':'Supplied report',
+              'supplied-unit_declaration':json.dumps(context.pop('unit_declaration')),
               'supplied-revision':rev(c),'supplied-inventory_confirmed':'on',
               **{'supplied-'+k:(v.isoformat() if hasattr(v,'isoformat') else v) for k,v in context.items()}}
         response=client.post(url,data);self.assertEqual(response.status_code,302)

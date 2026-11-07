@@ -1,12 +1,12 @@
 # Public source backup
 
-This is a source-only development backup, not a release or deployment. It extends the prior public snapshot with four synthetic test fixture precondition repairs and this sanitized status note.
+This is a source-only development backup, not a release or deployment. It extends the prior public snapshot with one synthetic accounting-intake fixture precondition repair and this sanitized status note.
 
 ## Scope
 
-The Finance exact catalogue, mapping diagnostics, note lineage and selected-statement fixtures now supply explicit source-unit evidence required by the existing source contract. No production behavior or assertions change.
+The supplied-file accounting intake fixture now binds explicit source-unit evidence to the exact supplied import. Malformed-source cases retain their intended validation path. No production behavior, test assertions or test IDs change.
 
-The bounded local compatibility check reported 13 passing tests. The broader 461-test regression is pending; no full-regression pass or hosted CI success is claimed. Full 108-process acceptance remains NOT_MET. Real source authenticity, owner policies and live integration/provider verification remain unresolved.
+The focused native accounting-intake check reported 10 passing tests. Broader regression verification remains incomplete; no full-regression pass or hosted CI success is claimed. Full 108-process acceptance remains NOT_MET. Real source authenticity, owner policies and live integration/provider verification remain unresolved.
 
 ## Publication boundary
 
