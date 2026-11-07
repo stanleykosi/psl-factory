@@ -47,6 +47,9 @@ def dispatch_context(pk,fence):
     if value!=job.intent:raise ValidationError('Invoice source/review/policy/destination changed; reconcile reserved intent')
     from apps.workflows.models import FactoryWork
     if FactoryWork.objects.filter(invoice=job.invoice,cancel_requested=True).exists():raise ValidationError('Factory cancellation prevents new invoice dispatch; existing effects require reconciliation')
+    if job.kind=='issue':
+        from .obligations import retain_effect
+        retain_effect(job)
     return job,value
 
 
@@ -84,6 +87,9 @@ def record_accepted_mock(pk,fence,observed):
     binding={'payload':payload,'destination':job.intent['adapter']['recipient_id'],'target':job.invoice_id,'intent':job.intent}
     expected={'environment':'synthetic_mock','operation_key':job.operation_key,'payload':payload,'destination':binding['destination'],'fingerprint':invoices.digest(binding)}
     if observed!=expected:raise ValidationError('Accepted effect proof differs from reserved identity/payload/destination')
+    if job.kind=='issue':
+        from .obligations import observe_original_attempt
+        observe_original_attempt(job,observed)
     result=_record_reserved_receipt(job,job.intent)
     event(job.actor,case,'invoice.accepted_mock_observed',job=job.pk,proof_hash=invoices.digest(observed),environment='synthetic_mock',dispatch_authorized=False)
     return result
@@ -130,6 +136,10 @@ def operate(actor,case_id,job_id,action,reason,expected):
             if value!=job.intent or actor.pk!=job.actor_id:raise ValidationError('Intent changed; explicitly replace held intent')
             job.status='pending';job.attempts=0
         else:
+            if job.kind=='issue':
+                from .models import ObligationEffect,ObligationLegacyAttempt
+                if ObligationEffect.objects.filter(invoice=job.invoice).exists() or ObligationLegacyAttempt.objects.filter(job=job).exists():
+                    raise ValidationError('Original attempted effect must be reconciled; a new operation key is not authorised')
             if InvoiceJob.objects.filter(invoice=job.invoice,kind=job.kind,generation__gt=job.generation).exists():raise ValidationError('Newer reservation exists')
             new=InvoiceJob.objects.create(invoice=job.invoice,kind=job.kind,generation=job.generation+1,intent=value,
                 operation_key=f'invoice:{job.invoice_id}:{job.kind}:g{job.generation+1}',actor=actor)

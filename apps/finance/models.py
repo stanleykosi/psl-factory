@@ -89,3 +89,6 @@ from .fixed_charge_models import CoverageFixedCharge, CoverageNativePreparation,
 from .usage_intake_models import UsageIntakeSource, UsageIntakeReceipt, UsageIntakeAcceptance, UsageIntakeWithdrawal
 
 from .draft_generation_models import DraftGeneration, DraftGenerationAttempt, DraftGenerationObservation, DraftGenerationCancellation
+
+from .obligation_models import ObligationNamespace, ObligationClaim, ObligationLocalKey, ObligationAlias, ObligationBinding, ObligationEffect
+from .obligation_models import ObligationLegacyAttempt, ObligationLegacyObservation

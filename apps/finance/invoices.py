@@ -118,6 +118,9 @@ def review_packet(invoice):
         packet['factory_sources']={'work':work.pk,'profile':work.policy_id,'evidence':latest}
         from apps.workflows.factory_routing import binding
         packet['factory_responsibility']=binding(work)
+    from .obligations import review_pin
+    identity_pin=review_pin(invoice)
+    if identity_pin is not None:packet['obligation_identity']=identity_pin
     return packet
 
 def factory_binding(actor,invoice,work_id):
@@ -166,12 +169,14 @@ def intent(actor,invoice,kind,role,correction_id=None,factory_work_id=None):
         return effect_intent(actor,invoice,kind,role,correction_id)
     policies,adapter,identity=adapter_config(invoice.case)
     if kind=='issue':
+        from .obligations import issue_pin
+        obligation_identity=issue_pin(invoice)
         r=reviewed(invoice)
         if role not in adapter['issuer_roles']:raise PermissionDenied('Issuer role is not configured')
         auth=decision_authority(actor,invoice.case,role)
         if adapter['require_due_date'] and invoice.due_date is None:raise ValidationError('Invoice due terms are not configured')
         if invoice.preparation.kind=='usage' and invoice.payload['usage_completeness']!='complete' and not adapter['allow_partial_usage']:raise ValidationError('Configured invoice policy does not allow incomplete usage coverage')
-        value={'policies':policies,'adapter':adapter,'identity':identity,'review':r.pk,'issuer_role':role,'issuer_authority':auth,'sha256':invoice.sha256}
+        value={'obligation_identity':obligation_identity,'policies':policies,'adapter':adapter,'identity':identity,'review':r.pk,'issuer_role':role,'issuer_authority':auth,'sha256':invoice.sha256}
         from .billing_evidence import release_context
         context=release_context(invoice,kind)
         if context is not None:value['d03_release']=context

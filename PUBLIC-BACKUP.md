@@ -1,17 +1,19 @@
 # Public source backup
 
-This is a source-only development backup, not a release or deployment. This update adds the separately accepted optional QuickBooks Online pure component checkpoint `980ce3c` on top of registry-validation backup `15ae0c7`. It does not represent integration of that component into the main application workflow.
+This is an incomplete source-only development checkpoint, not a release, deployment or claim of main-application integration. This update preserves 17 reviewed cross-case obligation identity implementation, migration, contract, template and test files from frozen source `84346fa63efe3da8650b2079751daf48460326d9`, on top of optional QBO component backup `928ee9c`.
 
-## Verification status
+## Cross-case identity verification
 
-The optional Invoice-only exact-ID read component uses fixed QBO origins, GET-only bounded transport, explicit binding validation and immutable minimal observations. Registry entries are optional; no operational provider, account, credential or source mapping has been selected. Eighteen distinct synthetic component tests passed under both normal and optimized Python. These include the existing eight registry tests and ten QBO component tests, not 18 additional tests beyond the registry suite.
+The candidate implements configurable namespace/key contracts, explicit invoice identity bindings, durable claims/conflicts, controlled aliases and original-operation recovery. Actual business keys, namespace membership and resolver authority remain owner-supplied decisions, not defaults.
 
-F01 application linkage, native database authorization/persistence/concurrency verification and live-provider acceptance are not established by this component. Newer application-linkage work is excluded from this snapshot. Cross-case invoice identity work remains excluded and unaccepted here.
+Native verification is incomplete: 18 of 27 selected tests are accepted; nine remain pending. Migration 0075, additive repair 0076 and original-operation recovery passed their reported checks. The fourth test batch was interrupted by the disk guard; interrupted work is not counted as passed. Full native acceptance and broader caller compatibility remain unproven. This backup does not declare the candidate integrated or accepted as a complete increment.
 
-The earlier permitted selected regression covered 461 unique test IDs across 95 accepted batches, executed on `c212331` (165), `3f3a1ed` (115), and `9236b7b` (181), with source/helper equivalence verified for the earlier 280 IDs. It does not cover this component delta and was not a single latest-snapshot run. No hosted CI result is claimed.
+Browser tests remain excluded by user direction. Restricted security/performance work remains held and is not included. Full 108-process acceptance and the only-owner-inputs-remain readiness gate remain NOT_MET.
 
-Full 108-process acceptance and the only-owner-inputs-remain readiness gate remain NOT_MET. Browser verification remains unverified and outside current requested testing scope. Operational provider selection, configuration and integration acceptance remain separate.
+## Earlier independent checkpoints
+
+The optional QBO pure component remains exactly as previously backed up: 18 distinct synthetic component tests passed normally and with optimized Python, comprising eight registry and ten QBO tests. Native F01 linkage, database integration and live-provider acceptance are not claimed. No provider/account/credential selection is supplied here. Earlier selected regression results do not constitute regression coverage of this cross-case delta. No hosted CI result is claimed.
 
 ## Publication boundary
 
-Only `adapters/quickbooks_online.py`, `config/integration_runtime.py`, `tests/test_quickbooks_online.py`, `docs/runbooks/quickbooks-lineage.md` and this note change. All other public blobs, including existing evidence, remain unchanged and may describe earlier checkpoints. No raw proof, private status files, runtime data, screenshots, secrets, private operational data or local Git history is published. Main is unchanged. No merge or deployment is performed.
+Only the 17 source files and this note change. Local BUILD/HANDOFF status files, design/runtime coordination records, raw proof, lifecycle harnesses, runtime data, screenshots, secrets, newer unreviewed work and local Git history are excluded. All other public blobs, including QBO source and the existing evidence subtree, remain unchanged and may describe earlier checkpoints. Main is unchanged. No merge or deployment is performed.

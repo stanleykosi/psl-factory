@@ -45,3 +45,26 @@ def investigate(actor,case_id,coverage_id,preparation_id,expected):
         except PermissionDenied:pass
     run=AgentRun.objects.create(case=case,actor=actor,evidence=cov.evidence,provider='deterministic-billing-investigation-v1',process_id='F29',result=result)
     event(actor,case,'agent.billing_investigation',run=run.pk,coverage=cov.pk);return run
+
+@transaction.atomic
+def investigate_identity(actor, case_id, invoice_id, expected):
+    """Read and explain only accessible exact identity pins; never infer or approve a key."""
+    from apps.finance.models import Invoice
+    from apps.finance.obligations import projection, latest
+    from apps.finance.fixed_charge import preparation_access
+    case = lock_case(actor, case_id, 'agent.billing', expected)
+    require(actor, case, 'finance.read')
+    invoice = exact(case, Invoice, invoice_id)
+    preparation_access(actor, invoice.preparation)
+    binding = latest(invoice)
+    evidence = binding.evidence if binding else invoice.preparation.coverage.evidence
+    result = {'invoice':invoice.pk, 'identity':projection(invoice),
+        'coverage':'Explicit claims only; historical unbound invoices require evidenced reconciliation.',
+        'next_work':'Supply the owner-backed namespace contract and exact invoice identity evidence. Resolve aliases only with configured resolver authority. Reconcile original attempted effects before any replacement.',
+        'citations':[{'id':evidence.pk, 'kind':evidence.kind, 'sha256':evidence.sha256}],
+        'invoice_issued':False, 'approval_granted':False, 'identity_inferred':False,
+        'external_authenticity_verified':False}
+    run = AgentRun.objects.create(case=case, actor=actor, evidence=evidence,
+        provider='deterministic-invoice-identity-v1', process_id='F30', result=result)
+    event(actor, case, 'agent.invoice_identity_investigation', run=run.pk, invoice=invoice.pk)
+    return run

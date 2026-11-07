@@ -1,0 +1,49 @@
+{
+  "classification": "Engineering interface only; real identity contract and resolver authority remain owner supplied.",
+  "components": [
+    {
+      "id": "D08.obligation_namespace",
+      "parent_decision_id": "D08",
+      "schema_ref": "schema:psl/policy-component/D08.obligation_namespace/v1",
+      "subject_scope": "Explicit organization-scoped authoritative namespace/key contract. No customer, invoice, resolver or business key is inferred.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": [
+    {
+      "operation": "finance.invoice.identity",
+      "required_components": [
+        "D08.obligation_namespace"
+      ]
+    }
+  ]
+}

@@ -336,6 +336,10 @@ def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
         if pending.status=='held':return [],'Native invoice work needs controlled operator recovery'
         if pending.status=='leased':return [],'Native invoice worker owns the current attempt'
         return ['ACT12' if pending.status=='unknown' else 'ACT11'],'Reconcile receipt' if pending.status=='unknown' else 'Process approved invoice'
+    if not InvoiceIssue.objects.filter(invoice=work.invoice).exists():
+        from apps.finance.obligations import current as identity_current
+        try:identity_current(work.invoice)
+        except (ValidationError,PermissionDenied) as exc:return [],'Invoice identity requires exact evidence/configuration: '+str(exc)
     return ['ACT11'],'Queue approved issuance or delivery'
 
 @transaction.atomic

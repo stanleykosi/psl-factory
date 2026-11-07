@@ -25,6 +25,15 @@ def workbench(request,case_id):
             if not entry or not entry['form'].is_valid():raise ValidationError(entry['form'].errors.as_text() if entry else 'Choose an invoice/cash action')
             d=entry['form'].cleaned_data;a=request.user;c=case.pk;v=d['revision'];action=d['action']
             if action=='draft':invoices.draft(a,c,d['preparation'].pk,d['reference'],d['due_date'],v)
+            elif action=='bind_identity':
+                from .obligations import bind
+                bind(a,c,d['invoice'].pk,d['key'],d['evidence'].pk,v,predecessor_id=d['predecessor_id'])
+            elif action=='alias_identity':
+                from .obligations import resolve_alias
+                resolve_alias(a,c,d['claim_id'],d['key'],d['evidence'].pk,v)
+            elif action=='investigate_identity':
+                from apps.agents.billing import investigate_identity
+                investigate_identity(a,c,d['invoice'].pk,v)
             elif action=='review':invoices.review(a,c,d['invoice'].pk,d['role'],d['verdict'],d['evidence'].pk,d['reason'],v,delegated=d['delegated'])
             elif action=='reserve':invoices.reserve(a,c,d['invoice'].pk,d['kind'],d['role'],v)
             elif action=='operate':invoice_delivery.operate(a,c,d['job'].pk,d['operation'],d['reason'],v)
@@ -44,6 +53,8 @@ def workbench(request,case_id):
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));case.refresh_from_db()
     docs=list(Invoice.objects.filter(case=case).order_by('-pk')[:50])
     for i in docs:
+        from .obligations import projection
+        i.identity_status=projection(i)
         i.current_findings=[]
         if InvoiceIssue.objects.filter(invoice=i).exists():i.display_status='Issued obligation'
         else:
@@ -60,7 +71,7 @@ def workbench(request,case_id):
         'receipts':CashReceipt.objects.filter(case=case).order_by('-pk')[:50],'lots':CashVerification.objects.filter(receipt__case=case).order_by('-pk')[:50],
         'assignments':CashAssignment.objects.filter(receipt__case=case).order_by('-pk')[:50],'allocations':CashAllocation.objects.filter(lot__receipt__case=case).order_by('-pk')[:50],
         'reversals':CashReversal.objects.filter(lot__receipt__case=case).union(CashReversal.objects.filter(allocation__lot__receipt__case=case)).order_by('-pk')[:50],
-        'snapshots':snapshots,'agents':AgentRun.objects.filter(case=case,provider='deterministic-receivables-v1').order_by('-pk')[:5]})
+        'snapshots':snapshots,'agents':AgentRun.objects.filter(case=case,provider__in=['deterministic-receivables-v1','deterministic-invoice-identity-v1']).order_by('-pk')[:5]})
 
 @login_required
 def inbox(request):
