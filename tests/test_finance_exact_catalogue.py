@@ -15,7 +15,7 @@ from apps.finance.models import FinanceRun
 from apps.finance.rules import formula_order
 from apps.finance.services import capture_import
 from apps.policy.services import active_component
-from .finance_analysis_helpers import fixture, policy
+from .finance_analysis_helpers import fixture, policy, declared_units
 from .helpers import rev
 
 
@@ -40,9 +40,10 @@ class FinanceExactCatalogueTests(TestCase):
             f'{account},{amount},{currency},2026-10\n' for account, amount in rows)
         evidence = add_evidence(self.a, self.c.pk, 'financial_input', csv, locator)
         batch = capture_import(self.a, self.c.pk, evidence.pk, rev(self.c))
+        units = declared_units(self.a, self.c, batch)
         return analysis.capture_source(self.a, self.c.pk, batch.pk, 'synthetic-company',
             'accrual', timezone.now()-timedelta(hours=1), 'complete', None,
-            self.e['finance_source'].pk, rev(self.c))
+            self.e['finance_source'].pk, rev(self.c), unit_declaration=units)
 
     def test_f03_n01_literal_present_zero_and_120_retain_source_rows(self):
         self.configure_maps(self.maps(['A100', 'A200']))

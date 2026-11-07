@@ -22,7 +22,7 @@ from apps.finance.services import capture_import
 from apps.identity.models import Grant
 from apps.policy.finance_drafts import draft_finance_policy
 from apps.policy.services import active_component, save_draft, transition
-from .finance_analysis_helpers import fixture, pipeline
+from .finance_analysis_helpers import fixture, pipeline, declared_units
 from .helpers import rev, setup_case
 
 
@@ -47,8 +47,9 @@ class FinanceMappingDiagnosticsTests(TestCase):
             f'{account},{amount},NGN,2026-10\n' for account, amount in rows)
         evidence = add_evidence(self.a, self.c.pk, 'financial_input', csv, 'synthetic:F03-E01')
         batch = capture_import(self.a, self.c.pk, evidence.pk, rev(self.c))
+        units = declared_units(self.a, self.c, batch)
         return analysis.capture_source(self.a, self.c.pk, batch.pk, 'synthetic-company', 'accrual',
-            timezone.now()-timedelta(hours=1), 'complete', None, self.e['finance_source'].pk, rev(self.c))
+            timezone.now()-timedelta(hours=1), 'complete', None, self.e['finance_source'].pk, rev(self.c), unit_declaration=units)
 
     def preview(self, source, draft):
         return preview_mapping_draft(self.a, self.c.pk, source.pk, draft.pk, rev(self.c))

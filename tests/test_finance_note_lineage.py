@@ -9,7 +9,7 @@ from apps.finance import analysis
 from apps.finance.services import capture_import
 from apps.finance.documents import projection_rows
 from apps.agents.finance_analysis import investigate_finance
-from .finance_analysis_helpers import fixture, policy
+from .finance_analysis_helpers import fixture, policy, declared_units
 from .helpers import rev
 
 
@@ -34,7 +34,8 @@ class FinanceNoteLineageTests(TestCase):
             csv='account,amount,currency,period\n'+''.join(f'{key},{value},NGN,2026-10\n' for key,value in source_rows)
         evidence=add_evidence(self.a,self.c.pk,'financial_input',csv,'synthetic:catalogue-cells')
         batch=capture_import(self.a,self.c.pk,evidence.pk,rev(self.c))
-        source=analysis.capture_source(self.a,self.c.pk,batch.pk,'synthetic-company','accrual',timezone.now()-timedelta(hours=1),'complete',None,self.e['finance_source'].pk,rev(self.c))
+        units=declared_units(self.a,self.c,batch)
+        source=analysis.capture_source(self.a,self.c.pk,batch.pk,'synthetic-company','accrual',timezone.now()-timedelta(hours=1),'complete',None,self.e['finance_source'].pk,rev(self.c),unit_declaration=units)
         mapping=analysis.map_source(self.a,self.c.pk,source.pk,[],rev(self.c))
         return mapping,analysis.calculate(self.a,self.c.pk,mapping.pk,rev(self.c))
 

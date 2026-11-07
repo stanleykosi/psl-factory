@@ -195,7 +195,7 @@ class StatementTests(TestCase):
         from django.utils import timezone
         from tests.factory_accounting_helpers import configured
         from apps.workflows import factory
-        source=analysis.capture_source(self.a,self.c.pk,self.source.batch_id,self.source.entity,'accrual',timezone.now()-timedelta(minutes=1),'complete',self.source.control_total,self.e['finance_source'].pk,rev(self.c))
+        source=analysis.capture_source(self.a,self.c.pk,self.source.batch_id,self.source.entity,'accrual',timezone.now()-timedelta(minutes=1),'complete',self.source.control_total,self.e['finance_source'].pk,rev(self.c),unit_declaration=self.source.unit_declaration)
         analysis.review(self.a,self.c.pk,'source',source.pk,'Finance','approve',self.e['finance_review'].pk,'Current source accepted',rev(self.c))
         transition(self.a,self.contract.pk,'revoked')
         work=configured(self.a,self.c,self.e,source,self.template,METRICS,statement_contract_id=self.contract.pk)['work']
