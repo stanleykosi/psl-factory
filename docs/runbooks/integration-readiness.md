@@ -36,13 +36,41 @@ Enrollment adds a live readiness dependency for the selected case/family. It doe
 
 Committed source effects reconcile before readiness checks. A later readiness failure cannot erase debt, cash, business receipts or independent release controls. Readiness observation receipts and source business receipts are separate records.
 
-The selected provider gateway runs only the fixed public canary after current review/enrollment. Operational private-evidence extraction remains unavailable until a reviewed vendor implementation, explicit data-egress controls and acceptance evidence are built. Existing synthetic extraction and deterministic domain agents continue. A target contract or successful canary does not unlock private data transmission or business tools.
+The readiness gateway runs the fixed public canary after current review/enrollment. Separate reviewed factory-planner and private-evidence gateway clients, signed Finance follow-up metadata transport, and domain receipt/preflight clients are implemented. These interfaces retain their own scoped contracts, data-egress controls, authority and receipt checks. Their existence is not evidence of a configured vendor or successful real-provider evaluation. A target contract or successful canary does not unlock private data transmission or business tools; operational draft generation remains separately unavailable without a reviewed implementation.
 
 ## Verification and remaining work
 
 See BUILD-TESTS for actual runs, failures and PostgreSQL concurrency/process evidence. HTTP fixtures authenticate requests and persist idempotent mock provider receipts over real loopback HTTP; internal domain workflows and PostgreSQL services are not mocked. Native database sessions and real-provider/vendor evaluation are reported separately. Never read `.runtime/demo-access.txt`, rerun one-shot walkthrough seeds, reset existing databases or backdate naturally expired evidence.
 
-Remaining engineering: actual vendor/incumbent authenticated read/dispatch/receipt adapters, independent model/provider quality evaluation, scoped private-data egress and typed business-agent gateway integration, SSO/managed secret stores and production authentication/TLS evidence, full-database isolated application recovery, monitoring/load/security/UAT and actual owner acceptance across all 13 families. Inputs: reviewed target/credential/principal/version/model contracts, actual grants/roles, freshness/receipt requirements and acceptance criteria. These dependencies hold only their specific live actions; they do not remove module implementation work.
+Remaining integration setup and acceptance: select actual vendor/incumbent protocols and configure reviewed target/credential/principal/version/model contracts, grants/roles and acceptance criteria; verify independent model/provider quality, production authentication/TLS, managed identity/secret-store setup and operational acceptance. Existing generic gateway clients are not proof that a selected vendor implements their protocol. Provider-specific adapter gaps must be assessed against that selected contract. Current broader milestone gaps are tracked in BUILD-STATE and HANDOFF; this runbook does not declare full acceptance.
 
 
 For focused operations, both `work_integration_readiness` and `work_outbox` support `--case <UUID>`. This selects the queue scope; it does not grant authority or bypass original-actor checks. Use it for walkthroughs/recovery so unrelated queued work is untouched. The readiness walkthrough preserved every pre-existing handoff state hash, including an older claimable job. Do not drain an unrelated queue to demonstrate a new case. RUN157 verifies scoped CLI behavior, default competing workers/process recovery and source permission checks.
+
+
+## Offline deployment registry preflight (RUN780)
+
+`PSL_INTEGRATION_PROFILE` is an absolute path to a bounded regular JSON registry file.
+An absent setting preserves empty registries and holds dependent adapters. The loader
+rejects duplicate JSON properties, nonfinite values, unexpected fields, malformed
+references, mismatched sender revisions, duplicate/noncanonical case UUIDs, and
+unsafe origins. Validation remains active with optimized Python (`-O`).
+Secret references contain only environment-variable names and explicit revisions;
+never put credential values in registry JSON. Endpoint and secret aliases follow
+the existing `endpoint:<logical-name>` and `secret:<logical-name>` contracts.
+
+Run `python -m config.integration_runtime --profile /absolute/path/to/registry.json`
+(or omit `--profile` to use the setting). This offline command opens only the registry,
+resolves no secret values, performs no DNS/network/database requests, and reports
+logical aliases rather than origins, environment-variable names or case bindings.
+Exit 0 means valid references or an explicitly reported unconfigured environment;
+exit 2 means invalid input. Neither result proves credential availability, provider
+identity, connectivity, readiness, authorization, quality or owner acceptance.
+The 1 MiB file, 1,024 entries per section/case list, and bounded reference/origin
+lengths are engineering input limits, not owner business policies.
+
+Focused verification: `python -m unittest tests.test_integration_runtime` and
+`python -O -m unittest tests.test_integration_runtime`. These use synthetic files
+and environment mappings; the Finance credential-function test executes the exact
+production function without importing ORM endpoints. It is not a database/HTTP
+workflow test or a substitute for existing integration suites.

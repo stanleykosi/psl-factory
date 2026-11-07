@@ -21,13 +21,12 @@ from .transport_models import FinanceAuthenticatedIntake as Receipt
 def credentials(case,sender):
     try:
         v=settings.FINANCE_INBOX_SENDERS[sender]
-        assert set(v)=={'credential_ref','credential_revision','destination_ref','case_ids','classification'}
-        assert str(case.pk) in v['case_ids'] and v['classification']==('synthetic' if case.synthetic else 'operational')
-        credential=settings.READINESS_SECRET_REFS[v['credential_ref']]
-        assert set(credential)=={'env','revision'} and credential['revision']==v['credential_revision']
+        from config.integration_runtime import validate_sender, require
+        credential=validate_sender(v, settings.READINESS_SECRET_REFS)
+        require(str(case.pk) in v['case_ids'] and v['classification']==('synthetic' if case.synthetic else 'operational'))
         secret=os.environ[credential['env']]
-        assert 32<=len(secret)<=4096 and '\n' not in secret and '\r' not in secret
-    except (KeyError,AssertionError,TypeError):raise PermissionDenied('Current source inbox sender/key/case binding unavailable') from None
+        require(isinstance(secret,str) and 32<=len(secret)<=4096 and '\n' not in secret and '\r' not in secret)
+    except (KeyError,ValueError,TypeError,AttributeError):raise PermissionDenied('Current source inbox sender/key/case binding unavailable') from None
     binding=digest({'sender':sender,'registry':v,'key_binding':hmac.new(settings.SECRET_KEY.encode(),secret.encode(),hashlib.sha256).hexdigest()})
     return v,secret,binding
 
