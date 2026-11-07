@@ -1,6 +1,6 @@
 """Supplied JSON evidence adapter. It does not authenticate bank/accounting sources."""
 import json,re
-from datetime import date
+from datetime import date,datetime,timedelta
 from django.core.exceptions import ValidationError
 from apps.documents.contracts import validate
 from apps.finance.rules import decimal
@@ -11,11 +11,21 @@ DAY={'type':['string','null']}
 def obj(props):return {'type':'object','properties':props,'required':list(props),'additionalProperties':False}
 def rows(props,minimum=0):return {'type':'array','minItems':minimum,'maxItems':100,'items':props}
 OPENING=obj({'account':KEY,'amount':MONEY,'observed_on':{'type':'string'},'cutoff':{'const':'start_of_day'},'evidence_id':{'type':'integer','minimum':1}})
+OPENING_CONTRACT='forecast-opening-boundary/v1'
+BOUNDARY=obj({'as_of':{'type':'string'},'opening_at':{'type':'string'},'status':{'enum':['reconciled','unreconciled']}})
+# A declaration may be embedded in the same supplied artifact. Separate evidence is optional.
+BOUNDARY['properties']['evidence_id']={'type':'integer','minimum':1}
+CLOSING=obj({'contract':{'const':OPENING_CONTRACT},'entity':KEY,'currency':{'type':'string','pattern':'^[A-Z]{3}$'},'basis':{'const':'gross_cash'},'account':KEY,'amount':MONEY,'observed_on':{'type':'string'},
+    'cutoff':{'const':'end_of_day'},'source':KEY,'source_version':KEY,'boundary_at':{'type':'string'},
+    'evidence_id':{'type':'integer','minimum':1},'boundary':BOUNDARY})
 ITEM=obj({'key':KEY,'kind':{'enum':['receivable','other_inflow','outflow']},'source_ref':KEY,'owner':KEY,'amount':MONEY,'expected_on':DAY,'original_due':DAY,'issue_id':{'type':['integer','null'],'minimum':1},'evidence_id':{'type':'integer','minimum':1},'commitment':{'enum':['forecast_only','reported_commitment']}})
+UNCERTAINTY=['unknown','disputed','uncertain','no_known_uncertainty']
+# Optional for old supplied JSON; omission means unknown, never resolved.
+ITEM['properties']['uncertainty']={'enum':UNCERTAINTY}
 SCENARIO=obj({'entity':KEY,'currency':{'type':'string','pattern':'^[A-Z]{3}$'},'basis':{'const':'gross_cash'},'as_of':{'type':'string'},
     'months':{'type':'array','minItems':1,'maxItems':24,'uniqueItems':True,'items':{'type':'string','pattern':'^[0-9]{4}-(0[1-9]|1[0-2])$'}},
     'coverage':obj({'accounts':{'type':'array','minItems':1,'maxItems':100,'uniqueItems':True,'items':KEY},'inflows':{'enum':['complete','partial','unknown']},'outflows':{'enum':['complete','partial','unknown']},'omissions':rows({'type':'string','minLength':1,'maxLength':500})}),
-    'openings':rows(OPENING),'items':rows(ITEM),'rollover':rows(obj({'key':KEY,'disposition':{'enum':['carry','cancel']},'reason':{'type':'string','minLength':1,'maxLength':1000}}))})
+    'openings':rows({'oneOf':[OPENING,CLOSING]}),'items':rows(ITEM),'rollover':rows(obj({'key':KEY,'disposition':{'enum':['carry','cancel']},'reason':{'type':'string','minLength':1,'maxLength':1000}}))})
 ACTUAL=obj({'entity':KEY,'account':KEY,'currency':{'type':'string','pattern':'^[A-Z]{3}$'},'basis':{'const':'gross_cash'},'source':KEY,'transaction':KEY,'direction':{'enum':['inflow','outflow']},'amount':MONEY,'occurred_on':{'type':'string'}})
 
 def parsed(body,schema):
@@ -35,6 +45,9 @@ def scenario(body):
     if len({(i['kind'],i['source_ref'],i['original_due']) for i in v['items']})!=len(v['items']):raise ValidationError('Duplicate source occurrence across forecast assumptions')
     for o in v['openings']:
         day(o['observed_on'])
+        if o.get('contract')==OPENING_CONTRACT:
+            if any(o[k]!=v[k] for k in ['entity','currency','basis']):raise ValidationError('Opening source entity/currency/basis differs from scenario; no implicit translation')
+            day(o['boundary']['as_of']);boundary_time(o['boundary_at']);boundary_time(o['boundary']['opening_at'])
         if o['amount'] is not None:decimal(o['amount'])
     for i in v['items']:
         for k in ['expected_on','original_due']:
@@ -47,3 +60,22 @@ def actual(body):
     v=parsed(body,ACTUAL);day(v['occurred_on'])
     if v['amount'] is not None:decimal(v['amount'],positive=True)
     return v
+
+
+def boundary_time(value):
+    # Supplied explicit local boundary; do not choose a bank timezone or cutoff.
+    if not isinstance(value,str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T00:00:00[+-]\d{2}:\d{2}',value):
+        raise ValidationError('Supply an explicit offset-aware midnight boundary timestamp')
+    try:
+        result=datetime.fromisoformat(value)
+        if int(value[-2:])>59:raise ValueError()
+        return result
+    except (ValueError,TypeError):raise ValidationError('Supply an exact boundary timestamp')
+
+
+def opening_eligible(o,as_of):
+    if o.get('contract')!=OPENING_CONTRACT:return o['observed_on']==as_of
+    b=o['boundary']
+    return (b['status']=='reconciled' and b['as_of']==as_of and
+            day(o['observed_on'])+timedelta(days=1)==day(as_of) and
+            o['boundary_at']==b['opening_at'] and boundary_time(b['opening_at']).date()==day(as_of))

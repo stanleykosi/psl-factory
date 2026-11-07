@@ -126,6 +126,7 @@ class IssueTests(TestCase):
         template=register_template(self.a,self.c.pk,'Issue report',{'document_type':'status_report','required_fields':['executive_summary','status'],
             'audience_fields':{'internal':['executive_summary','status','issue_status','issue_resolution','issue_impact','scope']}},self.e['policy_decision'].pk,rev(self.c))
         s=self.issue()
+        Grant.objects.get_or_create(case=self.c,user=self.a,action='report.read')
         b=draft_period_report(self.a,self.c.pk,'internal_tuesday',timezone.now()-timedelta(days=7),timezone.now(),template.pk,'internal',rev(self.c))
         self.assertIn('ISS-001',b.version.payload['sections'][2]['text'])
         self.assertFalse(preflight(b.version))

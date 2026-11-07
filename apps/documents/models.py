@@ -44,6 +44,7 @@ class Version(AppendOnly):
     fields = models.JSONField()
     source_manifest = models.JSONField()
     baseline_manifest = models.JSONField()
+    template_current_manifest = models.JSONField(default=dict)
     payload = models.JSONField()
     payload_sha256 = models.CharField(max_length=64)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
@@ -99,3 +100,5 @@ class PublicationReceipt(AppendOnly):
 from .protection_models import PrivateProtectionPacket
 
 from .migration_models import MigrationPlan,MigrationProof,MigrationObservation,MigrationAssessment,MigrationReadinessReview,MigrationAF13Binding
+
+from .template_models import TemplateScope, TemplateClaim, TemplateClaimRetraction, TemplateResolution

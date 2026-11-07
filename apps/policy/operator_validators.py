@@ -64,17 +64,29 @@ from .factory_validators import CLOSURE_COMPONENT as FACTORY_CLOSURE,CLOSURE_SCH
 SCHEMAS[FACTORY_CLOSURE]=(FACTORY_CLOSURE_SCHEMA,FACTORY_CLOSURE_VALUE)
 from .factory_validators import GO_LIVE_COMPONENT as FACTORY_GO_LIVE,GO_LIVE_SCHEMA as FACTORY_GO_LIVE_SCHEMA,GO_LIVE_VALUE as FACTORY_GO_LIVE_VALUE
 SCHEMAS[FACTORY_GO_LIVE]=(FACTORY_GO_LIVE_SCHEMA,FACTORY_GO_LIVE_VALUE)
+from .factory_validators import BU_COMPONENT as FACTORY_BU,BU_SCHEMA as FACTORY_BU_SCHEMA,BU_VALUE as FACTORY_BU_VALUE
+SCHEMAS[FACTORY_BU]=(FACTORY_BU_SCHEMA,FACTORY_BU_VALUE)
 from .factory_validators import PAYROLL_COMPONENT as FACTORY_PAYROLL,PAYROLL_SCHEMA as FACTORY_PAYROLL_SCHEMA,PAYROLL_VALUE as FACTORY_PAYROLL_VALUE
 SCHEMAS[FACTORY_PAYROLL]=(FACTORY_PAYROLL_SCHEMA,FACTORY_PAYROLL_VALUE)
 from .factory_validators import CHANGE_COMPONENT as FACTORY_CHANGE,CHANGE_SCHEMA as FACTORY_CHANGE_SCHEMA,CHANGE_VALUE as FACTORY_CHANGE_VALUE
 SCHEMAS[FACTORY_CHANGE]=(FACTORY_CHANGE_SCHEMA,FACTORY_CHANGE_VALUE)
 from .factory_validators import SCHEDULES_COMPONENT as FACTORY_SCHEDULES,SCHEDULES_SCHEMA as FACTORY_SCHEDULES_SCHEMA,SCHEDULES_VALUE as FACTORY_SCHEDULES_VALUE
 SCHEMAS[FACTORY_SCHEDULES]=(FACTORY_SCHEDULES_SCHEMA,FACTORY_SCHEDULES_VALUE)
+from .factory_minutes_validators import COMPONENT as FACTORY_MINUTES,SCHEMA as MINUTES_SCHEMA,VALUE as MINUTES_VALUE,validate_reference as validate_minutes
+SCHEMAS[FACTORY_MINUTES]=(MINUTES_SCHEMA,MINUTES_VALUE)
 from .factory_validators import PPE_COMPONENT as FACTORY_PPE,PPE_SCHEMA as FACTORY_PPE_SCHEMA,PPE_VALUE as FACTORY_PPE_VALUE
 SCHEMAS[FACTORY_PPE]=(FACTORY_PPE_SCHEMA,FACTORY_PPE_VALUE)
+from .factory_issue_validators import COMPONENT as FACTORY_ISSUE,SCHEMA as ISSUE_SCHEMA,VALUE as ISSUE_VALUE,validate_reference as validate_issue_factory
+SCHEMAS[FACTORY_ISSUE]=(ISSUE_SCHEMA,ISSUE_VALUE)
+from .factory_escalation_validators import COMPONENT as FACTORY_ESCALATION,SCHEMA as FACTORY_ESCALATION_SCHEMA,VALUE as FACTORY_ESCALATION_VALUE,validate_reference as validate_escalation_factory
 from .factory_emergency_validators import COMPONENT as FACTORY_EMERGENCY,SCHEMA as FACTORY_EMERGENCY_SCHEMA,VALUE as FACTORY_EMERGENCY_VALUE,validate_reference as validate_emergency_factory
+SCHEMAS[FACTORY_ESCALATION]=(FACTORY_ESCALATION_SCHEMA,FACTORY_ESCALATION_VALUE)
 from .factory_reporting_validators import COMPONENT as FACTORY_REPORTING,SCHEMA as FACTORY_REPORTING_SCHEMA,VALUE as FACTORY_REPORTING_VALUE,validate_reference as validate_reporting_factory
 SCHEMAS[FACTORY_REPORTING]=(FACTORY_REPORTING_SCHEMA,FACTORY_REPORTING_VALUE)
+from .factory_leadership_validators import COMPONENT as FACTORY_LEADERSHIP,SCHEMA as FACTORY_LEADERSHIP_SCHEMA,VALUE as FACTORY_LEADERSHIP_VALUE,validate_reference as validate_leadership_factory
+SCHEMAS[FACTORY_LEADERSHIP]=(FACTORY_LEADERSHIP_SCHEMA,FACTORY_LEADERSHIP_VALUE)
+SCHEMAS['OPS.leadership_review_authority']=('schema:psl/leadership-review-authority/v1',{'type':'object','properties':{'role':{'anyOf':[{'enum':['PMO Lead','Head of PMO']},{'type':'null'}]}},'required':['role'],'additionalProperties':False})
+SCHEMAS['OPS.leadership_audience']=('schema:psl/leadership-audience/v1',{'type':'object','properties':{key:{'anyOf':[{'type':'array','items':{'type':'integer','minimum':1},'minItems':1,'uniqueItems':True},{'type':'null'}]} for key in ['internal_tuesday:internal','monthly_executive:internal','monthly_executive:management']},'required':['internal_tuesday:internal','monthly_executive:internal','monthly_executive:management'],'additionalProperties':False})
 SCHEMAS[FACTORY_EMERGENCY]=(FACTORY_EMERGENCY_SCHEMA,FACTORY_EMERGENCY_VALUE)
 SCHEMAS[FACTORY_COMMERCIAL]=(FACTORY_COMMERCIAL_SCHEMA,FACTORY_COMMERCIAL_VALUE)
 from .factory_routing_validators import COMPONENT as FACTORY_RESPONSIBILITY,SCHEMA as FACTORY_RESPONSIBILITY_SCHEMA,VALUE as FACTORY_RESPONSIBILITY_VALUE,validate_reference as validate_factory_responsibility
@@ -97,6 +109,12 @@ SCHEMAS[RFP_OUTCOME]=(RFP_OUTCOME_SCHEMA,RFP_OUTCOME_VALUE)
 from .factory_forecast_validators import COMPONENT as FACTORY_FORECAST,SCHEMA as FORECAST_SCHEMA,VALUE as FORECAST_VALUE,validate_reference as validate_forecast_factory
 SCHEMAS[FACTORY_FORECAST]=(FORECAST_SCHEMA,FORECAST_VALUE)
 
+from .factory_validators import LEDGER_COMPONENT as FACTORY_LEDGER,LEDGER_SCHEMA,LEDGER_VALUE
+SCHEMAS[FACTORY_LEDGER]=(LEDGER_SCHEMA,LEDGER_VALUE)
+
+from .factory_validators import ENGAGEMENT_COMPONENT as FACTORY_ENGAGEMENT,ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE
+SCHEMAS[FACTORY_ENGAGEMENT]=(ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE)
+
 def validate_reference(component,target,case,runtime=False):
     if component==FACTORY_FORECAST:return validate_forecast_factory(component,target,case,runtime)
     if component==RFP_OUTCOME:return validate_rfp_outcome(component,target,case,runtime)
@@ -107,9 +125,13 @@ def validate_reference(component,target,case,runtime=False):
     if component==FACTORY_ACCOUNTING:return validate_factory_accounting(component,target,case,runtime)
     if component==REVIEW_AVAILABILITY:return validate_review_availability(component,target,case,runtime)
     if component==FACTORY_RESPONSIBILITY:return validate_factory_responsibility(component,target,case,runtime)
+    if component==FACTORY_ISSUE:return validate_issue_factory(component,target,case,runtime)
+    if component==FACTORY_ESCALATION:return validate_escalation_factory(component,target,case,runtime)
+    if component==FACTORY_LEADERSHIP:return validate_leadership_factory(component,target,case,runtime)
     if component==FACTORY_REPORTING:return validate_reporting_factory(component,target,case,runtime)
     if component==FACTORY_EMERGENCY:return validate_emergency_factory(component,target,case,runtime)
-    if component in [FACTORY_SCHEDULES,FACTORY_PPE,FACTORY_PAYROLL,FACTORY,FACTORY_PLANNING,FACTORY_COMMERCIAL,FACTORY_DELIVERY,FACTORY_HYPERCARE,FACTORY_ARCHIVE,FACTORY_HANDOVER,FACTORY_CLOSURE,FACTORY_GO_LIVE,FACTORY_CHANGE]:return validate_factory(component,target,case,runtime)
+    if component==FACTORY_MINUTES:return validate_minutes(component,target,case,runtime)
+    if component in [FACTORY_LEDGER,FACTORY_BU,FACTORY_ENGAGEMENT,FACTORY_SCHEDULES,FACTORY_PPE,FACTORY_PAYROLL,FACTORY,FACTORY_PLANNING,FACTORY_COMMERCIAL,FACTORY_DELIVERY,FACTORY_HYPERCARE,FACTORY_ARCHIVE,FACTORY_HANDOVER,FACTORY_CLOSURE,FACTORY_GO_LIVE,FACTORY_CHANGE]:return validate_factory(component,target,case,runtime)
     if component==PLANNING:return validate_planning(component,target,case,runtime)
     if component==PROJECT_VIEW:return validate_project_view(component,target,case,runtime)
     if component==IDENTITY_RESOLUTION:return validate_identity_resolution(component,target,case,runtime)
@@ -125,6 +147,12 @@ def validate_reference(component,target,case,runtime=False):
     if component==APPLICATION:return validate_application(component,target,case,runtime)
     private=component==PROTECTION and target.schema_ref==PRIVATE_SCHEMA
     v=typed(target,PRIVATE_SCHEMA,PRIVATE_VALUE) if private else typed(target,*SCHEMAS[component])
+    if component=='OPS.leadership_audience':
+        for purpose, members in v.items():
+            if members is None: continue
+            audience=purpose.split(':')[1]
+            if get_user_model().objects.filter(pk__in=members,is_active=True).count()!=len(members):raise ValidationError('Purpose-specific recipients must be actual active users')
+            if any(not Grant.objects.filter(case=case,user_id=uid,action='document.receive:'+audience,active=True).exists() for uid in members):raise ValidationError('Purpose-specific recipients need current scoped audience grants')
     if private:
         from apps.workflows.private_readiness_operations import validate_policy
         validate_policy(case,v,runtime)

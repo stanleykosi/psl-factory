@@ -17,6 +17,9 @@ class PlanningFormTests(TestCase):
             'stakeholders-TOTAL_FORMS':'4','stakeholders-INITIAL_FORMS':'4','stakeholders-MIN_NUM_FORMS':'4','stakeholders-MAX_NUM_FORMS':'4',
             'questions-TOTAL_FORMS':str(max(1,len(questions))),'questions-INITIAL_FORMS':'0','questions-MIN_NUM_FORMS':'0','questions-MAX_NUM_FORMS':'100'}
         for key in ['prd_id','scope_id','engineering_estimate_id','security_estimate_id']:values['packet-'+key]=p[key] or ''
+        values.update({'correlations-TOTAL_FORMS':str(len(p['source_correlations'])),'correlations-INITIAL_FORMS':str(len(p['source_correlations'])),'correlations-MIN_NUM_FORMS':'0','correlations-MAX_NUM_FORMS':'50'})
+        for index,row in enumerate(p['source_correlations']):
+            for key,value in row.items():values[f'correlations-{index}-{key}']=value or ''
         for index,row in enumerate(p['stakeholders']):
             for key,value in row.items():values[f'stakeholders-{index}-{key}']=value or ''
         for index,row in enumerate(questions):

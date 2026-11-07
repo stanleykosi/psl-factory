@@ -11,7 +11,7 @@ from apps.core.models import Evidence
 from apps.core.services import lock_case, event
 from apps.identity.services import require
 from apps.finance import forecast
-from apps.finance.models import ForecastScenario, ForecastRun
+from apps.finance.models import ForecastItemSupport, ForecastScenario, ForecastRun
 from apps.documents.models import Template
 from apps.documents.contracts import digest
 
@@ -106,6 +106,10 @@ def investigation(actor, case, value, run_id=None):
     else:
         findings.append('Calculate the exact selected scenario using the configured native forecast method')
     p = scenario.payload
+    provenance=forecast.item_provenance(scenario)
+    rows += [x.evidence for x in ForecastItemSupport.objects.filter(root=forecast.root_of(scenario))]
+    for key,item in provenance.items():
+        if item['continued_review_required']:findings.append('Continued review uncertainty: '+key+'; human timing review is not fresh corroboration')
     repeated = bool(scenario.parent_id and scenario.parent.scenario.parent_id and any(x['disposition']=='carry' for x in p['rollover']))
     if repeated:
         findings.append('Repeated carry retains original age; Finance should reassess continuing validity. Fresh opening evidence is not renewed evidence of receipt certainty.')
@@ -122,7 +126,7 @@ def investigation(actor, case, value, run_id=None):
         'aging': aging,
         'coverage': deepcopy(p['coverage']),
         'openings': deepcopy(p['openings']),
-        'assumptions': deepcopy(p['items']),
+        'assumptions': [dict(i,provenance=provenance[i['key']]) for i in p['items']],
         'findings': findings,
         'citations': [{'id': e.pk, 'sha256': e.sha256, 'kind': e.kind} for e in rows],
         'human_waits': ['Finance verifies actuals and explicitly matches or reverses links.',

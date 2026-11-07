@@ -13,6 +13,7 @@ from apps.pmo.change_impacts import timeline_text
 from apps.pmo.reporting import draft_period_report
 from apps.documents.controlled import register_template
 from tests.helpers import rev
+from tests.signature_helpers import packet_for, reaffirm_for
 from tests import test_commercial_changes as native_tests
 from tests.test_commercial_changes import impact_fixture
 
@@ -58,8 +59,41 @@ class ChangeImpactTests(TestCase):
         with self.assertRaises(DatabaseError),transaction.atomic():
             self.cv.assessments.filter(pk=ids[0]).update(impact_details={})
         from apps.pmo.models import Baseline
+        from apps.pmo.signatures import assert_current_signed_baseline
         other=add_evidence(self.actor,self.case.pk,'plan','Changed current owner plan','synthetic:plan')
-        Baseline.objects.filter(case=self.case).update(plan=other)
+        # P20 correctly forbids changing a signed pointer without new dual proof.
+        with self.assertRaisesMessage(DatabaseError,'Separate current SOW and PRD signature consumption required'),transaction.atomic():
+            Baseline.objects.filter(case=self.case).update(plan=other)
+        self.assertEqual(Baseline.objects.get(case=self.case).plan_id,self.e['plan'].pk)
+
+        # An independent, fully approved change replaces the baseline legitimately.
+        # Keep the original request current within its own history so its later
+        # decision is rejected specifically for the stale baseline, not revision.
+        replacement=log_change(self.actor,self.case.pk,'CR-BASELINE','Normal','Delivery',
+            'Separately approved plan replacement','New baseline owner request',self.source.pk,rev(self.case))
+        for team in ['Engineering','QA','Infra','Security']:
+            assess_change(self.actor,self.case.pk,replacement.pk,team,True,True,True,self.source.pk,
+                'Owner reviewed replacement baseline',rev(self.case),**impact_fixture(team,True))
+        for role in ['Product','Engineering','Client','Engineering Lead','Security Manager']:
+            decide_change(self.actor,self.case.pk,replacement.pk,role,'approve',self.source.pk,
+                'Owner approves exact replacement assessment',rev(self.case))
+        revised=dict(self.e,plan=other)
+        for kind in ['costing','sow','signature']:
+            revised[kind]=add_evidence(self.actor,self.case.pk,kind,'Replacement '+kind,'synthetic:baseline-replacement')
+        commercial=native_tests.proposal(self.actor,self.case,revised,self.source)
+        native_tests.approvals(self.actor,self.case,commercial)
+        receipt=native_tests.delivered(self.actor,self.case,commercial,self.t)
+        response=native_tests.capture_response(self.actor,self.case.pk,commercial.pk,receipt.pk,'signed',
+            revised['signature'].pk,'Human checked exact replacement signed SOW',rev(self.case))
+        packet=packet_for(self.actor,self.case,revised,commercial)
+        authorize_change(self.actor,self.case.pk,replacement.pk,commercial.pk,rev(self.case))
+        adoption=native_tests.adopt_signed(self.actor,self.case.pk,commercial.pk,response.pk,rev(self.case))
+        self.assertEqual(adoption.before,self.cv.base_manifest)
+        self.assertEqual(adoption.after['plan_id'],other.pk)
+        self.assertEqual(assert_current_signed_baseline(self.case).pk,packet.pk)
+        self.cv.change.refresh_from_db()
+        self.assertEqual(self.cv.change.current_id,self.cv.pk)
+        self.assertEqual(list(self.cv.assessments.order_by('pk').values_list('pk',flat=True)),ids)
         with self.assertRaisesRegex(ValidationError,'active baseline'):
             decide_change(self.actor,self.case.pk,self.cv.pk,'Product','approve',self.source.pk,'Owner decision',rev(self.case))
 
@@ -136,14 +170,18 @@ class ChangeImpactTests(TestCase):
         self.assertEqual(plan['assessment_ids'],auth.assessment_ids)
         with self.assertRaisesRegex(ValidationError,'weekly client report'):execution_manifest(auth)
         # A report manifest alone cannot prove that a template displayed the impact.
-        narrow=register_template(self.actor,self.case.pk,'Synthetic narrow weekly',{'document_type':'status_report','required_fields':['executive_summary'],
-            'audience_fields':{'client':['executive_summary']}},self.e['policy_decision'].pk,rev(self.case))
+        from apps.documents.models import Template
+        # Explicit historical immutable template fixture; current registration disallows this shape.
+        narrow=Template.objects.create(case=self.case,name='Synthetic narrow weekly',version=1,created_by=self.actor,evidence=self.e['policy_decision'],
+            definition={'document_type':'status_report','required_fields':['executive_summary'],'audience_fields':{'client':['executive_summary']}})
+        from apps.identity.models import Grant
+        Grant.objects.get_or_create(case=self.case,user=self.actor,action='report.read')
         before=timezone.now()
         draft_period_report(self.actor,self.case.pk,'weekly_client',before-timedelta(days=14),before-timedelta(days=7),narrow.pk,'client',rev(self.case))
         with self.assertRaisesRegex(ValidationError,'weekly client report'):execution_manifest(auth)
         # Native report service and native manifest, not an extra report engine.
         template=register_template(self.actor,self.case.pk,'Synthetic weekly',{'document_type':'status_report','required_fields':['executive_summary','status'],
-            'audience_fields':{'client':['executive_summary','status','timeline','scope']}},self.e['policy_decision'].pk,rev(self.case))
+            'audience_fields':{'client':['executive_summary','status','timeline','scope','risks','dependencies']}},self.e['policy_decision'].pk,rev(self.case))
         now=timezone.now()
         report=draft_period_report(self.actor,self.case.pk,'weekly_client',now-timedelta(days=7),now,template.pk,'client',rev(self.case))
         texts='\n'.join(s['text'] for s in report.version.payload['sections'])
@@ -234,8 +272,10 @@ class ChangeImpactTests(TestCase):
         for role in ['Product','Engineering','Client','Engineering Lead','Security Manager']:
             decide_change(self.actor,self.case.pk,self.cv.pk,role,'approve',self.source.pk,'Owner decision',rev(self.case))
         auth=authorize_change(self.actor,self.case.pk,self.cv.pk,None,rev(self.case))
-        template=register_template(self.actor,self.case.pk,'Narrow notice',{'document_type':'project_artifact','required_fields':['executive_summary','status'],
-            'audience_fields':{'client':['executive_summary','status']}},self.e['policy_decision'].pk,rev(self.case))
+        from apps.documents.models import Template
+        # Explicit historical immutable template fixture; current registration disallows this shape.
+        template=Template.objects.create(case=self.case,name='Narrow notice',version=1,created_by=self.actor,evidence=self.e['policy_decision'],
+            definition={'document_type':'project_artifact','required_fields':['executive_summary','status'],'audience_fields':{'client':['executive_summary','status']}})
         with self.assertRaisesRegex(ValidationError,'notice template must display'):
             draft_change_document(self.actor,self.case.pk,auth.pk,template.pk,'notice',rev(self.case))
         # Existing historical narrow binding still cannot pass current publication preflight.
@@ -251,6 +291,9 @@ class ProductionChangeImpactTests(delivery_tests.DeliveryFixture,TestCase):
 
     def setUp(self):
         self.setup_delivery();native_tests.change_roles(self.actor,self.case,self.e['policy_decision'])
+        # Expanded role configuration needs a current human attestation of the
+        # original exact signatures, not a bypass of P20 release assurance.
+        reaffirm_for(self.actor,self.case)
         self.change_source=add_evidence(self.actor,self.case.pk,'change_request','Synthetic production change','synthetic:production-change')
         self.cv=log_change(self.actor,self.case.pk,'CR-001','Normal','Delivery','Approved production scope','Owner request',self.change_source.pk,rev(self.case))
 

@@ -39,6 +39,8 @@ class ApplicationTests(TestCase):
         for role in ['PM','Head of PMO','CEO','PMO Lead']:
             response=self.client.post(url,{'action':'decide','role':role,'revision':rev(self.case)})
             self.assertEqual(response.status_code,302)
+        from tests.signature_helpers import packet_for
+        packet_for(self.actor, self.case, e)
         self.assertEqual(self.client.post(url,{'action':'sign','evidence':e['signature'].pk,'revision':rev(self.case)}).status_code,302)
         self.assertEqual(self.client.post(url,{'action':'complete','name':'Delivery A','evidence':e['completion'].pk,'revision':rev(self.case)}).status_code,302)
         job=Outbox.objects.get()
@@ -64,6 +66,8 @@ class ApplicationTests(TestCase):
         for role in ['PM','Head of PMO','CEO']: decide(self.actor,self.case.pk,role,rev(self.case))
         with self.assertRaises(ValidationError): sign_baseline(self.actor,self.case.pk,e['signature'].pk,rev(self.case))
         decide(self.actor,self.case.pk,'PMO Lead',rev(self.case))
+        from tests.signature_helpers import packet_for
+        packet_for(self.actor, self.case, e)
         sign_baseline(self.actor,self.case.pk,e['signature'].pk,rev(self.case))
 
     def test_cost_revision_cannot_reuse_decisions(self):
@@ -128,13 +132,13 @@ class ApplicationTests(TestCase):
         self.assertEqual(resolve(config.component,self.case).status,'EXPIRED')
 
     def test_all_components_accept_drafts_and_reject_invalid_activation(self):
-        self.assertEqual(len(components()),134) # Original57 plus77 supplemental interfaces; nominations confer no approval authority.
+        self.assertEqual(len(components()),155) # Accepted154 interfaces plus the explicit Q09 signature contract; no appointment is inferred.
         for key in components():
             with self.subTest(component=key):
                 self.assertEqual(resolve(key,self.case).status,'MISSING')
                 draft=save_draft(self.actor,self.case.pk,{'component_id':key,'value':None})
                 with self.assertRaises(ValidationError): transition(self.actor,draft.pk,'validated')
-        self.assertEqual(Configuration.objects.count(),134)
+        self.assertEqual(Configuration.objects.count(),155)
 
     def test_role_text_and_admin_cannot_forge_approval(self):
         e=project_evidence(self.actor,self.case)
@@ -156,6 +160,8 @@ class ApplicationTests(TestCase):
         activate(self.actor,self.case,old.component,old.envelope['value'],e['policy_decision'])
         with self.assertRaises(ValidationError): sign_baseline(self.actor,self.case.pk,e['signature'].pk,rev(self.case))
         for role in ['PM','Head of PMO','CEO','PMO Lead']: decide(self.actor,self.case.pk,role,rev(self.case))
+        from tests.signature_helpers import packet_for
+        packet_for(self.actor, self.case, e)
         sign_baseline(self.actor,self.case.pk,e['signature'].pk,rev(self.case))
         self.assertEqual(Decision.objects.count(),8)
 
@@ -285,6 +291,8 @@ class WorkerConcurrencyTests(TransactionTestCase):
         client=Client();client.force_login(actor);url=f'/cases/{case.pk}/'
         for role in ['PM','Head of PMO','CEO','PMO Lead']:
             self.assertEqual(client.post(url,{'action':'decide','role':role,'revision':rev(case)}).status_code,302)
+        from tests.signature_helpers import packet_for
+        packet_for(actor, case, e)
         self.assertEqual(client.post(url,{'action':'sign','evidence':e['signature'].pk,'revision':rev(case)}).status_code,302)
         self.assertEqual(client.post(url,{'action':'complete','name':'Process restart','evidence':e['completion'].pk,'revision':rev(case)}).status_code,302)
         env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])

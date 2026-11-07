@@ -1,6 +1,7 @@
 from django import forms
+from django.db.models import OuterRef,Subquery
 from apps.documents.models import Template
-from apps.policy.models import Configuration
+from apps.policy.models import Configuration,PolicyState
 from apps.policy.document_validators import ROLES
 from apps.policy.finance_drafts import SCHEMAS,EXTRA
 from .models import FinancialImport,FinanceSource,FinanceRun,FinanceAdjustment
@@ -29,6 +30,10 @@ def commands(case,data=None):
         'adjust':('Capture reporting adjustment',{'source':src(),'reference':forms.CharField(max_length=100),'kind':choice(['additive','reclassification']),
             'lines':js('Array of {account, amount}; exact decimal strings, reporting only. Reclassification must conserve the total.'),'evidence':evidence(['finance_adjustment']),'note':forms.CharField(max_length=4000)}),
         'map':('Build mapping preview',{'source':src(),'adjustments':forms.ModelMultipleChoiceField(FinanceAdjustment.objects.filter(source__case=case),required=False)}),
+        'diagnose_mapping':('Investigate draft mapping exceptions',{'source':src(),
+            'configuration':forms.ModelChoiceField(Configuration.objects.filter(case=case,component='D06.account_bu_maps').annotate(
+                current_lifecycle=Subquery(PolicyState.objects.filter(configuration_id=OuterRef('pk')).order_by('-pk').values('state')[:1])).filter(current_lifecycle='draft'),
+                help_text='Select an exact DRAFT version. Read-only diagnostic, not an approved mapping or Finance output.')}),
         'allocate':('Build BU allocation preview',{'parent':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind='mapping')),
             'metrics':forms.MultipleChoiceField(choices=[(v,v) for v in ['revenue','direct_cost','staff_cost','opex','other']])}),
         'calculate':('Calculate configured metrics',{'parent':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind__in=['mapping','allocation']))}),

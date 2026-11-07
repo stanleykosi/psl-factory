@@ -22,6 +22,8 @@ class CostingTests(TestCase):
         prepare_baseline(f['actor'],c.pk,s['plan'].pk,b.costing_id,s['sow'].pk,rev(c))
         with self.assertRaises(ValidationError):sign_baseline(f['actor'],c.pk,s['signature'].pk,rev(c))
         for role in ['PM','Head of PMO','CEO','PMO Lead']:decide(f['actor'],c.pk,role,rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(f['actor'], c, s)
         sign_baseline(f['actor'],c.pk,s['signature'].pk,rev(c));p=package(f);d.bind_af13(f['actor'],c.pk,r.pk,p.pk);self.assertEqual(d.package_readiness(p,f['owner'])['status'],'local_rule_oracle_verified');self.assertFalse(r.result['native_workbook_verified'])
     def test_missing_policy_holds_only_calculation_and_legacy_costing_continues(self):
         f=self.f;transition(f['actor'],f['policy'].pk,'revoked');s=f['sources']
@@ -80,7 +82,7 @@ class CostingTests(TestCase):
     def test_withdrawal_does_not_erase_proven_historical_calculation(self):
         f=self.f;r=run(f);review(f,f['oracle'],verdict='withdraw',key='withdraw-independent');self.assertEqual(CostingRun.objects.count(),1);self.assertFalse(d.report(f['actor'],f['case'].pk,r.pk)['current_usable'])
     def test_scoped_ui_report_and_private_source_guards(self):
-        f=self.f;r=run(f);self.client.force_login(f['actor']);base=f"/cases/{f['case'].pk}/costing/";self.assertContains(self.client.get(base),'Commercial costing rules and independent oracles');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,200)
+        f=self.f;r=run(f);self.client.force_login(f['actor']);base=f"/cases/{f['case'].pk}/costing/";self.assertContains(self.client.get(base),'Commercial costing rules and independent reference examples');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,200)
         Grant.objects.filter(case=f['case'],user=f['actor']).exclude(action__in=['case.read','costing.read']).update(active=False);self.assertContains(self.client.get(base),'Read-only access.');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,403);value=self.client.get(base+f'report/{r.pk}/').json();self.assertNotIn('result',value);self.assertNotIn('inputs',value)
     def test_agents_and_generic_readers_cannot_repackage_private_costing(self):
         f=self.f;run(f);agent=investigate(f['actor'],f['case'].pk);self.assertFalse(agent.result['source_body_read']);self.assertFalse(agent.result['expected_outputs_generated'])

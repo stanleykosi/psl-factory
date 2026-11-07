@@ -25,7 +25,7 @@ from tests.document_helpers import artifact
 class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
     def setUp(self):
         super().setUp()
-        self.template=register_template(self.actor,self.case.pk,'Emergency retrospective report',{'document_type':'project_artifact','required_fields':['executive_summary','status'],'audience_fields':{'client':['executive_summary','status','next_steps'],'internal':['executive_summary','status','next_steps']}},self.e['policy_decision'].pk,rev(self.case))
+        self.template=register_template(self.actor,self.case.pk,'Emergency retrospective report',{'document_type':'project_artifact','required_fields':['executive_summary','status'],'audience_fields':{'client': ['executive_summary', 'status', 'next_steps', 'scope', 'timeline', 'risks', 'dependencies'],'internal':['executive_summary','status','next_steps']}},self.e['policy_decision'].pk,rev(self.case))
         artifact(self.actor,self.case,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',{'template_ids':[self.template.pk],'repository':'internal-versioned','retention_days':30},self.e['policy_decision'])
         value=json.loads(Path('fixtures/factory-emergency.json').read_text());value.pop('classification');value.update(preparer_id=self.actor.pk,executor_id=self.actor.pk)
         config=draft_operator_policy(self.actor,self.case.pk,'OPS.factory_emergency_execution',value,self.e['policy_decision'].pk,timezone.now())

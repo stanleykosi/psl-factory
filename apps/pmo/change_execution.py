@@ -12,6 +12,15 @@ from .services import subject
 
 
 def validate_authorization(case, authorization):
+    from .models import Baseline
+    from .signatures import assert_current_signed_baseline
+    if Baseline.objects.filter(case=case,signed__isnull=False).exists():
+        assert_current_signed_baseline(case)
+    else:
+        from .models import BaselineSignatureExemption
+        if BaselineSignatureExemption.objects.filter(case=case).exists():
+            from .signature_exemptions import assert_current_baseline_assurance
+            assert_current_baseline_assurance(case)
     adopted = BaselineAdoption.objects.filter(revision_id=authorization.commercial_id).first() if authorization.commercial_id else None
     from .recoveries import active_recovery
     recovered=active_recovery(case,'signed_adoption',adopted.pk) if adopted else None
@@ -99,6 +108,8 @@ def draft_change_document(actor,case_id,authorization_id,template_id,purpose,exp
     if purpose=='go_live':
         fields['status']={'text':'Completed implementation and validated testing recorded for '+v.change.reference+'. Capture PM and Client acceptance of this exact version.',
             'evidence_ids':sorted(set(auth.execution.filter(pk__in=execution_ids).values_list('evidence_id',flat=True)))}
+    from apps.documents.pmo_sections import complete_native_client_sections
+    fields = complete_native_client_sections(fields, audience, [v.evidence_id])
     if v.evidence.source=='psl:p56-confirmed-request/v1':
         from apps.identity.services import require
         from apps.documents.controlled import _create_version

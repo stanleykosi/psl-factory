@@ -94,6 +94,8 @@ def deliver_internal(job_id,fence):
         scope=publication_scope(p.actor,case,p.version,p.factory_work_id)
         if scope['factory_policy_id']!=p.factory_policy_id or scope['factory_source_id']!=p.factory_source_id:raise ValidationError('Factory profile or commercial source changed before publication')
     version=current_version(case,p.version_id)
+    from apps.pmo.leadership_reporting import binding_access
+    binding_access(p.actor,version)
     from apps.pmo.rfp_documents import sender,dispatch_requirements
     sender(p.actor,version)
     dispatch_requirements(version)
@@ -114,11 +116,12 @@ def deliver_internal(job_id,fence):
 def receipt_only_recovery(publication):
     """Recovery contract from immutable native bindings, never request payload."""
     if publication.factory_work_id and publication.factory_work.definition in {
-        'pmo-escalation/v1','pmo-weekly-report/v1','pmo-minutes/v1'}:
+        'pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','pmo-minutes/v1'}:
         return True
     # Only the selected-facts weekly client mode opts unbound native reports in.
     # Mutable period-root fields must not erase an uncertain original's protection.
     from apps.pmo.models import MinutesReportBinding
+    if MinutesReportBinding.objects.filter(version_id=publication.version_id,manifest__source_mode='leadership_selected_facts/v1').exists():return True
     return publication.version.audience=='client' and MinutesReportBinding.objects.filter(
         version_id=publication.version_id,report_id__isnull=False,
         manifest__source_mode='weekly_client_facts/v1').exists()
@@ -184,6 +187,8 @@ def operate_publication(actor,case_id,job_id,action,reason,expected):
             raise ValidationError('Only held jobs need operator retry; unknown jobs reconcile through the worker')
         p=job.publication
         version=current_version(case,p.version_id)
+        from apps.pmo.leadership_reporting import binding_access
+        binding_access(p.actor,version)
         from apps.pmo.rfp_documents import dispatch_requirements
         dispatch_requirements(version)
         validate_review(case,version)

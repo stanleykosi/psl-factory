@@ -154,3 +154,51 @@ class ScheduleInventoryTests(TestCase):
  def test_another_schedule_cannot_reuse_equity_acceptance(self):
   f=self.f;body=accepted_equity(f);body['schedules'][0]['key']='different-schedule'
   with self.assertRaises(ValidationError):inventory(f,body)
+
+
+class CostOfSalesExactCatalogueTests(TestCase):
+ def test_cost_of_sales_explicit_conversion__F15_N02(self):
+  """Supplied cells/units, not XLSX execution or a PSL mapping oracle.
+
+  TST is the schema-compatible spelling of catalogue TEST. The mapping
+  storage unit major_currency is explicitly an alias for TEST note-units in
+  this fixture; it does not prove general typed note-unit ingestion.
+  """
+  from datetime import timedelta
+  from apps.core.services import add_evidence
+  from apps.finance.services import capture_import,validate_import
+  from .finance_analysis_helpers import policy as finance_policy
+  f=fixture();a,c=f['actor'],f['case']
+  supplied={'fixture_scope':'synthetic_test','workbook':'PSL MGT.ACCOUNT AS AT SEP 2026.xlsx',
+   'workbook_version':'synthetic-F15-N02-v1','sheet':'Notes 1-4','cell':'G18',
+   'value':'3','source_unit':'TEST note-units','stored_unit_alias':'major_currency',
+   'target_sheet':'BU M-o-M','target_cell':'J5','target_unit':'TEST detailed-units',
+   'classification':'cost_of_sales','factor':'1000','native_workbook_verified':False}
+  workbook=add_evidence(a,c.pk,'finance_source',json.dumps(supplied,sort_keys=True),'synthetic:F15-N02:external-workbook-v1')
+  finance_policy(a,c,'D06.unit_sign_currency_period',dict(f['base']['conventions'],currency='TST'),f['e']['policy_decision'])
+  maps=[dict(f['base']['mapping'][1],key='G18-cost-of-sales',account='G18',report_line='cost_of_sales',treatment='company',bu=None,pool=None)]
+  cfg=finance_policy(a,c,'D06.account_bu_maps',maps,f['e']['policy_decision'])
+  analysis.review(a,c.pk,'mapping',cfg.pk,'Finance','approve',f['e']['finance_review'].pk,'Synthetic G18 cost classification, never revenue',rev(c))
+  raw=add_evidence(a,c.pk,'financial_input','account,amount,currency,period\nG18,3,TST,2026-10\n','synthetic:F15-N02:external-workbook-v1:Notes-1-4:G18')
+  batch=capture_import(a,c.pk,raw.pk,rev(c));validate_import(a,c.pk,batch.pk,rev(c))
+  source=analysis.capture_source(a,c.pk,batch.pk,'synthetic-company','accrual',timezone.now()-timedelta(minutes=1),'complete','3',workbook.pk,rev(c))
+  analysis.review(a,c.pk,'source',source.pk,'Finance','approve',f['e']['finance_review'].pk,'Synthetic supplied workbook/version and note unit alias',rev(c))
+  parent=analysis.map_source(a,c.pk,source.pk,[],rev(c));f['parent']=parent
+  rule=dict(f['values']['income_rule'],currency='TST',report_line='cost_of_sales',target_unit='TEST_detailed_units',factor='1000',oracles=[{'input':'3','expected':'3000'},{'input':None,'expected':None}])
+  policy(f,INCOME,rule)
+  cell={'key':'J5','relationship':'disaggregation','amount':'3000','unit':'TEST_detailed_units','source_accounts':['G18'],'evidence_id':workbook.pk,'duplicate_state':'already_represented','duplicate_resolution_evidence_id':None,'adjustment_lines':[]}
+  body=dict(f['values']['detail'],currency='TST',report_line='cost_of_sales',target_unit='TEST_detailed_units',rows=[cell])
+  detail_source=evidence(f,'income_detail',json.dumps(supplied,sort_keys=True))
+  w=d.prepare(a,c.pk,'income','F15-N02-J5',parent.pk,body,detail_source.pk,rev(c));review(f,w)
+  self.assertEqual(connection.vendor,'postgresql')
+  self.assertEqual(parent.result['status'],'complete')
+  self.assertEqual([(r['account'],r['amount'],r['report_line'],r['metric']) for r in parent.result['rows']],[('G18','3','cost_of_sales','direct_cost')])
+  self.assertNotIn('revenue',{r['report_line'] for r in parent.result['rows']})
+  self.assertEqual((w.result['status'],w.result['parent_amount'],w.result['factor'],w.result['converted_parent'],w.result['adjusted_total']),('ready','3','1000','3000','3000'))
+  self.assertEqual((w.result['report_line'],w.result['target_unit']),('cost_of_sales','TEST_detailed_units'))
+  self.assertEqual((w.result['rows'][0]['key'],w.result['rows'][0]['amount']),('J5','3000'))
+  self.assertEqual((w.parent_id,w.evidence_id,w.result['rows'][0]['evidence_id']),(parent.pk,detail_source.pk,workbook.pk))
+  self.assertEqual((parent.source_id,parent.result['rows'][0]['source_evidence']),(source.pk,raw.pk))
+  self.assertEqual(json.loads(w.evidence.body),supplied)
+  self.assertEqual(json.loads(parent.source.evidence.body),supplied)
+  self.assertFalse(w.result['ledger_posted']);self.assertFalse(w.result['source_written'])

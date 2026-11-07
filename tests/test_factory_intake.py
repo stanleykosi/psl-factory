@@ -7,10 +7,24 @@ from apps.workflows.factory_views import intake_options
 from tests.helpers import setup_case
 
 
+# Independently enumerated accepted intake paths, not derived from INTAKES.
+EXPECTED_DEFINITIONS={
+    'finance-bu/v1','finance-ledger/v1',
+    'pmo-weekly-report/v1','pmo-escalation/v1','pmo-minutes/v1',
+    'engagement/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1',
+    'finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1',
+    'finance-accounts/v1','planning/v1','commercial/v1','delivery-release/v1',
+    'delivery-hypercare/v1','delivery-go-live/v1','delivery-archive/v1',
+    'delivery-handover/v1','delivery-closure/v1','pmo-finance/v1',
+}
+
+
 class FactoryIntakeTests(TestCase):
     def test_current_same_project_grants_drive_discovery_and_no_cross_project_union(self):
         actor,case=setup_case(username='synthetic-intake');self.client.force_login(actor)
-        self.assertEqual(len(intake_options(actor)),10)
+        self.assertEqual({row['definition'] for row in intake_options(actor)},EXPECTED_DEFINITIONS-{'pmo-weekly-report/v1'})
+        Grant.objects.create(user=actor,case=case,action='report.read')
+        self.assertEqual({row['definition'] for row in intake_options(actor)},EXPECTED_DEFINITIONS)
         Grant.objects.filter(user=actor).update(active=False)
         other=Case.objects.create(tenant='other-tenant',title='Private other project',kind='project',synthetic=True)
         Grant.objects.update_or_create(user=actor,case=case,action='factory.start',defaults={'active':True})
@@ -27,13 +41,14 @@ class FactoryIntakeTests(TestCase):
 
     def test_queue_has_one_context_preserving_start_action_and_chooser_reuses_native_forms(self):
         actor,case=setup_case(username='synthetic-intake-layout');self.client.force_login(actor)
+        Grant.objects.create(user=actor,case=case,action='report.read')
         page=self.client.get(reverse('home'),{'queue':'active','q':'<script>& project'})
         self.assertContains(page,'Start work',count=1);self.assertNotContains(page,'Start planning work')
         self.assertContains(page,reverse('factory_intake')+'?queue=active&amp;q=%3Cscript%3E%26%20project')
         page=self.client.get(reverse('factory_intake'),{'queue':'active','q':'<script>& project'})
         self.assertContains(page,'What needs to move forward?');self.assertNotContains(page,'<script>')
         self.assertNotContains(page,'Factory intake');self.assertContains(page,'studio.css?v=4')
-        self.assertEqual(len(page.context['options']),10)
+        self.assertEqual({row['definition'] for row in page.context['options']},EXPECTED_DEFINITIONS)
         for option in page.context['options']:
             form=self.client.get(reverse('factory_create'),{'definition':option['definition']})
             self.assertEqual(form.status_code,200)

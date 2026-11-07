@@ -15,11 +15,27 @@ VALUE=obj({'entity':KEY,'period':PERIOD,'accounting_basis':{'type':'string','min
     'inputs':rows(LINE),'oracle_evidence_id':{'anyOf':[ID,{'type':'null'}]}})
 
 def validate_reference(target,case):
-    value=typed(target,'schema:psl/finance-statement/v1',VALUE)
+    v3=target.schema_ref=='schema:psl/finance-statement/v3'
+    v2=v3 or target.schema_ref=='schema:psl/finance-statement/v2'
+    if v2:
+        from .statement_completeness import CONTRACT
+        schema=obj(dict(VALUE['properties'],completeness={'anyOf':[CONTRACT,{'type':'null'}]}))
+    else:schema=VALUE
+    if v3:
+        from .statement_ppe import PPE_LINE
+        schema=obj(dict(schema['properties'],inputs=rows({'anyOf':[LINE,PPE_LINE]})))
+    value=typed(target,'schema:psl/finance-statement/v3' if v3 else 'schema:psl/finance-statement/v2' if v2 else 'schema:psl/finance-statement/v1',schema)
+    if v2:
+        from .statement_completeness import validate
+        validate(value,case)
     if len({r['destination'] for r in value['inputs']})!=len(value['inputs']):
         raise ValidationError('Statement destinations must be unique')
     from apps.finance.models import FinanceRun,FinanceReview
     for row in value['inputs']:
+        if row.get('source_type')=='ppe_schedule':
+            from .statement_ppe import validate_binding
+            validate_binding(row,case,value)
+            continue
         if not FinanceRun.objects.filter(pk=row['source_run'],case=case,kind='formula').exists():
             raise ValidationError('Statement inputs must identify exact same-case native formula outputs')
         if not FinanceReview.objects.filter(pk=row['source_review'],case=case,run_id=row['source_run'],purpose='output').exists():

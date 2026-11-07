@@ -23,6 +23,7 @@ def workbench(request,case_id):
             if not f or not f.is_valid():raise ValidationError(f.errors.as_text() if f else 'Select a forecast action')
             d=f.cleaned_data;a=request.user;c=case.pk;v=d['revision'];action=d['action']
             if action=='capture':forecast.capture(a,c,d['reference'],d['evidence'].pk,d['reason'],v,d['parent'].pk if d['parent'] else None)
+            elif action=='support':forecast.record_support(a,c,d['scenario'].pk,d['item_key'],d['previous'].pk if d['previous'] else None,d['evidence'].pk,d['mode'],d['uncertainty'],d['observed_on'],d['role'],d['reason'],v)
             elif action=='prepare':forecast.prepare(a,c,d['scenario'].pk,v)
             elif action=='review':forecast.review(a,c,d['run'].pk,d['role'],d['verdict'],d['evidence'].pk,d['reason'],v)
             elif action=='actual':forecast.capture_actual(a,c,d['evidence'].pk,v,d['lot'].pk if d['lot'] else None)
@@ -47,6 +48,7 @@ def workbench(request,case_id):
     runs=list(ForecastRun.objects.filter(case=case).order_by('-pk')[:20])
     for r in runs:
         r.findings=[]
+        r.continuation=forecast.continuation_summary([{'provenance':p} for p in forecast.item_provenance(r.scenario).values()])
         try:forecast.ensure_current(r);r.current=True
         except (ValidationError,PermissionDenied) as exc:r.current=False;r.findings=getattr(exc,'messages',[str(exc)])
         r.approved=False

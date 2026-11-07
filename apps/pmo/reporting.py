@@ -16,6 +16,9 @@ def meeting_manifest(meeting):
 
 def binding_manifest(binding):
     if binding.meeting_id:return meeting_manifest(binding.meeting)
+    if binding.manifest.get('source_mode')=='leadership_selected_facts/v1':
+        from .leadership_reporting import current_manifest
+        return current_manifest(binding)
     report=binding.report
     adapter=LocalPMOReportingAdapter()
     read=adapter.read_client_facts if binding.manifest.get('source_mode')=='weekly_client_facts/v1' else adapter.read
@@ -33,10 +36,16 @@ def action_line(item):
     return f'{item.reference}: {state.description} · {state.status} · {owner} · {due}'
 
 
+CLIENT_SCOPE_COVERAGE = 'Unknown: approved project scope is not established by this selected local weekly PMO fact set. This report does not amend scope.'
+CLIENT_DEPENDENCY_COVERAGE = 'Unknown: project dependencies are not established by this selected weekly fact and narrative set. Obtain current dependency evidence; no absence of dependencies is implied.'
+
+
 def fields_for(template,audience,values,evidence_id):
     allowed=template.definition['audience_fields'].get(audience)
     if not allowed:raise ValidationError('Template does not support the intended audience')
-    return {key:{'text':values[key],'evidence_ids':[evidence_id]} for key in allowed if key in values}
+    from apps.documents.pmo_sections import complete_native_client_sections
+    fields = {key:{'text':values[key],'evidence_ids':[evidence_id]} for key in allowed if key in values}
+    return complete_native_client_sections(fields, audience, [evidence_id])
 
 
 @transaction.atomic
@@ -48,7 +57,7 @@ def draft_minutes(actor,case_id,meeting_id,template_id,audience,expected):
     current=meeting.current;actions=list(meeting_actions(meeting))
     decisions='\n'.join(d['text']+(f" [change evidence #{d['change_evidence_id']}]" if d.get('change_evidence_id') else '') for d in current.decisions) or 'No decisions recorded'
     lines='\n'.join(action_line(item) for item in actions) or 'No action commitments recorded'
-    values={'executive_summary':current.summary,'scope':'Meeting statements and change references do not amend the signed baseline.',
+    values={'executive_summary':'Purpose: '+current.purpose+'\n'+current.summary,'scope':'Meeting statements and change references do not amend the signed baseline.',
         'status':f'Meeting {meeting.reference}, revision {current.number}, at {current.occurred_at.isoformat()}',
         'participants':', '.join(f'Participant reference #{pk}' for pk in current.participant_ids) or 'Participants not yet mapped',
         'decisions':decisions,'actions':lines,'owners':'\n'.join(f'{a.reference}: '+(f'Owner reference #{a.current.owner_id}' if a.current.owner_id else 'Unassigned') for a in actions) or 'No action owners recorded',
@@ -78,14 +87,16 @@ def draft_period_report(actor,case_id,kind,start_at,end_at,template_id,audience,
     if type(client_safe) is not bool:raise ValidationError('Explicit client projection mode required')
     if client_safe:
         if reuse_existing:raise ValidationError('Client-safe reports need explicit content-bound revision; scheduled reuse is preparation-only')
-        required={'executive_summary','status','risks','timeline','next_steps'}
+        required={'executive_summary','scope','status','risks','timeline','dependencies','next_steps'}
         if kind!='weekly_client' or audience!='client' or not required.issubset(template.definition['required_fields']) or set(template.definition['audience_fields'].get('client',[]))!=required:
-            raise ValidationError('Weekly client projection requires exactly summary, progress, risks, milestones/timeline and next steps')
+            raise ValidationError('Weekly client projection requires summary, scope, progress, risks, milestones/timeline, dependencies and next steps')
     as_of=timezone.now()
     adapter=LocalPMOReportingAdapter()
     snapshot=(adapter.read_client_facts if client_safe else adapter.read)(case,start_at,end_at,as_of)
+    # Legacy/manual and scheduled drafts copy the same protected source domains.
+    # Authorize before report creation, snapshot evidence, or scheduled reuse.
+    report_source_access(actor,case,snapshot['manifest'])
     if client_safe:
-        report_source_access(actor,case,snapshot['manifest'])
         content,client_sections=client_content(case,snapshot,client_content_id)
         snapshot['manifest']=client_manifest(snapshot,content)
     report,created=PeriodReport.objects.get_or_create(case=case,kind=kind,start_at=start_at,end_at=end_at,audience=audience)
@@ -122,7 +133,16 @@ def draft_period_report(actor,case_id,kind,start_at,end_at,template_id,audience,
     case.refresh_from_db()
     title='Report: '+kind+' · '+start_at.isoformat()+' / '+end_at.isoformat()
     if client_safe and report.document_id:title=report.document.title
-    fields=fields_for(template,audience,values,evidence.pk)
+    projected_values = values
+    if audience == 'client' and not client_safe:
+        # P52 makes scope/risks/dependencies mandatory, but must not expose the
+        # legacy internal change descriptions or action references merely by
+        # adding headings to a previously narrow client template. Retain the
+        # existing explicit approved change timeline, not raw scope prose.
+        safe = client_safe_values(snapshot, start_at, end_at, as_of)
+        projected_values = dict(values, scope=CLIENT_SCOPE_COVERAGE,
+                                dependencies=CLIENT_DEPENDENCY_COVERAGE, risks=safe['risks'])
+    fields=fields_for(template,audience,projected_values,evidence.pk)
     if client_safe:
         # Inventory and narrative citations were authorized above. Only this freshly
         # generated projection crosses the private storage primitive, never caller IDs.
@@ -142,6 +162,8 @@ def client_safe_values(snapshot,start_at,end_at,as_of):
     unassigned=sum(a.current.owner_id is None for a in opened);undated=sum(a.current.due_at is None for a in opened)
     issues=snapshot['issues'];unresolved=sum(i.current.status in ['Open','In Progress'] for i in issues)
     return {
+        'scope': CLIENT_SCOPE_COVERAGE,
+        'dependencies': CLIENT_DEPENDENCY_COVERAGE,
         'executive_summary':f'Weekly client report for {start_at.isoformat()} to {end_at.isoformat()}. Prepared as of {as_of.isoformat()}. This is partial local coverage of selected meeting, action, milestone, issue and change facts only. Delivery/RFP/escalation histories, change-approval timelines, Engineering, Security, Finance and external-system reporting are not included.',
         'status':f'Progress evidence: {len(snapshot["milestones"])} milestone completions recorded during this period. Current local records contain {len(opened)} open commitments and {unresolved} unresolved issues. These counts do not establish overall project completion or delivery health.',
         'risks':f'Attention in the recorded commitment set: {overdue} explicit deadlines are overdue at preparation, {unassigned} owners are unassigned and {undated} deadlines are unknown. Project risks and unprovided source updates remain unassessed; this is not a complete risk assessment.',

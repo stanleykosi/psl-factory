@@ -28,7 +28,7 @@ PROTOCOL='factory-weekly-report-intake/v1'
 ID={'anyOf':[{'type':'integer','minimum':1,'maximum':9223372036854775807},{'type':'null'}]}
 INPUT={'type':'object','properties':{'template_id':ID,'content_id':ID,'start_at':{'type':'string','maxLength':64},'end_at':{'type':'string','maxLength':64}},'required':['template_id','content_id','start_at','end_at'],'additionalProperties':False}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'inputs':INPUT,'manifest':{'type':'object'},'captured_at':{'type':'string'}},'required':['protocol','inputs','manifest','captured_at'],'additionalProperties':False}
-SECTIONS={'executive_summary','status','risks','timeline','next_steps'}
+SECTIONS={'executive_summary','scope','status','risks','timeline','dependencies','next_steps'}
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
 
@@ -114,6 +114,10 @@ def bound_document(work,actor=None):
     content,sections=client_content(work.case,inventory(actor or work.actor,work.case,data['inputs']),data['inputs']['content_id'])
     projection=Evidence.objects.filter(case=work.case,pk__in=[x['id'] for x in v.source_manifest],kind='ops_client_report_projection',source='psl:weekly-client-projection:'+str(b.report_id),created_by_id=v.created_by_id).first()
     if not projection or len(v.source_manifest)!=1 or any(x['evidence_ids']!=[projection.pk] for x in v.fields.values()) or any(v.fields.get(k,{}).get('text')!=x['text'] for k,x in sections.items()):raise ValidationError('Exact substantive narrative, private native citations and generated-only outward projection required')
+    from apps.pmo.reporting import CLIENT_SCOPE_COVERAGE, CLIENT_DEPENDENCY_COVERAGE
+    for key, text in [('scope', CLIENT_SCOPE_COVERAGE), ('dependencies', CLIENT_DEPENDENCY_COVERAGE)]:
+        if v.fields.get(key, {}).get('text') != text or not any(s['heading'] == key and s['text'] == text for s in v.payload['sections']):
+            raise ValidationError('Exact generated client scope and dependency coverage statements required')
     current_version(work.case,v.pk);return data,v,b
 
 def published(work,actor=None):

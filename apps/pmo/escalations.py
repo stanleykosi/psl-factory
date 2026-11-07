@@ -35,6 +35,8 @@ def current_profile(case,pk):
     p=EscalationProfile.objects.select_related('state__issue').filter(pk=pk,state__issue__case=case).first()
     if not p or p.state.issue.current_id!=p.state_id or EscalationProfile.objects.filter(state__issue=p.state.issue).order_by('-pk').first().pk!=p.pk:
         raise ValidationError('Issue or escalation facts changed; capture a current source-bound profile')
+    from .progress import validate_profile_origin
+    validate_profile_origin(p)
     return p
 
 

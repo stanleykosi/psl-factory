@@ -58,6 +58,8 @@ class FactoryGoLiveDistinctAuthorityTests(TestCase):
         ref=register_reference(f.actor,f.case.pk,'go-live:attesting-pm','schema:psl/role-assignment/v1',
             {'role':'PM','user_id':pm.pk},f.e['policy_decision'].pk)
         activate(f.actor,f.case,'D05.role_principal_assignments',['role:0','role:1','role:2','role:3',ref.ref],f.e['policy_decision'])
+        from tests.signature_helpers import reaffirm_for
+        reaffirm_for(f.actor, f.case)  # Explicit current baseline proof after synthetic role re-rostering.
         f.release();f=setup(base=f);factory.run_until_wait(f.work.pk);review(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         version=go_live.document(f.work);receipt=PublicationReceipt.objects.get(publication__version=version)
         signature_pm=f.evidence('signature','Synthetic supplied PM signature for distinct human attestation')

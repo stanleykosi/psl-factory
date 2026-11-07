@@ -30,6 +30,15 @@ def workbench(request,case_id):
             elif action=='source':
                 kind=p['kind'];payload={}
                 if kind=='ui_applicability':payload={k:optional_bool(p[k]) for k in ['requires_ui','client_signoff_required']}
+                elif kind in ['ui_target','ui_design','ui_client']:
+                    artifact={k:p[k] for k in ['artifact_ref','artifact_version','artifact_sha256']}
+                    if kind=='ui_target':
+                        from .services import subject
+                        source=subject(case,int(p['artifact_evidence'])) if p.get('artifact_evidence') else None
+                        payload=dict({k:value or None for k,value in artifact.items()},protocol='ui-target/v1',
+                            artifact_evidence={'id':source.pk,'version':source.version,'sha256':source.sha256} if source else None)
+                    else:payload={'protocol':'ui-approval/v1','approved_ui_target':artifact,
+                        'source_version':p['source_version'],'signatory_ref':p['signatory_ref'],'decided_at':p['decided_at']}
                 elif kind.startswith('hypercare_'):payload={'observed_at':p['observed_at'],'confirmed':optional_bool(p['confirmed']),'metrics':json.loads(p['metrics'])}
                 capture_source(request.user,case.pk,d,kind,p['external_ref'],evidence,payload,expected)
             elif action=='verify':verify_source(request.user,case.pk,int(p['source']),expected)

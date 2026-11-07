@@ -13,6 +13,12 @@ from .models import BillingPreparation,Invoice,InvoiceReview,InvoiceJob,InvoiceI
 
 
 def obligation(prep):
+    if prep.usage_id and prep.usage.collective_acceptance_id:
+        from .usage_intake import obligation as collective_obligation
+        return collective_obligation(prep.usage)
+    if prep.kind == "fixed_contract":
+        from .fixed_charge import obligation as fixed_obligation
+        return fixed_obligation(prep.fixed_charge)
     cov=prep.coverage
     identity={'case':str(prep.case_id),'customer':cov.customer,'contract':cov.contract,'kind':prep.kind}
     identity['usage']=prep.usage_id if prep.kind=='usage' else None
@@ -30,7 +36,9 @@ def adapter_config(case):
 @transaction.atomic
 def draft(actor,case_id,preparation_id,reference,due_date,expected):
     case=lock_case(actor,case_id,'finance.invoice.draft',expected);require(actor,case,'finance.read')
-    prep=exact(case,BillingPreparation,preparation_id);ensure_current(prep)
+    prep=exact(case,BillingPreparation,preparation_id)
+    from .fixed_charge import preparation_access
+    preparation_access(actor,prep);ensure_current(prep)
     from adapters.billing_usage import KEY
     if not KEY.fullmatch(reference):raise ValidationError('Use a bounded explicit invoice reference')
     key=obligation(prep)
@@ -48,13 +56,19 @@ def draft(actor,case_id,preparation_id,reference,due_date,expected):
         'preparation':prep.pk,'preparation_key':prep.operation_key,'source_basis':cov.amount_basis,'amount_basis':'gross_including_tax',
         'currency':prep.result['currency'],'amount':format(amount,'f'),'due_date':due_date.isoformat() if due_date else None,'lines':prep.result['lines'],
         'usage_completeness':prep.result['usage_completeness'],'coverage_completeness':cov.completeness}
+    if prep.kind == 'fixed_contract':
+        payload['contract_period'] = prep.fixed_charge.payload['period']
+        payload['coverage_obligation'] = prep.fixed_charge.request.obligation_key
+        payload['fixed_charge'] = prep.fixed_charge_id
     record=Invoice.objects.create(case=case,preparation=prep,obligation_key=key,reference=reference,version=payload['version'],due_date=due_date,
         amount=amount,currency=prep.result['currency'],amount_basis='gross_including_tax',payload=payload,sha256=digest(payload),actor=actor)
     event(actor,case,'invoice.drafted',invoice=record.pk,obligation=key);bump(case);return record
 
 @transaction.atomic
 def review(actor,case_id,invoice_id,role,verdict,evidence_id,reason,expected,*,delegated=False):
-    case=lock_case(actor,case_id,'finance.invoice.review',expected);i=exact(case,Invoice,invoice_id);current(i);note(reason)
+    case=lock_case(actor,case_id,'finance.invoice.review',expected);i=exact(case,Invoice,invoice_id)
+    from .fixed_charge import preparation_access
+    preparation_access(actor,i.preparation);current(i);note(reason)
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose a configured invoice review decision')
     authority=review_authority(actor,case,'invoice',role,verdict,i.actor_id,delegated=delegated,invoice=i)
     from apps.workflows.factory_routing import for_invoice
@@ -70,6 +84,8 @@ def reviewed(invoice):
     from apps.workflows.factory_routing import for_invoice
     for_invoice(invoice,r.actor,delegated=delegated)
     if r.publication_packet!=review_packet(invoice):raise ValidationError('Publication target, destination, policy or evidence changed; fresh exact-packet review required')
+    from .fixed_charge import preparation_access
+    preparation_access(r.actor,invoice.preparation)
     require(r.actor,invoice.case,'finance.invoice.review')
     authority=review_authority(r.actor,invoice.case,'invoice',r.role,r.verdict,invoice.actor_id,delegated=delegated,invoice=invoice)
     strip=lambda v:{k:x for k,x in v.items() if k!='D05.decision_action_matrix'}
@@ -89,7 +105,10 @@ def review_packet(invoice):
         'preparation':invoice.preparation_id,'sources':invoice.preparation.snapshot}
     from apps.workflows.models import FactoryWork
     work=FactoryWork.objects.filter(invoice=invoice).select_related('policy').first()
-    if work and work.policy_id:
+    # Attaching an explicitly selected native invoice does not rewrite its reviewed
+    # publication packet. Factory send guards still check their own current sources.
+    preserve_native = work and work.request.get('mode') == 'existing-preparation/v1' and work.request.get('existing_invoice') == invoice.pk
+    if work and work.policy_id and not preserve_native:
         from apps.core.evidence_access import public_evidence
         from apps.core.models import Evidence
         required=reference_values(work.policy)[0]['required_evidence_kinds'];latest={}
@@ -112,6 +131,15 @@ def factory_binding(actor,invoice,work_id):
     if value['executor_id']!=actor.pk:raise PermissionDenied('Current separately configured invoice executor required')
     packet=review_packet(invoice)
     refs=packet.get('factory_sources',{}).get('evidence',{})
+    from apps.workflows.factory_invoice_intake import bound, check
+    if bound(work):
+        check(work, actor)
+        if work.request.get('existing_invoice') == invoice.pk:
+            from apps.core.evidence_access import public_evidence
+            from apps.core.models import Evidence
+            refs={}
+            for source in public_evidence(Evidence.objects.filter(case=work.case,kind__in=value['required_evidence_kinds'])).order_by('kind','-version'):
+                refs.setdefault(source.kind, {'id':source.pk,'sha256':source.sha256})
     from apps.core.models import Evidence
     from django.utils import timezone
     observed=list(Evidence.objects.filter(case=work.case,pk__in=[row['id'] for row in refs.values()]))
@@ -130,6 +158,8 @@ def legacy_factory_work_id(job):
     return ids[0] if ids else None
 
 def intent(actor,invoice,kind,role,correction_id=None,factory_work_id=None):
+    from .fixed_charge import preparation_access
+    preparation_access(actor,invoice.preparation)
     if kind in ['adjust','adjust_deliver']:
         if factory_work_id is not None:raise ValidationError('This factory definition does not authorise correction dispatch; use the native correction workflow')
         from .corrections import effect_intent
@@ -189,6 +219,7 @@ def reserve(actor,case_id,invoice_id,kind,role,expected,factory_work_id=None):
 def delivery_payload(invoice):
     p=invoice.payload
     fields=['reference','version','customer','contract','currency','amount','amount_basis','due_date']
+    if invoice.preparation.kind == 'fixed_contract': fields += ['contract_period']
     return dict({k:p[k] for k in fields},document_type='invoice',projection='finance-invoice-public/v1',
         lines=[{k:v for k,v in line.items() if k in ['transaction_id','stage','quantity','unit','rate','net','tax','total']} for line in p['lines']])
 

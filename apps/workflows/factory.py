@@ -24,6 +24,9 @@ TERMINAL={'verified','cancelled','blocked','owner_needed','configuration_needed'
 def access(actor,case,action='factory.read',envelope='pmo-finance/v1'):
     if not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current active actor required')
     for key in ['case.read',definition(envelope)['read'],action]:require(actor,case,key)
+    if envelope=='finance-ledger/v1':
+        from .factory_ledger import readable
+        readable(actor,case)
     if envelope=='finance-schedules/v1':
         from apps.finance.schedules import readable
         readable(actor,case)
@@ -60,7 +63,7 @@ def start(actor,case_id,key,coverage_id,handoff_id,reference,expected):
     if not cov or not handoff:raise ValidationError('Exact same-case contract coverage and native PMO handoff required')
     payload={'coverage':cov.pk,'handoff':handoff.pk,'reference':reference,'stage':'completion'};sha=digest(payload)
     from types import SimpleNamespace
-    business_key=invoices.obligation(SimpleNamespace(coverage=cov,case_id=case.pk,kind='completion'))
+    business_key=invoices.obligation(SimpleNamespace(coverage=cov,case_id=case.pk,kind='completion',usage_id=None))
     old=Work.objects.filter(case=case).filter(Q(key=key)|Q(definition='pmo-finance/v1',business_key=business_key)).first()
     if old:
         if old.request_hash!=sha or old.actor_id!=actor.pk:raise ValidationError('IDEMPOTENCY_CONFLICT: same work key has different payload or initiator')
@@ -105,6 +108,21 @@ def invoice_job_observation(jobs):
     return [(job.pk,job.status,'expired' if job.status=='leased' and uncertain_job(job) else None) for job in jobs]
 
 def _snapshot(work,value,reader=None):
+    if work.definition=='pmo-issues/v1':
+        from .factory_issues import snapshot as fn
+        return fn(work,value,reader=reader)
+    if work.definition=='finance-ledger/v1':
+        from .factory_ledger import snapshot as ledger_fn
+        return ledger_fn(work,value,reader=reader)
+    if work.definition=='engagement/v1':
+        from . import factory_engagement
+        return factory_engagement.snapshot(work,value,reader=reader)
+    if work.definition=='pmo-minutes/v1':
+        from .factory_minutes import snapshot as fn
+        return fn(work,value,reader=reader)
+    if work.definition=='pmo-leadership-report/v1':
+        from . import factory_leadership
+        return factory_leadership.snapshot(work,value,reader=reader)
     if work.definition=='pmo-weekly-report/v1':
         from . import factory_reporting
         return factory_reporting.snapshot(work,value,reader=reader)
@@ -117,9 +135,15 @@ def _snapshot(work,value,reader=None):
     if work.definition=='finance-forecast/v1':
         from .factory_forecast import snapshot as forecast_snapshot
         return forecast_snapshot(work,value,reader=reader)
+    if work.definition=='finance-bu/v1':
+        from .factory_bu import snapshot as bu_snapshot
+        return bu_snapshot(work,value,reader=reader)
     if work.definition=='finance-payroll/v1':
         from .factory_payroll import snapshot as payroll_snapshot
         return payroll_snapshot(work,value,reader=reader)
+    if work.definition=='pmo-escalation/v1':
+        from .factory_escalation import snapshot as escalation_snapshot
+        return escalation_snapshot(work,value,reader=reader)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency import snapshot as emergency_snapshot
         return emergency_snapshot(work,value,reader=reader)
@@ -157,6 +181,10 @@ def _snapshot(work,value,reader=None):
         from .factory_planning import snapshot as planning_snapshot
         return planning_snapshot(work,value,reader=reader)
     access(reader or work.execution_actor,work.case,'factory.read' if reader is not None else 'factory.execute')
+    from .factory_invoice_intake import bound as preparation_bound
+    if preparation_bound(work):
+        from apps.finance.fixed_charge import preparation_access
+        preparation_access(reader or work.execution_actor,work.preparation)
     records=sources(work);latest={}
     for e in records:latest.setdefault(e.kind,e)
     missing=[kind for kind in value['required_evidence_kinds'] if kind not in latest]
@@ -167,6 +195,14 @@ def _snapshot(work,value,reader=None):
         'invoice':work.invoice_id,'preparation':work.preparation_id,'jobs':invoice_job_observation(jobs),
         'receipts':list(InvoiceIssue.objects.filter(invoice_id=work.invoice_id).values_list('pk','sha256'))+list(InvoiceDelivery.objects.filter(invoice_id=work.invoice_id).values_list('pk','sha256')) if work.invoice_id else [],
         'tasks':[(t.pk,t.status,t.revision) for t in tasks]}
+    from .factory_invoice_intake import bound as preparation_bound
+    if preparation_bound(work):
+        from .factory_invoice_intake import selection
+        state['bound_preparation']=selection(work)['preparation']
+        if work.preparation.kind=='fixed_contract':
+            from apps.finance.preparation_continuation import latest as continuation_latest
+            continuation=continuation_latest(work.preparation.fixed_charge.request)
+            state['preparation_continuation']=continuation.pk if continuation else None
     if work.invoice_id:
         from .factory_routing import evaluate
         state['routing']=evaluate(work)
@@ -182,6 +218,21 @@ def snapshot(work,value,reader=None):
     return (state,*result[1:])
 
 def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
+    if work.definition=='pmo-issues/v1':
+        from .factory_issues import eligible as fn
+        return fn(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='finance-ledger/v1':
+        from .factory_ledger import eligible as ledger_fn
+        return ledger_fn(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='engagement/v1':
+        from . import factory_engagement
+        return factory_engagement.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='pmo-minutes/v1':
+        from .factory_minutes import eligible as fn
+        return fn(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='pmo-leadership-report/v1':
+        from . import factory_leadership
+        return factory_leadership.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
     if work.definition=='pmo-weekly-report/v1':
         from . import factory_reporting
         return factory_reporting.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
@@ -200,9 +251,15 @@ def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
     if work.definition=='finance-forecast/v1':
         from .factory_forecast import eligible as forecast_eligible
         return forecast_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='finance-bu/v1':
+        from .factory_bu import eligible as bu_eligible
+        return bu_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
     if work.definition=='finance-payroll/v1':
         from .factory_payroll import eligible as payroll_eligible
         return payroll_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
+    if work.definition=='pmo-escalation/v1':
+        from .factory_escalation import eligible as escalation_eligible
+        return escalation_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency import eligible as emergency_eligible
         return emergency_eligible(work,value,observed,latest,missing,stale,tasks,jobs)
@@ -241,12 +298,17 @@ def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
     if InvoiceIssue.objects.filter(obligation_key=work.business_key).exclude(invoice_id=work.invoice_id).exists():
         raise ValidationError('A prior invoice for this obligation is already issued; retain both drafts and use its native correction workflow')
     if stale:return [],'Stale evidence: '+', '.join(stale)
-    investigated=Activity.objects.filter(work=work,kind='ACT04',key=digest(['ACT04',observed['sources']]),status='succeeded').exists()
+    investigation_key=['ACT04',observed['sources']]
+    if 'bound_preparation' in observed:investigation_key.append(observed['bound_preparation'])
+    investigated=Activity.objects.filter(work=work,kind='ACT04',key=digest(investigation_key),status='succeeded').exists()
     if not investigated:return ['ACT04'],'Check source evidence'
     if missing:
         task=next((t for t in tasks if t.kind=='factory_information' and t.status=='open'),None)
         return ([],'Waiting for '+', '.join(missing)) if task else (['ACT05'],'Request missing evidence')
-    completion=latest.get('completion')
+    from .factory_invoice_intake import bound as preparation_bound, check as preparation_check
+    explicit = preparation_bound(work)
+    if explicit: preparation_check(work, work.execution_actor)
+    completion=None if explicit else latest.get('completion')
     if completion and Handoff.objects.get(pk=work.request['handoff'],case=work.case).milestone.evidence_id!=completion.pk:
         return ['ACT06'],'Reconcile changed completion evidence with PMO'
     if work.preparation_id:
@@ -299,6 +361,21 @@ def task(work,kind,context,resolver=None):
     return row
 
 def act(work,choice,value,latest,missing,tasks,jobs):
+    if work.definition=='pmo-issues/v1':
+        from .factory_issues import act as fn
+        return fn(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='finance-ledger/v1':
+        from .factory_ledger import act as ledger_fn
+        return ledger_fn(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='engagement/v1':
+        from . import factory_engagement
+        return factory_engagement.act(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='pmo-minutes/v1':
+        from .factory_minutes import act as fn
+        return fn(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='pmo-leadership-report/v1':
+        from . import factory_leadership
+        return factory_leadership.act(work,choice,value,latest,missing,tasks,jobs)
     if work.definition=='pmo-weekly-report/v1':
         from . import factory_reporting
         return factory_reporting.act(work,choice,value,latest,missing,tasks,jobs)
@@ -322,9 +399,15 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if work.definition=='finance-forecast/v1':
         from .factory_forecast import act as forecast_act
         return forecast_act(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='finance-bu/v1':
+        from .factory_bu import act as bu_act
+        return bu_act(work,choice,value,latest,missing,tasks,jobs)
     if work.definition=='finance-payroll/v1':
         from .factory_payroll import act as payroll_act
         return payroll_act(work,choice,value,latest,missing,tasks,jobs)
+    if work.definition=='pmo-escalation/v1':
+        from .factory_escalation import act as escalation_act
+        return escalation_act(work,choice,value,latest,missing,tasks,jobs)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency import act as emergency_act
         return emergency_act(work,choice,value,latest,missing,tasks,jobs)
@@ -358,7 +441,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         return planning_act(work,choice,value,latest,missing,tasks,jobs)
     kind=choice['activity'];case=work.case
     if kind=='ACT04':
-        if value['provider']=='governed_factory_v1':
+        from .factory_invoice_intake import bound as preparation_bound
+        if value['provider']=='governed_factory_v1' or preparation_bound(work):
             from adapters.factory_invoice_preparation import NativeInvoicePreparationAdapter
             return NativeInvoicePreparationAdapter().investigate(work)
         from apps.agents.services import extract_evidence
@@ -372,6 +456,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         user=get_user_model().objects.get(pk=resolver);access(user,case,'factory.information')
         t=task(work,'factory_information',{'work':work.pk,'missing':missing,'resolver':resolver,'profile':work.policy_id},resolver)
         return {'task':t.pk,'waiting':'input'}
+    from .factory_invoice_intake import bound as preparation_bound, draft as preparation_draft
+    if kind=='ACT08' and preparation_bound(work):return preparation_draft(work)
     if kind in ['ACT06','ACT08']:
         h=Handoff.objects.select_related('milestone__evidence').get(case=case,pk=work.request['handoff'])
         if h.payload['evidence_sha256']!=h.milestone.evidence.sha256 or h.payload['evidence_id']!=h.milestone.evidence_id:raise ValidationError('Native PMO handoff/evidence mismatch')
@@ -462,13 +548,16 @@ def cancellation_status(work):
     from apps.agents.factory_coordinator import pending,has_receipt
     planning=pending(work)
     if planning and not has_receipt(planning):return 'waiting_effect'
+    if work.definition=='finance-bu/v1':
+        from .factory_bu import publication_history
+        if publication_history(work).exists():return 'followup_needed'
     if work.definition=='finance-payroll/v1':
         from .factory_payroll import publication_history
         if publication_history(work).exists():return 'followup_needed'
     if work.definition=='delivery-closure/v1':
         from apps.pmo.models import DeliveryRecord
         if DeliveryRecord.objects.filter(dossier_id=work.request['dossier'],dossier__case=work.case,kind='closure').exists():return 'followup_needed'
-    if work.definition in ['pmo-weekly-report/v1','finance-forecast/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1','finance-accounts/v1']:
+    if work.definition in ['pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-forecast/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1','finance-accounts/v1']:
         from apps.documents.models import PublicationJob,PublicationReceipt
         if PublicationJob.objects.filter(publication__factory_work=work,status__in=['pending','unknown','leased','held']).exists():return 'waiting_effect'
         if PublicationReceipt.objects.filter(publication__factory_work=work).exists():return 'followup_needed'
@@ -560,7 +649,7 @@ def run_once(work_id,provider=None,adapter=None):
             if fresh['hash']!=observed['hash'] or fresh['work_revision']!=observed['work_revision']:raise ValidationError('STALE_VERSION: case/evidence/decision/work changed while planning')
             if not isinstance(answer,dict) or set(answer)!={'activity','citations'} or answer['activity'] not in options:raise PermissionDenied('FORBIDDEN: model choice is outside current capabilities')
             if not isinstance(answer['citations'],list) or not answer['citations'] or any(type(pk) is not int or pk not in context['evidence_ids'] for pk in answer['citations']):raise ValidationError('Unsupported citation')
-            process={'pmo-weekly-report/v1':'P41','finance-schedules/v1':('F12' if work.request.get('kind')=='income' else 'F13'),'finance-ppe/v1':'F07','finance-forecast/v1':'F39','finance-payroll/v1':'F16','pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
+            process={'pmo-issues/v1':'P50','finance-ledger/v1':'F01','finance-bu/v1':('F21' if work.request.get('mode')=='staff' else 'F44'),'engagement/v1':'P16' if answer['activity']=='ACT04' else 'P03','pmo-minutes/v1':'P43','pmo-escalation/v1':'P44','pmo-weekly-report/v1':'P41','pmo-leadership-report/v1':('P40' if work.request.get('kind')=='internal_tuesday' else 'P42'),'finance-schedules/v1':('F12' if work.request.get('kind')=='income' else 'F13'),'finance-ppe/v1':'F07','finance-forecast/v1':'F39','finance-payroll/v1':'F16','pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
                 'delivery-hypercare/v1':'P35','delivery-release/v1':'P32','planning/v1':'P26'}.get(work.definition)
             if work.definition=='finance-payroll/v1':
                 process='F18' if observed['native']['stage'] in ['aggregate','aggregate_review','publish','receipt','complete'] else 'F17' if observed['native']['stage'] in ['match','match_review'] else 'F16'
@@ -577,14 +666,19 @@ def run_once(work_id,provider=None,adapter=None):
                 process=('P14' if answer['activity']=='ACT04' else 'P06' if answer['activity']=='ACT08' else 'P07') if work.definition=='commercial/v1' else 'F29' if answer['activity']=='ACT08' else 'F30' if answer['activity'] in ['ACT09','ACT10','ACT11','ACT12','ACT13'] else 'P34'
             run=AgentRun.objects.create(case=work.case,actor=work.execution_actor,evidence=latest[next(iter(latest))],provider=provider_name,process_id=process,result=answer)
             child_key=digest(['ACT04',observed['sources'],work.source_head_id]) if answer['activity']=='ACT04' and work.definition in ['planning/v1','commercial/v1'] else digest(['ACT04',observed['sources']]) if answer['activity']=='ACT04' else digest([activity.key,answer['activity']])
+            if 'bound_preparation' in observed and answer['activity']=='ACT04':
+                child_key=digest(['ACT04',observed['sources'],observed['bound_preparation']])
             if work.definition=='finance-accounts/v1' and answer['activity']=='ACT04':
                 from .factory_accounting import investigation_key as accounting_investigation_key
                 child_key=accounting_investigation_key(work,observed)
             if work.definition=='rfp-response/v1' and answer['activity']=='ACT04':
                 from .factory_rfp import investigation_key as rfp_investigation_key
                 child_key=rfp_investigation_key(work,observed)
-            if work.definition in ['pmo-weekly-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] and answer['activity']=='ACT04':
+            if work.definition in ['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] and answer['activity']=='ACT04':
                 from .factory_delivery import investigation_key
+                child_key=investigation_key(work,observed)
+            if work.definition=='engagement/v1' and answer['activity']=='ACT04':
+                from .factory_engagement import investigation_key
                 child_key=investigation_key(work,observed)
             child,created=Activity.objects.get_or_create(work=work,key=child_key,defaults={'parent':activity,'kind':answer['activity'],'plan_revision':work.plan_revision})
             child_number=(child.attempts.aggregate(n=Max('number'))['n'] or 0)+1
@@ -776,6 +870,12 @@ def adapter_for(work,adapter=None):
     return selected
 
 def reconcile(actor,work_id,expected):
+    if Work.objects.filter(pk=work_id,definition='pmo-minutes/v1').exists():
+        from .factory_minutes import reconcile as minutes_reconcile
+        return minutes_reconcile(actor,work_id,expected)
+    if Work.objects.filter(pk=work_id,definition='pmo-leadership-report/v1').exists():
+        from .factory_leadership import reconcile as reporting_reconcile
+        return reporting_reconcile(actor,work_id,expected)
     if Work.objects.filter(pk=work_id,definition='pmo-weekly-report/v1').exists():
         from .factory_reporting import reconcile as reporting_reconcile
         return reporting_reconcile(actor,work_id,expected)
@@ -785,6 +885,9 @@ def reconcile(actor,work_id,expected):
     if Work.objects.filter(pk=work_id,definition='finance-forecast/v1').exists():
         from .factory_forecast import reconcile as forecast_reconcile
         return forecast_reconcile(actor,work_id,expected)
+    if Work.objects.filter(pk=work_id,definition='pmo-escalation/v1').exists():
+        from .factory_escalation import reconcile as escalation_reconcile
+        return escalation_reconcile(actor,work_id,expected,adapter)
     if Work.objects.filter(pk=work_id,definition='pmo-emergency/v1').exists():
         from .factory_emergency import reconcile as emergency_reconcile
         return emergency_reconcile(actor,work_id,expected)

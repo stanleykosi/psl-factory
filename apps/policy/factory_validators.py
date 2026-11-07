@@ -73,10 +73,25 @@ PAYROLL_SCHEMA='schema:psl/factory-payroll-execution/v1'
 PAYROLL_VALUE=deepcopy(PLANNING_VALUE)
 PAYROLL_VALUE['properties']['definition']={'const':'finance-payroll/v1'}
 
+LEDGER_COMPONENT='OPS.factory_ledger_execution'
+LEDGER_SCHEMA='schema:psl/factory-ledger-execution/v1'
+LEDGER_VALUE=deepcopy(PLANNING_VALUE)
+LEDGER_VALUE['properties']['definition']={'const':'finance-ledger/v1'}
+
+BU_COMPONENT='OPS.factory_bu_execution'
+BU_SCHEMA='schema:psl/factory-bu-execution/v1'
+BU_VALUE=deepcopy(PLANNING_VALUE)
+BU_VALUE['properties']['definition']={'const':'finance-bu/v1'}
+
 SCHEDULES_COMPONENT='OPS.factory_schedules_execution'
 SCHEDULES_SCHEMA='schema:psl/factory-schedules-execution/v1'
 SCHEDULES_VALUE=deepcopy(PLANNING_VALUE)
 SCHEDULES_VALUE['properties']['definition']={'const':'finance-schedules/v1'}
+
+ENGAGEMENT_COMPONENT='OPS.factory_engagement_execution'
+ENGAGEMENT_SCHEMA='schema:psl/factory-engagement-execution/v1'
+ENGAGEMENT_VALUE=deepcopy(PLANNING_VALUE)
+ENGAGEMENT_VALUE['properties']['definition']={'const':'engagement/v1'}
 
 def validate_reference(component,target,case,runtime=False):
     planning=component==PLANNING_COMPONENT
@@ -88,7 +103,7 @@ def validate_reference(component,target,case,runtime=False):
     closure=component==CLOSURE_COMPONENT
     change=component==CHANGE_COMPONENT
     go_live=component==GO_LIVE_COMPONENT or change
-    schema,shape={PAYROLL_COMPONENT:(PAYROLL_SCHEMA,PAYROLL_VALUE),COMPONENT:(SCHEMA,VALUE),PLANNING_COMPONENT:(PLANNING_SCHEMA,PLANNING_VALUE),
+    schema,shape={LEDGER_COMPONENT:(LEDGER_SCHEMA,LEDGER_VALUE),BU_COMPONENT:(BU_SCHEMA,BU_VALUE),ENGAGEMENT_COMPONENT:(ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE),PAYROLL_COMPONENT:(PAYROLL_SCHEMA,PAYROLL_VALUE),COMPONENT:(SCHEMA,VALUE),PLANNING_COMPONENT:(PLANNING_SCHEMA,PLANNING_VALUE),
         COMMERCIAL_COMPONENT:(COMMERCIAL_SCHEMA,COMMERCIAL_VALUE),DELIVERY_COMPONENT:(DELIVERY_SCHEMA,DELIVERY_VALUE),
         HYPERCARE_COMPONENT:(HYPERCARE_SCHEMA,HYPERCARE_VALUE),ARCHIVE_COMPONENT:(ARCHIVE_SCHEMA,ARCHIVE_VALUE),
         HANDOVER_COMPONENT:(HANDOVER_SCHEMA,HANDOVER_VALUE),CLOSURE_COMPONENT:(CLOSURE_SCHEMA,CLOSURE_VALUE),
@@ -98,7 +113,8 @@ def validate_reference(component,target,case,runtime=False):
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')
     from types import SimpleNamespace
     from apps.core.evidence_access import restricted
-    if any(restricted(SimpleNamespace(kind=k)) and not (component==SCHEDULES_COMPONENT and k=='agent_private_schedules_intake') for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
+    if any(restricted(SimpleNamespace(kind=k)) and not (component==BU_COMPONENT and k=='agent_private_bu_intake' or component==SCHEDULES_COMPONENT and k=='agent_private_schedules_intake' or component==ENGAGEMENT_COMPONENT and k=='agent_private_engagement_intake') and not (component==LEDGER_COMPONENT and k in ['agent_private_ledger_intake','ledger_source']) for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
+    if component==LEDGER_COMPONENT and any(k not in ['agent_private_ledger_intake','ledger_source'] for k in value['required_evidence_kinds']):raise ValidationError('Selected private ledger intake only')
     from django.contrib.auth import get_user_model
     from apps.identity.models import Grant
     for name in ['information_resolver_id','executor_id']+(['preparer_id'] if go_live else []):

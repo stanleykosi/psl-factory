@@ -457,7 +457,7 @@ class ChangeIntakeBindingTests(IntakeFixture, TestCase):
         from apps.documents.controlled import register_template
         template = register_template(self.actor, self.case.pk, 'SQL selected template',
             {'document_type': 'project_artifact', 'required_fields': ['executive_summary'],
-             'audience_fields': {'client': ['executive_summary']}}, self.evidence.pk, rev(self.case))
+             'audience_fields': {'client': ['executive_summary', 'scope', 'timeline', 'risks', 'dependencies', 'status']}}, self.evidence.pk, rev(self.case))
         candidate = self.candidate('wrong-template', field_overrides={'template_id': template.pk})
         # Native request and payload agree; only the actual work source chose None.
         self.rejected(candidate)
@@ -525,7 +525,7 @@ class ChangeIntakeReceiptIntegrityTests(IntakeFixture, TestCase):
         binding = self.confirm(self.receive())
         template = register_template(self.actor, self.case.pk, 'Public draft template',
             {'document_type': 'project_artifact', 'required_fields': ['executive_summary'],
-             'audience_fields': {'client': ['executive_summary']}}, self.evidence.pk, rev(self.case))
+             'audience_fields': {'client': ['executive_summary', 'scope', 'timeline', 'risks', 'dependencies', 'status']}}, self.evidence.pk, rev(self.case))
         payload = {'executive_summary': {'text': 'Generic draft cannot disclose private intake',
                                         'evidence_ids': [binding.version.evidence_id]}}
         before = Version.objects.count()

@@ -19,7 +19,10 @@ def investigate_proposal(actor,case_id,revision_id,expected):
     changes=[{'kind':kind,'before_id':previous.sources.get(kind) if previous else None,'after_id':pk}
         for kind,pk in revision.sources.items() if not previous or previous.sources.get(kind)!=pk]
     latest=latest_decisions(revision)
-    result={'capability':'A02/A06/A08 commercial revision and authority investigation','revision_id':revision.pk,
+    from apps.pmo.signatures import latest as latest_packet, packet_status
+    signature_packet = latest_packet(case)
+    signature_state = packet_status(signature_packet) if signature_packet else {'sow': 'missing', 'prd': 'missing', 'contract': 'not captured', 'authenticity': 'Not verified by a signature provider'}
+    result={'document_signature_status': signature_state, 'signature_packet_id': signature_packet.pk if signature_packet else None, 'capability':'A02/A06/A08 commercial revision and authority investigation','revision_id':revision.pk,
         'changed_sources':changes,'source_evidence_ids':list(revision.sources.values()),
         'decision_status':{role:d.verdict for role,d in latest.items()},
         'missing_decision_roles':[r for r in ['PM','Head of PMO','CEO','PMO Lead'] if r not in latest or latest[r].verdict!='approve'],

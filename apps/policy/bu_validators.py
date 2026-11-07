@@ -30,7 +30,12 @@ def weights(v):
  return result
 
 def validate_reference(component,target,case,runtime=False):
- v=typed(target,*SCHEMAS[component])
+ schema_id,schema=SCHEMAS[component]
+ if component==STAFF and target.schema_ref=='schema:psl/bu-staff/v2':
+  from copy import deepcopy
+  from .allocation_coverage import NULLABLE_COVERAGE
+  schema=deepcopy(schema);schema['properties']['weight_contract']=NULLABLE_COVERAGE;schema['required'].append('weight_contract');schema_id=target.schema_ref
+ v=typed(target,schema_id,schema)
  if 'from_period' in v and v['from_period']>v['to_period']:raise ValidationError('Ordered effective periods required')
  if component in [STAFF,MAPPING]:
   rule=v['rounding']
@@ -47,9 +52,12 @@ def validate_reference(component,target,case,runtime=False):
   if not known or not unknown:raise ValidationError('Known and unknown oracles required')
   if component==STAFF:
    if v['standard_method']=='fixed_weights' or v['standard_weights']:weights(v['standard_weights'])
+   if schema_id=='schema:psl/bu-staff/v2':
+    from .allocation_coverage import validate_contract
+    validate_contract(v,case,staff=True)
    from apps.pmo.services import subject
    e=subject(case,v['pool_contract_evidence_id'],'bu_pool_contract')
-   if case.evidence.filter(kind=e.kind,version__gt=e.version).exists():raise ValidationError('Standard pool contract replaced')
+   if (schema_id!='schema:psl/bu-staff/v2' or v['standard_method']!='fixed_weights') and case.evidence.filter(kind=e.kind,version__gt=e.version).exists():raise ValidationError('Standard pool contract replaced')
   else:
    if len({r['tag'] for r in v['mappings']})!=len(v['mappings']):raise ValidationError('Duplicate mapping tags')
    for m in v['mappings']:

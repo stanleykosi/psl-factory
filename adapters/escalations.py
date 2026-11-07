@@ -9,4 +9,6 @@ class LocalIssueEscalationAdapter:
             'next_steps':request.note,'actions':state.next_action}
         citations=sorted({state.evidence_id,profile.evidence_id,request.evidence_id})
         allowed=template.definition['audience_fields'].get(audience,[])
-        return {key:{'text':value,'evidence_ids':citations} for key,value in values.items() if key in allowed}
+        from apps.documents.pmo_sections import complete_native_client_sections
+        fields = {key:{'text':value,'evidence_ids':citations} for key,value in values.items() if key in allowed}
+        return complete_native_client_sections(fields, audience, citations)

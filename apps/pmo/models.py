@@ -198,3 +198,9 @@ from .approval_models import ApprovalRequest,ApprovalContractReview,ApprovalRout
 from .costing_models import CostingRule,CostingOracle,CostingReview,CostingRun,CostingBinding,CostingAF13Binding
 from .engagement_models import EngagementRecord,ProjectIdentifier
 from .identity_resolution_models import ProjectIdentityDecision
+
+from .issue_models import IssueReferenceContract, IssueReferenceObservation, IssueReferenceRevision
+
+from .signature_models import CommercialSignaturePacket, CommercialSignatureUse, CommercialSignatureReaffirmation, BaselineSignatureExemption
+
+from .progress_models import DeliveryProgressSource, DeliveryProgressObservation, DeliveryProgressCorrelation

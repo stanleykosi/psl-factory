@@ -45,6 +45,8 @@ class PolicyImpactTests(TestCase):
         with self.assertRaises(ValidationError):sign_baseline(self.a,self.c.pk,self.e['signature'].pk,rev(self.c))
         self.assertEqual(Decision.objects.count(),4);self.assertIsNone(Baseline.objects.get(case=self.c).signed_id)
         for role in ['PM','Head of PMO','CEO','PMO Lead']:decide(self.a,self.c.pk,role,rev(self.c))
+        from tests.signature_helpers import packet_for
+        packet_for(self.a, self.c, self.e)
         sign_baseline(self.a,self.c.pk,self.e['signature'].pk,rev(self.c))
         self.assertFalse(impact.inspect(self.a,self.c.pk,row.pk)['current'])
         self.assertEqual(ImpactReview.objects.get().pk,review.pk)
@@ -62,6 +64,8 @@ class PolicyImpactTests(TestCase):
         row=self.capture()
         from apps.pmo.services import sign_baseline,decide
         for role in ['PM','Head of PMO','CEO','PMO Lead']:decide(self.a,self.c.pk,role,rev(self.c))
+        from tests.signature_helpers import packet_for
+        packet_for(self.a, self.c, self.e)
         sign_baseline(self.a,self.c.pk,self.e['signature'].pk,rev(self.c))
         with self.assertRaises(ValidationError):impact.review(self.b,self.c.pk,row.pk,'accept',self.e['policy_decision'].pk,'Cannot ignore signed head')
         impact.review(self.b,self.c.pk,row.pk,'reject',self.e['policy_decision'].pk,'Record changed; successor assessment required')

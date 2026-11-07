@@ -79,14 +79,9 @@ def decide(actor, case_id, role, expected):
     return result
 
 
-def guard_sign(actor, case, signature_id):
-    require(actor,case,'baseline.sign')
-    commercial_guard(case)
-    baseline = Baseline.objects.get(case=case)
+def baseline_approval_refs(case, baseline):
     from .costing import verify_costing
-    verify_costing(baseline.costing,baseline.plan_id)
-    if baseline.signed_id:
-        raise ValidationError('Baseline already signed')
+    verify_costing(baseline.costing, baseline.plan_id)
     roles = set(Decision.objects.filter(evidence=baseline.costing).values_list('role', flat=True))
     if not {'PM', 'Head of PMO', 'CEO'}.issubset(roles) or not Decision.objects.filter(evidence=baseline.sow, role='PMO Lead').exists():
         raise ValidationError('Current cost approvals and distinct document review required')
@@ -97,6 +92,20 @@ def guard_sign(actor, case, signature_id):
         current_policy = role_policy(decision.actor, case, decision.role)
         if current_policy.pk != decision.policy_id:
             raise ValidationError('Decision authority configuration changed; obtain current version decisions')
+    return [Decision.objects.filter(evidence=target, role=role).order_by('-pk').first().pk for role, target in [('PM', baseline.costing), ('Head of PMO', baseline.costing), ('CEO', baseline.costing), ('PMO Lead', baseline.sow)]]
+
+
+def guard_sign(actor, case, signature_id):
+    require(actor,case,'baseline.sign')
+    commercial_guard(case)
+    baseline = Baseline.objects.get(case=case)
+    from .costing import verify_costing
+    verify_costing(baseline.costing,baseline.plan_id)
+    if baseline.signed_id:
+        raise ValidationError('Baseline already signed')
+    baseline_approval_refs(case, baseline)
+    from .signatures import current_packet
+    current_packet(case, signature_id)
     return baseline, subject(case,signature_id,'signature')
 
 
@@ -104,6 +113,8 @@ def guard_sign(actor, case, signature_id):
 def sign_baseline(actor, case_id, signature_id, expected):
     case = lock_case(actor, case_id, 'baseline.sign', expected)
     baseline, signature = guard_sign(actor,case,signature_id)
+    from .signatures import current_packet, record_use
+    record_use(actor, current_packet(case, signature_id))
     baseline.signed = signature
     baseline.save(update_fields=['signed'])
     event(actor, case, 'baseline.signed', signature=baseline.signed_id, plan=baseline.plan_id, costing=baseline.costing_id, sow=baseline.sow_id)
@@ -113,8 +124,8 @@ def sign_baseline(actor, case_id, signature_id, expected):
 
 def guard_complete(actor, case, name, evidence_id):
     require(actor,case,'milestone.complete')
-    if not Baseline.objects.filter(case=case, signed__isnull=False).exists():
-        raise ValidationError('Signed planning baseline required')
+    from .signature_exemptions import assert_current_baseline_assurance
+    assert_current_baseline_assurance(case)
     if not name.strip() or Milestone.objects.filter(case=case, name=name).exists():
         raise ValidationError('Milestone identity must be nonempty and unique')
     evidence = subject(case, evidence_id, 'completion')

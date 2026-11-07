@@ -41,6 +41,8 @@ def handoff(f):
  from apps.workflows.models import Outbox
  a,c,s=f['actor'],f['case'],f['sources'];prepare_baseline(a,c.pk,s['plan'].pk,s['costing'].pk,s['sow'].pk,rev(c))
  for role in ['PM','Head of PMO','CEO','PMO Lead']:decide(a,c.pk,role,rev(c))
+ from tests.signature_helpers import packet_for
+ packet_for(a, c, s)
  sign_baseline(a,c.pk,s['signature'].pk,rev(c));complete_milestone(a,c.pk,'Readiness bridge',s['completion'].pk,rev(c));return Outbox.objects.get(case=c)
 
 @contextmanager

@@ -19,7 +19,7 @@ def baseline_manifest(case):
 @transaction.atomic
 def register_template(actor,case_id,name,definition,evidence_id,expected):
     case=lock_case(actor,case_id,'document.template',expected)
-    validate_template(definition)
+    validate_template(definition, case=case)
     evidence=subject(case,evidence_id,'policy_decision')
     if not name.strip() or len(name)>160:
         raise ValidationError('Template name is required and limited to 160 characters')
@@ -39,13 +39,13 @@ def project_payload(title,definition,audience,fields):
 
 
 @transaction.atomic
-def create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None):
+def create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None,*,template_scope_id=None):
     if audience=='group':raise ValidationError('Use the native group disclosure preparation service')
-    return _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id)
+    return _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id,template_scope_id=template_scope_id)
 
 
 @transaction.atomic
-def _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None,*,authorized_restricted_source_ids=()):
+def _create_version(actor,case_id,template_id,title,audience,fields,expected,document_id=None,*,authorized_restricted_source_ids=(),template_scope_id=None):
     """Private storage primitive. Domain callers must independently authorize and
     recompute current fields plus the exact cited restricted-source set. Never
     accept this set from public forms, HTTP payloads or agent tool arguments.
@@ -55,6 +55,11 @@ def _create_version(actor,case_id,template_id,title,audience,fields,expected,doc
     if not template or audience not in AUDIENCES or not title.strip() or len(title)>240:
         raise ValidationError('A case template, supported audience and document title are required')
     if template.definition['document_type']=='accepted_finance_metadata':raise ValidationError('Use native accepted Finance metadata preparation')
+    from .template_current import selection, scope_for
+    if template_scope_id is not None:
+        from .template_access import require_scope
+        require_scope(actor,scope_for(case,template_scope_id))
+    template_manifest = selection(case,template,audience,template_scope_id) if template_scope_id is not None else {}
     validate({'type':'object','maxProperties':16,'properties':{key:{'type':'object','properties':{
         'text':{'type':'string','maxLength':12000},'evidence_ids':{'type':'array','uniqueItems':True,'maxItems':20,'items':{'type':'integer','minimum':1}}},
         'required':['text','evidence_ids'],'additionalProperties':False} for key in FIELDS},'additionalProperties':False},fields)
@@ -74,7 +79,7 @@ def _create_version(actor,case_id,template_id,title,audience,fields,expected,doc
     payload=project_payload(title,template.definition,audience,fields)
     version=Version.objects.create(document=document,number=number,template=template,audience=audience,fields=fields,
         source_manifest=[{'id':e.pk,'version':e.version,'sha256':e.sha256} for e in sources],baseline_manifest={} if audience=='group' else baseline_manifest(case),
-        payload=payload,payload_sha256=digest(payload),created_by=actor)
+        payload=payload,payload_sha256=digest(payload),created_by=actor,template_current_manifest=template_manifest)
     for task in HumanTask.objects.filter(version__document=document,status='open'):
         task.status='obsolete';task.save(update_fields=['status'])
         TaskEvent.objects.create(task=task,actor=actor,action='obsolete',data={'replacement':version.pk})
@@ -85,7 +90,8 @@ def _create_version(actor,case_id,template_id,title,audience,fields,expected,doc
 
 
 def preflight(version):
-    findings=[]
+    from .template_current import findings as template_findings
+    findings=template_findings(version)
     from apps.finance.documents import binding_for
     finance_binding=binding_for(version)
     if version.template.definition['document_type'] in ['finance_report','finance_group_report'] and not finance_binding:findings.append('Finance report requires an exact source-bound Finance output review')
@@ -143,7 +149,13 @@ def preflight(version):
         from apps.pmo.delivery_documents import binding_findings
         findings.extend(binding_findings(delivery_binding))
     definition=version.template.definition
-    for key in definition['required_fields']:
+    from .contracts import client_pmo_sections
+    mandatory = client_pmo_sections(definition, version.audience, version.document.case)
+    projected = {section['heading']: section for section in version.payload.get('sections', [])}
+    for key in mandatory:
+        if key not in definition['audience_fields'].get(version.audience, []) or not projected.get(key, {}).get('text', '').strip():
+            findings.append('Missing mandatory client PMO projection section: ' + key)
+    for key in set(definition['required_fields']) | set(mandatory):
         field=version.fields.get(key)
         if not field or not field['text'].strip():
             findings.append('Missing required section: '+key)
@@ -170,10 +182,15 @@ def current_version(case,version_id):
 def request_review(actor,case_id,version_id,expected):
     case=lock_case(actor,case_id,'document.request_review',expected)
     version=current_version(case,version_id)
+    from apps.pmo.leadership_reporting import binding_access
+    binding_access(actor,version)
     if version.template.definition['document_type'] in ['finance_report','finance_group_report']:raise ValidationError('Finance reports use configured Finance output review; no PMO Lead task is required')
     if HumanTask.objects.filter(version=version).exists():
         raise ValidationError('Review was already requested; returned/rejected content needs a new version')
-    task=HumanTask.objects.create(case=case,version=version,created_by=actor)
+    from apps.pmo.leadership_reporting import review_context
+    role,pins=review_context(version)
+    if role is None:raise ValidationError('Internal Tuesday reporting has no separate report approval')
+    task=HumanTask.objects.create(case=case,version=version,created_by=actor,required_role=role)
     TaskEvent.objects.create(task=task,actor=actor,action='requested',data={'sha256':version.payload_sha256})
     event(actor,case,'document.review_requested',task=task.pk,version=version.pk)
     bump(case)
@@ -186,11 +203,16 @@ def review_version(actor,case_id,version_id,verdict,note,expected,delegated=Fals
     if verdict not in ['approve','return','reject'] or not note.strip() or len(note)>4000:
         raise ValidationError('Choose a review decision and provide a concise rationale')
     version=current_version(case,version_id)
+    from apps.pmo.leadership_reporting import binding_access
+    binding_access(actor,version)
     if version.audience=='group':raise ValidationError('Use the exact native group disclosure review')
     task=HumanTask.objects.select_for_update().filter(case=case,version=version,status='open').first()
     if not task:
         raise ValidationError('This version has no open human review task')
-    authority=decision_authority(actor,case,'PMO Lead',verdict,delegated)
+    from apps.pmo.leadership_reporting import review_context
+    role,pins=review_context(version)
+    if role is None or task.required_role!=role:raise ValidationError('Current configured leadership role differs from the requested review')
+    authority=dict(decision_authority(actor,case,role,verdict,delegated),**pins)
     review=ControlledReview.objects.create(version=version,actor=actor,verdict=verdict,note=note,authority=authority,
         delegated=delegated,payload_sha256=version.payload_sha256)
     task.status={'approve':'completed','return':'returned','reject':'rejected'}[verdict];task.save(update_fields=['status'])
@@ -204,6 +226,8 @@ def review_version(actor,case_id,version_id,verdict,note,expected,delegated=Fals
 def withdraw_review(actor,case_id,version_id,note,expected):
     case=lock_case(actor,case_id,'document.withdraw',expected)
     version=current_version(case,version_id)
+    from apps.pmo.leadership_reporting import binding_access
+    binding_access(actor,version)
     task=HumanTask.objects.select_for_update().filter(case=case,version=version,status='open').first()
     if not task or not note.strip():
         raise ValidationError('An open task and withdrawal reason are required')
@@ -244,6 +268,8 @@ def publication_requirements(case,version):
     if finance_binding:
         from apps.finance.documents import publication_requirements as finance_requirements
         policies.update(finance_requirements(finance_binding,recipients))
+    from apps.pmo.leadership_reporting import recipient_access
+    policies.update(recipient_access(version,recipients))
     return policies,recipients,storage['retention_days']
 
 
@@ -251,13 +277,16 @@ def validate_review(case,version):
     if version.audience=='group':
         from apps.finance.group_forecast import approved
         return approved(version)
+    from apps.pmo.leadership_reporting import review_context
+    role,pins=review_context(version)
+    if role is None:return None
     review=version.reviews.order_by('-pk').first()
     if not review and version.audience!='client' and version.template.definition.get('internal_review_required') is False:
         return None
     if not review or review.verdict!='approve' or review.payload_sha256!=version.payload_sha256:
         raise ValidationError('A PMO Lead approval of this exact outward projection is required')
     require(review.actor,case,'document.review_controlled')
-    if decision_authority(review.actor,case,'PMO Lead','approve',review.delegated)!=review.authority:
+    if dict(decision_authority(review.actor,case,role,'approve',review.delegated),**pins)!=review.authority:
         raise ValidationError('Review authority changed; create a fresh version and review')
     return review
 
@@ -265,6 +294,8 @@ def validate_review(case,version):
 def guard_reserve_publication(actor,case,version_id):
     require(actor,case,'document.publish')
     version=current_version(case,version_id)
+    from apps.pmo.leadership_reporting import binding_access
+    binding_access(actor,version)
     from apps.pmo.rfp_documents import sender,dispatch_requirements
     sender(actor,version)
     dispatch_requirements(version)

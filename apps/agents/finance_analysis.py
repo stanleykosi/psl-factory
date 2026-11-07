@@ -11,6 +11,8 @@ def investigate_finance(actor,case_id,run_id,expected):
     case=lock_case(actor,case_id,'agent.finance',expected);require(actor,case,'finance.read')
     run=FinanceRun.objects.filter(case=case,pk=run_id).first()
     if not run:raise ValidationError('Select this case Finance preview')
+    from apps.finance.statement_ppe import recipient_access
+    recipient_access(run,[actor.pk])
     findings=list(run.result.get('findings',[]));chain=[];citations=set();cursor=run
     while cursor:
         chain.append({'run':cursor.pk,'kind':cursor.kind,'operation_key':cursor.operation_key,'policies':cursor.snapshot['policies'],'reviews':cursor.snapshot['reviews']})
@@ -42,3 +44,13 @@ def investigate_finance(actor,case_id,run_id,expected):
         result['scope']='Selected statement lines only; full statement oracle remains deferred.'
     log=AgentRun.objects.create(case=case,actor=actor,evidence=run.source.evidence,provider='deterministic-finance-lineage-v1',process_id='F23',result=result)
     event(actor,case,'agent.finance_investigation',run=log.pk,finance_run=run.pk);return log
+
+
+@transaction.atomic
+def investigate_mapping_draft(actor, case_id, source_id, configuration_id, expected):
+    """Deterministic, ephemeral triage; no model guesses or retained private rows."""
+    case = lock_case(actor, case_id, 'agent.finance', expected)
+    from apps.finance.mapping_diagnostics import preview_mapping_draft
+    result = preview_mapping_draft(actor, case.pk, source_id, configuration_id, expected)
+    return dict(result, capability='F03 deterministic draft mapping exception investigation',
+        external_authenticity_verified=False)

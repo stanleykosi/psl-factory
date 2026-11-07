@@ -71,7 +71,12 @@ def validate_reference(component,target,case,runtime=False):
         schema=copy.deepcopy(schema);audience=schema['properties']['audiences']['items']
         audience['properties'].update(columns={'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['actual','budget','prior','variance','prior_variance','ratio']}},charts={'type':'boolean'})
         audience['required']+=['columns','charts']
-    v=typed(target,'schema:psl/'+name+('/v2' if projection_v2 else '/v1'),schema)
+    pool_v2=component=='D07.allocation_pool_rules' and target.schema_ref=='schema:psl/finance-pool/v2'
+    if pool_v2:
+        import copy
+        from .allocation_coverage import NULLABLE_COVERAGE
+        schema=copy.deepcopy(schema);schema['properties']['weight_contract']=NULLABLE_COVERAGE;schema['required'].append('weight_contract')
+    v=typed(target,'schema:psl/'+name+('/v2' if projection_v2 or pool_v2 else '/v1'),schema)
     if 'from_period' in v and v['to_period']<v['from_period']:raise ValidationError('Effective periods are reversed')
     if component=='D06.account_bu_maps':
         if v['account']!=v['account'].strip():raise ValidationError('Account identifier must match the supplied trimmed source exactly')
@@ -101,6 +106,9 @@ def validate_reference(component,target,case,runtime=False):
             known|=actual is not None;unknown|=actual is None
         if not known or not unknown:raise ValidationError('Supply known-value and unknown-propagation oracle scenarios')
     elif component=='D07.allocation_pool_rules':
+        if pool_v2:
+            from .allocation_coverage import validate_contract
+            validate_contract(v,case)
         if any(x!=x.strip() for x in v['excluded_accounts']):raise ValidationError('Excluded accounts must match exact supplied identifiers')
         if v['method']=='headcount_weighted' and v['weights'] or v['method']=='fixed_weights' and not v['weights']:raise ValidationError('Only fixed-weight rules supply explicit weights')
         if len({x['bu'] for x in v['weights']})!=len(v['weights']):raise ValidationError('Duplicate BU weight')

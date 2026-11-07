@@ -22,6 +22,7 @@ class BillingCoverage(AppendOnly):
     def __str__(self):return f'{self.reference} v{self.version} / {self.customer} / {self.service} / #{self.pk}'
 
 class BillingUsage(AppendOnly):
+    collective_acceptance = models.ForeignKey('finance.UsageIntakeAcceptance', null=True, on_delete=models.PROTECT, related_name='partitions')
     coverage = models.ForeignKey(BillingCoverage,on_delete=models.PROTECT)
     evidence = models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
     source_sha256 = models.CharField(max_length=64)
@@ -31,7 +32,7 @@ class BillingUsage(AppendOnly):
     actor = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
-        constraints=[models.UniqueConstraint(fields=['coverage','source_sha256'],name='billing_usage_content')]
+        constraints=[models.UniqueConstraint(fields=['coverage','source_sha256'],name='billing_usage_content'),models.UniqueConstraint(fields=['collective_acceptance','coverage'],condition=models.Q(collective_acceptance__isnull=False),name='usage_collective_partition')]
     def __str__(self):return f'Usage #{self.pk} / {self.coverage}'
 
 class BillingPreparation(AppendOnly):
@@ -39,6 +40,7 @@ class BillingPreparation(AppendOnly):
     coverage = models.ForeignKey(BillingCoverage,on_delete=models.PROTECT)
     usage = models.ForeignKey(BillingUsage,null=True,on_delete=models.PROTECT)
     handoff = models.ForeignKey('finance.Handoff',null=True,on_delete=models.PROTECT)
+    fixed_charge = models.ForeignKey('finance.CoverageFixedCharge', null=True, on_delete=models.PROTECT)
     kind = models.CharField(max_length=30)
     snapshot = models.JSONField()
     result = models.JSONField()

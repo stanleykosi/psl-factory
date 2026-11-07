@@ -1,9 +1,10 @@
 from django import forms
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from apps.policy.document_validators import ROLES
 from apps.documents.models import Template,Version
 from .forms import CommandForm
-from .models import ForecastScenario,ForecastRun,ForecastActual,ForecastMatch,CashVerification
+from .models import ForecastItemSupport,ForecastScenario,ForecastRun,ForecastActual,ForecastMatch,CashVerification
 
 def commands(case,data=None):
     def select(model,optional=False):
@@ -17,6 +18,7 @@ def commands(case,data=None):
     def reason():return forms.CharField(max_length=4000,widget=forms.Textarea(attrs={'rows':2}))
     defs={
       'capture':('Capture scenario or actual roll-forward',{'reference':forms.CharField(max_length=100),'evidence':ev('forecast_input'),'parent':select(ForecastRun,True),'reason':reason()}),
+      'support':('Record supplied support or unchanged-evidence reaffirmation',{'scenario':select(ForecastScenario),'item_key':forms.CharField(max_length=100),'previous':select(ForecastItemSupport,True),'evidence':forms.ModelChoiceField(case.evidence.filter(Q(kind='forecast_support')|Q(pk__in={i['evidence_id'] for s in ForecastScenario.objects.filter(case=case) for i in s.payload['items']})|Q(pk__in=ForecastItemSupport.objects.filter(case=case).values('evidence_id')))),'mode':choice(['renewed_support','reaffirmation']),'uncertainty':choice(['unknown','disputed','uncertain','no_known_uncertainty']),'observed_on':forms.DateField(required=False,label='Supplied observation date (leave unknown when unknown)'),'role':choice(ROLES),'reason':reason()}),
       'prepare':('Calculate exact scenario',{'scenario':select(ForecastScenario)}),
       'review':('Review forecast and priorities',{'run':select(ForecastRun),'role':choice(ROLES),'verdict':choice(['approve','return','reject']),'evidence':ev('forecast_review'),'reason':reason()}),
       'actual':('Capture actual receipt or payment evidence',{'evidence':ev('forecast_actual'),'lot':select(CashVerification,True)}),

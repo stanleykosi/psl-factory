@@ -70,6 +70,9 @@ def current_review(case,purpose,**target):
     try:
         require(r.actor,case,'finance.review')
         item=r.source or r.configuration or r.adjustment or r.run
+        if r.run_id:
+            from .statement_ppe import recipient_access
+            recipient_access(r.run,[r.actor_id])
         preparer=item.created_by_id if r.configuration_id else item.actor_id
         current=review_authority(r.actor,case,purpose,r.role,r.verdict,preparer)
         # Unrelated D05 namespaces can change without manufacturing a new Finance decision.
@@ -238,6 +241,8 @@ def review(actor,case_id,purpose,target_id,role,verdict,evidence_id,note_text,ex
     elif purpose=='output':
         item=FinanceRun.objects.filter(case=case,pk=target_id,kind__in=['formula','statement']).first();target={'run':item}
         if item:
+            from .statement_ppe import recipient_access
+            recipient_access(item,[actor.pk])
             ensure_current(item)
             if verdict=='approve':
                 findings=certification_findings(item)

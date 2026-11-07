@@ -12,9 +12,14 @@ class SyntheticDeliverySourceAdapter:
     name='synthetic-delivery-source-v1'
     def read(self,source):
         from apps.pmo.delivery import SOURCE_OWNERS
-        return {'source_id':source.pk,'candidate_ref':source.dossier.candidate.reference,'external_ref':source.external_ref,
+        result={'source_id':source.pk,'candidate_ref':source.dossier.candidate.reference,'external_ref':source.external_ref,
             'owner':SOURCE_OWNERS[source.kind],'evidence_sha256':source.evidence.sha256,'payload_sha256':digest(source.payload),
             'decision':'accepted','source_receipt':'synthetic:delivery:'+str(source.pk)}
+        from apps.pmo.delivery_ui import KINDS
+        if source.kind in KINDS:
+            from copy import deepcopy
+            result['ui_binding']=deepcopy(source.payload)
+        return result
 
 
 class LocalDeliveryAdapter:
@@ -59,6 +64,9 @@ class LocalDeliveryAdapter:
         bindings=list(binding_query.select_related('version').order_by('pk')[:101])
         if len(bindings)>100:raise ValidationError('Delivery investigation exceeds the document budget')
         ids={dossier.evidence_id,dossier.candidate.requirements_id,*dossier.baseline.values(),*[s.evidence_id for s in sources],*[r.evidence_id for r in records]}
+        for source in sources:
+            if source.kind=='ui_target' and source.payload.get('protocol')=='ui-target/v1':
+                ids.add(source.payload['artifact_evidence']['id'])
         for b in bindings:
             ids.update(x['id'] for x in b.version.source_manifest)
             if b.purpose=='closure':

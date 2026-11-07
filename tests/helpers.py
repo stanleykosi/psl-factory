@@ -70,5 +70,7 @@ def signed(actor,case):
     e=prepared(actor,case)
     for role in ['PM','Head of PMO','CEO','PMO Lead']:
         decide(actor,case.pk,role,rev(case))
+    from .signature_helpers import packet_for
+    packet_for(actor,case,e)
     sign_baseline(actor,case.pk,e['signature'].pk,rev(case))
     return e

@@ -172,6 +172,8 @@ class EmergencyFollowupTests(RecoveryFixture,TestCase):
         original=reconcile_retrospective(self.actor,self.case.pk,outcome.pk,rev(self.case))
         f=self.followup(outcome);self.t=self.old_template
         commercial.change_roles(self.actor,self.case,self.e['policy_decision'])
+        from tests.signature_helpers import reaffirm_for
+        reaffirm_for(self.actor, self.case)  # Fixture re-rostering explicitly refreshes the original human proof.
         for team in CONTRIBUTORS:assess_change(self.actor,self.case.pk,f.version_id,team,True,False,False,f.version.evidence_id,'Further work impact',rev(self.case),**commercial.impact_fixture(team))
         for role in ['Product','Engineering']:decide_change(self.actor,self.case.pk,f.version_id,role,'approve',f.version.evidence_id,'Ordinary source-bound decision',rev(self.case))
         with self.assertRaisesMessage(ValidationError,'Cost impact'):authorize_change(self.actor,self.case.pk,f.version_id,None,rev(self.case))
@@ -183,6 +185,8 @@ class EmergencyFollowupTests(RecoveryFixture,TestCase):
         receipt=commercial.delivered(self.actor,self.case,v,self.t)
         signature=self.evidence('signature','New signed ordinary SOW')
         response=capture_response(self.actor,self.case.pk,v.pk,receipt.pk,'signed',signature.pk,'Matched signed outward receipt',rev(self.case))
+        from tests.signature_helpers import packet_for
+        packet_for(self.actor,self.case,dict(self.e,signature=signature),v)
         adoption=adopt_signed(self.actor,self.case.pk,v.pk,response.pk,rev(self.case))
         self.assertEqual(SignedBaselineIntake.objects.count(),1)
         self.assertFalse(ChangeExecutionEvent.objects.exists())

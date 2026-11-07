@@ -69,7 +69,7 @@ def detail(request,work):
     from .factory_views import presentation,permitted
     scenario,selected=service.source(work,request.user,False)
     inputs=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,scenario_reference=scenario.reference,initial=selected)
-    human_actions={'actual','verify','match','unmatch','review','priority','group_review'}
+    human_actions={'support','actual','verify','match','unmatch','review','priority','group_review'}
     forms_list=[r for r in commands(work.case,request.POST if request.method=='POST' else None) if r['action'] in human_actions]
     pin=service.observed(work,'forecast_run')
     for entry in forms_list:

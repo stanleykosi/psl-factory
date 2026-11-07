@@ -38,7 +38,7 @@ class DeliveryFixture:
         self.candidate=register_candidate(self.actor,self.case.pk,'delivery-build',self.e['requirements'].pk,rev(self.case))
         self.d=open_dossier(self.actor,self.case.pk,self.candidate.pk,self.e['plan'].pk,'PM scope attestation for this requirements/plan',rev(self.case))
         self.t=register_template(self.actor,self.case.pk,'Delivery artifact',{'document_type':'project_artifact','required_fields':['executive_summary','status'],
-            'internal_review_required':False,'audience_fields':{a:['executive_summary','scope','risks','status','next_steps'] for a in ['client','internal']}},self.e['policy_decision'].pk,rev(self.case))
+            'internal_review_required':False,'audience_fields':{a:['executive_summary','scope','risks','status','next_steps','timeline','dependencies'] for a in ['client','internal']}},self.e['policy_decision'].pk,rev(self.case))
         refs=[]
         for a in ['client','internal']:
             r=register_reference(self.actor,self.case.pk,'delivery-recipient:'+a,'schema:psl/document-recipient/v1',{'audience':a,'user_id':self.actor.pk},self.e['policy_decision'].pk);refs.append(r.ref)
@@ -149,10 +149,16 @@ class DeliveryTests(DeliveryFixture,TestCase):
         for kind in PLANNING:self.source(kind,{'requires_ui':None,'client_signoff_required':None} if kind=='ui_applicability' else {})
         with self.assertRaisesMessage(ValidationError,'remain unknown'):planning_inputs(self.d)
         self.source('ui_applicability',{'requires_ui':True,'client_signoff_required':True})
+        with self.assertRaisesMessage(ValidationError,'ui_target'):planning_inputs(self.d)
+        from .ui_artifact_helpers import target_payload,approval_payload
+        artifact=self.evidence('ui_design_artifact','Synthetic current UI design v2')
+        target=target_payload(artifact)
+        self.source('ui_target',target,self.evidence('ui_target_statement'))
         with self.assertRaisesMessage(ValidationError,'ui_design'):planning_inputs(self.d)
-        self.source('ui_design')
+        self.source('ui_design',approval_payload(target),self.evidence('ui_owner_signoff','Design Lead receipt'))
         with self.assertRaisesMessage(ValidationError,'ui_client'):planning_inputs(self.d)
-        self.source('ui_client');self.assertIn('ui_client',planning_inputs(self.d)['sources'])
+        self.source('ui_client',approval_payload(target,'client-4','Client'),self.evidence('ui_owner_signoff','Client receipt'))
+        self.assertIn('ui_client',planning_inputs(self.d)['sources'])
 
     def test_missing_qa_uat_go_and_glpi_cannot_be_skipped_or_cross_request_reused(self):
         self.plan()

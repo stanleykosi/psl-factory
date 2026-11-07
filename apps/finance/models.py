@@ -50,7 +50,7 @@ from .billing_models import BillingCoverage,BillingUsage,BillingPreparation
 from .settlement_models import Invoice,InvoiceReview,InvoiceJob,InvoiceIssue,InvoiceDelivery,CashReceipt,CashVerification,CashAssignment,CashAllocation,CashReversal,ReceivableSnapshot
 
 from .correction_models import InvoiceCorrection,CashSuccessor,FinancialCorrectionReview,InvoiceCorrectionAcceptance,InvoiceCorrectionDelivery,CashSuccessorAcceptance
-from .forecast_models import ForecastScenario,ForecastRun,ForecastReview,ForecastActual,ForecastActualVerification,ForecastMatch,ForecastBinding,ForecastMatchReversal,ForecastPriority
+from .forecast_models import ForecastItemSupport,ForecastScenario,ForecastRun,ForecastReview,ForecastActual,ForecastActualVerification,ForecastMatch,ForecastBinding,ForecastMatchReversal,ForecastPriority
 from .payment_models import PaymentAssessment,PaymentException,PaymentDecision,PaymentReleaseReservation
 
 from .recognition_models import ProgressPacket,RecognitionRecord
@@ -79,4 +79,13 @@ from .receipt_followup_models import FinanceReceiptFollowup,FinanceReceiptFollow
 from .followup_successor_models import FinanceFollowupSuccessor,FinanceFollowupSuccessorReview
 from .transport_models import FinanceAuthenticatedIntake
 
-from .statement_models import FinanceStatementInput
+from .statement_models import FinanceStatementInput,FinanceStatementPPEInput,FinanceStatementPPEProjection
+
+from .coverage_models import (CoverageAccess, CoverageSource, CoverageTerms, CoverageTermsEvent,
+    CoverageInvoiceReference, CoverageAssessment, CoveragePreparationRequest, CoveragePreparationReceipt, CoveragePreparationRoute, CoverageEvidenceScope)
+
+from .fixed_charge_models import CoverageFixedCharge, CoverageNativePreparation, CoveragePreparationContinuation
+
+from .usage_intake_models import UsageIntakeSource, UsageIntakeReceipt, UsageIntakeAcceptance, UsageIntakeWithdrawal
+
+from .draft_generation_models import DraftGeneration, DraftGenerationAttempt, DraftGenerationObservation, DraftGenerationCancellation

@@ -99,7 +99,7 @@ class EmergencyFixture:
 
     def report(self,outcome):
         t=register_template(self.actor,self.case.pk,'Emergency report',{'document_type':'project_artifact','required_fields':['executive_summary','status'],
-            'audience_fields':{'client':['executive_summary','status','next_steps'],'internal':['executive_summary','status','next_steps']}},self.e['policy_decision'].pk,rev(self.case))
+            'audience_fields':{'client': ['executive_summary', 'status', 'next_steps', 'scope', 'timeline', 'risks', 'dependencies'],'internal':['executive_summary','status','next_steps']}},self.e['policy_decision'].pk,rev(self.case))
         artifact(self.actor,self.case,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',
             {'template_ids':[t.pk],'repository':'internal-versioned','retention_days':30},self.e['policy_decision'])
         version=draft_retrospective(self.actor,self.case.pk,outcome.pk,t.pk,'client',rev(self.case))

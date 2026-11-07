@@ -23,7 +23,7 @@ from tests.costing_helpers import fixture as costing_fixture
 from tests.document_helpers import artifact
 from tests.helpers import activate,rev
 
-DEFINITION={'document_type':'sow','required_fields':['executive_summary','scope','timeline'],'audience_fields':{'client':['executive_summary','scope','timeline']}}
+DEFINITION={'document_type':'sow','required_fields':['executive_summary','scope','timeline'],'audience_fields':{'client': ['executive_summary', 'scope', 'timeline', 'risks', 'dependencies', 'status']}}
 
 def setup(configure=True,missing=False):
     f=costing_fixture();a=f['actor'];c=f['case'];e=f['sources']

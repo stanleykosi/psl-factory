@@ -1,6 +1,6 @@
 from django import forms
 from apps.core.models import Evidence
-from .models import Template, Version
+from .models import Template, Version, TemplateScope
 
 class TemplateForm(forms.Form):
     name=forms.CharField(max_length=160)
@@ -11,6 +11,7 @@ class TemplateForm(forms.Form):
 
 class DraftForm(forms.Form):
     template=forms.ModelChoiceField(queryset=Template.objects.none())
+    template_scope=forms.ModelChoiceField(queryset=TemplateScope.objects.none(),required=False,label='Optional owner-approved current-template assertion; leave blank for explicit historical selection')
     title=forms.CharField(max_length=240)
     audience=forms.ChoiceField(choices=[(a,a.title()) for a in ['internal','client','management']])
     fields=forms.JSONField(widget=forms.Textarea(attrs={'rows':7}),required=False,label='Sections and evidence references')

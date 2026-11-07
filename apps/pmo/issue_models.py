@@ -44,3 +44,46 @@ class IssueClosureEntry(AppendOnly):
     created_at=models.DateTimeField(auto_now_add=True)
     class Meta:
         constraints=[models.UniqueConstraint(fields=['state','role'],name='issue_closure_log_role')]
+
+
+class IssueReferenceContract(AppendOnly):
+    """Supplied/mock read scope only. This is not an external risk or incident master."""
+    case=models.ForeignKey('core.Case',on_delete=models.PROTECT)
+    kind=models.CharField(max_length=20)
+    source_identity=models.CharField(max_length=200)
+    allowed_fields=models.JSONField()
+    mode=models.CharField(max_length=20)
+    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
+    actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    created_at=models.DateTimeField(auto_now_add=True)
+
+
+class IssueReferenceObservation(AppendOnly):
+    issue=models.ForeignKey(Issue,on_delete=models.PROTECT,related_name='reference_observations')
+    state=models.ForeignKey(IssueState,on_delete=models.PROTECT)
+    contract=models.ForeignKey(IssueReferenceContract,on_delete=models.PROTECT)
+    source_ref=models.CharField(max_length=240)
+    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
+    source_sha256=models.CharField(max_length=64)
+    observed_at=models.DateTimeField()
+    availability=models.CharField(max_length=20)
+    fields=models.JSONField(default=dict)
+    actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    created_at=models.DateTimeField(auto_now_add=True)
+    class Meta:
+        constraints=[models.UniqueConstraint(fields=['issue','contract','source_ref','evidence'],name='issue_reference_observation_identity')]
+
+
+class IssueReferenceRevision(AppendOnly):
+    issue=models.ForeignKey(Issue,on_delete=models.PROTECT,related_name='reference_revisions')
+    state=models.ForeignKey(IssueState,on_delete=models.PROTECT)
+    number=models.PositiveIntegerField()
+    previous=models.OneToOneField('self',null=True,on_delete=models.PROTECT,related_name='successor')
+    references=models.JSONField(default=list)
+    relations=models.JSONField(default=list)
+    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
+    reason=models.CharField(max_length=2000)
+    actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    created_at=models.DateTimeField(auto_now_add=True)
+    class Meta:
+        constraints=[models.UniqueConstraint(fields=['issue','number'],name='issue_reference_revision_number')]

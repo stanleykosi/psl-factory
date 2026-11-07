@@ -69,6 +69,8 @@ class NativeGuardTests(TestCase):
         self.assertEqual(check('pmo.decision.record',role='Head of PMO'),'HELD')
         self.assertEqual(check('pmo.baseline.sign',signature_id=e['signature'].pk),'HELD')
         for role in ['PM','Head of PMO','CEO','PMO Lead']:pmo.decide(a,c.pk,role,rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(a, c, e)
         self.assertEqual(check('pmo.baseline.sign',signature_id=e['signature'].pk),'READY_AT_OBSERVATION')
         pmo.sign_baseline(a,c.pk,e['signature'].pk,rev(c))
         self.assertEqual(check('pmo.milestone.complete',name='Exact delivery',evidence_id=e['completion'].pk),'READY_AT_OBSERVATION')
@@ -137,7 +139,7 @@ class NativeGuardTests(TestCase):
         from apps.agents.pilot import investigate
         f=self.f;client=Client(enforce_csrf_checks=True);client.force_login(f['b'])
         url=reverse('pilot_binding',args=[f['c'].pk,f['binding'].pk]);response=client.get(url)
-        self.assertContains(response,'Native operation guards');self.assertEqual(response['Cache-Control'],'no-store')
+        self.assertContains(response,'<h2>Action checks</h2>',html=True);self.assertEqual(response['Cache-Control'],'no-store')
         self.assertEqual(client.post(url,{'verdict':'accept','reason':'test'}).status_code,403)
         response=client.post(url,{'verdict':'accept','reason':'Engineering only','csrfmiddlewaretoken':client.cookies['csrftoken'].value})
         self.assertEqual(response.status_code,302)
@@ -244,6 +246,8 @@ class NativeProcessTests(TransactionTestCase):
     def test_independent_actual_worker_process_observes_without_claiming_pending_work(self):
         f=fixture('independent-runtime');a,c=f['a'],f['c']
         for role in ['PM','Head of PMO','CEO','PMO Lead']:pmo.decide(a,c.pk,role,rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(a, c, f['e'])
         pmo.sign_baseline(a,c.pk,f['e']['signature'].pk,rev(c));pmo.complete_milestone(a,c.pk,'Pending real fixture handoff',f['e']['completion'].pk,rev(c))
         with override_settings(PILOT_RUNTIME_IDENTITIES=f['profiles']),patch.dict(os.environ,environments()):
             d.emit(a,c.pk,f['binding'].pk,'web');d.review(f['b'],c.pk,f['binding'].pk,'accept','Independent technical review')

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block content %}
+<p><a href="{% url 'case' case.pk %}">{{ case|workspace_name }}</a> / <a href="{% url 'finance_billing' case.pk %}">Billing preparation</a></p>
+<h1>Collective usage intake</h1>
+<p>Receive one supplied report across declared customers, reconcile every expected population and control total, then hand its exact partitions to native pricing. This is Finance intake, not provider authentication or a new approval/signature gate.</p>
+<section class="workflow-panel"><h2>What to supply</h2>
+<p>Add typed <code>usage_intake_source</code> and <code>usage_intake_controls</code> JSON evidence on this case. Include the explicit case/provider namespace and reference, report and source version, year/month, extraction and cut-off timestamps, completeness, customer/service/contract/unit rows, expected existing coverage IDs, currency, quantities, row counts and supplied control version/approval reference. Missing or unknown values hold the entire collective. Zero usage needs an explicit zero row.</p>
+<p>One real delivery has one delivery reference and one operation key. Reuse both after a lost response. A genuinely separate identical resend needs new keys and records a duplicate receipt, not another usage batch. Changed source or controls require a new source version and the exact predecessor. Never route this report to another case.</p>
+<p>Source corrections or withdrawal retain earlier partitions, preparations, reviews and issued receipts. New dependent actions need current reconciled evidence. An already issued obligation stays on the separate authorized invoice-correction route.</p>
+</section>
+<section class="workflow-panel"><h2>Work and exceptions</h2>
+{% for s in sources %}<article><h3>{{ s.report_ref }} / {{ s.period }} / version {{ s.version }}: {{ s.reconciliation.status }}</h3>
+<p>Source #{{ s.pk }} · {{ s.provider_namespace }} / {{ s.provider_ref }} · supplied source {{ s.source_version }} · controls {{ s.controls.version }} · predecessor {{ s.predecessor_id|default_if_none:'None' }}</p>
+{% for finding in s.reconciliation.findings %}<p>{{ finding }}</p>{% endfor %}
+{% for p in s.partitions %}<p>Accepted usage #{{ p.pk }} for {{ p.coverage.customer }} / {{ p.coverage.service }} / {{ p.coverage.contract }}. <a href="{% url 'finance_billing' case.pk %}">Prepare exact usage in billing</a></p>{% endfor %}
+<details><summary>Exact collective reconciliation and supplied evidence</summary><pre>{{ s.reconciliation }}</pre><pre>{{ s.payload }}</pre><pre>{{ s.controls }}</pre></details>
+</article>{% empty %}<p>No supplied collective report received.</p>{% endfor %}</section>
+<section class="workflow-panel"><h2>Delivery receipts</h2>
+{% for r in receipts %}<p>Receipt #{{ r.pk }} · {{ r.delivery_ref }} · operation {{ r.operation_key }} · {{ r.source }} · {% if r.duplicate_of_id %}Duplicate of receipt #{{ r.duplicate_of_id }}. No additional usage.{% else %}Original delivery.{% endif %}</p>{% empty %}<p>No delivery receipts.</p>{% endfor %}
+</section>
+<section class="workflow-panel"><h2>Intake and recovery actions</h2>{% for command in commands %}<details><summary>{{ command.label }}</summary><form method="post">{% csrf_token %}{{ command.form.as_p }}<button>{{ command.label }}</button></form></details>{% endfor %}</section>
+{% for a in agents %}<section class="workflow-panel"><h2>Cited investigation #{{ a.pk }}</h2>{% for f in a.result.missing_fields %}<p>{{ f }}</p>{% endfor %}<p>{{ a.result.next_work }}</p><details><summary>Scoped citations and result</summary><pre>{{ a.result }}</pre></details></section>{% endfor %}
+{% endblock %}

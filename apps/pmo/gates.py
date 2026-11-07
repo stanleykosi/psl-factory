@@ -119,8 +119,10 @@ def draft_gate_packet(actor,case_id,candidate_id,template_id,audience,expected):
     status='\n'.join(gate_summary(candidate,actor))
     evidence=add_evidence(actor,case.pk,'gate_packet',summary+'\n'+status,'psl:gate-packet:'+str(candidate.pk),expected)
     case.refresh_from_db()
-    version=create_version(actor,case.pk,template_id,'Gate evidence: '+candidate.reference,audience,
-        {'executive_summary':{'text':summary,'evidence_ids':[evidence.pk]},'status':{'text':status,'evidence_ids':[evidence.pk]}},case.revision)
+    from apps.documents.pmo_sections import complete_native_client_sections
+    fields = complete_native_client_sections({'executive_summary': {'text': summary, 'evidence_ids': [evidence.pk]},
+        'status': {'text': status, 'evidence_ids': [evidence.pk]}}, audience, [evidence.pk])
+    version=create_version(actor,case.pk,template_id,'Gate evidence: '+candidate.reference,audience,fields,case.revision)
     GateDocumentBinding.objects.create(version=version,candidate=candidate,manifest=gate_manifest(candidate))
     event(actor,case,'pmo.gate_packet_drafted',candidate=candidate.pk,version=version.pk,release_authorized=False)
     return version

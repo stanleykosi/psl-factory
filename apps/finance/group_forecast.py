@@ -29,10 +29,13 @@ def project(result, policy):
     rows={row['key']:row for row in result['items']}
     if set(policy['rows'])-rows.keys():
         raise ValidationError('Disclosure policy selects an absent native forecast row')
-    return {'implementation':IMPLEMENTATION,
+    projected={'implementation':IMPLEMENTATION,
             'metadata':{k:result[k] for k in policy['metadata']},
             'rows':[{k:rows[key][k] for k in policy['fields']} for key in policy['rows']],
             'scope':'selected_assumptions_only_no_group_balances', 'execution_authorized':False}
+    summary=forecast.continuation_summary([rows[key] for key in policy['rows']])
+    if summary:projected['continuation']=summary
+    return projected
 
 
 def inputs(run):

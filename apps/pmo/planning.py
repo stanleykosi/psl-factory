@@ -65,6 +65,8 @@ def payload_context(c,payload):
             item=ActionItem.objects.filter(case=c,pk=q['action_id'],current__isnull=False).first()
             if not item:raise ValidationError('Exact same-case current action required')
             heads[str(item.pk)]=item.current_id
+    from .planning_sources import context
+    context(c,payload)
     return heads
 
 @transaction.atomic
@@ -72,13 +74,26 @@ def capture(a,case_id,payload,predecessor=None):
     c=locked(a,case_id,'coordinate');old=latest(c,'packet')
     if (old.pk if old else None)!=predecessor:raise ValidationError('Explicit latest packet predecessor required')
     source=engagement.current_capture(c);heads=payload_context(c,payload)
-    return write(a,c,'packet',{'protocol':'planning-packet/v1','engagement_id':source.pk,'engagement_hash':digest(source.data),'payload':payload,'action_heads':heads})
+    from .planning_sources import context,validate_successor,historical_predecessor
+    prior,old_value,skipped=historical_predecessor(c)
+    if prior:validate_successor(c,old_value['payload'],payload)
+    item=write(a,c,'packet',{'protocol':'planning-packet/v2','engagement_id':source.pk,'engagement_hash':digest(source.data),'payload':payload,'action_heads':heads,'source_pins':context(c,payload)})
+    event(a,c,'planning.packet_source_lineage',packet_id=item.pk,explicit_predecessor=predecessor,
+        trusted_historical_predecessor=prior.pk if prior else None,skipped_heads=skipped,
+        historical_authority_reused=False,new_capture_authority_checked=True,
+        reason='Retained immutable native source history; skipped heads contribute no trusted claims, approval or completeness.')
+    return item
 
 def packet(c,pk=None):
     e=latest(c,'packet')
     if pk is not None and (not e or e.pk!=pk):raise ValidationError('Current planning packet required')
     v=read(c,e,'packet','coordinate')
-    if set(v)!={'protocol','engagement_id','engagement_hash','payload','action_heads'} or v['protocol']!='planning-packet/v1':raise ValidationError('Closed planning packet protocol required')
+    keys={'protocol','engagement_id','engagement_hash','payload','action_heads'}
+    if v.get('protocol')=='planning-packet/v2':keys.add('source_pins')
+    if set(v)!=keys or v['protocol'] not in ['planning-packet/v1','planning-packet/v2']:raise ValidationError('Closed planning packet protocol required')
+    if v['protocol']=='planning-packet/v2':
+        from .planning_sources import context
+        if context(c,v['payload'])!=v['source_pins']:raise ValidationError('Exact declared source/version pins changed')
     source=engagement.current_capture(c)
     if (v['engagement_id'],v['engagement_hash'])!=(source.pk,digest(source.data)) or payload_context(c,v['payload'])!=v['action_heads']:raise ValidationError('Engagement, source authority or linked action head changed; capture a successor packet')
     return e,v
@@ -135,6 +150,8 @@ def criteria(c):
 def comparison_context(c,e,p,rules):
     base=Baseline.objects.filter(case=c,signed__isnull=False).first()
     if not base:raise ValidationError('An actual signed baseline is required for contract comparison')
+    from .signatures import assert_current_signed_baseline
+    assert_current_signed_baseline(c)
     item=latest(c,'comparison');v=read(c,item,'comparison','compare')
     expected={'packet_id':e.pk,'packet_sha256':e.sha256,'sow_id':base.sow_id,'signature_id':base.signed_id,'policy_id':p.pk}
     if any(v.get(k)!=x for k,x in expected.items()) or v.get('verdict')!='no_difference':raise ValidationError('Current exact signed-contract comparison required; resolve differences through controlled commercial/change work')
@@ -158,7 +175,11 @@ def compare(a,case_id,packet_id,verdict,evidence_id):
     return write(a,c,'comparison',{'packet_id':e.pk,'packet_sha256':e.sha256,'sow_id':base.sow_id,'signature_id':base.signed_id,'policy_id':p.pk,'verdict':verdict,'evidence_id':source.pk,'authority':auth})
 
 def inputs(c,e,comparison_required,reader):
-    _,v=packet(c,e.pk);p,rules=criteria(c);payload=v['payload']
+    _,v=packet(c,e.pk);payload=v['payload']
+    from .planning_sources import require_complete
+    if v['protocol']!='planning-packet/v2':raise ValidationError('Legacy packet retains history only; capture explicit source bindings in a successor for current readiness')
+    correlation=require_complete(c,payload)
+    p,rules=criteria(c)
     if any(payload[k] is None for k in SOURCE_KINDS):raise ValidationError('PRD, scope and owning-team estimate sources remain unknown')
     for row in payload['stakeholders']:
         if row['team'] in rules['require_named_contacts'] and (row['contact_id'] is None or row['evidence_id'] is None):raise ValidationError('Configured named stakeholder/contact proof remains unknown')
@@ -176,7 +197,7 @@ def inputs(c,e,comparison_required,reader):
     if meeting_ids[0][0]==meeting_ids[1][0] or meeting_ids[1][1]<meeting_ids[0][1]:raise ValidationError('Two distinct alignment sessions in their documented order required')
     pair,observations=requests(c,e,reader)
     return {'policy_id':p.pk,'alignment_links':links,'candidate_id':pair['candidate_id'],'observations':observations,'comparison_id':comparison_context(c,e,p,rules) if comparison_required else None,
-        'source_hashes':{k:proof(c,payload[k]).sha256 for k in SOURCE_KINDS},'native_verified':False}
+        'source_hashes':{k:proof(c,payload[k]).sha256 for k in SOURCE_KINDS},'source_correlation':correlation,'native_verified':False}
 
 @transaction.atomic
 def prepare(a,case_id,packet_id):
@@ -213,6 +234,16 @@ def report(a,case_id):
     current=latest(c,'packet');out['current_packet_id']=current.pk if current else None
     try:
         e,v=packet(c);out.update(packet_id=e.pk,packet_sha256=e.sha256,payload=v['payload'])
+        from .planning_sources import assessment,clarifications
+        out['source_clarifications']=clarifications(c,e.pk)
+        out['source_correlation']=assessment(c,v['payload'])
+        if v['protocol']!='planning-packet/v2':
+            out['source_correlation']['complete']=False
+            out['source_correlation']['findings'].append({'key':'legacy_packet','code':'correlation_unknown','source_ids':[],
+                'detail':'Legacy packet retains history only; explicit source bindings require a successor.'})
+        if not out['source_correlation']['complete']:
+            out.update(status='dependent_readiness_held',finding='; '.join(f['key']+': '+f['detail'] for f in out['source_correlation']['findings']))
+            return out
         requests(c,e,a)
         old=latest(c,'ready');current=current_readiness(c,old.pk) if old else None
         out['readiness_inputs']=current['inputs'] if current else inputs(c,e,Baseline.objects.filter(case=c,signed__isnull=False).exists(),a);out['status']='source_referenced_ready'

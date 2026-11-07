@@ -32,10 +32,17 @@ QUEUES={'needs_me':'Needs my attention','active':'Active work','decisions':'Deci
 
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
+    ('pmo-issues/v1','Investigate an issue and follow up','Check permitted references and connect useful findings to the accountable issue owner.',('factory.start','issue.read','evidence.add')),
+    ('finance-ledger/v1','Review an incumbent transaction reference','Connect exact supplied evidence, private investigation and independent Finance review. No posting.',('factory.start','ledger.read','ledger.private.read','finance.read','evidence.add')),
+    ('engagement/v1','Log an engagement and connect planning','Investigate route evidence, record native PM assignment and register the project during Planning.',('factory.start','engagement.read','engagement.capture')),
+    ('pmo-minutes/v1','Record formal meeting minutes','Connect authorized notes, cited suggestions, human commitments and current native minutes.',('factory.start','meeting.read','evidence.add')),
+    ('pmo-escalation/v1','Coordinate an escalation communication','Connect a source-bound issue request, human client decision and exact recipient receipts.',('factory.start','issue.read','evidence.add')),
     ('pmo-weekly-report/v1','Prepare a weekly client report','Connect selected period, cited client narrative, exact PMO Lead review and recipient receipts.',('factory.start','report.read','evidence.add')),
+    ('pmo-leadership-report/v1','Prepare a internal leadership report','Connect selected period, cited human narrative, exact configured leadership review and recipient receipts.',('factory.start','report.read','evidence.add')),
     ('finance-schedules/v1','Prepare an income detail or schedule inventory','Connect exact supplied income detail or selected inventory, native checks and human review.',('factory.start','schedules.read','finance.read','evidence.add')),
     ('finance-ppe/v1','Prepare an asset schedule','Connect exact asset register reviews, configured calculation and a reviewed read-only accounting note.',('factory.start','ppe.read','finance.read','evidence.add')),
     ('finance-forecast/v1','Prepare a reviewed cash forecast','Connect exact scenario sources, native human decisions and aggregate delivery.',('factory.start','finance.read','evidence.add')),
+    ('finance-bu/v1','Coordinate BU aggregate','Reuse exact payroll exceptions or supplied events through human review and aggregate-only recipient receipt.',('factory.start','bu.read','bu.private.read','evidence.add')),
     ('finance-payroll/v1','Coordinate restricted payroll','Carry exact native payroll inputs through HR matching, human review and aggregate recipient receipt.',('factory.start','payroll.read','payroll.private.read','evidence.add')),
     ('pmo-emergency/v1','Coordinate Emergency evidence','Track native preauthorization, actual implementation and reviewed retrospective report receipts.',('factory.start','emergency.read','evidence.add')),
     ('pmo-change/v1','Coordinate a controlled change','Carry exact native change evidence through human decisions, controlled delivery and signed closure.',('factory.start','change.read','evidence.add')),
@@ -49,7 +56,7 @@ INTAKES=(
     ('delivery-archive/v1','Archive project records','Check the declared inventory and record the controlled archive index.',('factory.start','delivery.read','evidence.add')),
     ('delivery-handover/v1','Hand over to Support','Prepare the operating instructions and track recipient receipt or gaps.',('factory.start','delivery.read','evidence.add')),
     ('delivery-closure/v1','Close a project','Prepare the PM report, obtain the prescribed decision and verify recorded closure.',('factory.start','delivery.read','evidence.add')),
-    ('pmo-finance/v1','Prepare an invoice','Use PMO completion evidence for Finance review, issuance and delivery.',('finance.read','factory.start')),
+    ('pmo-finance/v1','Prepare an invoice','Continue an exact Finance preparation or PMO completion through review, issuance and delivery.',('finance.read','factory.start')),
 )
 
 def intake_options(actor):
@@ -72,9 +79,15 @@ def visible(actor):
     active(actor)
     scope=Q(pk__in=[])
     for name,spec in DEFINITIONS.items():
-        actions=[spec['read'],'factory.read']+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
+        actions=[spec['read'],'factory.read']+(['finance.read','ledger.private.read'] if name=='finance-ledger/v1' else [])+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
         scope|=Q(definition=name,case_id__in=granted(actor,actions).values('pk'))
-    return FactoryWork.objects.filter(scope).select_related('case','actor','invoice','source_head')
+    query=FactoryWork.objects.filter(scope).select_related('case','actor','invoice','source_head')
+    from apps.finance.fixed_charge import preparation_access
+    inaccessible=[]
+    for work in query.filter(preparation__kind='fixed_contract').select_related('preparation'):
+        try:preparation_access(actor,work.preparation)
+        except (PermissionDenied,ValidationError):inaccessible.append(work.pk)
+    return query.exclude(pk__in=inaccessible)
 
 def permitted(actor,work,action):
     try:d.access(actor,work.case,action,work.definition);return True
@@ -85,6 +98,12 @@ def presentation(actor,work):
     return decorate(actor,work,_presentation(actor,work))
 
 def _presentation(actor,work):
+    if work.definition=='pmo-issues/v1':
+        from .factory_issue_views import presentation as issue_presentation
+        return issue_presentation(actor,work)
+    if work.definition=='finance-bu/v1':
+        from .factory_bu_views import presentation as bu_presentation
+        return bu_presentation(actor,work)
     if work.definition=='finance-payroll/v1':
         from .factory_payroll_views import presentation as payroll_presentation
         return payroll_presentation(actor,work)
@@ -178,6 +197,10 @@ def _presentation(actor,work):
         'can_advance':profile_available and execution_owner is not None and controlled and not work.cancel_requested and not (work.lease_until and work.lease_until>timezone.now()) and work.status not in d.TERMINAL|{'waiting_effect'},
         'can_reconcile':recovery_available and not (work.lease_until and work.lease_until>timezone.now()) and controlled and any(d.uncertain_job(j) for j in jobs),
         'can_manage':permitted(actor,work,'factory.manage'),'can_cancel':permitted(actor,work,'factory.manage') and work.status not in ['verified','cancelled'] and not work.cancel_requested,'needs_me':any(t.can_claim or t.can_decide or t.can_supply for t in tasks) or execution_owner is not None and execution_owner.pk==actor.pk and work.status=='ready'}
+    from .factory_invoice_intake import bound as preparation_bound, selection as preparation_selection
+    if preparation_bound(work):
+        row['preparation_selection']=preparation_selection(work)
+        row['preparation_history']=work.preparation_bindings.select_related('actor','preparation').order_by('sequence')
     if work.definition=='pmo-finance/v1' and work.invoice_id:
         from .factory_routing import evaluate,task_authority_current
         row['routing']=evaluate(work)
@@ -213,6 +236,9 @@ def _presentation(actor,work):
             row.update(state='Owner needed',owner=(resolver.get_full_name() or resolver.username) if resolver else 'Unassigned',
                 next_action='Review responsibility assignments and recheck the current Finance route',
                 needs_me=any(t.can_claim or t.can_recheck for t in tasks),department_wait=True)
+    if work.definition=='engagement/v1':
+        from .factory_engagement import operator_projection
+        row.update(operator_projection(actor,work))
     if work.definition=='planning/v1':
         from .factory_planning import operator_projection
         row.update(operator_projection(actor,work))
@@ -336,6 +362,25 @@ def _presentation(actor,work):
         if panel['readiness_changed']:row.update(state='Recorded closure needs review',next_action='Review changed native source or authority; recorded closure remains in history',can_advance=False)
         if work.status=='followup_needed':row.update(state='Stopped; recorded closure needs follow-up',next_action='Inspect the existing native closure; stopping work cannot reopen it')
         row['can_reassess']=False
+    if work.definition=='pmo-minutes/v1':
+        from .factory_minutes import projection
+        row['minutes']=projection(actor,work);panel=row['minutes'];row['jobs']=panel['jobs']
+        row['can_reconcile']=recovery_available and controlled and any(d.uncertain_job(j) for j in panel['jobs'])
+        row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
+        row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        if not panel['confirmation']:
+            row.update(state='Confirm actual meeting record',needs_me=permitted(actor,work,'meeting.record'),department_wait=permitted(actor,work,'meeting.record'))
+        if panel['native']['stage']=='publication':
+            row.update(state='Awaiting exact outward review or delivery',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
+        if panel['readiness_changed']:row.update(state='Current meeting or action changes need new minutes',needs_me=permitted(actor,work,'factory.manage'),can_reassess=permitted(actor,work,'factory.manage'),can_advance=False)
+    if work.definition=='finance-ledger/v1':
+        from .factory_ledger import projection
+        row['ledger']=projection(actor,work);panel=row['ledger']
+        row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
+        row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        if panel['readiness_changed']:row['state']='Supplied incumbent verification needs revalidation'
+        elif panel['native']['stage']=='review':row.update(state='Awaiting independent Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
+        elif panel['native']['stage']=='observation':row.update(state='Awaiting current supplied incumbent observation',needs_me=permitted(actor,work,'ledger.verify'),department_wait=permitted(actor,work,'ledger.verify'))
     if work.definition=='finance-schedules/v1':
         from .factory_schedules import projection
         row['schedules']=projection(actor,work);panel=row['schedules']
@@ -360,6 +405,31 @@ def _presentation(actor,work):
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
         if panel['review_roles']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting native forecast review')
         if panel['readiness_changed']:row['state']='Recorded forecast evidence changed'
+    if work.definition=='pmo-escalation/v1':
+        from .factory_escalation import projection
+        row['escalation']=projection(actor,work);panel=row['escalation'];row['jobs']=panel['jobs']
+        row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
+        row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
+        if panel['review_verdicts']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting exact document review')
+        if panel['native'].get('stage')=='decision':row.update(owner=', '.join(panel['owner_names']) or 'Unassigned PMO Lead / Head of PMO',needs_me=bool(panel['decision_roles']),department_wait=bool(panel['decision_roles']),state='Awaiting native client decision')
+        if panel['readiness_changed']:row['state']='Communication evidence needs revalidation'
+    if work.definition=='pmo-leadership-report/v1':
+        from .factory_leadership import projection
+        row['reporting']=projection(actor,work);panel=row['reporting'];row['jobs']=panel['jobs']
+        row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
+        row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
+        if panel['review_verdicts']:row.update(state='Awaiting configured leadership review',owner=actor.get_full_name() or actor.username,needs_me=True,department_wait=True)
+        if panel['readiness_changed']:row.update(state='Reviewed leadership report needs revalidation',can_advance=False,can_reassess=panel['can_correct'])
+        # Optional editing is not an obligation while another principal reviews.
+        # Native return/currentness/hold facts identify the correction need; native
+        # can_correct remains the separate authority and settled-effect boundary.
+        verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
+        correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or verdict in ['return','reject'] or work.status in ['blocked','owner_needed','configuration_needed'])
+        row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
+        row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
+        row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
     if work.definition=='pmo-weekly-report/v1':
         from .factory_reporting import projection
         row['reporting']=projection(actor,work);panel=row['reporting'];row['jobs']=panel['jobs']
@@ -444,7 +514,7 @@ def index(request):
     query=visible(request.user)
     if q:query=query.filter(Q(request__reference__icontains=q)|Q(case__title__icontains=q)|Q(key__icontains=q))
     if queue=='verified':query=query.filter(status='verified')
-    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-weekly-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
+    elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
     else:query=query.exclude(status__in=['verified','cancelled'])
     query=query.distinct().order_by('-updated_at','-pk');items=[]
@@ -467,8 +537,13 @@ def index(request):
 class StartForm(forms.Form):
     key=forms.CharField(widget=forms.HiddenInput,max_length=100)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
-    coverage=forms.ModelChoiceField(queryset=BillingCoverage.objects.none(),label='Contract and service')
-    handoff=forms.ModelChoiceField(queryset=Handoff.objects.none(),label='PMO completion received by Finance')
+    mode=forms.ChoiceField(required=False,initial='completion',choices=[('completion','PMO completion'),('existing-preparation/v1','Existing Finance preparation')])
+    from apps.finance.models import BillingPreparation, Invoice
+    preparation=forms.ModelChoiceField(queryset=BillingPreparation.objects.none(),required=False,label='Exact collective usage or fixed-contract preparation')
+    invoice=forms.ModelChoiceField(queryset=Invoice.objects.none(),required=False,label='Existing native invoice (required if already drafted)')
+    due_date=forms.DateField(required=False,widget=forms.DateInput(attrs={'type':'date'}),label='Exact invoice due date for existing preparation')
+    coverage=forms.ModelChoiceField(queryset=BillingCoverage.objects.none(),required=False,label='Contract and service (PMO completion only)')
+    handoff=forms.ModelChoiceField(queryset=Handoff.objects.none(),required=False,label='PMO completion received by Finance')
     reference=forms.CharField(max_length=100,label='Invoice reference')
     revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
     def __init__(self,actor,data=None,case_id=None):
@@ -481,6 +556,25 @@ class StartForm(forms.Form):
             self.fields['coverage'].queryset=BillingCoverage.objects.filter(case=selected)
             self.fields['handoff'].queryset=Handoff.objects.filter(case=selected).select_related('milestone')
             self.fields['handoff'].label_from_instance=lambda h:h.milestone.name
+            from apps.finance.models import BillingPreparation, Invoice
+            from apps.finance.fixed_charge import preparation_access
+            ids=[]
+            for prep in BillingPreparation.objects.filter(case=selected).filter(Q(kind='fixed_contract')|Q(kind='usage',usage__collective_acceptance__isnull=False)):
+                try:preparation_access(actor,prep)
+                except (PermissionDenied,ValidationError):continue
+                ids.append(prep.pk)
+            self.fields['preparation'].queryset=BillingPreparation.objects.filter(pk__in=ids)
+            self.fields['preparation'].label_from_instance=lambda p:f'{p.kind} preparation #{p.pk}: {p.result.get("total")} {p.result.get("currency")}'
+            self.fields['invoice'].queryset=Invoice.objects.filter(case=selected,preparation_id__in=ids)
+            self.fields['invoice'].label_from_instance=lambda i:f'{i.reference} v{i.version} (preparation #{i.preparation_id})'
+
+    def clean(self):
+        values=super().clean()
+        values['mode']=values.get('mode') or 'completion'
+        fields=['preparation'] if values.get('mode')=='existing-preparation/v1' else ['coverage','handoff']
+        for field in fields:
+            if not values.get(field):self.add_error(field,'Select the exact source for this intake mode.')
+        return values
 
 @login_required
 def create(request):
@@ -492,21 +586,39 @@ def create(request):
     if envelope=='finance-accounts/v1':
         from .factory_accounting_views import create as create_accounting
         return create_accounting(request)
+    if envelope=='pmo-issues/v1':
+        from .factory_issue_views import create
+        return create(request)
+    if envelope=='pmo-minutes/v1':
+        from .factory_minutes_views import create
+        return create(request)
+    if envelope=='finance-ledger/v1':
+        from .factory_ledger_views import create
+        return create(request)
     if envelope=='finance-schedules/v1':
         from .factory_schedules_views import create
         return create(request)
     if envelope=='finance-ppe/v1':
         from .factory_ppe_views import create
         return create(request)
+    if envelope=='pmo-leadership-report/v1':
+        from .factory_leadership_views import ReportingProfileForm
+        form_class=ReportingProfileForm
     if envelope=='pmo-weekly-report/v1':
         from .factory_reporting_views import ReportingProfileForm
         form_class=ReportingProfileForm
     elif envelope=='finance-forecast/v1':
         from .factory_forecast_views import create as create_forecast
         return create_forecast(request)
+    if envelope=='finance-bu/v1':
+        from .factory_bu_views import create as create_bu
+        return create_bu(request)
     if envelope=='finance-payroll/v1':
         from .factory_payroll_views import create as create_payroll
         return create_payroll(request)
+    if envelope=='pmo-escalation/v1':
+        from .factory_escalation_views import create
+        return create(request)
     if envelope=='pmo-emergency/v1':
         from .factory_emergency_views import create as create_emergency
         return create_emergency(request)
@@ -528,6 +640,12 @@ def create(request):
     if envelope=='delivery-hypercare/v1':return create_delivery(request,envelope)
     if envelope=='delivery-release/v1':return create_delivery(request)
     if envelope=='commercial/v1':return create_commercial(request)
+    if envelope=='engagement/v1':
+        from .factory_engagement_views import create
+        return create(request)
+    if envelope=='pmo-leadership-report/v1':
+        from .factory_leadership_views import create
+        return create(request)
     if envelope=='pmo-weekly-report/v1':
         from .factory_reporting_views import create
         return create(request)
@@ -539,7 +657,11 @@ def create(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            work=d.start(request.user,v['case'].pk,v['key'],v['coverage'].pk,v['handoff'].pk,v['reference'],v['revision'])
+            if v['mode']=='existing-preparation/v1':
+                from .factory_invoice_intake import start as start_preparation
+                work=start_preparation(request.user,v['case'].pk,v['key'],v['preparation'].pk,v['reference'],v['due_date'],v['revision'],v['invoice'].pk if v['invoice'] else None)
+            else:
+                work=d.start(request.user,v['case'].pk,v['key'],v['coverage'].pk,v['handoff'].pk,v['reference'],v['revision'])
             return redirect('factory_detail',work_id=work.pk)
         except ValidationError as exc:form.add_error(None,str(exc))
     return render(request,'factory/start.html',{'form':form,'available_cases':granted(request.user,['finance.read','factory.start']).filter(kind='project')})
@@ -547,12 +669,24 @@ def create(request):
 @login_required
 def detail(request,work_id):
     work=get_object_or_404(visible(request.user),pk=work_id)
+    if work.definition=='engagement/v1':
+        from .factory_engagement_views import detail as engagement_detail
+        return engagement_detail(request,work)
     if work.definition=='rfp-response/v1':
         from .factory_rfp_views import detail as rfp_detail
         return rfp_detail(request,work)
     if work.definition=='finance-accounts/v1':
         from .factory_accounting_views import detail as accounting_detail
         return accounting_detail(request,work)
+    if work.definition=='pmo-issues/v1':
+        from .factory_issue_views import detail
+        return detail(request,work)
+    if work.definition=='pmo-minutes/v1':
+        from .factory_minutes_views import detail
+        return detail(request,work)
+    if work.definition=='finance-ledger/v1':
+        from .factory_ledger_views import detail
+        return detail(request,work)
     if work.definition=='finance-schedules/v1':
         from .factory_schedules_views import detail
         return detail(request,work)
@@ -562,9 +696,18 @@ def detail(request,work_id):
     if work.definition=='finance-forecast/v1':
         from .factory_forecast_views import detail as forecast_detail
         return forecast_detail(request,work)
+    if work.definition=='finance-bu/v1':
+        from .factory_bu_views import detail as bu_detail
+        return bu_detail(request,work)
     if work.definition=='finance-payroll/v1':
         from .factory_payroll_views import detail as payroll_detail
         return payroll_detail(request,work)
+    if work.definition=='pmo-escalation/v1':
+        from .factory_escalation_views import detail
+        return detail(request,work)
+    if work.definition=='pmo-leadership-report/v1':
+        from .factory_leadership_views import detail
+        return detail(request,work)
     if work.definition=='pmo-weekly-report/v1':
         from .factory_reporting_views import detail
         return detail(request,work)
@@ -592,7 +735,12 @@ def detail(request,work_id):
         try:
             operation=request.POST.get('action');revision=int(request.POST.get('revision','0'))
             if operation=='observe_department' and work.definition!='planning/v1' or operation=='reassess' and work.definition not in ['planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1']:raise ValidationError('Choose an action available for this work')
-            if operation=='advance':d.advance(request.user,work.pk,revision)
+            if operation=='replace_preparation':
+                from .factory_invoice_intake import replace
+                from datetime import date
+                due=date.fromisoformat(request.POST['due_date']) if request.POST.get('due_date') else None
+                replace(request.user,work.pk,int(request.POST.get('preparation','0')),request.POST.get('reference',''),due,revision,request.POST.get('reason',''))
+            elif operation=='advance':d.advance(request.user,work.pk,revision)
             elif operation=='reassess':
                 if work.definition=='delivery-hypercare/v1':
                     from .factory_hypercare import reassess
@@ -864,12 +1012,13 @@ class ProfileForm(forms.Form):
         super().__init__(*args,**kwargs);self.case=case;self.fields['evidence'].queryset=Evidence.objects.filter(case=case,kind='policy_decision')
         for field,action in [('information_resolver_id','factory.information'),('executor_id','factory.execute')]:
             self.fields[field].queryset=get_user_model().objects.filter(is_active=True,grant__case=case,grant__active=True,grant__action=action).distinct()
-        if definition in ['delivery-go-live/v1','pmo-change/v1','pmo-emergency/v1']:
+        if definition in ['pmo-escalation/v1','delivery-go-live/v1','pmo-change/v1','pmo-emergency/v1']:
             preparers=get_user_model().objects.filter(is_active=True)
-            for action in ['case.read','emergency.read' if definition=='pmo-emergency/v1' else 'change.read' if definition=='pmo-change/v1' else 'delivery.read','factory.execute','emergency.manage' if definition=='pmo-emergency/v1' else 'change.manage' if definition=='pmo-change/v1' else 'delivery.manage','document.draft','document.request_review']:
+            for action in ['case.read','issue.read' if definition=='pmo-escalation/v1' else 'emergency.read' if definition=='pmo-emergency/v1' else 'change.read' if definition=='pmo-change/v1' else 'delivery.read','factory.execute','issue.escalate' if definition=='pmo-escalation/v1' else 'emergency.manage' if definition=='pmo-emergency/v1' else 'change.manage' if definition=='pmo-change/v1' else 'delivery.manage','document.draft','document.request_review']:
+                if definition=='pmo-escalation/v1' and action=='document.request_review':continue
                 preparers=preparers.filter(grant__case=case,grant__active=True,grant__action=action)
-            self.fields['preparer_id']=forms.ModelChoiceField(queryset=preparers.distinct(),required=False,label='Existing Emergency report preparer' if definition=='pmo-emergency/v1' else 'Existing change preparer' if definition=='pmo-change/v1' else 'Existing PM for report preparation',
-                help_text='Selection does not grant Emergency or document permissions.' if definition=='pmo-emergency/v1' else 'Selection does not grant change or document permissions.' if definition=='pmo-change/v1' else 'Selection does not confer PM authority. Current business-role assignment is checked again at execution.')
+            self.fields['preparer_id']=forms.ModelChoiceField(queryset=preparers.distinct(),required=False,label='Existing escalation communication preparer' if definition=='pmo-escalation/v1' else 'Existing Emergency report preparer' if definition=='pmo-emergency/v1' else 'Existing change preparer' if definition=='pmo-change/v1' else 'Existing PM for report preparation',
+                help_text='Selection grants no issue or document authority.' if definition=='pmo-escalation/v1' else 'Selection does not grant Emergency or document permissions.' if definition=='pmo-emergency/v1' else 'Selection does not grant change or document permissions.' if definition=='pmo-change/v1' else 'Selection does not confer PM authority. Current business-role assignment is checked again at execution.')
 
     def clean_provider(self):
         value=self.cleaned_data['provider']
@@ -884,7 +1033,17 @@ def configuration(request,case_id):
     spec=definition(envelope);component=spec['component']
     case=accessible_case(request.user,case_id);d.access(request.user,case,'policy.configure',envelope)
     form_class=ProfileForm
-    if envelope=='pmo-weekly-report/v1':
+    if envelope=='pmo-issues/v1':
+        class IssueProfileForm(ProfileForm):
+            reference_max_age_seconds=forms.IntegerField(required=False,min_value=1,max_value=31536000,label='Source observation maximum age in seconds (blank means unknown)',help_text='Use an explicit source-owner threshold only. No default freshness or SLA is inferred.')
+        form_class=IssueProfileForm
+    if envelope=='pmo-minutes/v1':
+        from .factory_minutes_views import MinutesProfileForm
+        form_class=MinutesProfileForm
+    elif envelope=='pmo-leadership-report/v1':
+        from .factory_leadership_views import ReportingProfileForm
+        form_class=ReportingProfileForm
+    elif envelope=='pmo-weekly-report/v1':
         from .factory_reporting_views import ReportingProfileForm
         form_class=ReportingProfileForm
     elif envelope=='finance-forecast/v1':
@@ -897,14 +1056,14 @@ def configuration(request,case_id):
         from .factory_rfp_views import RFPProfileForm
         form_class=RFPProfileForm
     form=form_class(case,request.POST if request.method=='POST' else None,definition=envelope)
-    if envelope in ['finance-schedules/v1','finance-ppe/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
-        for name in (['executor_id','information_resolver_id'] if envelope in ['finance-schedules/v1','finance-ppe/v1','finance-payroll/v1','planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
+    if envelope in ['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','finance-schedules/v1','finance-ppe/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1']:
+        for name in (['executor_id','information_resolver_id'] if envelope in ['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','finance-schedules/v1','finance-ppe/v1','finance-payroll/v1','planning/v1','delivery-release/v1','delivery-hypercare/v1'] else ['information_resolver_id']):
             form.fields[name].widget=forms.HiddenInput();form.fields[name].disabled=True
-    if envelope in ['pmo-emergency/v1','pmo-change/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1']:
+    if envelope in ['pmo-minutes/v1','pmo-escalation/v1','pmo-emergency/v1','pmo-change/v1','commercial/v1','delivery-handover/v1','delivery-go-live/v1']:
         form.fields['executor_id'].label='Controlled document publisher'
         form.fields['executor_id'].queryset=form.fields['executor_id'].queryset.filter(grant__case=case,grant__active=True,grant__action='document.publish').distinct()
-        if envelope in ['pmo-emergency/v1','pmo-change/v1','delivery-handover/v1','delivery-go-live/v1']:
-            for action in ['case.read','emergency.read' if envelope=='pmo-emergency/v1' else 'change.read' if envelope=='pmo-change/v1' else 'delivery.read']:
+        if envelope in ['pmo-escalation/v1','pmo-emergency/v1','pmo-change/v1','delivery-handover/v1','delivery-go-live/v1']:
+            for action in ['case.read','issue.read' if envelope=='pmo-escalation/v1' else 'emergency.read' if envelope=='pmo-emergency/v1' else 'change.read' if envelope=='pmo-change/v1' else 'delivery.read']:
                 form.fields['executor_id'].queryset=form.fields['executor_id'].queryset.filter(grant__case=case,grant__active=True,grant__action=action).distinct()
     if envelope in ['delivery-archive/v1','delivery-closure/v1']:
         form.fields['executor_id'].label='Closure finaliser' if envelope=='delivery-closure/v1' else 'Archive operator'
@@ -913,7 +1072,7 @@ def configuration(request,case_id):
     if request.method=='POST' and request.POST.get('action')=='draft' and form.is_valid():
         value=dict(form.cleaned_data);proof=value.pop('evidence')
         value['required_evidence_kinds']=[v.strip() for v in value['required_evidence_kinds'].split(',') if v.strip()]
-        for name in ['information_resolver_id','executor_id']+(['preparer_id'] if envelope in ['pmo-weekly-report/v1','finance-forecast/v1','delivery-go-live/v1','pmo-change/v1','pmo-emergency/v1'] else []):value[name]=value[name].pk if value[name] else None
+        for name in ['information_resolver_id','executor_id']+(['preparer_id'] if envelope in ['pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-forecast/v1','delivery-go-live/v1','pmo-change/v1','pmo-emergency/v1'] else []):value[name]=value[name].pk if value[name] else None
         if envelope=='finance-accounts/v1':
             value['template_id']=value['template_id'].pk if value['template_id'] else None
             for name in ['allocation_mode','audience','bu_metrics']:value[name]=value[name] or None
@@ -922,7 +1081,7 @@ def configuration(request,case_id):
             value['route_key']=value['route_key'] or None
         selected=value.pop('provider') or None
         if 'provider' not in request.POST:selected='synthetic_factory_v1' if case.synthetic else None
-        value.update(definition=envelope,review_role=None if envelope in ['pmo-weekly-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
+        value.update(definition=envelope,review_role=None if envelope in ['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1'] else 'Finance',provider=selected)
         try:
             draft_operator_policy(request.user,case.pk,component,value,proof.pk,timezone.now());messages.success(request,'Draft saved. Validate it before activation.');return redirect(request.path+'?definition='+envelope)
         except ValidationError as exc:form.add_error(None,str(exc))

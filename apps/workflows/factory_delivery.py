@@ -141,6 +141,8 @@ def snapshot(work,value,reader=None):
         if e.kind not in latest or e.version>latest[e.kind].version:latest[e.kind]=e
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
+    from apps.pmo.progress import optional_report
+    data['progress_tracking']=optional_report(actor,d)
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'dossier':d.pk,'native':data,'checks':observed,'planning_owners':planning_owners(work.case),
         'release_recorded':d.records.filter(kind='release_outcome').exists(),'prepared':prepared(work).pk if prepared(work) else None}
@@ -170,9 +172,13 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if case.revision!=work.case.revision:raise ValidationError('STALE_VERSION: delivery sources changed before the command')
     d=subject(work,work.execution_actor);kind=choice['activity']
     if kind=='ACT04':
-        observed=checks(d)
+        observed=checks(d);progress_run=None
+        if d.progress_sources.exists():
+            from apps.agents.progress import investigate
+            try:progress_run=investigate(work.execution_actor,case.pk,d.pk,case.revision)
+            except (ValidationError,PermissionDenied):pass
         return {'head':work.source_head_id,'dossier':d.pk,'checks':{k:v['status'] for k,v in observed.items()},
-            'findings':{k:v['finding'] for k,v in observed.items() if v['status']=='held'},'deployment_dispatched':False}
+            'findings':{k:v['finding'] for k,v in observed.items() if v['status']=='held'},'deployment_dispatched':False,'progress_investigation_id':progress_run.pk if progress_run else None,'progress_tracking':'Inspect current scoped progress, plan-impact and issue correlations in the progress panel'}
     if kind=='ACT10':
         if not planning_owners(case):raise ValidationError('owner_needed: Configure current native PMO Lead Planning exit authority')
         return {'head':work.source_head_id,'native_planning_owner_available':True}
@@ -234,9 +240,11 @@ def projection(actor,work):
     author_current=True
     try:intake_authority(work)
     except PermissionDenied:author_current=False
+    from apps.pmo.progress import optional_report
     return {'dossier':d,'checks':observed,'can_decide':can_decide,'ready':prepared(work),'readiness_changed':changed,
         'can_reaffirm':instruction_packet is not None,'intake_current':current,'intake_authority_current':author_current,
         'planning_owner_names':owner_names,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
+        'progress_tracking':optional_report(actor,d),
         'decision_evidence':list(public_evidence(Evidence.objects.filter(case=work.case))) if can_decide else []}
 
 @transaction.atomic
@@ -268,5 +276,5 @@ def reassess(actor,work_id,expected,reason):
     event(actor,work.case,'factory.reassessment',work=work.pk,reason=reason,spent=work.budget_used);return work
 
 def attempt_projection(attempt):
-    allowed={'head','dossier','checks','release_ready','verified','verification_scope','deployment_authorized','deployment_dispatched','financial_release_granted','external_authenticity_verified','native_planning_owner_available'}
+    allowed={'progress_investigation_id','head','dossier','checks','release_ready','verified','verification_scope','deployment_authorized','deployment_dispatched','financial_release_granted','external_authenticity_verified','native_planning_owner_available'}
     return {k:v for k,v in attempt.result.items() if k in allowed}

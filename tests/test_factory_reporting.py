@@ -49,7 +49,7 @@ class FactoryReportingTests(TestCase):
     def setUp(self):
         (self.actor, self.case, self.owner, self.notes, self.minutes,
          self.old_template, self.meeting, self.recipient) = meetings_fixture()
-        fields = ['executive_summary', 'status', 'risks', 'timeline', 'next_steps']
+        fields = ['executive_summary', 'scope', 'status', 'risks', 'timeline', 'dependencies', 'next_steps']
         self.template = register_template(
             self.actor, self.case.pk, 'Client weekly report',
             {'document_type': 'status_report', 'required_fields': fields,
@@ -192,7 +192,7 @@ class FactoryReportingTests(TestCase):
         for text in self.narrative.values():
             self.assertIn(text, body)
             self.assertIn(text, json.dumps(receipt.payload))
-        for key in ['executive_summary', 'status', 'risks', 'timeline', 'next_steps']:
+        for key in ['executive_summary', 'scope', 'status', 'risks', 'timeline', 'dependencies', 'next_steps']:
             self.assertIn(key, body)
         for private in ['PRIVATE DIAGNOSIS', 'INTERNAL-ACTION-SECRET',
                         'Confirm the current delivery plan.', 'Investigate the dependency',
@@ -699,6 +699,22 @@ class FactoryReportingTests(TestCase):
             self.configure(review_role='PM')
         self.assertEqual(active_component('OPS.factory_reporting_execution', self.case).pk, original)
 
+    def test_p52_scope_and_dependencies_are_explicit_generated_coverage_not_raw_facts(self):
+        from apps.pmo.reporting import CLIENT_SCOPE_COVERAGE, CLIENT_DEPENDENCY_COVERAGE
+        self.start_work()
+        self.finish()
+        version = reporting.document(self.work)
+        self.assertEqual(len(version.payload['sections']), 7)
+        self.assertEqual(version.fields['scope']['text'], CLIENT_SCOPE_COVERAGE)
+        self.assertEqual(version.fields['dependencies']['text'], CLIENT_DEPENDENCY_COVERAGE)
+        receipt = PublicationReceipt.objects.get(publication__factory_work=self.work)
+        self.assertEqual(receipt.payload, version.payload)
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT psl_reporting_document(%s,%s,%s)',
+                           [self.work.pk, self.work.source_head_id, version.pk])
+            self.assertEqual(cursor.fetchone(), (True,))
+        self.assertTrue(all(field['evidence_ids'] == [version.source_manifest[0]['id']] for field in version.fields.values()))
+
     def test_exact_generated_projection_is_the_only_outward_source_reference(self):
         from apps.documents.controlled import create_version
         from apps.core.evidence_access import public_evidence
@@ -802,7 +818,7 @@ class FactoryReportingTests(TestCase):
         self.assertFalse(public_evidence(Evidence.objects.filter(pk=self.content.pk)).exists())
         fields = {key: {'text': 'This public route cannot disclose private source lineage',
                         'evidence_ids': [self.content.pk]}
-                  for key in ['executive_summary', 'status', 'risks', 'timeline', 'next_steps']}
+                  for key in ['executive_summary', 'scope', 'status', 'risks', 'timeline', 'dependencies', 'next_steps']}
         with self.assertRaises(ValidationError):
             create_version(self.preparer, self.case.pk, self.template.pk, 'Private narrative bypass',
                            'client', fields, rev(self.case))

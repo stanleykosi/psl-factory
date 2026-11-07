@@ -107,7 +107,10 @@ def validate_envelope(case, envelope, runtime=False):
         from .support_agent_validators import SCHEMAS as SUPPORT_AGENT_COMPONENTS,validate_reference as validate_support_agent
         from .support_release_validators import SCHEMAS as RELEASE_COMPONENTS,validate_reference as validate_release
         from .support_channel_validators import SCHEMAS as CHANNEL_COMPONENTS,validate_reference as validate_channel
-        if envelope['component_id'] in CHANNEL_COMPONENTS:
+        from .signature_validators import COMPONENT as SIGNATURE_COMPONENT, validate_reference as validate_signature
+        if envelope['component_id'] == SIGNATURE_COMPONENT:
+            validate_signature(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in CHANNEL_COMPONENTS:
             validate_channel(envelope['component_id'],target,case,runtime=runtime)
         elif envelope['component_id'] in RELEASE_COMPONENTS:
             validate_release(envelope['component_id'],target,case,runtime=runtime)

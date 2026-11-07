@@ -8,7 +8,8 @@ from apps.identity.services import require
 from apps.identity.models import Grant
 from apps.workflows.models import HumanTask
 from apps.agents.documents import draft_document, check_document, check_candidate
-from .models import Template, Document, Version, PublicationJob, PublicationReceipt
+from .template_access import visible_scopes
+from .models import Template, Document, Version, PublicationJob, PublicationReceipt, TemplateScope
 from .forms import TemplateForm, DraftForm, ReviewForm, CandidateForm, GateForm
 from apps.pmo.models import DeliveryCandidate
 from apps.pmo.gates import register_candidate, record_gate, verify_gate, draft_gate_packet, gate_summary
@@ -25,13 +26,24 @@ def workbench(request,case_id):
     if not finance_reader:
         versions=versions.filter(forecastbinding__isnull=True)
         templates=templates.exclude(definition__document_type='finance_group_report').exclude(pk__in=Version.objects.filter(document__case=case,forecastbinding__isnull=False).values('template_id'))
+    from apps.finance.models import FinanceDocumentBinding
+    from apps.finance.statement_ppe import recipient_access as ppe_recipient_access
+    hidden=[]
+    for binding in FinanceDocumentBinding.objects.filter(version__in=versions).select_related('run'):
+        try:ppe_recipient_access(binding.run,[request.user.pk])
+        except (PermissionDenied,ValidationError):hidden.append(binding.version_id)
+    from apps.pmo.leadership_reporting import binding_access
+    for version in versions.filter(minutesreportbinding__manifest__source_mode='leadership_selected_facts/v1'):
+        try:binding_access(request.user,version)
+        except PermissionDenied:hidden.append(version.pk)
+    versions=versions.exclude(pk__in=hidden)
     evidence=public_evidence(case.evidence.all()).order_by('-pk')
     tf=TemplateForm();df=DraftForm();rf=ReviewForm();cf=CandidateForm();gf=GateForm()
     candidates=DeliveryCandidate.objects.filter(case=case)
     cf.fields['requirements'].queryset=evidence.filter(kind='requirements')
     gf.fields['candidate'].queryset=candidates;gf.fields['evidence'].queryset=evidence
     tf.fields['evidence'].queryset=evidence.filter(kind='policy_decision')
-    df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence
+    df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=visible_scopes(request.user,case)
     rf.fields['version'].queryset=versions
     if request.method=='POST':
         try:
@@ -55,13 +67,13 @@ def workbench(request,case_id):
                 if not tf.is_valid():raise ValidationError(tf.errors.as_text())
                 d=tf.cleaned_data;register_template(request.user,case.pk,d['name'],d['definition'],d['evidence'].pk,expected)
             elif action in ['draft','agent_draft']:
-                df=DraftForm(request.POST);df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence
+                df=DraftForm(request.POST);df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=visible_scopes(request.user,case)
                 if not df.is_valid():raise ValidationError(df.errors.as_text())
                 d=df.cleaned_data
                 if action=='agent_draft':
-                    draft_document(request.user,case.pk,d['template'].pk,d['title'],d['audience'],[e.pk for e in d['sources']],expected,d['document_id'])
+                    draft_document(request.user,case.pk,d['template'].pk,d['title'],d['audience'],[e.pk for e in d['sources']],expected,d['document_id'],template_scope_id=d['template_scope'].pk if d['template_scope'] else None)
                 else:
-                    create_version(request.user,case.pk,d['template'].pk,d['title'],d['audience'],d['fields'] or {},expected,d['document_id'])
+                    create_version(request.user,case.pk,d['template'].pk,d['title'],d['audience'],d['fields'] or {},expected,d['document_id'],template_scope_id=d['template_scope'].pk if d['template_scope'] else None)
             elif action=='review':
                 rf=ReviewForm(request.POST);rf.fields['version'].queryset=versions
                 if not rf.is_valid():raise ValidationError(rf.errors.as_text())
@@ -97,9 +109,10 @@ def workbench(request,case_id):
                 except (PermissionDenied,ValidationError):continue
             candidate.visible_gates.append(gate)
     visible_jobs=PublicationJob.objects.filter(publication__version__document__case=case).exclude(publication__version__template__definition__document_type='accepted_finance_metadata')
+    visible_jobs=visible_jobs.exclude(publication__version_id__in=hidden)
     if not finance_reader:visible_jobs=visible_jobs.filter(publication__version__forecastbinding__isnull=True)
     return render(request,'documents/workbench.html',{'case':case,'actions':actions,'template_form':tf,'draft_form':df,'review_form':rf,
-        'candidate_form':cf,'gate_form':gf,'candidates':candidate_rows,'templates':templates,'versions':items,'tasks':HumanTask.objects.filter(case=case).exclude(version__template__definition__document_type='accepted_finance_metadata').select_related('version__document').order_by('-pk'),
+        'candidate_form':cf,'gate_form':gf,'candidates':candidate_rows,'templates':templates,'versions':items,'tasks':HumanTask.objects.filter(case=case).exclude(version_id__in=hidden).exclude(version__template__definition__document_type='accepted_finance_metadata').select_related('version__document').order_by('-pk'),
         'jobs':visible_jobs.select_related('publication__version__document').order_by('-pk'),
         'agent_runs':case.agentrun_set.filter(process_id__in=['P52','P53','P31']).order_by('-pk')[:20] if 'agent.document' in actions or 'agent.gates' in actions else []})
 
@@ -112,11 +125,20 @@ def inbox(request):
             from apps.finance.accepted_documents import recipient_access
             recipient_access(request.user,receipt)
             require(request.user,version.document.case,'document.receive:'+version.audience)
+            from apps.pmo.leadership_reporting import binding_access
+            binding_access(request.user,version)
             if version.audience=='group':
                 from apps.finance.group_forecast import recipient_access
                 recipient_access(request.user,receipt)
             if version.template.definition.get('document_type')=='finance_report':
                 require(request.user,version.document.case,'finance.read')
+                from apps.finance.models import FinanceDocumentBinding
+                from apps.finance.statement_ppe import recipient_access as ppe_recipient_access
+                binding=FinanceDocumentBinding.objects.filter(version=version).select_related('run').first()
+                if binding:
+                    ppe_recipient_access(binding.run,[request.user.pk])
+                    from apps.finance.statement_ppe_documents import check_binding
+                    check_binding(binding,current=False)
         except (PermissionDenied,ValidationError):continue
         from apps.finance.presentation import present
         receipt.finance_presentation=present(receipt.payload)

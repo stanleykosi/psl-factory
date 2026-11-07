@@ -12,6 +12,7 @@ from apps.policy.bu_drafts import draft_bu_policy
 from apps.agents.bu import investigate
 from apps.agents.models import AgentRun
 from .bu_forms import commands
+from apps.policy.allocation_coverage import COVERAGE
 from .bu_models import BUWork,BUReport
 from . import bu as domain
 @login_required
@@ -44,7 +45,7 @@ def workbench(request,case_id):
   except (ValidationError,PermissionDenied):w.current=False
   try:domain.private_access(request.user,w);w.can_read=True
   except (ValidationError,PermissionDenied):w.can_read=False
- response=render(request,'finance/bu.html',{'case':c,'works':rows,'reports':BUReport.objects.defer('payload').filter(work__case=c).order_by('-pk')[:30],'commands':forms,'policies':[resolve(k,c) for k in SCHEMAS],'schemas':SCHEMAS,'rule_schema':domain.RULE,'agents':AgentRun.objects.filter(case=c,provider='deterministic-bu-v1').order_by('-pk')[:5]});response['Cache-Control']='no-store';return response
+ response=render(request,'finance/bu.html',{'case':c,'works':rows,'reports':BUReport.objects.defer('payload').filter(work__case=c).order_by('-pk')[:30],'commands':forms,'policies':[resolve(k,c) for k in SCHEMAS],'schemas':SCHEMAS,'weight_coverage_schema':COVERAGE,'rule_schema':domain.RULE,'agents':AgentRun.objects.filter(case=c,provider='deterministic-bu-v1').order_by('-pk')[:5]});response['Cache-Control']='no-store';return response
 @login_required
 def inspect(request,case_id,kind,pk):
  c=accessible_case(request.user,case_id)

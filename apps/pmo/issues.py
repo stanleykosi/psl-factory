@@ -8,7 +8,7 @@ from apps.policy.services import decision_authority
 from apps.documents.contracts import validate
 from .models import Issue, IssueState, IssueClosureEntry
 from .commercial import note_required
-from .services import subject
+from .issue_access import issue_subject as subject
 
 SEVERITIES=['Critical','High','Medium','Low']
 

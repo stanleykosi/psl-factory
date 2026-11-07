@@ -85,6 +85,8 @@ class FactoryChangeBranchTests(TestCase):
         self.advance();self.assertIsNone(change.document(self.work,'notice'));self.assertIn('signed controlled commercial baseline',self.work.finding)
         receipt=native_tests.delivered(a,c,commercial,self.t)
         response=capture_response(a,c.pk,commercial.pk,receipt.pk,'signed',e['signature'].pk,'Human verifies actual signed replacement SOW',rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(a,c,e,commercial)
         adoption=adopt_signed(a,c.pk,commercial.pk,response.pk,rev(c))
         self.assertEqual(adoption.before['signed_id'],old_signed);self.assertEqual(Baseline.objects.get(case=c).signed_id,e['signature'].pk)
         self.work.refresh_from_db()

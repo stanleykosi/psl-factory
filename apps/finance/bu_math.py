@@ -24,7 +24,12 @@ def staff(rows,declared,rules,financial,bus):
     rule=by[pair][0]
     if rule['standard_pool_ref']!=financial['standard_pool_ref']:raise ValidationError('exception_pool_exclusion_mismatch')
     w=weights(rule['weights'])
-   else:w={row['bu']:Decimal(1)} if financial['standard_method']=='matched_bu' else weights(financial['standard_weights'])
+   else:
+    if financial['standard_method']=='matched_bu':w={row['bu']:Decimal(1)}
+    elif 'weight_contract' in financial:
+     from apps.policy.allocation_coverage import checked_weights
+     w=checked_weights(financial['standard_weights'],financial['weight_contract'])
+    else:w=weights(financial['standard_weights'])
    if not set(w)<=set(bus):raise ValidationError('unknown_or_ineligible_bu')
    parts,residual,_=proportional(decimal(row['amount']),w,financial['rounding'])
    if residual:code='allocation_residual_held'
@@ -37,7 +42,7 @@ def staff(rows,declared,rules,financial,bus):
  source=sum_values(r['amount'] for r in included) if included else None;allocated=sum_values(by_bu.values()) if included else None;residual=sum_values(r['residual'] for r in out) if included else None
  conserved=source is not None and allocated is not None and residual is not None and decimal(source)==decimal(allocated)+decimal(residual)
  if not conserved:codes.append('staff_conservation_unresolved')
- return {'rows':out,'by_bu':by_bu,'staff_counts':{k:len(v) for k,v in counts.items()},'source_total':source,'allocated_total':allocated,'residual':residual,'conserved':conserved,'excluded_components_total':sum_values(r['amount'] for r in rows if r['component'] not in financial['components'])},sorted(set(codes))
+ return {'rows':out,'by_bu':by_bu,'staff_counts':{k:len(v) for k,v in counts.items()},'source_total':source,'allocated_total':allocated,'residual':residual,'conserved':conserved,'weight_contract':financial.get('weight_contract'),'weight_semantics':'explicit_contract' if 'weight_contract' in financial else 'legacy_relative_v1','excluded_components_total':sum_values(r['amount'] for r in rows if r['component'] not in financial['components'])},sorted(set(codes))
 
 @exact_context
 def events(rows,rules,bus):

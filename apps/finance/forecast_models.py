@@ -100,3 +100,24 @@ class ForecastPriority(AppendOnly):
     review=models.ForeignKey(ForecastReview,on_delete=models.PROTECT)
     action=models.OneToOneField('pmo.ActionItem',on_delete=models.PROTECT)
     authority=models.JSONField()
+
+
+class ForecastItemSupport(AppendOnly):
+    """Explicit supplied support/continuation declaration; never authenticated cash."""
+    case=models.ForeignKey('core.Case',on_delete=models.PROTECT)
+    root=models.ForeignKey(ForecastScenario,on_delete=models.PROTECT,related_name='item_support_history')
+    scenario=models.ForeignKey(ForecastScenario,on_delete=models.PROTECT,related_name='item_support_declarations')
+    item_key=models.CharField(max_length=100)
+    previous=models.OneToOneField('self',null=True,on_delete=models.PROTECT)
+    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
+    mode=models.CharField(max_length=30)
+    uncertainty=models.CharField(max_length=30)
+    observed_on=models.DateField(null=True)
+    role=models.CharField(max_length=50)
+    snapshot=models.JSONField()
+    authority=models.JSONField()
+    reason=models.TextField()
+    actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    created_at=models.DateTimeField(auto_now_add=True)
+    class Meta:
+        constraints=[models.UniqueConstraint(fields=['root','item_key'],condition=models.Q(previous__isnull=True),name='forecast_item_support_origin')]

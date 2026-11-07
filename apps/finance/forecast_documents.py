@@ -30,8 +30,9 @@ def draft(actor,case_id,run_id,template_id,audience,expected):
         'scope':run.result['scope'],'full_business_cash_forecast':False,'coverage':{'account_count':len(run.result['coverage']['accounts']),'inflows':run.result['coverage']['inflows'],'outflows':run.result['coverage']['outflows'],'omission_count':len(run.result['coverage']['omissions']),'finding_count':len(run.result['findings'])},
         'periods':[{k:v for k,v in row.items() if k in ['month']+snapshot['projection']['columns']} for row in run.result['periods']],
         'execution_authorized':False}
+    if run.result.get('continuation'):public['continuation']=run.result['continuation']
     e=add_evidence(actor,case.pk,'finance_report_snapshot',json.dumps(public,sort_keys=True),'derived:forecast:'+str(run.pk),case.revision);case.refresh_from_db()
-    fields={'executive_summary':{'text':f"Reviewed {public['status']} forecast for {public['entity']} / {public['as_of']}. Captured case and explicitly declared account/source inventory only; omitted or unknown activity is outside this projection. This report grants no spending, payment or release authority.",'evidence_ids':[e.pk]},
+    fields={'executive_summary':{'text':f"Reviewed {public['status']} forecast for {public['entity']} / {public['as_of']}. Captured case and explicitly declared account/source inventory only; omitted or unknown activity is outside this projection. Timing review is not fresh support or reliability. This report grants no spending, payment or release authority.",'evidence_ids':[e.pk]},
         'financial_metrics':{'text':json.dumps(public,sort_keys=True),'evidence_ids':[e.pk]},'bu_totals':{'text':'No BU allocation or entity consolidation inferred.','evidence_ids':[e.pk]}}
     v=_create_version(actor,case.pk,template.pk,'Reviewed cash forecast '+str(run.pk),audience,fields,case.revision,authorized_restricted_source_ids=[e.pk])
     ForecastBinding.objects.create(version=v,run=run,snapshot=snapshot)

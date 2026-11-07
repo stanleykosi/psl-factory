@@ -37,6 +37,8 @@ class PlanningTests(TestCase):
         self.assertEqual(decision.kind,'planning_decision');self.assertIsNone(Baseline.objects.get(case=c).signed_id)
         from apps.pmo.services import decide,sign_baseline
         for role in ['PM','Head of PMO','CEO','PMO Lead']:decide(a,c.pk,role,rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(a, c, e)
         sign_baseline(a,c.pk,e['signature'].pk,rev(c))
         self.assertEqual(d.prepare(a,c.pk,f['packet'].pk).pk,ready.pk)
         delivery.verified_source(dossier,'scope_baseline')
@@ -81,6 +83,8 @@ class PlanningTests(TestCase):
         f=self.f;a,c,e=f['a'],f['c'],f['e'];h.observe(f)
         from apps.pmo.services import decide,sign_baseline
         for role in ['PM','Head of PMO','CEO','PMO Lead']:decide(a,c.pk,role,rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(a, c, e)
         sign_baseline(a,c.pk,e['signature'].pk,rev(c));before=Baseline.objects.get(case=c).signed_id
         with self.assertRaises(ValidationError):d.prepare(a,c.pk,f['packet'].pk)
         rules=copy.deepcopy(f['rules']);rules.update(comparison_reviewer_id=f['owners']['scope'].pk,comparison_reviewer_role='Product Owner');h.criteria(f,rules)

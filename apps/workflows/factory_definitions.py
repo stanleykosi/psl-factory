@@ -2,6 +2,13 @@
 from django.core.exceptions import ValidationError
 
 DEFINITIONS={
+    'pmo-issues/v1':{'component':'OPS.factory_issue_execution','read':'issue.read','title':'Issue investigation and owner follow-up'},
+    'pmo-leadership-report/v1':{'component':'OPS.factory_leadership_execution','read':'report.read','title':'Internal Tuesday and monthly leadership report'},
+    'finance-ledger/v1':{'component':'OPS.factory_ledger_execution','read':'ledger.read','title':'Supplied incumbent transaction reference'},
+    'finance-bu/v1':{'component':'OPS.factory_bu_execution','read':'bu.read','title':'Reviewed BU exception and event aggregates'},
+    'engagement/v1':{'component':'OPS.factory_engagement_execution','read':'engagement.read','title':'Engagement identity and planning handoff'},
+    'pmo-minutes/v1':{'component':'OPS.factory_minutes_execution','read':'meeting.read','title':'Formal minutes and action handoff'},
+    'pmo-escalation/v1':{'component':'OPS.factory_escalation_execution','read':'issue.read','title':'Escalation decisions and verified communication'},
     'pmo-weekly-report/v1':{'component':'OPS.factory_reporting_execution','read':'report.read','title':'Reviewed weekly client report'},
     'finance-schedules/v1':{'component':'OPS.factory_schedules_execution','read':'schedules.read','title':'Income detail and schedule inventory'},
     'finance-ppe/v1':{'component':'OPS.factory_ppe_execution','read':'ppe.read','title':'Asset schedule and reviewed accounting note'},

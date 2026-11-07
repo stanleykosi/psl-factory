@@ -18,7 +18,7 @@ class SyntheticDocumentProvider:
         return {key:{'text':quote,'evidence_ids':[first.pk]} for key in fields}
 
 
-def draft_document(actor,case_id,template_id,title,audience,evidence_ids,expected,document_id=None,provider=None):
+def draft_document(actor,case_id,template_id,title,audience,evidence_ids,expected,document_id=None,provider=None,*,template_scope_id=None):
     case=Case.objects.get(pk=case_id)
     require(actor,case,'agent.document')
     require(actor,case,'document.draft')
@@ -49,7 +49,7 @@ def draft_document(actor,case_id,template_id,title,audience,evidence_ids,expecte
     with transaction.atomic():
         # Provider output is untrusted; recheck current grants and revision after it returns.
         case=lock_case(actor,case_id,'agent.document',expected)
-        version=create_version(actor,case_id,template_id,title,audience,output,expected,document_id)
+        version=create_version(actor,case_id,template_id,title,audience,output,expected,document_id,template_scope_id=template_scope_id)
         run=AgentRun.objects.create(case=case,actor=actor,evidence=sources[0],provider=provider.name,process_id='P52',
             result={'capability':'A02/A06 restricted draft','version_id':version.pk,'source_ids':evidence_ids,'human_review_required':True})
         event(actor,case,'agent.document_drafted',run=run.pk,version=version.pk)
@@ -64,6 +64,8 @@ def check_document(actor,case_id,version_id):
     if not version or not version.source_manifest:
         raise ValidationError('Choose a case document with source evidence')
     if version.template.definition['document_type']=='accepted_finance_metadata':raise ValidationError('Use native metadata investigation')
+    from apps.pmo.leadership_reporting import binding_access
+    binding_access(actor,version)
     findings=preflight(version)
     run=AgentRun.objects.create(case=case,actor=actor,evidence_id=version.source_manifest[0]['id'],provider='deterministic-document-preflight-v1',
         process_id='P53',result={'capability':'A08 independent structural checks','version_id':version.pk,'findings':findings,'business_approval':False})

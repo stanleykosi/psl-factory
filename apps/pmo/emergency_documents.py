@@ -25,6 +25,8 @@ def draft_retrospective(actor,case_id,outcome_id,template_id,audience,expected):
     fields={'executive_summary':{'text':'Emergency '+ref+': actual implementation '+outcome.implemented_at.isoformat()+'. '+outcome.note,'evidence_ids':[outcome.evidence_id]},
         'status':{'text':f"P61/P62 evidence: {status}. {source['review_count']} post-implementation reviews and {source['decision_count']} retrospective decision records. Log late: {late}. This evidence report grants no scope, financial or deployment approval.",'evidence_ids':ids},
         'next_steps':{'text':'Human owners review recorded outcomes, missing authority and deadline exceptions; no retrospective decision substitutes for preauthorization. Ordinary scope/cost follow-ups: '+str(source['manifest']['followups']),'evidence_ids':ids}}
+    from apps.documents.pmo_sections import complete_native_client_sections
+    fields = complete_native_client_sections(fields, audience, ids)
     version=create_version(actor,case.pk,template.pk,'Emergency retrospective: '+ref,audience,fields,case.revision)
     EmergencyDocumentBinding.objects.create(version=version,outcome=outcome,manifest=source['manifest'])
     return version

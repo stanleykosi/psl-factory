@@ -160,7 +160,7 @@ def decide_proposal(actor, case_id, revision_id, role, verdict, note, expected, 
 
 
 @transaction.atomic
-def draft_submission(actor, case_id, revision_id, template_id, expected):
+def draft_submission(actor, case_id, revision_id, template_id, expected, *, template_scope_id=None):
     case = lock_case(actor, case_id, 'commercial.submit', expected)
     require_project_conversion(case)
     revision = current_revision(case, revision_id)
@@ -176,7 +176,7 @@ def draft_submission(actor, case_id, revision_id, template_id, expected):
         raise ValidationError('Select this case controlled SOW template')
     from adapters.commercial import LocalCommercialAdapter
     fields = LocalCommercialAdapter().submission_fields(case, revision)
-    version = create_version(actor, case.pk, template.pk, 'Commercial proposal '+str(revision.number), 'client', fields, case.revision)
+    version = create_version(actor, case.pk, template.pk, 'Commercial proposal '+str(revision.number), 'client', fields, case.revision, template_scope_id=template_scope_id)
     CommercialDocumentBinding.objects.create(version=version, revision=revision, decision_ids=decisions)
     return version
 
@@ -233,6 +233,8 @@ def adopt_signed(actor, case_id, revision_id, response_id, expected):
         raise ValidationError(binding_findings(binding))
     if BaselineAdoption.objects.filter(response__evidence=response.evidence).exists() or Baseline.objects.filter(signed=response.evidence).exists():
         raise ValidationError('Signature evidence cannot be reused for another baseline')
+    from .signatures import current_packet, record_use
+    signature_packet = current_packet(case, response.evidence_id, revision)
     before = baseline_manifest(case)
     if before.get('signed_id'):
         # A signed scope change also needs the independently controlled change authorization.
@@ -241,6 +243,7 @@ def adopt_signed(actor, case_id, revision_id, response_id, expected):
     after = {key+'_id': revision.sources[key] for key in ['plan', 'costing', 'sow']}
     after['signed_id'] = response.evidence_id
     adoption = BaselineAdoption.objects.create(revision=revision, response=response, before=before, after=after, actor=actor)
+    record_use(actor, signature_packet, adoption)
     Baseline.objects.update_or_create(case=case, defaults=after)
     from adapters.signed_baselines import InternalSignedBaselineAdapter
     receipt = InternalSignedBaselineAdapter().deliver(adoption)

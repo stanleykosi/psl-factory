@@ -3,9 +3,19 @@ import json
 from django.core.exceptions import ValidationError
 from jsonschema import Draft202012Validator
 
+PMO_CLIENT_SECTIONS = ('executive_summary', 'scope', 'timeline', 'risks', 'dependencies', 'status')
+PMO_DOCUMENT_TYPES = frozenset(['sow', 'status_report', 'minutes', 'project_artifact', 'rfp_response'])
+
+
+def client_pmo_sections(definition, audience, case=None):
+    if case is not None and case.kind != "project":
+        return ()
+    return PMO_CLIENT_SECTIONS if audience == 'client' and definition['document_type'] in PMO_DOCUMENT_TYPES else ()
+
+
 AUDIENCES = ['internal','client','management','group']
 PUBLIC_FIELDS = ['financial_metrics','bu_totals','requirements_mapping','commercial_terms','executive_summary','scope','timeline','risks','dependencies','status','issue_impact','issue_status','issue_resolution','next_steps','decisions','actions','owners','deadlines','participants']
-FIELDS = PUBLIC_FIELDS + ['internal_notes']
+FIELDS = PUBLIC_FIELDS + ['internal_notes','progress','blockers','delivery_health','performance','escalations','critical_incidents']
 FIELD_LIST = {'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':FIELDS}}
 TEMPLATE_SCHEMA = {'type':'object','properties':{
     'document_type':{'enum':['sow','status_report','minutes','project_artifact','rfp_response','finance_report','finance_group_report','accepted_finance_metadata']},
@@ -21,7 +31,7 @@ def validate(schema,value):
         raise ValidationError([e.message for e in errors])
 
 
-def validate_template(value):
+def validate_template(value, *, case=None):
     validate(TEMPLATE_SCHEMA,value)
     if value['document_type']=='accepted_finance_metadata':
         if value.get('internal_review_required') is not True or value['required_fields']!=['executive_summary'] or any(x!=['executive_summary'] for x in value['audience_fields'].values()):
@@ -35,6 +45,8 @@ def validate_template(value):
     client=value['audience_fields'].get('client')
     if client and ('internal_notes' in client or 'executive_summary' not in client or 'executive_summary' not in value['required_fields']):
         raise ValidationError('Client templates require an executive summary and cannot expose internal notes')
+    if client and not set(client_pmo_sections(value, 'client', case)).issubset(client):
+        raise ValidationError('Client PMO projection must include executive summary, scope, timeline, risks, dependencies and status')
     for allowed in value['audience_fields'].values():
         if not set(value['required_fields']).issubset(allowed):
             raise ValidationError('Required sections must be visible in each supported audience')

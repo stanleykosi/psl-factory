@@ -102,6 +102,10 @@ def requirements(work,source,value,formula,mapping=None,allocation=None,reader=N
             contract=config.configuration
             rows.append({'purpose':'formula','subject':'configuration','id':contract.pk,'preparer':contract.created_by_id})
             for item in reference_values(contract)[0]['inputs']:
+                if item.get('source_type')=='ppe_schedule':
+                    from apps.finance.statement_ppe import source_input
+                    source_input(reader or work.execution_actor,work.case,item,reference_values(contract)[0])
+                    continue
                 source_run=FinanceRun.objects.get(case=work.case,pk=item['source_run'])
                 if not any(r['subject']=='run' and r['id']==source_run.pk for r in rows):
                     rows.append({'purpose':'output','subject':'run','id':source_run.pk,'preparer':source_run.actor_id})
@@ -287,6 +291,8 @@ def verified(work,value,state=None):
     if binding_findings(binding):raise ValidationError('Current exact Finance document projection required')
     publication=Publication.objects.select_related('job').filter(version=binding.version).first()
     if publication is None or publication.job.status!='confirmed':raise ValidationError('Native report delivery is not confirmed')
+    from apps.finance.statement_ppe import recipient_access
+    recipient_access(run,publication.recipient_ids)
     receipts=list(PublicationReceipt.objects.filter(publication=publication).order_by('pk'))
     if not publication.recipient_ids or sorted(r.recipient_id for r in receipts)!=sorted(publication.recipient_ids):raise ValidationError('Every exact native report recipient receipt is required')
     return {'verified':True,'source':run.source_id,'run':run.pk,'binding':binding.pk,'publication':publication.pk,

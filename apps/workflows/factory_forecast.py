@@ -339,6 +339,9 @@ def human_action(actor, work_id, expected, case_expected, scenario_id, action, d
         result = forecast.review(actor,w.case_id,r.pk,data['role'],data['verdict'],data['evidence'].pk,data['reason'],case_expected)
     elif action == 'priority':
         result = forecast.prioritize(actor,w.case_id,r.pk,data['role'],data['reference'],data['description'],data['owner'].pk,data['due_at'],data['evidence'].pk,data['reason'],case_expected)
+    elif action == 'support':
+        if data['scenario'].pk!=scenario.pk:raise ValidationError('Select exact forecast work scenario')
+        result=forecast.record_support(actor,w.case_id,scenario.pk,data['item_key'],data['previous'].pk if data['previous'] else None,data['evidence'].pk,data['mode'],data['uncertainty'],data['observed_on'],data['role'],data['reason'],case_expected)
     elif action == 'actual':
         result = forecast.capture_actual(actor,w.case_id,data['evidence'].pk,case_expected,data['lot'].pk if data['lot'] else None)
     elif action == 'verify':
