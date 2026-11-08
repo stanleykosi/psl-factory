@@ -1,0 +1,163 @@
+"""Extracted stdlib-only dispatch tests: no Django/domain modules or SQL execute."""
+import ast
+import builtins
+import copy
+from datetime import datetime
+import hashlib
+import json
+import sys
+from pathlib import Path
+from types import SimpleNamespace as NS
+import unittest
+
+ROOT=Path(__file__).resolve().parents[1]
+BEFORE=ROOT/'tests/fixtures/d11_dispatch/validate_envelope_before.py.txt'
+BEFORE_BYTE_SHA='9e2033f3ff1a3e51e13afb612e3f8a47f49b2d0454d293e9fba2edc88f2c1f1a'
+BEFORE_AST_SHA='b8822e2b0deaa931656f713a1cf516f034a8ad1b42d8bbf9e9db5a66dbbb59ab'
+TARGET='D11.template_storage_retention_rules'
+DEFAULT_CONTENT=object()
+class VE(Exception):pass
+class PD(Exception):pass
+class Stop(Exception):pass
+
+def canonical_ast(node):
+    # Python 3.13 omits empty fields by default; preserve the original 3.12 pin.
+    options={"show_empty":True} if sys.version_info >= (3,13) else {}
+    return ast.dump(node,include_attributes=False,**options)
+
+def function(path):
+    raw=path.read_bytes()
+    if path==BEFORE and hashlib.sha256(raw).hexdigest()!=BEFORE_BYTE_SHA:raise RuntimeError('Frozen baseline function bytes changed')
+    node=next(n for n in ast.parse(raw).body if isinstance(n,ast.FunctionDef) and n.name=='validate_envelope')
+    if path==BEFORE and hashlib.sha256(canonical_ast(node).encode()).hexdigest()!=BEFORE_AST_SHA:raise RuntimeError('Frozen baseline function AST changed')
+    return node
+
+class Harness:
+    def __init__(self,path,component=TARGET,prepared=False,blocked=None,fail=None):
+        self.trace=[];self.imports=[];self.component=component;self.blocked=blocked;self.fail=fail
+        self.targets={};self.case=NS(pk='case',kind='project',synthetic=True)
+        self.prepared=NS(envelope_context=lambda *a:self.trace.append(('context',)), evidence_exists=lambda *a:True,reference_for_validation=lambda c,r,v:self.targets.get((r,v))) if prepared else None
+        def validator(*a,**kw):
+            self.trace.append(('document',a[1].schema_ref,copy.deepcopy(a[1].content),kw.get('runtime'),kw.get('_prepared') is self.prepared))
+            if self.fail and (not isinstance(self.fail,tuple) or a[1].ref==self.fail[0]):raise self.fail[1] if isinstance(self.fail,tuple) else self.fail
+        def imp(name,globals=None,locals=None,fromlist=(),level=0):
+            self.imports.append(name)
+            if name==self.blocked:raise ImportError(name)
+            vals={}
+            for x in fromlist:
+                if x=='validate_reference':vals[x]=validator if name=='document_validators' else lambda *a,**k:self.trace.append(('other',name))
+                elif x=='validate_collection':vals[x]=lambda *a,n=name:self.trace.append(('collection',n))
+                elif x=='handles':vals[x]=lambda *a:False
+                elif x=='COMPONENT':vals[x]='not-storage'
+                else:vals[x]={TARGET} if name=='document_validators' else ({component} if name=='clock_validators' and component!=TARGET else set())
+            return NS(**vals)
+        refs=NS(objects=NS(filter=lambda **kw:NS(first=lambda:self.targets.get((kw['ref'],kw['version'])))))
+        env={'__builtins__':dict(vars(builtins),__import__=imp),'ValidationError':VE,'Draft202012Validator':lambda *a,**k:NS(iter_errors=lambda e:[]),'FormatChecker':lambda:None,'envelope_schema':lambda:{},'components':lambda:{component:{'schema_ref':'schema:component'}},'datetime':datetime,'Evidence':NS(objects=NS(filter=lambda **kw:NS(exists=lambda:True))),'RegisteredReference':refs,'hashlib':hashlib,'json':json}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[function(path)],type_ignores=[])),str(path),'exec'),env)
+        self.fn=env['validate_envelope']
+    def item(self,ref='r',schema='schema:psl/document-storage/v3',content=DEFAULT_CONTENT):
+        content={'template_ids':[1]} if content is DEFAULT_CONTENT else content
+        digest=hashlib.sha256(json.dumps(content,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+        self.targets[(ref,1)]=NS(ref=ref,version=1,schema_ref=schema,content=content,sha256=digest)
+        return {'artifact_ref':ref,'artifact_version':1,'sha256':digest,'schema_ref':schema}
+    def envelope(self,value):
+        return {'component_id':self.component,'subject_scope':{'kind':'project','ref':'case'},'fixture_scope':'synthetic_test','implementation_id':'psl.reference-validation','implementation_version':'1','reviewed_implementation_ref':'code:apps/policy/services.py#reference-validation-v1','schema_version':'1','component_schema_ref':'schema:component','effective_from':'2026-01-01T00:00:00','effective_until':None,'evidence_refs':['evidence:1'],'human_decision_ref':'evidence:1','value':value}
+    def run(self,value,runtime=False):return self.fn(self.case,self.envelope(value),runtime=runtime,_prepared=self.prepared)
+
+class DispatchTests(unittest.TestCase):
+    current=ROOT/'apps/policy/services.py'
+    def test_same_document_calls_versions_and_prepared(self):
+        for schema in ('v1','v2','v3'):
+            for prepared in (False,True):
+                traces=[]
+                for p in (BEFORE,self.current):
+                    h=Harness(p,prepared=prepared);h.run(h.item(schema='schema:psl/document-storage/'+schema),True)
+                    traces.append([x for x in h.trace if x[0]!='collection'])
+                self.assertEqual(*traces)
+    def test_each_item_and_legacy_string(self):
+        for form in ('string','multiple'):
+            traces=[]
+            for p in (BEFORE,self.current):
+                h=Harness(p);a=h.item();b=h.item('b');h.run('r' if form=='string' else [a,b]);traces.append([x for x in h.trace if x[0]=='document'])
+            self.assertEqual(*traces);self.assertEqual(len(traces[0]),1 if form=='string' else 2)
+    def test_missing_and_hash_schema_prechecks(self):
+        for mode in ('missing','hash','schema'):
+            for p in (BEFORE,self.current):
+                h=Harness(p);v=h.item()
+                if mode=='missing':h.targets.clear()
+                else:v['sha256' if mode=='hash' else 'schema_ref']='wrong'
+                with self.assertRaises(VE):h.run(v)
+                self.assertEqual(h.imports,[])
+    def test_owner_exceptions_identical(self):
+        for cls in (PD,VE,Stop):
+            for prepared in (False,True):
+                error=cls('original')
+                for p in (BEFORE,self.current):
+                    h=Harness(p,fail=error,prepared=prepared)
+                    with self.assertRaises(cls) as caught:h.run(h.item())
+                    self.assertIs(caught.exception,error)
+    def test_owner_import_failure_not_hidden(self):
+        h=Harness(self.current,blocked='document_validators')
+        with self.assertRaises(ImportError):h.run(h.item())
+    def test_unrelated_import_failure_removed_not_validator(self):
+        old=Harness(BEFORE,blocked='signature_validators')
+        with self.assertRaises(ImportError):old.run(old.item())
+        h=Harness(self.current,blocked='signature_validators');h.run(h.item());self.assertEqual(h.imports,['document_validators']);self.assertEqual(len(h.trace),1)
+    def test_later_failure_does_not_run_collection_or_return_partial(self):
+        for p in (BEFORE,self.current):
+            h=Harness(p,fail=('b',VE('later')));a=h.item();b=h.item('b')
+            with self.assertRaises(VE):h.run([a,b])
+            self.assertEqual(len([x for x in h.trace if x[0]=='document']),2)
+            self.assertFalse(any(x[0]=='collection' for x in h.trace))
+    def test_empty_and_malformed_contents_still_reach_owner(self):
+        for content in ({},[],None,'malformed'):
+            for p in (BEFORE,self.current):
+                h=Harness(p,fail=VE('native schema rejects'));v=h.item(content=content)
+                with self.assertRaises(VE):h.run(v)
+                self.assertEqual(len(h.trace),1)
+    def test_empty_reference_list_matches_no_document_call(self):
+        for p in (BEFORE,self.current):
+            h=Harness(p);h.run([]);self.assertFalse(any(x[0]=='document' for x in h.trace))
+    def test_nonstorage_import_and_call_sequence_preserved(self):
+        traces=[]
+        for p in (BEFORE,self.current):
+            h=Harness(p,component='D04.clock_test');h.run(h.item());traces.append((h.imports,h.trace))
+        self.assertEqual(*traces)
+    def test_four_maps_frozen_key_ownership_and_collision(self):
+        pins=json.loads((ROOT/'tests/fixtures/d11_dispatch/four-map-hashes.json').read_text())
+        def keys(tree):
+            env={};result=None
+            for node in tree.body:
+                if isinstance(node,ast.Assign):
+                    for target in node.targets:
+                        self.assertIsInstance(target,ast.Name)
+                        if target.id=='SCHEMAS':
+                            self.assertIsNone(result);self.assertIsInstance(node.value,ast.Dict)
+                            result=[k.value if isinstance(k,ast.Constant) else env[k.id] for k in node.value.keys]
+                        elif isinstance(node.value,ast.Constant) and isinstance(node.value.value,str):env[target.id]=node.value.value
+                else:self.assertIsInstance(node,(ast.Import,ast.ImportFrom,ast.FunctionDef))
+            self.assertIsNotNone(result);self.assertNotIn(TARGET,result)
+            return result
+        for name,pin in pins.items():
+            raw=(ROOT/'apps/policy'/f'{name}.py').read_bytes();self.assertEqual(hashlib.sha256(raw).hexdigest(),pin)
+            tree=ast.parse(raw);self.assertEqual(len(keys(tree)),2)
+            assignment=next(n for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='SCHEMAS' for t in n.targets))
+            assignment.value.keys.append(ast.Constant(TARGET));assignment.value.values.append(ast.Constant(None))
+            with self.assertRaises(AssertionError):keys(tree)
+
+    def test_ast_nonstorage_and_common_tail_unchanged(self):
+        a=function(BEFORE);b=function(self.current)
+        self.assertEqual(hashlib.sha256(canonical_ast(a).encode()).hexdigest(),BEFORE_AST_SHA)
+        self.assertIn("decorator_list=[]",canonical_ast(a))
+        loopa=next(n for n in a.body if isinstance(n,ast.For) and isinstance(n.target,ast.Name) and n.target.id=='item')
+        loopb=next(n for n in b.body if isinstance(n,ast.For) and isinstance(n.target,ast.Name) and n.target.id=='item')
+        branch=loopb.body[-1];start=next(i for i,n in enumerate(loopa.body) if isinstance(n,ast.ImportFrom))
+        dump=lambda ns:[ast.dump(n,include_attributes=False) for n in ns]
+        self.assertEqual(dump(loopa.body[start:]),dump(branch.orelse))
+        self.assertEqual(dump(loopa.body[:start]),dump(loopb.body[:-1]))
+        wrapper=next(n for n in b.body if isinstance(n,ast.If) and isinstance(n.test,ast.Compare) and isinstance(n.test.ops[0],ast.NotEq) and any(isinstance(x,ast.Constant) and x.value==TARGET for x in ast.walk(n.test)))
+        i=next(i for i,n in enumerate(a.body) if isinstance(n,ast.ImportFrom) and n.module=='d03_validators')
+        self.assertEqual(dump(a.body[i:i+len(wrapper.body)]),dump(wrapper.body))
+        self.assertEqual(ast.dump(a.body[-1]),ast.dump(b.body[-1]))
+
+if __name__=='__main__':unittest.main()
