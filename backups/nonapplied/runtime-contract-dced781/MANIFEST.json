@@ -1,0 +1,36 @@
+{
+  "source_commit": "dced7819eb736fefd2a672012af2c30128b433cf",
+  "parent_source_commit": "e5439c469818d0ddd731790f3321eebe490bad63",
+  "status": "NONAPPLIED",
+  "files": [
+    {
+      "target_path": ".python-version",
+      "target_git_blob": "24ee5b1be9961e38a503c8e764b7385dbb6ba124",
+      "target_sha256": "02e735b3dfe1c32833eb550b7ff8ffa17f5f2bc3fa1e7bae61a8f5a3883ce398",
+      "target_bytes": 5,
+      "mode": "100644",
+      "representation": "complete-source",
+      "snapshot_path": "files/.python-version.source"
+    },
+    {
+      "target_path": "README.md",
+      "target_git_blob": "74dbfafd7276dfa7f3ae2ec0e67471f2686bbd13",
+      "target_sha256": "7e3f1a20e82e96630f5cf9e01badfbc718f3154e95825e403c0329f8b9185800",
+      "target_bytes": 9380,
+      "mode": "100644",
+      "base_sha256": "cbf21284f62397e04c511042dcb2711b59f4ef8a5f6d6aa35867ddf1c6540431",
+      "base_git_blob": "d45e6064e09ba594cbf4469bf560bb71d8462000",
+      "representation": "zero-context-patch",
+      "snapshot_path": "patches/README.md.patch"
+    },
+    {
+      "target_path": "tests/test_runtime_contract_component.py",
+      "target_git_blob": "31a1fa9572d8d2429715bf9c542e27674b0d4f80",
+      "target_sha256": "43165051f31a3f61ad39151c21a6054196bbf78040fdb7bf69b2e6d29e2a5f9a",
+      "target_bytes": 2427,
+      "mode": "100644",
+      "representation": "complete-source",
+      "snapshot_path": "files/tests/test_runtime_contract_component.py.source"
+    }
+  ]
+}

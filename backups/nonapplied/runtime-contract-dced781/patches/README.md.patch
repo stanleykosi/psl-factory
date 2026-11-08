@@ -1,0 +1,11 @@
+diff --git a/README.md b/README.md
+index d45e606..74dbfaf 100644
+--- a/README.md
++++ b/README.md
+@@ -46,0 +47,6 @@ For a fresh GitHub checkout or another build agent, start with the [checkout and
++
++## Intended Python runtime
++
++`.python-version` selects the Python 3.13 line for the audited dependency closure in `requirements.lock`. Install that lock in an isolated Python 3.13 environment; dependency installation and full application bootstrap are not yet verified in the recovered workspace. The current lock omits a conditional dependency needed on Python 3.12. This does not mean every listed package intrinsically requires 3.13. Extracted standard-library test passes on another Python version do not verify the locked application environment.
++
++The existing WSGI target is `config.wsgi:application`; management commands use `manage.py`, both defaulting to `config.settings`. Deployment must select a non-development `PSL_ENV`, provide `PSL_SECRET_KEY` and configure `PSL_ALLOWED_HOSTS` plus the required service settings. Existing settings checks remain unchanged. No production WSGI server dependency, hosting configuration, deployment, automatic migration or operational readiness is supplied by this runtime marker. Railway CLI/account setup remains separate.
