@@ -1,0 +1,148 @@
+"""INERT803 exact D11 payload admission, never authorization/currentness output.
+
+Call only after separate targeted document privacy closure. Snapshot entry proves
+consistency, not access. No production route/adapter invokes this module.
+"""
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied,ValidationError
+from django.db import connections
+from apps.identity.services import require
+from apps.core.models import Case
+from .models import Configuration,RegisteredReference,ScopeApplication,ScopeVersion,ScopeState
+from .services import _resolution_candidate
+from .template_snapshot_entry import require_context,require_context_actor,_CONTEXT
+
+COMPONENT='D11.template_storage_retention_rules'
+# Identifiers are INTERNAL literals; no caller-supplied SQL identifiers.
+CELLS={
+    'configuration':('policy_configuration','envelope',('case_id','component','revision'),64*1024),
+    'reference':('policy_registeredreference','content',('case_id','ref','version'),256*1024),
+    'application':('policy_scopeapplication','bindings',('configuration_id','source_id','actor_id'),64*1024),
+    'source':('policy_scopeversion','binding_paths',('configuration_id','kind','ref','revision','created_by_id'),64*1024),
+}
+MAX_CELLS=100
+MAX_BYTES=1024*1024
+MESSAGE='Template policy payload admission unavailable or exceeds bounded investigation limits'
+
+def hold():raise ValidationError(MESSAGE) from None
+
+class PolicyCellBudget:
+    """INERT actor-bound policy-only adoption; no shared decoded payload cache."""
+    def __init__(self,actor,keys):
+        from .template_policy_budget_v2 import PolicyLedger
+        self.ledger=PolicyLedger(actor,keys);self.keys=list(keys)
+        self.connection=self.ledger.connection
+    @property
+    def cells(self):
+        from types import MappingProxyType
+        return MappingProxyType(self.ledger.state['local_cells'])
+    @property
+    def bytes(self):return self.ledger.state['local_bytes']
+    def context(self):
+        from apps.documents.template_operation_budget import BudgetHold
+        try:self.ledger.context()
+        except BudgetHold:hold()
+    def poison(self):self.ledger.poison()
+    def load(self,kind,pk,expected):
+        from .template_policy_transfer_descriptor import metadata_statement,transfer_statement,decode_canonical,FIELDS,spec
+        from apps.documents.template_operation_budget import Metadata
+        try:
+            ticket=self.ledger.begin(kind,pk)
+            if type(expected) is not dict or set(expected)!=set(FIELDS[kind]):hold()
+            if any(type(expected[f]) is not t for f,t in zip(FIELDS[kind],spec(kind)[2])):hold()
+            sql,params=metadata_statement(kind,pk)
+            with self.connection.cursor() as cursor:
+                cursor.execute(sql,params);rows=cursor.fetchmany(2)
+            if len(rows)!=1:hold()
+            row=rows[0];fields=FIELDS[kind]
+            if len(row)!=len(fields)+3:hold()
+            metadata=Metadata(tuple(row[:len(fields)]),*row[-3:])
+            if metadata.identity!=tuple(expected[f] for f in fields):hold()
+            # Keep the existing (possibly stricter test-local) policy cell cap.
+            if type(metadata.size) is not int or metadata.size>CELLS[kind][3]:hold()
+            self.ledger.reserve(ticket,metadata)
+            sql,params=transfer_statement(kind,pk,metadata)
+            self.ledger.before_transfer(ticket)
+            with self.connection.cursor() as cursor:
+                cursor.execute(sql,params);rows=cursor.fetchmany(2)
+            payload=self.ledger.transfer_checked(ticket,rows)
+            self.ledger.before_decode(ticket)
+            value=decode_canonical(kind,metadata,payload)
+            self.ledger.validated(ticket)
+            return value
+        except Exception:
+            self.poison();hold()
+
+def identity(row,kind):return {field:row[field] for field in CELLS[kind][2]}
+
+def descriptor(envelope):
+    # Safe structural extraction ONLY. Native validate_envelope hydrates refs and
+    # MUST NOT be called until the complete exact closure has been admitted.
+    if type(envelope) is not dict or type(envelope.get('value')) is not dict:hold()
+    item=envelope['value']
+    if set(item)!={'artifact_ref','artifact_version','sha256','schema_ref'}:hold()
+    if type(item['artifact_ref']) is not str or not 1<=len(item['artifact_ref'])<=150:hold()
+    if type(item['artifact_version']) is not int or item['artifact_version']<=0:hold()
+    if type(item['schema_ref']) is not str or not 1<=len(item['schema_ref'])<=200:hold()
+    if type(item['sha256']) is not str or len(item['sha256'])!=64:hold()
+    return item
+
+def admit_reference(budget,config,env):
+    item=descriptor(env)
+    row=RegisteredReference.objects.using('default').filter(case_id=config['case_id'],ref=item['artifact_ref'],version=item['artifact_version']).values('id',*CELLS['reference'][2]).first()
+    if row is None:hold()
+    budget.load('reference',row['id'],identity(row,'reference'))
+    return row['id']
+
+def _admit_selected_owner_policy(observer,case,budget):
+    """Payload readiness only. Caller still owes private-scope gates + native owner checks.
+
+    No native validate_envelope/application_health/source_health is invoked here.
+    Return IDs only; never expose budget.cells/raw payloads through a public route.
+    """
+    budget.context()
+    require_context_actor(observer,budget.keys)
+    if observer is None or not get_user_model().objects.using('default').filter(pk=observer.pk,is_active=True).exists():raise PermissionDenied('Current document policy reader required')
+    for action in ('case.read','policy.read','document.read'):require(observer,case,action)
+    config=_resolution_candidate(COMPONENT,case)
+    if config is None:return {'admitted':False,'reason':'no_activated_candidate'}
+    # Preserve selected second-state read; revoked candidate needs no JSON.
+    if config.states.order_by('-pk').first().state=='revoked':return {'admitted':False,'reason':'revoked_candidate'}
+    local={'id':config.pk,'case_id':config.case_id,'component':config.component,'revision':config.revision}
+    app=ScopeApplication.objects.using('default').filter(configuration_id=config.pk).values('id',*CELLS['application'][2]).first()
+    if app is not None:
+        src=ScopeVersion.objects.using('default').filter(pk=app['source_id']).values('id',*CELLS['source'][2]).first()
+        if src is None:hold()
+        origin=Configuration.objects.using('default').filter(pk=src['configuration_id']).values('id',*CELLS['configuration'][2]).first()
+        if origin is None or origin['component']!=COMPONENT:hold()
+        source_case=Case.objects.using('default').get(pk=origin['case_id'])
+        # A copied local reference is source-derived too: origin permission must
+        # precede ANY payload load, including local envelope/reference cells.
+        require(observer,source_case,'case.read');require(observer,source_case,'policy.read')
+        if source_case.tenant!=case.tenant or source_case.synthetic!=case.synthetic:hold()
+        if src['kind']!='organization' and source_case.pk!=case.pk:hold()
+        if ScopeApplication.objects.using('default').filter(configuration_id=origin['id']).exists():hold()
+    env=budget.load('configuration',local['id'],identity(local,'configuration'))
+    refs=[admit_reference(budget,local,env)]
+    result={'admitted':True,'configuration':config.pk,'references':refs,'application':None,'source':None,'family_head':None}
+    if app is None:return result
+    budget.load('application',app['id'],identity(app,'application'))
+    budget.load('source',src['id'],identity(src,'source'))
+    source_env=budget.load('configuration',origin['id'],identity(origin,'configuration'))
+    refs.append(admit_reference(budget,origin,source_env))
+    result.update(application=app['id'],source=src['id'])
+    current=ScopeState.objects.using('default').filter(source_id=src['id']).order_by('-pk').values_list('state',flat=True).first()
+    if current=='active':
+        # EXACT native family-head predicate: any historical active/revoked state,
+        # not a reinterpreted latest-state filter. Earlier failures need no head.
+        head=ScopeVersion.objects.using('default').filter(configuration__case_id=origin['case_id'],configuration__component=COMPONENT,kind=src['kind'],ref=src['ref'],states__state__in=['active','revoked']).order_by('-revision').values('id',*CELLS['source'][2]).first()
+        if head is None:raise AttributeError("'NoneType' object has no attribute 'pk'")
+        budget.load('source',head['id'],identity(head,'source'));result['family_head']=head['id']
+    return result
+
+
+def admit_selected_owner_policy(observer,case,budget):
+    try:
+        return _admit_selected_owner_policy(observer,case,budget)
+    except Exception:
+        budget.poison();raise

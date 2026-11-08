@@ -1,0 +1,13 @@
+--- a/apps/policy/document_validators.py
++++ b/apps/policy/document_validators.py
+@@ -17 +17,2 @@
+-def validate_reference(component,target,case,runtime=False):
++def validate_reference(component,target,case,runtime=False,*,_prepared=None):
++    if _prepared is not None:_prepared.document_validator_context(component,case,runtime)
+@@ -38 +39 @@
+-        if Template.objects.filter(case=case,pk__in=content['template_ids']).count()!=len(content['template_ids']):
++        if (Template.objects.filter(case=case,pk__in=content['template_ids']).count() if _prepared is None else _prepared.storage_template_count(case,content['template_ids']))!=len(content['template_ids']):
+@@ -42 +43,2 @@
+-            validate_owners(case, content, runtime=runtime)
++            if _prepared is None:validate_owners(case, content, runtime=runtime)
++            else:validate_owners(case,content,runtime=runtime,_prepared=_prepared)

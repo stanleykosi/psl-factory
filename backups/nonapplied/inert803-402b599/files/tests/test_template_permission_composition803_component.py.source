@@ -1,0 +1,104 @@
+"""Pure registered worklists and fixed reader stand-ins; no SQL/native helpers."""
+import ast,sys,unittest
+from dataclasses import dataclass,replace
+from pathlib import Path
+from types import ModuleType
+from unittest.mock import patch
+from uuid import uuid4
+from django.core.exceptions import PermissionDenied,ValidationError
+from tests import test_template_candidate_worklist803_component as f
+class CompositionTests(unittest.TestCase):
+    setUp=f.CandidateTests.setUp
+    producer_fakes=f.CandidateTests.producer_fakes
+    budget=f.CandidateTests.budget
+    def initialize(self,empty=False):
+        self.producer_fakes();self.financial.append((2,*self.financial[0][1:]));self.pmo_rows.append((5,*self.pmo_rows[0][1:]))
+        if empty:self.financial=[];self.pmo_rows=[]
+        self.out=self.ns['discover_candidate_worklist'](self.actor,uuid4(),{},['documents.template_claims'])
+        self.events=[];self.modes={};self.hook=lambda *args:None;owner=self
+        class Fixed:
+            kind='finance'
+            def __init__(self,actor,keys,worklist=None,row=None):self.worklist=worklist;self.row=row;self.result=None;self.done=False
+            def admit(self,worklist,row):self.worklist=worklist;self.row=row;return self.read()
+            def read(self):
+                owner.events.append((self.kind,self.row[0]));mode=owner.modes.get((self.kind,self.row[0]),'success');owner.hook(self.kind,self.row)
+                if mode=='PD':raise PermissionDenied('native or engineering must propagate')
+                if mode=='VE':raise ValidationError('fatal')
+                self.done=mode!='missing-success';self.result=object() if mode in ('denied','forged') else None
+                return self.result
+            def _consume_success(self,worklist,row):
+                if not self.done or self.worklist is not worklist or self.row is not row or self.result is not None:raise f.Hold()
+                self.done=False
+            def _consume_denied(self,worklist,row,result):
+                if owner.modes.get((self.kind,row[0]))!='denied' or result is not self.result or not self.done:raise f.Hold()
+                self.done=False
+        class PMO(Fixed):kind='pmo'
+        modules={}
+        for name,cls,attr in [('apps.documents.template_finance_admission',Fixed,'ReaderAdmission'),('apps.pmo.template_prepared_reader',PMO,'PreparedLeadershipReader')]:
+            module=ModuleType(name);setattr(module,attr,cls);modules[name]=module
+        p=patch.dict(sys.modules,modules);p.start();self.addCleanup(p.stop)
+        path=Path(__file__).resolve().parents[1]/'apps/documents/template_permission_composition.py'
+        nodes=[n for n in ast.parse(path.read_text()).body if not isinstance(n,(ast.Import,ast.ImportFrom))]
+        self.c={'__name__':'apps.documents.template_permission_composition_pure','__package__':'apps.documents','dataclass':dataclass,'ValidationError':f.Hold,'check_registered_worklist':self.ns['check_registered_worklist'],'_CONTEXT':self.ns['_CONTEXT'],'_poison_marker':self.ns['_poison_marker']}
+        exec(compile(ast.Module(body=nodes,type_ignores=[]),'<composition>','exec'),self.c)
+    def compose(self,out=None):return self.c['compose_permissions'](self.actor,['documents.template_claims'],out or self.out)
+    def consume(self,receipt,out=None):return self.c['consume_receipt'](self.actor,['documents.template_claims'],out or self.out,receipt)
+    def test_every_finance_then_every_pmo_even_denied_template(self):
+        self.initialize();self.modes[('finance',1)]='denied';self.modes[('pmo',4)]='denied'
+        receipt=self.compose()
+        self.assertEqual(self.events,[('finance',1),('finance',2),('pmo',4),('pmo',5)])
+        self.assertEqual(len(receipt.completed),4);self.assertEqual(receipt.denied_templates,frozenset({2}))
+        self.assertIsNone(self.consume(receipt))
+        with self.assertRaises(f.Hold):self.consume(receipt)
+    def test_later_fatal_after_denial_no_partial_receipt(self):
+        self.initialize();self.modes[('finance',1)]='denied';self.modes[('pmo',4)]='VE'
+        with self.assertRaises(ValidationError):self.compose()
+        record=self.marker['template_permission_composition803']['records'][0]
+        self.assertEqual(record['phase'],'failed');self.assertIsNone(record['receipt'])
+        self.assertEqual(len(record['completed']),2);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_no_blanket_permissiondenied_catcher(self):
+        self.initialize();self.modes[('finance',1)]='PD'
+        with self.assertRaises(PermissionDenied):self.compose()
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_none_without_authenticated_success_and_forged_denial_fail(self):
+        for mode in ('missing-success','forged'):
+            self.setUp();self.initialize();self.modes[('finance',1)]=mode
+            with self.assertRaises(f.Hold):self.compose()
+            self.assertIsNone(self.marker['template_permission_composition803']['records'][0]['receipt'])
+    def test_legitimate_empty_and_equal_forged_worklist(self):
+        self.initialize(empty=True);receipt=self.compose();self.assertEqual(receipt.completed,());self.assertEqual(self.events,[])
+        self.assertIsNone(self.consume(receipt))
+        fake=replace(self.out)
+        with self.assertRaises(f.Hold):self.compose(fake)
+    def test_reentrant_duplicate_and_replay_worklist_never_reset(self):
+        self.initialize();receipt=self.compose();self.consume(receipt)
+        with self.assertRaises(f.Hold):self.compose()
+        self.assertEqual(self.marker['template_permission_composition803']['attempts'],1)
+    def test_tampered_completion_cannot_be_counted(self):
+        self.initialize()
+        def hook(kind,row):self.marker['template_permission_composition803']['records'][0]['completed'].append(('pmo',row,'success'))
+        self.hook=hook
+        with self.assertRaises(f.Hold):self.compose()
+        self.assertIsNone(self.marker['template_permission_composition803']['records'][0]['receipt'])
+    def test_context_change_between_rows_poisons_old_current(self):
+        self.initialize();old=self.marker
+        self.hook=lambda *args:setattr(self,'marker',{})
+        with self.assertRaises(f.Hold):self.compose()
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_copied_receipt_not_registered(self):
+        self.initialize(empty=True);receipt=self.compose()
+        with self.assertRaises(f.Hold):self.consume(replace(receipt))
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_old_receipt_new_valid_worklist_poisons_both(self):
+        self.initialize(empty=True);receipt=self.compose();old=self.marker;self.marker={}
+        self.out=self.ns['discover_candidate_worklist'](self.actor,uuid4(),{},['documents.template_claims'])
+        with self.assertRaises(f.Hold):self.consume(receipt)
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_marker_global100_attempts_no_new_wrapper_reset(self):
+        self.initialize(empty=True)
+        for index in range(100):
+            out=self.out if index==0 else self.ns['discover_candidate_worklist'](self.actor,uuid4(),{},['documents.template_claims'])
+            self.compose(out)
+        state=self.marker['template_permission_composition803'];self.assertEqual(state['attempts'],100)
+        with self.assertRaises(f.Hold):self.compose()
+        self.assertEqual(state['attempts'],100);self.assertEqual(len(state['records']),100)

@@ -1,0 +1,190 @@
+"""INERT fixed multikey template-owner page/batch. No registry, URL or tool wiring."""
+from dataclasses import dataclass
+from django.core import signing
+from django.core.exceptions import PermissionDenied,ValidationError
+from apps.core.models import Case
+from apps.identity.models import Grant
+from apps.identity.services import require
+from apps.policy.models import Configuration,ScopeApplication
+from apps.policy.template_snapshot_entry import _run_authenticated,selected,materialize
+from .models import TemplateClaim,TemplateClaimRetraction,TemplateResolution
+from .template_candidate_worklist import _Budget,case_uuid,discover_candidate_worklist
+from .template_scalar_closure import DOMAINS,_CONTEXT,_poison_marker
+
+SALT='psl.template-owner-impact-page/v1'
+COMPONENT='D11.template_storage_retention_rules'
+KINDS={key:kind for kind,key in DOMAINS.items()}
+MESSAGE='Template owner investigation unavailable'
+def hold():raise ValidationError(MESSAGE)
+def positive(value):return type(value) is int and value>0
+
+@dataclass(frozen=True,repr=False)
+class _Selector:
+    marker:object
+    actor:object
+    actor_pk:int
+    connection:object
+    raw:object
+    case_id:object
+    config_id:int
+    keys:tuple
+    purpose:str
+    after:object
+    capacity:int
+    records:tuple
+    context:tuple
+
+def _state(witness):
+    if type(witness) is not _Selector:hold()
+    record=next((r for r in witness.marker.get('template_owner_selectors803',[]) if r['witness'] is witness),None)
+    if record is None:hold()
+    return record
+
+def validate_selector(actor,keys,case_id,selections,witness,worklist=None):
+    """One pipeline may recheck, never start a second producer or change keys."""
+    budget=None
+    try:
+        budget=_Budget(actor,list(keys));budget.phase();g=budget.guard
+        if type(witness) is not _Selector:hold()
+        if (witness.marker is not g.marker or witness.actor is not actor or witness.actor_pk!=actor.pk
+            or witness.connection is not g.connection or witness.raw is not g.raw_connection
+            or witness.keys!=g.keys or witness.case_id!=case_id or not positive(witness.config_id)
+            or witness.purpose not in ('page','batch')):hold()
+        if (type(selections) is not dict or not selections or any(kind not in DOMAINS or type(ids) not in (list,tuple) or not ids or any(not positive(pk) for pk in ids) for kind,ids in selections.items())):hold()
+        expected=tuple(sorted((KINDS[key],pk) for key,pk in witness.records))
+        actual=tuple(sorted((kind,pk) for kind,ids in selections.items() for pk in ids))
+        if actual!=expected or not actual or any(kind not in DOMAINS for kind,pk in actual):hold()
+        record=_state(witness)
+        if worklist is None:
+            if record['phase']!='issued' or record['worklist'] is not None:hold()
+        elif record['phase']!='bound' or record['worklist'] is not worklist or worklist.selector is not witness:hold()
+        return witness
+    except Exception:
+        if type(witness) is _Selector:_poison_marker(witness.marker)
+        if budget is not None:budget.poison()
+        _poison_marker(_CONTEXT.get());raise
+
+def bind_selector(actor,keys,case_id,selections,witness,worklist):
+    try:
+        validate_selector(actor,keys,case_id,selections,witness)
+        record=_state(witness)
+        if worklist.selector is not witness:hold()
+        record['worklist']=worklist;record['phase']='bound'
+    except Exception:
+        if type(witness) is _Selector:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise
+
+def _authorize(actor,case_id,config_id,keys,budget):
+    budget.phase()
+    if not Grant.objects.filter(user=actor,case_id=case_id,action='case.read',active=True).exists():raise PermissionDenied('Current case reader required')
+    budget.phase();case=Case.objects.only('id').get(pk=case_id)
+    for action in ('case.read','policy.read'):
+        budget.phase();require(actor,case,action)
+    for key in keys:
+        if key not in KINDS:hold()
+        budget.phase();require(actor,case,'document.read')
+    budget.phase()
+    row=Configuration.objects.filter(pk=config_id,case_id=case_id,component=COMPONENT).values_list('id','case_id','component','revision').first()
+    if (type(row) is not tuple or len(row)!=4 or not positive(row[0]) or row[:3]!=(config_id,case_id,COMPONENT) or not positive(row[3])):hold()
+    budget.phase()
+    app=ScopeApplication.objects.filter(configuration_id=config_id).values_list('id','source_id','source__configuration_id','source__configuration__case_id').first()
+    if app is not None:
+        if type(app) is not tuple or len(app)!=4 or any(not positive(v) for v in app[:3]) or case_uuid(app[3])!=app[3]:hold()
+        budget.phase();origin=Case.objects.only('id').get(pk=app[3])
+        for action in ('case.read','policy.read'):
+            budget.phase();require(actor,origin,action)
+    return row,app
+
+def _after(cursor,actor,case_id,config_id,keys):
+    if cursor is None:return None
+    try:
+        if type(cursor) is not str or len(cursor)>4096:hold()
+        value=signing.loads(cursor,salt=SALT,max_age=3600)
+        if (type(value) is not dict or set(value)!={'version','purpose','actor','case','configuration','keys','after'}
+            or type(value['version']) is not int or value['version']!=1 or value['purpose']!='page'
+            or not positive(value['actor']) or value['actor']!=actor.pk or value['case']!=str(case_id)
+            or not positive(value['configuration']) or value['configuration']!=config_id or value['keys']!=list(keys)
+            or type(value['after']) is not list or len(value['after'])!=2 or value['after'][0] not in keys or not positive(value['after'][1])):hold()
+        return tuple(value['after'])
+    except Exception:raise ValidationError('Invalid or stale template investigation page link') from None
+
+def _select(case_id,config_id,keys,after,capacity,budget):
+    specs={'claim':(TemplateClaim,'scope__case_id'),'resolution':(TemplateResolution,'scope__case_id'),'retraction':(TemplateClaimRetraction,'claim__scope__case_id')}
+    rows=[]
+    for key in keys:
+        if after is not None and key<after[0]:continue
+        lower=after[1] if after is not None and key==after[0] else 0
+        remaining=capacity-len(rows)
+        if remaining<=0:break
+        kind=KINDS[key];model,casefield=specs[kind]
+        budget.phase()
+        ids=list(model.objects.filter(owner_policy_id=config_id,**{casefield:case_id},pk__gt=lower).order_by('pk').values_list('pk',flat=True)[:remaining])
+        if (len(ids)>remaining or any(not positive(pk) or pk<=lower for pk in ids) or ids!=sorted(set(ids))):hold()
+        rows.extend((key,pk) for pk in ids)
+        if len(rows)>100:hold() #101st detection never becomes an admitted worklist.
+        budget.guard.charge(kind,ids)
+    return tuple(rows)
+
+def _projected(result,rows,config_id):
+    if type(result) is not list or len(result)!=len(rows):hold()
+    output={}
+    base={'id','kind','metadata_only','domain_route','owner_policy','state','effects_performed'}
+    for item in result:
+        if type(item) is not dict or item.get('kind') not in DOMAINS:hold()
+        kind=item['kind'];extra='historical_retraction_recorded' if kind=='retraction' else 'owner_authority_pin_current'
+        if (set(item)!=base|{extra} or not positive(item['id']) or item['metadata_only'] is not True
+            or item['domain_route']!='documents' or not positive(item['owner_policy']) or item['owner_policy']!=config_id
+            or item['state']!='historical_owner_record_not_template_selection' or item['effects_performed'] is not False
+            or (item[extra] is not True if kind=='retraction' else type(item[extra]) is not bool)):hold()
+        identity=(DOMAINS[kind],item['id'])
+        if identity in output:hold()
+        output[identity]=item
+    if set(output)!=set(rows):hold()
+    return output
+
+def _entry(actor,case_id,config_id,keys,purpose,cursor,limit):
+    budget=None;record=None
+    try:
+        budget=_Budget(actor,list(keys));context=_authorize(actor,case_id,config_id,keys,budget)
+        after=_after(cursor,actor,case_id,config_id,keys) if purpose=='page' else None
+        capacity=limit+1 if purpose=='page' else 101
+        rows=_select(case_id,config_id,keys,after,capacity,budget);g=budget.guard
+        witness=_Selector(g.marker,actor,actor.pk,g.connection,g.raw_connection,case_id,config_id,tuple(keys),purpose,after,capacity,rows,context)
+        registry=g.marker.setdefault('template_owner_selectors803',[])
+        if len(registry)>=100:hold()
+        record={'witness':witness,'phase':'issued','worklist':None};registry.append(record)
+        grouped={key:[] for key in keys};result=[]
+        if rows:
+            selections={}
+            for key,pk in rows:selections.setdefault(KINDS[key],[]).append(pk)
+            worklist=discover_candidate_worklist(actor,case_id,selections,list(keys),_selector=witness)
+            from apps.policy.template_owner_prepared import owner_current_metadata
+            result=owner_current_metadata(actor,list(keys),worklist,config_id)
+            projected=_projected(result,rows,config_id)
+            emitted=rows[:limit] if purpose=='page' else rows
+            for identity in emitted:grouped[identity[0]].append(projected[identity])
+        else:emitted=()
+        if _authorize(actor,case_id,config_id,keys,budget)!=context or _select(case_id,config_id,keys,after,capacity,budget)!=rows:hold()
+        budget.context()
+        if _CONTEXT.get() is not witness.marker or record['phase']!=('bound' if rows else 'issued'):hold()
+        token=None
+        if purpose=='page' and len(rows)>limit:
+            token=signing.dumps({'version':1,'purpose':'page','actor':actor.pk,'case':str(case_id),'configuration':config_id,'keys':list(keys),'after':list(emitted[-1])},salt=SALT)
+        output=materialize({'domains':grouped,'next_cursor':token,'configuration':config_id,
+            'coverage':'partial ordered template-owner investigation' if purpose=='page' else 'complete selected template-owner domains within declared admission limits',
+            'owner_values_inferred':False,'effects_performed':False})
+        record['phase']='complete';return output
+    except Exception:
+        if record is not None:record['phase']='failed'
+        if budget is not None:budget.poison()
+        _poison_marker(_CONTEXT.get());raise
+
+def template_owner_page(server_principal,case_id,configuration_id,keys,cursor=None,limit=25):
+    wanted=selected(keys);case_id=case_uuid(case_id)
+    if not positive(configuration_id) or type(limit) is not int or not 1<=limit<=50:hold()
+    return _run_authenticated(server_principal,list(wanted),lambda fresh:_entry(fresh,case_id,configuration_id,wanted,'page',cursor,limit))
+
+def template_owner_batch(server_principal,case_id,configuration_id,keys):
+    wanted=selected(keys);case_id=case_uuid(case_id)
+    if not positive(configuration_id):hold()
+    return _run_authenticated(server_principal,list(wanted),lambda fresh:_entry(fresh,case_id,configuration_id,wanted,'batch',None,None))

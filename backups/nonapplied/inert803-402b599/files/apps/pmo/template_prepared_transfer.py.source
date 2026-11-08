@@ -1,0 +1,57 @@
+"""Closed inert PMO cell SQL/codec. No queries or model/action imports."""
+import datetime,hashlib,json,uuid
+from types import MappingProxyType
+from apps.documents.template_operation_budget import Metadata
+from apps.policy.template_policy_transfer_descriptor import finite_float,reject_constant
+# table,column,fields,exact scalar types,shape,cap
+SPECS=MappingProxyType({
+ 'manifest':('pmo_minutesreportbinding','manifest',('version_id','report_id','meeting_id'),(int,(int,type(None)),(int,type(None))),'object',256*1024),
+ 'references':('pmo_issuereferencerevision','references',('issue_id','state_id','number','evidence_id','actor_id','created_at','previous_id'),(int,int,int,int,int,datetime.datetime,(int,type(None))),'array',64*1024),
+ 'links':('pmo_issuestate','external_links',('issue_id','number','evidence_id','actor_id','created_at'),(int,int,int,int,datetime.datetime),'array',64*1024),
+ 'narrative':('core_evidence','body',('case_id','kind','version','sha256','created_by_id','created_at'),(uuid.UUID,str,int,str,int,datetime.datetime),'text',256*1024),
+})
+class PreparedHold(ValueError):pass
+def hold():raise PreparedHold('Prepared report admission unavailable')
+def spec(name):
+    if type(name) is not str or name not in SPECS:hold()
+    return SPECS[name]
+def positive(pk):
+    if type(pk) is not int or pk<=0:hold()
+def checked(name,metadata):
+    _,_,fields,types,shape,cap=spec(name)
+    if type(metadata) is not Metadata or type(metadata.identity) is not tuple or len(metadata.identity)!=len(fields):hold()
+    for value,typ in zip(metadata.identity,types):
+        if type(value) not in (typ if type(typ) is tuple else (typ,)):hold()
+        if type(value) is datetime.datetime and value.utcoffset() is None:hold()
+    if type(metadata.shape) is not str or metadata.shape!=shape or type(metadata.size) is not int or not 0<=metadata.size<=cap:hold()
+    if type(metadata.fingerprint) is not str or len(metadata.fingerprint)!=64 or any(c not in '0123456789abcdef' for c in metadata.fingerprint):hold()
+    return metadata
+def expressions(name):
+    table,column,fields,types,shape,cap=spec(name);cell='"'+column+'"'
+    binary=f"convert_to({cell}"+(", 'UTF8')" if shape=='text' else "::text, 'UTF8')")
+    kind=f"CASE WHEN {cell} IS NULL THEN NULL ELSE 'text' END" if shape=='text' else f'jsonb_typeof({cell})'
+    return table,fields,binary,kind,'octet_length('+binary+')',"encode(sha256("+binary+"),'hex')",cap
+def metadata_statement(name,pk):
+    positive(pk);table,fields,binary,kind,size,digest,cap=expressions(name)
+    identity=','.join('"'+f+'"' for f in fields)
+    return f'SELECT {identity},{kind},{size},{digest} FROM "{table}" WHERE id=%s',(pk,)
+def transfer_statement(name,pk,metadata):
+    positive(pk);checked(name,metadata);table,fields,binary,kind,size,digest,cap=expressions(name)
+    identity=' AND '.join('"'+f+'" IS NOT DISTINCT FROM %s' for f in fields)
+    return (f'SELECT {binary} FROM "{table}" WHERE id=%s AND {identity} AND {kind}=%s AND {size}=%s AND {digest}=%s AND {size}<=%s',
+            (pk,*metadata.identity,metadata.shape,metadata.size,metadata.fingerprint,cap))
+def decode(name,metadata,payload):
+    checked(name,metadata)
+    try:
+        if type(payload) is bytes:data=payload
+        elif type(payload) is memoryview:
+            if payload.nbytes!=metadata.size:hold()
+            data=payload.tobytes()
+        else:hold()
+        if len(data)!=metadata.size or hashlib.sha256(data).hexdigest()!=metadata.fingerprint:hold()
+        text=data.decode('UTF8')
+        if metadata.shape=='text':return text # native json.loads remains at original legacy point
+        value=json.loads(text,parse_float=finite_float,parse_constant=reject_constant)
+        if type(value) is not (dict if metadata.shape=='object' else list):hold()
+        return value
+    except (ValueError,TypeError,UnicodeError,RecursionError,OverflowError):raise PreparedHold('Prepared report admission unavailable') from None

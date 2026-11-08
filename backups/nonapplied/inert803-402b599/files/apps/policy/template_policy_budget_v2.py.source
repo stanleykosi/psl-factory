@@ -1,0 +1,112 @@
+"""INERT policy-only phase ledger. No SQL or decoded cache; not authorization."""
+from dataclasses import dataclass
+from types import MappingProxyType
+from apps.documents.template_operation_budget import Metadata,Cell,DOMAINS,_binding,BudgetHold
+from .template_policy_transfer_descriptor import spec,checked
+
+MAX_BYTES=1024*1024
+MAX_CELLS=100
+MAX_ATTEMPTS=1000
+SPECS=MappingProxyType({k:spec(k) for k in ('configuration','reference','application','source')})
+@dataclass(frozen=True)
+class Ticket:
+    entry:object
+    number:int
+    kind:str
+    pk:int
+
+def _active_marker():
+    from .template_snapshot_entry import _CONTEXT
+    return _CONTEXT.get()
+
+def poison_active_entry():
+    marker=_active_marker()
+    if marker is not None:
+        marker['policy_budget_v2_failed']=True
+        state=marker.get('policy_operation_budget_v2')
+        if state is not None:state['poison']=True
+
+class PolicyLedger:
+    def __init__(self,actor,keys):
+        try:marker,connection,raw=_binding(actor,keys)
+        except Exception:
+            poison_active_entry();raise
+        self.actor=actor;self.pk=actor.pk;self.keys=tuple(sorted(keys))
+        self.marker=marker;self.connection=connection;self.raw=raw
+        if not self.keys or any(k not in DOMAINS for k in self.keys):raise BudgetHold('Policy admission unavailable')
+        state=marker.get('policy_operation_budget_v2')
+        if state is None:
+            state={'actor':actor,'pk':actor.pk,'keys':self.keys,'connection':connection,'raw':raw,
+                   'entry':object(),'attempts':0,'poison':False,'cells':{},'bytes':0,
+                   'local_cells':{},'local_bytes':0,'domains':{},'tickets':{}}
+            marker['policy_operation_budget_v2']=state
+        self.state=state;self.context()
+    def poison(self):
+        self.marker['policy_budget_v2_failed']=True;self.state['poison']=True
+    def fail(self):
+        self.poison();poison_active_entry();raise BudgetHold('Policy admission unavailable')
+    def context(self):
+        try:marker,connection,raw=_binding(self.actor,list(self.keys))
+        except Exception:
+            self.poison();poison_active_entry();raise
+        s=self.state
+        if (marker is not self.marker or connection is not self.connection or raw is not self.raw
+            or s['actor'] is not self.actor or self.pk!=self.actor.pk or s['pk']!=self.pk
+            or s['keys']!=self.keys or s['connection'] is not connection or s['raw'] is not raw):self.fail()
+        if s['poison'] or self.marker.get('policy_budget_v2_failed'):raise BudgetHold('Policy admission unavailable')
+    def debit(self):
+        self.context()
+        if self.state['attempts']>=MAX_ATTEMPTS:self.fail()
+        self.state['attempts']+=1
+    def begin(self,kind,pk):
+        self.debit()
+        if type(kind) is not str or kind not in SPECS or type(pk) is not int or pk<=0:self.fail()
+        ticket=Ticket(self.state['entry'],self.state['attempts'],kind,pk)
+        self.state['tickets'][ticket.number]=(ticket,'metadata',None)
+        return ticket
+    def phase(self,ticket,wanted):
+        self.context()
+        if type(ticket) is not Ticket or ticket.entry is not self.state['entry']:self.fail()
+        record=self.state['tickets'].get(ticket.number)
+        if record is None or record[0]!=ticket or record[1]!=wanted:self.fail()
+        return record[2]
+    def mark(self,ticket,phase,metadata):self.state['tickets'][ticket.number]=(ticket,phase,metadata)
+    def reserve(self,ticket,metadata):
+        self.phase(ticket,'metadata')
+        try:checked(ticket.kind,metadata)
+        except Exception:
+            self.poison();raise
+        table,column,*_=SPECS[ticket.kind];key=(table,ticket.pk,column);s=self.state
+        existing=s['cells'].get(key)
+        if existing is not None and (existing.state!='validated' or existing.metadata!=metadata):self.fail()
+        fresh=existing is None;local_new=key not in s['local_cells']
+        if fresh and (len(s['cells'])>=MAX_CELLS or s['bytes']+metadata.size>MAX_BYTES):self.fail()
+        if local_new and (len(s['local_cells'])>=MAX_CELLS or s['local_bytes']+metadata.size>MAX_BYTES):self.fail()
+        # Conservative attribution to ALL server entry output domains, never caller chosen.
+        for domain in self.keys:
+            record=s['domains'].get(domain,{'cells':frozenset(),'bytes':0})
+            if key not in record['cells'] and (len(record['cells'])>=MAX_CELLS or record['bytes']+metadata.size>MAX_BYTES):self.fail()
+        if fresh:s['bytes']+=metadata.size
+        if local_new:s['local_cells'][key]=metadata;s['local_bytes']+=metadata.size
+        for domain in self.keys:
+            record=s['domains'].get(domain,{'cells':frozenset(),'bytes':0})
+            if key not in record['cells']:s['domains'][domain]={'cells':record['cells']|{key},'bytes':record['bytes']+metadata.size}
+        s['cells'][key]=Cell(metadata,'reserved');self.mark(ticket,'reserved',metadata)
+    def before_transfer(self,ticket):
+        metadata=self.phase(ticket,'reserved');self.debit();self.mark(ticket,'transfer',metadata)
+    def transfer_checked(self,ticket,rows):
+        metadata=self.phase(ticket,'transfer')
+        if type(rows) is not list or len(rows)!=1 or type(rows[0]) not in (tuple,list) or len(rows[0])!=1:self.fail()
+        data=rows[0][0]
+        if type(data) is bytes:size=len(data)
+        elif type(data) is memoryview:size=data.nbytes
+        else:self.fail()
+        if size!=metadata.size:self.fail()
+        self.mark(ticket,'transfer_checked',metadata)
+        return data
+    def before_decode(self,ticket):
+        metadata=self.phase(ticket,'transfer_checked');self.debit();self.mark(ticket,'decode',metadata)
+    def validated(self,ticket):
+        metadata=self.phase(ticket,'decode');table,column,*_=SPECS[ticket.kind]
+        self.state['cells'][(table,ticket.pk,column)]=Cell(metadata,'validated')
+        self.mark(ticket,'validated',metadata)

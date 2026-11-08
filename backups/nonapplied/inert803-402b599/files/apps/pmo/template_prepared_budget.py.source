@@ -1,0 +1,113 @@
+"""Inert PMO phases/local scalar counters sharing existing operation poison/caps."""
+from dataclasses import dataclass
+from apps.policy.template_policy_budget_v2 import PolicyLedger,MAX_BYTES,MAX_CELLS
+from apps.documents.template_operation_budget import Cell
+from .template_prepared_transfer import spec,checked
+@dataclass(frozen=True)
+class PMOTicket:
+    entry:object
+    number:int
+    kind:str
+    pk:int
+@dataclass(frozen=True,repr=False)
+class PMOOperation:
+    entry:object
+    number:int
+
+class PMOLedger(PolicyLedger):
+    def __init__(self,actor,keys):
+        super().__init__(actor,keys)
+        self.local=self.state.setdefault('pmo_local',{'bytes':0,'cells':{},'ids':{},'scalar_queries':0,'processing':0})
+    def processing(self):
+        self.context()
+        if self.local['processing']>=100:self.fail()
+        self.local['processing']+=1
+    def scalar(self,purpose):
+        self.context()
+        if purpose not in ('version','binding','revision','observation','narrative','issue','history','state','sources','identity'):self.fail()
+        if self.local['scalar_queries']>=1000:self.fail()
+        self.local['scalar_queries']+=1
+    def ids(self,kind,values):
+        self.context()
+        if kind not in ('version','binding','issue','revision','observation','contract','evidence','state'):self.fail()
+        if type(values) not in (list,tuple,set,frozenset,range) or len(values)>100:self.fail()
+        if any(type(v) is not int or v<=0 for v in values):self.fail()
+        values=frozenset(values)
+        merged=self.local['ids'].get(kind,frozenset())|values
+        total=sum(len(v) for k,v in self.local['ids'].items() if k!=kind)+len(merged)
+        if len(merged)>100 or total>400:self.fail()
+        self.local['ids'][kind]=merged
+    def begin_cell(self,kind,pk):
+        self.debit()
+        try:spec(kind)
+        except Exception:self.poison();raise
+        if type(pk) is not int or pk<=0:self.fail()
+        ticket=PMOTicket(self.state['entry'],self.state['attempts'],kind,pk)
+        self.state['tickets'][ticket.number]=(ticket,'metadata',None);return ticket
+    def phase(self,ticket,wanted):
+        self.context()
+        if type(ticket) is not PMOTicket or ticket.entry is not self.state['entry']:self.fail()
+        record=self.state['tickets'].get(ticket.number)
+        if record is None or record[0]!=ticket or record[1]!=wanted:self.fail()
+        return record[2]
+    def reserve_pmo(self,ticket,metadata):
+        self.phase(ticket,'metadata')
+        try:checked(ticket.kind,metadata)
+        except Exception:self.poison();raise
+        table,column,*_=spec(ticket.kind);key=(table,ticket.pk,column);s=self.state;local=self.local
+        old=s['cells'].get(key)
+        if old is not None and (old.state!='validated' or old.metadata!=metadata):self.fail()
+        new=old is None;localnew=key not in local['cells']
+        if new and (len(s['cells'])>=MAX_CELLS or s['bytes']+metadata.size>MAX_BYTES):self.fail()
+        if localnew and (len(local['cells'])>=100 or local['bytes']+metadata.size>MAX_BYTES):self.fail()
+        for domain in self.keys:
+            rec=s['domains'].get(domain,{'cells':frozenset(),'bytes':0})
+            if key not in rec['cells'] and (len(rec['cells'])>=MAX_CELLS or rec['bytes']+metadata.size>MAX_BYTES):self.fail()
+        if new:s['bytes']+=metadata.size
+        if localnew:local['bytes']+=metadata.size;local['cells'][key]=metadata
+        for domain in self.keys:
+            rec=s['domains'].get(domain,{'cells':frozenset(),'bytes':0})
+            if key not in rec['cells']:s['domains'][domain]={'cells':rec['cells']|{key},'bytes':rec['bytes']+metadata.size}
+        s['cells'][key]=Cell(metadata,'reserved');self.mark(ticket,'reserved',metadata)
+    def validated(self,ticket):
+        metadata=self.phase(ticket,'decode');table,column,*_=spec(ticket.kind)
+        self.state['cells'][(table,ticket.pk,column)]=Cell(metadata,'validated');self.mark(ticket,'validated',metadata)
+
+    def begin_operation(self,identity):
+        self.processing();ticket=PMOOperation(self.state['entry'],self.local['processing'])
+        self.local.setdefault('operations',{})[ticket.number]={'ticket':ticket,'identity':identity,'phase':'prepared','started':[], 'touched':{},'signal':None,'outcome':None,'consumed':False}
+        return ticket
+    def operation(self,ticket):
+        self.context()
+        if type(ticket) is not PMOOperation or ticket.entry is not self.state['entry']:self.fail()
+        record=self.local.get('operations',{}).get(ticket.number)
+        if record is None or record['ticket'] is not ticket:self.fail()
+        return record
+    def started(self,operation,ticket,history):
+        record=self.operation(operation)
+        if record['phase'] not in ('native_running','checking_success') or type(history) is not bool:self.fail()
+        self.phase(ticket,'metadata')
+        if self.state['tickets'][ticket.number][0] is not ticket:self.fail()
+        owners=self.local.setdefault('ticket_owners',{})
+        if ticket.number in owners:self.fail()
+        owners[ticket.number]=operation
+        if any(t is ticket for t,h in record['started']):self.fail()
+        record['started'].append((ticket,history))
+    def completed(self,operation,ticket,metadata,history):
+        record=self.operation(operation)
+        if not any(t is ticket and h is history for t,h in record['started']):self.fail()
+        if self.phase(ticket,'validated')!=metadata:self.fail()
+        key=(ticket.kind,ticket.pk);old=record['touched'].get(key)
+        if old is not None and old[0]!=metadata:self.fail()
+        if old is None and len(record['touched'])>=100:self.fail()
+        record['touched'][key]=(metadata,history or (old is not None and old[1]))
+    def completed_only(self,operation):
+        record=self.operation(operation)
+        for ticket,history in record['started']:
+            if self.local.get('ticket_owners',{}).get(ticket.number) is not operation or self.state['tickets'][ticket.number][0] is not ticket:self.fail()
+            meta=self.phase(ticket,'validated')
+            observed=record['touched'].get((ticket.kind,ticket.pk))
+            table,column,*_=spec(ticket.kind);cell=self.state['cells'].get((table,ticket.pk,column))
+            if cell is None or cell.state!='validated' or cell.metadata!=meta:self.fail()
+            if observed is None or observed[0]!=meta or history and not observed[1]:self.fail()
+        return tuple(record['touched'].items())

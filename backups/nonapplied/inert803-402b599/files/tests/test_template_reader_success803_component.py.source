@@ -1,0 +1,59 @@
+"""Pure exact invocation success consumption; no native helpers or SQL."""
+import unittest
+from unittest.mock import patch
+from django.core.exceptions import ValidationError
+from apps.documents.template_operation_budget import BudgetHold
+from apps.policy import template_policy_budget_v2 as v2
+from tests import test_template_finance_budget_adoption803_component as finance
+from tests import test_pmo_native_denial803_component as pmo
+class FinanceSuccessTests(unittest.TestCase):
+    setUp=finance.FinanceAdoptionTests.setUp
+    budget=finance.FinanceAdoptionTests.budget
+    prepared=finance.FinanceAdoptionTests.prepared
+    def test_statement_exact_complete_success_oneuse(self):
+        self.prepared();b=self.budget();self.assertIsNone(b.admit(self.worklist,self.expected))
+        record=b.ledger.binding_record(b._invocation['ticket']);self.assertEqual(record['phase'],'complete')
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'validated')
+        self.assertIsNone(b._consume_success(self.worklist,self.expected))
+        with self.assertRaises(ValidationError):b._consume_success(self.worklist,self.expected)
+    def test_nonstatement_complete_no_cell(self):
+        self.kind='trial';row=(*self.expected[:5],'trial',*self.expected[6:]);self.c.responses=[[row],[row]]
+        b=self.budget();b.admit(self.worklist,row);b._consume_success(self.worklist,row)
+        self.assertEqual(b.ledger.state['cells'],{});self.assertEqual(b.ledger.local['queries'],2)
+    def test_unconsumed_newcall_before_any_work(self):
+        self.prepared();b=self.budget();b.admit(self.worklist,self.expected);before=len(self.c.calls)
+        with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertEqual(len(self.c.calls),before);self.assertEqual(b.ledger.local['processing'],1)
+    def test_consumed_allows_new_full_invocation(self):
+        b=self.budget()
+        for _ in range(2):
+            self.prepared();b.admit(self.worklist,self.expected);b._consume_success(self.worklist,self.expected)
+        self.assertEqual(b.ledger.local['processing'],2);self.assertEqual(b.ledger.state['attempts'],12)
+    def test_copied_invocation_not_exact_registered(self):
+        self.prepared();b=self.budget();b.admit(self.worklist,self.expected);b._invocation=b._invocation.copy()
+        with self.assertRaises(ValidationError):b._consume_success(self.worklist,self.expected)
+    def test_old_reader_success_current_entry_poison_both(self):
+        self.prepared();b=self.budget();b.admit(self.worklist,self.expected);old=self.marker;self.marker={}
+        with patch.object(v2,'_active_marker',lambda:self.marker):
+            with self.assertRaises(BudgetHold):b._consume_success(self.worklist,self.expected)
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+class PMOSuccessTests(unittest.TestCase):
+    setUp=pmo.DenialTests.setUp
+    newreader=pmo.DenialTests.newreader
+    def test_exact_operation_success_once(self):
+        self.reader.read();self.reader._consume_success(self.worklist,self.row)
+        with self.assertRaises(ValidationError):self.reader._consume_success(self.worklist,self.row)
+    def test_prior_unconsumed_read_blocks_before_work(self):
+        self.reader.read();before=self.reader.ledger.local['processing']
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertEqual(self.reader.ledger.local['processing'],before)
+    def test_consumed_success_can_begin_new_operation(self):
+        for _ in range(2):self.reader.read();self.reader._consume_success(self.worklist,self.row)
+        self.assertEqual(self.reader.ledger.local['processing'],2)
+    def test_other_reader_cannot_borrow_completed_operation(self):
+        self.reader.read();other=self.newreader();other.operation=self.reader.operation
+        with self.assertRaises(ValidationError):other._consume_success(self.worklist,self.row)
+    def test_old_success_entry_poisons_original_and_current(self):
+        self.reader.read();old=self.marker;self.marker={}
+        with self.assertRaises(BudgetHold):self.reader._consume_success(self.worklist,self.row)
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])

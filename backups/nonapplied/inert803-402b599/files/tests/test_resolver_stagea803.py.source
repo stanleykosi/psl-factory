@@ -1,0 +1,88 @@
+"""Finite native loading regression definitions; no803 domain activation."""
+from datetime import timedelta
+from django.test import TestCase
+from django.db import connection
+from django.utils import timezone
+from apps.core.services import add_evidence
+from apps.core.models import Case
+from apps.identity.models import Grant
+from apps.policy.models import Configuration
+from apps.policy.services import resolve,save_draft,transition,_resolution_candidate
+from apps.policy import scopes
+from .helpers import setup_case,envelope,activate
+COMPONENT='D04.iana_timezone'
+
+class ResolverStageATests(TestCase):
+    def setUp(self):
+        self.a,self.c=setup_case(username='resolver-stagea')
+        self.e=add_evidence(self.a,self.c.pk,'policy_decision','Synthetic timezone configuration','synthetic:resolver-stagea')
+
+    def observe(self,call):
+        seen=[]
+        def wrapper(execute,sql,params,many,context):
+            if sql.lstrip().upper().startswith('SELECT') and 'policy_configuration' in sql:seen.append((sql,params))
+            return execute(sql,params,many,context)
+        with connection.execute_wrapper(wrapper):result=call()
+        return result,seen
+
+    def test_missing_draft_validated_no_envelope_hydration(self):
+        draft=save_draft(self.a,self.c.pk,envelope(self.c,COMPONENT,'UTC',self.e))
+        transition(self.a,draft.pk,'validated')
+        result,queries=self.observe(lambda:resolve(COMPONENT,self.c))
+        self.assertEqual((result.status,result.reason),('MISSING','No activated component version'))
+        self.assertTrue(queries)
+        self.assertTrue(all('"envelope"' not in sql for sql,_ in queries))
+
+    def test_newest_revoked_no_fallback_to_superseded(self):
+        old=activate(self.a,self.c,COMPONENT,'UTC',self.e)
+        new=activate(self.a,self.c,COMPONENT,'Africa/Lagos',self.e)
+        transition(self.a,new.pk,'revoked')
+        self.assertEqual(old.states.order_by('-pk').first().state,'superseded')
+        result,queries=self.observe(lambda:resolve(COMPONENT,self.c))
+        self.assertEqual(result.status,'REVOKED');self.assertIsNone(result.configuration)
+        self.assertTrue(all('"envelope"' not in sql for sql,_ in queries))
+
+    def test_large_unselected_local_envelopes_stay_deferred_and_exhaustive(self):
+        # save_draft accepts unvalidated data; never activate malformed policy.
+        huge=envelope(self.c,COMPONENT,'UTC',self.e);huge['draft_note']='x'*200000
+        older=save_draft(self.a,self.c.pk,huge)
+        chosen=activate(self.a,self.c,COMPONENT,'UTC',self.e)
+        newer=save_draft(self.a,self.c.pk,huge)
+        selected,queries=self.observe(lambda:_resolution_candidate(COMPONENT,self.c))
+        self.assertEqual(selected.pk,chosen.pk);self.assertIn('envelope',selected.get_deferred_fields())
+        self.assertTrue(all('"envelope"' not in sql for sql,_ in queries))
+        # Actual native resolve still validates the chosen envelope, never the huge drafts.
+        result,queries=self.observe(lambda:resolve(COMPONENT,self.c))
+        self.assertEqual((result.status,result.configuration.pk),('ACTIVE',chosen.pk))
+        for sql,params in queries:
+            if '"envelope"' in sql:
+                self.assertIn('WHERE',sql)
+                self.assertNotIn(older.pk,params);self.assertNotIn(newer.pk,params)
+
+    def test_selected_latest_state_read_occurs_twice(self):
+        chosen=activate(self.a,self.c,COMPONENT,'UTC',self.e);queries=[]
+        def wrapper(execute,sql,params,many,context):
+            if sql.lstrip().upper().startswith('SELECT') and 'policy_policystate' in sql and params and chosen.pk in params:queries.append(sql)
+            return execute(sql,params,many,context)
+        with connection.execute_wrapper(wrapper):self.assertEqual(resolve(COMPONENT,self.c).status,'ACTIVE')
+        self.assertEqual(len(queries),2)
+
+    def test_expected_revision_and_effective_time_result_text(self):
+        env=envelope(self.c,COMPONENT,'UTC',self.e);now=timezone.now();env['effective_from']=(now+timedelta(hours=1)).isoformat();env['effective_until']=(now+timedelta(hours=2)).isoformat()
+        cfg=save_draft(self.a,self.c.pk,env);transition(self.a,cfg.pk,'validated');transition(self.a,cfg.pk,'active')
+        stale=resolve(COMPONENT,self.c,at=now,expected_revision=cfg.revision+1)
+        self.assertEqual((stale.status,stale.reason),('INVALID','Stale policy revision'))
+        self.assertEqual(resolve(COMPONENT,self.c,at=now).reason,'Version is not yet effective')
+        self.assertEqual(resolve(COMPONENT,self.c,at=now+timedelta(hours=3)).status,'EXPIRED')
+
+    def test_inherited_source_and_selected_case_are_not_substituted(self):
+        cfg=save_draft(self.a,self.c.pk,envelope(self.c,COMPONENT,'UTC',self.e));transition(self.a,cfg.pk,'validated')
+        src=scopes.create(self.a,cfg.pk,'organization',self.c.tenant,[])
+        scopes.transition(self.a,src.pk,'validated');scopes.transition(self.a,src.pk,'active')
+        target=Case.objects.create(tenant=self.c.tenant,title='Synthetic resolver target',kind='project',synthetic=True)
+        for action in Grant.objects.filter(case=self.c,user=self.a).values_list('action',flat=True):Grant.objects.create(case=target,user=self.a,action=action)
+        evidence=add_evidence(self.a,target.pk,'policy_decision','Synthetic application','synthetic:resolver-target')
+        applied=scopes.apply(self.a,src.pk,target.pk,evidence.pk,[]);transition(self.a,applied.pk,'validated');transition(self.a,applied.pk,'active')
+        result=resolve(COMPONENT,target);self.assertEqual((result.status,result.configuration.pk),('ACTIVE',applied.pk))
+        self.assertIsNot(result.configuration.case,target)
+        scopes.transition(self.a,src.pk,'revoked');self.assertEqual(resolve(COMPONENT,target).status,'REVOKED')

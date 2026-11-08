@@ -1,0 +1,65 @@
+--- a/apps/policy/services.py
++++ b/apps/policy/services.py
+@@ -31 +31,2 @@
+-def validate_envelope(case, envelope, runtime=False):
++def validate_envelope(case, envelope, runtime=False, *, _prepared=None):
++    if _prepared is not None:_prepared.envelope_context(case,envelope,runtime)
+@@ -54 +55 @@
+-        if not ref.startswith('evidence:') or not ref.split(':')[-1].isdigit() or not Evidence.objects.filter(case=case, pk=ref.split(':')[-1]).exists():
++        if not ref.startswith('evidence:') or not ref.split(':')[-1].isdigit() or not (Evidence.objects.filter(case=case, pk=ref.split(':')[-1]).exists() if _prepared is None else _prepared.evidence_exists(case,ref.split(':')[-1])):
+@@ -71 +72 @@
+-        target = RegisteredReference.objects.filter(case=case, ref=ref, version=version).first()
++        target = RegisteredReference.objects.filter(case=case, ref=ref, version=version).first() if _prepared is None else _prepared.reference_for_validation(case,ref,version)
+@@ -179 +180,2 @@
+-            validate_reference(envelope['component_id'],target,case,runtime=runtime)
++            if _prepared is None:validate_reference(envelope['component_id'],target,case,runtime=runtime)
++            else:validate_reference(envelope['component_id'],target,case,runtime=runtime,_prepared=_prepared)
+@@ -266 +268,19 @@
+-def resolve(component, case, at=None, expected_revision=None):
++def _resolution_candidate(component, case):
++    """Stream local identities, preserving the exhaustive latest-state pass.
++
++    Do not stop after the first eligible version: malformed later history must
++    retain its native failure. This defers unselected LOCAL envelopes only;
++    chosen/inherited payload validation and READ COMMITTED semantics are intact.
++    Chunking limits queryset caching, not total database work or driver memory.
++    """
++    versions = Configuration.objects.filter(case=case, component=component).only(
++        'id', 'case_id', 'component', 'revision').order_by('-revision')
++    candidate = None
++    for config in versions.iterator(chunk_size=100):
++        state = config.states.order_by('-pk').first().state
++        if state in ['active', 'revoked', 'superseded'] and candidate is None:
++            candidate = config
++    return candidate
++
++
++def resolve(component, case, at=None, expected_revision=None, *, _prepared=None):
+@@ -268,3 +288,2 @@
+-    versions = Configuration.objects.filter(case=case, component=component).order_by('-revision')
+-    candidates = [c for c in versions if c.states.order_by('-pk').first().state in ['active', 'revoked', 'superseded']]
+-    if not candidates:
++    config = _resolution_candidate(component, case) if _prepared is None else _prepared.resolution_candidate(component,case)
++    if config is None:
+@@ -272,2 +291 @@
+-    config = candidates[0]
+-    state = config.states.order_by('-pk').first().state
++    state = config.states.order_by('-pk').first().state if _prepared is None else _prepared.latest_configuration_state(config).state
+@@ -277 +295 @@
+-    origin_status = application_health(config, at)
++    origin_status = application_health(config, at) if _prepared is None else application_health(config,at,_prepared=_prepared)
+@@ -283 +301,2 @@
+-        validate_envelope(case, config.envelope, runtime=True)
++        if _prepared is None:validate_envelope(case, config.envelope, runtime=True)
++        else:validate_envelope(case,config.envelope,runtime=True,_prepared=_prepared)
+@@ -284,0 +304 @@
++        if _prepared is not None:_prepared.clean()
+@@ -331,2 +351,2 @@
+-def active_component(component,case):
+-    result=resolve(component,case)
++def active_component(component,case,*,_prepared=None):
++    result=resolve(component,case) if _prepared is None else resolve(component,case,_prepared=_prepared)
+@@ -338 +358,2 @@
+-def reference_values(configuration):
++def reference_values(configuration,*,_prepared=None):
++    if _prepared is not None:return _prepared.reference_values(configuration)

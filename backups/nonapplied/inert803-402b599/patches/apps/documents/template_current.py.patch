@@ -1,0 +1,29 @@
+--- a/apps/documents/template_current.py
++++ b/apps/documents/template_current.py
+@@ -40,4 +40,5 @@
+-def owner_policy(actor, scope):
+-    require(actor, scope.case, 'case.read')
+-    require(actor, scope.case, 'document.read')
+-    require(actor, scope.case, 'document.template')
++def owner_policy(actor, scope, *, _prepared=None):
++    gate=require if _prepared is None else _prepared.owner_require
++    gate(actor, scope.case, 'case.read')
++    gate(actor, scope.case, 'document.read')
++    gate(actor, scope.case, 'document.template')
+@@ -45,3 +46,3 @@
+-        require(actor,scope.case,'finance.read')
+-    policy = active_component(COMPONENT, scope.case)
+-    rules = reference_values(policy)[0].get('template_owners', [])
++        gate(actor,scope.case,'finance.read')
++    policy = active_component(COMPONENT, scope.case) if _prepared is None else active_component(COMPONENT,scope.case,_prepared=_prepared)
++    rules = (reference_values(policy) if _prepared is None else reference_values(policy,_prepared=_prepared))[0].get('template_owners', [])
+@@ -53 +54 @@
+-def owner_current(record):
++def owner_current(record, *, _prepared=None):
+@@ -57 +58,3 @@
+-        return owner_policy(record.actor, record.scope).pk == record.owner_policy_id
++        policy=owner_policy(record.actor, record.scope) if _prepared is None else owner_policy(record.actor,record.scope,_prepared=_prepared)
++        if _prepared is not None:_prepared.clean()
++        return policy.pk == record.owner_policy_id
+@@ -58,0 +62 @@
++        if _prepared is not None:_prepared.clean()

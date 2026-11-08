@@ -1,0 +1,107 @@
+"""UNRUN two-connection definitions. Snapshot-time, NOT through-commit authorization."""
+from queue import Queue
+from threading import Event,Thread
+from datetime import timedelta
+from django.contrib.auth import get_user_model
+from django.db import connection,connections,close_old_connections
+from django.utils import timezone
+from django.core.exceptions import PermissionDenied,ValidationError
+from django.test import TransactionTestCase
+from django.test.utils import CaptureQueriesContext
+from apps.core.models import Case,Audit
+from apps.documents import template_current as tc
+from apps.documents.template_scalar_closure import ScalarClosureBudget,discover_template_owner_closure
+from apps.policy.template_snapshot_entry import _run_authenticated
+from apps.identity import intake
+from apps.identity.models import Grant
+from apps.identity.intake_models import AccessChange
+from tests import test_template_scalar_closure803 as fixtures
+
+KEYS=['documents.template_claims']
+
+class ScalarSnapshotConcurrencyTests(TransactionTestCase):
+    # Reuse only the minimal canonical synthetic setup, not its test methods.
+    setUp=fixtures.ScalarClosureTests.setUp
+
+    def discover(self,actor,budget):
+        return discover_template_owner_closure(actor,self.c.pk,{'claim':[self.claim.pk]},budget)
+
+    def worker(self,operation):
+        """Separate default connection; completion only after native commit and close."""
+        queue=Queue();done=Event()
+        def run():
+            result=None;error=None
+            try:
+                close_old_connections()
+                with connections['default'].cursor() as cursor:
+                    cursor.execute("SELECT set_config('lock_timeout', %s, false)",['2s'])
+                    cursor.execute("SELECT set_config('statement_timeout', %s, false)",['5s'])
+                    cursor.execute('SELECT pg_backend_pid()');pid=cursor.fetchone()[0]
+                result=(pid,operation())  # Native atomic function must return before signalling.
+            except BaseException as exc:error=exc
+            finally:
+                try:
+                    connections['default'].close()
+                    if connections['default'].connection is not None:raise AssertionError('Worker connection not closed')
+                except BaseException as exc:error=error or exc
+                queue.put((result,error));done.set()
+        thread=Thread(target=run,name='inert803-snapshot-writer',daemon=False)
+        # Always make a bounded cleanup attempt even if the main assertion fails.
+        def cleanup():
+            thread.join(timeout=10)
+            self.assertFalse(thread.is_alive(),'Writer remains alive; never count success')
+        self.addCleanup(cleanup)
+        thread.start();thread.join(timeout=10)
+        self.assertFalse(thread.is_alive(),'Native worker exceeded bounded wait')
+        self.assertTrue(done.is_set())
+        result,error=queue.get_nowait()
+        if error is not None:raise error
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT pg_backend_pid()');main_pid=cursor.fetchone()[0]
+        self.assertNotEqual(main_pid,result[0])
+        return result[1]
+
+    def test_committed_relevant_scope_link_only_visible_next_snapshot(self):
+        self.assertTrue(self.c.synthetic)
+        actor_id,case_id,evidence_id=self.a.pk,self.c.pk,self.own.pk
+        def append():
+            actor=get_user_model().objects.get(pk=actor_id)
+            case=Case.objects.get(pk=case_id)
+            return tc.register_scope(actor,case_id,'status_report','internal','Concurrent relevant scope','Snapshot contrast','Synthetic owner',evidence_id,case.revision).pk
+        seen=[]
+        def first(actor):
+            budget=ScalarClosureBudget(actor,KEYS);before=self.discover(actor,budget)
+            added=self.worker(append);seen.append(added)
+            after=self.discover(actor,budget)
+            self.assertEqual(after,before);self.assertNotIn(added,after._scopes)
+            seen.append(before._scopes)
+        _run_authenticated(self.a,KEYS,first)
+        def fresh(actor):
+            now=self.discover(actor,ScalarClosureBudget(actor,KEYS))
+            self.assertEqual(set(now._scopes),set(seen[1])|{seen[0]})
+        _run_authenticated(self.a,KEYS,fresh)
+
+    def test_revocation_current_snapshot_retains_grant_fresh_snapshot_denies(self):
+        self.assertTrue(self.c.synthetic)
+        bootstrap=get_user_model().objects.create_superuser(username='snapshot803bootstrap',password='synthetic-local-test-only')
+        value={'format':'psl.tenant-access/v1','create_cases':False,'manage_access':True,'kinds':[],
+            'allowed_actions':['document.read'],'initial_actions':[],'classification':'synthetic'}
+        authority=intake.provision(bootstrap,self.a,self.c.tenant,value,timezone.now()+timedelta(hours=1),True,'Synthetic concurrency fixture only')
+        actor_id,case_id=self.a.pk,self.c.pk
+        def revoke():
+            actor=get_user_model().objects.get(pk=actor_id)
+            return intake.change_access(actor,case_id,actor_id,'document.read',False,'Synthetic concurrent revocation').pk
+        changed=[]
+        def first(actor):
+            budget=ScalarClosureBudget(actor,KEYS);before=self.discover(actor,budget)
+            changed.append(self.worker(revoke))
+            self.assertEqual(self.discover(actor,budget),before)
+        _run_authenticated(self.a,KEYS,first)
+        self.assertFalse(Grant.objects.get(user_id=actor_id,case_id=case_id,action='document.read').active)
+        change=AccessChange.objects.get(pk=changed[0]);self.assertEqual(change.authority_id,authority.pk);self.assertFalse(change.enabled)
+        self.assertEqual(Audit.objects.filter(case_id=case_id,actor_id=actor_id,action='intake.access_changed',data__change=change.pk,data__enabled=False).count(),1)
+        def fresh(actor):
+            with CaptureQueriesContext(connection) as queries,self.assertRaises(PermissionDenied):
+                self.discover(actor,ScalarClosureBudget(actor,KEYS))
+            self.assertFalse(any('documents_template' in q['sql'].lower() for q in queries))
+        with self.assertRaises(ValidationError):_run_authenticated(self.a,KEYS,fresh)

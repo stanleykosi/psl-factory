@@ -1,0 +1,12 @@
+--- a/apps/pmo/reporting.py
++++ b/apps/pmo/reporting.py
+@@ -195 +195 @@
+-def report_source_access(actor,case,manifest):
++def report_source_access(actor,case,manifest, *, _prepared=None):
+@@ -196,0 +197,3 @@
++    if _prepared is not None:
++        from .template_prepared_reader import check_prepared
++        _prepared=check_prepared(_prepared,actor)
+@@ -200 +203 @@
+-    for pin in manifest.get('incident_claims', []): selected_access(actor,case,pin)
++    for pin in manifest.get('incident_claims', []): selected_access(actor,case,pin,_prepared=_prepared)

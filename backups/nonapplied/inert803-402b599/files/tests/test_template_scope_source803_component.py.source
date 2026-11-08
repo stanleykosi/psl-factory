@@ -1,0 +1,161 @@
+"""Pure fixed pipeline and native predicate query-shape models, no SQL/helpers."""
+import ast,sys,unittest
+from dataclasses import dataclass,replace
+from pathlib import Path
+from types import ModuleType,SimpleNamespace
+from unittest.mock import patch
+from uuid import uuid4
+from tests import test_template_permission_composition803_component as composition
+from tests import test_template_candidate_worklist803_component as f
+SOURCE=Path(__file__).resolve().parents[1]/'apps/documents/template_scope_source_privacy.py'
+def load(namespace):
+    nodes=[n for n in ast.parse(SOURCE.read_text()).body if not isinstance(n,(ast.Import,ast.ImportFrom))]
+    ns={'__name__':'apps.documents.scope_privacy_pure','__package__':'apps.documents','dataclass':dataclass,'ValidationError':f.Hold,**namespace}
+    exec(compile(ast.Module(body=nodes,type_ignores=[]),'<scope-source>','exec'),ns);return ns
+class PipelineTests(unittest.TestCase):
+    setUp=f.CandidateTests.setUp
+    producer_fakes=f.CandidateTests.producer_fakes
+    budget=f.CandidateTests.budget
+    initialize_composition=composition.CompositionTests.initialize
+    def initialize(self):
+        self.initialize_composition();closure=self.out.closure
+        closure._records=(('claim',1),);closure._scopes=(11,12);closure._evidence=(101,102)
+        models={}
+        for module,name in [('apps.finance.models','FinanceDocumentBinding'),('apps.pmo.models','MinutesReportBinding')]:
+            obj=ModuleType(module);setattr(obj,name,self.ns[name]);models[module]=obj
+        p=patch.dict(sys.modules,models);p.start();self.addCleanup(p.stop)
+        ns={k:self.ns[k] for k in ('Case','Grant','Template','Version','_Budget','_rows','FINANCE_FIELDS','PMO_FIELDS','check_registered_worklist','_poison_marker','_CONTEXT')}
+        ns.update(discover_template_owner_closure=lambda *args:closure,compose_permissions=self.c['compose_permissions'],consume_receipt=self.c['consume_receipt'],require=lambda *args:None)
+        self.s=load(ns);self.computed=[]
+        def compute(*args):self.computed.append(args[4]);return frozenset({12}),frozenset({101})
+        self.s['_compute']=compute
+    def prepare(self,out=None):return self.s['prepare_privacy_facts'](self.actor,['documents.template_claims'],out or self.out)
+    def consume(self,facts):return self.s['consume_privacy_facts'](self.actor,['documents.template_claims'],self.out,facts)
+    def test_fixed_fresh_composition_consumed_before_facts(self):
+        self.initialize();facts=self.prepare()
+        self.assertEqual(self.events,[('finance',1),('finance',2),('pmo',4),('pmo',5)])
+        self.assertEqual(len(self.computed),2);receipt=facts.receipt
+        rec=self.marker['template_permission_composition803']['records'][0]
+        self.assertIs(rec['receipt'],receipt);self.assertTrue(rec['consumed'])
+        self.assertIsNone(self.consume(facts))
+        with self.assertRaises(f.Hold):self.consume(facts)
+    def test_old_receipt_not_parameter_or_reusable_authority(self):
+        self.initialize();receipt=self.c['compose_permissions'](self.actor,['documents.template_claims'],self.out)
+        with self.assertRaises(TypeError):self.s['prepare_privacy_facts'](self.actor,['documents.template_claims'],self.out,receipt)
+        with self.assertRaises(f.Hold):self.prepare()
+        self.assertEqual(self.computed,[])
+    def test_fresh_denial_is_recomputed_not_old_hiddenids(self):
+        self.initialize();self.modes[('finance',1)]='denied';facts=self.prepare()
+        self.assertEqual(facts.receipt.denied_templates,frozenset({2}));self.assertEqual(len(self.events),4)
+    def test_final_topology_change_fails_no_facts(self):
+        self.initialize();original=self.s['_revalidate'];calls=[]
+        def validate(*args):
+            result=original(*args);calls.append(1)
+            if len(calls)==2:raise f.Hold('topology changed')
+            return result
+        self.s['_revalidate']=validate
+        with self.assertRaises(f.Hold):self.prepare()
+        rec=self.marker['template_scope_source_privacy803'][0]
+        self.assertIsNone(rec['facts']);self.assertEqual(rec['phase'],'failed');self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_final_private_scope_or_source_mutation_fails(self):
+        self.initialize();calls=[]
+        def compute(*args):calls.append(1);return frozenset({12}),frozenset({101} if len(calls)==1 else {102})
+        self.s['_compute']=compute
+        with self.assertRaises(f.Hold):self.prepare()
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_inventory_mutation_before_permissions_no_readers(self):
+        self.initialize();self.financial.append((3,*self.financial[0][1:]))
+        with self.assertRaises(f.Hold):self.prepare()
+        self.assertEqual(self.events,[])
+    def test_public_predicate_error_is_fatal_not_fallback(self):
+        self.initialize()
+        def compute(*args):raise ValueError('native predicate error')
+        self.s['_compute']=compute
+        with self.assertRaises(ValueError):self.prepare()
+        self.assertIsNone(self.marker['template_scope_source_privacy803'][0]['facts']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_copied_facts_oldfacts_newcontext_and_no_retry(self):
+        self.initialize();facts=self.prepare()
+        with self.assertRaises(f.Hold):self.consume(replace(facts))
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_oldfacts_newvalidworklist_poisons_both(self):
+        self.initialize();facts=self.prepare();old=self.marker;self.marker={}
+        self.out=self.ns['discover_candidate_worklist'](self.actor,uuid4(),{},['documents.template_claims'])
+        with self.assertRaises(f.Hold):self.consume(facts)
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+
+class FactQueryTests(unittest.TestCase):
+    def setUp(self):
+        self.case=SimpleNamespace(pk=uuid4());self.calls=[];self.public_calls=[];owner=self
+        self.templates=[{'pk':2,'case_id':self.case.pk},{'pk':8,'case_id':self.case.pk},{'pk':9,'case_id':self.case.pk}]
+        self.scopes=[{'pk':11,'case_id':self.case.pk,'document_type':'ordinary','claims':[8],'retracted':True},
+                     {'pk':12,'case_id':self.case.pk,'document_type':'ordinary','claims':[2]},
+                     {'pk':13,'case_id':self.case.pk,'document_type':'finance_report','claims':[]},
+                     {'pk':14,'case_id':self.case.pk,'document_type':'ordinary','claims':[]}]
+        self.evidence=[{'pk':n,'case_id':self.case.pk,'kind':'template_current_source','public':False,'links':{}} for n in range(101,109)]
+        for index,path in enumerate(('templatescope__in','templateclaim__scope__in','templateresolution__scope__in','templateclaimretraction__claim__scope__in')):
+            self.evidence[index]['links'][path]={11}
+        self.evidence[5].update(kind='policy_decision',public=True)
+        self.evidence[6].update(kind='policy_decision',public=False)
+        self.evidence[7].update(kind='ordinary',public=True)
+        class Q:
+            def __init__(self,**kw):self.parts=[kw]
+            def __or__(self,other):obj=Q();obj.parts=self.parts+other.parts;return obj
+        class Query:
+            def __init__(self,kind,rows,fields=None,flat=False):self.kind=kind;self.rows=rows;self.fields=fields;self.flat=flat
+            def filter(self,*args,**kwargs):
+                owner.calls.append((self.kind,args,kwargs))
+                def match(row,key,value):
+                    if key=='case':return row['case_id']==value.pk
+                    if key=='pk__in':return row['pk'] in (value.ids() if type(value) is Query else value)
+                    if key=='kind':return row['kind']==value
+                    if key=='claims__template__in':return bool(set(row['claims'])&set(value.ids()))
+                    if key in ('templatescope__in','templateclaim__scope__in','templateresolution__scope__in','templateclaimretraction__claim__scope__in'):
+                        return bool(row['links'].get(key,set())&set(value))
+                    raise AssertionError('unexpected native predicate '+key)
+                def qmatch(row,q):return any(all(match(row,k,v) for k,v in part.items()) for part in q.parts)
+                return Query(self.kind,[row for row in self.rows if all(match(row,k,v) for k,v in kwargs.items()) and all(qmatch(row,q) for q in args)])
+            def ids(self):return [row['pk'] for row in self.rows]
+            def order_by(self,*args):return self
+            def values(self,*args):return self
+            def values_list(self,*fields,flat=False):return Query(self.kind,self.rows,fields,flat)
+            def distinct(self):return self
+            def __getitem__(self,slice_):
+                return [row[self.fields[0]] if self.flat else tuple(row[f] for f in self.fields) for row in self.rows[slice_]]
+        def public(query):
+            self.public_calls.append(query);self.assertTrue(all(row['kind']=='policy_decision' for row in query.rows))
+            return Query('evidence',[row for row in query.rows if row['public']])
+        modules={}
+        for module,attr,value in [('apps.core.evidence_access','public_evidence',public),('apps.documents.template_current','SOURCE_KIND','template_current_source')]:
+            obj=ModuleType(module);setattr(obj,attr,value);modules[module]=obj
+        p=patch.dict(sys.modules,modules);p.start();self.addCleanup(p.stop)
+        self.s=load({'Q':Q,'TemplateScope':SimpleNamespace(objects=Query('scope',self.scopes)),'Template':SimpleNamespace(objects=Query('template',self.templates)),'Evidence':SimpleNamespace(objects=Query('evidence',self.evidence))})
+        self.steps=[];self.budget=SimpleNamespace(phase=lambda:self.steps.append(1),guard=SimpleNamespace(charge=lambda *args:None))
+        self.worklist=SimpleNamespace(candidate_templates=(2,9),closure=SimpleNamespace(_scopes=(11,12,13,14),_templates=(2,8,9),_evidence=tuple(range(101,109))))
+        self.receipt=SimpleNamespace(denied_templates=frozenset({2}))
+    def compute(self,finance=False):return self.s['_compute'](object(),self.case,finance,self.worklist,self.receipt,self.budget)
+    def test_filtered_and_denied_historical_claims_empty_finance_and_four_links(self):
+        hidden,eligible=self.compute()
+        self.assertEqual(hidden,frozenset({11,12,13}));self.assertEqual(eligible,frozenset({105,106}))
+        self.assertEqual(len(self.steps),4);self.assertEqual(len(self.public_calls),1)
+        paths=set()
+        for kind,args,kwargs in self.calls:
+            for q in args:
+                for part in q.parts:paths.update(part)
+        self.assertTrue({'templatescope__in','templateclaim__scope__in','templateresolution__scope__in','templateclaimretraction__claim__scope__in'}<=paths)
+    def test_finance_grant_only_removes_scope_type_exclusion_not_claim_privacy(self):
+        hidden,eligible=self.compute(True);self.assertEqual(hidden,frozenset({11,12}))
+        self.assertNotIn(14,hidden) # ordinary empty scope never newly denied
+    def test_explicit_source_kind_bypasses_public_branch_but_policy_requires_it(self):
+        hidden,eligible=self.compute()
+        self.assertIn(105,eligible);self.assertFalse(self.evidence[4]['public'])
+        self.assertIn(106,eligible);self.assertNotIn(107,eligible);self.assertNotIn(108,eligible)
+        self.assertNotIn(14,hidden) # visible selected scope need not inherit another linked hidden scope
+    def test_foreign_caller_denied_ids_not_admitted(self):
+        self.receipt.denied_templates=frozenset({999})
+        with self.assertRaises(f.Hold):self.compute()
+        self.assertEqual(self.steps,[])
+    def test_scope_overflow_fails_before_partial_facts(self):
+        for pk in range(15,112):self.scopes.append({'pk':pk,'case_id':self.case.pk,'document_type':'ordinary','claims':[]})
+        self.worklist.closure._scopes=tuple(row['pk'] for row in self.scopes)
+        with self.assertRaises(f.Hold):self.compute()
+        self.assertEqual(len(self.steps),1)

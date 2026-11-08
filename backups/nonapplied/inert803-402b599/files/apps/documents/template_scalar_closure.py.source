@@ -1,0 +1,150 @@
+"""INERT803 scalar discovery only. No visibility, payload or owner-authority decision."""
+from dataclasses import dataclass,field
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied,ValidationError
+from django.db import connections
+from django.db.models import Q
+from apps.core.models import Case,Evidence
+from apps.identity.services import require
+from apps.identity.models import Grant
+from apps.policy.template_snapshot_entry import require_context,require_context_actor,_CONTEXT
+from .models import TemplateScope,TemplateClaim,TemplateClaimRetraction,TemplateResolution,Template
+
+DOMAINS={'claim':'documents.template_claims','retraction':'documents.template_retractions','resolution':'documents.template_resolutions'}
+MAX_SELECTED=100
+MAX_SCOPES=100
+MAX_TEMPLATES=100
+MAX_IDENTITIES=400
+MESSAGE='Template scalar dependency closure unavailable or exceeds bounded investigation limits'
+def hold():raise ValidationError(MESSAGE)
+
+def selection(value):
+    if type(value) is not dict or not value or not set(value)<=set(DOMAINS):hold()
+    result={}
+    for kind,ids in value.items():
+        if type(ids) is not list or not ids or any(type(pk) is not int or pk<=0 for pk in ids) or len(ids)!=len(set(ids)):hold()
+        result[kind]=tuple(sorted(ids))
+    if sum(map(len,result.values()))>MAX_SELECTED:hold()
+    return result
+
+MAX_PHASES=1000
+KINDS=frozenset((*DOMAINS,'evidence','scope','template'))
+def _poison_marker(marker):
+    if marker is not None:
+        # Existing snapshot exit fence recognizes this shared admission failure.
+        marker['policy_budget_v2_failed']=True
+        state=marker.get('scalar_closure_budget803')
+        if state is not None:state['poison']=True
+
+def _binding(actor,keys):
+    require_context_actor(actor,keys)
+    connection=connections['default']
+    if connection.alias!='default' or connection.vendor!='postgresql' or connection.connection is None:hold()
+    return _CONTEXT.get(),connection,connection.connection
+
+class ScalarClosureBudget:
+    """Entry-shared identity/phase limits, not JSON bytes, total SQL or RSS."""
+    def __init__(self,actor,keys):
+        try:marker,connection,raw=_binding(actor,keys)
+        except Exception:
+            _poison_marker(_CONTEXT.get());raise
+        self.actor=actor;self.actor_pk=actor.pk;self.keys=tuple(sorted(keys))
+        self.marker=marker;self.connection=connection;self.raw_connection=raw
+        self.state=marker.setdefault('scalar_closure_budget803',{
+            'actor':actor,'pk':actor.pk,'keys':self.keys,'connection':connection,'raw':raw,
+            'identities':frozenset(),'phases':0,'poison':False})
+        self.context()
+    @property
+    def _identities(self):return self.state['identities']
+    def poison(self):
+        _poison_marker(self.marker);_poison_marker(_CONTEXT.get())
+    def fail(self):self.poison();hold()
+    def context(self):
+        try:marker,connection,raw=_binding(self.actor,list(self.keys))
+        except Exception:
+            self.poison();raise
+        s=self.state
+        if (marker is not self.marker or _CONTEXT.get() is not self.marker
+            or connection is not self.connection or raw is not self.raw_connection
+            or s['actor'] is not self.actor or s['pk']!=self.actor_pk or self.actor.pk!=self.actor_pk
+            or s['keys']!=self.keys or s['connection'] is not connection or s['raw'] is not raw):self.fail()
+        if s['poison'] or marker.get('policy_budget_v2_failed'):self.fail()
+    def before_phase(self):
+        # Fixed discovery callsites debit before each ORM evaluation/native gate.
+        self.context()
+        if self.state['phases']>=MAX_PHASES:self.fail()
+        self.state['phases']+=1
+    def charge(self,kind,ids):
+        self.context()
+        if type(kind) is not str or kind not in KINDS or type(ids) not in (list,tuple,set,frozenset):self.fail()
+        # Validate before dedup: bool must not disappear by equality with integer1.
+        if len(ids)>MAX_SELECTED or any(type(pk) is not int or pk<=0 for pk in ids):self.fail()
+        new=frozenset((kind,pk) for pk in ids);combined=self._identities|new
+        if (len(combined)>MAX_IDENTITIES or sum(k in DOMAINS for k,_ in combined)>MAX_SELECTED
+            or sum(k=='scope' for k,_ in combined)>MAX_SCOPES
+            or sum(k=='template' for k,_ in combined)>MAX_TEMPLATES
+            or sum(k=='evidence' for k,_ in combined)>MAX_SELECTED):self.fail()
+        self.state['identities']=combined
+
+@dataclass(frozen=True,repr=False)
+class _Closure:
+    # Private immutable topology: no public serializer or authorization boolean.
+    _records:tuple=field(repr=False)
+    _evidence:tuple=field(repr=False)
+    _scopes:tuple=field(repr=False)
+    _templates:tuple=field(repr=False)
+
+def _discover_template_owner_closure(server_actor,case_id,selections,budget,*,_selector=None,_worklist=None):
+    chosen=selection(selections);budget.context()
+    require_context_actor(server_actor,list(budget.keys))
+    if _selector is None:
+        if set(budget.keys)!={DOMAINS[k] for k in chosen}:hold()
+    else:
+        from .template_impact_entry import validate_selector
+        validate_selector(server_actor,list(budget.keys),case_id,chosen,_selector,_worklist)
+    budget.before_phase()
+    if server_actor is None or not get_user_model().objects.filter(pk=server_actor.pk,is_active=True).exists():raise PermissionDenied('Current document reader required')
+    budget.before_phase()
+    if not Grant.objects.filter(user=server_actor,case_id=case_id,action='case.read',active=True).exists():raise PermissionDenied('Current case reader required')
+    budget.before_phase()
+    case=Case.objects.get(pk=case_id)
+    for action in ('case.read','document.read','policy.read'):
+        budget.before_phase();require(server_actor,case,action)
+    scopes=set();evidence=set();records=[]
+    models={'claim':(TemplateClaim,'scope_id','scope__case'),
+        'retraction':(TemplateClaimRetraction,'claim__scope_id','claim__scope__case'),
+        'resolution':(TemplateResolution,'scope_id','scope__case')}
+    for kind,ids in chosen.items():
+        model,scopefield,casefield=models[kind]
+        budget.before_phase()
+        rows=list(model.objects.filter(pk__in=ids,**{casefield:case}).values_list('pk',scopefield,'evidence_id'))
+        if {row[0] for row in rows}!=set(ids):hold()
+        budget.charge(kind,ids);records.extend((kind,pk) for pk in ids)
+        scopes.update(row[1] for row in rows);evidence.update(row[2] for row in rows)
+    budget.before_phase()
+    if set(Evidence.objects.filter(case=case,pk__in=evidence).values_list('pk',flat=True))!=evidence:hold()
+    budget.before_phase()
+    if set(TemplateScope.objects.filter(case=case,pk__in=scopes).values_list('pk',flat=True))!=scopes:hold()
+    budget.charge('evidence',evidence)
+    # A single DISTINCT union across all four native source-link relations.
+    linked=TemplateScope.objects.filter(case=case).filter(Q(pk__in=scopes)|Q(evidence_id__in=evidence)|Q(claims__evidence_id__in=evidence)|Q(resolutions__evidence_id__in=evidence)|Q(claims__retraction__evidence_id__in=evidence))
+    budget.before_phase()
+    scopes=set(linked.order_by('pk').values_list('pk',flat=True).distinct()[:MAX_SCOPES+1])
+    if len(scopes)>MAX_SCOPES:hold()
+    budget.charge('scope',scopes)
+    # No retraction filter: historical claims continue to determine scope privacy.
+    budget.before_phase()
+    templates=set(TemplateClaim.objects.filter(scope_id__in=scopes).order_by('template_id').values_list('template_id',flat=True).distinct()[:MAX_TEMPLATES+1])
+    if len(templates)>MAX_TEMPLATES:hold()
+    budget.before_phase()
+    if set(Template.objects.filter(case=case,pk__in=templates).values_list('pk',flat=True))!=templates:hold()
+    budget.charge('template',templates)
+    return _Closure(tuple(sorted(records)),tuple(sorted(evidence)),tuple(sorted(scopes)),tuple(sorted(templates)))
+
+
+def discover_template_owner_closure(server_actor,case_id,selections,budget,*,_selector=None,_worklist=None):
+    try:
+        if _selector is None:return _discover_template_owner_closure(server_actor,case_id,selections,budget)
+        return _discover_template_owner_closure(server_actor,case_id,selections,budget,_selector=_selector,_worklist=_worklist)
+    except Exception:
+        budget.poison();raise

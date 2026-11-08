@@ -1,0 +1,188 @@
+"""INERT private candidate inventory. Not visibility, permission or owner authority."""
+from dataclasses import dataclass
+from datetime import datetime
+from uuid import UUID
+from django.core.exceptions import ValidationError
+from apps.core.models import Case
+from apps.identity.models import Grant
+from apps.identity.services import require
+from apps.finance.models import FinanceDocumentBinding
+from apps.pmo.models import MinutesReportBinding
+from .models import Template, Version
+from .template_scalar_closure import ScalarClosureBudget, discover_template_owner_closure, _poison_marker, _CONTEXT
+
+KINDS=frozenset(('template','version','finance','pmo'))
+FINANCE_FIELDS=('pk','run_id','version_id','version__template_id','version__document_id','run__kind','run__case_id','run__case__tenant','run__case__synthetic')
+PMO_FIELDS=('pk','version_id','report_id','meeting_id','version__template_id','version__document_id','version__created_at','version__document__case_id','report__case_id')
+MESSAGE='Template candidate inventory unavailable or exceeds bounded investigation limits'
+def hold():raise ValidationError(MESSAGE)
+def positive(value):return type(value) is int and value>0
+def case_uuid(value):
+    if type(value) is UUID:return value
+    if type(value) is str:
+        parsed=UUID(value)
+        if str(parsed)==value:return parsed
+    hold()
+
+class _Budget:
+    """Entry-global counters across cases; scalar closure has separate counters."""
+    def __init__(self,actor,keys):
+        self.guard=ScalarClosureBudget(actor,keys)
+        self.marker=self.guard.marker
+        self.state=self.marker.setdefault('template_candidate_worklist803',{'ids':frozenset(),'phases':0,'poison':False,'registered':[]})
+        self.context()
+    def poison(self):
+        self.state['poison']=True;self.guard.poison()
+    def fail(self):self.poison();hold()
+    def context(self):
+        self.guard.context()
+        if self.state['poison']:self.fail()
+    def phase(self):
+        self.context()
+        if self.state['phases']>=1000:self.fail()
+        self.state['phases']+=1
+    def charge(self,kind,ids):
+        self.context()
+        if kind not in KINDS or type(ids) not in (tuple,list) or len(ids)>100 or any(not positive(pk) for pk in ids):self.fail()
+        combined=self.state['ids']|frozenset((kind,pk) for pk in ids)
+        if len(combined)>400 or any(sum(k==category for k,_ in combined)>100 for category in KINDS):self.fail()
+        self.state['ids']=combined
+
+@dataclass(frozen=True,repr=False)
+class _Witness:
+    marker:object
+    actor:object
+    actor_pk:int
+    case_id:UUID
+    keys:tuple
+    connection:object
+    raw:object
+
+@dataclass(frozen=True,repr=False)
+class _Worklist:
+    closure:object
+    candidate_templates:tuple
+    finance:tuple
+    pmo:tuple
+    versions:tuple
+    witness:_Witness
+    selector:object=None
+
+def _rows(budget,rows,kind,templates):
+    if len(rows)>100:budget.fail()
+    seen=set()
+    for row in rows:
+        if type(row) is not tuple or len(row)!=9:budget.fail()
+        if kind=='finance':
+            if (any(not positive(v) for v in row[:5]) or type(row[5]) is not str
+                or type(row[6]) is not UUID or type(row[7]) is not str or type(row[8]) is not bool
+                or row[3] not in templates):budget.fail()
+        else:
+            if (any(not positive(row[i]) for i in (0,1,4,5))
+                or any(v is not None and not positive(v) for v in row[2:4])
+                or (row[2] is None)==(row[3] is None)
+                or type(row[6]) is not datetime or row[6].utcoffset() is None or type(row[7]) is not UUID
+                or (row[8] is not None and type(row[8]) is not UUID)
+                or (row[2] is None)!=(row[8] is None) or row[4] not in templates):budget.fail()
+        if row[0] in seen:budget.fail()
+        seen.add(row[0])
+    budget.charge(kind,[r[0] for r in rows])
+    return tuple(rows)
+
+def discover_candidate_worklist(fresh_actor,case_id,selections,keys,*,_selector=None):
+    """Trusted producer only; never accepts caller-created closure/query/transport."""
+    budget=None
+    try:
+        budget=_Budget(fresh_actor,keys);case_id=case_uuid(case_id)
+        closure=discover_template_owner_closure(fresh_actor,case_id,selections,budget.guard) if _selector is None else discover_template_owner_closure(fresh_actor,case_id,selections,budget.guard,_selector=_selector)
+        budget.charge('template',closure._templates)
+        budget.phase();case=Case.objects.get(pk=case_id)
+        budget.phase();require(fresh_actor,case,'document.read')
+        budget.phase();finance_read=Grant.objects.filter(case=case,user=fresh_actor,action='finance.read',active=True).exists()
+        candidates=Template.objects.filter(case=case,pk__in=closure._templates).exclude(definition__document_type='accepted_finance_metadata')
+        if not finance_read:
+            candidates=candidates.exclude(definition__document_type__in=['finance_report','finance_group_report'])
+            candidates=candidates.exclude(pk__in=Version.objects.filter(document__case=case,forecastbinding__isnull=False).values('template_id'))
+        budget.phase();templates=tuple(candidates.order_by('pk').values_list('pk',flat=True).distinct()[:101])
+        budget.charge('template',templates)
+        if not set(templates)<=set(closure._templates):budget.fail()
+        budget.phase();finance=_rows(budget,list(FinanceDocumentBinding.objects.filter(version__template_id__in=templates).order_by('pk').values_list(*FINANCE_FIELDS)[:101]),'finance',templates)
+        budget.phase();pmo=_rows(budget,list(MinutesReportBinding.objects.filter(version__template_id__in=templates,manifest__source_mode='leadership_selected_facts/v1').order_by('pk').values_list(*PMO_FIELDS)[:101]),'pmo',templates)
+        versions=tuple(sorted({r[2] for r in finance}|{r[1] for r in pmo}))
+        budget.charge('version',versions);budget.context()
+        g=budget.guard
+        witness=_Witness(g.marker,fresh_actor,fresh_actor.pk,case_id,g.keys,g.connection,g.raw_connection)
+        result=_Worklist(closure,templates,finance,pmo,versions,witness,_selector)
+        if len(budget.state['registered'])>=100:budget.fail()
+        budget.state['registered'].append(result)
+        if _selector is not None:
+            from .template_impact_entry import bind_selector
+            bind_selector(fresh_actor,keys,case_id,selections,_selector,result)
+        return result
+    except Exception:
+        if budget is not None:budget.poison()
+        else:_poison_marker(_CONTEXT.get())
+        raise
+
+
+def consume_pmo_candidate(actor,keys,worklist,row):
+    """Private exact registered-object membership, not full template visibility."""
+    budget=None
+    try:
+        budget=_Budget(actor,keys);budget.phase()
+        if type(worklist) is not _Worklist or type(worklist.witness) is not _Witness:budget.fail()
+        w=worklist.witness;g=budget.guard
+        if (not any(item is worklist for item in budget.state['registered'])
+            or w.marker is not g.marker or w.actor is not actor or w.actor_pk!=actor.pk
+            or w.keys!=g.keys or w.connection is not g.connection or w.raw is not g.raw_connection
+            or not any(item is row for item in worklist.pmo)):
+            budget.fail()
+        _rows(budget,[row],'pmo',worklist.candidate_templates)
+        if row[2] is None:budget.fail() # leadership reader needs actual report
+        return w.case_id,row
+    except Exception:
+        if type(worklist) is _Worklist and type(worklist.witness) is _Witness:
+            _poison_marker(worklist.witness.marker)
+        if budget is not None:budget.poison()
+        else:_poison_marker(_CONTEXT.get())
+        raise
+
+
+def consume_finance_candidate(actor,keys,worklist,row):
+    """Private Finance membership only; no visibility or denied-outcome decision."""
+    budget=None
+    try:
+        budget=_Budget(actor,keys);budget.phase()
+        if type(worklist) is not _Worklist or type(worklist.witness) is not _Witness:budget.fail()
+        w=worklist.witness;g=budget.guard
+        if (not any(item is worklist for item in budget.state['registered'])
+            or w.marker is not g.marker or w.actor is not actor or w.actor_pk!=actor.pk
+            or w.keys!=g.keys or w.connection is not g.connection or w.raw is not g.raw_connection
+            or not any(item is row for item in worklist.finance)):
+            budget.fail()
+        _rows(budget,[row],'finance',worklist.candidate_templates)
+        return w.case_id,row
+    except Exception:
+        if type(worklist) is _Worklist and type(worklist.witness) is _Witness:
+            _poison_marker(worklist.witness.marker)
+        if budget is not None:budget.poison()
+        else:_poison_marker(_CONTEXT.get())
+        raise
+
+
+def check_registered_worklist(actor,keys,worklist):
+    """Closed membership check includes legitimately empty inventories."""
+    budget=None
+    try:
+        budget=_Budget(actor,keys);budget.phase()
+        if type(worklist) is not _Worklist or type(worklist.witness) is not _Witness:budget.fail()
+        w=worklist.witness;g=budget.guard
+        if (not any(item is worklist for item in budget.state['registered']) or w.marker is not g.marker
+            or w.actor is not actor or w.actor_pk!=actor.pk or w.keys!=g.keys
+            or w.connection is not g.connection or w.raw is not g.raw_connection):budget.fail()
+        return w
+    except Exception:
+        if type(worklist) is _Worklist and type(worklist.witness) is _Witness:_poison_marker(worklist.witness.marker)
+        if budget is not None:budget.poison()
+        else:_poison_marker(_CONTEXT.get())
+        raise

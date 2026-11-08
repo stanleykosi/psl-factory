@@ -1,0 +1,109 @@
+"""Pure closed scalar models/fake transport; no ORM/SQL/native authorization executed."""
+import ast,unittest
+from pathlib import Path
+from types import SimpleNamespace
+from dataclasses import replace
+from tests import test_template_scope_source803_component as prior
+from tests.test_template_candidate_worklist803_component import Hold
+ROOT=Path(__file__).resolve().parents[1]
+class HistoricalTests(unittest.TestCase):
+    def setUp(self):
+        self.fixture=prior.PipelineTests();self.fixture.setUp();self.addCleanup(self.fixture.doCleanups);self.fixture.initialize()
+        self.f=self.fixture;self.s=self.f.s
+        self.s['_compute_scopes']=lambda *args:frozenset()
+        self.s['_compute_sources']=lambda *args: (_ for _ in ()).throw(AssertionError('source eligibility invoked'))
+        self.rows={'claim':[(1,self.f.out.witness.case_id,11,7)],'retraction':[],'resolution':[]}
+        self.fields=[];owner=self
+        class Query:
+            def __init__(self,kind):self.kind=kind
+            def filter(self,**kwargs):self.kw=kwargs;return self
+            def order_by(self,*args):return self
+            def values_list(self,*fields):owner.fields.append(fields);return self
+            def __getitem__(self,key):
+                if self.kind=='config':return [(7,owner.f.out.witness.case_id,owner.ns['COMPONENT'])][key]
+                return owner.rows[self.kind][key]
+        ns={'__name__':'history_pure','PermissionDenied':Hold,'ValidationError':Hold,
+            'Configuration':SimpleNamespace(objects=Query('config')),
+            'DOMAINS':{'claim':'documents.template_claims','retraction':'documents.template_retractions','resolution':'documents.template_resolutions'},
+            'positive':lambda x:type(x) is int and x>0,
+            **{k:self.s[k] for k in ('check_registered_worklist','_Budget','_poison_marker','_CONTEXT','prepare_scope_facts','consume_scope_facts')}}
+        for kind,model in [('claim','TemplateClaim'),('retraction','TemplateClaimRetraction'),('resolution','TemplateResolution')]:ns[model]=SimpleNamespace(objects=Query(kind))
+        tree=ast.parse((ROOT/'apps/documents/template_historical_metadata.py').read_text())
+        exec(compile(ast.Module(body=[n for n in tree.body if not isinstance(n,(ast.Import,ast.ImportFrom))],type_ignores=[]),'<historical>','exec'),ns);self.ns=ns
+    def run_history(self,config=7):return self.ns['historical_metadata'](self.f.actor,['documents.template_claims'],self.f.out,config)
+    def test_scope_only_never_source_eligibility_closed_payload(self):
+        result=self.run_history();self.assertEqual(result,[{'id':1,'kind':'claim','metadata_only':True,'domain_route':'documents','owner_policy':7,'state':'historical_owner_record_not_template_selection','effects_performed':False}])
+        self.assertTrue(all(not ({'note','claim_ids','body','actor','selected_claim_id'}&set(fields)) for fields in self.fields))
+    def test_hidden_selected_scope_denies_no_partial(self):
+        self.s['_compute_scopes']=lambda *args:frozenset({11})
+        with self.assertRaises(Hold):self.run_history()
+        self.assertTrue(self.f.marker['policy_budget_v2_failed'])
+    def test_other_linked_hidden_scope_does_not_deny_record(self):
+        self.s['_compute_scopes']=lambda *args:frozenset({12});self.assertEqual(len(self.run_history()),1)
+    def test_full_api_still_invokes_source_computation(self):
+        # Restore actual combined function, prior fixture had replaced it.
+        loaded=prior.load(self.s);loaded['_compute_scopes']=self.s['_compute_scopes'];loaded['_compute_sources']=self.s['_compute_sources'];self.s['_compute']=loaded['_compute']
+        with self.assertRaises(AssertionError):self.s['prepare_privacy_facts'](self.f.actor,['documents.template_claims'],self.f.out)
+    def test_scope_receipt_cannot_be_consumed_as_full(self):
+        facts=self.s['prepare_scope_facts'](self.f.actor,['documents.template_claims'],self.f.out)
+        with self.assertRaises(Hold):self.s['consume_privacy_facts'](self.f.actor,['documents.template_claims'],self.f.out,facts)
+        self.assertTrue(self.f.marker['policy_budget_v2_failed'])
+    def test_full_receipt_cannot_be_consumed_as_scope(self):
+        facts=self.s['prepare_privacy_facts'](self.f.actor,['documents.template_claims'],self.f.out)
+        with self.assertRaises(Hold):self.s['consume_scope_facts'](self.f.actor,['documents.template_claims'],self.f.out,facts)
+    def test_scope_copy_and_reuse_fail(self):
+        facts=self.s['prepare_scope_facts'](self.f.actor,['documents.template_claims'],self.f.out)
+        self.s['consume_scope_facts'](self.f.actor,['documents.template_claims'],self.f.out,facts)
+        with self.assertRaises(Hold):self.s['consume_scope_facts'](self.f.actor,['documents.template_claims'],self.f.out,facts)
+    def test_mapping_mutation_fails_after_permissions(self):
+        original=self.ns['prepare_scope_facts']
+        def changed(*args):
+            out=original(*args);self.rows['claim']=[(1,self.f.out.witness.case_id,12,7)];return out
+        self.ns['prepare_scope_facts']=changed
+        with self.assertRaises(Hold):self.run_history()
+        self.assertTrue(self.f.marker['policy_budget_v2_failed'])
+    def test_wrong_config_rejected_before_permissions(self):
+        with self.assertRaises(Hold):self.run_history(8)
+        self.assertEqual(self.f.events,[])
+    def test_bool_configuration_rejected_before_queries(self):
+        with self.assertRaises(Hold):self.run_history(True)
+        self.assertEqual(self.fields,[])
+    def test_bad_scalar_rows_rejected_before_permissions(self):
+        from uuid import uuid4
+        for row in [(True,self.f.out.witness.case_id,11,7),(1,uuid4(),11,7),(1,self.f.out.witness.case_id,11,True),(1,self.f.out.witness.case_id,11,8)]:
+            with self.subTest(row=row):
+                self.setUp();self.rows['claim']=[row]
+                with self.assertRaises(Hold):self.run_history()
+                self.assertEqual(self.f.events,[])
+    def test_retraction_claim_identity_and_resolution_projection(self):
+        # Mapping separately exercises genuine strict fields; fake permissions do not claim native gates.
+        for kind in ('retraction','resolution'):
+            self.setUp();self.f.out.closure._records=((kind,1),)
+            keys=[self.ns['DOMAINS'][kind]]
+            self.ns['check_registered_worklist']=lambda *a:self.f.out.witness
+            self.ns['_Budget']=lambda *a:SimpleNamespace(phase=lambda:None,poison=lambda:None)
+            self.ns['prepare_scope_facts']=lambda *a:SimpleNamespace(hidden_scopes=frozenset())
+            self.ns['consume_scope_facts']=lambda *a:None
+            self.rows[kind]=[(1,self.f.out.witness.case_id,11,7,*([23] if kind=='retraction' else []))]
+            result=self.ns['historical_metadata'](self.f.actor,keys,self.f.out,7)[0]
+            self.assertNotIn('owner_authority_pin_current',result)
+            self.assertEqual('historical_retraction_recorded' in result,kind=='retraction')
+            if kind=='retraction':self.assertIn(('pk','claim__scope__case_id','claim__scope_id','owner_policy_id','claim_id'),self.fields)
+
+    def test_retraction_relationship_mutation_rejected(self):
+        self.f.out.closure._records=(('retraction',1),)
+        self.ns['check_registered_worklist']=lambda *a:self.f.out.witness
+        self.ns['_Budget']=lambda *a:SimpleNamespace(phase=lambda:None,poison=lambda:None)
+        self.rows['retraction']=[(1,self.f.out.witness.case_id,11,7,23)]
+        def prepare(*args):
+            self.rows['retraction']=[(1,self.f.out.witness.case_id,11,7,24)]
+            return SimpleNamespace(hidden_scopes=frozenset())
+        self.ns['prepare_scope_facts']=prepare;self.ns['consume_scope_facts']=lambda *a:None
+        with self.assertRaises(Hold):self.ns['historical_metadata'](self.f.actor,['documents.template_retractions'],self.f.out,7)
+    def test_old_scope_facts_new_context_poison_both(self):
+        from uuid import uuid4
+        facts=self.s['prepare_scope_facts'](self.f.actor,['documents.template_claims'],self.f.out)
+        old=self.f.marker;self.f.marker={}
+        out=self.f.ns['discover_candidate_worklist'](self.f.actor,uuid4(),{},['documents.template_claims'])
+        with self.assertRaises(Hold):self.s['consume_scope_facts'](self.f.actor,['documents.template_claims'],out,facts)
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.f.marker['policy_budget_v2_failed'])

@@ -1,0 +1,179 @@
+"""Pure fake transport/native reader stand-ins; no SQL or Finance actions run."""
+import hashlib,uuid,unittest
+from types import SimpleNamespace
+from unittest.mock import patch
+from django.core.exceptions import PermissionDenied,ValidationError
+from apps.policy import template_policy_budget_v2 as v2
+from apps.documents import template_finance_admission as reader
+from apps.documents import template_finance_transfer_descriptor as d
+from apps.documents.template_operation_budget import Metadata,BudgetHold
+D='documents.template_claims';E='documents.template_resolutions'
+class Cursor:
+    def __init__(self,c):self.c=c
+    def __enter__(self):return self
+    def __exit__(self,*a):pass
+    def execute(self,sql,params):self.c.events.append('query');self.c.calls.append((sql,params));self.rows=self.c.responses.pop(0)
+    def fetchmany(self,n):assert n==2;return self.rows
+class Transport:
+    def __init__(self):self.calls=[];self.events=[];self.responses=[]
+    def cursor(self):return Cursor(self)
+class FinanceAdoptionTests(unittest.TestCase):
+    def setUp(self):
+        self.actor=SimpleNamespace(pk=7);self.marker={};self.raw=object();self.c=Transport();self.case=uuid.UUID(int=1)
+        self.expected=(1,1,1,1,1,'statement',self.case,'tenant',True)
+        self.bind=patch.object(v2,'_binding',lambda a,k:(self.marker,self.c,self.raw));self.bind.start();self.addCleanup(self.bind.stop)
+        self.kind='statement';self.deny=False;self.worklist=object();self.template_case=uuid.UUID(int=2)
+        def candidate(actor,keys,worklist,row):
+            self.assertIs(worklist,self.worklist);d.binding(row);return self.template_case,row
+        self.consume=patch.object(reader,'_consume_candidate',side_effect=candidate);self.consume.start();self.addCleanup(self.consume.stop)
+        def get(**kw):return SimpleNamespace(kind=self.kind,case_id=self.case,case=SimpleNamespace(pk=self.case))
+        manager=SimpleNamespace(only=lambda *args:SimpleNamespace(get=get))
+        def recipient(run,ids):
+            self.c.events.append('recipient');self.assertEqual(ids,[7])
+        def predicate(run):return run.kind=='statement' and reader.classify(run.snapshot)
+        def readable(actor,case):
+            self.c.events.append('ppe_gate')
+            if self.deny:raise PermissionDenied('native denied')
+        self.helpers=patch.object(reader,'_reader_helpers',return_value=(recipient,predicate,readable,SimpleNamespace(objects=manager)))
+        self.helpers.start();self.addCleanup(self.helpers.stop)
+    def budget(self):return reader.ReaderAdmission(self.actor,[D,E])
+    def prepared(self,expected=None,data=b'{"inputs": []}',count=0,ppe=False):
+        expected=expected or self.expected
+        row=(self.case,'statement','object',len(data),hashlib.sha256(data).hexdigest())
+        self.c.responses.extend([[expected],[row],[(True,count)],[(True,True,ppe)],[expected],[(data,)],[expected],[row]])
+        return Metadata(row[:2],*row[2:])
+    def test_empty_statement_six_phases_and_three_identities(self):
+        self.prepared();b=self.budget();self.assertIsNone(b.admit(self.worklist,self.expected))
+        self.assertEqual(b.ledger.state['attempts'],6);self.assertEqual(b.ledger.local['queries'],3)
+        self.assertEqual(len(self.c.calls),8);self.assertNotIn('ppe_gate',self.c.events)
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'validated')
+    def test_same_run_second_binding_dedup_but_full_work(self):
+        second=(2,*self.expected[1:]);m=self.prepared();self.prepared(second)
+        b=self.budget();b.admit(self.worklist,self.expected);self.budget().admit(self.worklist,second)
+        self.assertEqual(b.ledger.state['bytes'],m.size);self.assertEqual(b.ledger.state['attempts'],12)
+        self.assertEqual(b.ledger.local['processing'],2);self.assertEqual(b.ledger.local['queries'],6)
+    def test_nonstatement_no_snapshot_and_kind_transition_hold(self):
+        self.kind='trial';expected=(*self.expected[:5],'trial',*self.expected[6:]);self.c.responses=[[expected],[expected]]
+        b=self.budget();b.admit(self.worklist,expected);self.assertEqual(b.ledger.state['attempts'],0)
+        self.assertEqual(b.ledger.state['cells'],{});self.assertTrue(all('snapshot' not in sql for sql,p in self.c.calls))
+        self.kind='statement'
+        with self.assertRaises(ValidationError):b.admit(self.worklist,(2,*self.expected[1:]))
+        self.assertEqual(len(self.c.calls),2)
+    def test_statement_to_nonstatement_hold(self):
+        self.prepared();b=self.budget();b.admit(self.worklist,self.expected);self.kind='trial'
+        with self.assertRaises(ValidationError):b.admit(self.worklist,(2,*self.expected[1:5],'trial',*self.expected[6:]))
+        self.assertEqual(len(self.c.calls),8)
+    def test_count_guard_miss_stops_before_class(self):
+        self.prepared();self.c.responses[2]=[(False,None)];b=self.budget()
+        with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertEqual(len(self.c.calls),3);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_class_guard_miss_not_empty_ordinary(self):
+        self.prepared();self.c.responses[3]=[(False,True,False)]
+        with self.assertRaises(ValidationError):self.budget().admit(self.worklist,self.expected)
+        self.assertEqual(len(self.c.calls),4)
+    def test_ppe_denial_before_transfer_private_terminal_outcome(self):
+        self.deny=True;self.prepared(data=b'{"inputs": [{"declaration": {"source_type": "ppe_schedule"}}]}',count=1,ppe=True)
+        b=self.budget();outcome=b.admit(self.worklist,self.expected)
+        self.assertEqual(outcome.callsite,'EARLY_PPE');self.assertEqual(outcome.attained,'classified')
+        self.assertEqual(len(self.c.calls),5);self.assertFalse(self.marker.get('policy_budget_v2_failed',False))
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'denied_unvalidated')
+    def test_conditional_transfer_miss_no_decode(self):
+        self.prepared();self.c.responses[5]=[];b=self.budget()
+        with patch.object(d,'decode',side_effect=AssertionError('must not decode')):
+            with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertEqual(len(self.c.calls),6);self.assertEqual(b.ledger.state['attempts'],4)
+    def test_decode_success_final_drift_never_validated(self):
+        self.prepared();last=list(self.c.responses[-1][0]);last[-1]='b'*64;self.c.responses[-1]=[tuple(last)];b=self.budget()
+        with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'reserved')
+    def test_attempt999_cross_wrapper_and_no_transport_after1000(self):
+        self.prepared();b=self.budget()
+        policy=v2.PolicyLedger(self.actor,[D,E])
+        for _ in range(999):policy.begin('reference',99)
+        with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertEqual(b.ledger.state['attempts'],1000);self.assertEqual(len(self.c.calls),2)
+    def test_policy_global_charge_blocks_finance_before_count(self):
+        self.prepared();b=self.budget();b.ledger.state['bytes']=1024*1024
+        with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertEqual(len(self.c.calls),2)
+    def test_shared_processing_cap_and_invalid_worklist_poison(self):
+        b=self.budget();b.ledger.local['processing']=100
+        with self.assertRaises(ValidationError):self.budget().admit(self.worklist,self.expected)
+        self.assertEqual(self.c.calls,[])
+        self.marker={}
+        with self.assertRaises(ValidationError):self.budget().admit(self.worklist,iter([self.expected]))
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_scalar_query_permits_not_replayable(self):
+        b=self.budget();t=b.ledger.begin_binding(self.expected);b.ledger.before_identity(t,'entry')
+        with self.assertRaises(BudgetHold):b.ledger.before_identity(t,'entry')
+        self.assertEqual(b.ledger.local['queries'],1)
+    def test_descriptor_guards_and_policy_four_specs_unchanged(self):
+        m=Metadata((self.case,'statement'),'object',14,'a'*64)
+        count,cp=d.count_statement(self.expected,self.template_case,m);clas,clp=d.class_statement(self.expected,self.template_case,m,0);transfer,tp=d.transfer_statement(self.expected,self.template_case,m)
+        self.assertIn('CASE WHEN admitted THEN CASE WHEN',count)
+        self.assertIn("jsonb_array_elements(CASE WHEN matched THEN",clas)
+        self.assertIn("ELSE '[]'::jsonb END",clas);self.assertIn('SELECT matched',clas)
+        for sql in (count,clas,transfer):self.assertIn('sha256',sql);self.assertIn('IS NOT DISTINCT FROM',sql)
+        self.assertEqual(tp[:9],self.expected);self.assertNotIn('finance_snapshot',v2.SPECS)
+    def test_fresh_codec_mutation_not_shared(self):
+        data=b'{"inputs": []}';m=Metadata((self.case,'statement'),'object',len(data),hashlib.sha256(data).hexdigest())
+        one=d.decode(m,data);one['inputs'].append('changed');self.assertEqual(d.decode(m,memoryview(data)),{'inputs':[]})
+    def policy_cell(self,pk,size):
+        ledger=v2.PolicyLedger(self.actor,[D,E]);t=ledger.begin('reference',pk)
+        metadata=Metadata((self.case,'ref',1),'object',size,'a'*64)
+        ledger.reserve(t,metadata);ledger.before_transfer(t);ledger.transfer_checked(t,[(b'x'*size,)])
+        ledger.before_decode(t);ledger.validated(t)
+        return ledger
+    def test_actual_mixed_policy_finance_exact_bytes_both_orders(self):
+        prefix=b'{"inputs": [], "pad": "';data=prefix+b'x'*(256*1024-len(prefix)-2)+b'"}'
+        for finance_first in (True,False):
+            self.marker={};self.c.responses=[];self.c.calls=[]
+            def finance():self.prepared(data=data);self.budget().admit(self.worklist,self.expected)
+            if finance_first:finance()
+            for i in range(3):self.policy_cell(i+1,256*1024)
+            if not finance_first:finance()
+            b=self.budget();self.assertEqual(b.ledger.state['bytes'],1024*1024)
+            self.assertEqual(b.ledger.state['local_bytes'],3*256*1024)
+            self.assertEqual(b.ledger.local['bytes'],256*1024)
+            self.assertTrue(all(x['bytes']==1024*1024 for x in b.ledger.state['domains'].values()))
+            t=v2.PolicyLedger(self.actor,[D,E]).begin('reference',4)
+            with self.assertRaises(BudgetHold):v2.PolicyLedger(self.actor,[D,E]).reserve(t,Metadata((self.case,'ref',1),'object',1,'b'*64))
+    def test_actual_mixed_exact100cells_next_denied(self):
+        self.prepared();self.budget().admit(self.worklist,self.expected)
+        for i in range(99):self.policy_cell(i+1,1)
+        b=self.budget();self.assertEqual(len(b.ledger.state['cells']),100)
+        other=(2,2,*self.expected[2:]);self.prepared(expected=other)
+        before=len(self.c.calls)
+        with self.assertRaises(ValidationError):b.admit(self.worklist,other)
+        self.assertEqual(len(self.c.calls)-before,2)
+    def test_marker_constructor_and_old_wrapper_poison_current_entry(self):
+        b=self.budget();self.marker={}
+        with patch.object(v2,'_active_marker',lambda:self.marker):
+            with self.assertRaises(ValidationError):b.admit(self.worklist,[])
+        with self.assertRaises(BudgetHold):self.budget()
+    def test_conditional_binding_change_and_exit_failure_unvalidated(self):
+        self.prepared();self.c.responses[6]=[(2,*self.expected[1:])];b=self.budget()
+        with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertEqual(b.ledger.state['attempts'],5)
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'reserved')
+
+    def test_actual100_repeated_binding_processing_boundary(self):
+        b=self.budget()
+        for _ in range(100):
+            self.prepared();self.budget().admit(self.worklist,self.expected)
+        self.assertEqual(b.ledger.local['processing'],100)
+        self.assertEqual(b.ledger.local['queries'],300)
+        self.assertEqual(b.ledger.state['attempts'],600)
+        before=len(self.c.calls)
+        with self.assertRaises(ValidationError):self.budget().admit(self.worklist,self.expected)
+        self.assertEqual(len(self.c.calls),before)
+
+    def test_size_permit_single_use_before_second_debit_or_query(self):
+        b=self.budget();binding=b.ledger.begin_binding(self.expected)
+        b.ledger.before_identity(binding,'entry');b.ledger.identity_checked(binding,'entry',[self.expected])
+        ticket=b.ledger.begin_size(binding)
+        self.assertEqual(b.ledger.state['attempts'],1)
+        with self.assertRaises(BudgetHold):b.ledger.begin_size(binding)
+        self.assertEqual(b.ledger.state['attempts'],1)
+        self.assertIs(b.ledger.local['tickets'][binding.number]['cell'],ticket)
+        self.assertEqual(self.c.calls,[]);self.assertTrue(self.marker['policy_budget_v2_failed'])

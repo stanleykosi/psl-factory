@@ -1,0 +1,40 @@
+"""Pure scalar selection tests, not substitutes for native policy workflows."""
+import ast,hashlib
+from pathlib import Path
+from types import SimpleNamespace
+import unittest
+ROOT=Path(__file__).resolve().parents[1]
+def helper(rows):
+    tree=ast.parse((ROOT/'apps/policy/services.py').read_text());fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='_resolution_candidate')
+    calls=[]
+    class Query:
+        def filter(self,**kw):calls.append(('filter',kw));return self
+        def only(self,*fields):calls.append(('only',fields));return self
+        def order_by(self,*fields):calls.append(('order_by',fields));return self
+        def iterator(self,**kw):calls.append(('iterator',kw));return iter(rows)
+    ns={'Configuration':SimpleNamespace(objects=Query())};exec(compile(ast.Module(body=[fn],type_ignores=[]),'<selection-only>','exec'),ns)
+    return ns['_resolution_candidate'],calls
+
+def row(state,seen):
+    class States:
+        def order_by(self,key):assert key=='-pk';return self
+        def first(self):seen.append(state);return SimpleNamespace(state=state) if state is not None else None
+    return SimpleNamespace(states=States())
+class ResolverStageAComponentTests(unittest.TestCase):
+    def test_exhaustive_first_eligible_and_scalar_stream(self):
+        seen=[];rows=[row(s,seen) for s in ['draft','revoked','active','superseded','validated']]
+        choose,calls=helper(rows);self.assertIs(choose('D11','case'),rows[1]);self.assertEqual(seen,['draft','revoked','active','superseded','validated'])
+        self.assertIn(('only',('id','case_id','component','revision')),calls);self.assertIn(('iterator',{'chunk_size':100}),calls)
+    def test_missing_state_still_fails_after_winner(self):
+        seen=[];choose,_=helper([row('active',seen),row(None,seen)])
+        with self.assertRaises(AttributeError):choose('D11','case')
+        self.assertEqual(seen,['active',None])
+    def test_no_eligible_and_superseded_candidate(self):
+        choose,_=helper([row('draft',[]),row('validated',[])]);self.assertIsNone(choose('D11','case'))
+        r=row('superseded',[]);choose,_=helper([r]);self.assertIs(choose('D11','case'),r)
+    def test_downstream_resolution_ast_unchanged(self):
+        tree=ast.parse((ROOT/'apps/policy/services.py').read_text());fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='resolve')
+        # Everything from second latest-state read through validation/time results.
+        value=ast.dump(ast.Module(body=fn.body[3:],type_ignores=[]))
+        self.assertEqual(hashlib.sha256(value.encode()).hexdigest(),'531aec474dda6dbbe1520787056cb15d3ce33f6e199b9f7352457dfb24bf0c40')
+        self.assertNotIn('select_related',ast.unparse(fn))

@@ -1,0 +1,135 @@
+"""Pure real consumer/ledger/codec with fake transport, never SQL execution."""
+import ast,hashlib,json,uuid,unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+from apps.policy import template_policy_budget_v2 as v2
+from apps.policy.template_policy_transfer_descriptor import FIELDS
+from apps.documents.template_operation_budget import BudgetHold
+ROOT=Path(__file__).resolve().parents[1]
+SOURCE=(ROOT/'apps/policy/template_policy_admission.py').read_text()
+D='documents.template_claims';E='documents.template_resolutions'
+class Cursor:
+    def __init__(self,connection):self.c=connection
+    def __enter__(self):return self
+    def __exit__(self,*a):pass
+    def execute(self,sql,params):self.c.calls.append((sql,params));self.result=self.c.responses.pop(0)
+    def fetchmany(self,n):assert n==2;return self.result
+class Transport:
+    def __init__(self):self.calls=[];self.responses=[]
+    def cursor(self):return Cursor(self)
+class PolicyBudgetAdoptionTests(unittest.TestCase):
+    def setUp(self):
+        self.actor=SimpleNamespace(pk=7);self.marker={};self.transport=Transport();self.raw=object()
+        self.patch=patch.object(v2,'_binding',lambda a,k:(self.marker,self.transport,self.raw));self.patch.start();self.addCleanup(self.patch.stop)
+        tree=ast.parse(SOURCE);nodes=[n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='PolicyCellBudget']
+        def hold():raise ValueError('fixed hold')
+        cells={k:(None,None,FIELDS[k],v2.SPECS[k][4]) for k in FIELDS}
+        ns={'__package__':'apps.policy','hold':hold,'CELLS':cells}
+        exec(compile(ast.Module(body=nodes,type_ignores=[]),'<actual consumer>','exec'),ns)
+        self.Budget=ns['PolicyCellBudget'];self.expected={'case_id':uuid.UUID(int=1),'ref':'x','version':1}
+    def budget(self):return self.Budget(self.actor,[D,E])
+    def response(self,data=b'{"value": 1}',transfer=True):
+        meta=(*self.expected.values(),'object',len(data),hashlib.sha256(data).hexdigest())
+        self.transport.responses.extend([[meta],[(data,)] if transfer else []])
+    def test_full_phase_three_attempts_and_all_domains(self):
+        self.response();b=self.budget();self.assertEqual(b.load('reference',1,self.expected),{'value':1})
+        self.assertEqual(b.ledger.state['attempts'],3)
+        self.assertEqual(set(b.ledger.state['domains']),{D,E});self.assertEqual(len(self.transport.calls),2)
+        sql,params=self.transport.calls[1];self.assertIn('IS NOT DISTINCT FROM',sql);self.assertIn('sha256',sql);self.assertIn('<=%s',sql)
+    def test_fresh_decode_dedup_local_shared_across_wrappers(self):
+        self.response();self.response();a=self.budget();one=a.load('reference',1,self.expected);one['value']=99
+        b=self.budget();self.assertEqual(b.load('reference',1,self.expected),{'value':1})
+        self.assertEqual(len(b.cells),1);self.assertEqual(a.bytes,b.bytes);self.assertEqual(b.ledger.state['attempts'],6)
+        self.assertFalse(any(isinstance(x,dict) for x in b.cells.values()))
+    def test_no_matching_conditional_row_sticky_before_decode(self):
+        self.response(transfer=False);b=self.budget()
+        with self.assertRaises(ValueError):b.load('reference',1,self.expected)
+        self.assertEqual(b.ledger.state['attempts'],2)
+        with self.assertRaises(BudgetHold):self.budget()
+        self.assertEqual(len(self.transport.calls),2)
+    def test_bad_decode_retains_charge_and_poison(self):
+        self.response(b'{bad json');b=self.budget()
+        with self.assertRaises(ValueError):b.load('reference',1,self.expected)
+        self.assertGreater(b.bytes,0);self.assertTrue(b.ledger.state['poison'])
+    def test_same_size_hash_conflict_stops_before_transfer(self):
+        self.response();b=self.budget();b.load('reference',1,self.expected);self.response(b'{"value": 2}')
+        with self.assertRaises(ValueError):b.load('reference',1,self.expected)
+        self.assertEqual(len(self.transport.calls),3)
+    def test_attempt_exhaustion_prequery_shared(self):
+        b=self.budget();b.ledger.state['attempts']=1000
+        with self.assertRaises(ValueError):b.load('reference',1,self.expected)
+        self.assertEqual(self.transport.calls,[])
+    def test_budget_hold_pretransfer(self):
+        self.response();b=self.budget();b.ledger.state['local_bytes']=1024*1024
+        with self.assertRaises(ValueError):b.load('reference',1,self.expected)
+        self.assertEqual(len(self.transport.calls),1)
+    def test_transfer_nonnull_exactone_bytes_memoryview(self):
+        for rows in [[],[(None,)],[(b'a',),(b'a',)],[(bytearray(b'a'),)]]:
+            self.marker={};self.response();self.transport.responses[-1]=rows;b=self.budget()
+            with self.assertRaises(ValueError):b.load('reference',1,self.expected)
+            self.transport.responses=[]
+        self.marker={};self.response();self.transport.responses[-1]=[(memoryview(b'{"value": 1}'),)]
+        self.assertEqual(self.budget().load('reference',1,self.expected),{'value':1})
+    def test_phase_order_and_single_use(self):
+        ledger=self.budget().ledger;t=ledger.begin('reference',1)
+        with self.assertRaises(BudgetHold):ledger.before_transfer(t)
+        self.assertTrue(ledger.state['poison'])
+    def test_principal_context_and_entry_reset(self):
+        b=self.budget();self.actor.pk=8
+        with self.assertRaises(ValueError):b.load('reference',1,self.expected)
+        self.assertEqual(self.transport.calls,[])
+        self.actor.pk=7;self.marker={};self.assertEqual(self.budget().ledger.state['attempts'],0)
+    def test_discovery_error_poisons_before_ticket(self):
+        tree=ast.parse(SOURCE);wrapper=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='admit_selected_owner_policy')
+        def denied(*a):raise PermissionError('denied')
+        ns={'_admit_selected_owner_policy':denied};exec(compile(ast.Module(body=[wrapper],type_ignores=[]),'<wrapper>','exec'),ns)
+        b=self.budget()
+        with self.assertRaises(PermissionError):ns['admit_selected_owner_policy'](self.actor,None,b)
+        self.assertEqual(b.ledger.state['attempts'],0)
+        with self.assertRaises(BudgetHold):self.budget()
+    def test_exact_four_specs_no_policy_cell_reader_in_other_domains(self):
+        self.assertEqual(set(v2.SPECS),set(FIELDS))
+        for path in ['apps/documents/template_finance_admission.py','apps/pmo/leadership_reporting.py']:
+            self.assertNotIn('PolicyCellBudget',(ROOT/path).read_text())
+    def test_v2_full_caps_and_pending_not_ready(self):
+        from apps.documents.template_operation_budget import Metadata
+        ledger=self.budget().ledger;data=b'x'*(256*1024)
+        for pk in range(1,5):
+            t=ledger.begin('reference',pk);ledger.reserve(t,Metadata(tuple(self.expected.values()),'object',len(data),'a'*64))
+            ledger.before_transfer(t);ledger.transfer_checked(t,[(data,)]);ledger.before_decode(t);ledger.validated(t)
+        self.assertEqual(ledger.state['bytes'],1024*1024);self.assertEqual(ledger.state['local_bytes'],1024*1024)
+        self.assertTrue(all(d['bytes']==1024*1024 for d in ledger.state['domains'].values()))
+        t=ledger.begin('reference',5)
+        with self.assertRaises(BudgetHold):ledger.reserve(t,Metadata(tuple(self.expected.values()),'object',1,'a'*64))
+        self.assertEqual(self.transport.calls,[])
+    def test_v2_attempts_all_phases_shared_and_ticket_phase_poison(self):
+        b=self.budget();self.response();b.load('reference',1,self.expected)
+        for _ in range(997):self.budget().ledger.begin('reference',2)
+        with self.assertRaises(BudgetHold):self.budget().ledger.begin('reference',2)
+        self.assertEqual(b.ledger.state['attempts'],1000)
+        self.marker={};ledger=self.budget().ledger;t=ledger.begin('reference',1)
+        from apps.documents.template_operation_budget import Metadata
+        ledger.reserve(t,Metadata(tuple(self.expected.values()),'object',1,'a'*64))
+        with self.assertRaises(BudgetHold):ledger.before_decode(t)
+        self.assertTrue(ledger.state['poison'])
+    def test_constructor_failure_before_ledger_poisoned_entry(self):
+        with patch.object(v2,'_active_marker',lambda:self.marker),patch.object(v2,'_binding',side_effect=PermissionError('native denied')):
+            with self.assertRaises(PermissionError):self.budget()
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+        with self.assertRaises(BudgetHold):self.budget()
+        self.marker={}
+        self.assertEqual(self.budget().ledger.state['attempts'],0)
+    def test_generic_transport_exception_redacted(self):
+        b=self.budget()
+        with patch.object(self.transport,'cursor',side_effect=RuntimeError('PRIVATE transport detail')):
+            with self.assertRaisesRegex(ValueError,'^fixed hold$'):b.load('reference',1,self.expected)
+        self.assertTrue(b.ledger.state['poison'])
+
+    def test_old_ledger_new_valid_marker_poisons_active_entry(self):
+        old=self.budget();old_marker=self.marker;self.marker={}
+        with patch.object(v2,'_active_marker',lambda:self.marker):
+            with self.assertRaises(BudgetHold):old.ledger.context()
+        self.assertTrue(old_marker['policy_budget_v2_failed'])
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+        with self.assertRaises(BudgetHold):self.budget()

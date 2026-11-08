@@ -1,0 +1,25 @@
+--- a/apps/pmo/issue_references.py
++++ b/apps/pmo/issue_references.py
+@@ -18 +18,5 @@
+-def read_scope(actor,contract):
++def read_scope(actor,contract,*,_reader_scalar=False,_prepared=None):
++    if type(_reader_scalar) is not bool:raise ValidationError('Internal reader projection must be boolean')
++    if _prepared is not None:
++        from .template_prepared_reader import check_prepared
++        _prepared=check_prepared(_prepared,actor);_reader_scalar=True
+@@ -21 +25 @@
+-    issue_subject(contract.case,contract.evidence_id)
++    issue_subject(contract.case,contract.evidence_id,_reader_scalar=_reader_scalar)
+@@ -55 +59,5 @@
+-def observation(actor,case,pk,issue=None):
++def observation(actor,case,pk,issue=None,*,_reader_scalar=False,_prepared=None):
++    if type(_reader_scalar) is not bool:raise ValidationError('Internal reader projection must be boolean')
++    if _prepared is not None:
++        from .template_prepared_reader import check_prepared
++        _prepared=check_prepared(_prepared,actor);_reader_scalar=True
+@@ -57 +65 @@
+-    row=Observation.objects.select_related('contract__case','contract__actor','evidence__created_by','issue__case','actor').filter(pk=pk,issue__case=case).first()
++    row=_prepared.observation_for(actor,case,pk,issue) if _prepared is not None else Observation.objects.select_related('contract__case','contract__actor','evidence__created_by','issue__case','actor').filter(pk=pk,issue__case=case).first()
+@@ -59 +67 @@
+-    read_scope(actor,row.contract)
++    read_scope(actor,row.contract,_reader_scalar=_reader_scalar,_prepared=_prepared)

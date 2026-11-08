@@ -1,0 +1,94 @@
+"""Closed inert Finance SQL/codec descriptions; no queries or action imports."""
+import hashlib,json,uuid
+from apps.documents.template_operation_budget import Metadata
+from apps.policy.template_policy_transfer_descriptor import finite_float,reject_constant
+CAP=256*1024
+ITEMS=1000
+class FinanceTransferHold(ValueError):pass
+def hold():raise FinanceTransferHold('Finance reader admission unavailable')
+def pk(value):
+    if type(value) is not int or value<=0:hold()
+def binding(value):
+    if type(value) is not tuple or len(value)!=9:hold()
+    for v in value[:5]:pk(v)
+    if type(value[5]) is not str or type(value[6]) is not uuid.UUID or type(value[7]) is not str or type(value[8]) is not bool:hold()
+    return value
+def checked(metadata):
+    if (type(metadata) is not Metadata or type(metadata.identity) is not tuple or len(metadata.identity)!=2
+        or type(metadata.identity[0]) is not uuid.UUID or type(metadata.identity[1]) is not str
+        or metadata.identity[1]!='statement' or type(metadata.shape) is not str or metadata.shape!='object'
+        or type(metadata.size) is not int or not 0<=metadata.size<=CAP
+        or type(metadata.fingerprint) is not str or len(metadata.fingerprint)!=64
+        or any(c not in '0123456789abcdef' for c in metadata.fingerprint)):hold()
+    return metadata
+BINARY="convert_to(r.snapshot::text,'UTF8')"
+SIZE='octet_length('+BINARY+')'
+HASH="encode(sha256("+BINARY+"),'hex')"
+IDENTITY_SQL='''SELECT b.id,b.run_id,b.version_id,v.template_id,v.document_id,r.kind,r.case_id,c.tenant,c.synthetic
+ FROM finance_financedocumentbinding b JOIN finance_financerun r ON r.id=b.run_id
+ JOIN documents_version v ON v.id=b.version_id JOIN core_case c ON c.id=r.case_id WHERE b.id=%s'''
+def context_guard(value,template_case):
+    binding(value)
+    if type(template_case) is not uuid.UUID:hold()
+    fields=('fb.id','fb.run_id','fb.version_id','fv.template_id','fv.document_id','fr.kind','fr.case_id','fc.tenant','fc.synthetic')
+    exact=' AND '.join(f'{field} IS NOT DISTINCT FROM %s' for field in fields)
+    sql=f"""EXISTS (SELECT 1 FROM finance_financedocumentbinding fb
+ JOIN finance_financerun fr ON fr.id=fb.run_id JOIN documents_version fv ON fv.id=fb.version_id
+ JOIN documents_template ft ON ft.id=fv.template_id JOIN core_case fc ON fc.id=fr.case_id
+ WHERE fr.id=r.id AND {exact} AND ft.case_id=%s)"""
+    return sql,(*value,template_case)
+def identity_statement(value,template_case):
+    condition,params=context_guard(value,template_case)
+    return IDENTITY_SQL+' AND '+condition,(value[0],*params)
+def metadata_statement(value,template_case):
+    condition,params=context_guard(value,template_case)
+    return f'SELECT r.case_id,r.kind,jsonb_typeof(r.snapshot),{SIZE},{HASH} FROM finance_financerun r WHERE r.id=%s AND {condition}',(value[1],*params)
+def guard(metadata):
+    checked(metadata)
+    return (f'r.case_id IS NOT DISTINCT FROM %s AND r.kind IS NOT DISTINCT FROM %s AND jsonb_typeof(r.snapshot)=%s AND {SIZE}=%s AND {HASH}=%s AND {SIZE}<=%s',(*metadata.identity,metadata.shape,metadata.size,metadata.fingerprint,CAP))
+def count_statement(value,template_case,metadata):
+    ancestor,pins=context_guard(value,template_case);condition,params=guard(metadata)
+    condition=f"({condition}) AND ({ancestor})";params=(*params,*pins);run=value[1]
+    sql=f'''WITH src AS (SELECT r.snapshot,CASE WHEN {condition} THEN true ELSE false END AS admitted
+ FROM finance_financerun r WHERE r.id=%s)
+ SELECT admitted,CASE WHEN admitted THEN CASE WHEN jsonb_typeof(snapshot->'inputs')='array'
+ THEN jsonb_array_length(snapshot->'inputs') ELSE NULL END ELSE NULL END FROM src'''
+    return sql,(*params,run)
+def class_statement(value,template_case,metadata,count):
+    ancestor,pins=context_guard(value,template_case);condition,params=guard(metadata)
+    condition=f"({condition}) AND ({ancestor})";params=(*params,*pins);run=value[1]
+    if type(count) is not int or not 0<=count<=ITEMS:hold()
+    sql=f'''WITH src AS (SELECT r.snapshot,CASE WHEN {condition} THEN true ELSE false END AS admitted
+ FROM finance_financerun r WHERE r.id=%s), sized AS (
+ SELECT snapshot,CASE WHEN admitted THEN CASE WHEN jsonb_typeof(snapshot->'inputs')='array'
+ THEN jsonb_array_length(snapshot->'inputs') ELSE NULL END ELSE NULL END AS n FROM src), guarded AS (
+ SELECT snapshot,CASE WHEN n=%s AND n<=%s THEN true ELSE false END AS matched FROM sized)
+ SELECT matched,
+ COALESCE((SELECT bool_and(COALESCE(jsonb_typeof(i)='object' AND jsonb_typeof(i->'declaration')='object',false))
+ FROM jsonb_array_elements(CASE WHEN matched THEN snapshot->'inputs' ELSE '[]'::jsonb END) i),true),
+ COALESCE((SELECT bool_or(i->'declaration'->'source_type'='"ppe_schedule"'::jsonb)
+ FROM jsonb_array_elements(CASE WHEN matched THEN snapshot->'inputs' ELSE '[]'::jsonb END) i),false)
+ FROM guarded'''
+    return sql,(*params,run,count,ITEMS)
+def transfer_statement(value,template_case,metadata):
+    ancestor,pins=context_guard(value,template_case);condition,params=guard(metadata)
+    condition=f"({condition}) AND ({ancestor})";params=(*params,*pins)
+    identities=('b.id','b.run_id','b.version_id','v.template_id','v.document_id','r.kind','r.case_id','c.tenant','c.synthetic')
+    exact=' AND '.join(f'{field} IS NOT DISTINCT FROM %s' for field in identities)
+    sql=f'''SELECT {BINARY} FROM finance_financedocumentbinding b JOIN finance_financerun r ON r.id=b.run_id
+ JOIN documents_version v ON v.id=b.version_id JOIN core_case c ON c.id=r.case_id
+ WHERE {exact} AND {condition}'''
+    return sql,(*value,*params)
+def decode(metadata,payload):
+    checked(metadata)
+    try:
+        if type(payload) is bytes:data=payload
+        elif type(payload) is memoryview:
+            if payload.nbytes!=metadata.size:hold()
+            data=payload.tobytes()
+        else:hold()
+        if len(data)!=metadata.size or hashlib.sha256(data).hexdigest()!=metadata.fingerprint:hold()
+        value=json.loads(data.decode('UTF8'),parse_float=finite_float,parse_constant=reject_constant)
+        if type(value) is not dict:hold()
+        return value
+    except (ValueError,TypeError,UnicodeError,RecursionError,OverflowError):raise FinanceTransferHold('Finance reader admission unavailable') from None

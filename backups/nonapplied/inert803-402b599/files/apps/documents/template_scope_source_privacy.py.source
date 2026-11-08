@@ -1,0 +1,176 @@
+"""INERT fixed fresh permission pipeline; native global SQL work is NOT bounded."""
+from dataclasses import dataclass
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from apps.core.models import Case,Evidence
+from apps.identity.models import Grant
+from apps.identity.services import require
+from .models import Template,Version,TemplateScope
+from .template_candidate_worklist import check_registered_worklist,_Budget,_rows,FINANCE_FIELDS,PMO_FIELDS
+from .template_scalar_closure import discover_template_owner_closure,_poison_marker,_CONTEXT
+from .template_permission_composition import compose_permissions,consume_receipt
+
+MESSAGE='Template scope/source facts unavailable'
+def hold():raise ValidationError(MESSAGE)
+@dataclass(frozen=True,repr=False)
+class _Facts:
+    marker:object
+    witness:object
+    worklist:object
+    receipt:object
+    hidden_scopes:frozenset
+    eligible_sources:frozenset
+
+def _ids(budget,query,kind,allowed):
+    budget.phase();rows=list(query.order_by('pk').values_list('pk',flat=True).distinct()[:101])
+    if len(rows)>100 or any(type(pk) is not int or pk<=0 for pk in rows) or len(rows)!=len(set(rows)) or not set(rows)<=set(allowed):hold()
+    budget.guard.charge(kind,rows);return frozenset(rows)
+
+def _revalidate(actor,keys,worklist,budget):
+    """Same bounded scalar inventory, never a new registration or old authorization."""
+    from apps.finance.models import FinanceDocumentBinding
+    from apps.pmo.models import MinutesReportBinding
+    witness=check_registered_worklist(actor,keys,worklist)
+    selections={}
+    for kind,pk in worklist.closure._records:selections.setdefault(kind,[]).append(pk)
+    selector=getattr(worklist,'selector',None)
+    closure=discover_template_owner_closure(actor,witness.case_id,selections,budget.guard) if selector is None else discover_template_owner_closure(actor,witness.case_id,selections,budget.guard,_selector=selector,_worklist=worklist)
+    if closure!=worklist.closure:hold()
+    budget.phase();case=Case.objects.get(pk=witness.case_id)
+    budget.phase();require(actor,case,'document.read')
+    budget.phase();finance_read=Grant.objects.filter(case=case,user=actor,action='finance.read',active=True).exists()
+    candidates=Template.objects.filter(case=case,pk__in=closure._templates).exclude(definition__document_type='accepted_finance_metadata')
+    if not finance_read:
+        candidates=candidates.exclude(definition__document_type__in=['finance_report','finance_group_report'])
+        candidates=candidates.exclude(pk__in=Version.objects.filter(document__case=case,forecastbinding__isnull=False).values('template_id'))
+    budget.phase();templates=tuple(candidates.order_by('pk').values_list('pk',flat=True).distinct()[:101]);budget.charge('template',templates)
+    if templates!=worklist.candidate_templates:hold()
+    budget.phase();finance=_rows(budget,list(FinanceDocumentBinding.objects.filter(version__template_id__in=templates).order_by('pk').values_list(*FINANCE_FIELDS)[:101]),'finance',templates)
+    budget.phase();pmo=_rows(budget,list(MinutesReportBinding.objects.filter(version__template_id__in=templates,manifest__source_mode='leadership_selected_facts/v1').order_by('pk').values_list(*PMO_FIELDS)[:101]),'pmo',templates)
+    if finance!=worklist.finance or pmo!=worklist.pmo:hold()
+    if tuple(sorted({r[2] for r in finance}|{r[1] for r in pmo}))!=worklist.versions:hold()
+    return case,finance_read
+
+def _compute_scopes(actor,case,finance_read,worklist,receipt,budget):
+    scopes=worklist.closure._scopes;templates=worklist.closure._templates
+    denied=receipt.denied_templates
+    if type(denied) is not frozenset or any(type(pk) is not int or pk<=0 for pk in denied) or not denied<=set(worklist.candidate_templates):hold()
+    hidden_templates=(set(templates)-set(worklist.candidate_templates))|denied
+    budget.phase();rows=list(TemplateScope.objects.filter(case=case,pk__in=scopes).order_by('pk').values_list('pk','case_id','document_type')[:101])
+    if (len(rows)>100 or any(type(row) is not tuple or len(row)!=3 or type(row[0]) is not int or row[0]<=0 or row[1]!=case.pk or type(row[2]) is not str for row in rows)
+        or len(rows)!=len({row[0] for row in rows}) or {row[0] for row in rows}!=set(scopes)):hold()
+    hidden={pk for pk,case_id,kind in rows if not finance_read and kind in ('finance_report','finance_group_report')}
+    # ALL historical claims; no active/retraction/resolution-owner filter.
+    historical=TemplateScope.objects.filter(case=case,pk__in=scopes,claims__template__in=Template.objects.filter(case=case,pk__in=hidden_templates))
+    hidden.update(_ids(budget,historical,'scope',scopes))
+    return frozenset(hidden)
+
+def _compute_sources(case,worklist,hidden,budget):
+    from apps.core.evidence_access import public_evidence
+    from .template_current import SOURCE_KIND
+    evidence=worklist.closure._evidence
+    links=Evidence.objects.filter(case=case,pk__in=evidence).filter(
+        Q(templatescope__in=hidden)|Q(templateclaim__scope__in=hidden)|Q(templateresolution__scope__in=hidden)|Q(templateclaimretraction__claim__scope__in=hidden))
+    blocked=_ids(budget,links,'evidence',evidence)
+    # UNCHANGED native predicate: <=100 output IDs does NOT bound its global
+    # forecast JSON array expansion/casts, DB CPU, planner work or memory.
+    public=public_evidence(Evidence.objects.filter(case=case,pk__in=evidence,kind='policy_decision')).values('pk')
+    eligible=Evidence.objects.filter(case=case,pk__in=evidence).filter(Q(kind=SOURCE_KIND)|Q(pk__in=public))
+    eligible=_ids(budget,eligible,'evidence',evidence)
+    return eligible-blocked
+
+def _compute(actor,case,finance_read,worklist,receipt,budget):
+    hidden=_compute_scopes(actor,case,finance_read,worklist,receipt,budget)
+    return hidden,_compute_sources(case,worklist,hidden,budget)
+
+def prepare_privacy_facts(actor,keys,worklist):
+    """No older-receipt parameter. Fixed read-only chain; no caller callbacks."""
+    witness=None;record=None;budget=None
+    try:
+        witness=check_registered_worklist(actor,keys,worklist);budget=_Budget(actor,keys)
+        registry=witness.marker.setdefault('template_scope_source_privacy803',[])
+        if len(registry)>=100 or any(r['worklist'] is worklist for r in registry):hold()
+        # A worklist already composed cannot smuggle an old permission receipt.
+        if any(r['worklist'] is worklist for r in witness.marker.get('template_permission_composition803',{}).get('records',[])):hold()
+        record={'worklist':worklist,'phase':'checking','facts':None,'consumed':False};registry.append(record)
+        _revalidate(actor,keys,worklist,budget)
+        receipt=compose_permissions(actor,keys,worklist)
+        consume_receipt(actor,keys,worklist,receipt)
+        # Current scope finance gate, independent of whether any scope has claims.
+        budget.phase();case=Case.objects.get(pk=witness.case_id)
+        budget.phase();require(actor,case,'document.read')
+        budget.phase();finance_read=Grant.objects.filter(case=case,user=actor,action='finance.read',active=True).exists()
+        hidden,eligible=_compute(actor,case,finance_read,worklist,receipt,budget)
+        final_case,final_finance_read=_revalidate(actor,keys,worklist,budget)
+        if final_finance_read!=finance_read or _compute(actor,final_case,final_finance_read,worklist,receipt,budget)!=(hidden,eligible):hold()
+        if check_registered_worklist(actor,keys,worklist) is not witness or record['phase']!='checking':hold()
+        facts=_Facts(witness.marker,witness,worklist,receipt,hidden,eligible)
+        record['facts']=facts;record['phase']='complete';return facts
+    except Exception:
+        if record is not None:record['phase']='failed'
+        if budget is not None:budget.poison()
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise
+
+def consume_privacy_facts(actor,keys,worklist,facts):
+    witness=None
+    try:
+        witness=check_registered_worklist(actor,keys,worklist)
+        if type(facts) is not _Facts or facts.marker is not witness.marker or facts.witness is not witness or facts.worklist is not worklist:hold()
+        record=next((r for r in witness.marker.get('template_scope_source_privacy803',[]) if r['facts'] is facts),None)
+        if record is None or record['phase']!='complete' or record['consumed']:hold()
+        record['consumed']=True;return None
+    except Exception:
+        if type(facts) in (_Facts,_ScopeFacts):_poison_marker(facts.marker)
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise
+
+@dataclass(frozen=True,repr=False)
+class _ScopeFacts:
+    marker:object
+    witness:object
+    worklist:object
+    receipt:object
+    hidden_scopes:frozenset
+
+def prepare_scope_facts(actor,keys,worklist):
+    """No older-receipt parameter. Fixed read-only chain; no caller callbacks."""
+    witness=None;record=None;budget=None
+    try:
+        witness=check_registered_worklist(actor,keys,worklist);budget=_Budget(actor,keys)
+        registry=witness.marker.setdefault('template_scope_privacy803',[])
+        if len(registry)>=100 or any(r['worklist'] is worklist for r in registry):hold()
+        # A worklist already composed cannot smuggle an old permission receipt.
+        if any(r['worklist'] is worklist for r in witness.marker.get('template_permission_composition803',{}).get('records',[])):hold()
+        record={'worklist':worklist,'phase':'checking','facts':None,'consumed':False};registry.append(record)
+        _revalidate(actor,keys,worklist,budget)
+        receipt=compose_permissions(actor,keys,worklist)
+        consume_receipt(actor,keys,worklist,receipt)
+        # Current scope finance gate, independent of whether any scope has claims.
+        budget.phase();case=Case.objects.get(pk=witness.case_id)
+        budget.phase();require(actor,case,'document.read')
+        budget.phase();finance_read=Grant.objects.filter(case=case,user=actor,action='finance.read',active=True).exists()
+        hidden=_compute_scopes(actor,case,finance_read,worklist,receipt,budget)
+        final_case,final_finance_read=_revalidate(actor,keys,worklist,budget)
+        if final_finance_read!=finance_read or _compute_scopes(actor,final_case,final_finance_read,worklist,receipt,budget)!=hidden:hold()
+        if check_registered_worklist(actor,keys,worklist) is not witness or record['phase']!='checking':hold()
+        facts=_ScopeFacts(witness.marker,witness,worklist,receipt,hidden)
+        record['facts']=facts;record['phase']='complete';return facts
+    except Exception:
+        if record is not None:record['phase']='failed'
+        if budget is not None:budget.poison()
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise
+
+def consume_scope_facts(actor,keys,worklist,facts):
+    witness=None
+    try:
+        witness=check_registered_worklist(actor,keys,worklist)
+        if type(facts) is not _ScopeFacts or facts.marker is not witness.marker or facts.witness is not witness or facts.worklist is not worklist:hold()
+        record=next((r for r in witness.marker.get('template_scope_privacy803',[]) if r['facts'] is facts),None)
+        if record is None or record['phase']!='complete' or record['consumed']:hold()
+        record['consumed']=True;return None
+    except Exception:
+        if type(facts) in (_Facts,_ScopeFacts):_poison_marker(facts.marker)
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise

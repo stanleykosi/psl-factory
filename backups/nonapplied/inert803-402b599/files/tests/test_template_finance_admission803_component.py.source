@@ -1,0 +1,68 @@
+"""Pure only: no Finance imports/actions/native fixture or database execution."""
+import ast
+from pathlib import Path
+import unittest
+import uuid
+P=Path(__file__).resolve().parents[1]/'apps/documents/template_finance_admission.py'
+S=P.read_text();TREE=ast.parse(S)
+def functions():
+    def hold():raise ValueError('hold')
+    ns={'hold':hold,'MAX_INPUTS':1000,'MAX_BINDINGS':100,'FIELDS':tuple(range(9))}
+    nodes=[n for n in TREE.body if isinstance(n,ast.FunctionDef) and n.name in ('classify','worklist')]
+    exec(compile(ast.Module(body=nodes,type_ignores=[]),str(P),'exec'),ns)
+    return ns
+class FinanceAdmissionComponentTests(unittest.TestCase):
+    def test_legitimate_classification_truth_table(self):
+        classify=functions()['classify']
+        for inputs,expected in [([],False),([{'declaration':{}}],False),([{'declaration':{'source_type':None}}],False),([{'declaration':{'source_type':'ordinary'}}],False),([{'declaration':{}},{'declaration':{'source_type':'ppe_schedule'}}],True)]:
+            self.assertEqual(classify({'inputs':inputs}),expected)
+    def test_malformed_tail_is_hold_not_false_fallback(self):
+        classify=functions()['classify']
+        for value in [None,{}, {'inputs':None},{'inputs':[{}]},{'inputs':[{'declaration':None}]},{'inputs':[{'declaration':{'source_type':'ppe_schedule'}},{}]}]:
+            with self.assertRaises(ValueError):classify(value)
+    def test_exact_item_boundary(self):
+        classify=functions()['classify'];self.assertFalse(classify({'inputs':[{'declaration':{}}]*1000}))
+        with self.assertRaises(ValueError):classify({'inputs':[{'declaration':{}}]*1001})
+    def test_binding_worklist_bound_independent_of_runs(self):
+        from apps.documents.template_finance_budget import FinanceLedger
+        from types import SimpleNamespace
+        def fail():raise ValueError('hold')
+        fake=SimpleNamespace(context=lambda:None,fail=fail,poison=lambda:None)
+        fn=lambda items:FinanceLedger.worklist(fake,items)
+        row=(1,1,1,1,1,'statement',uuid.uuid4(),'tenant',True)
+        self.assertEqual(fn([row]),[row])
+        for bad in ([row,row],[(i+1,*row[1:]) for i in range(101)],iter([row])):
+            with self.assertRaises(ValueError):fn(bad)
+    def test_sql_size_count_before_expansion_and_closed_shape(self):
+        self.assertLess(S.index('reserve_finance(ticket,metadata)'),S.index('before_count(ticket)'))
+        self.assertLess(S.index('before_count(ticket)'),S.index('before_class(ticket)'))
+        descriptor=(P.parent/'template_finance_transfer_descriptor.py').read_text()
+        self.assertIn('COALESCE',descriptor);self.assertIn('ELSE NULL',descriptor);self.assertIn('CASE WHEN matched THEN',descriptor)
+    def test_gate_before_payload_and_postload_agreement(self):
+        self.assertLess(S.index("if ppe and self._native_denied(binding_ticket,'EARLY_PPE',run)"),S.index("self._fetch('transfer'"))
+        self.assertIn('if classify(value)!=ppe:hold()',S)
+        self.assertIn('if is_ppe_statement(run)!=ppe:hold()',S)
+        self.assertLess(S.index("self._identity(binding_ticket,'exit')",S.index('self.ledger.decoded')),S.index('self.ledger.final_checked'))
+    def test_shared_ledger_identity_and_no_public_discriminator(self):
+        ledger=(P.parent/'template_finance_budget.py').read_text()
+        self.assertIn('class FinanceLedger(PolicyLedger)',ledger)
+        self.assertIn("self.state.setdefault('finance_local'",ledger)
+        self.assertIn("local['bytes']+metadata.size>MAX_BYTES",ledger)
+        self.assertIn('return None',S)
+    def test_nonstatement_short_circuit_and_no_writes_or_top_level_finance_imports(self):
+        branch=S[S.index("if run.kind!='statement':"):S.index('ticket=self.ledger.begin_size')]
+        self.assertNotIn('snapshot',branch)
+        for n in TREE.body:
+            if isinstance(n,ast.ImportFrom):self.assertFalse((n.module or '').startswith('apps.finance'))
+        calls={ast.unparse(n.func) for n in ast.walk(TREE) if isinstance(n,ast.Call)}
+        for suffix in ['.save','.create','.update','.delete','.run_once']:
+            self.assertFalse(any(c.endswith(suffix) for c in calls))
+    def test_review_hardening_prequery_allowlist_and_preexpansion_reservation(self):
+        self.assertIn('kind not in statements',S)
+        self.assertLess(S.index('self.ledger.reserve_finance'),S.index("self._fetch('count'"))
+        ledger=(P.parent/'template_finance_budget.py').read_text()
+        self.assertIn("run!=(expected[6],expected[5])",ledger)
+    def test_aggregate_hold_proof_moves_to_actual_fake_transport_suite(self):
+        tests=(P.parents[2]/'tests/test_template_finance_budget_adoption803_component.py').read_text()
+        self.assertIn('def test_policy_global_charge_blocks_finance_before_count',tests)
+        self.assertIn('def test_count_guard_miss_stops_before_class',tests)

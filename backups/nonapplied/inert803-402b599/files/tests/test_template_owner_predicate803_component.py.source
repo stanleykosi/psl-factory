@@ -1,0 +1,138 @@
+"""Extracted generic predicate control-flow only; prepared transport not implemented here."""
+import ast,unittest
+from pathlib import Path
+from types import SimpleNamespace
+ROOT=Path(__file__).resolve().parents[1]
+class VE(Exception):pass
+class PD(Exception):pass
+class Stop(Exception):pass
+
+def functions(path,names,ns):
+    tree=ast.parse((ROOT/path).read_text())
+    nodes=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in names]
+    for node in nodes:node.decorator_list=[]
+    exec(compile(ast.Module(body=nodes,type_ignores=[]),'<owner-predicates>','exec'),ns)
+    return ns
+
+class OwnerPredicateTests(unittest.TestCase):
+    def setUp(self):
+        self.events=[];self.case=SimpleNamespace(pk=11);self.actor=SimpleNamespace(pk=3)
+        self.scope=SimpleNamespace(pk=5,case=self.case,document_type='ordinary')
+        self.record=SimpleNamespace(actor=self.actor,scope=self.scope,owner_policy_id=7)
+        self.policy=SimpleNamespace(pk=7)
+        def gate(*args):self.events.append(('gate',args[0].pk,args[2]))
+        def active(*args,**kw):self.events.append(('active',));return self.policy
+        def refs(*args,**kw):self.events.append(('refs',));return [{'template_owners':[{'scope_id':5,'user_id':3}]}]
+        self.ns=functions('apps/documents/template_current.py',{'owner_current','owner_policy'},{'ValidationError':VE,'PermissionDenied':PD,'COMPONENT':'D11.template_storage_retention_rules','require':gate,'active_component':active,'reference_values':refs})
+        self.prepared=SimpleNamespace(owner_require=gate,clean=lambda:self.events.append(('clean',)))
+    def test_null_before_actor_or_policy_access(self):
+        class Null:
+            owner_policy_id=None
+            def __getattr__(self,name):raise AssertionError(name)
+        self.assertFalse(self.ns['owner_current'](Null(),_prepared=self.prepared));self.assertEqual(self.events,[])
+    def test_original_actor_gate_sequence_not_observer(self):
+        self.assertTrue(self.ns['owner_current'](self.record,_prepared=self.prepared))
+        self.assertEqual(self.events[:3],[('gate',3,'case.read'),('gate',3,'document.read'),('gate',3,'document.template')])
+    def test_finance_extra_gate_only_scope_kind(self):
+        self.scope.document_type='finance_report';self.assertTrue(self.ns['owner_current'](self.record,_prepared=self.prepared))
+        self.assertEqual(self.events[3],('gate',3,'finance.read'))
+    def test_native_denial_false_clean_checked(self):
+        def deny(*args):raise PD()
+        self.prepared.owner_require=deny
+        self.assertFalse(self.ns['owner_current'](self.record,_prepared=self.prepared));self.assertEqual(self.events,[('clean',)])
+    def test_engineering_stop_not_false(self):
+        def fail(*args):raise Stop()
+        self.prepared.owner_require=fail
+        with self.assertRaises(Stop):self.ns['owner_current'](self.record,_prepared=self.prepared)
+    def test_swallowed_failure_poison_not_false(self):
+        def deny(*args):raise VE()
+        def poison():raise Stop()
+        self.prepared.owner_require=deny;self.prepared.clean=poison
+        with self.assertRaises(Stop):self.ns['owner_current'](self.record,_prepared=self.prepared)
+    def test_false_pin_does_not_mean_template_selection(self):
+        self.policy.pk=8;self.assertFalse(self.ns['owner_current'](self.record,_prepared=self.prepared))
+        self.assertNotIn('template_ids',str(self.events))
+    def test_default_path_has_no_prepared_keyword_calls(self):
+        def active(component,case):return self.policy
+        def refs(policy):return [{'template_owners':[{'scope_id':5,'user_id':3}]}]
+        self.ns['active_component']=active;self.ns['reference_values']=refs
+        self.assertTrue(self.ns['owner_current'](self.record))
+
+class NestedPredicateTests(unittest.TestCase):
+    def setUp(self):
+        import sys
+        from types import ModuleType
+        from unittest.mock import patch
+        self.events=[];self.bad=False
+        self.case=SimpleNamespace(pk=11,tenant='t',synthetic=True)
+        self.config=SimpleNamespace(pk=7,case=self.case,case_id=11,component='D11.template_storage_retention_rules',revision=1,envelope={'effective_from':'2020-01-01T00:00:00+00:00'})
+        self.source=SimpleNamespace(pk=9,configuration=self.config,kind='organization',ref='t',binding_paths=[])
+        self.application=SimpleNamespace(actor=object(),source=self.source,bindings=[])
+        self.prepared=SimpleNamespace(clean=self.clean,resolution_candidate=lambda *a:self.config,latest_configuration_state=lambda *a:SimpleNamespace(state='active'),application_for=lambda *a:self.application,
+            source_mutex=lambda *a:self.events.append('mutex'),source_state=lambda *a:'active',source_family_head=lambda *a:self.source,latest_active_state=lambda *a:SimpleNamespace(actor=object()),authorized=lambda *a:None)
+        services=ModuleType('apps.policy.services');services.validate_envelope=lambda *a,**k:None
+        scopes=ModuleType('apps.policy.scopes');scopes.application_health=lambda *a,**k:self.events.append('application') or 'ACTIVE'
+        self.services=services;self.scopes=scopes
+        p=patch.dict(sys.modules,{'apps.policy.services':services,'apps.policy.scopes':scopes});p.start();self.addCleanup(p.stop)
+        from datetime import datetime,timezone
+        now=datetime(2026,1,1,tzinfo=timezone.utc)
+        self.ns={'__package__':'apps.policy','ValidationError':VE,'PermissionDenied':PD,'ObjectDoesNotExist':type('Missing',(Exception,),{}),'datetime':datetime,'timezone':SimpleNamespace(now=lambda:now),
+            'Resolution':lambda status,component,configuration=None,reason='':SimpleNamespace(status=status,component=component,configuration=configuration,reason=reason),
+            'validate_envelope':services.validate_envelope,'values':lambda *a,**k:[], 'bind':lambda *a,**k:[], 'descriptor':lambda *a,**k:None}
+        functions('apps/policy/services.py',{'resolve'},self.ns)
+        functions('apps/policy/scopes.py',{'application_health','source_health'},self.ns)
+    def clean(self):
+        self.events.append('clean')
+        if self.bad:raise Stop()
+    def test_resolve_native_validation_false_status_and_poison_escape(self):
+        def invalid(*a,**k):raise VE('native')
+        self.ns['validate_envelope']=invalid
+        result=self.ns['resolve']('D11.template_storage_retention_rules',self.case,_prepared=self.prepared)
+        self.assertEqual(result.status,'INVALID');self.assertIn('clean',self.events)
+        self.bad=True
+        with self.assertRaises(Stop):self.ns['resolve']('D11.template_storage_retention_rules',self.case,_prepared=self.prepared)
+    def test_resolve_stop_bypasses_native_catch(self):
+        def stop(*a,**k):raise Stop()
+        self.ns['validate_envelope']=stop
+        with self.assertRaises(Stop):self.ns['resolve']('D11.template_storage_retention_rules',self.case,_prepared=self.prepared)
+    def test_missing_state_is_uncaught_attribute_error(self):
+        self.prepared.latest_configuration_state=lambda *a:None
+        with self.assertRaises(AttributeError):self.ns['resolve']('D11.template_storage_retention_rules',self.case,_prepared=self.prepared)
+    def test_revoked_no_application_or_payload(self):
+        self.prepared.latest_configuration_state=lambda *a:SimpleNamespace(state='revoked')
+        result=self.ns['resolve']('D11.template_storage_retention_rules',self.case,_prepared=self.prepared)
+        self.assertEqual(result.status,'REVOKED');self.assertEqual(self.events,[])
+    def test_expected_revision_after_application(self):
+        result=self.ns['resolve']('D11.template_storage_retention_rules',self.case,expected_revision=2,_prepared=self.prepared)
+        self.assertEqual(result.status,'INVALID');self.assertEqual(self.events,['application'])
+    def test_application_native_denial_and_poison_check(self):
+        def denied(*a):raise PD()
+        self.prepared.authorized=denied
+        self.assertEqual(self.ns['application_health'](self.config,_prepared=self.prepared),'INVALID')
+        self.bad=True
+        with self.assertRaises(Stop):self.ns['application_health'](self.config,_prepared=self.prepared)
+    def test_application_stop_not_caught(self):
+        def stop(*a):raise Stop()
+        self.prepared.authorized=stop
+        with self.assertRaises(Stop):self.ns['application_health'](self.config,_prepared=self.prepared)
+    def test_application_compares_fixture_scope_eighth_key(self):
+        other=SimpleNamespace(**vars(self.config));other.envelope={**self.config.envelope,'fixture_scope':'different'}
+        self.source.configuration=other
+        self.assertEqual(self.ns['application_health'](self.config,_prepared=self.prepared),'INVALID')
+        self.assertNotIn('mutex',self.events)
+    def test_source_mutex_before_revoked_return(self):
+        self.prepared.source_state=lambda *a:'revoked'
+        self.assertEqual(self.ns['source_health'](self.source,_prepared=self.prepared),'REVOKED');self.assertEqual(self.events,['mutex'])
+    def test_source_family_missing_not_reclassified(self):
+        self.prepared.source_family_head=lambda *a:None
+        with self.assertRaises(AttributeError):self.ns['source_health'](self.source,_prepared=self.prepared)
+    def test_source_native_gate_denial_and_poison(self):
+        def deny(*a):raise PD()
+        self.prepared.authorized=deny
+        self.assertEqual(self.ns['source_health'](self.source,_prepared=self.prepared),'INVALID')
+        self.bad=True
+        with self.assertRaises(Stop):self.ns['source_health'](self.source,_prepared=self.prepared)
+    def test_source_stop_bypasses_native_catch(self):
+        def stop(*a):raise Stop()
+        self.prepared.authorized=stop
+        with self.assertRaises(Stop):self.ns['source_health'](self.source,_prepared=self.prepared)

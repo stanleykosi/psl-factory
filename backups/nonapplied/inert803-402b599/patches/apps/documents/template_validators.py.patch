@@ -1,0 +1,9 @@
+--- a/apps/documents/template_validators.py
++++ b/apps/documents/template_validators.py
+@@ -7 +7,2 @@
+-def validate_owners(case, content, *, runtime=False):
++def validate_owners(case, content, *, runtime=False, _prepared=None):
++    if _prepared is not None:_prepared.document_validator_context('D11.template_storage_retention_rules',case,runtime)
+@@ -12 +13 @@
+-    if len(scopes) != len(set(scopes)) or TemplateScope.objects.filter(case=case, pk__in=scopes).count() != len(scopes):
++    if len(scopes) != len(set(scopes)) or (TemplateScope.objects.filter(case=case, pk__in=scopes).count() if _prepared is None else _prepared.storage_scope_count(case,scopes)) != len(scopes):

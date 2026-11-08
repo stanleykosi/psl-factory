@@ -1,0 +1,63 @@
+"""Finite native scaffold definitions only; no803 domain operation activation."""
+from django.test import TransactionTestCase
+from django.db import connection,transaction
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError,PermissionDenied
+from apps.policy.template_snapshot_entry import _run_authenticated,require_context,reject_unentered_domains
+KEYS=['documents.template_claims']
+class TemplateSnapshotEntryTests(TransactionTestCase):
+    def setUp(self):self.user=get_user_model().objects.create_user(username='snapshot803')
+    def test_set_precedes_first_select_and_user_is_fresh(self):
+        sql=[]
+        def observe(execute,statement,params,many,context):sql.append(statement);return execute(statement,params,many,context)
+        def callback(actor):
+            require_context(KEYS);self.assertIsNot(actor,self.user)
+            with connection.cursor() as c:c.execute('SHOW transaction_isolation');self.assertEqual(c.fetchone()[0],'repeatable read')
+            return {'actor':actor.pk}
+        with connection.execute_wrapper(observe):self.assertEqual(_run_authenticated(self.user,KEYS,callback),{'actor':self.user.pk})
+        first_select=next(i for i,s in enumerate(sql) if s.lstrip().upper().startswith('SELECT'))
+        setting=next(i for i,s in enumerate(sql) if s.startswith('SET TRANSACTION'))
+        self.assertLess(setting,first_select)
+        with self.assertRaises(ValidationError):require_context(KEYS)
+    def test_nested_rejected_before_callback_or_query(self):
+        with transaction.atomic():
+            with self.assertNumQueries(0),self.assertRaisesMessage(ValidationError,'Outermost'):
+                _run_authenticated(self.user,KEYS,lambda a:self.fail('Must not run'))
+    def test_fresh_inactive_denied_without_trusting_cached_user(self):
+        get_user_model().objects.filter(pk=self.user.pk).update(is_active=False)
+        self.assertTrue(self.user.is_active)
+        with self.assertRaises(PermissionDenied):_run_authenticated(self.user,KEYS,lambda a:self.fail('Must not run'))
+    def test_callback_failure_rolls_back_and_clears_context(self):
+        def callback(actor):
+            require_context(KEYS);get_user_model().objects.create_user(username='must-rollback803');raise ValidationError('stop')
+        with self.assertRaises(ValidationError):_run_authenticated(self.user,KEYS,callback)
+        self.assertFalse(get_user_model().objects.filter(username='must-rollback803').exists())
+        with self.assertRaises(ValidationError):require_context(KEYS)
+    def test_mixed_and_client_identity_rejected(self):
+        with self.assertRaises(PermissionDenied):_run_authenticated(self.user.pk,KEYS,lambda a:None)
+        with self.assertRaises(ValidationError):_run_authenticated(self.user,KEYS+['pmo.decisions'],lambda a:None)
+        with self.assertRaises(ValidationError):reject_unentered_domains(KEYS)
+
+    def test_nondefault_alias_rejected_before_connection_lookup(self):
+        with self.assertNumQueries(0),self.assertRaisesMessage(ValidationError,'Default database'):
+            _run_authenticated(self.user,KEYS,lambda a:self.fail('Must not run'),using='unsupported-alias')
+    def test_deleted_principal_fixed_permission_denial(self):
+        stale=get_user_model().objects.get(pk=self.user.pk)
+        self.user.delete()
+        with self.assertRaisesMessage(PermissionDenied,'Current active principal required'):
+            _run_authenticated(stale,KEYS,lambda a:self.fail('Must not run'))
+
+    def test_callback_principal_identity_and_pk_pinned_before_queries(self):
+        from apps.policy.template_snapshot_entry import require_context_actor
+        def callback(actor):
+            require_context_actor(actor,KEYS)
+            same=get_user_model().objects.get(pk=actor.pk)
+            other=get_user_model()(pk=actor.pk+999)
+            for wrong in (self.user,same,other):
+                with self.assertNumQueries(0),self.assertRaises(PermissionDenied):require_context_actor(wrong,KEYS)
+            original=actor.pk
+            actor.pk+=999
+            with self.assertNumQueries(0),self.assertRaises(PermissionDenied):require_context_actor(actor,KEYS)
+            actor.pk=original
+            require_context_actor(actor,KEYS)
+        _run_authenticated(self.user,KEYS,callback)

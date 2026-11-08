@@ -1,0 +1,64 @@
+"""Pure isolated generic-reader checks only; native SQL/fixtures UNRUN."""
+import ast,unittest
+from pathlib import Path
+from types import SimpleNamespace
+ROOT=Path(__file__).resolve().parents[1]
+FILES={'subject':'services','issue_subject':'issue_access','read_scope':'issue_references','observation':'issue_references','selected_access':'incident_reporting','legacy_access':'incident_reporting'}
+def node(name):
+    tree=ast.parse((ROOT/'apps/pmo'/f'{FILES[name]}.py').read_text())
+    return next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name==name)
+def load(name,ns):
+    exec(compile(ast.Module(body=[node(name)],type_ignores=[]),'<isolated-reader>','exec'),ns)
+    return ns[name]
+class Error(Exception):pass
+class ScalarReaderTests(unittest.TestCase):
+    def subject_fixture(self,row):
+        trace=[]
+        class Query:
+            def filter(self,**kw):trace.append(('filter',kw));return self
+            def only(self,*fields):trace.append(('only',fields));return self
+            def first(self):trace.append(('first',));return row
+        fn=load('subject',{'Evidence':SimpleNamespace(objects=Query()),'ValidationError':Error})
+        return fn,trace
+    def test_default_query_and_scalar_projection(self):
+        row=SimpleNamespace(pk=1,kind='incident');fn,trace=self.subject_fixture(row)
+        self.assertIs(fn('case',1),row);self.assertEqual([x[0] for x in trace],['filter','first'])
+        trace.clear();self.assertIs(fn('case',1,_reader_scalar=True),row)
+        self.assertEqual(trace,[('filter',{'case':'case','pk':1}),('only',('pk','case_id','kind')),('first',)])
+    def test_case_kind_private_and_boolean_errors_unchanged(self):
+        for scalar in (False,True):
+            for row,kind,message in [(None,None,'Evidence must match'),(SimpleNamespace(kind='incident'),'risk','Evidence must match'),(SimpleNamespace(kind='agent_private_x'),None,'Private agent')]:
+                fn,_=self.subject_fixture(row)
+                with self.assertRaisesRegex(Error,message):fn('case',1,kind,_reader_scalar=scalar)
+        for flag in (None,0,1,'true',[]):
+            fn,trace=self.subject_fixture(None)
+            with self.assertRaisesRegex(Error,'must be boolean'):fn('case',1,_reader_scalar=flag)
+            self.assertEqual(trace,[])
+    def test_issue_public_gate_retained_and_flag_forwarded(self):
+        for scalar in (False,True):
+            calls=[];row=SimpleNamespace(pk=2);allowed=[True]
+            def subject(*args,**kw):calls.append((args,kw));return row
+            query=SimpleNamespace(exists=lambda:allowed[0])
+            objects=SimpleNamespace(filter=lambda **kw:query)
+            fn=load('issue_subject',{'subject':subject,'Evidence':SimpleNamespace(objects=objects),'public_evidence':lambda q:q,'ValidationError':Error})
+            self.assertIs(fn('case',2,_reader_scalar=scalar),row)
+            self.assertEqual(calls[-1][1],{'_reader_scalar':scalar})
+            allowed[0]=False
+            with self.assertRaisesRegex(Error,'Private source'):fn('case',2,_reader_scalar=scalar)
+    def test_closed_keyword_defaults_and_exact_reader_propagation(self):
+        edges={'issue_subject':{'subject'},'read_scope':{'issue_subject'},'observation':{'read_scope'},'selected_access':{'issue_subject','refs.observation'},'legacy_access':{'selected_access'}}
+        for name in FILES:
+            n=node(name);self.assertIn('_reader_scalar',[a.arg for a in n.args.kwonlyargs]);self.assertEqual(n.args.kw_defaults[[a.arg for a in n.args.kwonlyargs].index('_reader_scalar')].value,False)
+            if name in edges:
+                selected=[c for c in ast.walk(n) if isinstance(c,ast.Call) and ast.unparse(c.func) in edges[name]]
+                self.assertTrue(selected)
+                for c in selected:self.assertIn(('_reader_scalar','_reader_scalar'),[(k.arg,ast.unparse(k.value)) for k in c.keywords])
+    def test_legacy_unconditional_state_lookup_and_no_activation(self):
+        n=node('legacy_access');loop=next(x for x in n.body if isinstance(x,ast.For))
+        assignments=[x for x in loop.body if isinstance(x,ast.Assign)]
+        state=next(x for x in assignments if ast.unparse(x.targets[0])=='state')
+        self.assertIsInstance(state.value,ast.IfExp)
+        self.assertEqual(ast.unparse(state.value.orelse.func),'IssueState.objects.get')
+        self.assertNotIn('.only(',ast.unparse(n))
+        leadership=(ROOT/'apps/pmo/leadership_reporting.py').read_text()
+        self.assertNotIn('_reader_scalar',leadership)

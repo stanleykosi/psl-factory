@@ -1,0 +1,78 @@
+"""Pure metadata ledger tests: no Django/Finance helpers, SQL or DB execution."""
+import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
+import uuid
+from apps.documents import template_operation_budget as m
+D='documents.template_claims';E='documents.template_resolutions'
+class OperationBudgetTests(unittest.TestCase):
+    def setUp(self):
+        self.actor=SimpleNamespace(pk=7);self.marker={};self.connection=object();self.raw=object()
+        self.patch=patch.object(m,'_binding',lambda a,k:(self.marker,self.connection,self.raw));self.patch.start();self.addCleanup(self.patch.stop)
+    def budget(self):return m.OperationBudget(self.actor,[D,E])
+    def meta(self,size=1,fingerprint='a'*64):return m.Metadata((uuid.UUID(int=1),'ref',1),'object',size,fingerprint)
+    def admit(self,b,pk,size=1,domain=D,fingerprint='a'*64):
+        t=b.begin(domain,'reference',pk);b.reserve(t,self.meta(size,fingerprint));b.validated(t);return t
+    def test_global_exact_bytes_and_next_byte_sticky(self):
+        b=self.budget()
+        for i in range(4):self.admit(b,i+1,256*1024,domain=D if i%2 else E)
+        self.assertEqual(b.state['bytes'],1024*1024)
+        with self.assertRaises(m.BudgetHold):self.admit(b,5)
+        with self.assertRaises(m.BudgetHold):self.budget()
+    def test_exact_cells_and_samehash_differentcell_charges(self):
+        b=self.budget()
+        for i in range(100):self.admit(b,i+1)
+        self.assertEqual(b.state['bytes'],100)
+        with self.assertRaises(m.BudgetHold):self.admit(b,101)
+    def test_duplicate_domain_charge_independent_of_global_dedup(self):
+        b=self.budget();self.admit(b,1,20);self.admit(self.budget(),1,20,domain=E)
+        self.assertEqual(b.state['bytes'],20)
+        self.assertEqual(b.state['domains'][D]['bytes'],20);self.assertEqual(b.state['domains'][E]['bytes'],20)
+    def test_same_size_fingerprint_conflict(self):
+        b=self.budget();self.admit(b,1)
+        with self.assertRaises(m.BudgetHold):self.admit(b,1,fingerprint='b'*64)
+    def test_failed_and_unvalidated_reservations_never_reuse(self):
+        b=self.budget();t=b.begin(D,'reference',1);b.reserve(t,self.meta(10))
+        with self.assertRaises(m.BudgetHold):self.admit(b,1,10)
+        self.assertEqual(b.state['bytes'],10)
+    def test_explicit_failure_poison_retains_charge(self):
+        b=self.budget();t=b.begin(D,'reference',1);b.reserve(t,self.meta(10));b.failed(t)
+        with self.assertRaises(m.BudgetHold):b.validated(t)
+        self.assertEqual(b.state['bytes'],10)
+    def test_attempts_shared_and_saturated_before_query_contract(self):
+        b=self.budget()
+        for i in range(1000):self.budget().begin(D,'reference',1)
+        with self.assertRaises(m.BudgetHold):b.begin(D,'reference',1)
+        self.assertEqual(b.state['attempts'],1000)
+    def test_entry_rollover_and_stale_ticket(self):
+        old=self.budget();t=self.admit(old,1);self.marker={};new=self.budget()
+        self.assertEqual(new.state['bytes'],0)
+        with self.assertRaises(m.BudgetHold):old.begin(D,'reference',1)
+        with self.assertRaises(m.BudgetHold):new.validated(t)
+    def test_principal_object_pk_and_connection_identity(self):
+        b=self.budget();self.actor=SimpleNamespace(pk=7)
+        with self.assertRaises(m.BudgetHold):self.budget()
+        self.actor=b.actor;self.actor.pk=8
+        with self.assertRaises(m.BudgetHold):b.begin(D,'reference',1)
+        self.actor.pk=7;self.raw=object()
+        with self.assertRaises(m.BudgetHold):b.begin(D,'reference',1)
+    def test_closed_specs_invalid_pk_and_percell_limit(self):
+        b=self.budget()
+        with self.assertRaises(TypeError):m.SPECS['unknown']=()
+        with self.assertRaises(m.BudgetHold):b.begin(D,'reference',True)
+        self.marker={};b=self.budget();t=b.begin(D,'configuration',1)
+        with self.assertRaises(m.BudgetHold):b.reserve(t,self.meta(65537))
+        self.assertEqual(b.state['bytes'],0)
+    def test_immutable_metadata_no_decoded_cache_and_single_use_ticket(self):
+        b=self.budget();t=self.admit(b,1)
+        with self.assertRaises(Exception):next(iter(b.state['cells'].values())).metadata.size=9
+        with self.assertRaises(m.BudgetHold):b.reserve(t,self.meta())
+
+    def test_domain_lower_cap_applies_even_on_global_duplicate(self):
+        b=self.budget();self.admit(b,1,20)
+        with patch.object(m,'DOMAIN_CAPS',{D:(1024*1024,100),E:(19,100)}):
+            with self.assertRaises(m.BudgetHold):self.admit(b,1,20,domain=E)
+        self.assertEqual(b.state['bytes'],20);self.assertNotIn(E,b.state['domains'])
+    def test_same_fingerprint_changed_identity_holds(self):
+        b=self.budget();self.admit(b,1);t=b.begin(D,'reference',1)
+        with self.assertRaises(m.BudgetHold):b.reserve(t,m.Metadata((uuid.UUID(int=1),'other',1),'object',1,'a'*64))

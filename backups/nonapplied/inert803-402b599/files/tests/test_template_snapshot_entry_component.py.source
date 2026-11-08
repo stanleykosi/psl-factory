@@ -1,0 +1,57 @@
+import ast,unittest
+from pathlib import Path
+from types import SimpleNamespace
+ROOT=Path(__file__).resolve().parents[1]
+# Extract pure helpers without configuring or touching a database.
+def helpers():
+    t=ast.parse((ROOT/'apps/policy/template_snapshot_entry.py').read_text())
+    names={'selected','materialize','sqlstate'}
+    nodes=[n for n in t.body if isinstance(n,ast.FunctionDef) and n.name in names]
+    class Error(Exception):pass
+    ns={'ValidationError':Error,'KEYS':frozenset({'documents.template_claims','documents.template_retractions','documents.template_resolutions'})}
+    exec(compile(ast.Module(body=nodes,type_ignores=[]),'<pure-entry>','exec'),ns);return ns,Error
+class SnapshotEntryComponentTests(unittest.TestCase):
+    def test_closed_keys_and_mixed_rejection(self):
+        n,E=helpers()
+        self.assertEqual(n['selected'](['documents.template_claims']),('documents.template_claims',))
+        for keys in ([],['documents.template_claims','pmo.decisions'],['documents.template_claims']*2,'documents.template_claims'):
+            with self.assertRaises(E):n['selected'](keys)
+    def test_materialization_rejects_lazy_or_nonfinite(self):
+        n,E=helpers();v={'rows':[1,True,None,{'a':'b'}]};self.assertEqual(n['materialize'](v),v)
+        for value in (iter([1]),SimpleNamespace(pk=1),float('nan'),{1:'wrong'},(1,2)):
+            with self.assertRaises(E):n['materialize'](value)
+    def test_only_confirmed_sqlstate_not_text(self):
+        n,_=helpers();e=RuntimeError('40001');self.assertIsNone(n['sqlstate'](e))
+        e.__cause__=RuntimeError();e.__cause__.sqlstate='40001';self.assertEqual(n['sqlstate'](e),'40001')
+        e.__cause__.sqlstate='08006';self.assertEqual(n['sqlstate'](e),'08006')
+    def test_boundary_order_and_no_retry_or_activation(self):
+        s=(ROOT/'apps/policy/template_snapshot_entry.py').read_text()
+        self.assertLess(s.index('if connection.in_atomic_block'),s.index('with transaction.atomic'))
+        self.assertLess(s.index("cursor.execute('SET TRANSACTION"),s.index('fresh=User.objects'))
+        self.assertIn('_CONTEXT.reset(token)',s);self.assertNotIn('while ',s)
+        registry=(ROOT/'adapters/policy_impact.py').read_text()
+        self.assertNotIn('documents.template_claims',registry)
+
+    def test_default_alias_and_deleted_principal_fail_closed(self):
+        s=(ROOT/'apps/policy/template_snapshot_entry.py').read_text()
+        self.assertLess(s.index("if using!='default'"),s.index('connection=connections[using]'))
+        self.assertIn('except User.DoesNotExist:',s)
+        self.assertIn('on_commit hooks and provider/external effects',s)
+
+class PrincipalBindingComponentTests(unittest.TestCase):
+    def test_identity_pk_and_context_checked_before_use(self):
+        import ast
+        from types import SimpleNamespace
+        from pathlib import Path
+        tree=ast.parse((Path(__file__).resolve().parents[1]/'apps/policy/template_snapshot_entry.py').read_text())
+        fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='require_context_actor')
+        class Denied(Exception):pass
+        actor=SimpleNamespace(pk=3);marker={'principal':actor,'principal_pk':3};calls=[]
+        ns={'require_context':lambda *a:calls.append(a),'_CONTEXT':SimpleNamespace(get=lambda:marker),'PermissionDenied':Denied}
+        exec(compile(ast.Module(body=[fn],type_ignores=[]),'<principal>','exec'),ns)
+        ns['require_context_actor'](actor,['documents.template_claims'])
+        for wrong in (SimpleNamespace(pk=3),SimpleNamespace(pk=4),None):
+            with self.assertRaises(Denied):ns['require_context_actor'](wrong,['documents.template_claims'])
+        actor.pk=4
+        with self.assertRaises(Denied):ns['require_context_actor'](actor,['documents.template_claims'])
+        self.assertEqual(len(calls),5)

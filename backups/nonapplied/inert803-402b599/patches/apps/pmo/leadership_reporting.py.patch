@@ -1,0 +1,29 @@
+--- a/apps/pmo/leadership_reporting.py
++++ b/apps/pmo/leadership_reporting.py
+@@ -87 +87 @@
+-def authorize_sources(actor, case, evidence_ids, confirmed):
++def authorize_sources(actor, case, evidence_ids, confirmed, *, _prepared=None):
+@@ -88,0 +89,3 @@
++    if _prepared is not None:
++        from .template_prepared_reader import check_prepared
++        _prepared=check_prepared(_prepared,actor);_prepared.check_sources(case,evidence_ids)
+@@ -98 +101 @@
+-    sources = list(Evidence.objects.filter(case=case, pk__in=evidence_ids).defer('body').order_by('pk'))
++    sources = _prepared.sources_for(case,evidence_ids) if _prepared is not None else list(Evidence.objects.filter(case=case, pk__in=evidence_ids).defer('body').order_by('pk'))
+@@ -194,2 +197,5 @@
+-def binding_access(actor, version):
+-    b = MinutesReportBinding.objects.filter(version=version, manifest__source_mode=MODE).select_related('report__case').first()
++def binding_access(actor, version, *, _prepared=None):
++    if _prepared is not None:
++        from .template_prepared_reader import check_prepared
++        _prepared=check_prepared(_prepared,actor);version=_prepared.version_for(version)
++    b = _prepared.binding_for(version) if _prepared is not None else MinutesReportBinding.objects.filter(version=version, manifest__source_mode=MODE).select_related('report__case').first()
+@@ -197 +203 @@
+-    report_source_access(actor, b.report.case, b.manifest)
++    report_source_access(actor, b.report.case, b.manifest, _prepared=_prepared)
+@@ -200 +206 @@
+-        legacy_access(actor, b.report.case, b.manifest, version.created_at)
++        legacy_access(actor, b.report.case, b.manifest, version.created_at, _prepared=_prepared)
+@@ -205 +211 @@
+-    authorize_sources(actor, b.report.case, ids, confirmed)
++    authorize_sources(actor, b.report.case, ids, confirmed, _prepared=_prepared)

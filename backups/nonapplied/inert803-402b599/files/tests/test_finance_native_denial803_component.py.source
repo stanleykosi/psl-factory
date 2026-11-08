@@ -1,0 +1,147 @@
+"""Pure fixed native-gate stand-ins. Hypothetical VE/nonstatement denial contract.
+No actual permission helper, SQL, Finance action or public visibility execution.
+"""
+import unittest
+from dataclasses import replace
+from unittest.mock import patch
+from django.core.exceptions import PermissionDenied,ValidationError
+from apps.documents import template_finance_admission as reader
+from apps.documents.template_operation_budget import BudgetHold
+from apps.policy import template_policy_budget_v2 as v2
+from tests import test_template_finance_budget_adoption803_component as fixtures
+PPE=b'{"inputs": [{"declaration": {"source_type": "ppe_schedule"}}]}'
+class NativeDenialTests(unittest.TestCase):
+    setUp=fixtures.FinanceAdoptionTests.setUp
+    budget=fixtures.FinanceAdoptionTests.budget
+    prepared=fixtures.FinanceAdoptionTests.prepared
+    def denial(self,site,error=PermissionDenied,mutate=None):
+        helpers=list(reader._reader_helpers());expected=self.expected
+        def deny(*args):
+            if mutate:mutate()
+            raise error('private text must not survive')
+        if site=='EARLY_PPE':
+            self.prepared(data=PPE,count=1,ppe=True);self.c.responses=self.c.responses[:5];helpers[2]=deny
+        elif site=='FINAL_RECIPIENT':
+            self.prepared(data=PPE,count=1,ppe=True);self.c.responses=self.c.responses[:7];helpers[0]=deny
+        else:
+            self.kind='trial';expected=(*self.expected[:5],'trial',*self.expected[6:]);self.c.responses=[[expected],[expected]];helpers[0]=deny
+        admission=self.budget()
+        with patch.object(reader,'_reader_helpers',return_value=tuple(helpers)):
+            outcome=admission.admit(self.worklist,expected)
+        return admission,outcome,expected
+    def test_early_denial_terminal_unvalidated_no_transfer_and_no_refund(self):
+        b,o,e=self.denial('EARLY_PPE')
+        self.assertEqual((o.callsite,o.attained),('EARLY_PPE','classified'))
+        self.assertEqual(b.ledger.state['attempts'],3);self.assertEqual(b.ledger.local['queries'],2)
+        self.assertEqual(len(self.c.calls),5);self.assertFalse(b.ledger.state['poison'])
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'denied_unvalidated')
+        self.assertGreater(b.ledger.state['bytes'],0);self.assertNotIn('private text',repr(o))
+        self.assertIsNone(b._consume_denied(self.worklist,e,o))
+    def test_final_denial_decoded_not_final_validated(self):
+        b,o,e=self.denial('FINAL_RECIPIENT')
+        self.assertEqual(o.attained,'decoded');self.assertEqual(b.ledger.state['attempts'],5)
+        self.assertEqual(b.ledger.local['queries'],3);self.assertEqual(len(self.c.calls),7)
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'denied_unvalidated')
+        self.assertFalse(b.ledger.state['poison'])
+    def test_nonstatement_denial_no_cell_no_snapshot(self):
+        b,o,e=self.denial('NONSTATEMENT_RECIPIENT')
+        self.assertEqual(o.attained,'entry_checked');self.assertEqual(b.ledger.state['attempts'],0)
+        self.assertEqual(b.ledger.state['cells'],{});self.assertEqual(b.ledger.local['queries'],2)
+        self.assertFalse(any('snapshot' in sql for sql,params in self.c.calls))
+    def test_hypothetical_native_validationerror_contract(self):
+        b,o,e=self.denial('FINAL_RECIPIENT',ValidationError)
+        self.assertEqual(o.callsite,'FINAL_RECIPIENT');self.assertFalse(b.ledger.state['poison'])
+    def test_copied_outcome_and_double_consumption_rejected(self):
+        b,o,e=self.denial('EARLY_PPE')
+        with self.assertRaises(ValidationError):b._consume_denied(self.worklist,e,replace(o))
+        self.assertTrue(b.ledger.state['poison'])
+    def test_exact_outcome_oneuse(self):
+        b,o,e=self.denial('EARLY_PPE');b._consume_denied(self.worklist,e,o)
+        with self.assertRaises(ValidationError):b._consume_denied(self.worklist,e,o)
+        self.assertTrue(b.ledger.state['poison'])
+    def test_denied_ticket_cannot_resume_or_refinalize(self):
+        b,o,e=self.denial('EARLY_PPE');cell=b.ledger.binding_record(o.ticket)['cell']
+        with self.assertRaises(BudgetHold):b.ledger.before_transfer(cell)
+        self.assertEqual(b.ledger.state['attempts'],3)
+    def test_shared_run_denied_then_new_binding_full_phases(self):
+        b,o,e=self.denial('EARLY_PPE');b._consume_denied(self.worklist,e,o);before=b.ledger.state['bytes'];domains={k:v.copy() for k,v in b.ledger.state['domains'].items()}
+        second=(2,*e[1:]);self.prepared(expected=second,data=PPE,count=1,ppe=True)
+        b.admit(self.worklist,second)
+        self.assertEqual(b.ledger.local['processing'],2);self.assertEqual(b.ledger.state['attempts'],9)
+        self.assertEqual(b.ledger.state['bytes'],before);self.assertEqual(b.ledger.state['domains'],domains)
+        self.assertEqual(b.ledger.binding_record(o.ticket)['phase'],'denied')
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'validated')
+    def test_shared_run_denied_changed_metadata_stays_fatal(self):
+        b,o,e=self.denial('EARLY_PPE');b._consume_denied(self.worklist,e,o);second=(2,*e[1:]);self.prepared(expected=second)
+        with self.assertRaises(ValidationError):b.admit(self.worklist,second)
+        self.assertTrue(b.ledger.state['poison']);self.assertEqual(b.ledger.state['attempts'],4)
+    def test_poisoned_native_exception_cannot_be_hidden(self):
+        with self.assertRaises(ValidationError):self.denial('EARLY_PPE',ValidationError,lambda:self.marker.update(policy_budget_v2_failed=True))
+        self.assertEqual(self.marker['policy_operation_budget_v2'].get('finance_denied_outcomes',[]),[])
+    def test_swallowed_poison_on_normal_native_return_fatal(self):
+        self.prepared(data=PPE,count=1,ppe=True);helpers=list(reader._reader_helpers())
+        helpers[2]=lambda *args:self.marker.update(policy_budget_v2_failed=True)
+        with patch.object(reader,'_reader_helpers',return_value=tuple(helpers)):
+            with self.assertRaises(ValidationError):self.budget().admit(self.worklist,self.expected)
+        self.assertEqual(len(self.c.calls),4)
+    def test_denial_exit_identity_failure_is_engineering_not_outcome(self):
+        self.prepared(data=PPE,count=1,ppe=True);self.c.responses[4]=[];helpers=list(reader._reader_helpers())
+        def deny(*args):raise PermissionDenied('native')
+        helpers[2]=deny;b=self.budget()
+        with patch.object(reader,'_reader_helpers',return_value=tuple(helpers)):
+            with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertTrue(b.ledger.state['poison']);self.assertEqual(b.ledger.state.get('finance_denied_outcomes',[]),[])
+    def test_same_exception_class_outside_helper_remains_fatal(self):
+        b=self.budget()
+        with patch.object(b,'_fetch',side_effect=ValidationError('engineering')):
+            with self.assertRaises(ValidationError):b.admit(self.worklist,self.expected)
+        self.assertTrue(b.ledger.state['poison']);self.assertEqual(b.ledger.state.get('finance_denied_outcomes',[]),[])
+    def test_raw_context_change_during_native_call_fatal(self):
+        with self.assertRaises(ValidationError):self.denial('EARLY_PPE',PermissionDenied,lambda:setattr(self,'raw',object()))
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_outcome_crossentry_poison_old_and_current(self):
+        b,o,e=self.denial('EARLY_PPE');old=self.marker;self.marker={}
+        with patch.object(v2,'_active_marker',lambda:self.marker):
+            with self.assertRaises(BudgetHold):b._consume_denied(self.worklist,e,o)
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_final_denied_then_distinct_binding_reprocesses_full(self):
+        b,o,e=self.denial('FINAL_RECIPIENT');b._consume_denied(self.worklist,e,o);before=b.ledger.state['bytes'];second=(2,*e[1:])
+        self.prepared(expected=second,data=PPE,count=1,ppe=True);b.admit(self.worklist,second)
+        self.assertEqual(b.ledger.state['attempts'],11);self.assertEqual(b.ledger.state['bytes'],before)
+        self.assertEqual(b.ledger.binding_record(o.ticket)['denial'],('FINAL_RECIPIENT','decoded'))
+    def test_prior_validated_does_not_substitute_for_new_denied(self):
+        self.prepared(data=PPE,count=1,ppe=True);b=self.budget();b.admit(self.worklist,self.expected);b._consume_success(self.worklist,self.expected)
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'validated')
+        self.deny=True;self.prepared(data=PPE,count=1,ppe=True);self.c.responses=self.c.responses[:5]
+        o=b.admit(self.worklist,self.expected)
+        self.assertEqual(o.attained,'classified');self.assertEqual(b.ledger.state['attempts'],9)
+        self.assertEqual(next(iter(b.ledger.state['cells'].values())).state,'denied_unvalidated')
+    def test_pending_reserved_cell_cannot_be_reused(self):
+        b=self.budget();m=self.prepared();self.c.responses=[]
+        t=b.ledger.begin_binding(self.expected);b.ledger.before_identity(t,'entry');b.ledger.identity_checked(t,'entry',[self.expected])
+        cell=b.ledger.begin_size(t);b.ledger.reserve_finance(cell,m)
+        second=(2,*self.expected[1:]);u=b.ledger.begin_binding(second);b.ledger.before_identity(u,'entry');b.ledger.identity_checked(u,'entry',[second])
+        another=b.ledger.begin_size(u)
+        with self.assertRaises(BudgetHold):b.ledger.reserve_finance(another,m)
+        self.assertEqual(b.ledger.state['bytes'],m.size)
+    def test_terminal_denial_requires_recorded_native_provenance(self):
+        b=self.budget();t=b.ledger.begin_binding((*self.expected[:5],'trial',*self.expected[6:]))
+        b.ledger.before_identity(t,'entry');b.ledger.identity_checked(t,'entry',[t.expected])
+        b.ledger.before_identity(t,'exit');b.ledger.identity_checked(t,'exit',[t.expected])
+        with self.assertRaises(BudgetHold):b.ledger.terminal_denied(t,'NONSTATEMENT_RECIPIENT')
+        self.assertNotIn('finance_denied_outcomes',b.ledger.state)
+    def test_copied_terminal_ticket_cannot_finish(self):
+        b,o,e=self.denial('NONSTATEMENT_RECIPIENT')
+        with self.assertRaises(BudgetHold):b.ledger.terminal_denied(replace(o.ticket),'NONSTATEMENT_RECIPIENT')
+
+    def test_old_outcome_new_reader_new_valid_candidate_poisons_both(self):
+        previous,outcome,old_candidate=self.denial('EARLY_PPE')
+        old_marker=self.marker;self.marker={};self.worklist=object()
+        new_reader=self.budget();new_candidate=(2,*self.expected[1:])
+        with patch.object(v2,'_active_marker',lambda:self.marker):
+            with self.assertRaises(ValidationError):new_reader._consume_denied(self.worklist,new_candidate,outcome)
+        self.assertTrue(old_marker['policy_budget_v2_failed'])
+        self.assertTrue(old_marker['policy_operation_budget_v2']['poison'])
+        self.assertTrue(self.marker['policy_budget_v2_failed']);self.assertTrue(new_reader.ledger.state['poison'])
+        self.assertIsNot(previous.ledger.state,new_reader.ledger.state)
+        with self.assertRaises(BudgetHold):self.budget()

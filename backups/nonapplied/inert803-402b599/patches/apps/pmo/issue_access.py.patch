@@ -1,0 +1,7 @@
+--- a/apps/pmo/issue_access.py
++++ b/apps/pmo/issue_access.py
+@@ -8,2 +8,2 @@
+-def issue_subject(case, pk, kind=None):
+-    evidence = subject(case, pk, kind)
++def issue_subject(case, pk, kind=None, *, _reader_scalar=False):
++    evidence = subject(case, pk, kind, _reader_scalar=_reader_scalar)

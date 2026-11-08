@@ -1,0 +1,98 @@
+"""Inert scalar-only native definitions; no visibility or Finance branches."""
+from django.test import TransactionTestCase
+from django.core.exceptions import ValidationError,PermissionDenied
+from unittest.mock import patch
+from apps.documents import template_current as tc
+from apps.documents.controlled import register_template
+from apps.documents.template_scalar_closure import ScalarClosureBudget,discover_template_owner_closure
+from apps.policy.template_snapshot_entry import _run_authenticated
+from apps.core.services import add_evidence
+from tests.helpers import setup_case,rev
+from tests.document_helpers import DEFINITION,artifact
+class ScalarClosureTests(TransactionTestCase):
+    def setUp(self):
+        self.a,self.c=setup_case(username='closure803')
+        self.e=add_evidence(self.a,self.c.pk,'policy_decision','Synthetic scope policy','synthetic:803')
+        self.t=register_template(self.a,self.c.pk,'Scalar status',DEFINITION,self.e.pk,rev(self.c))
+        self.s=tc.register_scope(self.a,self.c.pk,'status_report','internal','Purpose','Context','Owner',self.e.pk,rev(self.c))
+        artifact(self.a,self.c,tc.COMPONENT,'schema:psl/document-storage/v3',{'template_ids':[self.t.pk],'repository':'internal-versioned','retention_days':30,'template_owners':[{'scope_id':self.s.pk,'user_id':self.a.pk}]},self.e)
+        self.own=tc.capture_source(self.a,self.c.pk,'Claim own source','synthetic:own',rev(self.c))
+        self.claim=tc.claim_current(self.a,self.c.pk,self.s.pk,self.t.pk,self.own.pk,'Synthetic claim',rev(self.c),confirm_owner=True)
+    def inspect(self,kind,pk,callback):
+        keys=['documents.template_'+{'claim':'claims','retraction':'retractions','resolution':'resolutions'}[kind]]
+        def run(actor):
+            closure=discover_template_owner_closure(actor,self.c.pk,{kind:[pk]},ScalarClosureBudget(actor,keys));callback(closure);return None
+        return _run_authenticated(self.a,keys,run)
+    def test_claim_own_source_only_and_historical_template(self):
+        self.inspect('claim',self.claim.pk,lambda c:(self.assertEqual(c._evidence,(self.own.pk,)),self.assertEqual(c._templates,(self.t.pk,))))
+    def test_retraction_does_not_seed_original_claim_or_scope_source(self):
+        evidence=tc.capture_source(self.a,self.c.pk,'Retraction own source','synthetic:retract',rev(self.c))
+        row=tc.retract_claim(self.a,self.c.pk,self.claim.pk,evidence.pk,'Own retraction',rev(self.c))
+        self.inspect('retraction',row.pk,lambda c:(self.assertEqual(c._evidence,(evidence.pk,)),self.assertEqual(c._templates,(self.t.pk,))))
+    def test_resolution_own_source_not_claim_list(self):
+        evidence=tc.capture_source(self.a,self.c.pk,'Resolution source','synthetic:resolve',rev(self.c))
+        row=tc.resolve_claims(self.a,self.c.pk,self.s.pk,self.claim.pk,[self.claim.pk],evidence.pk,'Exact selection',rev(self.c))
+        self.inspect('resolution',row.pk,lambda c:self.assertEqual(c._evidence,(evidence.pk,)))
+    def test_shared_scope_union_and_relevant_cap(self):
+        linked=tc.register_scope(self.a,self.c.pk,'status_report','internal','Other','Context','Owner',self.own.pk,rev(self.c))
+        self.inspect('claim',self.claim.pk,lambda c:self.assertEqual(set(c._scopes),{self.s.pk,linked.pk}))
+        with patch('apps.documents.template_scalar_closure.MAX_SCOPES',1),self.assertRaises(ValidationError):self.inspect('claim',self.claim.pk,lambda c:self.fail('Overflow cannot return'))
+    def test_missing_selected_identity_rejects(self):
+        with self.assertRaises(ValidationError):self.inspect('claim',self.claim.pk+999,lambda c:self.fail('Missing cannot return'))
+
+    def test_all_four_source_edges_distinct_union_exact_and_overflow(self):
+        scopes=[tc.register_scope(self.a,self.c.pk,'status_report','internal','Edge '+str(i),'Context','Owner',self.own.pk if i==0 else self.e.pk,rev(self.c)) for i in range(4)]
+        artifact(self.a,self.c,tc.COMPONENT,'schema:psl/document-storage/v3',{'template_ids':[self.t.pk],'repository':'internal-versioned','retention_days':30,'template_owners':[{'scope_id':x.pk,'user_id':self.a.pk} for x in [self.s]+scopes]},self.e)
+        # Each distinct scope has exactly the requested source-link edge.
+        claims=[]
+        for i in (1,2,3):
+            claims.append(tc.claim_current(self.a,self.c.pk,scopes[i].pk,self.t.pk,self.own.pk if i==1 else self.e.pk,'Edge claim',rev(self.c),confirm_owner=True))
+        tc.resolve_claims(self.a,self.c.pk,scopes[2].pk,claims[1].pk,[claims[1].pk],self.own.pk,'Resolution edge',rev(self.c))
+        tc.retract_claim(self.a,self.c.pk,claims[2].pk,self.own.pk,'Retraction edge',rev(self.c))
+        expected={self.s.pk,*[x.pk for x in scopes]}
+        with patch('apps.documents.template_scalar_closure.MAX_SCOPES',5):
+            self.inspect('claim',self.claim.pk,lambda c:self.assertEqual(set(c._scopes),expected))
+        with patch('apps.documents.template_scalar_closure.MAX_SCOPES',4),self.assertRaises(ValidationError):
+            self.inspect('claim',self.claim.pk,lambda c:self.fail('Aggregate union overflow'))
+        # This is a five-scope native boundary with an artificial lower cap, not a100-scope stress claim.
+
+    def test_foreign_selected_record_rejected_without_invalid_rows(self):
+        other,case=setup_case(username='closure803foreign')
+        # Existing local row remains legitimate; querying it under another authorized case cannot select it.
+        keys=['documents.template_claims']
+        def callback(actor):
+            with self.assertRaises(ValidationError):discover_template_owner_closure(actor,case.pk,{'claim':[self.claim.pk]},ScalarClosureBudget(actor,keys))
+        with self.assertRaises(ValidationError):_run_authenticated(other,keys,callback)
+
+    def test_revoked_reader_and_inactive_entry_do_not_query_domain(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        from django.core.exceptions import PermissionDenied
+        from apps.identity.models import Grant
+        Grant.objects.filter(user=self.a,case=self.c,action='document.read').update(active=False)
+        with CaptureQueriesContext(connection) as queries,self.assertRaises(PermissionDenied):
+            self.inspect('claim',self.claim.pk,lambda c:self.fail('Revoked'))
+        self.assertFalse(any('documents_template' in q['sql'].lower() for q in queries))
+        self.a.is_active=False;self.a.save(update_fields=['is_active'])
+        with CaptureQueriesContext(connection) as queries,self.assertRaises(PermissionDenied):
+            self.inspect('claim',self.claim.pk,lambda c:self.fail('Inactive'))
+        self.assertFalse(any('documents_template' in q['sql'].lower() for q in queries))
+
+    def test_absent_expired_and_cross_entry_budget_reject_before_sql(self):
+        keys=['documents.template_claims'];saved=[]
+        with self.assertNumQueries(0),self.assertRaises(ValidationError):ScalarClosureBudget(self.a,keys)
+        _run_authenticated(self.a,keys,lambda actor:saved.append(ScalarClosureBudget(actor,keys)))
+        with self.assertNumQueries(0),self.assertRaises(ValidationError):saved[0].context()
+        def callback(actor):
+            with self.assertNumQueries(0),self.assertRaises((ValidationError,PermissionDenied)):
+                discover_template_owner_closure(actor,self.c.pk,{'claim':[self.claim.pk]},saved[0])
+        with self.assertRaises(ValidationError):_run_authenticated(self.a,keys,callback)
+
+    def test_actual_discovery_sql_does_not_hydrate_private_payload_columns(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        with CaptureQueriesContext(connection) as queries:
+            self.inspect('claim',self.claim.pk,lambda c:self.assertEqual(c._evidence,(self.own.pk,)))
+        sql=' '.join(q['sql'].lower() for q in queries)
+        for field in ('body','note','definition','claim_ids'):
+            self.assertNotIn('."'+field+'"',sql)

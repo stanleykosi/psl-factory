@@ -1,0 +1,369 @@
+"""INERT D11 original-owner evaluation. No route or registry installs this reader.
+
+Every payload use passes conditional metadata/BYTEA admission. Original owners
+never become the observer entry principal. Native advisory locking is retained.
+"""
+from dataclasses import dataclass
+from uuid import UUID
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied,ValidationError
+from apps.core.models import Case,Evidence
+from apps.identity.models import Grant
+from apps.identity.services import require
+from apps.documents.models import TemplateScope,TemplateClaim,TemplateClaimRetraction,TemplateResolution,Template
+from apps.documents.template_candidate_worklist import check_registered_worklist
+from apps.documents.template_scalar_closure import _CONTEXT,_poison_marker
+from .models import Configuration,PolicyState,RegisteredReference,ScopeApplication,ScopeVersion,ScopeState
+from .template_policy_admission import PolicyCellBudget,descriptor,COMPONENT,CELLS
+from .template_policy_transfer_descriptor import metadata_statement,transfer_statement,decode_canonical,FIELDS,spec
+from apps.documents.template_operation_budget import Metadata
+
+class PreparedOwnerStop(Exception):
+    """Never a native PD/VE/ValueError/KeyError/DoesNotExist result."""
+
+CATEGORIES=frozenset(('record','configuration','case','scope','application','source','policy_state','source_state','actor','reference','evidence','template'))
+TABLES={'configuration':('policy_configuration',('id','case_id','component','revision')),
+ 'case':('core_case',('id','kind','tenant','synthetic')),
+ 'scope':('documents_templatescope',('id','case_id','document_type')),
+ 'application':('policy_scopeapplication',('id','configuration_id','source_id','actor_id')),
+ 'source':('policy_scopeversion',('id','configuration_id','kind','ref','revision','created_by_id')),
+ 'reference':('policy_registeredreference',('id','case_id','ref','version','schema_ref','sha256')),
+ 'policy_state':('policy_policystate',('id','configuration_id','state')),
+ 'source_state':('policy_scopestate',('id','source_id','state','actor_id')),
+ 'claim':('documents_templateclaim',('id','scope_id','actor_id','owner_policy_id')),
+ 'resolution':('documents_templateresolution',('id','scope_id','actor_id','owner_policy_id'))}
+
+@dataclass(frozen=True,repr=False)
+class _View:
+    reader:object
+    kind:str
+    values:tuple
+    def __getattr__(self,name):
+        r=self.reader;r.clean();fields=TABLES[self.kind][1]
+        if name=='pk':return self.values[0]
+        if name in fields:return self.values[fields.index(name)]
+        if name=='case' and self.kind in ('scope','configuration'):return r.case_for(self.case_id)
+        if name=='scope' and self.kind in ('claim','resolution'):return r.scope_for(self.scope_id)
+        if name=='actor' and self.kind in ('claim','resolution','application','source_state'):return r.actor_for(self.actor_id)
+        if name=='source' and self.kind=='application':return r.source_for(self.source_id)
+        if name=='configuration' and self.kind=='source':return r.configuration_for(self.configuration_id)
+        if name=='envelope' and self.kind=='configuration':return r.envelope(self)
+        if name=='content' and self.kind=='reference':return r.load('reference',self)
+        if name=='bindings' and self.kind=='application':return r.load('application',self)
+        if name=='binding_paths' and self.kind=='source':return r.load('source',self)
+        r.fail()
+
+class OwnerReader:
+    """Closed fixed purposes only; scalar caps belong to the snapshot marker."""
+    def __init__(self,observer,keys,worklist,permit):
+        self.marker=_CONTEXT.get();self.observer=observer;self.worklist=worklist
+        try:
+            self.witness=check_registered_worklist(observer,keys,worklist)
+            self.budget=PolicyCellBudget(observer,keys);self.keys=list(keys)
+            self.state=self.marker.setdefault('template_owner_reader803',{'identities':frozenset(),'attempts':0,'operations':0,'poison':False})
+            self.guards=[];self.tickets=[];self.views=[];self.actors=[];self.active_record=None;self.finished=False
+            self.permit=permit
+            if (type(permit) is not _Permit or permit.marker is not self.marker or permit.worklist is not worklist
+                or not any(p['permit'] is permit and not p['used'] for p in self.marker.get('template_owner_permits803',[]))):raise PreparedOwnerStop()
+            next(p for p in self.marker['template_owner_permits803'] if p['permit'] is permit)['used']=True
+            self.stop=PreparedOwnerStop('Prepared owner policy investigation unavailable')
+            self.clean()
+        except Exception:
+            if type(permit) is _Permit:_poison_marker(permit.marker)
+            _poison_marker(self.marker);_poison_marker(_CONTEXT.get());raise PreparedOwnerStop('Prepared owner policy investigation unavailable') from None
+    def fail(self):
+        self.state['poison']=True;_poison_marker(self.marker);_poison_marker(_CONTEXT.get());self.budget.poison();raise self.stop from None
+    def clean(self):
+        try:
+            if self.marker is not _CONTEXT.get() or self.state['poison'] or self.finished:self.fail()
+            self.budget.context()
+            if check_registered_worklist(self.observer,self.keys,self.worklist) is not self.witness:self.fail()
+        except PreparedOwnerStop:raise
+        except Exception:self.fail()
+    def phase(self):
+        self.clean()
+        if self.state['attempts']>=1000:self.fail()
+        self.state['attempts']+=1
+    def charge(self,kind,ids):
+        self.clean()
+        if kind not in CATEGORIES or len(ids)>100:self.fail()
+        for pk in ids:
+            if kind=='case':
+                if type(pk) is not UUID:self.fail()
+            elif kind=='record':
+                if type(pk) is not tuple or len(pk)!=2 or pk[0] not in ('claim','resolution') or type(pk[1]) is not int or pk[1]<=0:self.fail()
+            elif type(pk) is not int or pk<=0:self.fail()
+        combined=self.state['identities']|frozenset((kind,pk) for pk in ids)
+        if len(combined)>400 or sum(k==kind for k,p in combined)>100:self.fail()
+        self.state['identities']=combined
+    def add(self,sql,params):
+        # Internal fixed purpose expressions only. No caller SQL/query replay API.
+        self.clean()
+        value=(sql,tuple(params))
+        if value not in self.guards:
+            if len(self.guards)>=1000:self.fail()
+            self.guards.append(value)
+    def guard(self):
+        self.clean();return ' AND '.join('('+s+')' for s,p in self.guards) or 'TRUE',tuple(x for s,p in self.guards for x in p)
+    def observe(self,kind,row):
+        if row is None:return None
+        fields=TABLES[kind][1]
+        if type(row) is not tuple or len(row)!=len(fields):self.fail()
+        for field,value in zip(fields,row):
+            if field=='case_id':
+                if type(value) is not UUID:self.fail()
+            elif field=='id' and kind=='case':
+                if type(value) is not UUID:self.fail()
+            elif field=='id' or field.endswith('_id') or field in ('revision','version'):
+                if field=='owner_policy_id' and value is None:continue
+                if type(value) is not int or value<=0:self.fail()
+            elif field=='synthetic':
+                if type(value) is not bool:self.fail()
+            elif type(value) is not str:self.fail()
+        category='record' if kind in ('claim','resolution') else kind
+        self.charge(category,[(kind,row[0]) if category=='record' else row[0]])
+        table=TABLES[kind][0]
+        self.add('EXISTS (SELECT 1 FROM "'+table+'" own WHERE '+' AND '.join('own."'+f+'" IS NOT DISTINCT FROM %s' for f in fields)+')',row)
+        view=_View(self,kind,row);self.views.append(view);return view
+    def check_view(self,view,kind):
+        self.clean()
+        if type(view) is not _View or view.reader is not self or view.kind!=kind or not any(v is view for v in self.views):self.fail()
+    def one(self,model,kind,pk):
+        self.phase();row=model.objects.filter(pk=pk).values_list(*TABLES[kind][1]).first()
+        return self.observe(kind,row)
+    def case_for(self,pk):return self.one(Case,'case',pk)
+    def scope_for(self,pk):return self.one(TemplateScope,'scope',pk)
+    def configuration_for(self,pk):return self.one(Configuration,'configuration',pk)
+    def source_for(self,pk):return self.one(ScopeVersion,'source',pk)
+    def actor_for(self,pk):
+        self.phase()
+        try:actor=get_user_model().objects.only('id','is_active').get(pk=pk)
+        except get_user_model().DoesNotExist:
+            if get_user_model()._meta.db_table!='auth_user':self.fail()
+            self.add('NOT EXISTS (SELECT 1 FROM auth_user WHERE id=%s)',(pk,));raise
+        self.charge('actor',[actor.pk])
+        # User table is fixed by server authentication model, never caller input.
+        table=get_user_model()._meta.db_table
+        if table!='auth_user':self.fail()
+        self.add('EXISTS (SELECT 1 FROM auth_user own WHERE own.id=%s AND own.is_active=%s)',(actor.pk,actor.is_active))
+        self.actors.append((actor,actor.pk,actor.is_active));return actor
+    def owner_require(self,actor,case,action):
+        if action not in ('case.read','document.read','document.template','finance.read','policy.read','policy.configure','policy.activate'):self.fail()
+        self.check_view(case,'case')
+        if actor is not self.observer and not any(a is actor and pk==actor.pk and active==actor.is_active for a,pk,active in self.actors):self.fail()
+        # Observe same native grant predicate, then invoke unchanged native require.
+        self.phase();yes=Grant.objects.filter(user=actor,case_id=case.pk,action=action,active=True).exists()
+        self.add(('' if yes else 'NOT ')+'EXISTS (SELECT 1 FROM identity_grant own WHERE own.user_id=%s AND own.case_id=%s AND own.action=%s AND own.active)',(actor.pk,case.pk,action))
+        self.phase()
+        # Native require accepts a real case model; only its exact PK is used.
+        require(actor,Case(pk=case.pk),action)
+    def authorized(self,actor,case,action):
+        self.owner_require(actor,case,'case.read');self.owner_require(actor,case,action)
+    def resolution_candidate(self,component,case):
+        self.check_view(case,'case')
+        if component!=COMPONENT:self.fail()
+        self.phase();rows=list(Configuration.objects.filter(case_id=case.pk,component=component).order_by('-revision').values_list(*TABLES['configuration'][1])[:101])
+        if len(rows)>100:self.fail()
+        candidates=[self.observe('configuration',row) for row in rows]
+        ids=tuple(c.pk for c in candidates)
+        self.add('NOT EXISTS (SELECT 1 FROM policy_configuration own WHERE own.case_id=%s AND own.component=%s AND NOT (own.id=ANY(%s)))',(case.pk,component,list(ids)))
+        chosen=None
+        for config in candidates:
+            state=self.latest_configuration_state(config).state
+            if state in ('active','revoked','superseded') and chosen is None:chosen=config
+        return chosen
+    def latest_configuration_state(self,config):
+        self.check_view(config,'configuration');self.phase()
+        row=PolicyState.objects.filter(configuration_id=config.pk).order_by('-pk').values_list(*TABLES['policy_state'][1]).first()
+        self.add('(SELECT id FROM policy_policystate WHERE configuration_id=%s ORDER BY id DESC LIMIT 1) IS NOT DISTINCT FROM %s',(config.pk,None if row is None else row[0]))
+        return self.observe('policy_state',row)
+    def application_for(self,config):
+        self.check_view(config,'configuration');self.phase()
+        row=ScopeApplication.objects.filter(configuration_id=config.pk).values_list(*TABLES['application'][1]).first()
+        if row is None:self.add('NOT EXISTS (SELECT 1 FROM policy_scopeapplication WHERE configuration_id=%s)',(config.pk,))
+        result=self.observe('application',row)
+        if result is not None:
+            # Origin observer admission precedes ANY copied/source payload.
+            try:self.authorized(self.observer,result.source.configuration.case,'policy.read')
+            except (PermissionDenied,ValidationError):self.fail()
+        return result
+    def source_state(self,source):
+        self.check_view(source,'source');self.phase()
+        row=ScopeState.objects.filter(source_id=source.pk).order_by('-pk').values_list(*TABLES['source_state'][1]).first()
+        self.add('(SELECT id FROM policy_scopestate WHERE source_id=%s ORDER BY id DESC LIMIT 1) IS NOT DISTINCT FROM %s',(source.pk,None if row is None else row[0]))
+        view=self.observe('source_state',row);return None if view is None else view.state
+    def source_family_head(self,source):
+        self.check_view(source,'source');config=source.configuration;self.phase()
+        row=ScopeVersion.objects.filter(configuration__case_id=config.case_id,configuration__component=config.component,kind=source.kind,ref=source.ref,states__state__in=['active','revoked']).order_by('-revision').values_list(*TABLES['source'][1]).first()
+        self.add("(SELECT sv.id FROM policy_scopeversion sv JOIN policy_configuration cfg ON cfg.id=sv.configuration_id WHERE cfg.case_id=%s AND cfg.component=%s AND sv.kind=%s AND sv.ref=%s AND EXISTS (SELECT 1 FROM policy_scopestate st WHERE st.source_id=sv.id AND st.state IN ('active','revoked')) ORDER BY sv.revision DESC LIMIT 1) IS NOT DISTINCT FROM %s",(config.case_id,config.component,source.kind,source.ref,None if row is None else row[0]))
+        return self.observe('source',row)
+    def latest_active_state(self,source):
+        self.check_view(source,'source');self.phase()
+        row=ScopeState.objects.filter(source_id=source.pk,state='active').order_by('-pk').values_list(*TABLES['source_state'][1]).first()
+        if row is None:raise ScopeState.DoesNotExist('ScopeState matching query does not exist.')
+        self.add("(SELECT id FROM policy_scopestate WHERE source_id=%s AND state='active' ORDER BY id DESC LIMIT 1) IS NOT DISTINCT FROM %s",(source.pk,row[0]))
+        return self.observe('source_state',row)
+    def source_mutex(self,source):
+        self.check_view(source,'source');self.phase()
+        from .scopes import mutex
+        mutex(source)
+    def reference_for_validation(self,case,ref,version):
+        self.check_view(case,'case');self.phase()
+        row=RegisteredReference.objects.filter(case_id=case.pk,ref=ref,version=version).values_list(*TABLES['reference'][1]).first()
+        if row is None:self.add('NOT EXISTS (SELECT 1 FROM policy_registeredreference WHERE case_id=%s AND ref=%s AND version=%s)',(case.pk,ref,version))
+        return self.observe('reference',row)
+    def reference_values(self,config):
+        self.check_view(config,'configuration');item=descriptor(config.envelope)
+        case=config.case;self.phase()
+        try:row=RegisteredReference.objects.filter(case_id=case.pk,ref=item['artifact_ref'],version=item['artifact_version']).values_list(*TABLES['reference'][1]).get()
+        except RegisteredReference.DoesNotExist:
+            self.add('NOT EXISTS (SELECT 1 FROM policy_registeredreference WHERE case_id=%s AND ref=%s AND version=%s)',(case.pk,item['artifact_ref'],item['artifact_version']));raise
+        target=self.observe('reference',row)
+        return [target.content]
+    def envelope_context(self,case,envelope,runtime):
+        self.check_view(case,'case')
+        if runtime is not True or type(envelope) is not dict or envelope.get('component_id')!=COMPONENT:self.fail()
+        try:descriptor(envelope)
+        except Exception:self.fail()
+    def document_validator_context(self,component,case,runtime):
+        self.check_view(case,'case')
+        if component!=COMPONENT or runtime is not True:self.fail()
+    def evidence_exists(self,case,ref):
+        self.check_view(case,'case');self.phase()
+        yes=Evidence.objects.filter(case_id=case.pk,pk=ref).exists()
+        self.add(('' if yes else 'NOT ')+'EXISTS (SELECT 1 FROM core_evidence WHERE case_id=%s AND id=%s)',(case.pk,ref))
+        if yes:self.charge('evidence',[int(ref)])
+        return yes
+    def descriptor_sow_exists(self,case,ref):
+        self.check_view(case,'case');pk=ref[9:] if ref[9:].isdigit() else None;self.phase()
+        yes=Evidence.objects.filter(case_id=case.pk,pk=pk,kind='sow').exists()
+        self.add(('' if yes else 'NOT ')+"EXISTS (SELECT 1 FROM core_evidence WHERE case_id=%s AND id=%s AND kind='sow')",(case.pk,pk))
+        if yes:self.charge('evidence',[int(pk)])
+        return yes
+    def storage_template_count(self,case,ids):return self.storage_count(case,ids,'template')
+    def storage_scope_count(self,case,ids):return self.storage_count(case,ids,'scope')
+    def storage_count(self,case,ids,kind):
+        self.check_view(case,'case')
+        if type(ids) is not list or len(ids)>100 or any(type(pk) is not int or pk<=0 for pk in ids):self.fail()
+        self.charge(kind,ids);self.phase()
+        model,table=(Template,'documents_template') if kind=='template' else (TemplateScope,'documents_templatescope')
+        count=model.objects.filter(case_id=case.pk,pk__in=ids).count()
+        self.add('(SELECT count(*) FROM '+table+' WHERE case_id=%s AND id=ANY(%s))=%s',(case.pk,list(ids),count));return count
+    def origin_gate(self,config):
+        self.check_view(config,'configuration')
+        if config.component!=COMPONENT:self.fail()
+        app=self.application_for(config)
+        if app is None:return
+        source=app.source;origin=source.configuration;target_case=config.case;source_case=origin.case
+        try:self.authorized(self.observer,source_case,'policy.read')
+        except (PermissionDenied,ValidationError):self.fail()
+        if (origin.component!=COMPONENT or source_case.tenant!=target_case.tenant or source_case.synthetic!=target_case.synthetic
+            or (source.kind!='organization' and source_case.pk!=target_case.pk) or self.application_for(origin) is not None):self.fail()
+    def envelope(self,config):
+        self.origin_gate(config);value=self.load('configuration',config)
+        try:descriptor(value)
+        except Exception:self.fail()
+        return value
+    def load(self,kind,view):
+        try:
+            self.check_view(view,kind)
+            ledger=self.budget.ledger;ticket=ledger.begin(kind,view.pk);self.tickets.append(ticket)
+            sql,params=metadata_statement(kind,view.pk);guard,gparams=self.guard()
+            with self.budget.connection.cursor() as cursor:
+                cursor.execute(sql+' AND ('+guard+')',(*params,*gparams));rows=cursor.fetchmany(2)
+            if len(rows)!=1:self.fail()
+            fields=FIELDS[kind];row=rows[0]
+            if len(row)!=len(fields)+3:self.fail()
+            metadata=Metadata(tuple(row[:len(fields)]),*row[-3:])
+            if metadata.identity!=tuple(getattr(view,f) for f in fields) or metadata.size>CELLS[kind][3]:self.fail()
+            ledger.reserve(ticket,metadata)
+            sql,params=transfer_statement(kind,view.pk,metadata);guard,gparams=self.guard();ledger.before_transfer(ticket)
+            with self.budget.connection.cursor() as cursor:
+                cursor.execute(sql+' AND ('+guard+')',(*params,*gparams));rows=cursor.fetchmany(2)
+            payload=ledger.transfer_checked(ticket,rows);ledger.before_decode(ticket)
+            value=decode_canonical(kind,metadata,payload);ledger.validated(ticket);return value
+        except PreparedOwnerStop:raise
+        except Exception:self.fail()
+    def final_guard(self):
+        try:
+            for ticket in self.tickets:self.budget.ledger.phase(ticket,'validated')
+        except Exception:self.fail()
+        self.phase();guard,params=self.guard()
+        with self.budget.connection.cursor() as cursor:
+            cursor.execute('SELECT 1 WHERE '+guard,params);rows=cursor.fetchmany(2)
+        if rows!=[(1,)]:self.fail()
+        self.clean()
+    def evaluate(self,kind,pk):
+        self.clean()
+        if self.active_record is not None or kind not in ('claim','resolution') or (kind,pk) not in self.worklist.closure._records:self.fail()
+        if self.state['operations']>=100:self.fail()
+        self.state['operations']+=1
+        record=self.one(TemplateClaim if kind=='claim' else TemplateResolution,kind,pk)
+        if record is None:raise (TemplateClaim if kind=='claim' else TemplateResolution).DoesNotExist()
+        self.active_record=record
+        if (kind,*record.values)!=self.permit.record:self.fail()
+        if record.scope.case_id!=self.witness.case_id:self.fail()
+        # Exact null short circuit: no owner/User/policy/lock loading.
+        if record.owner_policy_id is None:result=False
+        else:
+            from apps.documents.template_current import owner_current
+            result=owner_current(record,_prepared=self)
+        self.final_guard();self.finished=True;return result
+
+
+@dataclass(frozen=True,eq=False,repr=False)
+class _Permit:
+    marker:object
+    worklist:object
+    record:tuple
+
+def owner_current_metadata(observer,keys,worklist,configuration_id):
+    """Fixed scope-authorized historical pipeline, no older outcome/caller callback."""
+    from apps.documents.template_historical_metadata import historical_metadata
+    from apps.documents.template_candidate_worklist import _Budget
+    budget=None;witness=None
+    try:
+        witness=check_registered_worklist(observer,keys,worklist);budget=_Budget(observer,keys)
+        selected=worklist.closure._records
+        if type(configuration_id) is not int or configuration_id<=0:raise PreparedOwnerStop()
+        if any(k not in ('claim','resolution') for k,pk in selected):
+            selector=getattr(worklist,'selector',None)
+            if selector is None:raise PreparedOwnerStop('Claims/resolutions only')
+            from apps.documents.template_impact_entry import validate_selector
+            selections={}
+            for kind,pk in selected:selections.setdefault(kind,[]).append(pk)
+            validate_selector(observer,keys,witness.case_id,selections,selector,worklist)
+        def mapping():
+            rows=[]
+            for kind in ('claim','resolution','retraction'):
+                ids=[pk for k,pk in selected if k==kind]
+                if not ids:continue
+                budget.phase()
+                if kind=='retraction':model,casefield,fields=TemplateClaimRetraction,'claim__scope__case_id',('id','claim__scope_id','claim_id','owner_policy_id')
+                else:model,casefield,fields=(TemplateClaim if kind=='claim' else TemplateResolution),'scope__case_id',('id','scope_id','actor_id','owner_policy_id')
+                found=list(model.objects.filter(pk__in=ids,**{casefield:witness.case_id},owner_policy_id=configuration_id).order_by('pk').values_list(*fields)[:101])
+                if len(found)!=len(ids) or {r[0] for r in found}!=set(ids):raise PreparedOwnerStop()
+                if any(type(value) is not int or value<=0 for row in found for value in row):raise PreparedOwnerStop()
+                rows.extend((kind,*r) for r in found)
+            return tuple(rows)
+        before=mapping()
+        # This consumes fresh scope-only facts and independently pins case/config.
+        output=historical_metadata(observer,keys,worklist,configuration_id)
+        if mapping()!=before:raise PreparedOwnerStop()
+        registry=witness.marker.setdefault('template_owner_permits803',[])
+        if len(registry)+sum(row[0] in ('claim','resolution') for row in before)>100:raise PreparedOwnerStop()
+        results={}
+        for row in before:
+            if row[0]=='retraction':continue
+            permit=_Permit(witness.marker,worklist,row);registry.append({'permit':permit,'used':False})
+            reader=OwnerReader(observer,keys,worklist,permit)
+            results[(row[0],row[1])]=reader.evaluate(row[0],row[1])
+        if mapping()!=before:raise PreparedOwnerStop()
+        for item in output:
+            if item['kind'] in ('claim','resolution'):item['owner_authority_pin_current']=results[(item['kind'],item['id'])]
+        if check_registered_worklist(observer,keys,worklist) is not witness:raise PreparedOwnerStop()
+        return output
+    except Exception:
+        if budget is not None:budget.poison()
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise
