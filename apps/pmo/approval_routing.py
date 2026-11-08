@@ -38,13 +38,15 @@ def intent(a,r,purpose,factory_work_id=None):
   value['factory_execution']={'schema':'factory-planning-routing/v1','work':w.pk,'profile':profile.pk,'executor':a.pk}
  return value
 
-@transaction.atomic
-def reserve(a,case_id,request_id,purpose='request',expected=None,factory_work_id=None):
- c=d.locked(a,case_id,'approval.route',expected);r=d.exact(c,request_id);value=intent(a,r,purpose,factory_work_id)
+def guard_reserve(a,c,request_id,purpose='request',factory_work_id=None):
+ """Read-only native reservation prerequisites; observation grants no dispatch authority."""
+ d.readable(a,c);require(a,c,'approval.route')
+ if c.kind!='project':raise ValidationError('Project coordination case required')
+ r=d.exact(c,request_id);value=intent(a,r,purpose,factory_work_id)
  jobs=ApprovalRouteJob.objects.filter(request=r).order_by('-generation');last=jobs.first()
  if purpose=='request' and last:
   original=jobs.filter(purpose='request').exclude(status__in=['cancelled','replaced']).order_by('-pk').first()
-  if original and original.intent==value and original.status not in ['cancelled','replaced']:return original
+  if original and original.intent==value and original.status not in ['cancelled','replaced']:return r,value,original,last.generation+1
   raise ValidationError('Use explicit held-job intent replacement or a successor request')
  if last and (last.status in ['pending','unknown','leased','held']):raise ValidationError('Reconcile outstanding routing before another reminder')
  if purpose=='reminder':
@@ -54,6 +56,13 @@ def reserve(a,case_id,request_id,purpose='request',expected=None,factory_work_id
   if not latest or (timezone.now()-latest.created_at).total_seconds()<contract['minimum_reminder_interval_seconds']:raise ValidationError('Confirmed receipt and configured reminder interval required')
   if receipts.filter(job__purpose='reminder').count()>=contract['maximum_reminders']:raise ValidationError('Configured reminder budget exhausted')
  generation=last.generation+1 if last else 1
+ return r,value,None,generation
+
+@transaction.atomic
+def reserve(a,case_id,request_id,purpose='request',expected=None,factory_work_id=None):
+ c=d.locked(a,case_id,'approval.route',expected)
+ r,value,existing,generation=guard_reserve(a,c,request_id,purpose,factory_work_id)
+ if existing:return existing
  j=ApprovalRouteJob.objects.create(request=r,actor=a,generation=generation,purpose=purpose,operation_key=digest({'tenant':c.tenant,'request':r.pk,'generation':generation,'purpose':purpose}),intent=value)
  event(a,c,'approval.route_reserved',job=j.pk,approval_granted=False);bump(c);return j
 

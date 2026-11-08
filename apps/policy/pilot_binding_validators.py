@@ -32,7 +32,10 @@ def schema():
     args={'expected_revision':ID}
     from .document_validators import ROLES
     from adapters.billing_usage import KEY as CASH_OPERATION_KEY
-    specs={'receipt.verify':dict(args,cash_receipt_id=ID,role={'enum':ROLES},cash_verification_evidence_id=ID),
+    specs={'recognition.attest':dict(args,recognition_input_id=ID,recognition_input_sha256={'type':'string','pattern':'^[a-f0-9]{64}$'}),
+        'planning.readiness':dict(args,planning_packet_id=ID),'approval.route':dict(args,approval_request_id=ID,approval_purpose={'enum':['request','reminder']}),
+        'ledger.review':dict(args,ledger_check_id=ID,ledger_review_evidence_id=ID,ledger_verdict={'enum':['approve','reject']}),
+        'receipt.verify':dict(args,cash_receipt_id=ID,role={'enum':ROLES},cash_verification_evidence_id=ID),
         'receipt.allocate':dict(args,cash_lot_id=ID,issued_invoice_id=ID,cash_amount={'type':'string','minLength':1,'maxLength':70,'pattern':r'^(0|[1-9][0-9]{0,39})(\.[0-9]{1,20})?$'},operation_key={'type':'string','minLength':1,'maxLength':100,'pattern':CASH_OPERATION_KEY.pattern},role={'enum':ROLES},cash_allocation_evidence_id=ID),
         'payment.assess':dict(args,dossier_id=ID,coverage_id=ID),'hypercare.evaluate':dict(args,dossier_id=ID),
         'workflow.clock.evaluate':dict(args,action_state_id=ID),'role.decision.evaluate':dict(args,role={'enum':ROLES},decision_action={'enum':['approve','return','reject','withdraw','reopen']},delegated={'type':'boolean'}),
@@ -68,11 +71,15 @@ def validate(contract,payload):
     from apps.core.evidence_access import public_evidence
     kinds={'plan_id':'plan','cost_id':'costing','sow_id':'sow','signature_id':'signature','evidence_id':'completion','cash_verification_evidence_id':'cash_verification','cash_allocation_evidence_id':'cash_allocation'}
     for g in payload['guards']:
+        if g['operation']=='planning.readiness' and not Evidence.objects.filter(case=contract.case,pk=g['arguments']['planning_packet_id'],kind='planning_packet').exists():
+            raise ValidationError('Exact scoped planning packet required')
+        if g['operation']=='ledger.review' and not public_evidence(Evidence.objects.filter(case=contract.case,pk=g['arguments']['ledger_review_evidence_id'])).exists():
+            raise ValidationError('Exact permitted public review evidence required')
         for k,kind in kinds.items():
             if k in g['arguments'] and not public_evidence(Evidence.objects.filter(case=contract.case,pk=g['arguments'][k],kind=kind)).exists():
                 raise ValidationError('Exact permitted case source evidence required')
         from django.apps import apps
-        for key,model,path in [('cash_receipt_id','finance.CashReceipt','case'),('cash_lot_id','finance.CashVerification','receipt__case'),('issued_invoice_id','finance.InvoiceIssue','invoice__case'),('dossier_id','pmo.DeliveryDossier','case'),('coverage_id','finance.BillingCoverage','case'),('action_state_id','pmo.ActionState','item__case'),('version_id','documents.Version','document__case'),('invoice_id','finance.Invoice','case'),('correction_id','finance.InvoiceCorrection','case'),('packet_id','baas.SupportResponsePacket','case')]:
+        for key,model,path in [('recognition_input_id','core.Evidence','case'),('approval_request_id','pmo.ApprovalRequest','case'),('ledger_check_id','finance.LedgerCheck','lineage__case'),('cash_receipt_id','finance.CashReceipt','case'),('cash_lot_id','finance.CashVerification','receipt__case'),('issued_invoice_id','finance.InvoiceIssue','invoice__case'),('dossier_id','pmo.DeliveryDossier','case'),('coverage_id','finance.BillingCoverage','case'),('action_state_id','pmo.ActionState','item__case'),('version_id','documents.Version','document__case'),('invoice_id','finance.Invoice','case'),('correction_id','finance.InvoiceCorrection','case'),('packet_id','baas.SupportResponsePacket','case')]:
             if key in g['arguments'] and not apps.get_model(model).objects.filter(pk=g['arguments'][key],**{path:contract.case}).exists():raise ValidationError('Exact native case subject required')
     d=payload['deployment']
     if d['web_key_ref']==d['worker_key_ref']:raise ValidationError('Independent role key references required')

@@ -199,18 +199,24 @@ def inputs(c,e,comparison_required,reader):
     return {'policy_id':p.pk,'alignment_links':links,'candidate_id':pair['candidate_id'],'observations':observations,'comparison_id':comparison_context(c,e,p,rules) if comparison_required else None,
         'source_hashes':{k:proof(c,payload[k]).sha256 for k in SOURCE_KINDS},'source_correlation':correlation,'native_verified':False}
 
-@transaction.atomic
-def prepare(a,case_id,packet_id):
-    c=locked(a,case_id,'prepare');e,_=packet(c,packet_id)
+def guard_prepare(a,c,packet_id):
+    readable(a,c);require(a,c,'planning.prepare')
+    e,_=packet(c,packet_id)
     requests(c,e,a)
     old=latest(c,'ready')
     if old:
         try:
-            if current_readiness(c,old.pk)['packet_id']==e.pk:return old
+            if current_readiness(c,old.pk)['packet_id']==e.pk:return e,None,old
         except (ValidationError,PermissionDenied):pass
     required=Baseline.objects.filter(case=c,signed__isnull=False).exists()
     value={'packet_id':e.pk,'packet_sha256':e.sha256,'comparison_required':required,'inputs':inputs(c,e,required,a)}
-    return write(a,c,'ready',value)
+    return e,value,None
+
+@transaction.atomic
+def prepare(a,case_id,packet_id):
+    c=locked(a,case_id,'prepare')
+    _,value,old=guard_prepare(a,c,packet_id)
+    return old or write(a,c,'ready',value)
 
 def current_readiness(c,evidence_id):
     item=c.evidence.filter(pk=evidence_id,kind=KINDS['ready']).first();value=read(c,item,'ready','prepare')

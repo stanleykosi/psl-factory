@@ -1,17 +1,13 @@
-# Public source backup
+# Fresh cloud source backup scope
 
-This source-only development update preserves 29 accepted implementation, test and fixture/helper files from frozen checkpoint `4b3191f9be35dfcf70983a86f3b975cb128510b1` on top of public backup `b06e8ae`. It is not a release, deployment or main-branch merge.
+This new backup carries 264 reviewed source, test, helper and dependency-design files from local accepted checkpoint `0b2820ea6b9cc2bf322be00fcc9b73a92b37bd1a`, plus this scope note. It is a fresh backup, not a reconstruction or retry of an earlier unavailable payload. Its only destination is `build/cloud-milestone`; the repository's `main` branch is not changed.
 
-## Included changes
+Included: the accepted ledger/approval/planning/recognition preview and policy-impact source through engagement-profile805, related tests, selected dependency helpers and manifests, and the reconciled QuickBooks/provider runbooks. The 264-file source set totals 6,921,136 bytes. Files outside this reviewed set remain at their existing remote versions; no remote files are deleted.
 
-Invoice delivery pins canonical local adapter callables and requires an outer autocommit boundary for custom adapters before claiming work or contacting a provider. Related synthetic fixtures explicitly establish invoice identity and refresh the real review packet. QuickBooks MCP rejects decoded responses containing the exact current bearer secret, including object keys; it does not claim detection of arbitrary encodings. Direct QBO transport uses bounded chunk reads with a monotonic body budget, not a strict end-to-end DNS/TLS/header deadline.
+Excluded: runtime database snapshots, logs, screenshots, private proof archives, credentials, nondependency operational scripts and unsanitized historical build records. Historical local acceptance is not a fresh full-suite run, deployment or live-provider acceptance. Selection manifests and harness source retain exact historical provenance, but private proof inputs and old source checkouts are not included: those historical proof commands are not represented as runnable from this backup alone. Existing BUILD/HANDOFF records outside this payload may describe older checkpoints and are not a current completion ledger.
 
-## Verification boundary
+Bounded accepted805 evidence covers 15 selected native outcomes, including populated migration preservation, metadata access checks and restart comparisons. It does not establish full108 acceptance or mean only HOD decisions remain. Provider setup, genuine owner/HOD policy choices, unresolved technical acceptance, cold recovery and historical-artifact gaps remain distinct. Browser tests are excluded; held performance/F08/conversion work is neither changed nor authorized by this backup.
 
-Accepted bounded provider verification covers 35 selected tests. Invoice verification covers 63 selected tests across split runs, not one uninterrupted full-suite execution. These results support the reviewed increments only; they do not establish full 108-process acceptance, all caller compatibility, live provider operation or the only-owner-inputs-remain readiness gate. Older public documents may describe earlier checkpoints. No hosted CI result is claimed.
+The separate inert803 branch at `95afd30514bbc2c19f5f380bd3febd6c5d9a06a9` is NOT integrated or included. It has 73 changed paths relative to its base `8aaaecc7752543bc78cf3afdfce621b3c70cfebc`; those remain separately saved locally pending review of an explicitly nonapplied snapshot. Component tests for that work do not establish native database equivalence.
 
-Browser testing remains excluded by user direction. Restricted security/performance work remains held. Pending cold-recovery work and the separate historical test-organization repair are excluded. Real provider setup, accounts, credentials, source mappings and owner policy choices remain separate; none is invented or enabled by this backup.
-
-## Publication boundary
-
-Only the 29 reviewed source/test/helper files and this sanitized note change. Runtime wrapper checks, harnesses, raw proof, logs, screenshots, archives, private coordination and local Git history are excluded. All other public blobs and the existing evidence subtree remain unchanged. Main is unchanged. No deployment or live service action is performed.
+No security alert investigation or remediation is included. Narrow new-payload pattern screening and unchanged-region hash comparison do not constitute a repository-wide security audit. Publication verification and any hosted CI results must be reported separately after the remote update.

@@ -15,6 +15,10 @@ from .role_guard import guard as role_guard
 from .clock_guard import guard as clock_guard
 from .release_evaluations import payment as payment_guard,hypercare as hypercare_guard
 from .cash_guards import verify as cash_verify_guard,allocate as cash_allocate_guard
+from .ledger_review_guard import guard as ledger_review_guard
+from .planning_readiness_guard import guard as planning_readiness_guard
+from .approval_route_guard import guard as approval_route_guard
+from apps.finance.recognition_preview import guard as recognition_guard
 
 
 def issue(a,c,invoice_id,role):return invoices.guard_reserve(a,c,invoice_id,'issue',role)
@@ -23,6 +27,10 @@ def correct(a,c,correction_id,role):return corrections.guard_reserve(a,c,correct
 def correction_deliver(a,c,correction_id,role):return corrections.guard_reserve(a,c,correction_id,'adjust_deliver',role)
 
 REGISTRY={
+ 'recognition.attest':('recognition.attest',recognition_guard,['recognition_input_id','recognition_input_sha256']),
+ 'planning.readiness':('planning.prepare',planning_readiness_guard,['planning_packet_id']),
+ 'approval.route':('approval.route',approval_route_guard,['approval_request_id','approval_purpose']),
+ 'ledger.review':('ledger.review',ledger_review_guard,['ledger_check_id','ledger_review_evidence_id','ledger_verdict']),
  'receipt.verify':('finance.cash.verify',cash_verify_guard,['cash_receipt_id','role','cash_verification_evidence_id']),
  'receipt.allocate':('finance.cash.allocate',cash_allocate_guard,['cash_lot_id','issued_invoice_id','cash_amount','operation_key','role','cash_allocation_evidence_id']),
  'payment.assess':('payment.assess',payment_guard,['dossier_id','coverage_id']),
@@ -62,7 +70,19 @@ def check(observer,case,selection):
     from apps.policy.pilot import context
     from apps.identity.models import Grant
     case=context(observer,case.pk)
-    if selection['operation'] in ['receipt.verify','receipt.allocate']:
+    if selection['operation']=='recognition.attest':
+        from apps.finance.recognition_preview import get
+        get(observer,case,selection['arguments']['recognition_input_id'],selection['arguments']['recognition_input_sha256'])
+    elif selection['operation']=='planning.readiness':
+        from .planning_readiness_guard import readable
+        readable(observer,case,selection['arguments'])
+    elif selection['operation']=='approval.route':
+        from .approval_route_guard import readable
+        readable(observer,case)
+    elif selection['operation']=='ledger.review':
+        from .ledger_review_guard import readable
+        readable(observer,case,selection['arguments'])
+    elif selection['operation'] in ['receipt.verify','receipt.allocate']:
         from .cash_guards import readable
         readable(observer,case)
     elif selection['operation'] in ['payment.assess','hypercare.evaluate']:
@@ -90,6 +110,15 @@ def check(observer,case,selection):
         from .role_guard import required
         keys=required(args);result['native_required_components']=keys
         result['authority_scope']='role_and_decision_action_only';result['business_approval']=False
+    if operation=='recognition.attest':
+        result['coverage']='unbound_proposed_attestation_observation';result['business_approval']=False;result['separately_entered_intent_bound']=False
+    if operation=='approval.route':
+        result['coverage']='native_internal_approval_routing_only';result['business_approval']=False
+    if operation=='ledger.review':
+        keys=['F01.review_authority','D05.role_principal_assignments'] if args['ledger_verdict']=='reject' else keys
+        result['native_required_components']=keys
+        result['coverage']='native_review_public_evidence_only'
+        result['business_approval']=False
     if operation=='workflow.clock.evaluate':
         from .clock_guard import required
         keys=required(case);result['native_required_components']=keys
@@ -112,11 +141,29 @@ def check(observer,case,selection):
             result['clock_calculation']={key:native[1][key] for key in ['proposed_base_due_at','input_quality','scope','operational_deadline_unchanged','action_grants_evaluated']}
         if operation in ['payment.assess','hypercare.evaluate']:
             result['evaluation']=native[1]['evaluation']
+        if operation=='recognition.attest':
+            result['native_context_sha256']=digest(native[1]);result['policy_pins']+=sorted(pins(native[1]))
+            if native[2]:result['existing_record']=native[2].pk
+        if operation=='planning.readiness':
+            result['native_context_sha256']=digest(native[1])
+            result['coverage']='planning_prepare_readonly'
+            result['business_approval']=False
+            result['native_verified']=False
+        if operation=='approval.route':
+            result['policy_pins']+=sorted(pins(native[1]))
+            result['native_context_sha256']=digest(native[1])
+            if native[2]:result['existing_reservation']=native[2].pk
+        if operation=='ledger.review':
+            result['policy_pins']+=sorted(pins(native[1]))
+            result['native_context_sha256']=digest(native[1])
+            result['coverage']='native_review_public_evidence_only'
+            result['business_approval']=False
         if operation=='baas.response.decide':
             result['policy_pins']+=sorted(pins(native[1]))
             result['native_context_sha256']=digest(native[1])
         result['state']='READY_AT_OBSERVATION'
         if result.get('existing_reservation'):result['state']='EXISTING_RESERVATION_SOURCE_RECOVERY'
+        if operation=='recognition.attest' and result.get('existing_record'):result['state']='EXACT_RECORDED_REPLAY_ONLY'
     except PolicyHold as exc:
         result['findings']=[{'code':'policy_hold','component':r.component,'status':r.status} for r in exc.results]
     except PermissionDenied:result['findings']=[{'code':'native_authority_denied'}]
@@ -140,6 +187,12 @@ def check(observer,case,selection):
         packet=support_release.packet_for(case,args['packet_id'])
         result['head']['packet']=[packet.pk,packet.sha256,support_release.Decision.objects.filter(packet=packet).order_by('-pk').values_list('pk',flat=True).first(),support_release.Job.objects.filter(packet=packet).order_by('-pk').values_list('pk',flat=True).first()]
         result['policy_pins']+=sorted(pins(packet.snapshot))
+    if operation=='approval.route':
+        from .approval_route_guard import head
+        result['head']['approval_route']=head(observer,case,args['approval_request_id'])
+    if operation=='ledger.review':
+        from .ledger_review_guard import head
+        result['head']['ledger_review']=head(observer,case,args)
     if operation=='document.publish':
         from .document_guard import head
         result['head']['document'],authority=head(observer,case,args['version_id'])
@@ -164,4 +217,7 @@ def check(observer,case,selection):
             result['head']['generated_costing']=[binding.pk,digest(binding.run.snapshot)]
     result['policy_pins']=sorted(set(result['policy_pins']))
     for pk in result['policy_pins']:configuration(observer,case.pk,pk)
+    if operation=='planning.readiness':
+        from .planning_readiness_guard import head
+        result['head']['planning_readiness']=head(observer,case,args)
     return result

@@ -92,10 +92,12 @@ def prepare(actor,case_id,reference,payload,evidence_id,expected):
  r=ProgressPacket.objects.create(case=case,reference=reference,version=v,payload=payload,manifest=m,sha256=digest({'payload':payload,'manifest':m}),evidence=e,actor=actor)
  event(actor,case,'recognition.packet',packet=r.pk);bump(case);return r
 
-@transaction.atomic
-def record(actor,case_id,packet_id,kind,operation_key,evidence_id,note,expected,verdict=None,decision_evidence_id=None):
+def guard_record(actor,case,packet_id,kind,operation_key,evidence_id,note,verdict=None,decision_evidence_id=None):
+ """Read-only native checks, including original replay before new-currentness."""
  if kind not in ['attest','request','receive','review']:raise ValidationError('Unknown F33 transition')
- case=locked(actor,case_id,'recognition.'+kind,expected);validate(KEY,operation_key);validate(TEXT,note)
+ require(actor,case,'recognition.'+kind);require(actor,case,'case.read');require(actor,case,'recognition.read')
+ if case.kind!='project':raise ValidationError('Project case required')
+ validate(KEY,operation_key);validate(TEXT,note)
  packet=ProgressPacket.objects.filter(case=case,pk=packet_id).first()
  if not packet:raise ValidationError('Scoped progress packet required')
  e=subject(case,evidence_id)
@@ -105,7 +107,7 @@ def record(actor,case_id,packet_id,kind,operation_key,evidence_id,note,expected,
  old=packet.records.filter(operation_key=operation_key).first()
  if old:
   if old.actor_id!=actor.pk or old.kind!=kind or old.evidence_id!=e.pk or old.payload['intent']!=intent:raise ValidationError('Operation key reused for changed intent')
-  return old
+  return packet,e,intent,old,{},{}
  packet_current(packet);auth={};snapshot={}
  if kind=='attest':auth=authority(actor,case,'attest')
  elif kind=='request':snapshot={'attestation_id':attested(packet).pk}
@@ -129,6 +131,14 @@ def record(actor,case_id,packet_id,kind,operation_key,evidence_id,note,expected,
    if gaps or not set(rules['required_categories'])<=cats:raise ValidationError('Unresolved evidence gaps/conflicts or required categories: '+str(gaps))
    if rules['decision_reference_required'] and not decision_evidence_id:raise ValidationError('Finance decision evidence reference required')
    snapshot.update(review_policy_id=config.pk,policy_evidence_id=rules['policy_evidence_id'])
+ return packet,e,intent,None,auth,snapshot
+
+@transaction.atomic
+def record(actor,case_id,packet_id,kind,operation_key,evidence_id,note,expected,verdict=None,decision_evidence_id=None):
+ if kind not in ['attest','request','receive','review']:raise ValidationError('Unknown F33 transition')
+ case=locked(actor,case_id,'recognition.'+kind,expected)
+ packet,e,intent,old,auth,snapshot=guard_record(actor,case,packet_id,kind,operation_key,evidence_id,note,verdict,decision_evidence_id)
+ if old:return old
  payload={'intent':intent,'snapshot':snapshot,'recognised_amount':None,'accounting_posted':False,'invoice_approved':False,'payment_approved':False}
  r=RecognitionRecord.objects.create(packet=packet,kind=kind,operation_key=operation_key,payload=payload,authority=auth,evidence=e,actor=actor)
  event(actor,case,'recognition.'+kind,record=r.pk,packet=packet.pk);bump(case);return r

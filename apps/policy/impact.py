@@ -59,7 +59,7 @@ def page(actor,case_id,configuration_id,key,cursor=None,limit=25):
             after=token[4]
         except (signing.BadSignature,ValueError,TypeError,IndexError):
             raise ValidationError('Invalid or stale impact page link')
-    rows=list(adapter.query(config,key).filter(pk__gt=after)[:limit+1])
+    rows=list(adapter.query(config,key,actor=actor).filter(pk__gt=after)[:limit+1])
     for row in rows:adapter.authorize_row(actor,config.case,key,row)
     more=len(rows)>limit;rows=rows[:limit]
     token=signing.dumps([actor.pk,str(config.case_id),config.pk,key,rows[-1].pk],salt=FORMAT) if more else None
@@ -80,11 +80,11 @@ def observation(actor,previous,successor,keys,lock=False):
         'coverage':'complete only for selected declared adapters at the observed heads; other consumers remain unknown'}
     for key in keys:
         adapter.authorize(actor,previous.case,key)
-        query=adapter.query(previous,key)
+        query=adapter.query(previous,key,actor=actor)
         # Effect rows are mutable independently of case services. NOWAIT avoids a case/job lock-order deadlock.
         try:
             with transaction.atomic():
-                if lock and key in ['finance.invoice_effects','finance.correction_effects','baas.response_effects']:
+                if lock and key in ['finance.invoice_effects','finance.correction_effects','baas.response_effects','pmo.approval_routing_jobs','workflows.factory_planning_profiles','workflows.factory_engagement_profiles']:
                     query=query.select_for_update(of=('self',),nowait=True)
                 rows=list(query[:SNAPSHOT_LIMIT+1])
         except DatabaseError:
