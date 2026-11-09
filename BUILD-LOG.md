@@ -1,5 +1,7 @@
 # Build progress log
 
+9 November 2026. Verified the scoped scalar resolver increment and added restricted QuickBooks read status to the primary Finance console. The status remains available to authorized readers during a connection hold. Native tests proved the same reservation is retained and GET performs no provider call. Adopted the exact Python 3.13 marker from the audited snapshot. Updated HOD, external setup and remaining engineering separately.
+
 9 November 2026. Fresh local PostgreSQL migration completed. Reproduced D11's unrelated validator dependency in the native policy lifecycle, isolated the exact storage component, and observed passing D11, template and operator HTTP tests. The broader QuickBooks native cohort is in progress. Reviewed hosted prerequisites and recorded the two Django deploy check warnings. Kept the prepared-reader snapshot chain inert.
 
 9 November 2026. Fast-forwarded the clean local main to reviewed GitHub commit `501b76f` and started `build/local-milestone-20261109`. Verified the nonapplied snapshot chain separately. Fixed the integration registry and QuickBooks MCP profile loaders on Windows using bounded regular-file handles with final-link rejection. Local provider component results and the symlink-fixture skip are in BUILD-TESTS.md. This work uses synthetic test data and does not configure an Intuit account.

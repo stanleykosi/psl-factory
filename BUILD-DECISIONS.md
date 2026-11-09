@@ -1,5 +1,7 @@
 # Build decisions
 
+9 November 2026. Limit default policy selection to scalar revision metadata and fetch the chosen envelope on demand. Retain the exhaustive state scan, current-state recheck and existing scope and time logic. This reduces unselected JSON hydration. Total history work and the larger prepared-reader resource bounds remain engineering work. The Finance console reads MCP reservation metadata through the existing native status and current private integration/contract grants. The status panel and the operator's existing work controls have separate authority checks.
+
 9 November 2026. Integrate D11 storage dispatch independently of privacy803 prepared readers. Select the existing document validator only after shared envelope, reference, schema and content-hash checks. Skip unrelated collection validators for this exact storage component. The native validator still handles the registered storage schema and its draft/runtime distinctions. A local AST comparison confirms other policy service logic matches the reviewed main after removing the three exact storage dispatch additions.
 
 9 November 2026. Share bounded file reading between the existing integration registry and optional QuickBooks MCP profile. POSIX retains nonblocking no-follow opening. Windows opens the final reparse point itself and validates attributes on the same handle used for reading. The host-specific implementation preserves the existing schema, size, secret-reference and transport gates.
