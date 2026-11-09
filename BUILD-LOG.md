@@ -1,5 +1,7 @@
 # Build progress log
 
+9 November 2026. Paged the owner template workbench and bounded list and choice reads. The SQL diagnostic found a deferred foreign-key lookup per source. The corrected small and large fixtures each executed 29 statements, and native exact submissions and historical reviews passed. Rehearsed Finance 0077 on 2,050 synthetic scenarios, including lock observation, privacy and row preservation, and malformed-data rollback. Recorded the deployment write window and deferred HOD choices separately.
+
 9 November 2026. Integrated bounded, scope-authorized owner history and the forecast citation index. PostgreSQL verified a 100-record batch, committed grant revocation, populated migration, indexed evidence lookup and native publication. The nine-case follow-up passed after correcting the Finance template fixture. Recorded deployment rehearsal and HOD decisions separately.
 
 9 November 2026. Integrated bounded dependency loading for exact PMO and Finance template-source reads and added the original-recorder authority page for selected claims and decisions. The first SQL trace exposed an unbounded source-family projection. Corrected it and passed all 16 tests in the composed PostgreSQL rerun. Kept native D11 typed-reference validation and deferred HOD policy choices.

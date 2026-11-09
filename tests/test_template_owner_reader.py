@@ -57,6 +57,11 @@ class TemplateOwnerReaderTests(TransactionTestCase):
         self.assertContains(self.client.get(url), 'original recorder still holds')
         self.assertIn('no-store', self.client.get(url)['Cache-Control'])
         self.assertEqual(self.client.post(url).status_code, 405)
+        inventory_url = reverse('template_owner_pin_detail', args=(self.case.pk, 'decision', decision.pk))
+        inventory = self.client.get(inventory_url, {'inventory': 1})
+        self.assertContains(inventory, f'{reported.pk}, {recorded.pk}')
+        self.assertNotContains(inventory, 'original recorder still holds')
+        self.assertEqual(self.client.get(url, {'inventory': 1}).status_code, 404)
 
         Grant.objects.create(case=self.case, user=self.observer, action='document.template')
         Grant.objects.filter(case=self.case, user=self.owner, action='document.template').update(active=False)

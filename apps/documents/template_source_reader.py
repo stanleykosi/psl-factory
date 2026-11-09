@@ -5,7 +5,7 @@ from django.db import DatabaseError, connection, transaction
 from django.db.models import Func, IntegerField, Q
 
 from apps.core.models import Evidence
-from apps.core.read_budget import ReadBudget, ReadLimit
+from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
 from apps.identity.services import require, visible_cases
 from .models import TemplateClaim, TemplateClaimRetraction, TemplateResolution, TemplateScope
 from .template_access import visible_scopes, visible_sources
@@ -54,11 +54,11 @@ def _source(actor, case, budget, source_id):
     return case, source
 
 
-def read_owner_pin(actor, case_id, kind, pk):
+def read_owner_pin(actor, case_id, kind, pk, *, recorded_inventory=False):
     from .template_current import owner_current
 
     model = {'claim': TemplateClaim, 'decision': TemplateResolution}.get(kind)
-    if model is None or not _valid_id(pk):
+    if model is None or not _valid_id(pk) or (recorded_inventory and kind != 'decision'):
         return None
 
     def read(fresh, case, budget):
@@ -70,6 +70,8 @@ def read_owner_pin(actor, case_id, kind, pk):
         scopes = TemplateScope.objects.filter(pk=record.scope_id)
         if not visible_scopes(fresh, case, scopes=scopes, budget=budget).exists():
             return None
+        if recorded_inventory:
+            return case, {'recorded': True, 'claim_ids': budget.load(record, 'claim_ids')}
         record.scope.case = case
         return case, {'current': owner_current(record, budget=budget), 'pinned': record.owner_policy_id is not None}
 
@@ -126,21 +128,12 @@ def _snapshot(actor, case_id, read):
     if connection.vendor != 'postgresql' or connection.in_atomic_block or not connection.get_autocommit():
         raise ReadLimit
 
-    remaining = MAX_QUERIES
-
-    def charge(execute, sql, params, many, context):
-        nonlocal remaining
-        if remaining == 0:
-            raise ReadLimit
-        remaining -= 1
-        return execute(sql, params, many, context)
-
     try:
         with transaction.atomic(durable=True):
             with connection.cursor() as cursor:
                 cursor.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')
                 cursor.execute("SELECT set_config('statement_timeout', %s, true)", [str(STATEMENT_TIMEOUT_MS)])
-            with connection.execute_wrapper(charge):
+            with limit_queries(MAX_QUERIES):
                 fresh = get_user_model().objects.filter(pk=actor.pk, is_active=True).only('id', 'is_active').first()
                 if fresh is None:
                     raise PermissionDenied

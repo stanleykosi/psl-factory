@@ -1,10 +1,25 @@
 """Bound data transferred by an explicitly scoped PostgreSQL snapshot reader."""
-from django.db import models
+from contextlib import contextmanager
+
+from django.db import connection, models
 from django.db.models.functions import Cast
 
 
 class ReadLimit(Exception):
     """An engineering hold, independent of domain validation or permission."""
+
+
+@contextmanager
+def limit_queries(remaining):
+    def charge(execute, sql, params, many, context):
+        nonlocal remaining
+        if remaining == 0:
+            raise ReadLimit
+        remaining -= 1
+        return execute(sql, params, many, context)
+
+    with connection.execute_wrapper(charge):
+        yield
 
 
 class ReadBudget:

@@ -53,18 +53,20 @@ def visible_scopes(actor, case, *, scopes=None, budget=None):
 
 
 def require_scope(actor, scope):
-    if not visible_scopes(actor, scope.case).filter(pk=scope.pk).exists():
+    if not visible_scopes(actor, scope.case, scopes=TemplateScope.objects.filter(pk=scope.pk)).exists():
         raise PermissionDenied('Template source metadata needs its owning document-domain access')
 
 
-def visible_sources(actor, case, *, source_id=None, budget=None):
+def visible_sources(actor, case, *, source_id=None, source_ids=None, budget=None):
     from .template_current import SOURCE_KIND
     scopes = TemplateScope.objects.filter(case=case)
     sources = case.evidence.all()
     if source_id is not None:
-        sources = sources.filter(pk=source_id)
-        scopes = scopes.filter(Q(evidence_id=source_id) | Q(claims__evidence_id=source_id) |
-            Q(resolutions__evidence_id=source_id) | Q(claims__retraction__evidence_id=source_id))
+        source_ids = [source_id]
+    if source_ids is not None:
+        sources = sources.filter(pk__in=source_ids)
+        scopes = scopes.filter(Q(evidence_id__in=source_ids) | Q(claims__evidence_id__in=source_ids) |
+            Q(resolutions__evidence_id__in=source_ids) | Q(claims__retraction__evidence_id__in=source_ids))
         visible = visible_scopes(actor, case, scopes=scopes, budget=budget)
     else:
         visible = visible_scopes(actor, case, budget=budget)

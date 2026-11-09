@@ -3,9 +3,9 @@
     "reviewed_main": "501b76f8304d971c3786223dcc91a863eec58cef",
     "branch": "build/local-milestone-20261109",
     "snapshot_integrity": "Five nonapplied snapshots reconstructed and hash verified outside active source",
-    "current_increment": "Bounded selected owner history and indexed Finance forecast evidence privacy with atomic historical backfill",
-    "verification": "PostgreSQL 16.15 owner batch and forecast citation checkpoint: 16 passes and one fixture error initially, nine passes in the corrected follow-up. Migration 0077 applied and populated upgrade verified. Django and migration drift checks passed. See BUILD-TESTS.md for separate runs.",
-    "next": ["Rehearse forecast citation migration on representative isolated data and scale workbench list reads", "Broader connected workflow and milestone acceptance", "HTTPS redirect and HSTS configuration for an approved deployment topology"],
+    "current_increment": "Bounded template workbench lists and populated PostgreSQL rehearsal of Finance migration 0077",
+    "verification": "PostgreSQL 16.15 rehearsal backfilled 2,050 synthetic scenarios to 26,627 citations and passed lock, rollback and privacy checks. The corrected nine-test cohort passed. Both workbench fixture sizes executed 29 SQL statements. Django and migration drift checks passed. See BUILD-TESTS.md for split runs.",
+    "next": ["Broader connected workflow and milestone acceptance", "Measure protected binding query work and rehearse on an approved operational copy", "HTTPS redirect and HSTS configuration for an approved deployment topology"],
     "external_setup": ["Approved QuickBooks hosted MCP access and read scope", "Actual tool schema and scoped company binding", "Deployment authorization and environment configuration"],
     "owner_policy": "HOD ownership, independent review roles, exact evidence sources and Finance rules stay separate from engineering",
     "full_product_complete": false

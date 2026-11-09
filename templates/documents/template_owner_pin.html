@@ -2,9 +2,10 @@
 {% block title %}Template owner authority · PSL Product Studio{% endblock %}
 {% block content %}
 {% if case %}<p><a href="{% url 'template_current' case.pk %}">Back to owner template claims</a></p>{% endif %}
-<h1>Template owner authority</h1>
+<h1>{% if pin.recorded %}Recorded decision claims{% else %}Template owner authority{% endif %}</h1>
 <section>
 {% if not pin %}<p>The authority check could not complete within the read limits.</p>
+{% elif pin.recorded %}<p>Claims retained with this decision</p><p>{{ pin.claim_ids|join:", " }}</p>
 {% elif not pin.pinned %}<p>This claim was recorded without an owner attestation.</p>
 {% elif pin.current %}<p>The original recorder still holds the recorded owner authority for this scope.</p>
 {% else %}<p>The recorded owner authority is no longer current for this scope.</p>
