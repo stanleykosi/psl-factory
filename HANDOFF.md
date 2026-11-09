@@ -1,5 +1,13 @@
 # PSL operations factory cloud handoff — 6 November 2026
 
+## Local development checkpoint · 9 November 2026
+
+Resume on `build/local-milestone-20261109`, branched from the verified reviewed main `501b76f8304d971c3786223dcc91a863eec58cef`. Local main fast-forwarded from `05590af` with a clean index and working tree. Use the separate local PostgreSQL 16 cluster under `.runtime/psl-local-20261109-pg16`, loopback port 55443, role `psl_local` and database `psl_local_20261109` for this machine's synthetic checks. Its lifecycle is independent of old development databases. Python 3.13.1 and the exact lock are installed.
+
+All five nonapplied snapshots reconstructed with exact hashes under `.runtime/nonapplied-review-20261109`. After supplying the four matching pinned source dependencies, the isolated D11 suite passed 12 tests in both normal and optimized Python. The privacy resolver, prepared readers and their cross-family permission checks still need native review before activation. For D11, review and test an isolated change against the current document validator and policy lifecycle. Keep the historical backups immutable.
+
+The Windows integration/MCP profile loader fix passed 25 component tests in each of two interpreter modes. One symlink fixture was skipped for missing Windows creation permission. PostgreSQL baseline and native operator/QuickBooks tests are next. Older cloud paths, test processes and held work below are historical. Continue on a build branch and ask before merging to main. Browser testing is out of scope for this stage.
+
 ## Current development handoff: 9 November 2026
 
 This section supersedes older continuation/status paragraphs below. The user requested a reviewed main-branch handoff to resume local development, not a production release or completion declaration.

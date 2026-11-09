@@ -83,12 +83,29 @@ class RegistryTests(unittest.TestCase):
             with self.assertRaises(RuntimeError) as caught: runtime.load_file(self.path)
             self.assertEqual(str(caught.exception), runtime.INVALID)
         self.path.write_bytes(b' '*(runtime.MAX_BYTES+1))
-        link = Path(self.tmp.name)/'link'; link.symlink_to(self.path)
-        fifo = Path(self.tmp.name)/'fifo'; os.mkfifo(fifo)
-        for path in [self.path, link, fifo, Path(self.tmp.name), Path(self.tmp.name)/'missing', 'relative', '']:
+        paths = [self.path, Path(self.tmp.name), Path(self.tmp.name)/'missing', 'relative', '']
+        if hasattr(os, 'mkfifo'):
+            fifo = Path(self.tmp.name) / 'fifo'
+            os.mkfifo(fifo)
+            paths.append(fifo)
+        if os.name == 'nt':
+            paths.extend([self.path.with_name('NUL'), self.path.with_name('registry.json:alternate'),
+                          r'\\.\pipe\psl-registry'])
+        for path in paths:
             with self.subTest(path=str(path)):
                 with self.assertRaises(RuntimeError) as caught: runtime.load_file(path)
                 self.assertEqual(str(caught.exception), runtime.FILE_INVALID)
+
+    def test_symlink_to_valid_registry_is_rejected(self):
+        link = self.path.with_name('link')
+        try:
+            link.symlink_to(self.path)
+        except OSError as exc:
+            if os.name == 'nt' and exc.winerror == 1314:
+                self.skipTest('Windows requires permission to create a symlink fixture')
+            raise
+        with self.assertRaisesRegex(RuntimeError, runtime.FILE_INVALID):
+            runtime.load_file(link)
 
     def test_preflight_does_not_resolve_or_disclose(self):
         with patch('os.getenv', side_effect=AssertionError('environment resolution prohibited')):

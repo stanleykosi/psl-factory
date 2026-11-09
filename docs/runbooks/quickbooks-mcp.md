@@ -14,6 +14,8 @@ Capture an existing integration contract with implementation `hosted_mcp_read_v1
 
 A reference-only profile at `PSL_QUICKBOOKS_MCP_PROFILE` is optional; absence disables MCP. It is a bounded absolute regular non-symlink JSON file. Each alias has exactly: enabled, realm, principal_ref, credential_ref, credential_revision, app_name, contract_id, scopes, reviewed_tool, output_schema, target_argument, result_identity_key, fixed_arguments. Credentials are references to existing READINESS_SECRET_REFS, never values. Scopes must be accounting plus `sales.tools.invoice.read`; broad write MCP scopes are rejected.
 
+On Windows, use an absolute drive-qualified file path. The registry and MCP loaders check the opened Windows handle for reparse attributes before reading, and both platforms retain their file-size and JSON validation limits.
+
 Initially reviewed_tool/output_schema/target_argument/result_identity_key can be null. Discovery is retained privately but capability stays unready. Obtain the real tool schema through authorized discovery. Review it and configure exact tool descriptor, a bounded output projection schema, the exact argument field carrying the supplied source invoice ID, output identity field, and fixed non-secret arguments. Unsupported schemas or complex mappings fail closed rather than guessing. This version supports bounded closed JSON-schema objects/arrays/scalars, no references, regex or external schema resolution. Changed descriptions/schema/configuration/credential revision invalidate prior assessment. Re-probe and use the existing configured human review lifecycle.
 
 ## Native execution and access

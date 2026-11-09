@@ -1,9 +1,8 @@
 """Optional reference-only MCP configuration; no credential resolution or traffic."""
 import os
 import re
-import stat
-from pathlib import Path
 from adapters.quickbooks_mcp import decode, bounded, require, MCPError, READ_SCOPE, VERSION, READ_TOOL, schema_check
+from .runtime_files import read_bounded_file
 
 FIELDS = {'enabled','realm','principal_ref','credential_ref','credential_revision','app_name','contract_id','scopes','reviewed_tool','output_schema','target_argument','result_identity_key','fixed_arguments'}
 
@@ -45,15 +44,7 @@ def load(secrets):
     if not value:
         return {}
     try:
-        path = Path(value)
-        require(path.is_absolute() and not path.is_symlink())
-        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
-        with os.fdopen(fd, 'rb') as source:
-            before = os.fstat(source.fileno())
-            require(stat.S_ISREG(before.st_mode) and before.st_size <= 131072)
-            raw = source.read(131073)
-            after = os.fstat(source.fileno())
-            require(before.st_mtime_ns == after.st_mtime_ns and before.st_size == after.st_size == len(raw))
+        raw = read_bounded_file(value, 131072)
         return validate_registry(decode(raw), secrets)
-    except (OSError, ValueError, TypeError, MCPError):
+    except (OSError, ValueError, TypeError, AttributeError, MCPError):
         raise RuntimeError('Invalid QuickBooks MCP reference configuration') from None

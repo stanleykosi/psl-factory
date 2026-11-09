@@ -1,5 +1,11 @@
 # PSL operations factory build state — 6 November 2026
 
+## Local development checkpoint · 9 November 2026
+
+GitHub main and local main matched `501b76f8304d971c3786223dcc91a863eec58cef` after a clean fast-forward. Development continues on `build/local-milestone-20261109`. All five nonapplied snapshots verified in isolation. Privacy803 and its default resolver change still require native authorization and concurrency composition. D11 isolation is a separately reviewable change.
+
+The integration and QuickBooks MCP profile loaders now read bounded Windows regular files while retaining final-link rejection. Both normal and optimized provider component runs recorded 25 passes and one unavailable symlink fixture. Native tests are the next verification gate. QuickBooks already has a bounded read-only MCP broker, agent entrypoint, operator commands and readiness lifecycle. Live acceptance requires actual provider eligibility, authorized company/principal, a reviewed tool schema and credentials through approved secret storage. HOD authority and business-source decisions remain separate.
+
 ## Current development handoff: 9 November 2026
 
 This section supersedes older continuation/status paragraphs below. The user requested a reviewed main-branch handoff to resume local development, not a production release or completion declaration.

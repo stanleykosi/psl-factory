@@ -1,10 +1,13 @@
 import copy
 import json
+import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch, Mock
 from http.client import BadStatusLine
 from adapters import quickbooks_mcp as m
-from config.quickbooks_mcp_runtime import validate_registry
+from config.quickbooks_mcp_runtime import load, validate_registry
 
 INPUT={'type':'object','properties':{'id':{'type':'string','maxLength':30}},'required':['id'],'additionalProperties':False}
 OUTPUT=copy.deepcopy(INPUT)
@@ -97,6 +100,19 @@ class MCPTests(unittest.TestCase):
         for change in [{'token':'DO_NOT_LEAK'},{'scopes':['com.intuit.quickbooks.accounting','sales.tools.invoice']},{'enabled':1},{'credential_revision':'r2'}]:
             with self.assertRaises(RuntimeError) as e:validate_registry({'fixture':dict(entry,**change)},secret)
             self.assertNotIn('DO_NOT_LEAK',str(e.exception))
+
+    def test_optional_profile_loads_bounded_file_and_holds_invalid_paths(self):
+        with TemporaryDirectory() as folder:
+            path = Path(folder) / 'mcp.json'
+            path.write_bytes(b'{}')
+            with patch.dict(os.environ, {'PSL_QUICKBOOKS_MCP_PROFILE': str(path)}):
+                self.assertEqual(load({}), {})
+                path.write_bytes(b' ' * 131073)
+                with self.assertRaisesRegex(RuntimeError, 'Invalid QuickBooks MCP reference configuration'):
+                    load({})
+            with patch.dict(os.environ, {'PSL_QUICKBOOKS_MCP_PROFILE': 'relative.json'}):
+                with self.assertRaisesRegex(RuntimeError, 'Invalid QuickBooks MCP reference configuration'):
+                    load({})
 
     def response(self, chunks, status=200, content_type='text/event-stream'):
         response=Mock();response.__enter__=Mock(return_value=response);response.__exit__=Mock(return_value=None)
