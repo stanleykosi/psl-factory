@@ -1,5 +1,26 @@
 # PSL operations factory cloud handoff — 6 November 2026
 
+## Current development handoff: 9 November 2026
+
+This section supersedes older continuation/status paragraphs below. The user requested a reviewed main-branch handoff to resume local development, not a production release or completion declaration.
+
+- Reviewed source: `build/cloud-milestone` at `4c3691cb8fe46f6478daf73bdf353ef86247cad7`, based on main `05590afd11494c6c5d973bace2694a2e7da8e73a`: 32 commits and 962 changed files before this documentation update.
+- Active application source is the backed-up development baseline through the `f77f2f0` source selection. The 106 files under `backups/nonapplied/` are deliberately inert copies/patches, NOT active application changes. A normal branch merge preserves them without applying them.
+- Latest privacy803, D11 dispatch isolation, portable regression fixtures, Python 3.13 declaration and AST-format correction remain in those snapshots. Do not claim that merging this branch activates them. The default resolver and D11 dispatch modifications require separate native composition review; no automatic restoration is performed.
+- Review performed on 9 November: 698 changed active Python files parse; independent review parsed 1,102 active apps/adapters/config modules, resolved their absolute local imports and 38 literal dynamic-import targets; 303 migration files parse with no missing literal local dependency or cycle after accounting for the declared replacement. These are static checks, not Django or PostgreSQL execution.
+- GitHub returned no commit statuses or PR workflow runs for `4c3691c`; no `.github/workflows` is checked in. There is no CI pass claim. CRLF-aware diff checking found only three pre-existing extra blank lines at EOF; they are retained rather than changing tested source for formatting.
+- Historical 97 selected pure-test passes (normal and optimized Python) and six inactive-loader checks belong to the reconstructed candidate documented in the snapshots. They are NOT a fresh test run of this active branch and do not establish native/database/full-product acceptance.
+- This review environment lacks Django and psycopg. Full Django startup, migration execution, database/concurrency checks and composed integration tests were NOT run. Full 108-process acceptance remains NOT_MET. No deployment, live provider setup, Railway CLI/configuration, credential change or owner/HOD policy decision is implied.
+
+### Local continuation
+
+1. Fetch the reviewed main branch into a new clean checkout or preserve existing local changes before updating. Do not overwrite local databases or uncommitted work.
+2. Read this section first, then `PUBLIC-BACKUP.md`, each nonapplied snapshot README, and `docs/runbooks/agent-checkout.md`. Historical paths, processes, databases, private evidence and old commit references are not assumed present or runnable.
+3. Use the intended Python 3.13 / PostgreSQL 16 development setup and exact `requirements.lock`. Supply local development credentials outside Git. Use only a NEW isolated development/test database, not a retained/operational database. Re-establish ordinary application and migration checks before claiming acceptance; do not replay historical broad harnesses automatically.
+4. If continuing privacy803/D11, reconstruct the snapshot chain in a separate development branch with exact base/target hash verification: `inert803-402b599` -> `inert803-d11-773ad49` -> `inert803-d11-portable-e5439c4` -> `runtime-contract-dced781` -> `d11-ast-portability-54fa5b3`. Preserve historical snapshots and failures. Review and test the reconstructed changes before active integration.
+5. Continue independent engineering, then owner/HOD policies and provider setup. Previously held Finance performance/F08/conversion operations remain held; moving to local does not authorize retrying or bypassing them. Browser testing remains excluded by the user's direction. No live workers/providers or deployment are authorized by this handoff.
+
+
 ## Current continuation status: 7 November 2026
 
 Current integrated runtime42269ac adds accepted P41 UI93b21fe (727c134PASS) to the accepted group-date correction/P41 composition. Exact changes are two UI view files and17-test module; native services and migrations are unchanged. Relative to1536-file UI proof, only the two accepted datefix fixture edits differ and0026/date-test files are additional. UI evidencef6d8d40 and lifecycle1db5cc0 preserve earlier727/727a/727b diagnostics separately. All main artifacts and historical migrations remain intact. Static system check passed and model migration dry-run found no changes; database was offline, so this is not live migration proof. No new full run or run reservation; prefer one final composed suite after accepted P44/P43/engagement. Browser recheck is separate and prior53e00e8 browser proof does not establish corrected UI acceptance.
