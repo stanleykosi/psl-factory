@@ -15,10 +15,10 @@ from .models import IssueReferenceContract as Contract,IssueReferenceObservation
 KINDS=['risk','incident','change']
 
 
-def read_scope(actor,contract,*,metadata_only=False):
-    for action in ['case.read','issue.read','issue.reference.'+contract.kind+'.read']:require(actor,contract.case,action)
-    for action in ['issue.reference.configure','evidence.add']:require(contract.actor,contract.case,action)
-    issue_subject(contract.case,contract.evidence_id,metadata_only=metadata_only)
+def read_scope(actor,contract,*,metadata_only=False,require_action=require,check_subject=issue_subject):
+    for action in ['case.read','issue.read','issue.reference.'+contract.kind+'.read']:require_action(actor,contract.case,action)
+    for action in ['issue.reference.configure','evidence.add']:require_action(contract.actor,contract.case,action)
+    check_subject(contract.case,contract.evidence_id,metadata_only=metadata_only)
 
 
 @transaction.atomic
@@ -56,10 +56,13 @@ def observation(actor,case,pk,issue=None,*,metadata_only=False):
     if type(pk) is not int or pk<1:raise ValidationError('An exact positive integer observation identity is required')
     rows=Observation.objects.select_related('contract__case','contract__actor','evidence__created_by','issue__case','actor').filter(pk=pk,issue__case=case)
     if metadata_only:rows=rows.defer('fields','contract__allowed_fields','evidence__body')
-    row=rows.first()
+    return check_observation(actor, case, rows.first(), issue, metadata_only=metadata_only)
+
+
+def check_observation(actor,case,row,issue=None,*,metadata_only=False,require_action=require,check_subject=issue_subject):
     if not row or issue and row.issue_id!=issue.pk:raise ValidationError('Select this issue exact observation')
-    read_scope(actor,row.contract,metadata_only=metadata_only)
-    require(row.actor,case,'issue.reference.observe');require(row.evidence.created_by,case,'evidence.add')
+    read_scope(actor,row.contract,metadata_only=metadata_only,require_action=require_action,check_subject=check_subject)
+    require_action(row.actor,case,'issue.reference.observe');require_action(row.evidence.created_by,case,'evidence.add')
     if row.evidence.kind!='agent_private_issue_readback':raise ValidationError('Scoped source observation required')
     if row.source_sha256!=row.evidence.sha256:raise ValidationError('Source observation hash does not match')
     return row

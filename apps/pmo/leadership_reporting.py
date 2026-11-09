@@ -275,7 +275,8 @@ def _check_source_facts(case, ids, confirmed, facts, grants):
 
 def denied_binding_templates(actor, bindings, budget):
     """Batch current grant and citation facts while retaining exact incident checks."""
-    from .incident_reporting import legacy_access, narrative_citations
+    from .incident_access_batch import IncidentAccess, LegacyHistory
+    from .incident_reporting import legacy_pins, narrative_citations, selected_access
 
     grants = active_case_grants(actor, {binding.report.case_id for binding in bindings})
     admitted = [binding for binding in bindings if (binding.report.case_id, 'report.read') in grants]
@@ -298,13 +299,13 @@ def denied_binding_templates(actor, bindings, budget):
         binding = group[0]
         case, manifest = binding.report.case, binding.manifest
         templates = {member.version.template_id for member in group}
-        try:
-            report_source_access(actor, case, manifest, budget=budget, require_action=require_action)
-        except PermissionDenied:
-            denied.update(templates)
-            continue
         narrative = None
         if 'incident_claims' not in manifest:
+            try:
+                report_source_access(actor, case, manifest, budget=budget, require_action=require_action)
+            except PermissionDenied:
+                denied.update(templates)
+                continue
             pk = Evidence._meta.pk.get_prep_value(manifest['content']['id'])
             narrative = (case.pk, pk)
             narratives[case.pk].add(pk)
@@ -313,17 +314,38 @@ def denied_binding_templates(actor, bindings, budget):
     bodies = list(_selected_evidence(narratives).only('id', 'case_id'))
     budget.load_many(bodies, 'body')
     retained = {(row.case_id, row.pk): row for row in bodies}
+    history = LegacyHistory((
+        (binding.report.case_id, binding.manifest, binding.version.created_at)
+        for binding, _, narrative in ready if narrative is not None
+    ), budget)
     parsed = {}
-    source_checks, references = [], defaultdict(set)
+    resolved = []
     for binding, templates, narrative in ready:
+        pins = []
+        if narrative is not None:
+            if narrative not in retained:
+                raise Evidence.DoesNotExist('Exact retained report narrative is missing')
+            if narrative not in parsed:
+                parsed[narrative] = narrative_citations(retained[narrative].body)
+            pins = list(legacy_pins(binding.report.case, binding.manifest, binding.version.created_at,
+                                   parsed[narrative], budget=budget, reader=history))
+        resolved.append((binding, templates, pins))
+    incidents = IncidentAccess(actor, (
+        (binding.report.case_id, pin) for binding, _, pins in resolved
+        if (binding.report.case_id, 'issue.read') in grants
+        for pin in binding.manifest.get('incident_claims', pins)
+    ), budget)
+
+    source_checks, references = [], defaultdict(set)
+    for binding, templates, pins in resolved:
         case, manifest = binding.report.case, binding.manifest
         try:
-            if narrative is not None:
-                if narrative not in retained:
-                    raise Evidence.DoesNotExist('Exact retained report narrative is missing')
-                if narrative not in parsed:
-                    parsed[narrative] = narrative_citations(retained[narrative].body)
-                legacy_access(actor, case, manifest, binding.version.created_at, budget=budget, citations=parsed[narrative])
+            if 'incident_claims' in manifest:
+                report_source_access(actor, case, manifest, budget=budget, require_action=require_action,
+                                     incident_reader=incidents)
+            else:
+                for pin in pins:
+                    selected_access(actor, case, pin, budget=budget, reader=incidents)
             _manifest_actions(actor, case, manifest, require_action)
             ids, confirmed = _source_ids(manifest)
             if any(type(pk) is not int for pk in ids):

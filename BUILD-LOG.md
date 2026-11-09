@@ -1,5 +1,7 @@
 # Build progress log
 
+9 November 2026. Profiled selected incident authorization and batched exact revision, observation, source and grant reads. Reconstructed each legacy report version at its own cutoff. The 12-incident, six-legacy-version fixture moved from HTTP 503 at 255 SQL statements to HTTP 200 at 72. All 17 composed PostgreSQL tests passed. Recorded HOD walkthrough preparation and the separate live-pilot acceptance work in HANDOFF.md.
+
 9 November 2026. Batched current grants, bounded legacy narratives and citation facts for distinct protected bindings. The 48-PMO and 48-Finance workbench fixture moved from a query-limit hold to 49 SQL statements and a rendered page. Verified the native incident, private-source and PPE regressions on PostgreSQL. Kept HOD decisions deferred.
 
 9 November 2026. Batched protected template authorization and measured it against detached checkpoint `77fb7ac`. Small protected workbench reads dropped from 253 SQL statements to 100. The large fixture moved from a read hold to a rendered page in 100 statements. Verified exact grant and provenance behavior, and retained the existing dependency limits and HOD deferrals.
