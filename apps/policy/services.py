@@ -269,13 +269,24 @@ def transition(actor, config_id, state):
     return config
 
 
+def _resolution_candidate(component, case):
+    """Select from local revision metadata before loading the chosen envelope."""
+    versions = Configuration.objects.filter(case=case, component=component).only(
+        'id', 'case_id', 'component', 'revision').order_by('-revision')
+    candidate = None
+    for config in versions.iterator(chunk_size=100):
+        # Keep the exhaustive state pass, including failures in older history.
+        state = config.states.order_by('-pk').first().state
+        if state in ['active', 'revoked', 'superseded'] and candidate is None:
+            candidate = config
+    return candidate
+
+
 def resolve(component, case, at=None, expected_revision=None):
     at = at or timezone.now()
-    versions = Configuration.objects.filter(case=case, component=component).order_by('-revision')
-    candidates = [c for c in versions if c.states.order_by('-pk').first().state in ['active', 'revoked', 'superseded']]
-    if not candidates:
+    config = _resolution_candidate(component, case)
+    if config is None:
         return Resolution('MISSING', component, reason='No activated component version')
-    config = candidates[0]
     state = config.states.order_by('-pk').first().state
     if state == 'revoked':
         return Resolution('REVOKED', component)
