@@ -14,27 +14,45 @@ def visible_templates(actor, case, *, candidate_ids=None, budget=None):
     if not Grant.objects.filter(case=case, user=actor, action='finance.read', active=True).exists():
         templates = templates.exclude(definition__document_type__in=['finance_report', 'finance_group_report'])
         templates = templates.exclude(pk__in=Version.objects.filter(document__case=case, forecastbinding__isnull=False).values('template_id'))
+    if budget is not None:
+        return _bounded_bindings(actor, templates, budget)
     from apps.finance.models import FinanceDocumentBinding
     from apps.finance.statement_ppe import recipient_access
     hidden = []
     bindings = FinanceDocumentBinding.objects.filter(version__template__in=templates).select_related('run', 'version')
-    if budget is not None:
-        bindings = budget.take(bindings.only('id', 'run__kind', 'run__case_id', 'version__template_id'))
     for binding in bindings:
         try:
-            recipient_access(binding.run, [actor.pk], budget=budget)
+            recipient_access(binding.run, [actor.pk])
         except (PermissionDenied, ValidationError):
             hidden.append(binding.version.template_id)
     from apps.pmo.leadership_reporting import binding_access
     reports = Version.objects.filter(template__in=templates, minutesreportbinding__manifest__source_mode='leadership_selected_facts/v1')
-    if budget is not None:
-        reports = budget.take(reports.only('id', 'created_at', 'template_id'))
     for version in reports:
         try:
-            binding_access(actor, version, budget=budget)
+            binding_access(actor, version)
         except PermissionDenied:
             hidden.append(version.template_id)
     return templates.exclude(pk__in=hidden)
+
+
+def _bounded_bindings(actor, templates, budget):
+    from apps.finance.models import FinanceDocumentBinding, FinanceRun
+    from apps.finance.statement_ppe import denied_statement_runs
+    from apps.pmo.leadership_reporting import MODE, denied_binding_templates
+    from apps.pmo.models import MinutesReportBinding
+
+    finance = FinanceDocumentBinding.objects.filter(version__template__in=templates)
+    runs = FinanceRun.objects.filter(pk__in=finance.values('run_id'), kind='statement').select_related('case').only(
+        'kind', 'case__id',
+    )
+    denied_runs = denied_statement_runs(actor, budget.take(runs), budget)
+    reports = MinutesReportBinding.objects.filter(
+        version__template__in=templates, manifest__source_mode=MODE,
+    ).select_related('report__case', 'version').only('report__case__id', 'version__created_at', 'version__template_id')
+    hidden = denied_binding_templates(actor, budget.take(reports), budget)
+    return templates.exclude(
+        pk__in=finance.filter(run_id__in=denied_runs).values('version__template_id'),
+    ).exclude(pk__in=hidden)
 
 
 def visible_scopes(actor, case, *, scopes=None, budget=None):

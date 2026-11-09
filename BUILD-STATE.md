@@ -12,6 +12,10 @@ Workbench list reads now page scopes, sources, templates and focused history, wi
 
 The corrected nine-test workbench and migration cohort passed. Small and large workbench pages each used 29 SQL statements. The larger test case had 81 scopes, 161 sources and 121 templates. Django system and migration drift checks passed.
 
+Protected workbench visibility now batches PMO manifests and Finance statement snapshots. Multiple Finance bindings to one run share its classification and native PPE grant check. Identical PMO authorization inputs share their check within one pass, including the timestamp for legacy incident history. A denied binding continues to hide the entire template and its dependent scopes and sources.
+
+On isolated PostgreSQL, the previous checkpoint used 253 statements for the small protected fixture and returned HTTP 503 for the large fixture. The optimized page returned HTTP 200 in 100 statements for both, including 48 PMO and 120 Finance bindings in the large fixture. Fifteen composed tests passed, including permission withdrawal, distinct-input denial, payload admission and native publication checks.
+
 On isolated PostgreSQL 16.15, the first run passed 16 cases and found a fixture error. The nine-case follow-up passed after correcting the fixture, including the mixed selection, concurrent grant revocation, selective index plan, populated migration and publication regressions. Django and migration drift checks passed.
 
 The integration and QuickBooks MCP profile loaders now read bounded Windows regular files while retaining final-link rejection. Both interpreter modes recorded 25 passes and one unavailable symlink fixture. Fresh PostgreSQL migration and Django checks passed. The D11 checkpoint passed 43 native tests covering templates, operator HTTP, the receipt race and synthetic QuickBooks execution. The later policy and console cohort reached 19 passes, one SQL assertion failure and one fixture error. Its focused follow-up passed all four tests after correcting the checks. The console now exposes restricted reservation status independently of current connection availability. Full milestone acceptance remains pending.

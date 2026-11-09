@@ -46,6 +46,35 @@ class ReadBudget:
         setattr(row, field_name, value)
         return value
 
+    def load_many(self, records, field_name, *, ceiling=256 * 1024):
+        if not records:
+            return
+        model = type(records[0])
+        by_id = {row.pk: row for row in records}
+        field = model._meta.get_field(field_name)
+        size = models.Func(Cast(models.F(field_name), models.TextField()),
+                           function='OCTET_LENGTH', output_field=models.IntegerField())
+        # Admission and transfer share one statement. An over-budget batch
+        # returns sizes, with no JSON values sent to the application.
+        rows = list(model.objects.filter(pk__in=by_id).annotate(
+            _read_size=size,
+            _read_total=models.Window(models.Sum(size)),
+            _read_largest=models.Window(models.Max(size)),
+        ).annotate(
+            _read_value=models.Case(
+                models.When(_read_total__lte=self.remaining, _read_largest__lte=ceiling, then=models.F(field_name)),
+                output_field=field,
+            ),
+        ).values_list('pk', '_read_size', '_read_value'))
+        if len(rows) != len(by_id) or any(size is None or size > ceiling for _, size, _ in rows):
+            raise ReadLimit
+        total = sum(size for _, size, _ in rows)
+        if total > self.remaining:
+            raise ReadLimit
+        self.remaining -= total
+        for pk, _, value in rows:
+            setattr(by_id[pk], field_name, value)
+
     def take(self, queryset, limit=100):
         rows = list(queryset[:limit + 1])
         if len(rows) > limit:

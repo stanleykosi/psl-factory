@@ -200,15 +200,68 @@ def binding_access(actor, version, *, budget=None):
     if budget is not None:
         require(actor, b.report.case, 'report.read')
         budget.load(b, 'manifest')
-    report_source_access(actor, b.report.case, b.manifest, budget=budget)
-    if 'incident_claims' not in b.manifest:
+    _bound_access(actor, b.report.case, b.manifest, version.created_at, budget=budget)
+
+
+def _bound_access(actor, case, manifest, recorded_at, *, budget, source_access=authorize_sources):
+    report_source_access(actor, case, manifest, budget=budget)
+    if 'incident_claims' not in manifest:
         from .incident_reporting import legacy_access
-        legacy_access(actor, b.report.case, b.manifest, version.created_at, budget=budget)
-    if b.manifest.get('escalations'): require(actor, b.report.case, 'issue.read')
-    for action in b.manifest.get('source_actions', []): require(actor, b.report.case, action)
-    ids = {s['id'] for s in b.manifest['sources']}
-    confirmed = {row[2] for row in b.manifest.get('changes', [])}
-    authorize_sources(actor, b.report.case, ids, confirmed)
+        legacy_access(actor, case, manifest, recorded_at, budget=budget)
+    if manifest.get('escalations'): require(actor, case, 'issue.read')
+    for action in manifest.get('source_actions', []): require(actor, case, action)
+    ids = {s['id'] for s in manifest['sources']}
+    confirmed = {row[2] for row in manifest.get('changes', [])}
+    source_access(actor, case, ids, confirmed)
+
+
+def denied_binding_templates(actor, bindings, budget):
+    """Apply native access once for each distinct authorization input in this batch."""
+    from collections import defaultdict
+
+    by_case = defaultdict(list)
+    for binding in bindings:
+        by_case[binding.report.case].append(binding)
+    admitted, denied = [], set()
+    for case, case_bindings in by_case.items():
+        try:
+            require(actor, case, 'report.read')
+        except PermissionDenied:
+            denied.update(binding.version.template_id for binding in case_bindings)
+        else:
+            admitted.extend(case_bindings)
+    budget.load_many(admitted, 'manifest')
+
+    source_results = {}
+
+    def check_sources(actor, case, ids, confirmed):
+        key = (case.pk, frozenset(ids), frozenset(confirmed))
+        if key not in source_results:
+            try:
+                authorize_sources(actor, case, ids, confirmed)
+            except PermissionDenied:
+                source_results[key] = False
+            else:
+                source_results[key] = True
+        if not source_results[key]:
+            raise PermissionDenied('Selected report source is unavailable')
+
+    results = {}
+    for binding in admitted:
+        case, manifest, version = binding.report.case, binding.manifest, binding.version
+        # Only legacy incident history depends on the version's timestamp.
+        cutoff = version.created_at if 'incident_claims' not in manifest and manifest.get('issues') else None
+        key = (case.pk, cutoff, json.dumps(manifest, sort_keys=True))
+        if key not in results:
+            try:
+                _bound_access(actor, case, manifest, version.created_at, budget=budget, source_access=check_sources)
+            except PermissionDenied:
+                results[key] = False
+            else:
+                results[key] = True
+        if not results[key]:
+            denied.add(version.template_id)
+    return denied
 
 
 def current_manifest(binding):

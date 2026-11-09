@@ -281,6 +281,22 @@ class StatementPPETests(TestCase):
         self.assertContains(self.client.get(url),'500.00')
         Grant.objects.filter(case=f['case'],user=f['recipient'],action='ppe.read').update(active=False)
         self.assertNotContains(self.client.get(url),'500.00')
+        from apps.documents.models import Version
+        from apps.finance.models import FinanceDocumentBinding
+
+        original = FinanceDocumentBinding.objects.get(version=document)
+        copies = Version.objects.bulk_create([
+            Version(document_id=document.document_id, number=document.number + offset,
+                    template_id=document.template_id, audience=document.audience, fields=document.fields,
+                    source_manifest=document.source_manifest, baseline_manifest=document.baseline_manifest,
+                    payload=document.payload, payload_sha256=document.payload_sha256, created_by_id=document.created_by_id)
+            for offset in range(1, 102)
+        ])
+        FinanceDocumentBinding.objects.bulk_create([
+            FinanceDocumentBinding(version=copy, run=run, snapshot=original.snapshot) for copy in copies
+        ])
+        self.assertFalse(visible_sources(f['recipient'], f['case'], budget=ReadBudget(), **candidates).exists())
+        self.assertTrue(visible_sources(f['actor'], f['case'], budget=ReadBudget(), **candidates).exists())
 
     def test_output_review_requires_current_ppe_source_read_access(self):
         run=self.assemble();f=self.f

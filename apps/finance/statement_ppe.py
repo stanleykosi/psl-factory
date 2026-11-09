@@ -1,5 +1,5 @@
 """Native PPE source selection and immutable inventory for selected statement lines."""
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from apps.policy.statement_ppe import validate_binding
 from . import ppe
 
@@ -46,3 +46,19 @@ def recipient_access(run,recipients,*,budget=None):
     if not is_ppe_statement(run):return
     from django.contrib.auth import get_user_model
     for user in get_user_model().objects.filter(pk__in=recipients):ppe.readable(user,run.case)
+
+
+def denied_statement_runs(actor, runs, budget):
+    """Batch bound run snapshots and check PPE authority once per owning case."""
+    budget.load_many(runs, 'snapshot')
+    ppe_by_case = {}
+    for run in runs:
+        if is_ppe_statement(run):
+            ppe_by_case.setdefault(run.case_id, []).append(run)
+    denied = []
+    for case_runs in ppe_by_case.values():
+        try:
+            ppe.readable(actor, case_runs[0].case)
+        except PermissionDenied:
+            denied.extend(run.pk for run in case_runs)
+    return denied
