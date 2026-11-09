@@ -1,13 +1,14 @@
-"""One exact source read using native visibility within a PostgreSQL snapshot."""
+"""Exact template reads using native visibility within a PostgreSQL snapshot."""
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.db import DatabaseError, connection, transaction
-from django.db.models import Func, IntegerField
+from django.db.models import Func, IntegerField, Q
 
 from apps.core.models import Evidence
 from apps.core.read_budget import ReadBudget, ReadLimit
 from apps.identity.services import require, visible_cases
-from .template_access import visible_sources
+from .models import TemplateClaim, TemplateClaimRetraction, TemplateResolution, TemplateScope
+from .template_access import visible_scopes, visible_sources
 
 
 # Engineering limits for an interactive source read. The byte cap also admits
@@ -15,9 +16,19 @@ from .template_access import visible_sources
 MAX_QUERIES = 100
 MAX_BODY_BYTES = 1024 * 1024
 STATEMENT_TIMEOUT_MS = 2500
+MAX_OWNER_RECORDS = 100
+OWNER_RECORDS = {
+    'claim': (TemplateClaim, 'scope'),
+    'decision': (TemplateResolution, 'scope'),
+    'retraction': (TemplateClaimRetraction, 'claim__scope'),
+}
 
 
 SourceReadUnavailable = ReadLimit
+
+
+class InvalidOwnerSelection(ValueError):
+    """Malformed or out-of-budget selection before any record reads."""
 
 
 def read_source(actor, case_id, source_id):
@@ -44,8 +55,6 @@ def _source(actor, case, budget, source_id):
 
 
 def read_owner_pin(actor, case_id, kind, pk):
-    from .models import TemplateClaim, TemplateResolution
-    from .template_access import visible_scopes
     from .template_current import owner_current
 
     model = {'claim': TemplateClaim, 'decision': TemplateResolution}.get(kind)
@@ -58,11 +67,55 @@ def read_owner_pin(actor, case_id, kind, pk):
         ).first()
         if record is None:
             return None
-        scopes = type(record.scope).objects.filter(pk=record.scope_id)
+        scopes = TemplateScope.objects.filter(pk=record.scope_id)
         if not visible_scopes(fresh, case, scopes=scopes, budget=budget).exists():
             return None
         record.scope.case = case
         return case, {'current': owner_current(record, budget=budget), 'pinned': record.owner_policy_id is not None}
+
+    return _snapshot(actor, case_id, read)
+
+
+def read_owner_metadata(actor, case_id, selection):
+    """Return only selected historical pointers, all within the same scope check."""
+    if type(selection) is not list or not 1 <= len(selection) <= MAX_OWNER_RECORDS:
+        raise InvalidOwnerSelection
+    keys = []
+    grouped = {}
+    for token in selection:
+        if type(token) is not str or len(token) > 30:
+            raise InvalidOwnerSelection
+        kind, _, identifier = token.partition(':')
+        if kind not in OWNER_RECORDS or not identifier.isascii() or not identifier.isdecimal():
+            raise InvalidOwnerSelection
+        pk = int(identifier)
+        if not _valid_id(pk) or identifier != str(pk):
+            raise InvalidOwnerSelection
+        keys.append((kind, pk))
+        grouped.setdefault(kind, []).append(pk)
+    if len(set(keys)) != len(keys):
+        raise InvalidOwnerSelection
+
+    def read(fresh, case, budget):
+        from .template_current import COMPONENT
+
+        records = {}
+        scope_ids = set()
+        for kind, ids in grouped.items():
+            model, scope = OWNER_RECORDS[kind]
+            rows = model.objects.filter(pk__in=ids, **{f'{scope}__case': case}).filter(
+                Q(owner_policy__isnull=True) | Q(owner_policy__case=case, owner_policy__component=COMPONENT),
+            ).values_list('pk', f'{scope}_id', 'owner_policy_id')
+            for pk, scope_id, policy_id in rows:
+                scope_ids.add(scope_id)
+                records[(kind, pk)] = {'kind': kind, 'id': pk, 'scope_id': scope_id, 'policy_id': policy_id}
+        if len(records) != len(keys):
+            return None
+        selected_scopes = TemplateScope.objects.filter(pk__in=scope_ids)
+        visible = visible_scopes(fresh, case, scopes=selected_scopes, budget=budget).values_list('pk', flat=True)
+        if set(visible) != scope_ids:
+            return None
+        return case, [records[key] for key in keys]
 
     return _snapshot(actor, case_id, read)
 

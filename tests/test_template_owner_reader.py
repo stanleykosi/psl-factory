@@ -1,9 +1,10 @@
 """Native PostgreSQL checks of exact historical owner attestations."""
+from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.db import connection
+from django.db import connection, connections
 from django.test import TransactionTestCase
 from django.urls import reverse
 
@@ -11,6 +12,7 @@ from apps.core.read_budget import ReadBudget, ReadLimit
 from apps.core.services import add_evidence
 from apps.documents import template_current as current, template_source_reader as reader
 from apps.documents.controlled import register_template
+from apps.documents.models import TemplateClaim
 from apps.identity.models import Grant
 from apps.policy import scopes
 from apps.policy.models import PolicyState
@@ -137,3 +139,118 @@ class TemplateOwnerReaderTests(TransactionTestCase):
         budget.remaining = size
         self.assertEqual(budget.load(config, 'envelope'), policy.envelope)
         self.assertEqual(budget.remaining, 0)
+
+    def test_selected_history_preserves_order_and_projects_only_metadata(self):
+        policy = self.configure()
+        recorded = self.claim()
+        reported = self.claim(False)
+        decision = current.resolve_claims(self.owner, self.case.pk, self.scope.pk, recorded.pk,
+                                          [recorded.pk, reported.pk], self.evidence.pk, 'Private decision note', rev(self.case))
+        retracted = current.retract_claim(self.owner, self.case.pk, reported.pk, self.evidence.pk,
+                                          'Private retraction note', rev(self.case))
+        selection = [f'retraction:{retracted.pk}', f'decision:{decision.pk}', f'claim:{recorded.pk}', f'claim:{reported.pk}']
+        self.client.force_login(self.observer)
+        url = reverse('template_owner_metadata', args=(self.case.pk,))
+        queries = []
+
+        def trace(execute, sql, params, many, context):
+            queries.append(sql)
+            return execute(sql, params, many, context)
+
+        with connection.execute_wrapper(trace):
+            _, records = reader.read_owner_metadata(self.observer, self.case.pk, selection)
+        expected = [
+            ('retraction', retracted.pk, None), ('decision', decision.pk, policy.pk),
+            ('claim', recorded.pk, policy.pk), ('claim', reported.pk, None),
+        ]
+        self.assertEqual(records, [
+            {'kind': kind, 'id': pk, 'policy_id': pin, 'scope_id': self.scope.pk} for kind, pk, pin in expected
+        ])
+        for column in ('note', 'claim_ids', 'selected_claim_id', 'body', 'envelope', 'actor_id'):
+            self.assertFalse(any(f'."{column}"' in sql for sql in queries), column)
+        response = self.client.get(url, {'record': selection})
+        self.assertContains(response, 'Selected template history')
+        self.assertNotContains(response, 'Private decision note')
+        self.assertNotContains(response, 'Private retraction note')
+        self.assertIn('no-store', response['Cache-Control'])
+        self.assertEqual(self.client.post(url, {'record': selection}).status_code, 405)
+        self.assertContains(self.client.get(reverse('template_current', args=(self.case.pk,))), 'Review selected history')
+
+    def test_history_is_atomic_for_missing_foreign_and_hidden_records(self):
+        ordinary = self.claim(False)
+        foreign_owner, foreign_case = setup_case(username='other-owner')
+        foreign_evidence = add_evidence(foreign_owner, foreign_case.pk, 'policy_decision', 'Other case', 'synthetic:other')
+        foreign_template = register_template(foreign_owner, foreign_case.pk, 'Other report', DEFINITION,
+                                            foreign_evidence.pk, rev(foreign_case))
+        foreign_scope = scope(foreign_owner, foreign_case, foreign_evidence, document_type='status_report')
+        foreign = claim(foreign_owner, foreign_case, foreign_scope, foreign_template, foreign_evidence, False)
+        finance_template = register_template(self.owner, self.case.pk, 'Finance report', {
+            'document_type': 'finance_report',
+            'required_fields': ['executive_summary', 'financial_metrics', 'bu_totals'],
+            'audience_fields': {'internal': ['executive_summary', 'financial_metrics', 'bu_totals']},
+            'internal_review_required': False,
+        }, self.evidence.pk, rev(self.case))
+        finance_scope = scope(self.owner, self.case, self.evidence, document_type='finance_report', audience='internal')
+        private = claim(self.owner, self.case, finance_scope, finance_template, self.evidence, False)
+        token = f'claim:{ordinary.pk}'
+        self.client.force_login(self.observer)
+        url = reverse('template_owner_metadata', args=(self.case.pk,))
+        for pk in (foreign.pk, private.pk, 2**63 - 1):
+            response = self.client.get(url, {'record': [token, f'claim:{pk}']})
+            self.assertNotContains(response, f'Claim #{ordinary.pk}', status_code=404)
+        # The selected scope is visible although its evidence is also linked
+        # to the hidden Finance scope. Historical pointers disclose no source.
+        self.assertIsNone(reader.read_source(self.observer, self.case.pk, self.evidence.pk))
+        self.assertEqual(len(reader.read_owner_metadata(self.observer, self.case.pk, [token])[1]), 1)
+
+        grant = Grant.objects.create(case=self.case, user=self.observer, action='finance.read')
+        selection = [token, f'claim:{private.pk}']
+
+        def revoke():
+            try:
+                return Grant.objects.filter(pk=grant.pk).update(active=False)
+            finally:
+                connections.close_all()
+
+        def interleave(execute, sql, params, many, context):
+            if 'FROM "documents_templateclaim"' in sql and '"documents_templateclaim"."owner_policy_id"' in sql:
+                self.assertEqual(pool.submit(revoke).result(timeout=10), 1)
+            return execute(sql, params, many, context)
+
+        with ThreadPoolExecutor(max_workers=1) as pool, connection.execute_wrapper(interleave):
+            self.assertEqual(len(reader.read_owner_metadata(self.observer, self.case.pk, selection)[1]), 2)
+        self.assertIsNone(reader.read_owner_metadata(self.observer, self.case.pk, selection))
+
+    def test_history_at_selection_limit_uses_the_same_number_of_queries(self):
+        claims = TemplateClaim.objects.bulk_create([
+            TemplateClaim(scope=self.scope, template=self.template, actor=self.owner,
+                          evidence=self.evidence, note='Synthetic recorded claim')
+            for _ in range(reader.MAX_OWNER_RECORDS)
+        ])
+        selection = [f'claim:{record.pk}' for record in claims]
+        calls = []
+
+        def trace(execute, sql, params, many, context):
+            calls.append(sql)
+            return execute(sql, params, many, context)
+
+        with connection.execute_wrapper(trace):
+            reader.read_owner_metadata(self.observer, self.case.pk, selection[:1])
+        count = len(calls)
+        calls.clear()
+        with connection.execute_wrapper(trace):
+            self.assertEqual(len(reader.read_owner_metadata(self.observer, self.case.pk, selection)[1]), len(selection))
+        self.assertEqual(len(calls), count)
+
+        calls.clear()
+        for invalid in ([], selection + ['claim:1'], [selection[0]] * 2, ['claim:01'], ['source:1'], ['claim:٢']):
+            with connection.execute_wrapper(trace), self.assertRaises(reader.InvalidOwnerSelection):
+                reader.read_owner_metadata(self.observer, self.case.pk, invalid)
+        self.assertEqual(calls, [])
+        self.client.force_login(self.observer)
+        url = reverse('template_owner_metadata', args=(self.case.pk,))
+        self.assertContains(self.client.get(url, {'record': [selection[0]] * 2}), 'distinct records', status_code=400)
+        with patch.object(reader, 'MAX_QUERIES', 3):
+            response = self.client.get(url, {'record': selection[:1]})
+        self.assertContains(response, 'within the read limits', status_code=503)
+        self.assertNotContains(response, f'Claim #{claims[0].pk}', status_code=503)

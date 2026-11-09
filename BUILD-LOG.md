@@ -1,5 +1,7 @@
 # Build progress log
 
+9 November 2026. Integrated bounded, scope-authorized owner history and the forecast citation index. PostgreSQL verified a 100-record batch, committed grant revocation, populated migration, indexed evidence lookup and native publication. The nine-case follow-up passed after correcting the Finance template fixture. Recorded deployment rehearsal and HOD decisions separately.
+
 9 November 2026. Integrated bounded dependency loading for exact PMO and Finance template-source reads and added the original-recorder authority page for selected claims and decisions. The first SQL trace exposed an unbounded source-family projection. Corrected it and passed all 16 tests in the composed PostgreSQL rerun. Kept native D11 typed-reference validation and deferred HOD policy choices.
 
 9 November 2026. Integrated the bounded exact template source reader and workbench links. PostgreSQL verified cross-case and domain permissions, historical source relationships, revocation during a snapshot read, SQL and body limits, and the existing publication race. The composed rerun passed 21 tests. Kept the broader prepared owner and payload chains in the immutable snapshots and deferred HOD policy values.

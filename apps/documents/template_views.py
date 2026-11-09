@@ -12,7 +12,9 @@ from apps.identity.models import Grant
 from .models import Template, TemplateScope
 from .template_forms import SourceForm, ScopeForm, ClaimForm, OwnerPolicyForm
 from . import template_current as current
-from .template_source_reader import read_owner_pin, read_source, SourceReadUnavailable
+from .template_source_reader import (
+    InvalidOwnerSelection, MAX_OWNER_RECORDS, read_owner_metadata, read_owner_pin, read_source, SourceReadUnavailable,
+)
 
 
 @transaction.non_atomic_requests
@@ -43,6 +45,23 @@ def owner_pin_detail(request, case_id, kind, pk):
         raise Http404
     case, pin = result
     return render(request, 'documents/template_owner_pin.html', {'case': case, 'pin': pin})
+
+
+@transaction.non_atomic_requests
+@login_required
+@require_safe
+@never_cache
+def owner_metadata(request, case_id):
+    try:
+        result = read_owner_metadata(request.user, case_id, request.GET.getlist('record'))
+    except InvalidOwnerSelection:
+        return render(request, 'documents/template_owner_history.html', {'selection_limit': MAX_OWNER_RECORDS}, status=400)
+    except SourceReadUnavailable:
+        return render(request, 'documents/template_owner_history.html', status=503)
+    if result is None:
+        raise Http404
+    case, records = result
+    return render(request, 'documents/template_owner_history.html', {'case': case, 'records': records})
 
 
 @login_required
@@ -97,6 +116,7 @@ def workbench(request, case_id):
         state['claim_ids_json'] = json.dumps(state['claim_ids'])
     sources = list(evidence)
     response = render(request, 'documents/template_current.html', {'case': case, 'forms': forms, 'rows': rows, 'sources': sources,
+        'owner_selection_limit': MAX_OWNER_RECORDS,
         'source_ids': {source.pk for source in sources},
         'actions': set(Grant.objects.filter(case=case, user=request.user, active=True).values_list('action', flat=True))})
     response['Cache-Control'] = 'no-store'

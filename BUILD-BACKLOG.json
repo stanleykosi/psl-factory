@@ -3,9 +3,9 @@
     "reviewed_main": "501b76f8304d971c3786223dcc91a863eec58cef",
     "branch": "build/local-milestone-20261109",
     "snapshot_integrity": "Five nonapplied snapshots reconstructed and hash verified outside active source",
-    "current_increment": "Exact template source and original-recorder authority reads with bounded native PMO, Finance and D11 dependency loading",
-    "verification": "Bounded-domain composed PostgreSQL 16.15 regression passed 16 tests in 285.182 seconds. Django and migration drift checks passed. Prior exact-source checkpoint passed 21 tests. See BUILD-TESTS.md for test scope and retained failures.",
-    "next": ["Verify and bound batched owner metadata and address native Finance evidence scan separately", "Broader connected workflow and milestone acceptance", "HTTPS redirect and HSTS configuration for an approved deployment topology"],
+    "current_increment": "Bounded selected owner history and indexed Finance forecast evidence privacy with atomic historical backfill",
+    "verification": "PostgreSQL 16.15 owner batch and forecast citation checkpoint: 16 passes and one fixture error initially, nine passes in the corrected follow-up. Migration 0077 applied and populated upgrade verified. Django and migration drift checks passed. See BUILD-TESTS.md for separate runs.",
+    "next": ["Rehearse forecast citation migration on representative isolated data and scale workbench list reads", "Broader connected workflow and milestone acceptance", "HTTPS redirect and HSTS configuration for an approved deployment topology"],
     "external_setup": ["Approved QuickBooks hosted MCP access and read scope", "Actual tool schema and scoped company binding", "Deployment authorization and environment configuration"],
     "owner_policy": "HOD ownership, independent review roles, exact evidence sources and Finance rules stay separate from engineering",
     "full_product_complete": false

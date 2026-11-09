@@ -19,6 +19,17 @@ class ForecastScenario(AppendOnly):
         constraints=[models.UniqueConstraint(fields=['case','reference','number'],name='forecast_scenario_revision')]
 
 
+class ForecastEvidenceReference(AppendOnly):
+    """Database-maintained lookup of evidence IDs cited by a scenario payload."""
+    scenario = models.ForeignKey(ForecastScenario, on_delete=models.PROTECT)
+    # Preserve historical IDs even if they do not currently identify evidence.
+    evidence_id = models.BigIntegerField(db_index=True)
+    numeric_reference = models.BooleanField()
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['scenario', 'evidence_id'], name='forecast_evidence_per_scenario')]
+
+
 class ForecastRun(AppendOnly):
     def __str__(self):return f'Forecast #{self.pk} / {self.scenario.reference} / {self.result.get("status","unknown")}'
     case=models.ForeignKey('core.Case',on_delete=models.PROTECT)
