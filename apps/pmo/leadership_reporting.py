@@ -4,15 +4,18 @@ Native document review, distribution and receipts remain the execution boundary.
 This service does not register a factory envelope or invent publication cadence.
 """
 import json
+from collections import defaultdict
 from datetime import timedelta
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef, Q
 from django.utils import timezone
 from apps.core.models import Evidence
-from apps.core.evidence_access import restricted, forecast_private
+from apps.core.evidence_access import (
+    CONFIRMED_CHANGE_SOURCE, forecast_private, forecast_private_query, other_private_query, restricted,
+)
 from apps.core.services import lock_case, add_evidence, event
-from apps.identity.services import require
+from apps.identity.services import active_case_grants, require
 from apps.documents.contracts import validate
 from apps.documents.models import Template, Publication, PublicationReceipt
 from .clocks import aware
@@ -27,6 +30,14 @@ THEMES = {
 }
 DOMAINS = {'meetings': 'meeting.read', 'actions': 'meeting.read', 'milestones': 'meeting.read',
            'issues': 'issue.read', 'changes': 'change.read', 'escalations': 'issue.read'}
+SOURCE_OVERLAPS = (
+    ('meeting.read', Meeting, 'case_id', 'current__evidence_id'),
+    ('meeting.read', ActionItem, 'case_id', 'current__evidence_id'),
+    ('meeting.read', Milestone, 'case_id', 'evidence_id'),
+    ('issue.read', Issue, 'case_id', 'current__evidence_id'),
+    ('change.read', ChangeRequest, 'case_id', 'current__evidence_id'),
+    ('issue.read', EscalationRequest, 'profile__state__issue__case_id', 'evidence_id'),
+)
 
 
 def window(kind, start, end, audience):
@@ -87,17 +98,14 @@ def inventory(actor, case, start, end, selections):
 def authorize_sources(actor, case, evidence_ids, confirmed):
     """Historical grants persist, and later private-domain reuse cannot widen access."""
     actions = set()
-    for domain, model, lookup in [('meetings', Meeting, 'current__evidence_id'),
-            ('actions', ActionItem, 'current__evidence_id'), ('milestones', Milestone, 'evidence_id'),
-            ('issues', Issue, 'current__evidence_id'), ('changes', ChangeRequest, 'current__evidence_id')]:
-        if model.objects.filter(case=case, **{lookup+'__in': evidence_ids}).exists():
-            require(actor, case, DOMAINS[domain]); actions.add(DOMAINS[domain])
-    if EscalationRequest.objects.filter(profile__state__issue__case=case, evidence_id__in=evidence_ids).exists():
-        require(actor, case, 'issue.read'); actions.add('issue.read')
+    for action, model, case_lookup, evidence_lookup in SOURCE_OVERLAPS:
+        if model.objects.filter(**{case_lookup: case.pk, f'{evidence_lookup}__in': evidence_ids}).exists():
+            require(actor, case, action)
+            actions.add(action)
     # Raw native bodies are never extracted or copied by this report path.
     sources = list(Evidence.objects.filter(case=case, pk__in=evidence_ids).defer('body').order_by('pk'))
     if len(sources) != len(evidence_ids) or any(forecast_private(e) or restricted(e) and not
-            (e.pk in confirmed and e.source == 'psl:p56-confirmed-request/v1') for e in sources):
+            (e.pk in confirmed and e.source == CONFIRMED_CHANGE_SOURCE) for e in sources):
         raise PermissionDenied('Selected source requires an unsupported private domain interface')
     return sources, actions
 
@@ -203,64 +211,135 @@ def binding_access(actor, version, *, budget=None):
     _bound_access(actor, b.report.case, b.manifest, version.created_at, budget=budget)
 
 
-def _bound_access(actor, case, manifest, recorded_at, *, budget, source_access=authorize_sources):
+def _bound_access(actor, case, manifest, recorded_at, *, budget):
     report_source_access(actor, case, manifest, budget=budget)
     if 'incident_claims' not in manifest:
         from .incident_reporting import legacy_access
         legacy_access(actor, case, manifest, recorded_at, budget=budget)
-    if manifest.get('escalations'): require(actor, case, 'issue.read')
-    for action in manifest.get('source_actions', []): require(actor, case, action)
+    _manifest_actions(actor, case, manifest, require)
+    ids, confirmed = _source_ids(manifest)
+    authorize_sources(actor, case, ids, confirmed)
+
+
+def _manifest_actions(actor, case, manifest, require_action):
+    if manifest.get('escalations'):
+        require_action(actor, case, 'issue.read')
+    for action in manifest.get('source_actions', []):
+        require_action(actor, case, action)
+
+
+def _source_ids(manifest):
     ids = {s['id'] for s in manifest['sources']}
     confirmed = {row[2] for row in manifest.get('changes', [])}
-    source_access(actor, case, ids, confirmed)
+    return ids, confirmed
+
+
+def _selected_evidence(references):
+    pairs = Q(pk__in=[])
+    for case_id, ids in references.items():
+        pairs |= Q(case_id=case_id, pk__in=ids)
+    return Evidence.objects.filter(pairs)
+
+
+def _source_facts(references):
+    overlaps = {}
+    for index, (_, model, case_lookup, evidence_lookup) in enumerate(SOURCE_OVERLAPS):
+        overlaps[f'_overlap_{index}'] = Exists(model.objects.filter(
+            **{case_lookup: OuterRef('case_id'), evidence_lookup: OuterRef('pk')},
+        ))
+    rows = _selected_evidence(references).annotate(
+        forecast=forecast_private_query(same_case=True),
+        other_private=other_private_query(),
+        **overlaps,
+    ).values_list('case_id', 'pk', 'source', 'forecast', 'other_private', *overlaps)
+    return {
+        (case_id, pk): (source, forecast, private, {
+            action for (action, *_), present in zip(SOURCE_OVERLAPS, flags) if present
+        })
+        for case_id, pk, source, forecast, private, *flags in rows
+    }
+
+
+def _check_source_facts(case, ids, confirmed, facts, grants):
+    for pk in ids:
+        fact = facts.get((case.pk, pk))
+        if fact is None:
+            return False
+        source, forecast, private, actions = fact
+        if forecast or (private and not (pk in confirmed and source == CONFIRMED_CHANGE_SOURCE)):
+            return False
+        if any((case.pk, action) not in grants for action in actions):
+            return False
+    return True
 
 
 def denied_binding_templates(actor, bindings, budget):
-    """Apply native access once for each distinct authorization input in this batch."""
-    from collections import defaultdict
+    """Batch current grant and citation facts while retaining exact incident checks."""
+    from .incident_reporting import legacy_access, narrative_citations
 
-    by_case = defaultdict(list)
-    for binding in bindings:
-        by_case[binding.report.case].append(binding)
-    admitted, denied = [], set()
-    for case, case_bindings in by_case.items():
-        try:
-            require(actor, case, 'report.read')
-        except PermissionDenied:
-            denied.update(binding.version.template_id for binding in case_bindings)
-        else:
-            admitted.extend(case_bindings)
+    grants = active_case_grants(actor, {binding.report.case_id for binding in bindings})
+    admitted = [binding for binding in bindings if (binding.report.case_id, 'report.read') in grants]
+    denied = {binding.version.template_id for binding in bindings if (binding.report.case_id, 'report.read') not in grants}
     budget.load_many(admitted, 'manifest')
 
-    source_results = {}
+    def require_action(actor, case, action):
+        if (case.pk, action) not in grants:
+            raise PermissionDenied('This record/action has no active grant')
 
-    def check_sources(actor, case, ids, confirmed):
-        key = (case.pk, frozenset(ids), frozenset(confirmed))
-        if key not in source_results:
-            try:
-                authorize_sources(actor, case, ids, confirmed)
-            except PermissionDenied:
-                source_results[key] = False
-            else:
-                source_results[key] = True
-        if not source_results[key]:
-            raise PermissionDenied('Selected report source is unavailable')
-
-    results = {}
+    groups = defaultdict(list)
     for binding in admitted:
-        case, manifest, version = binding.report.case, binding.manifest, binding.version
+        manifest = binding.manifest
         # Only legacy incident history depends on the version's timestamp.
-        cutoff = version.created_at if 'incident_claims' not in manifest and manifest.get('issues') else None
-        key = (case.pk, cutoff, json.dumps(manifest, sort_keys=True))
-        if key not in results:
-            try:
-                _bound_access(actor, case, manifest, version.created_at, budget=budget, source_access=check_sources)
-            except PermissionDenied:
-                results[key] = False
-            else:
-                results[key] = True
-        if not results[key]:
-            denied.add(version.template_id)
+        cutoff = binding.version.created_at if 'incident_claims' not in manifest and manifest.get('issues') else None
+        groups[(binding.report.case_id, cutoff, json.dumps(manifest, sort_keys=True))].append(binding)
+
+    ready, narratives = [], defaultdict(set)
+    for group in groups.values():
+        binding = group[0]
+        case, manifest = binding.report.case, binding.manifest
+        templates = {member.version.template_id for member in group}
+        try:
+            report_source_access(actor, case, manifest, budget=budget, require_action=require_action)
+        except PermissionDenied:
+            denied.update(templates)
+            continue
+        narrative = None
+        if 'incident_claims' not in manifest:
+            pk = Evidence._meta.pk.get_prep_value(manifest['content']['id'])
+            narrative = (case.pk, pk)
+            narratives[case.pk].add(pk)
+        ready.append((binding, templates, narrative))
+
+    bodies = list(_selected_evidence(narratives).only('id', 'case_id'))
+    budget.load_many(bodies, 'body')
+    retained = {(row.case_id, row.pk): row for row in bodies}
+    parsed = {}
+    source_checks, references = [], defaultdict(set)
+    for binding, templates, narrative in ready:
+        case, manifest = binding.report.case, binding.manifest
+        try:
+            if narrative is not None:
+                if narrative not in retained:
+                    raise Evidence.DoesNotExist('Exact retained report narrative is missing')
+                if narrative not in parsed:
+                    parsed[narrative] = narrative_citations(retained[narrative].body)
+                legacy_access(actor, case, manifest, binding.version.created_at, budget=budget, citations=parsed[narrative])
+            _manifest_actions(actor, case, manifest, require_action)
+            ids, confirmed = _source_ids(manifest)
+            if any(type(pk) is not int for pk in ids):
+                # Retain native coercion and cardinality semantics for legacy IDs.
+                authorize_sources(actor, case, ids, confirmed)
+                continue
+        except PermissionDenied:
+            denied.update(templates)
+            continue
+        references[case.pk].update(ids)
+        source_checks.append((case, ids, confirmed, templates))
+
+    facts = _source_facts(references)
+    for case, ids, confirmed, templates in source_checks:
+        if not _check_source_facts(case, ids, confirmed, facts, grants):
+            denied.update(templates)
     return denied
 
 

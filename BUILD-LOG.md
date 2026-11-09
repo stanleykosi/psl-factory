@@ -1,5 +1,7 @@
 # Build progress log
 
+9 November 2026. Batched current grants, bounded legacy narratives and citation facts for distinct protected bindings. The 48-PMO and 48-Finance workbench fixture moved from a query-limit hold to 49 SQL statements and a rendered page. Verified the native incident, private-source and PPE regressions on PostgreSQL. Kept HOD decisions deferred.
+
 9 November 2026. Batched protected template authorization and measured it against detached checkpoint `77fb7ac`. Small protected workbench reads dropped from 253 SQL statements to 100. The large fixture moved from a read hold to a rendered page in 100 statements. Verified exact grant and provenance behavior, and retained the existing dependency limits and HOD deferrals.
 
 9 November 2026. Paged the owner template workbench and bounded list and choice reads. The SQL diagnostic found a deferred foreign-key lookup per source. The corrected small and large fixtures each executed 29 statements, and native exact submissions and historical reviews passed. Rehearsed Finance 0077 on 2,050 synthetic scenarios, including lock observation, privacy and row preservation, and malformed-data rollback. Recorded the deployment write window and deferred HOD choices separately.

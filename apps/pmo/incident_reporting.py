@@ -98,21 +98,26 @@ def summary(manifest):
         '; freshness unknown; source authenticity unverified.' for pin in manifest.get('incident_claims', []))
 
 
-def legacy_access(actor, case, manifest, recorded_at, *, budget=None):
+def narrative_citations(body):
+    import json
+    return {pk for section in json.loads(body)['sections'].values() for pk in section['evidence_ids']}
+
+
+def legacy_access(actor, case, manifest, recorded_at, *, budget=None, citations=None):
     """Conservative scopes from recorded history, NOT an original claim binding.
 
     Never persist these candidates or treat them as current report provenance.
     Ambiguous histories require all recorded candidate scopes, not a guessed one.
     """
-    import json
     from apps.core.models import Evidence
-    evidence = Evidence.objects.filter(case=case, pk=manifest['content']['id'])
-    if budget is not None:
-        evidence = evidence.defer('body')
-    narrative = evidence.get()
-    if budget is not None:
-        budget.load(narrative, 'body')
-    citations = {pk for section in json.loads(narrative.body)['sections'].values() for pk in section['evidence_ids']}
+    if citations is None:
+        evidence = Evidence.objects.filter(case=case, pk=manifest['content']['id'])
+        if budget is not None:
+            evidence = evidence.defer('body')
+        narrative = evidence.get()
+        if budget is not None:
+            budget.load(narrative, 'body')
+        citations = narrative_citations(narrative.body)
     for issue_id, state_id, _ in manifest['issues']:
         issue = Issue.objects.get(case=case, pk=issue_id)
         history = issue.reference_revisions.filter(created_at__lte=recorded_at).order_by('-number')

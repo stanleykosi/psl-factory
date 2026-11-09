@@ -24,11 +24,12 @@ from . import analysis
 DATE={'type':'string','pattern':r'^\d{4}-\d{2}-\d{2}$'}
 ASSET=obj(dict({'asset_id':KEY,'category':KEY,'capitalisation':{'enum':['capitalise','undecided']},'classification_evidence_id':ID},**{k:DEC for k in ['opening_cost','opening_accumulated','residual','life','fraction']}))
 EVENT=obj({'event_id':KEY,'asset_id':KEY,'date':DATE,'kind':{'enum':['addition','disposal','reclassification']},'cost_delta':DEC,'accumulated_delta':DEC,'evidence_id':ID})
+READ_ACTIONS = ('case.read', 'finance.read', 'ppe.read')
 REGISTER=obj({'entity':KEY,'provider':KEY,'currency':{'type':'string','pattern':'^[A-Z]{3}$'},'unit':{'const':'major_currency'},'period_start':DATE,'period_end':DATE,'label_as_of':DATE,'extracted_at':{'type':'string'},'completeness':{'enum':['complete','partial','unknown']},'opening_evidence_id':ID,'assets':{'type':'array','minItems':1,'maxItems':100,'items':ASSET},'events':{'type':'array','maxItems':100,'items':EVENT},'closing_controls':obj({k:DEC for k in ['cost','accumulated','book_value']})})
 
 def readable(actor,c):
  if not actor.is_authenticated or not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Active human principal required')
- for key in ['case.read','finance.read','ppe.read']:require(actor,c,key)
+ for key in READ_ACTIONS:require(actor,c,key)
 def locked(actor,case_id,action,expected=None):
  c=lock_case(actor,case_id,action,expected);list(Grant.objects.select_for_update().filter(case=c).order_by('pk'));readable(actor,c);return c
 def exact(c,pk,kind=None):

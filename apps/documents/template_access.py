@@ -42,9 +42,7 @@ def _bounded_bindings(actor, templates, budget):
     from apps.pmo.models import MinutesReportBinding
 
     finance = FinanceDocumentBinding.objects.filter(version__template__in=templates)
-    runs = FinanceRun.objects.filter(pk__in=finance.values('run_id'), kind='statement').select_related('case').only(
-        'kind', 'case__id',
-    )
+    runs = FinanceRun.objects.filter(pk__in=finance.values('run_id'), kind='statement').only('kind', 'case_id')
     denied_runs = denied_statement_runs(actor, budget.take(runs), budget)
     reports = MinutesReportBinding.objects.filter(
         version__template__in=templates, manifest__source_mode=MODE,
