@@ -1,5 +1,7 @@
 # Build progress log
 
+9 November 2026. Added a committed PostgreSQL acceptance case from PMO milestone to Finance receivables, with separate operator grants and lookup of the original handoff and invoice after lost responses. Verified worker exit recovery and operator metadata restore. Corrected invoice and payment fixtures to use the existing identity and signature controls, and passed all 25 payment tests. Added a concise HOD answer sheet for flows, owners, policies and approved examples. Owner policy values remain deferred.
+
 9 November 2026. Profiled selected incident authorization and batched exact revision, observation, source and grant reads. Reconstructed each legacy report version at its own cutoff. The 12-incident, six-legacy-version fixture moved from HTTP 503 at 255 SQL statements to HTTP 200 at 72. All 17 composed PostgreSQL tests passed. Recorded HOD walkthrough preparation and the separate live-pilot acceptance work in HANDOFF.md.
 
 9 November 2026. Batched current grants, bounded legacy narratives and citation facts for distinct protected bindings. The 48-PMO and 48-Finance workbench fixture moved from a query-limit hold to 49 SQL statements and a rendered page. Verified the native incident, private-source and PPE regressions on PostgreSQL. Kept HOD decisions deferred.
