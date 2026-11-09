@@ -117,7 +117,7 @@ def claim_current(actor, case_id, scope_id, template_id, evidence_id, note, expe
 
 
 def active_claims(scope):
-    return list(scope.claims.filter(retraction__isnull=True).select_related('template', 'evidence', 'actor', 'scope__case').order_by('pk'))
+    return list(scope.claims.filter(retraction__isnull=True).select_related('template', 'actor', 'scope__case').order_by('pk'))
 
 
 @transaction.atomic

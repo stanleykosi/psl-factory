@@ -1,13 +1,33 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.http import Http404
 from django.shortcuts import render, redirect
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_safe
 from apps.core.views import accessible_case
 from apps.identity.services import require
 from apps.identity.models import Grant
 from .models import Template, TemplateScope
 from .template_forms import SourceForm, ScopeForm, ClaimForm, OwnerPolicyForm
 from . import template_current as current
+from .template_source_reader import read_source, SourceReadUnavailable
+
+
+@transaction.non_atomic_requests
+@login_required
+@require_safe
+@never_cache
+def source_detail(request, case_id, source_id):
+    try:
+        result = read_source(request.user, case_id, source_id)
+    except SourceReadUnavailable:
+        return render(request, 'documents/template_source.html', status=503)
+    if result is None:
+        raise Http404
+    case, source = result
+    return render(request, 'documents/template_source.html', {'case': case, 'source': source})
 
 
 @login_required
@@ -15,7 +35,7 @@ def workbench(request, case_id):
     case = accessible_case(request.user, case_id)
     require(request.user, case, 'document.read')
     from .template_access import visible_templates, visible_scopes, visible_sources
-    evidence = visible_sources(request.user,case).order_by('-pk')
+    evidence = visible_sources(request.user,case).defer('body').order_by('-pk')
     scopes = visible_scopes(request.user,case).order_by('pk')
     templates = visible_templates(request.user,case)
     forms = {'source': SourceForm(), 'scope': ScopeForm(), 'claim': ClaimForm(), 'owner_policy': OwnerPolicyForm()}
@@ -60,7 +80,9 @@ def workbench(request, case_id):
     for scope, state in rows:
         import json
         state['claim_ids_json'] = json.dumps(state['claim_ids'])
-    response = render(request, 'documents/template_current.html', {'case': case, 'forms': forms, 'rows': rows, 'sources': evidence,
+    sources = list(evidence)
+    response = render(request, 'documents/template_current.html', {'case': case, 'forms': forms, 'rows': rows, 'sources': sources,
+        'source_ids': {source.pk for source in sources},
         'actions': set(Grant.objects.filter(case=case, user=request.user, active=True).values_list('action', flat=True))})
     response['Cache-Control'] = 'no-store'
     return response
