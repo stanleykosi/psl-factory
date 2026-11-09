@@ -3,9 +3,9 @@
     "reviewed_main": "501b76f8304d971c3786223dcc91a863eec58cef",
     "branch": "build/local-milestone-20261109",
     "snapshot_integrity": "Five nonapplied snapshots reconstructed and hash verified outside active source",
-    "current_increment": "Windows bounded provider profile loading",
-    "verification": "25 provider component passes and one symlink fixture skip in each of normal and optimized Python",
-    "next": ["Native D11 isolation contrast", "QuickBooks broker and operator HTTP regression", "Privacy803 resolver and caller composition review"],
+    "current_increment": "D11 exact storage validator isolation and Windows bounded provider profile loading",
+    "verification": "Fresh PostgreSQL migration and Django checks passed. Native D11 contrast, all template and operator HTTP cases passed. Broader QuickBooks native run in progress. Windows component tests recorded 25 passes and one symlink fixture skip in each interpreter mode.",
+    "next": ["Read final QuickBooks native regression results", "Isolate and verify the privacy803 scalar resolver step", "Add restricted QuickBooks read status to the primary console"],
     "external_setup": ["Approved QuickBooks hosted MCP access and read scope", "Actual tool schema and scoped company binding", "Deployment authorization and environment configuration"],
     "owner_policy": "HOD ownership, independent review roles, exact evidence sources and Finance rules stay separate from engineering",
     "full_product_complete": false

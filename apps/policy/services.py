@@ -62,6 +62,7 @@ def validate_envelope(case, envelope, runtime=False):
         return
     # Reference-backed values require a reviewed domain schema. Arbitrary text cannot execute rules.
     values = value if isinstance(value, list) else [value]
+    storage_rule = envelope['component_id'] == 'D11.template_storage_retention_rules'
     resolved_contents=[]
     for item in values:
         if isinstance(item, dict):
@@ -75,6 +76,10 @@ def validate_envelope(case, envelope, runtime=False):
         digest = hashlib.sha256(json.dumps(target.content, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
         if target.sha256 != digest or (isinstance(item, dict) and (item['sha256'] != digest or item['schema_ref'] != target.schema_ref)):
             raise ValidationError('Referenced content hash/schema does not match')
+        if storage_rule:
+            from .document_validators import validate_reference
+            validate_reference(envelope['component_id'], target, case, runtime=runtime)
+            continue
         from .clock_validators import SUPPORTED as CLOCK_COMPONENTS, validate_reference as validate_clock_reference
         from .document_validators import SUPPORTED, validate_reference
         from .revision_validators import SUPPORTED as REVISION_COMPONENTS, validate_reference as validate_revision_reference
@@ -198,18 +203,19 @@ def validate_envelope(case, envelope, runtime=False):
     if envelope['component_id']=='D05.role_principal_assignments':
         from .role_assignments import validate_collection as validate_role_collection
         validate_role_collection(resolved_contents)
-    from .d03_validators import validate_collection as validate_d03_collection
-    validate_d03_collection(envelope['component_id'],resolved_contents)
-    from .payment_validators import validate_collection as validate_payment_collection
-    validate_payment_collection(envelope['component_id'],resolved_contents)
-    from .partner_validators import validate_collection as validate_partner_collection
-    validate_partner_collection(envelope['component_id'],resolved_contents)
-    from .settlement_validators import SUPPORTED as SETTLEMENT_COMPONENTS,validate_collection as validate_settlement_collection
-    if envelope['component_id'] in SETTLEMENT_COMPONENTS:validate_settlement_collection(envelope['component_id'],resolved_contents)
-    from .billing_validators import SUPPORTED as BILLING_COMPONENTS,validate_collection as validate_billing_collection
-    if envelope['component_id'] in BILLING_COMPONENTS:validate_billing_collection(envelope['component_id'],resolved_contents)
-    from .finance_validators import SUPPORTED as FINANCE_COMPONENTS,validate_collection
-    if envelope['component_id'] in FINANCE_COMPONENTS:validate_collection(envelope['component_id'],resolved_contents)
+    if not storage_rule:
+        from .d03_validators import validate_collection as validate_d03_collection
+        validate_d03_collection(envelope['component_id'],resolved_contents)
+        from .payment_validators import validate_collection as validate_payment_collection
+        validate_payment_collection(envelope['component_id'],resolved_contents)
+        from .partner_validators import validate_collection as validate_partner_collection
+        validate_partner_collection(envelope['component_id'],resolved_contents)
+        from .settlement_validators import SUPPORTED as SETTLEMENT_COMPONENTS,validate_collection as validate_settlement_collection
+        if envelope['component_id'] in SETTLEMENT_COMPONENTS:validate_settlement_collection(envelope['component_id'],resolved_contents)
+        from .billing_validators import SUPPORTED as BILLING_COMPONENTS,validate_collection as validate_billing_collection
+        if envelope['component_id'] in BILLING_COMPONENTS:validate_billing_collection(envelope['component_id'],resolved_contents)
+        from .finance_validators import SUPPORTED as FINANCE_COMPONENTS,validate_collection
+        if envelope['component_id'] in FINANCE_COMPONENTS:validate_collection(envelope['component_id'],resolved_contents)
     if envelope['component_id'] in ['D01.change_type_catalogue','D11.adapter_configuration_refs']:
         if len(values)>100:
             raise ValidationError('Standard catalogue exceeds the 100-entry validation budget')
