@@ -1,0 +1,190 @@
+def validate_envelope(case, envelope, runtime=False, *, _prepared=None):
+    if _prepared is not None:_prepared.envelope_context(case,envelope,runtime)
+    errors = sorted(Draft202012Validator(envelope_schema(), format_checker=FormatChecker()).iter_errors(envelope), key=lambda e: str(e.path))
+    if errors:
+        raise ValidationError([f'{list(e.path)}: {e.message}' for e in errors])
+    component = components()[envelope['component_id']]
+    if envelope['subject_scope'] != {'kind': 'project' if case.kind == 'project' else 'service', 'ref': str(case.pk)}:
+        raise ValidationError('Executable local configurations require exact case scope; reusable sources must be explicitly applied, with no scope or stage fallback')
+    if (envelope['fixture_scope'] == 'synthetic_test') != case.synthetic:
+        raise ValidationError('Synthetic and operational scopes cannot mix')
+    if envelope['implementation_id'] != 'psl.reference-validation' or envelope['implementation_version'] != '1':
+        raise ValidationError('Implementation ID/version has no reviewed validator')
+    if envelope['reviewed_implementation_ref'] != 'code:apps/policy/services.py#reference-validation-v1':
+        raise ValidationError('Reviewed implementation reference does not match code registry')
+    if envelope['schema_version'] != '1':
+        raise ValidationError('Unsupported schema version')
+    if envelope['component_schema_ref'] != component['schema_ref']:
+        raise ValidationError('Incorrect component schema')
+    start = datetime.fromisoformat(envelope['effective_from'])
+    end = datetime.fromisoformat(envelope['effective_until']) if envelope.get('effective_until') else None
+    if end and end <= start:
+        raise ValidationError('Effective end must follow start')
+    refs = envelope['evidence_refs'] + [envelope['human_decision_ref']]
+    for ref in refs:
+        if not ref.startswith('evidence:') or not ref.split(':')[-1].isdigit() or not (Evidence.objects.filter(case=case, pk=ref.split(':')[-1]).exists() if _prepared is None else _prepared.evidence_exists(case,ref.split(':')[-1])):
+            raise ValidationError('Evidence/decision references must identify evidence on this case')
+    value = envelope['value']
+    if envelope['component_id'] == 'D04.iana_timezone':
+        try:
+            ZoneInfo(value)
+        except (ValueError, ZoneInfoNotFoundError):
+            raise ValidationError('Unknown IANA timezone')
+        return
+    # Reference-backed values require a reviewed domain schema. Arbitrary text cannot execute rules.
+    values = value if isinstance(value, list) else [value]
+    resolved_contents=[]
+    for item in values:
+        if isinstance(item, dict):
+            ref, version = item['artifact_ref'], item['artifact_version']
+        else:
+            ref, version = item, 1
+        target = RegisteredReference.objects.filter(case=case, ref=ref, version=version).first() if _prepared is None else _prepared.reference_for_validation(case,ref,version)
+        if not target:
+            raise ValidationError('Registered domain reference is missing')
+        resolved_contents.append(target.content)
+        digest = hashlib.sha256(json.dumps(target.content, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+        if target.sha256 != digest or (isinstance(item, dict) and (item['sha256'] != digest or item['schema_ref'] != target.schema_ref)):
+            raise ValidationError('Referenced content hash/schema does not match')
+        from .clock_validators import SUPPORTED as CLOCK_COMPONENTS, validate_reference as validate_clock_reference
+        from .document_validators import SUPPORTED, validate_reference
+        from .revision_validators import SUPPORTED as REVISION_COMPONENTS, validate_reference as validate_revision_reference
+        from .change_validators import SUPPORTED as CHANGE_COMPONENTS, validate_reference as validate_change_reference
+        from .emergency_validators import SUPPORTED as EMERGENCY_COMPONENTS, validate_reference as validate_emergency_reference
+        from .delivery_validators import SUPPORTED as DELIVERY_COMPONENTS, validate_reference as validate_delivery_reference
+        from .rfp_validators import SUPPORTED as RFP_COMPONENTS,validate_reference as validate_rfp_reference
+        from .finance_validators import SUPPORTED as FINANCE_COMPONENTS,validate_reference as validate_finance_reference
+        from .billing_validators import SUPPORTED as BILLING_COMPONENTS,validate_reference as validate_billing_reference
+        from .settlement_validators import SUPPORTED as SETTLEMENT_COMPONENTS,validate_reference as validate_settlement_reference
+        from .baas_validators import SUPPORTED as BAAS_COMPONENTS,validate_reference as validate_baas_reference
+        from .partner_validators import handles,validate_reference as validate_partner
+        from .payment_validators import SCHEMAS as PAYMENT_COMPONENTS,validate_reference as validate_payment
+        from .validation_validators import SCHEMAS as VALIDATION_COMPONENTS,validate_reference as validate_discovery
+        from .recognition_validators import SCHEMAS as RECOGNITION_COMPONENTS,validate_reference as validate_recognition
+        from .hrfinance_validators import handles as hr_handles,validate_reference as validate_hr
+        from .payroll_validators import SCHEMAS as PAYROLL_COMPONENTS,validate_reference as validate_payroll
+        from .bu_validators import SCHEMAS as BU_COMPONENTS,validate_reference as validate_bu
+        from .schedule_validators import SCHEMAS as SCHEDULE_COMPONENTS,validate_reference as validate_schedule
+        from .ppe_validators import SCHEMAS as PPE_COMPONENTS,validate_reference as validate_ppe
+        from .ledger_validators import SCHEMAS as LEDGER_COMPONENTS,validate_reference as validate_ledger
+        from .support_validators import SCHEMAS as SUPPORT_COMPONENTS,validate_reference as validate_support
+        from .approval_validators import SCHEMAS as APPROVAL_COMPONENTS,validate_reference as validate_approval
+        from .migration_validators import SCHEMAS as MIGRATION_COMPONENTS,validate_reference as validate_migration
+        from .d03_validators import SCHEMAS as D03_COMPONENTS,validate_reference as validate_d03
+        from .costing_validators import SCHEMAS as COSTING_COMPONENTS,validate_reference as validate_costing
+        from .operator_validators import SCHEMAS as OPERATOR_COMPONENTS,validate_reference as validate_operator
+        from .readiness_validators import SCHEMAS as READINESS_COMPONENTS,validate_reference as validate_readiness
+        from .agent_data_validators import SCHEMAS as DATA_COMPONENTS,validate_reference as validate_data
+        from .support_agent_validators import SCHEMAS as SUPPORT_AGENT_COMPONENTS,validate_reference as validate_support_agent
+        from .support_release_validators import SCHEMAS as RELEASE_COMPONENTS,validate_reference as validate_release
+        from .support_channel_validators import SCHEMAS as CHANNEL_COMPONENTS,validate_reference as validate_channel
+        from .signature_validators import COMPONENT as SIGNATURE_COMPONENT, validate_reference as validate_signature
+        from .change_applicability_validators import COMPONENT as APPLICABILITY_COMPONENT, validate_reference as validate_applicability
+        if envelope['component_id'] == APPLICABILITY_COMPONENT:
+            validate_applicability(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] == SIGNATURE_COMPONENT:
+            validate_signature(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in CHANNEL_COMPONENTS:
+            validate_channel(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in RELEASE_COMPONENTS:
+            validate_release(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in SUPPORT_AGENT_COMPONENTS:
+            validate_support_agent(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in DATA_COMPONENTS:
+            validate_data(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in READINESS_COMPONENTS:
+            validate_readiness(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in OPERATOR_COMPONENTS:
+            validate_operator(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in COSTING_COMPONENTS:
+            validate_costing(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in D03_COMPONENTS:
+            validate_d03(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in MIGRATION_COMPONENTS:
+            validate_migration(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in APPROVAL_COMPONENTS:
+            validate_approval(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in SUPPORT_COMPONENTS:
+            validate_support(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in LEDGER_COMPONENTS:
+            validate_ledger(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in PPE_COMPONENTS:
+            validate_ppe(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in SCHEDULE_COMPONENTS:
+            validate_schedule(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in BU_COMPONENTS:
+            validate_bu(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in PAYROLL_COMPONENTS:
+            validate_payroll(envelope['component_id'],target,case,runtime=runtime)
+        elif hr_handles(envelope['component_id'],target):
+            validate_hr(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in RECOGNITION_COMPONENTS:
+            validate_recognition(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in VALIDATION_COMPONENTS:
+            validate_discovery(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in PAYMENT_COMPONENTS:
+            validate_payment(envelope['component_id'],target,case,runtime=runtime)
+        elif handles(envelope['component_id'],target):
+            validate_partner(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in BAAS_COMPONENTS:
+            validate_baas_reference(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in SETTLEMENT_COMPONENTS:
+            validate_settlement_reference(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in BILLING_COMPONENTS:
+            validate_billing_reference(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in FINANCE_COMPONENTS or envelope['component_id']=='D06.unit_sign_currency_period' and target.schema_ref in ['schema:psl/source-conventions/v2','schema:psl/source-conventions/v3']:
+            validate_finance_reference(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in RFP_COMPONENTS:
+            validate_rfp_reference(envelope['component_id'],target,case,runtime=runtime)
+        elif envelope['component_id'] in DELIVERY_COMPONENTS:
+            validate_delivery_reference(envelope['component_id'],target,case)
+        elif envelope['component_id'] in EMERGENCY_COMPONENTS:
+            validate_emergency_reference(envelope['component_id'],target,case)
+        elif envelope['component_id'] in CHANGE_COMPONENTS:
+            validate_change_reference(envelope['component_id'],target,case)
+        elif envelope['component_id'] in REVISION_COMPONENTS:
+            validate_revision_reference(envelope['component_id'],target,case)
+        elif envelope['component_id'] in CLOCK_COMPONENTS:
+            validate_clock_reference(envelope['component_id'],target,case)
+        elif envelope['component_id'] in SUPPORTED:
+            if _prepared is None:validate_reference(envelope['component_id'],target,case,runtime=runtime)
+            else:validate_reference(envelope['component_id'],target,case,runtime=runtime,_prepared=_prepared)
+        elif envelope['component_id'] == 'D05.role_principal_assignments':
+            from .role_assignments import validate_reference as validate_role_assignment
+            validate_role_assignment(target,case)
+        elif envelope['component_id'] == 'D06.source_schema_ref':
+            if target.schema_ref != 'schema:psl/controlled-csv/v1' or target.content != {'columns': ['account', 'amount', 'currency', 'period']}:
+                raise ValidationError('Expected the reviewed controlled CSV schema')
+        elif envelope['component_id'] == 'D06.unit_sign_currency_period':
+            from jsonschema import validate
+            from jsonschema.exceptions import ValidationError as SchemaError
+            schema = {'type':'object','properties':{'currency':{'type':'string','pattern':'^[A-Z]{3}$'}, 'unit':{'const':'major_currency'}, 'period':{'type':'string','pattern':r'^\d{4}-(0[1-9]|1[0-2])$'}, 'sign_convention':{'enum':['debit_positive','credit_positive']}},'required':['currency','unit','period','sign_convention'],'additionalProperties':False}
+            if target.schema_ref != 'schema:psl/source-conventions/v1':
+                raise ValidationError('Unsupported source convention schema')
+            try:
+                validate(target.content,schema)
+            except SchemaError as exc:
+                raise ValidationError(exc.message)
+        else:
+            raise ValidationError('Domain semantic validator is not implemented for this component yet; draft is retained')
+    if envelope['component_id']=='D05.role_principal_assignments':
+        from .role_assignments import validate_collection as validate_role_collection
+        validate_role_collection(resolved_contents)
+    from .d03_validators import validate_collection as validate_d03_collection
+    validate_d03_collection(envelope['component_id'],resolved_contents)
+    from .payment_validators import validate_collection as validate_payment_collection
+    validate_payment_collection(envelope['component_id'],resolved_contents)
+    from .partner_validators import validate_collection as validate_partner_collection
+    validate_partner_collection(envelope['component_id'],resolved_contents)
+    from .settlement_validators import SUPPORTED as SETTLEMENT_COMPONENTS,validate_collection as validate_settlement_collection
+    if envelope['component_id'] in SETTLEMENT_COMPONENTS:validate_settlement_collection(envelope['component_id'],resolved_contents)
+    from .billing_validators import SUPPORTED as BILLING_COMPONENTS,validate_collection as validate_billing_collection
+    if envelope['component_id'] in BILLING_COMPONENTS:validate_billing_collection(envelope['component_id'],resolved_contents)
+    from .finance_validators import SUPPORTED as FINANCE_COMPONENTS,validate_collection
+    if envelope['component_id'] in FINANCE_COMPONENTS:validate_collection(envelope['component_id'],resolved_contents)
+    if envelope['component_id'] in ['D01.change_type_catalogue','D11.adapter_configuration_refs']:
+        if len(values)>100:
+            raise ValidationError('Standard catalogue exceeds the 100-entry validation budget')
+        keys=[RegisteredReference.objects.get(case=case,ref=ref,version=1).content['key'] for ref in values]
+        if len(keys)!=len(set(keys)):
+            raise ValidationError('Standard catalogue keys must be unique')

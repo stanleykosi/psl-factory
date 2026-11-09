@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Review an incumbent transaction reference</h1><p>Select exact supplied evidence. Finance retains ledger posting and accounting treatment. This flow does not authenticate or write QuickBooks.</p>
+<form method="get"><input type="hidden" name="definition" value="finance-ledger/v1">{{ form.case.as_field_group }}<button>Select case</button></form>
+{% if case %}<p><a href="{% url 'ledger' case.pk %}">Inspect native incumbent evidence and rules</a></p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start incumbent reference review</button></form>{% endif %}{% endblock %}

@@ -6,6 +6,7 @@ from apps.core.models import AppendOnly
 class FinanceSource(AppendOnly):
     case=models.ForeignKey('core.Case',on_delete=models.PROTECT)
     batch=models.ForeignKey('finance.FinancialImport',on_delete=models.PROTECT,related_name='contexts')
+    unit_declaration=models.JSONField(null=True,editable=False)
     entity=models.CharField(max_length=100)
     accounting_basis=models.CharField(max_length=100)
     extracted_at=models.DateTimeField()
@@ -14,6 +15,12 @@ class FinanceSource(AppendOnly):
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     created_at=models.DateTimeField(auto_now_add=True)
+    @property
+    def unit_state(self):
+        from django.core.exceptions import ValidationError
+        from .source_units import inspect
+        try:return inspect(self)
+        except ValidationError as exc:return {'status':'stale_or_invalid','findings':exc.messages,'declaration':self.unit_declaration}
     def __str__(self):return f'Source #{self.pk} / import #{self.batch_id} / {self.entity}'
 
 class FinanceAdjustment(AppendOnly):

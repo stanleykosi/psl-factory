@@ -67,3 +67,5 @@ _integration_runtime=load_integration_runtime()
 READINESS_ENDPOINTS=_integration_runtime['endpoints']
 READINESS_SECRET_REFS=_integration_runtime['secrets']
 FINANCE_INBOX_SENDERS=_integration_runtime['finance_senders']
+
+QUICKBOOKS_READS = _integration_runtime.get('quickbooks_reads', {})

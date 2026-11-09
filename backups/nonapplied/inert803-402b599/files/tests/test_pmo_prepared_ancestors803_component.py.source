@@ -1,0 +1,83 @@
+"""Pure SQL-shape and modeled ancestor misses; NOT PostgreSQL execution proof."""
+import datetime,hashlib,unittest,uuid
+from dataclasses import replace
+from unittest.mock import patch
+from apps.pmo import template_prepared_ancestors as a
+from apps.pmo import template_prepared_transfer as d
+from apps.documents.template_operation_budget import Metadata,BudgetHold
+from tests import test_pmo_prepared_reader803_component as fixtures
+
+class DescriptorTests(unittest.TestCase):
+    def setUp(self):
+        self.now=datetime.datetime(2026,1,1,tzinfo=datetime.timezone.utc)
+        self.stamp=Metadata((2,3,None),'object',2,hashlib.sha256(b'{}').hexdigest())
+        self.context=a.Context((2,4,5,self.now,uuid.UUID(int=1)),(1,2,3,None,uuid.UUID(int=2)),self.stamp,uuid.UUID(int=3))
+    def test_all_cells_both_phases_pin_ancestors_and_mode(self):
+        identities={'manifest':(2,3,None),'references':(6,7,1,8,9,self.now,None),'links':(6,1,8,9,self.now),'narrative':(uuid.UUID(int=2),'agent_private_report',1,'stored-only',9,self.now)}
+        for kind,identity in identities.items():
+            m=Metadata(identity,d.spec(kind)[4],2,hashlib.sha256(b'{}').hexdigest())
+            for sql,params in (a.metadata_statement(kind,1,self.context),a.transfer_statement(kind,1,m,self.context)):
+                for fragment in ('EXISTS','v.template_id=%s','v.document_id=%s','v.created_at=%s','d.case_id=%s','r.case_id=%s','t.case_id=%s',"b.manifest->>'source_mode'=%s"):
+                    self.assertIn(fragment,sql)
+                self.assertEqual(sql.count('%s'),len(params))
+                self.assertIn(a.MODE,params);self.assertIn(uuid.UUID(int=1),params);self.assertIn(uuid.UUID(int=2),params)
+                self.assertNotIn('r.case_id=d.case_id',sql)
+                self.assertIn(self.stamp.fingerprint,params)
+    def test_initial_manifest_mode_guard_no_prior_stamp(self):
+        ctx=replace(self.context,manifest=None)
+        sql,params=a.metadata_statement('manifest',1,ctx)
+        self.assertIn("b.manifest->>'source_mode'=%s",sql);self.assertIn(a.MODE,params)
+        for kind in ('references','links','narrative'):
+            with self.assertRaises(d.PreparedHold):a.metadata_statement(kind,1,ctx)
+    def test_history_only_cutoff_issue_case_and_no_added_privacy_gate(self):
+        sql,params=a.metadata_statement('references',10,self.context,True)
+        self.assertIn('i.case_id=%s',sql);self.assertIn('"pmo_issuereferencerevision".created_at<=%s',sql)
+        selected,_=a.metadata_statement('references',10,self.context)
+        self.assertNotIn('created_at<=',selected)
+        narrative,_=a.metadata_statement('narrative',10,self.context)
+        self.assertNotIn('public',narrative);self.assertNotIn('created_by',narrative.split('EXISTS',1)[1])
+        with self.assertRaises(d.PreparedHold):a.metadata_statement('links',10,self.context,True)
+    def test_closed_context_types_and_identity(self):
+        for ctx in (object(),replace(self.context,version=(True,*self.context.version[1:])),replace(self.context,binding=(1,99,3,None,uuid.UUID(int=2)))):
+            with self.assertRaises(d.PreparedHold):a.metadata_statement('manifest',1,ctx)
+        with self.assertRaises(d.PreparedHold):a.metadata_statement('manifest',999,self.context)
+        with self.assertRaises(d.PreparedHold):a.metadata_statement('arbitrary',1,self.context)
+
+class ModeledMissTests(unittest.TestCase):
+    setUp=fixtures.PreparedPayloadTransportTests.setUp
+    prepare=fixtures.PreparedPayloadTransportTests.prepare
+    # Reuse fake connection only; modeled failures are not SQL semantic execution.
+    def test_changed_ancestor_or_mode_no_transfer_no_decode(self):
+        # Fake relational store matches the emitted common pins; no SQL evaluator.
+        indices={'binding':0,'binding_version':1,'binding_report':2,'binding_meeting':3,'report_case':4,'version':5,'template':6,'document':7,'created_at':8,'document_case':9,'source_mode':10,'template_case':11}
+        owner=self
+        for field,index in indices.items():
+            with self.subTest(field=field):
+                self.marker={};self.reader.ledger=type(self.reader.ledger)(self.actor,['documents.template_claims']);self.reader.manifest_stamp=None
+                self.reader.operation=self.reader.ledger.begin_operation(())
+                self.reader.ledger.operation(self.reader.operation)['phase']='native_running'
+                row=self.prepare();metadata=self.responses.pop(0);self.responses.pop(0)
+                live=list((*self.reader.binding_pin,*self.reader.version_pin,a.MODE,self.reader.template_case_id))
+                class Cursor:
+                    def __enter__(self):return self
+                    def __exit__(self,*args):pass
+                    def execute(self,sql,params):
+                        owner.calls.append((sql,params))
+                        if sql.startswith('SELECT convert_to'):
+                            self.rows=[] if tuple(live)!=params[-12:] else [(b'{}',)]
+                        else:
+                            self.rows=metadata
+                            live[index]=object() # own-write after metadata, before transfer
+                    def fetchmany(self,n):return self.rows
+                with patch.object(self.connection,'cursor',Cursor),patch.object(d,'decode',side_effect=AssertionError('must not decode')):
+                    with self.assertRaises(BudgetHold):self.reader._payload('manifest',row)
+                sql,params=self.calls[-1]
+                self.assertIn('EXISTS',sql);self.assertIn(a.MODE,params)
+                self.assertTrue(self.reader.ledger.state['poison'])
+    def test_manifest_stamp_cannot_be_replaced_on_conditional_miss(self):
+        row=self.prepare();self.reader._payload('manifest',row);stamp=self.reader.manifest_stamp
+        self.prepare(transfer=False)
+        with patch.object(d,'decode',side_effect=AssertionError('must not decode')):
+            with self.assertRaises(BudgetHold):self.reader._payload('manifest',row)
+        self.assertIs(self.reader.manifest_stamp,stamp)
+        self.assertIn(stamp.fingerprint,self.calls[-1][1])

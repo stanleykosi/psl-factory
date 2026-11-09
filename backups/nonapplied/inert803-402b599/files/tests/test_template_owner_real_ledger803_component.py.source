@@ -1,0 +1,65 @@
+"""Actual reviewed PolicyCellBudget/PolicyLedger/codec, fake transport, no SQL."""
+import ast,hashlib,unittest
+from pathlib import Path
+from unittest.mock import patch
+from apps.policy import template_policy_budget_v2 as v2
+from tests import test_template_owner_reader803_component as original
+ROOT=Path(__file__).resolve().parents[1]
+class RealOwnerLedgerTests(unittest.TestCase):
+    reader=original.ReaderTests.reader
+    def setUp(self):
+        original.ReaderTests.setUp(self)
+        self.connection=self.ns['PolicyCellBudget']().connection;self.raw=object()
+        for name,value in [('_binding',lambda a,k:(self.marker,self.connection,self.raw)),('_active_marker',lambda:self.marker)]:
+            p=patch.object(v2,name,value);p.start();self.addCleanup(p.stop)
+        tree=ast.parse((ROOT/'apps/policy/template_policy_admission.py').read_text())
+        node=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='PolicyCellBudget')
+        def hold():raise ValueError('fixed admission hold')
+        ns={'__package__':'apps.policy','hold':hold,'CELLS':self.ns['CELLS']}
+        exec(compile(ast.Module(body=[node],type_ignores=[]),'<actual-policy-budget>','exec'),ns)
+        self.ns['PolicyCellBudget']=ns['PolicyCellBudget']
+    def response(self,data=b'{"x": 1}',transfer=True):
+        self.responses.extend([[(self.case,'ref',1,'object',len(data),hashlib.sha256(data).hexdigest())],[(data,)] if transfer else []])
+    def reference(self,r):return r.observe('reference',(5,self.case,'ref',1,'schema:x','a'*64))
+    def test_actual_three_phases_and_completed_ticket_final_guard(self):
+        r=self.reader();v=self.reference(r);self.response();self.assertEqual(r.load('reference',v),{'x':1})
+        self.assertIs(type(r.budget.ledger),v2.PolicyLedger)
+        state=r.budget.ledger.state
+        self.assertEqual(state['attempts'],3);self.assertEqual(set(state['domains']),{'documents.template_claims'})
+        self.assertEqual(state['tickets'][r.tickets[0].number][1],'validated')
+        self.responses=[[(1,)]];r.final_guard();self.assertEqual(len(self.queries),3)
+    def test_actual_shared_dedup_fresh_decode_across_readers(self):
+        a=self.reader();self.response();first=a.load('reference',self.reference(a));first['x']=99
+        b=self.reader();self.response();self.assertEqual(b.load('reference',self.reference(b)),{'x':1})
+        self.assertIs(a.budget.ledger.state,b.budget.ledger.state);self.assertEqual(b.budget.ledger.state['attempts'],6)
+        self.assertEqual(len(b.budget.ledger.state['local_cells']),1)
+    def test_actual_conditional_transfer_miss_never_validates(self):
+        r=self.reader();self.response(transfer=False)
+        with self.assertRaises(self.Stop):r.load('reference',self.reference(r))
+        state=r.budget.ledger.state;self.assertEqual(state['attempts'],2);self.assertTrue(state['poison']);self.assertEqual(self.decoded,[])
+        self.assertNotEqual(state['tickets'][r.tickets[0].number][1],'validated')
+    def test_actual_bad_decode_retains_bytes_and_poison(self):
+        r=self.reader();self.response(b'{bad json')
+        with self.assertRaises(self.Stop):r.load('reference',self.reference(r))
+        self.assertGreater(r.budget.ledger.state['bytes'],0);self.assertTrue(r.budget.ledger.state['poison'])
+        self.assertEqual(r.budget.ledger.state['attempts'],3)
+    def test_actual_fingerprint_conflict_stops_second_transfer(self):
+        r=self.reader();self.response();r.load('reference',self.reference(r));self.response(b'{"x": 2}')
+        with self.assertRaises(self.Stop):r.load('reference',self.reference(r))
+        self.assertEqual(len(self.queries),3);self.assertEqual(len(self.decoded),1)
+    def test_actual_attempt_cap_before_metadata_query(self):
+        r=self.reader();r.budget.ledger.state['attempts']=1000
+        with self.assertRaises(self.Stop):r.load('reference',self.reference(r))
+        self.assertEqual(self.queries,[])
+    def test_actual_pending_ticket_blocks_final_guard(self):
+        r=self.reader();r.tickets.append(r.budget.ledger.begin('reference',5))
+        with self.assertRaises(self.Stop):r.final_guard()
+        self.assertEqual(self.queries,[]);self.assertTrue(r.budget.ledger.state['poison'])
+    def test_actual_cross_entry_old_reader_poisons_both(self):
+        r=self.reader();old=self.marker;self.marker={}
+        with self.assertRaises(self.Stop):r.clean()
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_actual_aggregate_cap_stops_before_transfer(self):
+        r=self.reader();r.budget.ledger.state['local_bytes']=1024*1024;self.response()
+        with self.assertRaises(self.Stop):r.load('reference',self.reference(r))
+        self.assertEqual(len(self.queries),1);self.assertEqual(self.decoded,[])

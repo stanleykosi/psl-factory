@@ -1,0 +1,8 @@
+{
+  "source_reference": "402b59930572c1b1d12ed7916889e3e0f0e8e62d",
+  "recovered_over": "17c4bb492bb37812aff6d6d80bbfb8b80f50572e",
+  "full_preedit_sha256": "f6cebbae2fec80728067753dc4cb97af6e410b41bf8c87520fae7fc8e13632c0",
+  "function_byte_sha256": "9e2033f3ff1a3e51e13afb612e3f8a47f49b2d0454d293e9fba2edc88f2c1f1a",
+  "function_ast_sha256": "b8822e2b0deaa931656f713a1cf516f034a8ad1b42d8bbf9e9db5a66dbbb59ab",
+  "scope": "Exact preedit validate_envelope only, original line endings retained. Not whole-module equivalence proof."
+}

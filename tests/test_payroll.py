@@ -146,7 +146,7 @@ class PayrollTests(TestCase):
   f=self.f;c,m,a,p=pipeline(f);self.client.force_login(f['manager'])
   response=self.client.get(reverse('payroll_inspect',args=[f['case'].pk,'report',p.pk]));self.assertContains(response,'Reviewed BU staff-cost report');self.assertContains(response,'250.00');self.assertNotContains(response,'E001');self.assertEqual(response['Cache-Control'],'no-store')
   self.assertEqual(self.client.get(reverse('payroll_inspect',args=[f['case'].pk,'run',m.pk])).status_code,403)
-  self.client.force_login(f['preparer']);response=self.client.get(reverse('payroll_inspect',args=[f['case'].pk,'run',m.pk]));self.assertContains(response,'E001');self.assertContains(response,'Source lineage');self.assertEqual(response['Cache-Control'],'no-store')
+  self.client.force_login(f['preparer']);response=self.client.get(reverse('payroll_inspect',args=[f['case'].pk,'run',m.pk]));self.assertContains(response,'E001');self.assertContains(response,'Source history');self.assertEqual(response['Cache-Control'],'no-store')
   capture(f,1,'new-source-human',source_version='B2')
   self.client.force_login(f['manager']);response=self.client.get(reverse('payroll_inspect',args=[f['case'].pk,'report',p.pk]));self.assertEqual(response.status_code,409);self.assertNotContains(response,'250.00',status_code=409)
  def test_large_eight_place_coefficient_tieout_stays_exact(self):

@@ -259,7 +259,7 @@ def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     return review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
 
 @transaction.atomic
-def accept(actor,work_id,expected,case_expected,version_id,receipt_id,pm_signature_id,client_signature_id,note,previous_acceptance_id=None):
+def accept(actor,work_id,expected,case_expected,version_id,receipt_id,pm_signature_id,client_signature_id,note,previous_acceptance_id=None,*,attestation=None,mode="fresh_signatures"):
     """Human-only console command. It is deliberately absent from agent dispatch."""
     from .factory import access
     if any(type(pk) is not int or pk<1 for pk in [expected,case_expected,version_id,receipt_id,pm_signature_id,client_signature_id]):raise ValidationError('Exact rendered versions, receipt and signature references required')
@@ -270,10 +270,11 @@ def accept(actor,work_id,expected,case_expected,version_id,receipt_id,pm_signatu
     if version_id!=v.pk or receipt_id not in [r.pk for r in receipts]:raise ValidationError('Select an actual receipt of this exact current document')
     previous=native.latest_go_live(d,False)
     if previous:
-        accepted=native.reaffirm_go_live(actor,w.case_id,d.pk,previous_acceptance_id,receipt_id,pm_signature_id,client_signature_id,note,case_expected)
+        accepted=native.reaffirm_go_live(actor,w.case_id,d.pk,previous_acceptance_id,receipt_id,pm_signature_id,client_signature_id,note,case_expected,attestation=attestation,mode=mode)
     else:
+        if mode!='fresh_signatures':raise ValidationError('Metadata binding requires an existing unchanged go-live acceptance')
         if previous_acceptance_id is not None:raise ValidationError('STALE_VERSION: this dossier has no prior acceptance to reaffirm')
-        accepted=native.accept_go_live(actor,w.case_id,d.pk,receipt_id,pm_signature_id,client_signature_id,note,case_expected)
+        accepted=native.accept_go_live(actor,w.case_id,d.pk,receipt_id,pm_signature_id,client_signature_id,note,case_expected,attestation=attestation)
     w.status='ready';w.finding='Actual human sign-off recorded; verify the native evidence head';w.observation_hash='';w.revision+=1;w.save()
     event(actor,w.case,'factory.go_live_signoff_recorded',work=w.pk,acceptance=accepted.pk,previous=previous.pk if previous else None)
     return accepted
@@ -417,11 +418,13 @@ def projection(actor,work):
     delivery_complete=False
     try:published(work,actor);delivery_complete=True
     except (ValidationError,PermissionDenied):pass
+    from apps.pmo.go_live_attestations import declaration_draft
+    for receipt in receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
     accepted=previous
     if accepted and accepted.data['receipt_id'] not in [r.pk for r in receipts]:accepted=None
     return {'dossier':d,'data':data,'report':LocalDeliveryAdapter().read_go_live(d,selected(data),data['inputs']['template_id']),
         'document':v,'publication':p,'receipts':receipts,'delivery_complete':delivery_complete,'jobs':jobs,'acceptance':accepted,'previous_acceptance':previous,
-        'finding':issue,'readiness_changed':changed,'intake_current':intake_current,'pending_review':pending_review,
+        'legacy_unbound':bool(previous and not previous.data.get('attestation')),'finding':issue,'readiness_changed':changed,'intake_current':intake_current,'pending_review':pending_review,
         'review_names':[u.get_full_name() or u.username for u in owners(work.case,'PMO Lead','document.review_controlled')],
         'pm_names':[u.get_full_name() or u.username for u in attestation_owners(work,d)],
         'review_verdicts':review_verdicts,'can_accept':can_accept,'can_correct':can_correct,'can_restart':can_restart,

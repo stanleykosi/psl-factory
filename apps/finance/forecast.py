@@ -9,13 +9,14 @@ from apps.identity.services import require
 from apps.identity.models import Grant
 from apps.pmo.services import subject
 from apps.policy.services import active_component,reference_values,resolve,decision_authority
-from adapters.forecast import scenario as parse_scenario,actual as parse_actual,day
+from adapters.forecast import scenario as parse_scenario,actual as parse_actual,day,UNCERTAINTY,OPENING_CONTRACT,opening_eligible
 from .analysis import note,digest,review_authority
 from .rules import decimal,number
-from .models import ForecastScenario,ForecastRun,ForecastReview,ForecastActual,ForecastActualVerification,ForecastMatch,ForecastMatchReversal,InvoiceIssue,CashVerification,CashReversal
+from .models import ForecastItemSupport,ForecastScenario,ForecastRun,ForecastReview,ForecastActual,ForecastActualVerification,ForecastMatch,ForecastMatchReversal,InvoiceIssue,CashVerification,CashReversal
 from . import receivables,cash,corrections
 
 METHOD='D10.forecast_inclusion_rule_id'
+IMPLEMENTATION='forecast/v2-continuation'
 
 def exact(case,model,pk):
     r=model.objects.filter(case=case,pk=pk).first()
@@ -62,6 +63,32 @@ def actual_available(r):
         return not CashReversal.objects.filter(lot_id=r.lot_id).exists()
     return ForecastActualVerification.objects.filter(actual=r).exists()
 
+def validate_opening_evidence(case,o,proof,actual):
+    expected={k:x for k,x in o.items() if k!='evidence_id'}
+    if o.get('contract')==OPENING_CONTRACT and 'evidence_id' in o['boundary']:
+        expected={k:x for k,x in expected.items() if k not in ['contract','boundary']}
+        b=o['boundary'];declaration=subject(case,b['evidence_id'],'forecast_opening')
+        try:body=json.loads(declaration.body)
+        except (ValueError,TypeError):raise ValidationError('Boundary declaration must contain exact supplied snapshot relationship')
+        boundary={k:x for k,x in b.items() if k!='evidence_id'}
+        if body!=dict(boundary,snapshot_evidence_id=proof.pk,snapshot_sha256=proof.sha256,**expected):
+            raise ValidationError('Opening boundary differs from exact supplied snapshot declaration')
+    if actual!=expected:raise ValidationError('Opening balance differs from exact supplied evidence')
+
+
+def opening_provenance(s):
+    if not any(o.get('contract')==OPENING_CONTRACT for o in s.payload['openings']):return None
+    result=[]
+    for o in s.payload['openings']:
+        proof=subject(s.case,o['evidence_id'],'forecast_opening')
+        validate_opening_evidence(s.case,o,proof,json.loads(proof.body))
+        boundary_id=o.get('boundary',{}).get('evidence_id',proof.pk)
+        declaration=subject(s.case,boundary_id,'forecast_opening')
+        result.append(dict(o,snapshot_sha256=proof.sha256,boundary_sha256=declaration.sha256,
+            eligible=opening_eligible(o,s.payload['as_of']),verification='supplied_only_not_bank_authenticated'))
+    return result
+
+
 def validate_inputs(case,v):
     if day(v['as_of'])>timezone.localdate():raise ValidationError('Forecast as-of is actual, not future')
     if v['months'][0]<v['as_of'][:7]:raise ValidationError('Forecast horizon cannot begin before its as-of month')
@@ -71,7 +98,7 @@ def validate_inputs(case,v):
         proof=subject(case,o['evidence_id'],'forecast_opening')
         try:actual=json.loads(proof.body)
         except (ValueError,TypeError):raise ValidationError('Opening evidence must contain exact account/amount/date snapshot')
-        if actual!={k:x for k,x in o.items() if k!='evidence_id'}:raise ValidationError('Opening balance differs from exact supplied evidence')
+        validate_opening_evidence(case,o,proof,actual)
         if day(o['observed_on'])>day(v['as_of']):raise ValidationError('Opening observation is later than scenario as-of')
     for i in v['items']:
         subject(case,i['evidence_id'])
@@ -111,10 +138,88 @@ def capture(actor,case_id,reference,evidence_id,reason,expected,parent_id=None):
     s=ForecastScenario.objects.create(case=case,reference=reference,number=(ForecastScenario.objects.filter(case=case,reference=reference).count()+1),root=root,parent=parent,evidence=e,payload=v,reason=reason,actor=actor)
     event(actor,case,'forecast.captured',scenario=s.pk,parent=parent.pk if parent else None);bump(case);return s
 
+def ancestry(s):
+    chain=[];seen=set();node=s
+    while node:
+        if node.pk in seen or node.case_id!=s.case_id:raise ValidationError('Invalid forecast ancestry')
+        seen.add(node.pk);chain.append(node);node=node.parent.scenario if node.parent_id else None
+    chain.reverse()
+    if chain[0].pk!=root_of(s).pk:raise ValidationError('Forecast root differs from original ancestry')
+    return chain
+
+def support_current(record):
+    try:
+        for action in ['finance.read','finance.forecast.capture','finance.forecast.review']:require(record.actor,record.case,action)
+        auth=review_authority(record.actor,record.case,'forecast_rollover' if record.scenario.parent_id else 'forecast',record.role,'approve',record.scenario.actor_id)
+        strip=lambda v:{k:x for k,x in v.items() if k!='D05.decision_action_matrix'}
+        return strip(auth)==strip(record.authority)
+    except (ValidationError,PermissionDenied):return False
+
+def item_provenance(s):
+    chain=ancestry(s);result={}
+    supports=list(ForecastItemSupport.objects.filter(root=root_of(s),scenario_id__in=[x.pk for x in chain]).select_related('evidence','actor','case','scenario').order_by('pk'))
+    for item in s.payload['items']:
+        history=[]
+        for node in chain:
+            prior=next((i for i in node.payload['items'] if i['key']==item['key']),None)
+            if prior is None:raise ValidationError('Carried item has no exact original occurrence')
+            history.append({'scenario':node.pk,'parent_run':node.parent_id,'as_of':node.payload['as_of'],'expected_on':prior['expected_on']})
+        original=next(i for i in chain[0].payload['items'] if i['key']==item['key'])
+        proof=subject(s.case,original['evidence_id'])
+        records=[x for x in supports if x.item_key==item['key']];latest=records[-1] if records else None
+        state=latest.uncertainty if latest else original.get('uncertainty','unknown')
+        if state not in UNCERTAINTY:raise ValidationError('Explicit valid supplied uncertainty required')
+        active=support_current(latest) if latest else True
+        fresh=bool(latest and latest.mode=='renewed_support' and latest.scenario_id==s.pk and active)
+        continued=bool((len(history)>1 and not (fresh and state=='no_known_uncertainty')) or state in ['disputed','uncertain'] or not active)
+        result[item['key']]={'original_scenario':chain[0].pk,'original_due':original['original_due'],
+            'first_captured_as_of':chain[0].payload['as_of'],'original_evidence_id':proof.pk,'original_evidence_sha256':proof.sha256,
+            'carry_count':len(history)-1,'history':history,'uncertainty':state,'reliability':'unknown',
+            'fresh_external_support':False,'renewed_supplied_support':fresh,'continued_review_required':continued,
+            'support_authority_current':active,'support_id':latest.pk if latest else None,
+            'support_history':[{'id':x.pk,'scenario':x.scenario_id,'previous':x.previous_id,'evidence_id':x.evidence_id,'sha256':x.evidence.sha256,
+                'mode':x.mode,'observed_on':x.observed_on.isoformat() if x.observed_on else None,'uncertainty':x.uncertainty} for x in records]}
+    return result
+
+def continuation_summary(items):
+    count=sum(bool(i.get('provenance',{}).get('continued_review_required')) for i in items)
+    return {'label':'continued_review_uncertainty','item_count':count,'reliability':'unknown','review_is_fresh_support':False} if count else None
+
+@transaction.atomic
+def record_support(actor,case_id,scenario_id,item_key,previous_id,evidence_id,mode,uncertainty,observed_on,role,reason,expected):
+    case=lock_case(actor,case_id,'finance.forecast.capture',expected)
+    list(Grant.objects.select_for_update().filter(case=case))
+    require(actor,case,'finance.read');require(actor,case,'finance.forecast.review');note(reason)
+    s=exact(case,ForecastScenario,scenario_id)
+    if ForecastScenario.objects.filter(case=case,reference=s.reference,number__gt=s.number).exists():raise ValidationError('Select current scenario revision')
+    if s.payload['as_of']!=timezone.localdate().isoformat():raise ValidationError('Support declaration requires current actual-as-of scenario')
+    item=next((i for i in s.payload['items'] if i['key']==item_key),None)
+    if not item:raise ValidationError('Select exact current forecast item')
+    if mode not in ['reaffirmation','renewed_support'] or uncertainty not in UNCERTAINTY:raise ValidationError('Choose explicit support mode and declared uncertainty')
+    if observed_on is not None:
+        observed_on=day(observed_on) if isinstance(observed_on,str) else observed_on
+        if observed_on>timezone.localdate():raise ValidationError('Supporting observation cannot be future')
+    root=root_of(s);previous=ForecastItemSupport.objects.filter(root=root,item_key=item_key).order_by('-pk').first()
+    if previous_id!=(previous.pk if previous else None):raise ValidationError('Select exact current support predecessor')
+    if previous and previous.scenario_id not in {x.pk for x in ancestry(s)}:raise ValidationError('Support predecessor must belong to this exact scenario ancestry')
+    e=subject(case,evidence_id)
+    if mode=='renewed_support' and e.kind!='forecast_support':raise ValidationError('Renewal requires explicit supplied forecast_support evidence, not a review or opening')
+    original=next(i for i in root.payload['items'] if i['key']==item_key);original_e=subject(case,original['evidence_id'])
+    prior_e=previous.evidence if previous else original_e
+    if mode=='reaffirmation' and (e.pk!=prior_e.pk or observed_on!=(previous.observed_on if previous else None) or uncertainty!=(previous.uncertainty if previous else original.get('uncertainty','unknown'))):raise ValidationError('Reaffirmation preserves prior evidence identity, observed date and uncertainty')
+    if mode=='renewed_support' and (e.sha256==original_e.sha256 or ForecastItemSupport.objects.filter(root=root,item_key=item_key,evidence__sha256=e.sha256).exists()):raise ValidationError('Renewed supplied support requires different evidence bytes; review or reupload is not renewal')
+    auth=review_authority(actor,case,'forecast_rollover' if s.parent_id else 'forecast',role,'approve',s.actor_id)
+    snapshot={'original_evidence_id':original_e.pk,'original_evidence_sha256':original_e.sha256,'original_due':original['original_due'],
+        'previous_evidence_id':prior_e.pk,'previous_evidence_sha256':prior_e.sha256,'evidence_sha256':e.sha256}
+    record=ForecastItemSupport.objects.create(case=case,root=root,scenario=s,item_key=item_key,previous=previous,evidence=e,mode=mode,uncertainty=uncertainty,
+        observed_on=observed_on,role=role,snapshot=snapshot,authority=auth,reason=reason,actor=actor)
+    event(actor,case,'forecast.support_declared',support=record.pk,scenario=s.pk,item=item_key,mode=mode,uncertainty=uncertainty);bump(case);return record
+
 def calculate(s):
     case=s.case;v=s.payload;findings=[]
     r=resolve(METHOD,case);c=r.configuration;m=reference_values(c)[0] if r.status=='ACTIVE' else None
-    manifest={'implementation':'forecast/v1','scenario':s.pk,'source_hash':s.evidence.sha256,'method':{'status':r.status,'id':c.pk if c else None},'today':timezone.localdate().isoformat()}
+    provenance=item_provenance(s)
+    manifest={'implementation':IMPLEMENTATION,'item_provenance':provenance,'scenario':s.pk,'source_hash':s.evidence.sha256,'method':{'status':r.status,'id':c.pk if c else None},'today':timezone.localdate().isoformat()}
     ledger,position=receivables.calculate(case,timezone.localdate());manifest['receivables']=ledger
     actuals=list(ForecastActual.objects.filter(case=case).order_by('pk'));links=list(active_matches().filter(case=case).order_by('pk'))
     manifest['actuals']=[[a.pk,actual_available(a),a.evidence.sha256] for a in actuals];manifest['verifications']=list(ForecastActualVerification.objects.filter(actual__case=case).values_list('pk',flat=True));manifest['matches']=list(ForecastMatch.objects.filter(case=case).values_list('pk',flat=True));manifest['match_reversals']=list(ForecastMatchReversal.objects.filter(match__case=case).values_list('pk',flat=True))
@@ -148,11 +253,13 @@ def calculate(s):
                 issue=InvoiceIssue.objects.get(pk=i['issue_id'],invoice__case=case)
                 if corrections.unresolved(issue):findings.append('Selected receivable has unresolved correction: '+i['key'])
                 if amount is not None and amount>cash.open_amount(issue):findings.append('Selected residual exceeds current corrected receivable: '+i['key'])
-            row=dict(i,residual=number(amount),matched=number(matched(root_of(s),i['key'])))
+            p=provenance[i['key']]
+            if p['continued_review_required']:findings.append('Continued review uncertainty: '+i['key']+'; '+p['uncertainty']+'; timing review is not fresh support or reliability')
+            row=dict(i,residual=number(amount),matched=number(matched(root_of(s),i['key'])),provenance=p)
             inputs.append(row)
             if not i['expected_on'] or i['expected_on'][:7] not in v['months']:
                 unscheduled.append(i['key']);findings.append('Unknown/out-of-horizon timing: '+i['key'])
-        opening_date_gap=any(o['observed_on']!=v['as_of'] for o in openings.values())
+        opening_date_gap=any(not opening_eligible(o,v['as_of']) for o in openings.values())
         if opening_date_gap:findings.append('Opening is not the declared as-of start of day; intervening cash reconciliation is unavailable')
         if any(o['amount'] is None for o in openings.values()) or set(openings)!=set(v['coverage']['accounts']) or opening_date_gap:opening=None
         else:opening=sum((decimal(o['amount']) for o in openings.values()),Decimal(0))
@@ -177,10 +284,16 @@ def calculate(s):
                 'expected_inflow':number(expected_values['inflow']),'expected_outflow':number(expected_values['outflow']),'actual_inflow':number(realized['inflow']),'actual_outflow':number(realized['outflow'])})
             opening=None if close is None else decimal(close)
     if any(p['closing'] is None for p in periods):findings.append('Projected balance is unknown; missing input is not zero')
-    result={'status':'held' if not m else 'partial' if findings else 'ready','entity':v['entity'],'currency':v['currency'],'basis':v['basis'],'as_of':v['as_of'],
+    result={'implementation':IMPLEMENTATION,'continuation':continuation_summary(inputs),'status':'held' if not m else 'partial' if findings else 'ready','entity':v['entity'],'currency':v['currency'],'basis':v['basis'],'as_of':v['as_of'],
         'coverage':v['coverage'],'scope':'captured_case_and_explicit_account_inventory_only','full_business_cash_forecast':False,'periods':periods,'items':inputs,'omitted_receivables':omitted,'queues':queues,'findings':findings,
         'actuals':[{'id':a.pk,'direction':a.payload['direction'],'amount':a.payload['amount'],'verified':actual_available(a),'unmatched':unmatched_actual(a,links)} for a in actuals],
         'rollover':v['rollover'],'execution_authorized':False}
+    opening_sources=opening_provenance(s)
+    if opening_sources is not None:
+        manifest['opening_contract']=OPENING_CONTRACT;manifest['opening_provenance']=opening_sources
+        result['opening_contract']=OPENING_CONTRACT;result['opening_provenance']=opening_sources
+    from .forecast_workbook import apply as compare_workbook
+    compare_workbook(s,m,manifest,result)
     return manifest,result
 
 @transaction.atomic
@@ -202,7 +315,10 @@ def ensure_current(run):
 def review_snapshot(run):
     ensure_current(run);c,m=method(run.case)
     if run.result['status']=='held' or run.result['status']=='partial' and m['partial_publication']=='hold':raise ValidationError('Configured policy holds this incomplete forecast')
-    return {'run_hash':run.sha256,'method':c.pk}
+    if any(not i['provenance']['support_authority_current'] for i in run.result['items']):raise ValidationError('Supplied support declaration authority changed; record a current authorized correction')
+    return {'run_hash':run.sha256,'method':c.pk,'implementation':IMPLEMENTATION,
+        'review_kind':'continuation_of_uncertain_expectation' if run.result['continuation'] else 'forecast_expectation',
+        'item_provenance':run.manifest['item_provenance'],'review_is_fresh_support':False}
 
 @transaction.atomic
 def review(actor,case_id,run_id,role,verdict,evidence_id,reason,expected):

@@ -11,6 +11,7 @@ from apps.policy.recognition_validators import AUTHORITY,REVIEW
 from apps.pmo.services import complete_milestone
 from apps.finance import recognition as domain
 from .helpers import setup_case,signed,activate,rev
+from .signature_helpers import reaffirm_for
 
 def policy(a,c,key,value,e):
  r=draft_recognition_policy(a,c.pk,key,value,e.pk,timezone.now()-timedelta(seconds=1));transition(a,r.pk,'validated');transition(a,r.pk,'active');return r
@@ -23,6 +24,7 @@ def fixture():
  for person,role in [(a,'PM'),(f,'Finance')]:
   r=register_reference(a,c.pk,'f33-role:'+role,'schema:psl/role-assignment/v1',{'user_id':person.pk,'role':role},e['policy_decision'].pk);refs.append(r.ref)
  activate(a,c,'D05.role_principal_assignments',refs,e['policy_decision'])
+ reaffirm_for(a,c)
  pe=add_evidence(a,c.pk,'recognition_policy','Synthetic Finance review criteria; no revenue formula','synthetic:f33')
  de=add_evidence(a,c.pk,'recognition_decision','Synthetic external human review memo; no journal','synthetic:f33')
  price=add_evidence(a,c.pk,'progress_price','Signed price evidence; exact amount remains in source','synthetic:f33')

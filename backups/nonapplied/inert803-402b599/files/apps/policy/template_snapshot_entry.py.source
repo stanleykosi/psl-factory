@@ -1,0 +1,96 @@
+"""INERT803 snapshot scaffold. No production route calls this module.
+
+Snapshot-time authorization contract awaits approval; not through-commit revocation.
+The internal callback must retain every native authorization predicate. A context
+marker never grants access. No retries, providers, tools or domain activation.
+"""
+from contextvars import ContextVar
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied,ValidationError
+from django.db import DatabaseError,connections,transaction
+
+KEYS=frozenset({'documents.template_claims','documents.template_retractions','documents.template_resolutions'})
+_CONTEXT=ContextVar('inert803_snapshot_context',default=None)
+
+class SnapshotConflict(ValidationError):
+    """Confirmed database rollback conflict; caller may explicitly request a fresh operation."""
+
+def selected(keys):
+    if not isinstance(keys,list) or not keys or any(type(k) is not str or k not in KEYS for k in keys) or len(set(keys))!=len(keys):
+        raise ValidationError('Select only distinct template-owner snapshot domains')
+    return tuple(sorted(keys))
+
+def require_context(keys,using='default'):
+    wanted=selected(keys);marker=_CONTEXT.get()
+    if marker is None or marker['alias']!=using or marker['keys']!=wanted or not connections[using].in_atomic_block:
+        raise ValidationError('Independent template-owner snapshot entry required')
+    # This confirms entry only. Every native reader/configuration/source gate remains required.
+
+def require_context_actor(actor,keys,using='default'):
+    require_context(keys,using)
+    marker=_CONTEXT.get()
+    if actor is not marker.get('principal') or actor.pk!=marker.get('principal_pk'):
+        raise PermissionDenied('Snapshot callback principal required')
+    # Identity binding is not authorization; native reader gates remain mandatory.
+
+def reject_unentered_domains(keys,using='default'):
+    """Unwired future generic-route guard. Mixed sets always fail, not partial filtering."""
+    if isinstance(keys,(list,tuple)) and any(k in KEYS for k in keys if isinstance(k,str)):
+        require_context(list(keys),using)
+
+def materialize(value):
+    """Accept only fully materialized JSON-shaped results, never lazy ORM values."""
+    if value is None or type(value) in (bool,int,str):return value
+    if type(value) is float:
+        import math
+        if not math.isfinite(value):raise ValidationError('Finite materialized snapshot result required')
+        return value
+    if type(value) is list:return [materialize(v) for v in value]
+    if type(value) is dict and all(type(k) is str for k in value):return {k:materialize(v) for k,v in value.items()}
+    raise ValidationError('Materialized snapshot result required')
+
+def sqlstate(exc):
+    """Only direct database cause codes; never infer rollback from error text."""
+    cause=exc.__cause__
+    return getattr(cause,'sqlstate',None) or getattr(cause,'pgcode',None)
+
+def _run_authenticated(server_principal,keys,callback,*,using='default'):
+    """Internal scaffold only. Principal must come from server authentication, NOT client IDs.
+
+    Callback receives freshly loaded user and must run native authorization itself.
+    Trusted callback forbids lazy returns, on_commit hooks and provider/external effects.
+    No production callback/entry/URL is installed by this source increment.
+    """
+    if using!='default':raise ValidationError('Default database snapshot entry required')
+    User=get_user_model()
+    if not isinstance(server_principal,User) or not server_principal.is_authenticated or server_principal.pk is None:
+        raise PermissionDenied('Authenticated server principal required')
+    wanted=selected(keys);connection=connections[using]
+    if connection.in_atomic_block or not connection.get_autocommit():
+        raise ValidationError('Outermost autocommit snapshot entry required')
+    if connection.vendor!='postgresql':raise ValidationError('PostgreSQL snapshot required')
+    # No table lookup before entering; BEGIN/SET occur before the first SELECT.
+    try:
+        with transaction.atomic(using=using,durable=True):
+            with connection.cursor() as cursor:
+                cursor.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ')
+            try:
+                fresh=User.objects.using(using).get(pk=server_principal.pk)
+            except User.DoesNotExist:
+                raise PermissionDenied('Current active principal required') from None
+            if not fresh.is_active:raise PermissionDenied('Current active principal required')
+            marker={'alias':using,'keys':wanted,'principal':fresh,'principal_pk':fresh.pk}
+            token=_CONTEXT.set(marker)
+            try:
+                result=callback(fresh)
+                if (_CONTEXT.get() is not marker or marker.get('policy_budget_v2_failed')
+                    or marker.get('policy_operation_budget_v2',{}).get('poison')):
+                    raise ValidationError('Snapshot admission failed; result unavailable')
+                return materialize(result)
+            finally:
+                _CONTEXT.reset(token)
+    except DatabaseError as exc:
+        # Outside outer atomic: confirmed conflicts have rolled back. Never retry.
+        if sqlstate(exc) in {'40001','40P01'}:
+            raise SnapshotConflict('Snapshot transaction conflicted and rolled back; request a fresh operation') from exc
+        raise

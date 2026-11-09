@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<a href="{% url 'factory_create' %}?definition=pmo-change/v1&amp;case={{ case.pk }}">← Controlled change work</a>
+<h1>Submit a change request</h1><p>{{ case|workspace_name }}</p>
+<p>Keep the original request. Extraction proposes fields and identifies missing facts; the PM records the category. Classification requires no approval and grants no implementation permission.</p>
+<p>For the local demonstration, labelled lines such as “CR ID:”, “Requestor:”, “Date raised: YYYY-MM-DD”, “Affected module:”, “Description:”, “Reason:” and “Category:” can be extracted. Unclear fields remain unknown.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Receive change request</button><button type="submit" name="action" value="refresh" formnovalidate>Refresh project and retain this request</button></form>
+<section><h2>Received requests</h2>{% for r in receipts %}<p><a href="{% url 'p56_intake_detail' case.pk r.pk %}">Request receipt #{{ r.pk }}</a> · received {{ r.created_at }}</p>{% empty %}<p>No change requests received through this intake yet.</p>{% endfor %}</section>
+{% endblock %}

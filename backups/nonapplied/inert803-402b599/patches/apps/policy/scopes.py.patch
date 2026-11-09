@@ -1,0 +1,75 @@
+--- a/apps/policy/scopes.py
++++ b/apps/policy/scopes.py
+@@ -36 +36 @@
+-def descriptor(config, kind, ref):
++def descriptor(config, kind, ref, *, _prepared=None):
+@@ -46 +46 @@
+-        if Evidence.objects.filter(case=case, pk=ref[9:] if ref[9:].isdigit() else None, kind='sow').exists():
++        if (Evidence.objects.filter(case=case, pk=ref[9:] if ref[9:].isdigit() else None, kind='sow').exists() if _prepared is None else _prepared.descriptor_sow_exists(case,ref)):
+@@ -51 +51 @@
+-def values(config):
++def values(config, *, _prepared=None):
+@@ -52,0 +53 @@
++    if _prepared is not None:return reference_values(config,_prepared=_prepared)
+@@ -56 +57 @@
+-def source_health(source, at=None):
++def source_health(source, at=None, *, _prepared=None):
+@@ -58 +59,2 @@
+-    mutex(source)
++    if _prepared is None:mutex(source)
++    else:_prepared.source_mutex(source)
+@@ -60 +62 @@
+-    current = state(source)
++    current = state(source) if _prepared is None else _prepared.source_state(source)
+@@ -65 +67,2 @@
+-    if family(source).filter(states__state__in=['active', 'revoked']).order_by('-revision').first().pk != source.pk:
++    head=family(source).filter(states__state__in=['active', 'revoked']).order_by('-revision').first() if _prepared is None else _prepared.source_family_head(source)
++    if head.pk != source.pk:
+@@ -68,5 +71,12 @@
+-        activated = source.states.filter(state='active').latest('pk')
+-        authorized(activated.actor, source.configuration.case, 'policy.activate')
+-        descriptor(source.configuration, source.kind, source.ref)
+-        validate_envelope(source.configuration.case, source.configuration.envelope, runtime=True)
+-        if source.configuration.states.order_by('-pk').first().state != 'validated':
++        activated = source.states.filter(state='active').latest('pk') if _prepared is None else _prepared.latest_active_state(source)
++        if _prepared is None:
++            authorized(activated.actor, source.configuration.case, 'policy.activate')
++            descriptor(source.configuration, source.kind, source.ref)
++            validate_envelope(source.configuration.case, source.configuration.envelope, runtime=True)
++            config_state=source.configuration.states.order_by('-pk').first().state
++        else:
++            _prepared.authorized(activated.actor,source.configuration.case,'policy.activate')
++            descriptor(source.configuration,source.kind,source.ref,_prepared=_prepared)
++            validate_envelope(source.configuration.case,source.configuration.envelope,runtime=True,_prepared=_prepared)
++            config_state=_prepared.latest_configuration_state(source.configuration).state
++        if config_state != 'validated':
+@@ -74,0 +85 @@
++        if _prepared is not None:_prepared.clean()
+@@ -179,2 +190,2 @@
+-def application_health(config, at=None):
+-    application = ScopeApplication.objects.select_related('source__configuration__case', 'actor').filter(configuration=config).first()
++def application_health(config, at=None, *, _prepared=None):
++    application = ScopeApplication.objects.select_related('source__configuration__case', 'actor').filter(configuration=config).first() if _prepared is None else _prepared.application_for(config)
+@@ -184,2 +195,6 @@
+-        authorized(application.actor, config.case, 'policy.configure')
+-        authorized(application.actor, application.source.configuration.case, 'policy.read')
++        if _prepared is None:
++            authorized(application.actor, config.case, 'policy.configure')
++            authorized(application.actor, application.source.configuration.case, 'policy.read')
++        else:
++            _prepared.authorized(application.actor,config.case,'policy.configure')
++            _prepared.authorized(application.actor,application.source.configuration.case,'policy.read')
+@@ -191 +206,2 @@
+-        bound = bind(values(source.configuration), source.binding_paths, application.bindings,
++        source_values=values(source.configuration) if _prepared is None else values(source.configuration,_prepared=_prepared)
++        bound = bind(source_values, source.binding_paths, application.bindings,
+@@ -193 +209,2 @@
+-        if bound != values(config):
++        local_values=values(config) if _prepared is None else values(config,_prepared=_prepared)
++        if bound != local_values:
+@@ -199,2 +216,3 @@
+-        return 'INVALID'
+-    return source_health(application.source, at)
++        if _prepared is not None:_prepared.clean()
++        return 'INVALID'
++    return source_health(application.source, at) if _prepared is None else source_health(application.source,at,_prepared=_prepared)

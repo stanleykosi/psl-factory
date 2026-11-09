@@ -1,0 +1,65 @@
+{
+  "status": "NONAPPLIED_D11_SOURCE_ONLY_NATIVE_NOT_MET",
+  "namespace": "backups/nonapplied/inert803-d11-773ad49",
+  "source_commit": "773ad4964dc163ce0c5c008057ca6a131a8918bb",
+  "required_prior_snapshot": "backups/nonapplied/inert803-402b599",
+  "required_prior_source_reference": "402b59930572c1b1d12ed7916889e3e0f0e8e62d",
+  "public_base": "17c4bb492bb37812aff6d6d80bbfb8b80f50572e",
+  "entries": [
+    {
+      "original_path": "apps/policy/services.py",
+      "snapshot_path": "backups/nonapplied/inert803-d11-773ad49/patches/apps/policy/services.py.patch",
+      "representation": "zero-context-patch",
+      "original_mode": "100644",
+      "snapshot_mode": "100644",
+      "base_sha256": "f6cebbae2fec80728067753dc4cb97af6e410b41bf8c87520fae7fc8e13632c0",
+      "base_git_blob": "ea6b90fd651b9f3d9e81ce8d7bc083ba6cd8cb6b",
+      "target_sha256": "201a62f71dcfd8be107a7476bc30b9c8ec443c204540f6da310689154c01a377",
+      "target_git_blob": "3e723d2689d7f227242b99664efcd2c9db3ef26c",
+      "target_bytes": 30150,
+      "snapshot_sha256": "04971f6847a66791f35b51817225319bc7b596220e603eb613cfa877648ea3d9",
+      "snapshot_git_blob": "88565de5dde192d0f56723bcf47feba525cf3cd6",
+      "snapshot_bytes": 24692,
+      "reconstruction_verified": true
+    },
+    {
+      "original_path": "tests/test_d11_dispatch_isolation_component.py",
+      "snapshot_path": "backups/nonapplied/inert803-d11-773ad49/files/tests/test_d11_dispatch_isolation_component.py.source",
+      "representation": "complete-new-file",
+      "original_mode": "100644",
+      "snapshot_mode": "100644",
+      "base_sha256": null,
+      "base_git_blob": null,
+      "target_sha256": "37cb679d9baaa09994104c4f08a6965e36e2963ab5c41f4f7ebef708f570440b",
+      "target_git_blob": "d109983f9109b95dcf7f79ed3fdfa8352881d4c8",
+      "target_bytes": 10300,
+      "snapshot_sha256": "37cb679d9baaa09994104c4f08a6965e36e2963ab5c41f4f7ebef708f570440b",
+      "snapshot_git_blob": "d109983f9109b95dcf7f79ed3fdfa8352881d4c8",
+      "snapshot_bytes": 10300,
+      "reconstruction_verified": true
+    },
+    {
+      "original_path": "docs/design/d11-storage-dispatch-isolation.md",
+      "snapshot_path": "backups/nonapplied/inert803-d11-773ad49/files/docs/design/d11-storage-dispatch-isolation.md.source",
+      "representation": "complete-new-file",
+      "original_mode": "100644",
+      "snapshot_mode": "100644",
+      "base_sha256": null,
+      "base_git_blob": null,
+      "target_sha256": "7ec7792ed167216f97349f59952de563e86a6e35533067b3fb6ed782048778cb",
+      "target_git_blob": "9e0a85154015e1a1e1f6e4668bc80a00cc1778a8",
+      "target_bytes": 1969,
+      "snapshot_sha256": "7ec7792ed167216f97349f59952de563e86a6e35533067b3fb6ed782048778cb",
+      "snapshot_git_blob": "9e0a85154015e1a1e1f6e4668bc80a00cc1778a8",
+      "snapshot_bytes": 1969,
+      "reconstruction_verified": true
+    }
+  ],
+  "private_proof_excluded": [
+    "docs/test-evidence/d11-dispatch-source/services-before.py.txt",
+    "docs/test-evidence/d11-dispatch-source/four-map-hashes.json"
+  ],
+  "test_runnability": "Not standalone CI runnable without excluded exact local pre-edit proof; no tests executed by backup preparation",
+  "default_behavior": "ExactD11dispatch intentionally avoids unrelated initialization; not universal behavior equivalence or alloptin",
+  "native_acceptance": "NOT_MET"
+}

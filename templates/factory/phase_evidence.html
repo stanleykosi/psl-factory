@@ -1,0 +1,9 @@
+<section class="card"><h2>Four-phase evidence checklist</h2>
+<p>Read-only child evidence, not permission to enter or exit a phase.</p>
+<p>{{ phases.rule_ambiguity }}</p><p>Observed {{ phases.as_of }}. {{ phases.coverage }}</p>
+{% for phase in phases.phases %}<section><h3>{{ phase.name }}</h3>
+<p>{{ phase.coverage.current }} of {{ phase.coverage.checked }} checks current. Phase entry and exit: unknown.</p>
+<ul>{% for check in phase.checks %}<li>{{ check.title }}: {{ check.status }}. Authority: {{ check.authority }}.</li>{% endfor %}</ul>
+<details><summary>Existing child references</summary>{% for ref in phase.references %}<p>{{ ref }}</p>{% empty %}<p>No current references established. Missing evidence does not imply rejection.</p>{% endfor %}</details></section>{% endfor %}
+<p>Finance retains debt and payment authority. GLPI retains external release decisions. No new approval, deposit, waiver or stage change is created.</p>
+</section>

@@ -32,8 +32,8 @@ def issue(a,c,i,e):
     approve(a,c,i,e);job=invoices.reserve(a,c.pk,i.pk,'issue','Finance',rev(c));invoice_delivery.run_once();job.refresh_from_db()
     return InvoiceIssue.objects.get(invoice=i)
 
-def receipt(a,c,amount='50.00',ref='tx-cash-1',verify=True):
-    value={'source':'synthetic-bank','transaction_ref':ref,'customer':'client-example','amount':amount,'currency':'NGN','amount_basis':'gross_including_tax','received_at':(timezone.now()-timedelta(hours=1)).isoformat()}
+def receipt(a,c,amount='50.00',ref='tx-cash-1',verify=True,*,received_at=None):
+    value={'source':'synthetic-bank','transaction_ref':ref,'customer':'client-example','amount':amount,'currency':'NGN','amount_basis':'gross_including_tax','received_at':received_at if received_at is not None else (timezone.now()-timedelta(hours=1)).isoformat()}
     report=evidence(a,c,'cash_report',json.dumps(value));r=cash.report(a,c.pk,report.pk,rev(c))
     if not verify:return r,None
     proof=evidence(a,c,'cash_verification',json.dumps(value));lot=cash.verify(a,c.pk,r.pk,'Finance',proof.pk,rev(c));return r,lot

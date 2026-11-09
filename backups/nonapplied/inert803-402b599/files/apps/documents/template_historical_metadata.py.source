@@ -1,0 +1,81 @@
+"""INERT scope-only historical metadata. Not owner currentness or source access."""
+from django.core.exceptions import PermissionDenied,ValidationError
+from apps.policy.models import Configuration
+from .models import TemplateClaim,TemplateClaimRetraction,TemplateResolution
+from .template_candidate_worklist import check_registered_worklist,_Budget,positive
+from .template_scalar_closure import DOMAINS,_poison_marker,_CONTEXT
+from .template_scope_source_privacy import prepare_scope_facts,consume_scope_facts
+
+COMPONENT='D11.template_storage_retention_rules'
+MESSAGE='Selected template historical metadata unavailable'
+def hold():raise ValidationError(MESSAGE)
+
+def _mapping(actor,keys,worklist,configuration_id,budget):
+    witness=check_registered_worklist(actor,keys,worklist)
+    if not positive(configuration_id):hold()
+    budget.phase()
+    configs=list(Configuration.objects.filter(pk=configuration_id,case_id=witness.case_id,component=COMPONENT).values_list('pk','case_id','component')[:2])
+    if (len(configs)!=1 or type(configs[0]) is not tuple or len(configs[0])!=3
+        or not positive(configs[0][0]) or configs!=[(configuration_id,witness.case_id,COMPONENT)]):hold()
+    selected=worklist.closure._records
+    if (type(selected) is not tuple or not selected or len(selected)>100
+        or any(type(r) is not tuple or len(r)!=2 or r[0] not in DOMAINS or not positive(r[1]) for r in selected)
+        or len(set(selected))!=len(selected)):hold()
+    selector=getattr(worklist,'selector',None)
+    if selector is None:
+        if set(keys)!={DOMAINS[k] for k,pk in selected}:hold()
+    else:
+        if selector.config_id!=configuration_id:hold()
+        from .template_impact_entry import validate_selector
+        selections={}
+        for kind,pk in selected:selections.setdefault(kind,[]).append(pk)
+        validate_selector(actor,keys,witness.case_id,selections,selector,worklist)
+    specifications={
+        'claim':(TemplateClaim,'scope__case_id','scope_id',None),
+        'retraction':(TemplateClaimRetraction,'claim__scope__case_id','claim__scope_id','claim_id'),
+        'resolution':(TemplateResolution,'scope__case_id','scope_id',None)}
+    result=[]
+    for kind in sorted({k for k,pk in selected}):
+        model,casefield,scopefield,claimfield=specifications[kind]
+        ids=tuple(sorted(pk for k,pk in selected if k==kind))
+        fields=('pk',casefield,scopefield,'owner_policy_id')+((claimfield,) if claimfield else ())
+        budget.phase()
+        rows=list(model.objects.filter(pk__in=ids,owner_policy_id=configuration_id,**{casefield:witness.case_id}).order_by('pk').values_list(*fields)[:101])
+        if len(rows)!=len(ids):hold()
+        seen=set()
+        for row in rows:
+            if (type(row) is not tuple or len(row)!=len(fields) or not positive(row[0]) or row[0] in seen or row[0] not in ids
+                or row[1]!=witness.case_id or not positive(row[2]) or row[2] not in worklist.closure._scopes
+                or not positive(row[3]) or row[3]!=configuration_id or (claimfield and not positive(row[4]))):hold()
+            seen.add(row[0]);result.append((kind,*row))
+        if seen!=set(ids):hold()
+    return tuple(result)
+
+def historical_metadata(actor,keys,worklist,configuration_id):
+    """Trusted fixed pipeline only. Config selection/origin impact gates remain caller duties.
+
+    Worklist already requires original document/policy outer admission. No supplied
+    receipt/facts or callbacks; no native owner-current or source eligibility call.
+    """
+    budget=None;witness=None
+    try:
+        witness=check_registered_worklist(actor,keys,worklist);budget=_Budget(actor,keys)
+        before=_mapping(actor,keys,worklist,configuration_id,budget)
+        facts=prepare_scope_facts(actor,keys,worklist)
+        consume_scope_facts(actor,keys,worklist,facts)
+        if any(row[3] in facts.hidden_scopes for row in before):
+            raise PermissionDenied('Template historical metadata needs owning scope access')
+        result=[]
+        for row in before:
+            kind,pk,case_id,scope_id,owner_policy,*rest=row
+            item={'id':pk,'kind':kind,'metadata_only':True,'domain_route':'documents','owner_policy':owner_policy,
+                  'state':'historical_owner_record_not_template_selection','effects_performed':False}
+            if kind=='retraction':item['historical_retraction_recorded']=True
+            result.append(item)
+        if _mapping(actor,keys,worklist,configuration_id,budget)!=before:hold()
+        if check_registered_worklist(actor,keys,worklist) is not witness:hold()
+        return result
+    except Exception:
+        if budget is not None:budget.poison()
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise

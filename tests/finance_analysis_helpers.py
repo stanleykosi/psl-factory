@@ -21,6 +21,17 @@ METRICS=['revenue','direct_cost','staff_cost','opex']
 def policy(actor,case,key,content,evidence):
     c=draft_finance_policy(actor,case.pk,key,content,evidence.pk,timezone.now()-timedelta(days=1));transition(actor,c.pk,'validated');transition(actor,c.pk,'active');return c
 
+def declared_units(actor,case,batch):
+    """Explicit synthetic fixture assertion, not a production/default conversion rule."""
+    from apps.finance.source_units import evidence_identity
+    body={'schema':'finance-source-unit-assertion/v1','batch_id':batch.pk,'source_sha256':batch.source_sha256,
+        'input_key':'synthetic-controlled-input','feed':'synthetic-controlled-export','unit':'major_currency'}
+    evidence=add_evidence(actor,case.pk,'finance_source_unit',json.dumps(body,sort_keys=True),
+        evidence_identity(batch.pk,'synthetic-controlled-input','synthetic-controlled-export'))
+    return {'schema':'finance-source-units/v1','batch':{'id':batch.pk,'sha256':batch.source_sha256},
+        'input_key':body['input_key'],'declarations':[{'feed':body['feed'],'unit':body['unit'],
+        'evidence':{'id':evidence.pk,'version':evidence.version,'sha256':evidence.sha256}}]}
+
 def fixture(username='human',recipient_username='finance-reader',review=True,synthetic=True):
     a,c=setup_case(username=username,synthetic=synthetic);f=json.loads((settings.BASE_DIR/'fixtures/finance-analysis.json').read_text());e={}
     for kind in ['policy_decision','finance_source','finance_review','finance_adjustment']:
@@ -42,7 +53,8 @@ def fixture(username='human',recipient_username='finance-reader',review=True,syn
     payloads['D06.rule_oracle_refs']=formulas
     for key,value in payloads.items():configs[key]=policy(a,c,key,value,owner)
     batch=capture_import(a,c.pk,e['financial_input'].pk,rev(c));validate_import(a,c.pk,batch.pk,rev(c))
-    source=analysis.capture_source(a,c.pk,batch.pk,'synthetic-company','accrual',timezone.now()-timedelta(hours=1),'complete',f['source_control_total'],e['finance_source'].pk,rev(c))
+    units=declared_units(a,c,batch)
+    source=analysis.capture_source(a,c.pk,batch.pk,'synthetic-company','accrual',timezone.now()-timedelta(hours=1),'complete',f['source_control_total'],e['finance_source'].pk,rev(c),unit_declaration=units)
     if review:
         analysis.review(a,c.pk,'source',source.pk,'Finance','approve',e['finance_review'].pk,'Source context and selected inventory reviewed',rev(c))
         for component,purpose in analysis.PURPOSE.items():analysis.review(a,c.pk,purpose,configs[component].pk,'Finance','approve',e['finance_review'].pk,'Exact configured rule reviewed',rev(c))

@@ -12,6 +12,8 @@ from apps.identity.services import visible_cases,require
 from apps.identity.models import Grant
 from apps.core.evidence_access import public_evidence
 from apps.finance.models import FinanceSource,FinanceAdjustment,FinanceRun
+from apps.core.models import Evidence, Audit
+from . import factory_accounting_intake as intake
 from apps.documents.models import Template,PublicationReceipt
 from . import factory as runtime,factory_accounting as service
 from .models import FactoryActivity,HumanTask
@@ -44,6 +46,29 @@ class StartForm(forms.Form):
         self.fields['adjustment_ids'].label_from_instance=lambda a:f'{a.reference} · revision {a.number}'
         self.initial['revision']=case.revision
 
+class SuppliedIntakeForm(forms.Form):
+    unit_declaration=forms.JSONField(required=False,help_text="Exact evidenced finance-source-units/v1 envelope for an existing import; blank is unknown, not assumed major currency.")
+    key=forms.CharField(max_length=100,widget=forms.HiddenInput)
+    evidence=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Supplied unchanged CSV evidence')
+    source_evidence=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Extraction context evidence')
+    entity=forms.CharField(max_length=100)
+    period=forms.RegexField(r'^\d{4}-(0[1-9]|1[0-2])$',label='Declared reporting period (YYYY-MM)')
+    currency=forms.RegexField(r'^[A-Z]{3}$',label='Declared source currency')
+    accounting_basis=forms.CharField(max_length=100)
+    extracted_at=forms.DateTimeField(label='Actual extraction/as-of time')
+    completeness=forms.ChoiceField(choices=[('unknown','Unknown'),('partial','Partial'),('complete','Complete')])
+    control_total=forms.CharField(max_length=64,required=False,label='Supplied control total (leave blank if unknown)')
+    reference=forms.CharField(max_length=100,label='Report work reference')
+    inventory_confirmed=forms.BooleanField(label='Start with no supplemental reporting adjustments; later changes require explicit rework')
+    revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
+
+    def __init__(self,case,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['evidence'].queryset=Evidence.objects.filter(case=case,kind='financial_input')
+        self.fields['source_evidence'].queryset=Evidence.objects.filter(case=case,kind='finance_source')
+        self.initial.update(key='supplied:'+str(uuid4()),revision=case.revision)
+
+
 def create(request):
     cases=[]
     for case in visible_cases(request.user).order_by('title'):
@@ -58,14 +83,34 @@ def create(request):
     try:UUID(selected)
     except (ValueError,TypeError,AttributeError):raise Http404 from None
     case=get_object_or_404(visible_cases(request.user).filter(pk__in=[c.pk for c in cases]),pk=selected)
-    form=StartForm(case,request.POST if request.method=='POST' else None)
-    if request.method=='POST' and form.is_valid():
+    action=request.POST.get('action','existing') if request.method=='POST' else None
+    form=StartForm(case,request.POST if action=='existing' else None)
+    supplied=SuppliedIntakeForm(case,request.POST if action=='supplied' else None,prefix='supplied')
+    result=None
+    if request.method=='POST':
         try:
-            v=form.cleaned_data
-            work=service.start(request.user,case.pk,'accounting:'+str(uuid4()),v['source'].pk,[a.pk for a in v['adjustment_ids']],v['reference'],v['revision'])
-            return redirect(reverse('factory_detail',args=[work.pk]))
-        except ValidationError as exc:form.add_error(None,str(exc))
-    response=render(request,'factory/accounting_start.html',{'case':case,'form':form,'definition':service.DEFINITION});response['Cache-Control']='no-store';return response
+            if action=='existing' and form.is_valid():
+                v=form.cleaned_data
+                work=service.start(request.user,case.pk,'accounting:'+str(uuid4()),v['source'].pk,[a.pk for a in v['adjustment_ids']],v['reference'],v['revision'])
+                return redirect(reverse('factory_detail',args=[work.pk]))
+            if action=='supplied' and supplied.is_valid():
+                v=supplied.cleaned_data
+                context={k:v[k] for k in ['entity','period','currency','accounting_basis','extracted_at','completeness']}
+                context.update(control_total=v['control_total'] or None,source_evidence_id=v['source_evidence'].pk,unit_declaration=v['unit_declaration'])
+                result=intake.submit(request.user,case.pk,v['key'],v['evidence'].pk,context,v['reference'],v['revision'])
+            elif action=='resume':
+                try:receipt_id=int(request.POST.get('receipt',''));revision=int(request.POST.get('revision',''))
+                except (ValueError,TypeError):raise ValidationError('Exact receipt and current revision required')
+                result=intake.resume(request.user,case.pk,receipt_id,revision)
+            if result:
+                if result['status']=='started':return redirect(reverse('factory_detail',args=[result['work']]))
+                messages.warning(request,'Intake preserved: '+result['status'].replace('_',' ')+'. '+str(result['findings']))
+                return redirect(request.get_full_path())
+        except ValidationError as exc:
+            (supplied if action=='supplied' else form).add_error(None,str(exc))
+    case.refresh_from_db()
+    receipts=[{'receipt':r,'result':intake.latest(r)} for r in Audit.objects.filter(case=case,actor=request.user,action=intake.RECEIPT).order_by('-pk')[:30]]
+    response=render(request,'factory/accounting_start.html',{'case':case,'form':form,'supplied_form':supplied,'receipts':receipts,'definition':service.DEFINITION});response['Cache-Control']='no-store';return response
 
 def presentation(actor,work):
     from apps.agents.factory_coordinator import decorate
@@ -188,5 +233,5 @@ def detail(request,work):
         receipt.current_recipient_name=(receipt.recipient.get_full_name() or receipt.recipient.username) if receipt.recipient.is_active and Grant.objects.filter(case=work.case,user=receipt.recipient,active=True,action='finance.read').exists() else 'Historical recipient'
     response=render(request,'factory/accounting_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,
         'review_evidence':public_evidence(work.case.evidence.filter(kind='finance_review')).order_by('-pk'),
-        'sources':source_choices,'receipts':receipts,'activities':activities})
+        'sources':source_choices,'receipts':receipts,'activities':activities,'intake_provenance':intake.provenance(request.user,work)})
     response['Cache-Control']='no-store';return response

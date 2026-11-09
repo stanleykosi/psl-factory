@@ -12,6 +12,11 @@ def commands(a,c,data=None):
  'resolution_evidence':('Capture restricted resolution evidence','ledger.capture',{'kind':forms.ChoiceField(choices=[(x,x) for x in ['ledger_resolution','ledger_resolution_review']]),'body':forms.CharField(max_length=12000,widget=forms.Textarea)}),
  'resolve':('Propose scoped duplicate or reference-correction resolution','ledger.resolve',{'selected':forms.ModelChoiceField(claims.filter(case=c)),'members':forms.ModelMultipleChoiceField(claims),'retired':forms.ModelMultipleChoiceField(claims),'mode':forms.ChoiceField(choices=[(x,x) for x in ['duplicate_alias','reference_correction']]),'reference':forms.CharField(max_length=100),'predecessor':forms.ModelChoiceField(r.Resolution.objects.filter(case=c),required=False),'evidence':ev(['ledger_resolution']),'reason':forms.CharField(max_length=400)}),
  'resolve_review':('Independently review exact claim resolution','ledger.resolve_review',{'resolution':forms.ModelChoiceField(r.Resolution.objects.filter(pk__in=[p['row'].pk for p in r.visible_packets(a,c)],case=c)),'verdict':forms.ChoiceField(choices=[(x,x) for x in ['confirm','return','withdraw']]),'evidence':ev(['ledger_resolution_review'])})})
+ from . import quickbooks_read as qbo
+ aliases=[(key,key) for key,value in qbo.registry().items() if value.get('enabled')]
+ if aliases:
+  defs['qbo_reserve']=('Reserve optional native QBO object read','ledger.verify',{'lineage':forms.ModelChoiceField(LedgerLineage.objects.filter(case=c)), 'binding':forms.ChoiceField(choices=aliases)})
+  defs['qbo_execute']=('Execute reserved read once (no posting)','ledger.verify',{'intent':forms.IntegerField(min_value=1)})
  grants=set(Grant.objects.filter(case=c,user=a,active=True).values_list('action',flat=True));out=[]
  for action,(title,permission,fields) in defs.items():
   if permission in grants:out.append({'title':title,'form':type('Ledger'+action,(CommandForm,),fields)(data if data is not None and data.get('action')==action else None,initial={'action':action,'revision':c.revision},auto_id='id_'+action+'_%s')})

@@ -1,0 +1,71 @@
+"""INERT complete candidate-row processing, not scope/source/public visibility."""
+from dataclasses import dataclass
+from django.core.exceptions import ValidationError
+from .template_candidate_worklist import check_registered_worklist
+from .template_scalar_closure import _poison_marker,_CONTEXT
+
+MESSAGE='Template permission composition unavailable'
+def hold():raise ValidationError(MESSAGE)
+@dataclass(frozen=True,repr=False)
+class _Receipt:
+    marker:object
+    witness:object
+    worklist:object
+    attempt:object
+    completed:tuple
+    denied_templates:frozenset
+
+def _context(actor,keys,worklist):
+    witness=check_registered_worklist(actor,keys,worklist)
+    state=witness.marker.setdefault('template_permission_composition803',{'attempts':0,'records':[]})
+    return witness,state
+
+def compose_permissions(actor,keys,worklist):
+    witness=None;record=None
+    try:
+        witness,state=_context(actor,keys,worklist)
+        if state['attempts']>=100 or any(r['worklist'] is worklist for r in state['records']):hold()
+        state['attempts']+=1
+        expected=tuple(('finance',row) for row in worklist.finance)+tuple(('pmo',row) for row in worklist.pmo)
+        record={'worklist':worklist,'attempt':object(),'phase':'processing','completed':[],'receipt':None,'consumed':False}
+        state['records'].append(record);denied=set()
+        from .template_finance_admission import ReaderAdmission
+        from apps.pmo.template_prepared_reader import PreparedLeadershipReader
+        for index,(kind,row) in enumerate(expected):
+            current,current_state=_context(actor,keys,worklist)
+            if current is not witness or current_state is not state or record['phase']!='processing' or len(record['completed'])!=index:hold()
+            if kind=='finance':
+                reader=ReaderAdmission(actor,keys);result=reader.admit(worklist,row)
+            else:
+                reader=PreparedLeadershipReader(actor,keys,worklist,row);result=reader.read()
+            if result is None:
+                reader._consume_success(worklist,row);status='success'
+            else:
+                reader._consume_denied(worklist,row,result);status='denied'
+                denied.add(row[3] if kind=='finance' else row[4])
+            current,current_state=_context(actor,keys,worklist)
+            if current is not witness or current_state is not state or record['phase']!='processing' or len(record['completed'])!=index:hold()
+            record['completed'].append((kind,row,status))
+        current,current_state=_context(actor,keys,worklist)
+        completed=tuple(record['completed'])
+        if (current is not witness or current_state is not state or record['phase']!='processing' or len(completed)!=len(expected)
+            or any(got[0]!=want[0] or got[1] is not want[1] for got,want in zip(completed,expected))):hold()
+        receipt=_Receipt(witness.marker,witness,worklist,record['attempt'],completed,frozenset(denied))
+        record['receipt']=receipt;record['phase']='complete';return receipt
+    except Exception:
+        if record is not None:record['phase']='failed'
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise
+
+def consume_receipt(actor,keys,worklist,receipt):
+    witness=None
+    try:
+        witness,state=_context(actor,keys,worklist)
+        if type(receipt) is not _Receipt or receipt.marker is not witness.marker or receipt.witness is not witness or receipt.worklist is not worklist:hold()
+        record=next((r for r in state['records'] if r['attempt'] is receipt.attempt),None)
+        if record is None or record['phase']!='complete' or record['receipt'] is not receipt or record['consumed']:hold()
+        record['consumed']=True;return None
+    except Exception:
+        if type(receipt) is _Receipt:_poison_marker(receipt.marker)
+        if witness is not None:_poison_marker(witness.marker)
+        _poison_marker(_CONTEXT.get());raise

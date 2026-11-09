@@ -1,0 +1,29 @@
+"""Static stdlib-only source contracts, not settings/application execution."""
+import ast
+from pathlib import Path
+import unittest
+ROOT=Path(__file__).resolve().parents[1]
+def tree(name):return ast.parse((ROOT/name).read_bytes())
+def calls(t,name):return [n for n in ast.walk(t) if isinstance(n,ast.Call) and ast.unparse(n.func)==name]
+class RuntimeContractTests(unittest.TestCase):
+ def test_intended_minor_line(self):
+  self.assertEqual((ROOT/'.python-version').read_bytes(),b'3.13\n')
+ def test_existing_wsgi_target(self):
+  t=tree('config/wsgi.py');defaults=calls(t,'os.environ.setdefault')
+  self.assertEqual([[ast.literal_eval(a) for a in c.args] for c in defaults],[['DJANGO_SETTINGS_MODULE','config.settings']])
+  exports=[n for n in t.body if isinstance(n,ast.Assign) and any(isinstance(x,ast.Name) and x.id=='application' for x in n.targets)]
+  self.assertEqual(len(exports),1);self.assertEqual(ast.unparse(exports[0].value),'get_wsgi_application()')
+  self.assertLess(defaults[0].lineno,exports[0].lineno)
+ def test_management_default_and_command_entry(self):
+  t=tree('manage.py');defaults=calls(t,'os.environ.setdefault');commands=calls(t,'execute_from_command_line')
+  self.assertEqual([[ast.literal_eval(a) for a in c.args] for c in defaults],[['DJANGO_SETTINGS_MODULE','config.settings']])
+  self.assertEqual(len(commands),1);self.assertEqual(ast.unparse(commands[0].args[0]),'sys.argv');self.assertLess(defaults[0].lineno,commands[0].lineno)
+ def test_existing_nondevelopment_secret_gate_structure(self):
+  t=tree('config/settings.py');assign={n.targets[0].id:n.value for n in t.body if isinstance(n,ast.Assign) and len(n.targets)==1 and isinstance(n.targets[0],ast.Name)}
+  self.assertEqual(ast.unparse(assign['ENVIRONMENT']),"os.getenv('PSL_ENV', 'development')")
+  self.assertEqual(ast.unparse(assign['DEBUG']),"ENVIRONMENT == 'development'")
+  self.assertEqual(ast.unparse(assign['ALLOWED_HOSTS']),"os.getenv('PSL_ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')")
+  gates=[n for n in t.body if isinstance(n,ast.If) and ast.unparse(n.test)=="not DEBUG and SECRET_KEY == 'local-development-only-do-not-deploy'"]
+  self.assertEqual(len(gates),1);self.assertEqual(len(gates[0].body),1)
+  raised=gates[0].body[0];self.assertIsInstance(raised,ast.Raise);self.assertIsInstance(raised.exc,ast.Call);self.assertEqual(ast.unparse(raised.exc.func),'RuntimeError')
+if __name__=='__main__':unittest.main()

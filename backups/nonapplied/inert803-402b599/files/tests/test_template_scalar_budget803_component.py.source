@@ -1,0 +1,96 @@
+"""Isolated scalar-ledger/orchestration proof only: no Django or database imports."""
+import ast,unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+SOURCE=Path(__file__).resolve().parents[1]/'apps/documents/template_scalar_closure.py'
+class Hold(Exception):pass
+class ScalarBudgetTests(unittest.TestCase):
+    def setUp(self):
+        self.actor=SimpleNamespace(pk=7);self.marker={};self.raw=object();self.connection=object()
+        self.keys=['documents.template_claims']
+        def binding(actor,keys):
+            if actor is not self.actor or actor.pk!=7 or list(keys)!=self.keys or self.marker is None:raise Hold('context')
+            return self.marker,self.connection,self.raw
+        def hold():raise Hold('fixed')
+        tree=ast.parse(SOURCE.read_text());names={'_poison_marker','discover_template_owner_closure'}
+        nodes=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in names or isinstance(n,ast.ClassDef) and n.name=='ScalarClosureBudget']
+        domains={'claim':'documents.template_claims','retraction':'documents.template_retractions','resolution':'documents.template_resolutions'}
+        self.ns={'_binding':binding,'_CONTEXT':SimpleNamespace(get=lambda:self.marker),'hold':hold,'DOMAINS':domains,
+                 'KINDS':frozenset((*domains,'evidence','scope','template')),'MAX_SELECTED':100,'MAX_SCOPES':100,'MAX_TEMPLATES':100,'MAX_IDENTITIES':400,'MAX_PHASES':1000}
+        exec(compile(ast.Module(body=nodes,type_ignores=[]),'<isolated-scalar>','exec'),self.ns)
+    def budget(self):return self.ns['ScalarClosureBudget'](self.actor,self.keys)
+    def test_wrapper_reuse_dedup_and_101st_identity_sticky(self):
+        a=self.budget();a.charge('scope',list(range(1,101)));b=self.budget();b.charge('scope',[1])
+        self.assertIs(a.state,b.state);self.assertEqual(len(b._identities),100)
+        with self.assertRaises(Hold):b.charge('scope',[101])
+        self.assertEqual(len(a._identities),100)
+        with self.assertRaises(Hold):self.budget()
+    def test_exact_400_and_record_kind_aggregate(self):
+        b=self.budget()
+        for kind in ('claim','evidence','scope','template'):b.charge(kind,list(range(1,101)))
+        self.assertEqual(len(b._identities),400)
+        with self.assertRaises(Hold):b.charge('retraction',[1])
+        self.assertEqual(len(b._identities),400)
+    def test_bool_unknown_kind_iterable_reject_before_dedup(self):
+        for kind,ids in [('scope',[1,True]),('unknown',[1]),('scope',iter([1])),('scope',[0]),('scope',list(range(101)))]:
+            self.marker={};b=self.budget()
+            with self.assertRaises(Hold):b.charge(kind,ids)
+            self.assertEqual(b._identities,frozenset());self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_repeated_same_ids_still_spend_shared_phase_limit(self):
+        a=self.budget();a.charge('scope',[1])
+        for _ in range(1000):self.budget().before_phase()
+        with self.assertRaises(Hold):a.before_phase()
+        self.assertEqual(a.state['phases'],1000);self.assertEqual(len(a._identities),1)
+    def test_old_entry_new_entry_both_poisoned(self):
+        b=self.budget();old=self.marker;self.marker={}
+        with self.assertRaises(Hold):b.context()
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+        with self.assertRaises(Hold):self.budget()
+    def test_actor_pk_connection_and_raw_changes_fail(self):
+        for change in ('actor','pk','connection','raw'):
+            self.setUp();b=self.budget()
+            if change=='actor':self.actor=SimpleNamespace(pk=7)
+            elif change=='pk':self.actor.pk=8
+            elif change=='connection':self.connection=object()
+            else:self.raw=object()
+            with self.assertRaises(Hold):b.context()
+            self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_constructor_invalid_keys_poisons_before_state(self):
+        with self.assertRaises(Hold):self.ns['ScalarClosureBudget'](self.actor,['wrong'])
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+        with self.assertRaises(Hold):self.budget()
+    def test_discovery_preflight_and_native_exception_poison(self):
+        for error in (ValueError('bad selection'),PermissionError('native denied'),RuntimeError('query failed')):
+            self.marker={};b=self.budget()
+            def fail(*args):raise error
+            self.ns['_discover_template_owner_closure']=fail
+            with self.assertRaises(type(error)) as caught:self.ns['discover_template_owner_closure'](self.actor,None,None,b)
+            self.assertIs(caught.exception,error);self.assertTrue(self.marker['policy_budget_v2_failed'])
+            with self.assertRaises(Hold):self.budget()
+    def test_identity_view_immutable(self):
+        b=self.budget();b.charge('scope',[1]);view=b._identities
+        self.assertIs(type(view),frozenset)
+        with self.assertRaises(AttributeError):view.add(('scope',2))
+    def test_fixed_query_gate_phase_sites_and_graph_unchanged(self):
+        tree=ast.parse(SOURCE.read_text());fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='_discover_template_owner_closure')
+        text=ast.unparse(fn)
+        self.assertEqual(text.count('budget.before_phase()'),10) # native gate loop3 + selected loop1..3 =>12..14
+        self.assertIn("for action in ('case.read', 'document.read', 'policy.read')",text)
+        self.assertIn("values_list('pk', scopefield, 'evidence_id')",text)
+        self.assertIn('claims__retraction__evidence_id__in=evidence',text)
+        self.assertNotIn('active_claims',text);self.assertNotIn('owner_current',text)
+
+    def test_discovery_uses_actual_list_only_snapshot_selector(self):
+        snapshot=SOURCE.parents[1]/'policy/template_snapshot_entry.py'
+        tree=ast.parse(snapshot.read_text());names={'selected','require_context','require_context_actor'}
+        nodes=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in names]
+        marker={'alias':'default','keys':tuple(self.keys),'principal':self.actor,'principal_pk':self.actor.pk}
+        ns={'KEYS':frozenset(self.keys),'ValidationError':Hold,'PermissionDenied':Hold,
+            '_CONTEXT':SimpleNamespace(get=lambda:marker),'connections':{'default':SimpleNamespace(in_atomic_block=True)}}
+        exec(compile(ast.Module(body=nodes,type_ignores=[]),'<actual-snapshot-boundary>','exec'),ns)
+        closure=ast.parse(SOURCE.read_text());fn=next(n for n in closure.body if isinstance(n,ast.FunctionDef) and n.name=='_discover_template_owner_closure')
+        call=next(n for n in ast.walk(fn) if isinstance(n,ast.Call) and ast.unparse(n.func)=='require_context_actor')
+        ns.update(server_actor=self.actor,budget=SimpleNamespace(keys=tuple(self.keys)))
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[ast.Expr(value=call)],type_ignores=[])),'<actual-discovery-call>','exec'),ns)
+        with self.assertRaises(Hold):ns['require_context_actor'](self.actor,tuple(self.keys))

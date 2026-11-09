@@ -82,6 +82,11 @@ def inputs(cov,kind,usage=None,handoff=None):
     snapshot={'implementation':'billing-preparation/v1','coverage':cov.pk,'coverage_version':cov.version,'coverage_evidence_hash':cov.evidence.sha256,
         'policies':states,'usage':usage.pk if usage else None,'usage_hash':usage.source_sha256 if usage else None,'usage_context':usage.source_context if usage else None,
         'handoff':handoff.pk if handoff else None,'handoff_payload_hash':digest(handoff.payload) if handoff else None}
+    if usage and usage.collective_acceptance_id:
+        from .usage_intake import origin
+        try:snapshot['collective_usage_origin']=origin(usage)
+        except (ValidationError,PermissionDenied) as exc:
+            snapshot['collective_usage_origin']={'status':'held'};findings.append('Collective usage requires reconciliation: '+str(exc))
     if usage:
         from apps.baas.models import PartnerBillingImport
         if PartnerBillingImport.objects.filter(usage=usage).exists():
@@ -151,6 +156,9 @@ def prepare(actor,case_id,coverage_id,kind,usage_id,handoff_id,expected):
     event(actor,case,'billing.prepared',preparation=record.pk,status=result['status']);bump(case);return record
 
 def ensure_current(record):
+    if record.kind == "fixed_contract":
+        from .fixed_charge import ensure_current as fixed_current
+        return fixed_current(record)
     require(record.actor,record.case,'finance.billing.prepare');require(record.actor,record.case,'finance.read')
     snapshot,values,findings=inputs(record.coverage,record.kind,record.usage,record.handoff)
     if snapshot!=record.snapshot or calculate(record.coverage,record.kind,record.usage,record.handoff,values,findings)!=record.result:raise ValidationError('Billing preparation is stale; rebuild against current exact evidence and policy')

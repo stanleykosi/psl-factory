@@ -1,5 +1,7 @@
 # Resume from a GitHub checkout
 
+> Current handoff: read the 9 November 2026 section at the top of HANDOFF.md before historical instructions below. Latest snapshots remain nonapplied; no fresh native test or deployment acceptance is claimed. Do not replay broad historical commands automatically.
+
 The repository is the source/build handoff for PSL's AI agent operations factory. Read root AGENTS.md, START-HERE.md, BUILD-STATE.md, HANDOFF.md and BUILD-BACKLOG.json before changing it. The user paused feature work on 6 November 2026 to make this initial GitHub handoff. Do not interpret this initial commit as product completion or production approval.
 
 ## What travels with the repository

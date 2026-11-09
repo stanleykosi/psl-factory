@@ -47,6 +47,9 @@ def complete_followup(actor,case_id,followup_id,closure_id,note,expected):
     if EmergencyFollowupCompletion.objects.filter(followup=followup).exists():raise ValidationError('Follow-up completion already recorded')
     if EmergencyFollowup.objects.filter(supersedes=followup).exists():raise ValidationError('Follow-up was superseded; complete its current linked revision')
     validate_authorization(case,closure.authorization)
+    if closure.client_signature_id is None or closure.authorization.applicability_records.exists():
+        from .change_signatures import current_closure
+        current_closure(closure)
     _,flags=impact(followup.version)
     if flags['cost_impact'] and not BaselineAdoption.objects.filter(revision_id=closure.authorization.commercial_id).exists():
         raise ValidationError('Cost follow-up requires the ordinary approved and signed commercial adoption')

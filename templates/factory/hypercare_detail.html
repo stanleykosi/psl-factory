@@ -20,7 +20,7 @@
 <details><summary>Client report version {{ receipt.publication.version.number }}</summary>
 <h3>{{ receipt.payload.title }}</h3>
 {% for section in receipt.payload.sections %}<h4>{{ section.heading|readable }}</h4><p>{{ section.text|linebreaksbr }}</p>{% endfor %}
-<p class="muted">Recipient receipt {{ receipt.pk }} · document version {{ receipt.publication.version.number }}</p>
+<details><summary>Exact declaration template; missing actual facts remain null</summary><pre>{{ receipt.attestation_draft }}</pre></details><p class="muted">Recipient receipt {{ receipt.pk }} · document version {{ receipt.publication.version.number }}</p>
 </details>{% endfor %}
 <details><summary>Review the signature evidence</summary>
 {% for source in row.hypercare.decision_evidence %}{% if source.kind == 'signature' %}
@@ -31,7 +31,7 @@
 <input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="packet" value="{{ row.hypercare.acceptance_packet }}">
 <label>Delivered client report<select name="receipt" required>{% for receipt in row.hypercare.go_live_receipts %}<option value="{{ receipt.pk }}">Version {{ receipt.publication.version.number }} · recipient receipt {{ receipt.pk }}</option>{% endfor %}</select></label>
 <label>PM signature evidence<select name="pm_signature" required>{% for source in row.hypercare.decision_evidence %}{% if source.kind == 'signature' %}<option value="{{ source.pk }}">{{ source.body|truncatechars:80 }} · evidence {{ source.pk }} · version {{ source.version }}</option>{% endif %}{% endfor %}</select></label>
-<label>Client signature evidence<select name="client_signature" required>{% for source in row.hypercare.decision_evidence %}{% if source.kind == 'signature' %}<option value="{{ source.pk }}">{{ source.body|truncatechars:80 }} · evidence {{ source.pk }} · version {{ source.version }}</option>{% endif %}{% endfor %}</select></label>
+{% include 'pmo/go_live_attestation_fields.html' %}<label>Client signature evidence<select name="client_signature" required>{% for source in row.hypercare.decision_evidence %}{% if source.kind == 'signature' %}<option value="{{ source.pk }}">{{ source.body|truncatechars:80 }} · evidence {{ source.pk }} · version {{ source.version }}</option>{% endif %}{% endfor %}</select></label>
 <label>Acceptance observation<textarea name="note" required maxlength="4000"></textarea></label><button>Record exact go-live acceptance</button>
 </form></section>{% endif %}
 {% if row.can_reassess %}<section class="card"><h2>Review changed stability evidence</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="reassess"><input type="hidden" name="revision" value="{{ row.work.revision }}"><label>Reason for reassessment<textarea name="reason" required maxlength="2000"></textarea></label><button>Reassess changed stability evidence</button></form></section>{% endif %}

@@ -1,0 +1,123 @@
+"""Dynamic extracted default predicates vs immutable24c300a, fake ORM/imports only.
+
+No application module import, SQL, advisory lock or schema-validator execution.
+Proves exact observed paths/calls/results for finite fixtures, not exhaustive equivalence.
+"""
+import ast,subprocess,sys,unittest
+from datetime import datetime,timezone
+from pathlib import Path
+from types import SimpleNamespace as N,ModuleType
+from unittest.mock import patch
+ROOT=Path(__file__).resolve().parents[1]
+BASE='24c300a3d4b257ff6898c63de06977c566a14919'
+class VE(Exception):pass
+class PD(Exception):pass
+class Missing(Exception):pass
+
+def extract(path,names,ns,old):
+    source=subprocess.check_output(['git','show',BASE+':'+path],cwd=ROOT,text=True) if old else (ROOT/path).read_text()
+    nodes=[n for n in ast.parse(source).body if isinstance(n,ast.FunctionDef) and n.name in names]
+    for n in nodes:n.decorator_list=[]
+    exec(compile(ast.Module(body=nodes,type_ignores=[]),'<default-before>' if old else '<default-after>','exec'),ns)
+    return ns
+
+class DefaultEquivalenceTests(unittest.TestCase):
+    def run_path(self,kind,mode,old):
+        events=[];case=N(pk=11,kind='project',tenant='tenant',synthetic=True)
+        now=datetime(2026,1,1,tzinfo=timezone.utc)
+        env={'effective_from':'2020-01-01T00:00:00+00:00','fixture_scope':'synthetic_test'}
+        config=N(pk=7,case=case,case_id=11,component='D11.template_storage_retention_rules',revision=1,envelope=env)
+        def emit(name,*args):events.append((name,*args))
+        class Query:
+            def __init__(self,value,label):self.value=value;self.label=label
+            def select_related(self,*args):emit(self.label+'.related',args);return self
+            def filter(self,**kw):emit(self.label+'.filter',tuple((k,normalize(v)) for k,v in kw.items()));return self
+            def order_by(self,*args):emit(self.label+'.order',args);return self
+            def first(self):emit(self.label+'.first');return self.value
+            def latest(self,*args):emit(self.label+'.latest',args);return self.value
+            def count(self):emit(self.label+'.count');return self.value
+        def normalize(value):
+            if hasattr(value,'pk'):return ('pk',value.pk)
+            if isinstance(value,list):return tuple(value)
+            return value
+        actor=N(pk=3)
+        config.states=Query(None if mode=='missing_state' else N(state='revoked' if mode=='revoked' else ('validated' if kind=='source' else 'active')),'configstate')
+        source=N(pk=9,configuration=config,kind='organization',ref='tenant',binding_paths=[],states=Query(N(actor=actor),'sourceactive'))
+        app=N(pk=10,actor=actor,source=source,bindings=[])
+        def authorize(actor,case,action):
+            emit('authorize',actor.pk,case.pk,action)
+            if mode=='denied':raise PD('native denial')
+        def validate(*args,**kwargs):
+            emit('validate',kwargs.get('runtime'))
+            if mode=='invalid':raise VE('native validation')
+        def values(c):emit('values',c.pk);return [1]
+        def bind(values,paths,bindings,**kw):emit('bind',values,paths,bindings,kw['cross_case']);return [2] if mode=='binding_mismatch' else [1]
+        def health(c,at=None):emit('application',c.pk);return 'INVALID' if mode=='origin_invalid' else 'ACTIVE'
+        def sourcehealth(s,at=None):emit('sourcehealth',s.pk);return 'ACTIVE'
+        ns={'__package__':'apps.policy','ValidationError':VE,'PermissionDenied':PD,'ObjectDoesNotExist':Missing,
+            'datetime':datetime,'timezone':N(now=lambda:now),'Resolution':lambda status,component,configuration=None,reason='':(status,component,None if configuration is None else configuration.pk,reason),
+            '_resolution_candidate':lambda *args:(emit('candidate') or (None if mode=='missing' else config)),
+            'validate_envelope':validate,'values':values,'bind':bind,'authorized':authorize,
+            'descriptor':lambda c,k,r:emit('descriptor',c.pk,k,r),'mutex':lambda s:emit('mutex',s.pk),
+            'state':lambda s:(emit('state',s.pk) or ('revoked' if mode=='revoked' else 'active')),
+            'family':lambda s:Query(None if mode=='missing_head' else source,'family'),
+            'ScopeApplication':N(objects=Query(None if mode=='absent' else app,'applicationquery')),
+            'source_health':sourcehealth}
+        services=ModuleType('apps.policy.services');services.validate_envelope=validate
+        scopes=ModuleType('apps.policy.scopes');scopes.application_health=health
+        if mode=='fixture_mismatch':
+            origin=N(**vars(config));origin.envelope=dict(env,fixture_scope='operational');source.configuration=origin
+        with patch.dict(sys.modules,{'apps.policy.services':services,'apps.policy.scopes':scopes}):
+            try:
+                if kind=='resolve':
+                    extract('apps/policy/services.py',{'resolve'},ns,old)
+                    result=ns['resolve'](config.component,case,expected_revision=2 if mode=='stale' else None)
+                elif kind=='application':
+                    extract('apps/policy/scopes.py',{'application_health'},ns,old);result=ns['application_health'](config)
+                elif kind=='source':
+                    extract('apps/policy/scopes.py',{'source_health'},ns,old);result=ns['source_health'](source)
+                else:raise AssertionError(kind)
+                return ('return',result),events
+            except Exception as error:return ('error',type(error).__name__,str(error)),events
+    def compare(self,kind,modes):
+        for mode in modes:
+            with self.subTest(kind=kind,mode=mode):self.assertEqual(self.run_path(kind,mode,True),self.run_path(kind,mode,False))
+    def test_resolve_default_success_missing_revoked(self):self.compare('resolve',['active','missing','revoked'])
+    def test_resolve_default_invalid_stale_origin_and_missing_state(self):self.compare('resolve',['invalid','stale','origin_invalid','missing_state'])
+    def test_application_default_absent_success_denial(self):self.compare('application',['absent','active','denied'])
+    def test_application_default_binding_and_eighth_key(self):self.compare('application',['binding_mismatch','fixture_mismatch'])
+    def test_source_default_lock_revoked_and_active(self):self.compare('source',['active','revoked'])
+    def test_source_default_invalid_denied_missing_head(self):self.compare('source',['invalid','denied','missing_head'])
+    def validator_path(self,old,mode):
+        events=[];case=N(pk=11);content={'template_ids':[1,2],'repository':'internal-versioned','retention_days':2,'template_owners':[{'scope_id':1,'user_id':3}]}
+        target=N(schema_ref='schema:psl/document-storage/v3',content=content)
+        class Query:
+            def filter(self,**kw):events.append(('templates',kw['case'].pk,kw['pk__in']));return self
+            def count(self):return 1 if mode=='missing_template' else 2
+        model=ModuleType('apps.documents.models');model.Template=N(objects=Query())
+        validators=ModuleType('apps.documents.template_validators')
+        def owners(case,value,**kw):
+            events.append(('owners',case.pk,value,kw))
+            if mode=='owner_invalid':raise VE('native owner validation')
+        validators.validate_owners=owners
+        ns={'__package__':'apps.policy','ValidationError':VE,'AUDIENCES':[],
+            'validate':lambda schema,value:events.append(('schema',schema,value))}
+        extract('apps/policy/document_validators.py',{'typed','validate_reference'},ns,old)
+        with patch.dict(sys.modules,{'apps.documents.models':model,'apps.documents.template_validators':validators}):
+            try:result=ns['validate_reference']('D11.template_storage_retention_rules',target,case,runtime=True);return ('return',result),events
+            except Exception as error:return ('error',type(error).__name__,str(error)),events
+    def test_d11_default_validator_success_and_failures(self):
+        for mode in ['active','missing_template','owner_invalid']:
+            with self.subTest(mode=mode):self.assertEqual(self.validator_path(True,mode),self.validator_path(False,mode))
+    def test_runtime_owner_validation_skips_unrelated_principal_checks(self):
+        results=[]
+        for old in [True,False]:
+            trace=[]
+            class Query:
+                def filter(self,**kw):trace.append(('scopes',kw['pk__in']));return self
+                def count(self):return 1
+            def forbidden():raise AssertionError('Unrelated owner user lookup')
+            ns={'ValidationError':VE,'TemplateScope':N(objects=Query()),'get_user_model':forbidden}
+            extract('apps/documents/template_validators.py',{'validate_owners'},ns,old)
+            ns['validate_owners'](N(pk=11),{'template_owners':[{'scope_id':1,'user_id':999}]},runtime=True);results.append(trace)
+        self.assertEqual(results[0],results[1])

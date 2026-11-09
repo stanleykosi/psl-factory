@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<a class="back-link" href="{% url 'home' %}">← Work queue</a><h1>Log an engagement and connect planning</h1>
+<p>Use the existing project workspace. Record the actual route before PRD or signed SOW exists. The agent investigates missing inputs; authorised people assign the PM and register the supplied project identifier during Planning.</p>
+<section class="card"><h2>Select an existing workspace</h2>{% for case in available_cases %}<p><a href="?definition=engagement/v1&amp;case={{ case.pk }}">{{ case|workspace_name }}</a></p>{% empty %}<p>No permitted project workspace is available. Use authorised technical intake to create one; this flow does not create a second project master.</p>{% endfor %}</section>
+<section class="card"><form method="post">{% csrf_token %}{{ form.as_p }}<button>Log engagement work</button></form></section>{% endblock %}

@@ -49,7 +49,7 @@ class EngagementIntakeTests(TransactionTestCase):
         self.assertEqual(d.Identifier.objects.count(),2);self.assertEqual(d.report(a,c.pk)['registration_status'],'current')
         export=d.export_registration(a,c.pk,'downstream');self.assertEqual(d.export_registration(a,c.pk,'downstream').pk,export.pk);self.assertEqual(json.loads(export.body)['value'],'SYN-2')
         client=Client();client.force_login(a);self.assertContains(client.get(reverse('engagement',args=[c.pk])),'Engagement and project identity')
-        self.assertContains(client.get(reverse('case',args=[c.pk])),'Engagement and project identity')
+        self.assertContains(client.get(reverse('case',args=[c.pk])), 'href="'+reverse('engagement',args=[c.pk])+'"')
         response=client.post(reverse('engagement',args=[c.pk]),{'action':'investigate','revision':c.revision});self.assertEqual(response.status_code,200);self.assertEqual(response.json()['effect_tools'],[])
         for model in [d.Record,d.Identifier]:
             with self.assertRaises(DatabaseError),transaction.atomic():model.objects.all().update(case=c)

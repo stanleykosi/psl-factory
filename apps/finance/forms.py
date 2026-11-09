@@ -1,6 +1,7 @@
 from django import forms
+from django.db.models import OuterRef,Subquery
 from apps.documents.models import Template
-from apps.policy.models import Configuration
+from apps.policy.models import Configuration,PolicyState
 from apps.policy.document_validators import ROLES
 from apps.policy.finance_drafts import SCHEMAS,EXTRA
 from .models import FinancialImport,FinanceSource,FinanceRun,FinanceAdjustment
@@ -19,20 +20,25 @@ def commands(case,data=None):
         'capture':('Capture supplied CSV',{'evidence':evidence(['financial_input'])}),
         'validate':('Validate source conventions',{'batch':forms.ModelChoiceField(FinancialImport.objects.filter(case=case))}),
         'source':('Record extraction context',{'batch':forms.ModelChoiceField(FinancialImport.objects.filter(case=case)),'entity':forms.CharField(max_length=100),'accounting_basis':forms.CharField(max_length=100),
-            'extracted_at':forms.DateTimeField(),'completeness':choice(['unknown','partial','complete']),'control_total':forms.CharField(required=False,max_length=64),'evidence':evidence(['finance_source'])}),
+            'extracted_at':forms.DateTimeField(),'completeness':choice(['unknown','partial','complete']),'control_total':forms.CharField(required=False,max_length=64),'unit_declaration':forms.JSONField(required=False,widget=forms.Textarea,help_text='Exact finance-source-units/v1 envelope: batch id/hash, explicit input_key, declarations with feed/unit/evidence id/version/hash. Blank means unknown and holds mapping. Evidence kind finance_source_unit must contain matching finance-source-unit-assertion/v1.'),'evidence':evidence(['finance_source'])}),
         'policy':('Save Finance policy draft',{'component':choice(sorted(set(SCHEMAS)|set(EXTRA))),'content':js('Versioned typed records; no executable workbook expressions or default account/ratio values.'),
             'evidence':evidence(['policy_decision']),'effective_from':forms.DateTimeField()}),
         'review':('Record configured Finance review',{'purpose':choice(['source','mapping','formula','allocation','adjustment','output']),'source':src(),
-            'configuration':forms.ModelChoiceField(Configuration.objects.filter(case=case,component__in=['D06.account_bu_maps','D06.rule_oracle_refs','D07.allocation_pool_rules','D07.rounding_residual_rule_id','D10.report_category_effective_dates'])),
+            'configuration':forms.ModelChoiceField(Configuration.objects.filter(case=case,component__in=['D06.account_bu_maps','D06.rule_oracle_refs','D06.statement_contract','D07.allocation_pool_rules','D07.rounding_residual_rule_id','D10.report_category_effective_dates'])),
             'adjustment':forms.ModelChoiceField(FinanceAdjustment.objects.filter(source__case=case)),'run':run(),'role':choice(ROLES),'verdict':choice(['approve','return','reject']),
             'evidence':evidence(['finance_review']),'note':forms.CharField(max_length=4000,widget=forms.Textarea(attrs={'rows':2}))}),
         'adjust':('Capture reporting adjustment',{'source':src(),'reference':forms.CharField(max_length=100),'kind':choice(['additive','reclassification']),
             'lines':js('Array of {account, amount}; exact decimal strings, reporting only. Reclassification must conserve the total.'),'evidence':evidence(['finance_adjustment']),'note':forms.CharField(max_length=4000)}),
         'map':('Build mapping preview',{'source':src(),'adjustments':forms.ModelMultipleChoiceField(FinanceAdjustment.objects.filter(source__case=case),required=False)}),
+        'diagnose_mapping':('Investigate draft mapping exceptions',{'source':src(),
+            'configuration':forms.ModelChoiceField(Configuration.objects.filter(case=case,component='D06.account_bu_maps').annotate(
+                current_lifecycle=Subquery(PolicyState.objects.filter(configuration_id=OuterRef('pk')).order_by('-pk').values('state')[:1])).filter(current_lifecycle='draft'),
+                help_text='Select an exact DRAFT version. Read-only diagnostic, not an approved mapping or Finance output.')}),
         'allocate':('Build BU allocation preview',{'parent':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind='mapping')),
             'metrics':forms.MultipleChoiceField(choices=[(v,v) for v in ['revenue','direct_cost','staff_cost','opex','other']])}),
         'calculate':('Calculate configured metrics',{'parent':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind__in=['mapping','allocation']))}),
-        'report':('Prepare reviewed aggregate report',{'run':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind='formula')),
+        'statement':('Bind reviewed statement inputs',{'parent':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind='formula')),'contract':forms.ModelChoiceField(Configuration.objects.filter(case=case,component='D06.statement_contract'))}),
+        'report':('Prepare reviewed aggregate report',{'run':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind__in=['formula','statement'])),
             'template':forms.ModelChoiceField(Template.objects.filter(case=case,definition__document_type='finance_report')),'audience':choice(['internal','management'])}),
         'investigate':('Investigate lineage and differences',{'run':run()})}
     result=[]

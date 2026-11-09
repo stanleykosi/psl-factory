@@ -11,6 +11,8 @@ METHOD=obj({'implementation':{'const':'monthly_cash_chain_v1'},'decimal_places':
     'matching':{'enum':['exact_only','explicit_partial']},'match_reversal':{'const':'full_once'},'rollover':{'const':'explicit_dates_and_reasons'},
     'actual_roles':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':ROLES}},'distinct_actual_reporter':{'type':'boolean'},
     'oracle_evidence_id':{'type':'integer','minimum':1},'oracles':rows(obj({'opening':MONEY,'inflow':MONEY,'outflow':MONEY,'expected':MONEY}),2)})
+from adapters.forecast_workbook import POLICY as WORKBOOK_POLICY
+METHOD['properties']['workbook_reference']=WORKBOOK_POLICY
 PROJECTION=obj({'forecast':rows(obj({'audience':{'enum':['internal','management']},'publisher_roles':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':ROLES}},
     'columns':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['opening','inflow','outflow','closing']}},'disclosure':{'const':'aggregate_with_coverage'}}),1)})
 
@@ -28,6 +30,9 @@ def validate_method(target,case):
     try:content=json.loads(source.body)
     except (ValueError,TypeError):raise ValidationError('Forecast oracles require structured evidence')
     if content!=v['oracles']:raise ValidationError('Forecast oracles differ from their exact cited evidence')
+    if 'workbook_reference' in v:
+        from apps.finance.forecast_workbook import validate_contract
+        validate_contract(case,v['workbook_reference'])
     known=unknown=False
     for o in v['oracles']:
         actual=chain(o['opening'],o['inflow'],o['outflow']);expected=o['expected']
@@ -42,7 +47,10 @@ def validate_projection(target):
     audience=existing['audiences']['items']
     audience['properties'].update(columns={'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['actual','budget','prior','variance','prior_variance','ratio']}},charts={'type':'boolean'})
     schema['properties'].update(existing)
+    from .group_forecast_validators import GROUP,validate_group
+    schema['properties']['group']=GROUP
     v=typed(target,'schema:psl/forecast-projection/v1',schema)
+    if 'group' in v:validate_group(v['group'])
     if len({r['audience'] for r in v['forecast']})!=len(v['forecast']):raise ValidationError('Duplicate forecast audience')
     audiences=v.get('audiences',[])
     if ('audiences' in v)!=('disclosure' in v) or len({r['audience'] for r in audiences})!=len(audiences):raise ValidationError('Preserve exact existing Finance projection and disclosure together')

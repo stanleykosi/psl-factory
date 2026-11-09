@@ -1,0 +1,15 @@
+{
+  "source_commit": "54fa5b39daa5825b11a4d8398385a40ac257f042",
+  "parent_source_commit": "dced7819eb736fefd2a672012af2c30128b433cf",
+  "status": "NONAPPLIED_TEST_ONLY",
+  "files": [
+    {
+      "target_path": "tests/test_d11_dispatch_isolation_component.py",
+      "snapshot_path": "files/tests/test_d11_dispatch_isolation_component.py.source",
+      "target_sha256": "4cec05d07fcc45f6b6e43dbff6dfb5c392894ebe9d0f6a093f9c7d770a9a54ab",
+      "target_git_blob": "724fe519ca93a4d6881c85a1ec670c3b1f960b95",
+      "bytes": 11172,
+      "mode": "100644"
+    }
+  ]
+}

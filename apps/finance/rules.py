@@ -21,19 +21,21 @@ def total(values):
         c.prec=512
         return sum((Decimal(v) for v in values),Decimal(0))
 
-def evaluate(rule,operands):
+def evaluate(rule,operands,*,include_provenance=False):
     """No eval, spreadsheet execution, network calls or implicit missing-to-zero."""
     with localcontext() as c:
         c.prec=512
         if any(operands.get((t['kind'],t['key'])) is None for t in rule['terms']):
-            return {'value':None,'unrounded':None,'rounding_difference':None,'unit':rule['output_unit'],'status':'unknown'}
+            return {'value':None,'unrounded':None,'rounding_difference':None,'unit':rule['output_unit'],'status':'unknown',
+                **({'calculation_provenance':{'weighted_numerator':None,'divisor':rule['divisor'],'input_unit':'major_currency','display_unit':rule['output_unit'],'decimal_places':rule['decimal_places'],'rounding':rule['rounding']}} if include_provenance else {})}
         try:
             numerator=sum((Decimal(operands[(t['kind'],t['key'])])*decimal(t['coefficient']) for t in rule['terms']),Decimal(0))
             raw=numerator/decimal(rule['divisor'],positive=True)
             rounded=raw.quantize(Decimal(1).scaleb(-rule['decimal_places']),rounding=ROUNDING[rule['rounding']])
             if abs(raw)>=Decimal('1e24'):raise InvalidOperation
         except (InvalidOperation,KeyError,ZeroDivisionError):raise ValidationError('Formula numeric budget or operand contract exceeded')
-        return {'value':number(rounded),'unrounded':number(raw),'rounding_difference':number(raw-rounded),'unit':rule['output_unit'],'status':'known'}
+        return {'value':number(rounded),'unrounded':number(raw),'rounding_difference':number(raw-rounded),'unit':rule['output_unit'],'status':'known',
+            **({'calculation_provenance':{'weighted_numerator':number(numerator),'divisor':rule['divisor'],'input_unit':'major_currency','display_unit':rule['output_unit'],'decimal_places':rule['decimal_places'],'rounding':rule['rounding']}} if include_provenance else {})}
 
 def formula_order(rules):
     by_key={r['key']:r for r in rules}

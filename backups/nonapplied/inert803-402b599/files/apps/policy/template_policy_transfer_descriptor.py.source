@@ -1,0 +1,81 @@
+"""UNADOPTED pure SQL descriptions/codec. No queries, readers or ledger mutation.
+
+Descriptors are not authorization or evidence of budget reservation. Future
+consumers owe native gates and separately reviewed attempt/ticket sequencing.
+"""
+import hashlib
+import json
+import math
+from types import MappingProxyType
+from apps.documents.template_operation_budget import Metadata,SPECS
+
+FIELDS=MappingProxyType({
+    'configuration':('case_id','component','revision'),
+    'reference':('case_id','ref','version'),
+    'application':('configuration_id','source_id','actor_id'),
+    'source':('configuration_id','kind','ref','revision','created_by_id'),
+})
+class TransferHold(ValueError):pass
+
+def hold():raise TransferHold('Policy transfer descriptor unavailable')
+
+def spec(name):
+    if type(name) is not str or name not in FIELDS:hold()
+    return SPECS[name]
+
+def checked(name,metadata):
+    _,_,types,shape,cap=spec(name)
+    if (type(metadata) is not Metadata or type(metadata.identity) is not tuple
+        or len(metadata.identity)!=len(types)
+        or any(type(v) is not t for v,t in zip(metadata.identity,types))
+        or type(metadata.shape) is not str or metadata.shape!=shape
+        or type(metadata.size) is not int or not 0<=metadata.size<=cap
+        or type(metadata.fingerprint) is not str or len(metadata.fingerprint)!=64
+        or any(c not in '0123456789abcdef' for c in metadata.fingerprint)):hold()
+    return metadata
+
+def expressions(name):
+    table,column,_,_,cap=spec(name)
+    cell='"'+column+'"'
+    binary="convert_to("+cell+"::text,'UTF8')"
+    return table,cell,binary,'octet_length('+binary+')',"encode(sha256("+binary+"),'hex')",cap
+
+def positive_pk(pk):
+    if type(pk) is not int or pk<=0:hold()
+
+def metadata_statement(name,pk):
+    positive_pk(pk);table,cell,binary,size,digest,cap=expressions(name)
+    identities=','.join('"'+field+'"' for field in FIELDS[name])
+    return (f'SELECT {identities},jsonb_typeof({cell}),{size},{digest} FROM "{table}" WHERE id=%s',(pk,))
+
+def transfer_statement(name,pk,metadata):
+    positive_pk(pk);checked(name,metadata)
+    table,cell,binary,size,digest,cap=expressions(name)
+    identities=' AND '.join('"'+field+'" IS NOT DISTINCT FROM %s' for field in FIELDS[name])
+    sql=(f'SELECT {binary} FROM "{table}" WHERE id=%s AND {identities}'
+         f' AND jsonb_typeof({cell})=%s AND {size}=%s AND {digest}=%s AND {size}<=%s')
+    return sql,(pk,*metadata.identity,metadata.shape,metadata.size,metadata.fingerprint,cap)
+
+def finite_float(text):
+    value=float(text)
+    if not math.isfinite(value):hold()
+    return value
+
+def reject_constant(text):hold()
+
+def decode_canonical(name,metadata,payload):
+    checked(name,metadata)
+    try:
+        if type(payload) is bytes:
+            data=payload
+        elif type(payload) is memoryview:
+            # Check bytes, not element count, BEFORE allocation/copy.
+            if payload.nbytes!=metadata.size:hold()
+            data=payload.tobytes()
+        else:hold()
+        if len(data)!=metadata.size or hashlib.sha256(data).hexdigest()!=metadata.fingerprint:hold()
+        value=json.loads(data.decode('UTF8'),parse_float=finite_float,parse_constant=reject_constant)
+        if type(value) is not (dict if metadata.shape=='object' else list):hold()
+        return value  # Fresh decode every time; no shared mutable payload cache.
+    except (ValueError,TypeError,UnicodeError,RecursionError,OverflowError):
+        raise TransferHold('Policy transfer descriptor unavailable') from None

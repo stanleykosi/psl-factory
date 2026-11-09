@@ -1,15 +1,17 @@
+from .change_signatures import parse_declaration, bind_historical, declaration_draft
+from .change_impacts import assessment_form, execution_form
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from apps.core.views import accessible_case
 from apps.identity.services import require
-from apps.documents.models import Template, PublicationReceipt
+from apps.documents.models import Template, PublicationReceipt, TemplateScope
 from apps.agents.commercial import investigate_proposal
 from apps.agents.models import AgentRun
 from .models import CommercialCase, CommercialRevision, ChangeRequest, ChangeVersion, ChangeAuthorization, ChangeDocumentBinding
 from .change_execution import record_execution, draft_change_document, close_change
-from .commercial_forms import ProposalForm, CommercialDecisionForm
+from .commercial_forms import ProposalForm, CommercialDecisionForm, SignaturePacketForm, SignatureContractForm, InternalSignatureExemptionForm
 from .commercial import SOURCE_KINDS, propose, decide_proposal, draft_submission, capture_response, adopt_signed
 from .changes import log_change, assess_change, decide_change, authorize_change, CONTRIBUTORS, DECISION_ROLES
 
@@ -18,6 +20,14 @@ from .changes import log_change, assess_change, decide_change, authorize_change,
 def workbench(request,case_id):
     case=accessible_case(request.user,case_id);require(request.user,case,'commercial.read')
     form=ProposalForm(case=case,auto_id='proposal_%s')
+    from .signatures import capture_packet, latest, packet_status
+    from .models import CommercialSignaturePacket
+    from uuid import uuid4
+    signature_form = SignaturePacketForm(case=case, initial={'operation_key': str(uuid4()), 'predecessor': getattr(latest(case), 'pk', None)})
+    contract_form = SignatureContractForm(case=case)
+    from .signature_exemptions import latest as latest_exemption, record_exemption
+    from .models import BaselineSignatureExemption
+    exemption_form = InternalSignatureExemptionForm(case=case, initial={'operation_key': str(uuid4()), 'predecessor': getattr(latest_exemption(case), 'pk', None)})
     if request.method=='POST':
         try:
             p=request.POST;expected=int(p['revision']);action=p['action']
@@ -30,8 +40,27 @@ def workbench(request,case_id):
                 f=CommercialDecisionForm(p)
                 if not f.is_valid():raise ValidationError(f.errors.as_text())
                 d=f.cleaned_data;decide_proposal(request.user,case.pk,int(p['proposal']),d['role'],d['verdict'],d['note'],expected,d['delegated'])
-            elif action=='draft':draft_submission(request.user,case.pk,int(p['proposal']),int(p['template']),expected)
+            elif action=='draft':draft_submission(request.user,case.pk,int(p['proposal']),int(p['template']),expected,template_scope_id=int(p['template_scope']) if p.get('template_scope') else None)
             elif action=='response':capture_response(request.user,case.pk,int(p['proposal']),int(p['receipt']),p['kind'],int(p['evidence']),p['note'],expected)
+            elif action=='signature_packet':
+                signature_form = SignaturePacketForm(p, case=case)
+                if not signature_form.is_valid(): raise ValidationError(signature_form.errors.as_text())
+                d = signature_form.cleaned_data
+                capture_packet(request.user, case.pk, d['prd'].pk, d['signatures'], d['note'], d['operation_key'], expected, d['commercial_revision'].pk if d['commercial_revision'] else (int(p['proposal']) if p.get('proposal') else None), d['predecessor'])
+            elif action=='signature_exemption':
+                exemption_form = InternalSignatureExemptionForm(p, case=case)
+                if not exemption_form.is_valid(): raise ValidationError(exemption_form.errors.as_text())
+                d = exemption_form.cleaned_data
+                record_exemption(request.user, case.pk, d['prd'].pk, d['note'], d['operation_key'], expected, d['predecessor'])
+            elif action=='signature_contract':
+                contract_form = SignatureContractForm(p, case=case)
+                if not contract_form.is_valid(): raise ValidationError(contract_form.errors.as_text())
+                from .signatures import draft_contract
+                d = contract_form.cleaned_data
+                draft_contract(request.user, case.pk, contract_form.contract(), d['evidence'].pk, d['effective_from'], expected)
+            elif action=='signature_reaffirm':
+                from .signatures import reaffirm_baseline
+                reaffirm_baseline(request.user, case.pk, int(p['packet']), expected)
             elif action=='adopt':adopt_signed(request.user,case.pk,int(p['proposal']),int(p['response']),expected)
             elif action=='investigate':investigate_proposal(request.user,case.pk,int(p['proposal']),expected)
             else:raise ValidationError('Unsupported commercial command')
@@ -46,8 +75,12 @@ def workbench(request,case_id):
     return render(request,'pmo/commercial.html',{'case':case,'form':form,'dossier':dossier,'rfp_workspace':rfp_workspace,'rfp_converted':converted,
         'is_rfp_proposal':bool(dossier and RFPResponse.objects.filter(commercial_id=dossier.current_id).exists()),
         'revisions':CommercialRevision.objects.filter(dossier__case=case).order_by('-number'),
+        'signature_form': signature_form, 'signature_contract_form': contract_form,
+        'exemption_form': exemption_form, 'signature_exemptions': BaselineSignatureExemption.objects.filter(case=case).order_by('-pk'),
+        'signature_packets': [(packet, packet_status(packet)) for packet in CommercialSignaturePacket.objects.filter(case=case).order_by('-pk')],
         'decision_form':CommercialDecisionForm(auto_id='decision_%s'),
         'templates':Template.objects.filter(case=case,definition__document_type='sow'),
+        'template_scopes':TemplateScope.objects.filter(case=case,document_type='sow',audience='client') if request.user.grant_set.filter(case=case,action='document.read',active=True).exists() else TemplateScope.objects.none(),
         'receipts':PublicationReceipt.objects.filter(publication__version__commercialdocumentbinding__revision__dossier__case=case),
         'evidence':case.evidence.filter(kind__in=['client_feedback','signature']),
         'runs':AgentRun.objects.filter(case=case,provider='deterministic-commercial-investigation-v1').order_by('-pk')[:10]})
@@ -71,12 +104,16 @@ def changes(request,case_id):
                 def flag(key):
                     if p.get(key) not in ['unknown','true','false']:raise ValidationError('Select true, false or unknown')
                     return {'unknown':None,'true':True,'false':False}[p[key]]
-                assess_change(request.user,case.pk,int(p['version']),p['contributor'],flag('cost_impact'),flag('timeline_impact'),flag('client_facing'),int(p['evidence']),p['note'],expected)
+                assess_change(request.user,case.pk,int(p['version']),p['contributor'],flag('cost_impact'),flag('timeline_impact'),flag('client_facing'),int(p['evidence']),p['note'],expected,**assessment_form(p))
             elif action=='decide':decide_change(request.user,case.pk,int(p['version']),p['role'],p['verdict'],int(p['evidence']),p['note'],expected)
             elif action=='authorize':authorize_change(request.user,case.pk,int(p['version']),int(p['commercial']) if p.get('commercial') else None,expected)
-            elif action=='execution':record_execution(request.user,case.pk,int(p['authorization']),p['kind'],int(p['evidence']),p['note'],expected)
+            elif action=='execution':record_execution(request.user,case.pk,int(p['authorization']),p['kind'],int(p['evidence']),p['note'],expected,**execution_form(p))
             elif action=='draft_change':draft_change_document(request.user,case.pk,int(p['authorization']),int(p['template']),p['purpose'],expected,p.get('audience','client'))
-            elif action=='close':close_change(request.user,case.pk,int(p['authorization']),int(p['receipt']),int(p['pm_signature']),int(p['client_signature']),p['note'],expected)
+            elif action=='close':close_change(request.user,case.pk,int(p['authorization']),int(p['receipt']),int(p['pm_signature']),int(p['client_signature']) if p.get('client_signature') else None,p['note'],expected,attestation=parse_declaration(p.get('attestation','')),operation_key=p.get('operation_key'))
+            elif action=='change_applicability':
+                from .change_applicability import record_successor
+                record_successor(request.user,case.pk,int(p['closure']),int(p['client_signature']) if p.get('client_signature') else None,parse_declaration(p.get('attestation','')),p['note'],p['operation_key'],expected,int(p['previous']) if p.get('previous') else None)
+            elif action=='bind_change_metadata':bind_historical(request.user,case.pk,int(p['closure']),parse_declaration(p.get('attestation','')),p['note'],expected,int(p['previous']) if p.get('previous') else None)
             elif action=='standard_approve':preapprove(request.user,case.pk,p['catalogue_key'],p['role'],p['verdict'],int(p['evidence']),p['note'],expected)
             elif action=='standard_bind':bind_standard(request.user,case.pk,int(p['version']),p['catalogue_key'],int(p['evidence']),p['note'],expected)
             elif action=='standard_investigate':investigate_standard(request.user,case.pk,int(p['version']),expected)
@@ -91,15 +128,26 @@ def changes(request,case_id):
             return redirect('changes',case_id=case.pk)
         except (ValidationError,ValueError,KeyError) as exc:
             messages.error(request,str(exc));case.refresh_from_db()
-    versions=ChangeVersion.objects.filter(change__case=case).order_by('-pk')
+    versions=ChangeVersion.objects.filter(change__case=case).select_related('intake_confirmation').order_by('-pk')
     try:entries,gates,policies=catalogue(case);catalogue_error=''
     except ValidationError as exc:entries={};gates=[];policies={};catalogue_error=str(exc)
-    return render(request,'pmo/changes.html',{'case':case,'versions':versions,'evidence':case.evidence.order_by('-pk'),
+    change_receipts=list(PublicationReceipt.objects.filter(publication__version__changedocumentbinding__authorization__version__change__case=case))
+    for receipt in change_receipts:
+        binding=receipt.publication.version.changedocumentbinding
+        receipt.declaration_draft=declaration_draft(binding.authorization,receipt,request.user) if binding.purpose=='go_live' else ''
+    from .change_applicability import presentation as applicability_presentation
+    from apps.policy.change_applicability_validators import OWNER_QUESTION, unresolved_draft
+    import json
+    authorizations=list(ChangeAuthorization.objects.filter(version__change__case=case))
+    for auth in authorizations:
+        receipt=next((r for r in change_receipts if r.publication.version.changedocumentbinding.authorization_id==auth.pk and r.publication.version.changedocumentbinding.purpose=='go_live'),None)
+        auth.applicability=applicability_presentation(auth,receipt,request.user)
+    return render(request,'pmo/changes.html',{'case':case,'versions':versions,'evidence':case.evidence.exclude(kind__startswith='agent_private_').order_by('-pk'),
         'standard_entries':entries,'standard_gates':gates,'standard_policies':policies,'standard_error':catalogue_error,
         'standard_policy_form':policy_form,'preapprovals':StandardPreapproval.objects.filter(case=case).order_by('-pk')[:100],
         'standard_bindings':StandardBinding.objects.filter(version__change__case=case).order_by('-pk')[:100],
         'standard_runs':AgentRun.objects.filter(case=case,provider='deterministic-standard-investigation-v1').order_by('-pk')[:10],
         'contributors':CONTRIBUTORS,'roles':DECISION_ROLES,'commercial':CommercialRevision.objects.filter(dossier__case=case),
-        'authorizations':ChangeAuthorization.objects.filter(version__change__case=case),
+        'authorizations':authorizations,'applicability_question':OWNER_QUESTION,'applicability_draft':json.dumps(unresolved_draft(case),indent=2),
         'templates':Template.objects.filter(case=case,definition__document_type__in=['status_report','project_artifact']),
-        'change_receipts':PublicationReceipt.objects.filter(publication__version__changedocumentbinding__authorization__version__change__case=case)})
+        'change_receipts':change_receipts})

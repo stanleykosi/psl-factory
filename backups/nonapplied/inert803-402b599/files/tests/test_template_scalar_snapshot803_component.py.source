@@ -1,0 +1,27 @@
+import ast,unittest
+from pathlib import Path
+PATH=Path(__file__).resolve().parent/'test_template_scalar_snapshot803.py'
+class ScalarSnapshotDefinitionsTests(unittest.TestCase):
+    def test_real_native_writes_and_narrow_technical_provision(self):
+        source=PATH.read_text();tree=ast.parse(source)
+        calls={ast.unparse(n.func) for n in ast.walk(tree) if isinstance(n,ast.Call)}
+        self.assertTrue({'tc.register_scope','intake.provision','intake.change_access'}<=calls)
+        self.assertNotIn('Grant.objects.update',source)
+        for text in ("'create_cases':False","'kinds':[]","'initial_actions':[]","'allowed_actions':['document.read']","self.assertTrue(self.c.synthetic)"):
+            self.assertIn(text,source)
+    def test_bounded_thread_close_and_completed_result(self):
+        source=PATH.read_text();tree=ast.parse(source)
+        self.assertIn('daemon=False',source);self.assertIn('thread.join(timeout=10)',source)
+        self.assertIn("connections['default'].close()",source)
+        self.assertIn("connections['default'].connection is not None",source)
+        self.assertIn('if error is not None:raise error',source)
+        self.assertIn('self.assertNotEqual(main_pid,result[0])',source)
+        self.assertFalse(any(isinstance(n,(ast.While,ast.AsyncFor)) for n in ast.walk(tree)))
+        self.assertNotIn('terminate_backend',source)
+    def test_explicit_two_snapshot_contrasts(self):
+        source=PATH.read_text()
+        self.assertEqual(source.count('    def test_'),2)
+        self.assertIn('self.assertEqual(after,before)',source)
+        self.assertIn("set(seen[1])|{seen[0]}",source)
+        self.assertIn('self.assertRaises(PermissionDenied)',source)
+        self.assertIn('NOT through-commit authorization',source)

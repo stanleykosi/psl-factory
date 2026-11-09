@@ -7,7 +7,7 @@ from apps.documents.controlled import register_template, create_version, request
 from .helpers import setup_case, roles, activate, rev
 
 DEFINITION={'document_type':'status_report','required_fields':['executive_summary','status'],
- 'audience_fields':{'client':['executive_summary','status','next_steps'],'internal':['executive_summary','status','internal_notes']}}
+ 'audience_fields':{'client':['executive_summary','scope','timeline','risks','dependencies','status','next_steps'],'internal':['executive_summary','status','internal_notes']}}
 
 
 def artifact(actor,case,component,schema,content,evidence):
@@ -34,6 +34,7 @@ def publication_fixture():
 def fields(source):
     return {'executive_summary':{'text':'Delivery is progressing.','evidence_ids':[source.pk]},
         'status':{'text':'In progress','evidence_ids':[source.pk]},
+        **{key:{'text':'Unknown: not established by the selected local progress source.','evidence_ids':[source.pk]} for key in ['scope','timeline','risks','dependencies']},
         'internal_notes':{'text':'PRIVATE TRACE DO NOT SHARE','evidence_ids':[source.pk]}}
 
 

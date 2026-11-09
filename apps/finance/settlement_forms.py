@@ -13,6 +13,9 @@ def commands(case,data=None):
     def text():return forms.CharField(max_length=4000,widget=forms.Textarea(attrs={'rows':2}))
     defs={
      'draft':('Generate invoice draft',{'preparation':select(BillingPreparation),'reference':forms.CharField(max_length=100),'due_date':forms.DateField(required=False)}),
+     'bind_identity':('Bind exact invoice obligation identity',{'invoice':select(Invoice),'key':forms.CharField(max_length=100),'evidence':ev('invoice_identity'),'predecessor_id':forms.IntegerField(required=False,min_value=1)}),
+     'alias_identity':('Resolve an exact authorised identity alias',{'claim_id':forms.IntegerField(min_value=1),'key':forms.CharField(max_length=100),'evidence':ev('invoice_identity_alias')}),
+     'investigate_identity':('Investigate invoice identity readiness',{'invoice':select(Invoice)}),
      'review':('Review exact invoice',{'invoice':select(Invoice),'role':choice(ROLES),'verdict':choice(['approve','return','reject']),
         'delegated':forms.BooleanField(required=False,label='Use configured delegated invoice authority',help_text='Requires current approval for this project, decision, currency, amount and authority window.'),'evidence':ev('invoice_review'),'reason':text()}),
      'reserve':('Reserve issuance or delivery',{'invoice':select(Invoice),'kind':choice(['issue','deliver']),'role':choice(ROLES)}),

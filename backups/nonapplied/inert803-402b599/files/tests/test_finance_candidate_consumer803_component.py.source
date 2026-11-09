@@ -1,0 +1,83 @@
+"""Pure registered Finance consumer and closed SQL shapes, not DB execution."""
+import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
+from uuid import uuid4
+from apps.documents import template_finance_admission as reader
+from apps.documents import template_finance_transfer_descriptor as d
+from apps.documents.template_operation_budget import Metadata
+from apps.policy import template_policy_budget_v2 as v2
+from tests import test_template_candidate_worklist803_component as f
+class FinanceConsumerTests(unittest.TestCase):
+    setUp=f.CandidateTests.setUp
+    producer_fakes=f.CandidateTests.producer_fakes
+    budget=f.CandidateTests.budget
+    def produce(self):
+        self.producer_fakes();self.financial.append((2,*self.financial[0][1:]))
+        return self.ns['discover_candidate_worklist'](self.actor,uuid4(),{},['documents.template_claims'])
+    def consume(self,out,row):return self.ns['consume_finance_candidate'](self.actor,['documents.template_claims'],out,row)
+    def test_exact_registered_shared_run_rows_distinct_template_case(self):
+        out=self.produce()
+        for row in out.finance:
+            case,actual=self.consume(out,row)
+            self.assertIs(actual,row);self.assertEqual(case,out.witness.case_id);self.assertNotEqual(case,row[6])
+        self.assertEqual(out.finance[0][1],out.finance[1][1])
+    def test_equal_forged_row_and_worklist_denied_sticky(self):
+        for kind in ('row','worklist'):
+            self.setUp();out=self.produce();row=out.finance[0]
+            if kind=='row':row=tuple(list(row))
+            else:out=self.ns['_Worklist'](out.closure,out.candidate_templates,out.finance,out.pmo,out.versions,out.witness)
+            with self.assertRaises(f.Hold):self.consume(out,row)
+            self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_entry_actor_keys_raw_mismatches_poison_original_and_current(self):
+        for kind in ('entry','actor','keys','raw','pk'):
+            self.setUp();out=self.produce();old=self.marker;keys=['documents.template_claims']
+            if kind=='entry':self.marker={}
+            elif kind=='actor':self.actor=SimpleNamespace(pk=1)
+            elif kind=='keys':keys=['documents.template_resolutions']
+            elif kind=='pk':self.actor.pk=2
+            else:self.raw=object()
+            with self.assertRaises(f.Hold):self.ns['consume_finance_candidate'](self.actor,keys,out,out.finance[0])
+            self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_actual_admit_membership_before_work_or_helpers(self):
+        out=self.produce();events=[]
+        with patch.object(v2,'_binding',lambda *args:(self.marker,self.connection,self.raw)),patch.object(reader,'_consume_candidate',side_effect=self.ns['consume_finance_candidate']),patch.object(reader,'_reader_helpers',side_effect=AssertionError('no helpers')):
+            admission=reader.ReaderAdmission(self.actor,['documents.template_claims'])
+            with patch.object(admission,'_admit',side_effect=lambda rows:events.append(rows)):
+                admission.admit(out,out.finance[0]);self.assertEqual(events,[[out.finance[0]]]);self.assertEqual(admission.template_case,out.witness.case_id)
+                events.clear()
+                with self.assertRaises(Exception):admission.admit(out,tuple(list(out.finance[0])))
+                self.assertEqual(events,[])
+    def test_all_phases_use_same_full_context_before_array_expansion(self):
+        out=self.produce();row=out.finance[0];case=out.witness.case_id
+        m=Metadata((row[6],'statement'),'object',14,'a'*64)
+        guard,pins=d.context_guard(row,case)
+        statements=[d.identity_statement(row,case),d.metadata_statement(row,case),d.count_statement(row,case,m),d.class_statement(row,case,m,0),d.transfer_statement(row,case,m)]
+        self.assertEqual(pins,(*row,case))
+        for sql,params in statements:
+            self.assertIn(guard,sql);self.assertEqual(sql.count('%s'),len(params))
+            self.assertIn(case,params);self.assertIn(row[6],params)
+            self.assertNotIn('ft.case_id=r.case_id',sql)
+        for sql,params in statements[2:4]:
+            self.assertLess(sql.index(guard),sql.index('jsonb_array_length'))
+            self.assertIn('CASE WHEN admitted THEN CASE WHEN',sql)
+        self.assertIn("jsonb_array_elements(CASE WHEN matched THEN",statements[3][0])
+        with self.assertRaises(d.FinanceTransferHold):d.metadata_statement(row,True)
+
+from tests import test_template_finance_budget_adoption803_component as phases
+class ModeledContextMissTests(unittest.TestCase):
+    setUp=phases.FinanceAdoptionTests.setUp
+    budget=phases.FinanceAdoptionTests.budget
+    prepared=phases.FinanceAdoptionTests.prepared
+    def test_modeled_template_case_drift_denies_before_decode_in_each_phase(self):
+        # Fake SQL response model; conditional expression semantics remain UNRUN.
+        for position,response in ((1,[]),(2,[(False,None)]),(3,[(False,True,False)]),(5,[])):
+            with self.subTest(position=position):
+                self.marker={};self.c.responses=[];self.c.calls=[]
+                self.prepared();self.c.responses[position]=response
+                with patch.object(d,'decode',side_effect=AssertionError('no decode on guard miss')) as decode:
+                    with self.assertRaises(Exception):self.budget().admit(self.worklist,self.expected)
+                    decode.assert_not_called()
+                sql,params=self.c.calls[-1]
+                self.assertIn('ft.case_id=%s',sql);self.assertIn(self.template_case,params)
+                self.assertTrue(self.marker['policy_budget_v2_failed'])

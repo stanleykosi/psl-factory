@@ -48,6 +48,9 @@ def draft(actor,case_id,response_id,template_id,route_key,expected):
         'scope':{'text':e.body,'evidence_ids':[e.pk]},
         mapping:{'text':'\n'.join(row['key']+': '+row['disposition']+' — '+row['response'] for row in v.matrix),'evidence_ids':sorted(set(row['evidence_id'] for row in v.matrix))},
         terms:{'text':public_terms.body+'\nTimeline: '+plan.body,'evidence_ids':[public_terms.pk,plan.pk]}}
+    from apps.documents.pmo_sections import complete_native_client_sections
+    fields['timeline'] = {'text': plan.body, 'evidence_ids': [plan.pk]}
+    fields = complete_native_client_sections(fields, 'client', [e.pk])
     version=create_version(actor,case.pk,t.pk,'RFP response '+v.rfp.reference,'client',fields,case.revision)
     RFPDocumentBinding.objects.create(version=version,response=v,snapshot=snapshot);sender(actor,version);return version
 

@@ -23,6 +23,25 @@ def configure(actor,case_id,contract_id,payload):
     c,contract=pilot.contract(actor,case_id,contract_id);require(actor,c,'pilot.configure')
     pilot.lock_selection(c,contract.payload,actor)
     if PilotContract.objects.filter(case=c,version__gt=contract.version).exists():raise ValidationError('Current pilot contract required')
+    # Enforce observer scope before schema validators inspect native ledger IDs.
+    if isinstance(payload,dict) and isinstance(payload.get('guards'),list) and any(isinstance(g,dict) and g.get('operation')=='ledger.review' for g in payload['guards']):
+        from apps.finance.ledger import readable
+        readable(actor,c)
+    if isinstance(payload,dict) and isinstance(payload.get('guards'),list):
+        from adapters.planning_readiness_guard import readable as planning_readable
+        for g in payload['guards']:
+            if isinstance(g,dict) and g.get('operation')=='planning.readiness':
+                args=g.get('arguments',{})
+                if isinstance(args,dict) and type(args.get('planning_packet_id')) is int:
+                    planning_readable(actor,c,args)
+                else:
+                    raise ValidationError('Exact planning packet identifier required')
+    if isinstance(payload,dict) and isinstance(payload.get('guards'),list) and any(isinstance(g,dict) and g.get('operation')=='approval.route' for g in payload['guards']):
+        from apps.pmo.approvals import readable
+        readable(actor,c)
+    if isinstance(payload,dict) and isinstance(payload.get('guards'),list) and any(isinstance(g,dict) and g.get('operation')=='recognition.attest' for g in payload['guards']):
+        from apps.finance.recognition_preview import readable
+        readable(actor,c)
     validators.validate(contract,payload)
     for g in payload['guards']:pilot_guards.check(actor,c,g)
     old=PilotBinding.objects.filter(contract=contract).first()

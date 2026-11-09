@@ -30,6 +30,10 @@ def investigate(actor,case_id,pk):
     if binding.get('unbound_operations'):findings.append('Native guard not bound for selected operations: '+', '.join(binding['unbound_operations']))
     for g in binding.get('native_guards',[]):
         if g['state']!='READY_AT_OBSERVATION':findings.append(g['operation']+': shared native guard holds; no transition performed')
+        if g['operation']=='recognition.attest':findings.append('Private proposed attestation observation only: unbound to separately entered native form input, not approval, attestation or execution authority.')
+        if g['operation']=='planning.readiness':findings.append('Planning preparation preconditions only: no readiness record, owner approval or native source verification is created. Source-read grants and current source observations remain required')
+        if g['operation']=='approval.route':findings.append('Internal prerequisite routing preconditions only; no job, reminder, delivery or department approval is created. Native reservation rechecks current authority and source.')
+        if g['operation']=='ledger.review':findings.append('Ledger review preconditions with public review evidence only; no Finance decision, incumbent verification or posting authority is created. Other private evidence classes are not covered by this preview')
         if g['operation']=='role.decision.evaluate':findings.append('Role/action qualification only; actual business action grants and independent human controls remain separate')
         if g['operation']=='workflow.clock.evaluate':findings.append('Base due reassessment only; stored commitments, pause history and action permissions remain unchanged. Use the native human deadline review for adoption')
         if g['operation']=='payment.assess':

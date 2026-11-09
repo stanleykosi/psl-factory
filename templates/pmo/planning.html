@@ -6,6 +6,11 @@
 <p>Unknown sources and contacts may remain blank. This records a new packet version; it does not approve scope, assign an action owner or calculate a deadline.</p>
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="capture_fields">
 {{ ordinary.0.as_p }}
+<h3>Declared source versions and target PRD / scope</h3>
+<p>Document version labels are independent. Record the target explicitly from the source; never copy the selected PRD just to make readiness pass. Preserve conflicting sources. A clarification response is not a baseline approval.</p>
+{{ ordinary.3.management_form }}{{ ordinary.3.non_form_errors }}
+{% for row in ordinary.3 %}<fieldset><legend>Source correlation {{ forloop.counter }}</legend>{{ row.as_p }}</fieldset>{% endfor %}
+<button name="edit_rows" value="add_correlation">Add a source correlation without saving</button>
 <h3>Delivery stakeholders</h3>{{ ordinary.1.management_form }}{{ ordinary.1.non_form_errors }}
 {% for row in ordinary.1 %}<fieldset><legend>{{ row.team.value }}</legend>{{ row.as_p }}</fieldset>{% endfor %}
 <h3>Questions and clarifications</h3>{{ ordinary.2.management_form }}{{ ordinary.2.non_form_errors }}

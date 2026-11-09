@@ -1,0 +1,46 @@
+--- a/apps/pmo/incident_reporting.py
++++ b/apps/pmo/incident_reporting.py
+@@ -66 +66 @@
+-def selected_access(actor, case, pin):
++def selected_access(actor, case, pin, *, _reader_scalar=False,_prepared=None):
+@@ -67,0 +68,4 @@
++    if type(_reader_scalar) is not bool:raise ValidationError('Internal reader projection must be boolean')
++    if _prepared is not None:
++        from .template_prepared_reader import check_prepared
++        _prepared=check_prepared(_prepared,actor);_reader_scalar=True
+@@ -69 +73,2 @@
+-    issue_subject(case, pin['reference']['evidence_id'])
++    if _prepared is not None:_prepared.selected_pin(case,pin)
++    issue_subject(case, pin['reference']['evidence_id'], _reader_scalar=_reader_scalar)
+@@ -71 +76 @@
+-        revision = IssueReferenceRevision.objects.filter(pk=pin['revision_id'], issue_id=pin['issue_id'], issue__case=case).first()
++        revision = _prepared.revision_for(case,pin['revision_id'],pin['issue_id']) if _prepared is not None else IssueReferenceRevision.objects.filter(pk=pin['revision_id'], issue_id=pin['issue_id'], issue__case=case).first()
+@@ -74 +79 @@
+-        issue_subject(case, revision.evidence_id)
++        issue_subject(case, revision.evidence_id, _reader_scalar=_reader_scalar)
+@@ -77 +82 @@
+-        row = refs.observation(actor, case, pin['observation_id'])
++        row = refs.observation(actor, case, pin['observation_id'], _reader_scalar=_reader_scalar, _prepared=_prepared)
+@@ -96 +101 @@
+-def legacy_access(actor, case, manifest, recorded_at):
++def legacy_access(actor, case, manifest, recorded_at, *, _reader_scalar=False,_prepared=None):
+@@ -101,0 +107,4 @@
++    if type(_reader_scalar) is not bool:raise ValidationError('Internal reader projection must be boolean')
++    if _prepared is not None:
++        from .template_prepared_reader import check_prepared
++        _prepared=check_prepared(_prepared,actor);_reader_scalar=True
+@@ -104 +113 @@
+-    narrative = Evidence.objects.get(case=case, pk=manifest['content']['id'])
++    narrative = _prepared.narrative_for(case,manifest['content']['id']) if _prepared is not None else Evidence.objects.get(case=case, pk=manifest['content']['id'])
+@@ -107,3 +116,3 @@
+-        issue = Issue.objects.get(case=case, pk=issue_id)
+-        revisions = list(issue.reference_revisions.filter(created_at__lte=recorded_at).order_by('-number'))
+-        state = IssueState.objects.get(issue=issue, pk=state_id)
++        issue = _prepared.issue_for(case,issue_id) if _prepared is not None else Issue.objects.get(case=case, pk=issue_id)
++        revisions = _prepared.history_for(issue,recorded_at) if _prepared is not None else list(issue.reference_revisions.filter(created_at__lte=recorded_at).order_by('-number'))
++        state = _prepared.state_for(issue,state_id,not revisions) if _prepared is not None else IssueState.objects.get(issue=issue, pk=state_id)
+@@ -117,0 +127 @@
++            if _prepared is not None:_prepared.derived_pin(case,{'issue_id':issue_id,'reference':link,'revision_id':origin.pk if origin else None,'observation_id':link.get('observation_id')})
+@@ -119 +129 @@
+-                'revision_id': origin.pk if origin else None, 'observation_id': link.get('observation_id')})
++                'revision_id': origin.pk if origin else None, 'observation_id': link.get('observation_id')}, _reader_scalar=_reader_scalar, _prepared=_prepared)

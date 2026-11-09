@@ -1,0 +1,133 @@
+"""Extracted closed reader with fake scalar/byte transport. No SQL/native imports."""
+import ast,unittest,hashlib,json
+from dataclasses import dataclass,replace
+from pathlib import Path
+from types import SimpleNamespace
+from uuid import UUID,uuid4
+from unittest.mock import Mock
+from apps.documents.template_operation_budget import Metadata
+from apps.policy import template_policy_transfer_descriptor as codec
+from tests.test_template_owner_predicate803_component import VE,PD
+ROOT=Path(__file__).resolve().parents[1]
+
+class ReaderTests(unittest.TestCase):
+    def setUp(self):
+        self.marker={};self.case=uuid4();self.actor=SimpleNamespace(pk=3);self.worklist=SimpleNamespace(closure=SimpleNamespace(_records=(('claim',1),)))
+        self.witness=SimpleNamespace(marker=self.marker,case_id=self.case);self.queries=[];self.responses=[];self.decoded=[];owner=self
+        class Cursor:
+            def __enter__(self):return self
+            def __exit__(self,*args):pass
+            def execute(self,sql,params):owner.queries.append((sql,params))
+            def fetchmany(self,n):return owner.responses.pop(0)
+        class Ledger:
+            def __init__(self):self.states={}
+            def begin(self,kind,pk):ticket=len(self.states);self.states[ticket]='metadata';return ticket
+            def reserve(self,ticket,metadata):self.states[ticket]='reserved'
+            def before_transfer(self,ticket):self.states[ticket]='transfer'
+            def transfer_checked(self,ticket,rows):
+                if len(rows)!=1:raise VE()
+                self.states[ticket]='transfer_checked';return rows[0][0]
+            def before_decode(self,ticket):self.states[ticket]='decode'
+            def validated(self,ticket):self.states[ticket]='validated'
+            def phase(self,ticket,wanted):
+                if self.states[ticket]!=wanted:raise VE()
+        class Budget:
+            def __init__(self,*args):self.connection=SimpleNamespace(cursor=Cursor);self.ledger=Ledger()
+            def context(self):
+                if owner.marker.get('policy_budget_v2_failed'):raise VE()
+            def poison(self):owner.marker['policy_budget_v2_failed']=True
+        def registered(actor,keys,worklist):
+            if worklist is not owner.worklist:raise VE()
+            return owner.witness
+        def poison(marker):
+            if marker is not None:marker['policy_budget_v2_failed']=True
+        ns={'__name__':'owner_pure','dataclass':dataclass,'UUID':UUID,'PermissionDenied':PD,'ValidationError':VE,
+            'PolicyCellBudget':Budget,'check_registered_worklist':registered,'_CONTEXT':SimpleNamespace(get=lambda:self.marker),'_poison_marker':poison,
+            'COMPONENT':'D11.template_storage_retention_rules','Metadata':Metadata,
+            **{key:getattr(codec,key) for key in ('metadata_statement','transfer_statement','FIELDS','spec')},
+            'CELLS':{k:(None,None,None,v[-1]) for k,v in codec.SPECS.items()}}
+        def decode(*args):self.decoded.append(1);return codec.decode_canonical(*args)
+        ns['decode_canonical']=decode
+        tree=ast.parse((ROOT/'apps/policy/template_owner_prepared.py').read_text())
+        exec(compile(ast.Module(body=[n for n in tree.body if not isinstance(n,(ast.Import,ast.ImportFrom))],type_ignores=[]),'<owner-reader>','exec'),ns)
+        self.ns=ns;self.Stop=ns['PreparedOwnerStop']
+    def reader(self,record=None):
+        permit=self.ns['_Permit'](self.marker,self.worklist,record or ('claim',1,11,3,7))
+        self.marker.setdefault('template_owner_permits803',[]).append({'permit':permit,'used':False})
+        return self.ns['OwnerReader'](self.actor,['documents.template_claims'],self.worklist,permit)
+    def test_entry_counters_shared_and_strict_categories(self):
+        a=self.reader();a.charge('configuration',list(range(1,101)))
+        b=self.reader();self.assertIs(a.state,b.state)
+        with self.assertRaises(self.Stop):b.charge('configuration',[101])
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_attempt_boundary_no_wrapper_reset(self):
+        a=self.reader();a.state['attempts']=999;a.phase();b=self.reader()
+        with self.assertRaises(self.Stop):b.phase()
+        self.assertEqual(a.state['attempts'],1000)
+    def test_bool_identity_and_cross_entry_poison(self):
+        a=self.reader()
+        with self.assertRaises(self.Stop):a.charge('actor',[True])
+        self.setUp();a=self.reader();old=self.marker;self.marker={}
+        with self.assertRaises(self.Stop):a.clean()
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_permit_copied_and_reused_rejected(self):
+        permit=self.ns['_Permit'](self.marker,self.worklist,('claim',1,11,3,7))
+        self.marker['template_owner_permits803']=[{'permit':permit,'used':False}]
+        with self.assertRaises(self.Stop):self.ns['OwnerReader'](self.actor,['documents.template_claims'],self.worklist,replace(permit))
+    def test_reference_metadata_and_transfer_include_stored_identity(self):
+        a=self.reader();view=a.observe('reference',(5,self.case,'ref',1,'schema:x','a'*64));data=b'{"x": 1}'
+        self.responses=[[(self.case,'ref',1,'object',len(data),hashlib.sha256(data).hexdigest())],[(data,)]]
+        self.assertEqual(a.load('reference',view),{'x':1})
+        self.assertEqual(len(self.queries),2)
+        for sql,params in self.queries:
+            self.assertIn('own."schema_ref" IS NOT DISTINCT FROM %s',sql);self.assertIn('own."sha256" IS NOT DISTINCT FROM %s',sql)
+            self.assertIn('schema:x',params);self.assertIn('a'*64,params)
+    def test_metadata_context_guardmiss_no_transfer_decode(self):
+        a=self.reader();view=a.observe('reference',(5,self.case,'ref',1,'schema:x','a'*64));self.responses=[[]]
+        with self.assertRaises(self.Stop):a.load('reference',view)
+        self.assertEqual(len(self.queries),1);self.assertEqual(self.decoded,[])
+    def test_transfer_context_guardmiss_no_decode(self):
+        a=self.reader();view=a.observe('reference',(5,self.case,'ref',1,'schema:x','a'*64));data=b'{}'
+        self.responses=[[(self.case,'ref',1,'object',2,hashlib.sha256(data).hexdigest())],[]]
+        with self.assertRaises(self.Stop):a.load('reference',view)
+        self.assertEqual(len(self.queries),2);self.assertEqual(self.decoded,[])
+    def test_no_deferred_unknown_field(self):
+        a=self.reader();view=a.observe('configuration',(5,self.case,self.ns['COMPONENT'],1))
+        with self.assertRaises(self.Stop):_ = view.created_by
+        self.assertEqual(self.queries,[])
+    def test_observed_schema_id_boolean_rejected(self):
+        a=self.reader()
+        with self.assertRaises(self.Stop):a.observe('reference',(True,self.case,'ref',1,'schema:x','a'*64))
+    def test_pending_ticket_cannot_finish(self):
+        a=self.reader();a.tickets=[a.budget.ledger.begin('reference',5)]
+        with self.assertRaises(self.Stop):a.final_guard()
+        self.assertEqual(self.queries,[])
+    def test_null_evaluate_never_actor_policy_mutex(self):
+        a=self.reader(('claim',1,11,3,None));record=a.observe('claim',(1,11,3,None));scope=a.observe('scope',(11,self.case,'ordinary'))
+        a.one=lambda *args:record;a.scope_for=lambda *args:scope
+        a.actor_for=lambda *args:self.fail('actor loaded');a.resolution_candidate=lambda *args:self.fail('policy loaded');a.source_mutex=lambda *args:self.fail('mutex invoked')
+        self.ns['TemplateClaim']=object();self.responses=[[(1,)]]
+        self.assertFalse(a.evaluate('claim',1));self.assertEqual(len(self.queries),1)
+    def query_model(self,row):
+        class Query:
+            def filter(self,**kw):return self
+            def order_by(self,*args):return self
+            def values_list(self,*args):return self
+            def first(self):return row
+        return SimpleNamespace(objects=Query())
+    def test_missing_latest_state_remains_none_not_false(self):
+        a=self.reader();config=a.observe('configuration',(5,self.case,self.ns['COMPONENT'],1));self.ns['PolicyState']=self.query_model(None)
+        self.assertIsNone(a.latest_configuration_state(config));sql,params=a.guard()
+        self.assertIn('ORDER BY id DESC LIMIT 1',sql);self.assertIn(None,params)
+    def test_absent_application_guard_and_no_origin_load(self):
+        a=self.reader();config=a.observe('configuration',(5,self.case,self.ns['COMPONENT'],1));self.ns['ScopeApplication']=self.query_model(None)
+        self.assertIsNone(a.application_for(config));self.assertIn('NOT EXISTS (SELECT 1 FROM policy_scopeapplication',a.guard()[0])
+    def test_source_family_guard_keeps_any_historical_state(self):
+        a=self.reader();config=a.observe('configuration',(5,self.case,self.ns['COMPONENT'],1));source=a.observe('source',(6,5,'organization','tenant',1,3))
+        a.configuration_for=lambda *args:config;self.ns['ScopeVersion']=self.query_model(None)
+        self.assertIsNone(a.source_family_head(source));sql,_=a.guard()
+        self.assertIn("st.state IN ('active','revoked')",sql);self.assertIn('ORDER BY sv.revision DESC LIMIT 1',sql)
+    def test_modern_only_envelope_gate_holds_legacy_not_false(self):
+        a=self.reader();case=a.observe('case',(self.case,'project','tenant',True))
+        self.ns['descriptor']=lambda env: (_ for _ in ()).throw(VE())
+        with self.assertRaises(self.Stop):a.envelope_context(case,{'component_id':self.ns['COMPONENT'],'value':['legacy']},True)

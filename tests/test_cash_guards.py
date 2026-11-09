@@ -21,15 +21,18 @@ from tests.settlement_helpers import fixture,draft,issue,receipt,assign
 from tests.test_release_evaluation_guards import selected,contract_payload
 
 
-def ready():
-    a,c,cov,p,e=fixture();issued=issue(a,c,draft(a,c,p),e);r,_=receipt(a,c,verify=False)
+def ready(*, identity=False):
+    issue_original=issue
+    if identity:
+        from tests.obligation_helpers import issue_identified as issue_original
+    a,c,cov,p,e=fixture();issued=issue_original(a,c,draft(a,c,p),e);r,_=receipt(a,c,verify=False)
     proof=evidence(a,c,'cash_verification',r.evidence.body)
     return a,c,cov,e,issued,r,proof
 
 
 class CashGuardTests(TestCase):
     @classmethod
-    def setUpTestData(cls):cls.a,cls.c,cls.cov,cls.e,cls.issued,cls.r,cls.proof=ready()
+    def setUpTestData(cls):cls.a,cls.c,cls.cov,cls.e,cls.issued,cls.r,cls.proof=ready(identity=True)
 
     def verify_g(self):return selected(self.a,self.c,'receipt.verify',cash_receipt_id=self.r.pk,role='Finance',cash_verification_evidence_id=self.proof.pk)
 
@@ -131,7 +134,7 @@ class CashGuardTests(TestCase):
 
 class CashAutocommitGuardTests(TransactionTestCase):
     def test_preview_requires_no_mutation_transaction_while_native_effect_keeps_locks(self):
-        a,c,cov,e,issued,r,proof=ready();self.assertFalse(connection.in_atomic_block)
+        a,c,cov,e,issued,r,proof=ready(identity=True);self.assertFalse(connection.in_atomic_block)
         result=pilot_guards.check(a,c,selected(a,c,'receipt.verify',cash_receipt_id=r.pk,role='Finance',cash_verification_evidence_id=proof.pk))
         self.assertEqual(result['state'],'READY_AT_OBSERVATION');self.assertFalse(CashVerification.objects.exists())
         lot=cash.verify(a,c.pk,r.pk,'Finance',proof.pk,rev(c));assign(a,c,r,cov,e)

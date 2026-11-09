@@ -85,7 +85,15 @@ class Command(BaseCommand):
         data={k:evidence(kind).pk for k,kind in [('checklist','deployment_checklist'),('incident_reporting','incident_reporting'),('rollback','rollback_plan')]}
         receipt=publish(draft_delivery_document(a,c.pk,d.pk,'go_live',t.pk,data,rev()))
         pm=evidence('signature','Synthetic exact PM go-live signature');client=evidence('signature','Synthetic exact Client go-live signature')
-        accept_go_live(a,c.pk,d.pk,receipt.pk,pm.pk,client.pk,'Synthetic two-signature attestation',rev())
+        from apps.pmo.go_live_attestations import PROTOCOL,PURPOSE,pin,subject_pins
+        from apps.pmo.delivery import latest
+        # This demo explicitly creates synthetic decisions, never real signature facts.
+        signed_at=timezone.now().isoformat()
+        declared=dict(subject_pins(d,receipt,latest(d,'release_outcome')),protocol=PROTOCOL,purpose=PURPOSE,
+            attesting_actor_id=a.pk,signatures={role:dict(evidence=pin(signature),source_system='synthetic-demo',
+                source_reference='signature:'+str(signature.pk),decision_id='decision:'+str(signature.pk),decision_version='1',
+                signer_reference='synthetic:'+role,purpose=PURPOSE,signed_at=signed_at) for role,signature in [('PM',pm),('Client',client)]})
+        accept_go_live(a,c.pk,d.pk,receipt.pk,pm.pk,client.pk,'Synthetic two-signature attestation',rev(),attestation=declared)
         for owner,metrics in [('engineering',{'errors':{'value':0,'unit':'count'}}),('infrastructure',{'availability':{'value':100,'unit':'percent'}})]:
             source('hypercare_'+owner,{'observed_at':timezone.now().isoformat(),'confirmed':True,'metrics':metrics})
         inventory={k:evidence(k) for k in fixture['closure_inventory']['required_kinds']};source('technical_finalization',src=inventory['technical_document'])

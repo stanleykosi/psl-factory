@@ -1,0 +1,201 @@
+"""INERT generic reader primitive. No route/caller or native fixture is installed.
+
+Trusted scalar closure must authorize the binding worklist first. Internal DB
+classification only selects the existing PPE gate, never a public disclosure.
+No caller callbacks between phases; snapshot consistency is not authorization.
+"""
+from dataclasses import dataclass
+from django.core.exceptions import PermissionDenied,ValidationError
+
+MAX_BINDINGS=100
+MAX_RUNS=100
+MAX_INPUTS=1000
+MAX_SNAPSHOT=256*1024
+MAX_BYTES=1024*1024
+FIELDS=('binding','run','version','template','document','kind','case','tenant','synthetic')
+MESSAGE='Template reader dependency admission unavailable'
+
+def hold():raise ValidationError(MESSAGE)
+
+def classify(snapshot):
+    """Closed admitted shapes only; intentionally stricter than malformed any()."""
+    if type(snapshot) is not dict or type(snapshot.get('inputs')) is not list:hold()
+    inputs=snapshot['inputs']
+    if len(inputs)>MAX_INPUTS:hold()
+    for item in inputs:
+        if type(item) is not dict or type(item.get('declaration')) is not dict:hold()
+    return any(item['declaration'].get('source_type')=='ppe_schedule' for item in inputs)
+
+def _reader_helpers():
+    from apps.finance.statement_ppe import recipient_access,is_ppe_statement
+    from apps.finance.ppe import readable
+    from apps.finance.models import FinanceRun
+    return recipient_access,is_ppe_statement,readable,FinanceRun
+
+def _consume_candidate(actor,keys,worklist,candidate):
+    from .template_candidate_worklist import consume_finance_candidate
+    return consume_finance_candidate(actor,keys,worklist,candidate)
+
+@dataclass(frozen=True,repr=False)
+class _DeniedOutcome:
+    marker:object
+    actor:object
+    pk:int
+    keys:tuple
+    connection:object
+    raw:object
+    worklist:object
+    candidate:tuple
+    ticket:object
+    callsite:str
+    attained:str
+
+class ReaderAdmission:
+    def __init__(self,actor,keys):
+        from .template_finance_budget import FinanceLedger
+        self.ledger=FinanceLedger(actor,keys);self.actor=actor;self.keys=list(self.ledger.keys)
+        self.connection=self.ledger.connection;self._invocation=None
+    def context(self):self.ledger.context()
+    def _fetch(self,kind,*args):
+        from . import template_finance_transfer_descriptor as d
+        # Closed operations generate all identifiers; no caller SQL accepted.
+        statements={'identity':d.identity_statement,'size':d.metadata_statement,
+                    'count':d.count_statement,'class':d.class_statement,'transfer':d.transfer_statement}
+        if type(kind) is not str or kind not in statements:hold()
+        self.context();sql,params=statements[kind](*args)
+        with self.connection.cursor() as cursor:
+            cursor.execute(sql,params);return cursor.fetchmany(2)
+    def _identity(self,ticket,phase):
+        self.ledger.before_identity(ticket,phase)
+        self.ledger.identity_checked(ticket,phase,self._fetch('identity',ticket.expected,self.template_case))
+    def _metadata(self,rows):
+        from apps.documents.template_operation_budget import Metadata
+        if type(rows) is not list or len(rows)!=1 or len(rows[0])!=5:hold()
+        return Metadata(tuple(rows[0][:2]),*rows[0][2:])
+    def admit(self,worklist,candidate):
+        try:
+            self.context()
+            if self._invocation is not None and not self._invocation['consumed']:hold()
+            self.template_case,expected=_consume_candidate(self.actor,self.keys,worklist,candidate)
+            self.worklist=worklist;self.candidate=candidate
+            self._invocation={'reader':self,'worklist':worklist,'candidate':candidate,'ticket':None,'phase':'running','consumed':False}
+            result=self._admit([expected])
+            self._invocation['phase']='success' if result is None else 'denied'
+            return result
+        except Exception as exc:
+            self.ledger.poison()
+            from django.core.exceptions import PermissionDenied
+            if isinstance(exc,(PermissionDenied,ValidationError)):raise
+            raise ValidationError(MESSAGE) from None
+    def _registered(self,ticket):
+        self.context()
+        case,expected=_consume_candidate(self.actor,self.keys,self.worklist,self.candidate)
+        origin=self.ledger.binding_record(ticket).get('candidate_identity')
+        if origin is None or origin[0] is not self.worklist or origin[1] is not self.candidate or origin[2]!=case:hold()
+        if case!=self.template_case or expected is not self.candidate or expected!=ticket.expected:hold()
+    def _native_denied(self,ticket,callsite,run):
+        self._registered(ticket);self.ledger.native_gate_ready(ticket,callsite)
+        if self.ledger.binding_record(ticket).get('native_denial_pending') is not None:hold()
+        recipient_access,is_ppe_statement,readable,FinanceRun=_reader_helpers()
+        denied=False
+        # Only the fixed native helper is inside each allowed exception boundary.
+        if callsite=='EARLY_PPE':
+            try:readable(self.actor,run.case)
+            except (PermissionDenied,ValidationError):denied=True
+        elif callsite in ('FINAL_RECIPIENT','NONSTATEMENT_RECIPIENT'):
+            try:recipient_access(run,[self.actor.pk])
+            except (PermissionDenied,ValidationError):denied=True
+        else:hold()
+        self._registered(ticket);self.ledger.native_gate_ready(ticket,callsite)
+        if denied:self.ledger.binding_record(ticket)['native_denial_pending']=callsite
+        return denied
+    def _denied(self,ticket,callsite):
+        self._registered(ticket);self.ledger.native_gate_ready(ticket,callsite)
+        if self.ledger.binding_record(ticket).get('native_denial_pending')!=callsite:hold()
+        self._identity(ticket,'denial_exit' if callsite=='EARLY_PPE' else 'exit')
+        self._registered(ticket)
+        attained=self.ledger.terminal_denied(ticket,callsite)
+        s=self.ledger.state;outcomes=s.setdefault('finance_denied_outcomes',[])
+        if len(outcomes)>=100:self.ledger.fail()
+        outcome=_DeniedOutcome(self.ledger.marker,self.actor,self.actor.pk,tuple(self.keys),self.connection,self.ledger.raw,
+                               self.worklist,self.candidate,ticket,callsite,attained)
+        outcomes.append([outcome,False,self._invocation]);return outcome
+    def _consume_denied(self,worklist,candidate,outcome):
+        try:
+            self.context()
+            _consume_candidate(self.actor,self.keys,worklist,candidate)
+            if type(outcome) is not _DeniedOutcome:hold()
+            if (outcome.marker is not self.ledger.marker or outcome.actor is not self.actor or outcome.pk!=self.actor.pk
+                or outcome.keys!=tuple(self.keys) or outcome.connection is not self.connection or outcome.raw is not self.ledger.raw
+                or outcome.worklist is not worklist or outcome.candidate is not candidate):hold()
+            registered=next((r for r in self.ledger.state.get('finance_denied_outcomes',[]) if r[0] is outcome),None)
+            record=self.ledger.binding_record(outcome.ticket)
+            if (registered is None or registered[1] or record['ticket'] is not outcome.ticket or record['phase']!='denied'
+                or record.get('denial')!=(outcome.callsite,outcome.attained)):hold()
+            registered[1]=True;registered[2]['consumed']=True
+            return None # private consumption, not a visibility decision
+        except Exception:
+            if type(outcome) is _DeniedOutcome:
+                outcome.marker['policy_budget_v2_failed']=True
+                old_state=outcome.marker.get('policy_operation_budget_v2')
+                if old_state is not None:old_state['poison']=True
+            self.ledger.poison()
+            from apps.policy.template_policy_budget_v2 import poison_active_entry
+            poison_active_entry();raise
+    def _consume_success(self,worklist,candidate):
+        try:
+            self.context();_consume_candidate(self.actor,self.keys,worklist,candidate)
+            invocation=self._invocation
+            if (invocation is None or invocation['reader'] is not self or invocation['phase']!='success' or invocation['consumed']
+                or invocation['worklist'] is not worklist or invocation['candidate'] is not candidate):hold()
+            ticket=invocation['ticket'];record=self.ledger.binding_record(ticket)
+            if record.get('invocation') is not invocation or record['ticket'] is not ticket or record['phase']!='complete' or record.get('native_denial_pending') is not None:hold()
+            self._registered(ticket);invocation['consumed']=True;return None
+        except Exception:
+            self.ledger.poison()
+            from apps.policy.template_policy_budget_v2 import poison_active_entry
+            poison_active_entry();raise
+    def _admit(self,items):
+        from .template_finance_transfer_descriptor import decode
+        items=self.ledger.worklist(items)
+        recipient_access,is_ppe_statement,readable,FinanceRun=_reader_helpers()
+        for expected in items:
+            binding_ticket=self.ledger.begin_binding(expected)
+            self._invocation['ticket']=binding_ticket
+            self.ledger.binding_record(binding_ticket)['invocation']=self._invocation
+            self.ledger.binding_record(binding_ticket)['candidate_identity']=(self.worklist,self.candidate,self.template_case)
+            self._identity(binding_ticket,'entry')
+            run=FinanceRun.objects.only('id','kind','case_id').get(pk=expected[1])
+            if (run.kind,run.case_id)!=(expected[5],expected[6]):hold()
+            if run.kind!='statement':
+                if self._native_denied(binding_ticket,'NONSTATEMENT_RECIPIENT',run):
+                    return self._denied(binding_ticket,'NONSTATEMENT_RECIPIENT')
+                self._identity(binding_ticket,'exit')
+                self.ledger.complete_binding(binding_ticket)
+                continue
+            ticket=self.ledger.begin_size(binding_ticket)
+            metadata=self._metadata(self._fetch('size',expected,self.template_case))
+            self.ledger.reserve_finance(ticket,metadata)
+            self.ledger.before_count(ticket)
+            count=self.ledger.count_checked(ticket,self._fetch('count',expected,self.template_case,metadata))
+            self.ledger.before_class(ticket)
+            ppe=self.ledger.class_checked(ticket,self._fetch('class',expected,self.template_case,metadata,count))
+            if ppe and self._native_denied(binding_ticket,'EARLY_PPE',run):
+                return self._denied(binding_ticket,'EARLY_PPE')
+            self._identity(binding_ticket,'pretransfer')
+            self.ledger.before_transfer(ticket)
+            payload=self.ledger.transfer_checked(ticket,self._fetch('transfer',expected,self.template_case,metadata))
+            self.ledger.before_decode(ticket)
+            value=decode(metadata,payload)
+            if classify(value)!=ppe:hold()
+            run.snapshot=value
+            if is_ppe_statement(run)!=ppe:hold()
+            self.ledger.decoded(ticket)
+            if self._native_denied(binding_ticket,'FINAL_RECIPIENT',run):
+                return self._denied(binding_ticket,'FINAL_RECIPIENT')
+            self._identity(binding_ticket,'exit')
+            self.ledger.before_final(ticket)
+            self.ledger.final_checked(ticket,self._metadata(self._fetch('size',expected,self.template_case)))
+            self.ledger.complete_binding(binding_ticket)
+        self.context()
+        return None

@@ -3,8 +3,8 @@ from apps.finance.models import InvoiceJob,InvoiceDelivery,InvoiceCorrectionAcce
 from .correction_helpers import fixture,note,apply
 from .helpers import rev
 
-def documents(case_id=None):
-    a,c,cov,iss,e=fixture(case_id)
+def documents(case_id=None, *, identity=False):
+    a,c,cov,iss,e=fixture(case_id,identity=identity)
     j=invoices.reserve(a,c.pk,iss.invoice_id,'deliver','Finance',rev(c));invoice_delivery.run_once();j.refresh_from_db();assert j.status=='confirmed',j.error
     for kind,amount in [('credit','5.00'),('debit','3.00'),('void',None)]:
         r=note(a,c,iss,e,kind,amount,'NATIVE-'+kind)

@@ -1,5 +1,6 @@
 """Restricted F21 rules and F44 reference attribution; never a second ledger."""
 import hashlib
+from decimal import Decimal, InvalidOperation, localcontext
 from datetime import timedelta
 from django.db import transaction,connection
 from django.core.exceptions import ValidationError,PermissionDenied
@@ -239,7 +240,30 @@ def review(actor,case_id,work_id,purpose,verdict,key,evidence_id,expected):
 
 @transaction.atomic
 def read_private(actor,case_id,work_id):
- c=locked(actor,case_id,'bu.private.read');w=exact(c,work_id);private_access(actor,w);current(w);return w.payload
+ c=locked(actor,case_id,'bu.private.read');w=exact(c,work_id);private_access(actor,w);current(w)
+ # Derived private display only: saved source, review and publication facts stay unchanged.
+ value=dict(w.payload)
+ if isinstance(value.get('finance_company_comparison'),dict):
+  comparison=dict(value['finance_company_comparison'])
+  comparison.update(private_comparison_difference(value.get('source_total'),comparison.get('company_total'),
+   bool(w.metadata.get('comparison')) and comparison.get('reference')==w.metadata.get('comparison')))
+  value['finance_company_comparison']=comparison
+ return value
+
+
+def private_comparison_difference(bu_total,company_total,comparable):
+ """Diagnostic only after current same-scope native comparison, never sign conversion."""
+ result={'difference':None,'difference_basis':'Company minus BU (supplied comparable totals)', 'difference_status':'unknown'}
+ if not comparable or any(type(v) not in (str,int,Decimal) for v in (bu_total,company_total)):return result
+ try:
+  bu,company=Decimal(bu_total),Decimal(company_total)
+  if not bu.is_finite() or not company.is_finite():return result
+  with localcontext() as ctx:
+   ctx.prec=max(28,max(v.adjusted() for v in (bu,company))-min(v.as_tuple().exponent for v in (bu,company))+3)
+   difference=company-bu
+  result.update(difference=format(difference,'f'),difference_status='unresolved' if difference else 'matching totals; review status unchanged')
+ except (InvalidOperation,ValueError):pass
+ return result
 
 @transaction.atomic
 def publish(actor,case_id,work_id,key,expected):

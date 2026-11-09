@@ -6,7 +6,22 @@ from apps.pmo.models import DeliveryDossier
 class NativePlanningAdapter:
     def investigate(self,work):
         from apps.agents.planning import investigate
-        return investigate(work.execution_actor,work.case_id)
+        value=investigate(work.execution_actor,work.case_id)
+        from apps.pmo.planning_sources import clarify
+        from django.core.exceptions import PermissionDenied
+        from apps.identity.services import require
+        routed=[]
+        try:
+            require(work.execution_actor,work.case,'action.manage')
+            existing={r['key']:r for r in value.get('source_clarifications',[])}
+            for finding in value.get('source_correlation',{}).get('findings',[]):
+                old=existing.get(finding['key'])
+                item=clarify(work.execution_actor,work.case_id,work.source_head_id,finding['key'],old['owner_id'] if old else None)
+                routed.append({'key':finding['key'],'action_id':item.pk,'owner_id':item.current.owner_id,'external_message_sent':False})
+        except (ValidationError,PermissionDenied) as exc:
+            value['clarification_route_hold']=str(exc)
+        value['internal_clarifications']=routed
+        return value
 
     def route(self,work):
         return planning.open_requests(work.execution_actor,work.case_id,work.source_head_id)

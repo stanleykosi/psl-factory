@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 from decimal import Decimal
 from django.test import TestCase
 from django.core.exceptions import ValidationError,PermissionDenied
@@ -16,8 +17,8 @@ from apps.identity.models import Grant
 from adapters.invoices import TimeoutAfterInvoiceAccept
 from apps.agents.financial_corrections import investigate
 
-class FinancialCorrectionTests(TestCase):
-    def setUp(self):self.a,self.c,self.cov,self.iss,self.e=fixture()
+class FinancialCorrectionTests(TransactionTestCase):
+    def setUp(self):self.a,self.c,self.cov,self.iss,self.e=fixture(identity=self._testMethodName in {'test_pending_and_unknown_note_never_erase_proven_debt','test_timeout_after_applied_note_reconciles_before_revoked_executor'})
     def test_credit_debit_void_adjust_existing_canonical_obligation(self):
         for kind,amount,expected,ref in [('credit','5.00','27.25','CR-1'),('debit','3.00','30.25','DB-1'),('void',None,'0.00','VD-1')]:
             n=note(self.a,self.c,self.iss,self.e,kind,amount,ref);j=apply(self.a,self.c,n,self.e);j.refresh_from_db();self.assertEqual(j.status,'confirmed',j.error)

@@ -60,7 +60,7 @@ def source():
     invoice_case=None
     if v.get('with_invoice_variants'):
         from tests.invoice_variant_helpers import documents
-        _,invoice_case,_,_,_=documents()
+        _,invoice_case,_,_,_=documents(identity=True)
     if v.get('with_native_validation'):
         from tests.test_native_validation import fixture as native_fixture,ready as native_ready
         from tests.validation_helpers import review as native_review

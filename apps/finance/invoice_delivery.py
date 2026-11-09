@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.core.exceptions import ValidationError,PermissionDenied
-from django.db import transaction
+from django.db import connection, transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Case
@@ -8,6 +8,9 @@ from apps.core.services import lock_case,event,bump
 from apps.identity.models import Grant
 from apps.identity.services import require
 from .models import InvoiceJob,InvoiceIssue,InvoiceDelivery
+from adapters.invoices import InternalInvoiceAdapter as _LOCAL_ADAPTER
+_LOCAL_LOOKUP = _LOCAL_ADAPTER.lookup
+_LOCAL_DELIVER = _LOCAL_ADAPTER.deliver
 from . import invoices
 
 @transaction.atomic
@@ -47,6 +50,9 @@ def dispatch_context(pk,fence):
     if value!=job.intent:raise ValidationError('Invoice source/review/policy/destination changed; reconcile reserved intent')
     from apps.workflows.models import FactoryWork
     if FactoryWork.objects.filter(invoice=job.invoice,cancel_requested=True).exists():raise ValidationError('Factory cancellation prevents new invoice dispatch; existing effects require reconciliation')
+    if job.kind=='issue':
+        from .obligations import retain_effect
+        retain_effect(job)
     return job,value
 
 
@@ -84,6 +90,9 @@ def record_accepted_mock(pk,fence,observed):
     binding={'payload':payload,'destination':job.intent['adapter']['recipient_id'],'target':job.invoice_id,'intent':job.intent}
     expected={'environment':'synthetic_mock','operation_key':job.operation_key,'payload':payload,'destination':binding['destination'],'fingerprint':invoices.digest(binding)}
     if observed!=expected:raise ValidationError('Accepted effect proof differs from reserved identity/payload/destination')
+    if job.kind=='issue':
+        from .obligations import observe_original_attempt
+        observe_original_attempt(job,observed)
     result=_record_reserved_receipt(job,job.intent)
     event(job.actor,case,'invoice.accepted_mock_observed',job=job.pk,proof_hash=invoices.digest(observed),environment='synthetic_mock',dispatch_authorized=False)
     return result
@@ -91,20 +100,31 @@ def record_accepted_mock(pk,fence,observed):
 def run_once(adapter=None,case_id=None,job_id=None,*,lookup_only=False):
     if type(lookup_only) is not bool:raise ValidationError('Explicit receipt-only lookup flag required')
     from adapters.invoices import InternalInvoiceAdapter
-    adapter=adapter or InternalInvoiceAdapter();lease=claim(case_id,job_id,lookup_only=lookup_only)
+    adapter=adapter or _LOCAL_ADAPTER()
+    # Exact local adapter effects share the native transaction. Any custom/subclass
+    # adapter may persist independently and requires a committed claim before calls.
+    local_adapter=(InternalInvoiceAdapter is _LOCAL_ADAPTER and type(adapter) is _LOCAL_ADAPTER
+        and _LOCAL_ADAPTER.lookup is _LOCAL_LOOKUP and _LOCAL_ADAPTER.deliver is _LOCAL_DELIVER
+        and not any(name in vars(adapter) for name in ('lookup','deliver')))
+    if not local_adapter and (connection.in_atomic_block or not connection.get_autocommit()):
+        raise ValidationError('External invoice delivery requires an outer autocommit boundary')
+    # Pin canonical native callables; instance mutation during lookup cannot replace delivery.
+    lookup=_LOCAL_LOOKUP.__get__(adapter) if local_adapter else adapter.lookup
+    deliver=_LOCAL_DELIVER.__get__(adapter) if local_adapter else adapter.deliver
+    lease=claim(case_id,job_id,lookup_only=lookup_only)
     if not lease:return False
     pk,fence=lease;job=InvoiceJob.objects.select_related('invoice__case').get(pk=pk)
-    if type(adapter) is not InternalInvoiceAdapter and not job.invoice.case.synthetic:
+    if not local_adapter and not job.invoice.case.synthetic:
         finish(pk,fence,'held','Fault adapters are restricted to synthetic cases');return True
     try:
         # Proven prior effects survive later source/authority changes; reconcile before new dispatch checks.
-        if adapter.lookup(job):finish(pk,fence,'confirmed');return True
+        if lookup(job):finish(pk,fence,'confirmed');return True
         if lookup_only:
             finish(pk,fence,'unknown','Original effect is not confirmed; receipt-only lookup authorises no send')
             return True
         if job.attempts>job.intent['identity']['max_attempts']:finish(pk,fence,'held','Attempt budget exhausted; operator reconciliation required');return True
         dispatch_context(pk,fence)
-        adapter.deliver(pk,fence)
+        deliver(pk,fence)
     except (TimeoutError,ConnectionError):finish(pk,fence,'unknown','Outcome unknown; reconcile before retry')
     except (ValidationError,PermissionDenied,ValueError) as exc:finish(pk,fence,'held',str(exc))
     else:finish(pk,fence,'confirmed')
@@ -130,6 +150,10 @@ def operate(actor,case_id,job_id,action,reason,expected):
             if value!=job.intent or actor.pk!=job.actor_id:raise ValidationError('Intent changed; explicitly replace held intent')
             job.status='pending';job.attempts=0
         else:
+            if job.kind=='issue':
+                from .models import ObligationEffect,ObligationLegacyAttempt
+                if ObligationEffect.objects.filter(invoice=job.invoice).exists() or ObligationLegacyAttempt.objects.filter(job=job).exists():
+                    raise ValidationError('Original attempted effect must be reconciled; a new operation key is not authorised')
             if InvoiceJob.objects.filter(invoice=job.invoice,kind=job.kind,generation__gt=job.generation).exists():raise ValidationError('Newer reservation exists')
             new=InvoiceJob.objects.create(invoice=job.invoice,kind=job.kind,generation=job.generation+1,intent=value,
                 operation_key=f'invoice:{job.invoice_id}:{job.kind}:g{job.generation+1}',actor=actor)

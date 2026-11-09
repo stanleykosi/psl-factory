@@ -28,6 +28,7 @@ class ChangeVersion(AppendOnly):
 
 
 class ChangeAssessment(AppendOnly):
+    impact_details = models.JSONField(default=dict)
     version = models.ForeignKey(ChangeVersion, on_delete=models.PROTECT, related_name='assessments')
     contributor = models.CharField(max_length=40)
     cost_impact = models.BooleanField(null=True)
@@ -70,6 +71,7 @@ class ChangeDocumentBinding(AppendOnly):
 
 
 class ChangeExecutionEvent(AppendOnly):
+    impact_details = models.JSONField(default=dict)
     authorization = models.ForeignKey(ChangeAuthorization, on_delete=models.PROTECT, related_name='execution')
     kind = models.CharField(max_length=30)
     evidence = models.ForeignKey('core.Evidence', on_delete=models.PROTECT)
@@ -82,8 +84,47 @@ class ChangeClosure(AppendOnly):
     authorization = models.OneToOneField(ChangeAuthorization, on_delete=models.PROTECT)
     receipt = models.ForeignKey('documents.PublicationReceipt', on_delete=models.PROTECT)
     pm_signature = models.ForeignKey('core.Evidence', on_delete=models.PROTECT, related_name='+')
-    client_signature = models.ForeignKey('core.Evidence', on_delete=models.PROTECT, related_name='+')
+    client_signature = models.ForeignKey('core.Evidence', null=True, on_delete=models.PROTECT, related_name='+')
     execution_ids = models.JSONField()
     note = models.TextField()
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ChangeClosureSignatureBinding(AppendOnly):
+    """Actual source signature facts, separate from immutable historical closure."""
+    authorization = models.ForeignKey(ChangeAuthorization, on_delete=models.PROTECT, related_name='signature_bindings')
+    receipt = models.ForeignKey('documents.PublicationReceipt', on_delete=models.PROTECT)
+    pm_signature = models.ForeignKey('core.Evidence', on_delete=models.PROTECT, related_name='+')
+    client_signature = models.ForeignKey('core.Evidence', on_delete=models.PROTECT, related_name='+')
+    execution_ids = models.JSONField()
+    declaration = models.JSONField()
+    authority = models.JSONField()
+    previous = models.OneToOneField('self', null=True, on_delete=models.PROTECT, related_name='successor')
+    mode = models.CharField(max_length=30)
+    note = models.TextField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ChangeClosureApplicability(AppendOnly):
+    """Owner applicability facts, not a Client signature or extra approval."""
+    authorization = models.ForeignKey(ChangeAuthorization, on_delete=models.PROTECT, related_name='applicability_records')
+    receipt = models.ForeignKey('documents.PublicationReceipt', on_delete=models.PROTECT)
+    pm_signature = models.ForeignKey('core.Evidence', on_delete=models.PROTECT, related_name='+')
+    client_signature = models.ForeignKey('core.Evidence', null=True, on_delete=models.PROTECT, related_name='+')
+    requirement = models.CharField(max_length=20, choices=[('required', 'Required'), ('not_applicable', 'Not applicable')])
+    policy = models.ForeignKey('policy.Configuration', on_delete=models.PROTECT)
+    execution_ids = models.JSONField()
+    declaration = models.JSONField()
+    authority = models.JSONField()
+    previous = models.OneToOneField('self', null=True, on_delete=models.PROTECT, related_name='successor')
+    legacy_binding = models.ForeignKey(ChangeClosureSignatureBinding, null=True, on_delete=models.PROTECT)
+    operation_key = models.CharField(max_length=100)
+    note = models.TextField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['authorization', 'operation_key'], name='change_applicability_operation'),
+            models.CheckConstraint(condition=(models.Q(requirement='required', client_signature__isnull=False) | models.Q(requirement='not_applicable', client_signature__isnull=True)), name='change_applicability_variant')]

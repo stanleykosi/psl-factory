@@ -1,0 +1,203 @@
+"""Pure PMO native-call stand-ins and scalar-result models. No SQL/native helpers."""
+import datetime,hashlib,sys,unittest,uuid
+from dataclasses import replace
+from types import SimpleNamespace,ModuleType
+from unittest.mock import patch
+from django.core.exceptions import PermissionDenied,ValidationError
+from apps.pmo import template_prepared_reader as r
+from apps.pmo import template_prepared_ancestors as a
+from apps.pmo.template_prepared_budget import PMOLedger
+from apps.documents.template_operation_budget import Metadata,BudgetHold
+from apps.policy import template_policy_budget_v2 as v2
+class DenialTests(unittest.TestCase):
+    def setUp(self):
+        self.actor=SimpleNamespace(pk=1);self.marker={};self.raw=object();self.calls=[];self.responses=[];owner=self
+        class Cursor:
+            def __enter__(self):return self
+            def __exit__(self,*args):pass
+            def execute(self,sql,params):owner.calls.append((sql,params));self.rows=owner.responses.pop(0)
+            def fetchmany(self,n):return self.rows
+        self.connection=SimpleNamespace(cursor=Cursor)
+        self.bind=patch.object(v2,'_binding',lambda *args:(self.marker,self.connection,self.raw));self.bind.start();self.addCleanup(self.bind.stop)
+        self.active=patch.object(v2,'_active_marker',lambda:self.marker);self.active.start();self.addCleanup(self.active.stop)
+        self.worklist=object();now=datetime.datetime(2026,1,1,tzinfo=datetime.timezone.utc)
+        self.row=(1,2,3,None,4,5,now,uuid.UUID(int=1),uuid.UUID(int=2));self.case=uuid.UUID(int=3)
+        def consume(actor,keys,worklist,row):
+            if actor is not self.actor or worklist is not self.worklist or row is not self.row:raise ValidationError('membership')
+            return self.case,row
+        modules={}
+        for name in ('apps.documents.template_candidate_worklist','apps.pmo.leadership_reporting','apps.identity.services'):modules[name]=ModuleType(name)
+        modules['apps.documents.template_candidate_worklist'].consume_pmo_candidate=consume
+        modules['apps.pmo.leadership_reporting'].binding_access=lambda *args,**kwargs:self.native(*args,**kwargs)
+        modules['apps.identity.services'].require=lambda *args:self.require(*args)
+        self.mods=patch.dict(sys.modules,modules);self.mods.start();self.addCleanup(self.mods.stop)
+        self.require=lambda *args:None;self.native=lambda *args,**kwargs:None
+        self.reader=self.newreader()
+    def newreader(self):
+        obj=object.__new__(r.PreparedLeadershipReader);obj.actor=self.actor;obj.keys=('documents.template_claims',)
+        obj.ledger=PMOLedger(self.actor,list(obj.keys));obj.worklist=self.worklist;obj.candidate=self.row
+        obj.version_pin=(2,4,5,self.row[6],self.row[7]);obj.binding_pin=(1,2,3,None,self.row[8]);obj.template_case_id=self.case
+        obj.version=SimpleNamespace(pk=2);obj._version_identity=lambda:obj.version
+        obj.binding_for=lambda version:None;obj.report_case=SimpleNamespace(pk=self.row[8]);obj.manifest_stamp=None
+        obj.operation=None;obj.running=False;return obj
+    def deny(self):raise PermissionDenied('private native detail')
+    def ordinary_denial(self):
+        self.responses=[[(1,)]];self.native=lambda *args,**kwargs:self.deny()
+        return self.reader.read()
+    def test_native_pd_private_terminal_no_payload_and_oneuse(self):
+        outcome=self.ordinary_denial();record=self.reader.ledger.operation(outcome.operation)
+        self.assertEqual(record['phase'],'denied');self.assertEqual(outcome.callsite,'NATIVE_BINDING')
+        self.assertFalse(self.reader.ledger.state['poison']);self.assertEqual(self.reader.ledger.state['attempts'],0)
+        self.assertEqual(len(self.calls),1);self.assertTrue(self.calls[0][0].startswith('SELECT 1'))
+        self.assertNotIn('private native',repr(outcome))
+        self.reader._consume_denied(self.worklist,self.row,outcome)
+        with self.assertRaises(ValidationError):self.reader._consume_denied(self.worklist,self.row,outcome)
+    def test_native_validationerror_still_fatal(self):
+        def native(*args,**kwargs):raise ValidationError('native validation')
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison']);self.assertEqual(self.calls,[])
+    def test_report_gate_exact_signal_crosses_guard_before_payload(self):
+        self.require=lambda *args:self.deny();self.responses=[[(1,)]]
+        gate=r.guarded(lambda obj:obj._report_gate())
+        self.native=lambda actor,version,**kw:gate(kw['_prepared'])
+        outcome=self.reader.read()
+        self.assertEqual(outcome.callsite,'REPORT_READ');self.assertEqual(self.reader.ledger.state['cells'],{})
+        self.assertEqual(len(self.calls),1);self.assertFalse(self.reader.ledger.state['poison'])
+        self.assertFalse(issubclass(r._ReportDenied,(PermissionDenied,ValidationError)))
+    def test_unregistered_or_copied_report_signal_fatal(self):
+        def native(*args,**kwargs):raise r._ReportDenied()
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison'])
+    def test_prepared_sameclass_pd_never_converted(self):
+        gate=r.guarded(lambda obj:self.deny())
+        self.native=lambda actor,version,**kw:gate(kw['_prepared'])
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertEqual(self.calls,[]);self.assertTrue(self.reader.ledger.state['poison'])
+    def test_swallowed_prepared_failure_still_fatal(self):
+        gate=r.guarded(lambda obj:self.deny())
+        def native(actor,version,**kw):
+            try:gate(kw['_prepared'])
+            except PermissionDenied:pass
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison'])
+    def test_version_materialization_outside_native_catch(self):
+        self.reader._version_identity=lambda:self.deny()
+        with self.assertRaises(PermissionDenied):self.reader.read()
+        self.assertEqual(self.calls,[]);self.assertTrue(self.reader.ledger.state['poison'])
+    def test_success_final_gate_failure_not_denial(self):
+        self.reader.binding_for=lambda version:self.deny()
+        with self.assertRaises(PermissionDenied):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison'])
+        self.assertIsNone(self.reader.ledger.local['operations'][self.reader.operation.number]['outcome'])
+    def test_denial_scalar_miss_fatal_no_outcome(self):
+        self.responses=[[]];self.native=lambda *args,**kwargs:self.deny()
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison'])
+    def test_denied_reader_cannot_resume_new_reader_spends_processing(self):
+        outcome=self.ordinary_denial();second=self.newreader();self.responses=[[(1,)]];second.read()
+        self.assertEqual(second.ledger.local['processing'],2)
+        with self.assertRaises(ValidationError):self.reader.read()
+    def test_copied_outcome_and_operation_rejected(self):
+        outcome=self.ordinary_denial()
+        with self.assertRaises(ValidationError):self.reader._consume_denied(self.worklist,self.row,replace(outcome))
+        self.assertTrue(self.reader.ledger.state['poison'])
+    def test_new_reader_old_outcome_poisons_both(self):
+        outcome=self.ordinary_denial();old=self.marker;self.marker={};self.worklist=object();self.row=tuple(list(self.row));new=self.newreader()
+        with self.assertRaises(ValidationError):new._consume_denied(self.worklist,self.row,outcome)
+        self.assertTrue(old['policy_budget_v2_failed']);self.assertTrue(old['policy_operation_budget_v2']['poison'])
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_clean_normal_success_remains_none(self):
+        self.assertIsNone(self.reader.read());self.assertFalse(self.reader.ledger.state['poison'])
+        self.assertEqual(self.reader.ledger.operation(self.reader.operation)['phase'],'complete')
+    def test_completed_bytes_retained_denial_rechecks_metadata_only(self):
+        data=b'{"source_mode":"leadership_selected_facts/v1"}'
+        meta=(2,3,None,'object',len(data),hashlib.sha256(data).hexdigest())
+        def native(*args,**kwargs):
+            self.responses.extend([[meta],[(data,)]])
+            self.reader._payload('manifest',SimpleNamespace(pk=1,version_id=2,report_id=3,meeting_id=None))
+            self.responses.extend([[(1,)],[meta]])
+            self.deny()
+        self.native=native;outcome=self.reader.read();ledger=self.reader.ledger
+        self.assertEqual(outcome.callsite,'NATIVE_BINDING');self.assertEqual(ledger.state['attempts'],4)
+        self.assertEqual(ledger.state['bytes'],len(data));self.assertEqual(next(iter(ledger.state['cells'].values())).state,'validated')
+        self.assertEqual(sum(sql.startswith('SELECT convert_to') for sql,params in self.calls),1)
+        self.assertFalse(ledger.state['poison'])
+    def test_selected_and_history_same_cell_preserves_stronger_cutoff(self):
+        now=self.row[6];data=b'{}';manifest=(2,3,None,'object',2,hashlib.sha256(data).hexdigest())
+        refs=(6,7,1,8,9,now,None,'array',2,hashlib.sha256(b'[]').hexdigest())
+        row=SimpleNamespace(pk=10,issue_id=6,state_id=7,number=1,evidence_id=8,actor_id=9,created_at=now,previous_id=None)
+        def native(*args,**kwargs):
+            self.responses.extend([[manifest],[(data,)]])
+            self.reader._payload('manifest',SimpleNamespace(pk=1,version_id=2,report_id=3,meeting_id=None))
+            for history in (True,False):
+                self.responses.extend([[refs],[(b'[]',)]])
+                self.reader._payload('references',row,history=history)
+            self.responses.extend([[(1,)],[manifest],[refs]]);self.deny()
+        self.native=native;outcome=self.reader.read()
+        record=self.reader.ledger.operation(outcome.operation)
+        self.assertTrue(record['touched'][('references',10)][1]);self.assertEqual(len(record['started']),3)
+        self.assertIn('created_at<=%s',self.calls[-1][0]);self.assertEqual(self.reader.ledger.state['attempts'],11)
+    def test_pending_operation_cell_prevents_denial_result(self):
+        def native(*args,**kwargs):
+            t=self.reader.ledger.begin_cell('manifest',1);self.reader.ledger.started(self.reader.operation,t,False)
+            self.responses=[[(1,)]];self.deny()
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison'])
+        self.assertIsNone(self.reader.ledger.local['operations'][1]['outcome'])
+    def test_completed_metadata_change_is_fatal_not_new_payload(self):
+        data=b'{}';meta=(2,3,None,'object',2,hashlib.sha256(data).hexdigest())
+        def native(*args,**kwargs):
+            self.responses.extend([[meta],[(data,)]])
+            self.reader._payload('manifest',SimpleNamespace(pk=1,version_id=2,report_id=3,meeting_id=None))
+            self.responses.extend([[(1,)],[]]);self.deny()
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison'])
+        self.assertEqual(sum(sql.startswith('SELECT convert_to') for sql,params in self.calls),1)
+    def test_operation_exact100_then101_preserves_records(self):
+        ledger=self.reader.ledger;tickets=[ledger.begin_operation(()) for _ in range(100)]
+        with self.assertRaises(BudgetHold):ledger.begin_operation(())
+        self.assertEqual(len(ledger.local['operations']),100)
+        self.assertTrue(all(ledger.local['operations'][t.number]['ticket'] is t for t in tickets))
+    def test_copied_operation_ticket_rejected(self):
+        ticket=self.reader.ledger.begin_operation(())
+        with self.assertRaises(BudgetHold):self.reader.ledger.operation(replace(ticket))
+    def test_metadata_recheck_uses_existing_attempt_limit(self):
+        data=b'{}';meta=(2,3,None,'object',2,hashlib.sha256(data).hexdigest())
+        def native(*args,**kwargs):
+            self.responses.extend([[meta],[(data,)]])
+            self.reader._payload('manifest',SimpleNamespace(pk=1,version_id=2,report_id=3,meeting_id=None))
+            self.reader.ledger.state['attempts']=1000;self.responses=[[(1,)]];self.deny()
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertEqual(len(self.calls),3);self.assertTrue(self.reader.ledger.state['poison'])
+    def test_copied_actual_report_signal_not_accepted(self):
+        self.require=lambda *args:self.deny();gate=r.guarded(lambda obj:obj._report_gate())
+        def native(actor,version,**kw):
+            try:gate(kw['_prepared'])
+            except r._ReportDenied:raise r._ReportDenied() from None
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison']);self.assertEqual(self.calls,[])
+    def test_swallowed_registered_signal_no_success(self):
+        self.require=lambda *args:self.deny();gate=r.guarded(lambda obj:obj._report_gate())
+        def native(actor,version,**kw):
+            try:gate(kw['_prepared'])
+            except r._ReportDenied:pass
+        self.native=native
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison'])
+    def test_report_validationerror_not_signal(self):
+        def require(*args):raise ValidationError('fatal')
+        self.require=require;gate=r.guarded(lambda obj:obj._report_gate())
+        self.native=lambda actor,version,**kw:gate(kw['_prepared'])
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertTrue(self.reader.ledger.state['poison']);self.assertEqual(self.calls,[])
+    def test_no_terminal_outcome_without_native_catch_provenance(self):
+        self.native=lambda *args,**kw:self.reader._finish_denied('NATIVE_BINDING')
+        with self.assertRaises(ValidationError):self.reader.read()
+        self.assertEqual(self.calls,[]);self.assertTrue(self.reader.ledger.state['poison'])

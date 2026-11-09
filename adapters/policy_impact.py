@@ -15,6 +15,19 @@ class Contract:
 
 
 REGISTRY = {
+ 'workflows.factory_planning_execution_bindings':Contract('workflows.FactoryExecutionBinding','work__case',('planning.read','factory.read'),()),
+ 'workflows.factory_engagement_profiles':Contract('workflows.FactoryWork','case',('engagement.read','factory.read'),()),
+ 'workflows.factory_planning_profiles':Contract('workflows.FactoryWork','case',('planning.read','factory.read'),()),
+ 'pmo.baseline_signature_exemptions':Contract('pmo.BaselineSignatureExemption','case',('commercial.read',),()),
+ 'pmo.emergency_recovery_requests':Contract('pmo.AuthorityRecoveryRequest','case',('authority.read',),()),
+ 'pmo.signature_packets':Contract('pmo.CommercialSignaturePacket','case',('commercial.read',),()),
+ 'pmo.signed_adoption_recovery_requests':Contract('pmo.AuthorityRecoveryRequest','case',('authority.read',),()),
+ 'pmo.delivery_prerequisites':Contract('pmo.DeliveryRecord','dossier__case',('delivery.read',),()),
+ 'pmo.approval_routing_jobs':Contract('pmo.ApprovalRouteJob','request__case',('approval.read',),()),
+ 'finance.payment_assessments':Contract('finance.PaymentAssessment','case',('payment.read','finance.read','delivery.read'),()),
+ 'pmo.planning_comparisons':Contract('core.Evidence','case',('planning.read','approval.read','commercial.read','document.read'),()),
+ 'pmo.planning_readiness':Contract('core.Evidence','case',('planning.read','approval.read'),()),
+ 'finance.recognition_records':Contract('finance.RecognitionRecord','packet__case',('recognition.read',),('authority.{component}',)),
  'documents.publication_effects':Contract('documents.Publication','version__document__case',('document.read',),('policies.{component}','review__authority.{component}')),
  'finance.ledger_projections':Contract('finance.LedgerProjection','case',('finance.read','ledger.read','ledger.private.read','ledger.agent.read','agent.data.read','agent.data.source'),('policy_id','snapshot.projector.native_authority.{component}','snapshot.owner.native_authority.{component}')),
  'finance.ledger_drafts':Contract('finance.LedgerAgentDraft','case',('finance.read','ledger.read','ledger.private.read','ledger.agent.read','agent.data.read','agent.data.source'),('snapshot.policy','snapshot.owner.native_authority.{component}','source__policy_id')),
@@ -33,7 +46,7 @@ REGISTRY = {
  'baas.response_effects':Contract('baas.SupportResponseJob','packet__case',('support.read','support.private.read','support.response.read'),('packet__snapshot.policy','decision__snapshot.authority.{component}')),
 }
 UNCOVERED = ['other direct/JSON policy consumers','document drafts/audiences beyond reserved publication policy pins','private inputs, snapshots and reports beyond declared Finance metadata contracts','other effect receipt variants beyond declared invoice/correction/response jobs','indirect dependencies outside these declared contracts']
-ROUTES = {'documents.publication_effects':'documents','finance.ledger_projections':'ledger_agents','finance.ledger_drafts':'ledger_agents','finance.hr_disclosures':'hrfinance','finance.payroll_work':'payroll','finance.bu_work':'bu','pmo.decisions':'case','pmo.actions':'meetings','pmo.schedules':'meetings',
+ROUTES = {'workflows.factory_engagement_profiles':'engagement','workflows.factory_planning_execution_bindings':'planning','workflows.factory_planning_profiles':'planning','pmo.baseline_signature_exemptions':'commercial','pmo.emergency_recovery_requests':'authority_recovery','pmo.signature_packets':'commercial','pmo.signed_adoption_recovery_requests':'authority_recovery','pmo.delivery_prerequisites':'delivery','pmo.approval_routing_jobs':'approvals','finance.payment_assessments':'payment_controls','pmo.planning_comparisons':'planning','pmo.planning_readiness':'planning','finance.recognition_records':'recognition','documents.publication_effects':'documents','finance.ledger_projections':'ledger_agents','finance.ledger_drafts':'ledger_agents','finance.hr_disclosures':'hrfinance','finance.payroll_work':'payroll','finance.bu_work':'bu','pmo.decisions':'case','pmo.actions':'meetings','pmo.schedules':'meetings',
     'finance.runs':'finance_analysis','finance.billing':'finance_billing','finance.invoice_effects':'finance_settlement','finance.correction_effects':'finance_corrections',
     'baas.events':'support_flow','baas.reports':'support_flow','baas.response_effects':'support_responses'}
 
@@ -43,12 +56,18 @@ def authorize(actor, case, key):
         raise ValidationError('Unknown policy impact adapter')
     for grant in REGISTRY[key].grants:
         require(actor, case, grant)
+    if key == 'pmo.planning_comparisons':
+        from .planning_comparison_impact import readable
+        readable(actor,case)
+    if key == 'pmo.planning_readiness':
+        from .planning_policy_impact import readable
+        readable(actor,case)
     if key == 'baas.response_effects':
         from apps.baas.support_release import access
         access(actor, case)
 
 
-PRIVATE_KEYS={'documents.publication_effects','finance.ledger_projections','finance.ledger_drafts','finance.hr_disclosures','finance.payroll_work','finance.bu_work'}
+PRIVATE_KEYS={'workflows.factory_engagement_profiles','workflows.factory_planning_execution_bindings','workflows.factory_planning_profiles','pmo.baseline_signature_exemptions','pmo.emergency_recovery_requests','pmo.signature_packets','pmo.signed_adoption_recovery_requests','pmo.delivery_prerequisites','pmo.approval_routing_jobs','finance.payment_assessments','pmo.planning_comparisons','pmo.planning_readiness','finance.recognition_records','documents.publication_effects','finance.ledger_projections','finance.ledger_drafts','finance.hr_disclosures','finance.payroll_work','finance.bu_work'}
 
 
 def authorize_row(actor,case,key,row):
@@ -68,11 +87,49 @@ def lock_row(row,key):
             raise ValidationError('Publication work is being reconciled; refresh the impact observation') from None
 
 
-def query(config, key):
+def query(config, key, actor=None):
+    if key=='workflows.factory_planning_execution_bindings':
+        from .factory_planning_binding_impact import query as binding_query
+        return binding_query(actor,config)
+    if key=='workflows.factory_engagement_profiles':
+        from .factory_engagement_policy_impact import query as engagement_factory_query
+        return engagement_factory_query(actor,config)
+    if key=='workflows.factory_planning_profiles':
+        from .factory_planning_policy_impact import query as planning_factory_query
+        return planning_factory_query(actor,config)
+    if key=='pmo.baseline_signature_exemptions':
+        from .exemption_policy_impact import query as exemption_query
+        return exemption_query(actor,config)
+    if key=='pmo.emergency_recovery_requests':
+        from .emergency_recovery_policy_impact import query as emergency_query
+        return emergency_query(actor,config)
+    if key=='pmo.signature_packets':
+        from .signature_policy_impact import query as signature_query
+        return signature_query(actor,config)
+    if key=='pmo.signed_adoption_recovery_requests':
+        from .recovery_policy_impact import query as recovery_query
+        return recovery_query(actor,config)
+    if key=='pmo.delivery_prerequisites':
+        from .delivery_policy_impact import query as delivery_query
+        return delivery_query(actor,config)
+    if key=='pmo.approval_routing_jobs':
+        from .approval_routing_policy_impact import query as routing_query
+        return routing_query(actor,config)
+    if key=='finance.payment_assessments':
+        from .payment_policy_impact import query as payment_query
+        return payment_query(actor,config)
+    if key=='pmo.planning_comparisons':
+        from .planning_comparison_impact import query as comparison_query
+        return comparison_query(actor,config)
+    if key=='pmo.planning_readiness':
+        from .planning_policy_impact import query as planning_query
+        return planning_query(actor,config)
     contract=REGISTRY[key];model=apps.get_model(contract.model)
     clauses=Q(pk__in=[])
     for path in contract.pins:
         clauses |= Q(**{path.replace('.', '__').replace('{component}',config.component):config.pk})
+    if key == 'finance.recognition_records' and config.component=='F33.recognition_review_rules':
+        clauses |= Q(payload__snapshot__review_policy_id=config.pk)
     if key == 'baas.reports':
         events=query(config,'baas.events').annotate(json_id=Func(F('pk'),function='to_jsonb',output_field=JSONField())).values('json_id')
         clauses |= Q(snapshot__head__in=events)
@@ -84,6 +141,7 @@ def query(config, key):
         applied=model.objects.filter(invoice__case=config.case,kind='adjust').filter(clauses).values('intent__correction')
         clauses |= Q(intent__correction__in=applied)
     result=model.objects.filter(**{contract.case_path:config.case}).filter(clauses)
+    if key == 'finance.recognition_records':result=result.filter(kind__in=['attest','review'])
     if key == 'finance.invoice_effects':result=result.filter(kind__in=['issue','deliver'])
     if key == 'finance.correction_effects':result=result.filter(kind__in=['adjust','adjust_deliver'])
     return result.order_by('pk')

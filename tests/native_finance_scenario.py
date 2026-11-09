@@ -63,7 +63,7 @@ def provider_seed():
         get_user_model().objects.create_user(username='independent-second-human')
         get_user_model().objects.create_user(username='independent-private-human')
         from tests.invoice_variant_helpers import documents
-        _,finance_case,_,_,_=documents(v['archive']['invoice_case_id']);cases.append(str(finance_case.pk))
+        _,finance_case,_,_,_=documents(v['archive']['invoice_case_id'],identity=True);cases.append(str(finance_case.pk))
     return {'provider_case_ids':cases}
 
 def provider_initialize():

@@ -1,0 +1,64 @@
+"""Pure descriptors and immutable Metadata compatibility; no ledger orchestration."""
+import ast,hashlib,unittest,uuid
+from pathlib import Path
+from unittest.mock import patch
+from apps.policy import template_policy_transfer_descriptor as m
+ROOT=Path(__file__).resolve().parents[1]
+class PolicyTransferTests(unittest.TestCase):
+    def meta(self,data=b'{}',name='reference'):
+        types=m.SPECS[name][2]
+        values={uuid.UUID:uuid.UUID(int=1),str:"bound'identity",int:1}
+        return m.Metadata(tuple(values[t] for t in types),m.SPECS[name][3],len(data),hashlib.sha256(data).hexdigest())
+    def test_exact_four_existing_policy_specs(self):
+        tree=ast.parse((ROOT/'apps/policy/template_policy_admission.py').read_text())
+        assignment=next(n for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='CELLS' for t in n.targets))
+        ns={};exec(compile(ast.Module(body=[assignment],type_ignores=[]),'<constant-only>','exec'),ns)
+        self.assertEqual(set(m.FIELDS),set(ns['CELLS']))
+        for name,(table,column,fields,cap) in ns['CELLS'].items():
+            self.assertEqual((m.SPECS[name][0],m.SPECS[name][1],m.FIELDS[name],m.SPECS[name][4]),(table,column,fields,cap))
+        with self.assertRaises(TypeError):m.FIELDS['x']=()
+    def test_closed_specs_and_positive_integer_pk(self):
+        for name in ('finance_snapshot','unknown','reference;DROP TABLE x',[],None):
+            with self.assertRaises(m.TransferHold):m.metadata_statement(name,1)
+        for pk in (True,False,0,-1,1.0,'1',None):
+            with self.assertRaises(m.TransferHold):m.metadata_statement('reference',pk)
+    def test_sql_conditional_identity_shape_size_hash_and_caps(self):
+        for name in m.FIELDS:
+            metadata=self.meta(name=name);sql,params=m.transfer_statement(name,7,metadata)
+            self.assertNotIn(metadata.identity[1] if type(metadata.identity[1]) is str else 'nonexistent-data',sql)
+            self.assertEqual(sql.count('IS NOT DISTINCT FROM %s'),len(m.FIELDS[name]))
+            self.assertIn('jsonb_typeof(',sql);self.assertIn('encode(sha256(',sql);self.assertIn('<=%s',sql)
+            self.assertEqual(params,(7,*metadata.identity,metadata.shape,metadata.size,metadata.fingerprint,m.SPECS[name][4]))
+            self.assertEqual(sql.count('%s'),len(params))
+            ms,mp=m.metadata_statement(name,7);self.assertEqual(mp,(7,));self.assertIn('encode(sha256(',ms)
+    def test_metadata_exact_types_shape_hash_and_limits(self):
+        good=self.meta()
+        cases=[dict(identity=list(good.identity)),dict(identity=(uuid.UUID(int=1),'x',True)),dict(shape='array'),dict(size=True),dict(size=-1),dict(size=256*1024+1),dict(fingerprint='A'*64),dict(fingerprint='a'*63)]
+        for changes in cases:
+            attrs={k:getattr(good,k) for k in ('identity','shape','size','fingerprint')};attrs.update(changes)
+            with self.assertRaises(m.TransferHold):m.transfer_statement('reference',1,m.Metadata(**attrs))
+        with self.assertRaises(m.TransferHold):m.transfer_statement('reference',1,object())
+    def test_unicode_bytes_memoryview_and_fresh_nested_decode(self):
+        data='{"name":"é", "nested":[{"a":1}]}'.encode();metadata=self.meta(data)
+        first=m.decode_canonical('reference',metadata,data);first['nested'][0]['a']=9
+        second=m.decode_canonical('reference',metadata,memoryview(data))
+        self.assertEqual(second,{'name':'é','nested':[{'a':1}]});self.assertIsNot(first,second)
+    def test_length_digest_utf8_json_toptype_and_constant_rejections(self):
+        for data in (b'\xff',b'{',b'[]',b'{"n":NaN}',b'{"n":Infinity}',b'{"n":-Infinity}',b'{"n":1e999}',b'{"n":-1e999}'):
+            with self.assertRaisesRegex(m.TransferHold,'^Policy transfer descriptor unavailable$'):
+                m.decode_canonical('reference',self.meta(data),data)
+        for payload in (b'{ }',b'[]',bytearray(b'{}'),memoryview(b'long')):
+            with self.assertRaises(m.TransferHold):m.decode_canonical('reference',self.meta(),payload)
+    def test_array_and_deep_json_errors_generic(self):
+        data=b'[1,2]';self.assertEqual(m.decode_canonical('source',self.meta(data,'source'),data),[1,2])
+        # Pure exception-path injection, not a claim of a native decoder depth limit.
+        for error in (RecursionError,OverflowError):
+            with patch.object(m.json,'loads',side_effect=error('private detail')):
+                with self.assertRaisesRegex(m.TransferHold,'^Policy transfer descriptor unavailable$'):m.decode_canonical('source',self.meta(data,'source'),data)
+    def test_no_execution_reader_cache_or_ledger_api(self):
+        source=(ROOT/'apps/policy/template_policy_transfer_descriptor.py').read_text();tree=ast.parse(source)
+        calls={ast.unparse(n.func) for n in ast.walk(tree) if isinstance(n,ast.Call)}
+        for forbidden in ('cursor','execute','connect','reserve','validated','begin','failed'):
+            self.assertFalse(any(c.split('.')[-1]==forbidden for c in calls))
+        self.assertNotIn('django',source);self.assertNotIn('OperationBudget',source)
+        self.assertFalse(any(isinstance(n,ast.ClassDef) and n.name!='TransferHold' for n in tree.body))

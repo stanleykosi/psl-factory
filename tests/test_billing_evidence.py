@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 import copy
 from datetime import timedelta
 from django.test import TestCase
@@ -12,18 +13,23 @@ from apps.policy.services import transition,active_component
 from apps.agents.billing_evidence import investigate
 from .d03_helpers import fixture,source,confirm,policy,observe,bound,evidence,corrected_contract
 from .helpers import rev
-class BillingEvidenceTests(TestCase):
- @classmethod
- def setUpTestData(cls):cls.f=fixture()
+class BillingEvidenceTests(TransactionTestCase):
+ def setUp(self):self.f=fixture()
  def test_connected_billing_source_evidence_issuance_and_separate_delivery(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;r,b=bound(f);j=invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None);invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'confirmed');self.assertEqual(InvoiceIssue.objects.count(),1);self.assertFalse(InvoiceDelivery.objects.exists())
   with self.assertRaises(ValidationError):invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'deliver','Finance',None)
   bound(f,'deliver');j=invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'deliver','Finance',None);invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'confirmed');self.assertEqual(InvoiceDelivery.objects.count(),1);self.assertFalse(r.result['posted']);self.assertFalse(r.result['deployment_authorized']);self.assertFalse(r.result['debt_waived'])
  def test_signature_interpretation_never_infers_an_extra_signature_gate(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;review=confirm(f,f['statement'],'signature',key='written-clarification');statement=dict(f['statement_policy'],review_id=review.pk);policy(f,STATEMENT,statement)
   corrected_contract(f,requirements=[]);r=d.assess(f['actor'],f['case'].pk,f['invoice'].pk,'issue');d.bind(f['owner'],f['case'].pk,r.pk)
   invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None);invoice_delivery.run_once();self.assertEqual(InvoiceIssue.objects.count(),1);self.assertFalse(r.result['signature_gate_inferred'])
  def test_missing_d03_holds_only_enrolled_dispatch_not_pricing_or_draft(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;transition(f['actor'],active_component(STATEMENT,f['case']).pk,'revoked')
   self.assertEqual(f['preparation'].result['status'],'prepared');self.assertGreater(f['invoice'].amount,0)
   with self.assertRaises(ValidationError):d.assess(f['actor'],f['case'].pk,f['invoice'].pk,'issue')
@@ -47,6 +53,8 @@ class BillingEvidenceTests(TestCase):
    with self.assertRaises(ValidationError):observe(f,changes=changes)
   self.assertFalse(BillingControlReceipt.objects.exists())
  def test_unknown_and_later_source_unavailability_hold_queued_dispatch(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;r,b=bound(f);j=invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None)
   observe(f,changes={'source_version':'v2','outcome':'unavailable'});invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'held');self.assertFalse(InvoiceIssue.objects.exists());self.assertEqual(BillingControlReceipt.objects.count(),2)
   r2=d.assess(f['actor'],f['case'].pk,f['invoice'].pk,'issue');self.assertFalse(r2.result['evidence_ready']);self.assertFalse(d.report(f['actor'],f['case'].pk,r.pk)['current_evidence_ready'])
@@ -54,11 +62,15 @@ class BillingEvidenceTests(TestCase):
   f=self.f;r=observe(f);self.assertEqual(d.observe_control(f['owner'],f['case'].pk,f['invoice'].pk,r.evidence_id).pk,r.pk)
   with self.assertRaises(ValidationError):observe(f,changes={'outcome':'unknown'})
  def test_missing_controls_and_native_contract_modes_are_explicit(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;r=d.assess(f['actor'],f['case'].pk,f['invoice'].pk,'issue');self.assertFalse(r.result['evidence_ready'])
   corrected_contract(f,implementation='incumbent_reference_only');r,b=bound(f)
   with self.assertRaises(ValidationError):invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None)
   self.assertFalse(r.result['native_flow_verified'])
  def test_bound_evidence_does_not_replace_existing_finance_invoice_review(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;bound(f)
   invoices.review(f['actor'],f['case'].pk,f['invoice'].pk,'Finance','return',f['settlement_e']['invoice_review'].pk,'Return exact invoice',None)
   with self.assertRaises(ValidationError):invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None)
@@ -87,16 +99,22 @@ class BillingEvidenceTests(TestCase):
   f=self.f;Grant.objects.filter(case=f['case'],user=f['actor']).exclude(action__in=['case.read','finance.read','d03.read']).update(active=False);self.client.force_login(f['actor']);url=f"/cases/{f['case'].pk}/finance/billing-evidence/"
   self.assertContains(self.client.get(url),'Read-only access.');self.assertEqual(self.client.post(url,{'action':'enroll','coverage':f['coverage'].pk,'evidence':f['enrollment_evidence'].pk,'revision':rev(f['case'])}).status_code,302)
  def test_unknown_before_effect_recovers_with_explicit_intent_replacement(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;bound(f);j=invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None);observe(f,changes={'source_version':'v2','outcome':'unknown'});invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'held')
   observe(f,changes={'source_version':'v3'});r=d.assess(f['actor'],f['case'].pk,f['invoice'].pk,'issue');d.bind(f['owner'],f['case'].pk,r.pk)
   with self.assertRaises(ValidationError):invoice_delivery.operate(f['actor'],f['case'].pk,j.pk,'retry','Intent changed',None)
   invoice_delivery.operate(f['actor'],f['case'].pk,j.pk,'replace_intent','Fresh exact source evidence',None);invoice_delivery.run_once();self.assertEqual(InvoiceIssue.objects.count(),1)
  def test_committed_unknown_effect_reconciles_before_revoked_source_authority(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;bound(f);j=invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None)
   from adapters.invoices import TimeoutAfterInvoiceAccept
   invoice_delivery.run_once(TimeoutAfterInvoiceAccept());j.refresh_from_db();self.assertEqual(j.status,'unknown');Grant.objects.filter(case=f['case'],user=f['owner'],action='d03.source.read').update(active=False)
   invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'confirmed');self.assertEqual(InvoiceIssue.objects.count(),1)
  def test_debt_and_cash_allocation_survive_later_source_failure(self):
+  from tests.obligation_helpers import approve_identified
+  approve_identified(self.f['actor'],self.f['case'],self.f['invoice'],self.f['settlement_e'])
   f=self.f;bound(f);invoices.reserve(f['actor'],f['case'].pk,f['invoice'].pk,'issue','Finance',None);invoice_delivery.run_once();observe(f,changes={'source_version':'v2','outcome':'unavailable'})
   from .settlement_helpers import receipt,assign,allocate
   from apps.finance.receivables import calculate
@@ -113,7 +131,8 @@ class BillingEvidenceTests(TestCase):
  def test_invoice_without_enrolled_coverage_has_no_new_d03_gate(self):
   f=self.f
   from .billing_helpers import coverage,usage,prices,prepare
-  from .settlement_helpers import draft,approve
+  from .settlement_helpers import draft
+  from .obligation_helpers import approve_identified as approve
   cov=coverage(f['actor'],f['case'],reference='independent-coverage',customer='other-customer',contract='other-contract');prices(f['actor'],f['case'],cov)
   body='customer,service,contract,period,transaction_id,quantity,unit\nother-customer,api-usage,other-contract,2026-03,UNRELATED,1,transaction\n'
   # Use exact fixture identity/unit from the existing source batch, preserving the actual parser.

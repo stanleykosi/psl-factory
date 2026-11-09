@@ -1,0 +1,11 @@
+# Exact D11 storage dependency isolation (source candidate)
+
+The recovered candidate is84 verified files from402b599 over17c4bb4, NOT the original complete402 tree or accepted805 runtime. Original recovery manifest and separate baseline are untouched.
+
+Exact D11.template_storage_retention_rules now selects its existing document validator after the unchanged envelope, reference lookup, content hash and schema checks. Runtime/prepared signatures and validator exceptions propagate unchanged. Every item is processed; no early return/continue was introduced. Only the enumerated unrelated collection-import block is skipped for this exact component. Common post-loop catalogue checks remain. Non-storage dispatch and collection code are preserved apart from indentation.
+
+This makes document storage's validator ownership explicit. It intentionally removes dependency on unrelated module initialization failures/side effects; it does NOT promise universal behavioral equivalence to arbitrary mutated exports or failed unrelated imports. No validation is replaced by a permissive stub in production. The frozen four metadata maps exclude storage; the pure contract test rejects a hypothetical collision rather than silently granting new ownership.
+
+12 stdlib-only extracted/fake-import tests pass normal and optimized Python. They prove finite dispatch/precheck/call/error contracts and AST preservation, not actual schemas, ORM, Django initialization, SQL, advisory locks, private authorization, native fixtures or full803 acceptance. Malformed-content rejection is a fake owning-validator outcome, not execution of the domain validator. Real module bootstrap remains a separate runtime gate; no held actions or modules were executed.
+
+Pre-edit services bytes and four map hashes are retained under docs/test-evidence/d11-dispatch-source. Baseline recovery proof remains external and unchanged. No route/registry activation, DB start, public push or provider effects.

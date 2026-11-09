@@ -1,0 +1,121 @@
+"""INERT metadata-only budget. No readers adopt this primitive; no SQL/loaders.
+
+Trusted consumers must begin an attempt BEFORE every metadata query, reserve
+before parsing/transfer, and validate or fail after their guarded read. This
+ledger neither grants access nor validates supplied DB metadata by itself.
+"""
+from dataclasses import dataclass
+from types import MappingProxyType
+import uuid
+
+MAX_BYTES=1024*1024
+MAX_CELLS=100
+MAX_ATTEMPTS=1000
+DOMAINS=frozenset(('documents.template_claims','documents.template_retractions','documents.template_resolutions'))
+# table/column/identity types/JSON type/per-cell cap, fixed and immutable.
+SPECS=MappingProxyType({
+ 'configuration':('policy_configuration','envelope',(uuid.UUID,str,int),'object',64*1024),
+ 'reference':('policy_registeredreference','content',(uuid.UUID,str,int),'object',256*1024),
+ 'application':('policy_scopeapplication','bindings',(int,int,int),'array',64*1024),
+ 'source':('policy_scopeversion','binding_paths',(int,str,str,int,int),'array',64*1024),
+ 'finance_snapshot':('finance_financerun','snapshot',(uuid.UUID,str),'object',256*1024),
+})
+DOMAIN_CAPS=MappingProxyType({domain:(MAX_BYTES,MAX_CELLS) for domain in DOMAINS})
+
+class BudgetHold(ValueError):pass
+
+def hold():raise BudgetHold('Template operation admission unavailable')
+
+def _binding(actor,keys):
+    from django.db import connections
+    from apps.policy.template_snapshot_entry import require_context_actor,_CONTEXT
+    require_context_actor(actor,keys)
+    connection=connections['default']
+    if connection.vendor!='postgresql' or connection.connection is None:hold()
+    return _CONTEXT.get(),connection,connection.connection
+
+@dataclass(frozen=True)
+class Metadata:
+    identity:tuple
+    shape:str
+    size:int
+    fingerprint:str
+
+@dataclass(frozen=True)
+class Cell:
+    metadata:Metadata
+    state:str
+
+@dataclass(frozen=True)
+class Ticket:
+    entry:object
+    serial:int
+    domain:str
+    spec:str
+    pk:int
+
+class OperationBudget:
+    def __init__(self,actor,keys):
+        marker,connection,raw=_binding(actor,keys)
+        self.actor=actor;self.actor_pk=actor.pk;self.keys=tuple(sorted(keys))
+        self.marker=marker;self.connection=connection;self.raw=raw
+        if not self.keys or any(k not in DOMAINS for k in self.keys):hold()
+        state=marker.get('operation_metadata_budget803')
+        if state is None:
+            state={'actor':actor,'pk':actor.pk,'connection':connection,'raw':raw,'keys':self.keys,
+                   'bytes':0,'cells':{},'domains':{},'attempts':0,'tickets':{},'poisoned':False,'entry':object()}
+            marker['operation_metadata_budget803']=state
+        self.state=state;self.context()
+    def context(self):
+        marker,connection,raw=_binding(self.actor,list(self.keys));s=self.state
+        if (marker is not self.marker or connection is not self.connection or raw is not self.raw
+            or s['actor'] is not self.actor or self.actor.pk!=self.actor_pk or s['pk']!=self.actor_pk
+            or s['connection'] is not connection or s['raw'] is not raw or s['keys']!=self.keys):hold()
+        if s['poisoned']:hold()
+    def abort(self):
+        self.state['poisoned']=True
+        hold()
+    def begin(self,domain,spec,pk):
+        """Debit before caller's query. No SQL or caller callback is accepted."""
+        self.context();s=self.state
+        if s['attempts']>=MAX_ATTEMPTS:self.abort()
+        s['attempts']+=1
+        if type(domain) is not str or domain not in self.keys or type(spec) is not str or spec not in SPECS or type(pk) is not int or pk<=0:self.abort()
+        ticket=Ticket(s['entry'],s['attempts'],domain,spec,pk)
+        s['tickets'][ticket.serial]=(ticket,'begun')
+        return ticket
+    def ticket(self,ticket,phase):
+        self.context();s=self.state
+        if type(ticket) is not Ticket or ticket.entry is not s['entry'] or s['tickets'].get(ticket.serial)!=(ticket,phase):self.abort()
+    def reserve(self,ticket,metadata):
+        self.ticket(ticket,'begun');s=self.state
+        table,column,types,shape,limit=SPECS[ticket.spec]
+        if (type(metadata) is not Metadata or type(metadata.identity) is not tuple
+            or len(metadata.identity)!=len(types)
+            or any(type(v) is not typ for v,typ in zip(metadata.identity,types))
+            or type(metadata.shape) is not str or metadata.shape!=shape or type(metadata.size) is not int or not 0<=metadata.size<=limit
+            or type(metadata.fingerprint) is not str or len(metadata.fingerprint)!=64
+            or any(c not in '0123456789abcdef' for c in metadata.fingerprint)):self.abort()
+        key=(table,ticket.pk,column);existing=s['cells'].get(key)
+        if existing is not None and (existing.state!='validated' or existing.metadata!=metadata):self.abort()
+        domain=s['domains'].get(ticket.domain,{'bytes':0,'cells':frozenset()})
+        local_new=key not in domain['cells'];global_new=existing is None
+        byte_cap,cell_cap=DOMAIN_CAPS[ticket.domain]
+        if (global_new and (s['bytes']+metadata.size>MAX_BYTES or len(s['cells'])>=MAX_CELLS)
+            or local_new and (domain['bytes']+metadata.size>byte_cap or len(domain['cells'])>=cell_cap)):self.abort()
+        if global_new:s['bytes']+=metadata.size
+        if local_new:s['domains'][ticket.domain]={'bytes':domain['bytes']+metadata.size,'cells':domain['cells']|{key}}
+        # Even reuse must complete new permission/transfer validation; no cache hit.
+        s['cells'][key]=Cell(metadata,'reserved')
+        s['tickets'][ticket.serial]=(ticket,'reserved')
+    def validated(self,ticket):
+        self.ticket(ticket,'reserved');s=self.state
+        table,column,*_=SPECS[ticket.spec];key=(table,ticket.pk,column)
+        cell=s['cells'][key]
+        if cell.state!='reserved':self.abort()
+        s['cells'][key]=Cell(cell.metadata,'validated')
+        s['tickets'][ticket.serial]=(ticket,'validated')
+    def failed(self,ticket):
+        self.context()
+        # Any caught downstream error poisons operation; never refunds charges.
+        self.state['poisoned']=True

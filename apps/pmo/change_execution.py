@@ -12,6 +12,15 @@ from .services import subject
 
 
 def validate_authorization(case, authorization):
+    from .models import Baseline
+    from .signatures import assert_current_signed_baseline
+    if Baseline.objects.filter(case=case,signed__isnull=False).exists():
+        assert_current_signed_baseline(case)
+    else:
+        from .models import BaselineSignatureExemption
+        if BaselineSignatureExemption.objects.filter(case=case).exists():
+            from .signature_exemptions import assert_current_baseline_assurance
+            assert_current_baseline_assurance(case)
     adopted = BaselineAdoption.objects.filter(revision_id=authorization.commercial_id).first() if authorization.commercial_id else None
     from .recoveries import active_recovery
     recovered=active_recovery(case,'signed_adoption',adopted.pk) if adopted else None
@@ -41,17 +50,21 @@ def authorization_recovery(case,auth):
 
 
 def execution_manifest(auth):
+    from .change_impacts import deviation_hold
+    deviation_hold(auth)
     latest = {}
     for e in auth.execution.order_by('pk'):latest[e.kind]=e
     if set(latest)!={'plan_updated','implemented','testing_validated','documentation_updated'}:
         raise ValidationError('Updated plan, implementation, validated testing and documentation evidence required')
     if latest['testing_validated'].pk < latest['implemented'].pk:
         raise ValidationError('Latest implementation has not been validated')
+    from .change_impacts import validate_execution
+    validate_execution(auth, latest)
     return [latest[k].pk for k in sorted(latest)]
 
 
 @transaction.atomic
-def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, expected):
+def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, expected, *, scope_items=None, dossier_id=None, candidate_id=None):
     actions={'plan_updated':'change.manage','implemented':'change.progress:Engineering','testing_validated':'change.progress:QA','documentation_updated':'change.manage'}
     if kind not in actions:raise ValidationError('Choose an explicit implementation evidence category')
     case=lock_case(actor,case_id,actions[kind],expected)
@@ -63,7 +76,9 @@ def record_execution(actor, case_id, authorization_id, kind, evidence_id, note, 
     prior=set(auth.execution.values_list('kind',flat=True))
     if kind=='implemented' and 'plan_updated' not in prior:raise ValidationError('Record the updated plan before implementation evidence')
     if kind=='testing_validated' and 'implemented' not in prior:raise ValidationError('Record completed implementation before testing validation')
-    result=ChangeExecutionEvent.objects.create(authorization=auth,kind=kind,evidence=evidence,note=note,actor=actor)
+    from .change_impacts import execution_details
+    details,evidence=execution_details(actor,case,auth,kind,evidence,scope_items,dossier_id,candidate_id)
+    result=ChangeExecutionEvent.objects.create(impact_details=details,authorization=auth,kind=kind,evidence=evidence,note=note,actor=actor)
     event(actor,case,'change.execution_evidence',execution=result.pk,authorization=auth.pk,kind=kind)
     bump(case)
     return result
@@ -80,16 +95,28 @@ def draft_change_document(actor,case_id,authorization_id,template_id,purpose,exp
     template=Template.objects.filter(case=case,pk=template_id,definition__document_type__in=['status_report','project_artifact']).first()
     if not template:raise ValidationError('Select this case reviewed change template')
     v=auth.version
+    from .change_impacts import timeline_text, timeline_required
+    approved_timeline=timeline_text(auth)
+    if purpose=='notice' and timeline_required(auth) and 'timeline' not in template.definition['audience_fields'].get(audience,[]):
+        raise ValidationError('Timeline-impact notice template must display the approved timeline')
     execution_ids = execution_manifest(auth) if purpose=='go_live' else []
     fields={'executive_summary':{'text':v.description,'evidence_ids':[v.evidence_id]},
         'scope':{'text':v.module+': '+v.description,'evidence_ids':[v.evidence_id]},
         'status':{'text':'Authorized '+v.category+' change '+v.change.reference+'. This document does not authorize deployment.','evidence_ids':[v.evidence_id]},
-        'timeline':{'text':'See the exact linked owner impact and agreed timeline evidence.','evidence_ids':sorted(set(v.assessments.filter(pk__in=auth.assessment_ids).values_list('evidence_id',flat=True)))},
+        'timeline':{'text':approved_timeline or 'See the exact linked owner impact and agreed timeline evidence.','evidence_ids':sorted(set(v.assessments.filter(pk__in=auth.assessment_ids).values_list('evidence_id',flat=True)))},
         'next_steps':{'text':'Coordinate implementation, validate testing and capture signed change go-live acceptance.','evidence_ids':[v.evidence_id]}}
     if purpose=='go_live':
         fields['status']={'text':'Completed implementation and validated testing recorded for '+v.change.reference+'. Capture PM and Client acceptance of this exact version.',
             'evidence_ids':sorted(set(auth.execution.filter(pk__in=execution_ids).values_list('evidence_id',flat=True)))}
-    version=create_version(actor,case.pk,template.pk,'Change '+v.change.reference+' v'+str(v.number)+' '+purpose,audience,fields,case.revision)
+    from apps.documents.pmo_sections import complete_native_client_sections
+    fields = complete_native_client_sections(fields, audience, [v.evidence_id])
+    if v.evidence.source=='psl:p56-confirmed-request/v1':
+        from apps.identity.services import require
+        from apps.documents.controlled import _create_version
+        require(actor,case,'change.read')
+        version=_create_version(actor,case.pk,template.pk,'Change '+v.change.reference+' v'+str(v.number)+' '+purpose,audience,fields,case.revision,authorized_restricted_source_ids=(v.evidence_id,))
+    else:
+        version=create_version(actor,case.pk,template.pk,'Change '+v.change.reference+' v'+str(v.number)+' '+purpose,audience,fields,case.revision)
     ChangeDocumentBinding.objects.create(version=version,authorization=auth,purpose=purpose,execution_ids=execution_ids,
         authority_recovery=authorization_recovery(case,auth))
     return version
@@ -98,6 +125,9 @@ def draft_change_document(actor,case_id,authorization_id,template_id,purpose,exp
 def change_binding_findings(binding):
     try:
         validate_authorization(binding.authorization.version.change.case,binding.authorization)
+        from .change_impacts import notice_has_timeline
+        if binding.purpose=='notice' and not notice_has_timeline(binding.authorization,binding.version):
+            return ['Notice must display the exact approved timeline impact']
         recovered=authorization_recovery(binding.authorization.version.change.case,binding.authorization)
         if binding.authority_recovery_id!=(recovered.pk if recovered else None):
             return ['Historical authority recovery changed; prepare and review a fresh document version']
@@ -108,12 +138,19 @@ def change_binding_findings(binding):
 
 
 @transaction.atomic
-def close_change(actor,case_id,authorization_id,receipt_id,pm_signature_id,client_signature_id,note,expected):
+def close_change(actor,case_id,authorization_id,receipt_id,pm_signature_id,client_signature_id,note,expected,*,attestation=None,operation_key=None):
     case=lock_case(actor,case_id,'change.manage',expected)
     auth=get_authorization(case,authorization_id)
     decision_authority(actor,case,'PM')
     note_required(note)
-    if ChangeClosure.objects.filter(authorization=auth).exists():raise ValidationError('Change is already closed')
+    existing=ChangeClosure.objects.filter(authorization=auth).first()
+    if existing:
+        from .change_applicability import PROTOCOL as APPLICABILITY_PROTOCOL, validate_record
+        if isinstance(attestation,dict) and attestation.get('protocol')==APPLICABILITY_PROTOCOL and operation_key:
+            row=auth.applicability_records.filter(operation_key=operation_key).first()
+            if row and row==auth.applicability_records.order_by('-pk').first() and (row.receipt_id,row.pm_signature_id,row.client_signature_id,row.note,row.actor_id,row.declaration)==(receipt_id,pm_signature_id,client_signature_id,note,actor.pk,attestation):
+                validate_record(row);return existing
+        raise ValidationError('Change is already closed; use the exact applicability successor or recover original receipt')
     execution_ids=execution_manifest(auth)
     receipt=PublicationReceipt.objects.filter(pk=receipt_id,publication__version__changedocumentbinding__authorization=auth,
         publication__version__changedocumentbinding__purpose='go_live',publication__version__audience='client').first()
@@ -123,12 +160,25 @@ def close_change(actor,case_id,authorization_id,receipt_id,pm_signature_id,clien
         publication__version__changedocumentbinding__purpose='notice')
     if flags['client_facing'] or flags['timeline_impact']:
         notices=notices.filter(publication__version__audience='client')
-    notice=notices.exists()
+    from .change_impacts import notice_has_timeline
+    notice=any(notice_has_timeline(auth,r.publication.version) for r in notices.select_related('publication__version'))
     if not receipt or not notice:raise ValidationError('Recorded delivery of change notice and exact change go-live document required')
     binding=ChangeDocumentBinding.objects.get(version=receipt.publication.version)
     if binding.execution_ids!=execution_ids:raise ValidationError('Signed go-live document is stale for current implementation evidence')
-    pm=subject(case,pm_signature_id,'signature');client=subject(case,client_signature_id,'signature')
-    if pm.pk==client.pk:raise ValidationError('Capture each PM and Client signature reference explicitly')
+    pm=subject(case,pm_signature_id,'signature')
+    from .change_applicability import PROTOCOL as APPLICABILITY_PROTOCOL, owner_requirement
+    explicit=isinstance(attestation,dict) and attestation.get('protocol')==APPLICABILITY_PROTOCOL
+    if explicit or not client_signature_id:
+        policy,entry=owner_requirement(auth)
+        if not explicit:raise ValidationError('Exact explicit applicability declaration required; no unsigned shortcut')
+        client=subject(case,client_signature_id,'signature') if client_signature_id else None
+        from .change_applicability import capture
+        capture(actor,auth,receipt,pm,client,execution_ids,note,attestation,operation_key)
+    else:
+        client=subject(case,client_signature_id,'signature')
+        if pm.pk==client.pk:raise ValidationError('Capture each PM and Client signature reference explicitly')
+        from .change_signatures import capture
+        capture(actor,auth,receipt,pm,client,execution_ids,note,attestation)
     closure=ChangeClosure.objects.create(authorization=auth,receipt=receipt,pm_signature=pm,client_signature=client,
         execution_ids=execution_ids,note=note,actor=actor)
     event(actor,case,'change.closed',closure=closure.pk,authorization=auth.pk,receipt=receipt.pk)

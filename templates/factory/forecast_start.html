@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Prepare a reviewed cash forecast</h1><p>Select native assumptions, opening sources and an exact horizon. This work does not authorize spending or payments.</p>
+<form method="get"><input type="hidden" name="definition" value="finance-forecast/v1">{{ form.case.as_field_group }}<button>Select engagement</button></form>
+{% if case %}<p><a href="{% url 'finance_forecast' case.pk %}">Inspect or capture native scenarios and source inventories</a></p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start forecast work</button></form>{% endif %}
+{% endblock %}

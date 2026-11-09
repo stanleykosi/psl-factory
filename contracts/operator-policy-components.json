@@ -2,6 +2,150 @@
   "classification": "Supplemental engineering operator/protection interfaces; no new process or consolidated D group, no default RPO/RTO or real appointments",
   "components": [
     {
+      "id": "OPS.factory_forecast_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_forecast_execution/v1",
+      "subject_scope": "Explicit native forecast scenario, horizon and selected sources; native case-wide actual inventory, human reviews and priorities; aggregate-only controlled publication. No payment authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_payroll_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_payroll_execution/v1",
+      "subject_scope": "F16-F18 exact payroll input references, minimal HR snapshot, native preparation, human review/publication and recipient-owned aggregate receipt. No employee rows in generic coordination; no HR writes, guessed merge or receipt impersonation.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_emergency_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_emergency_execution/v1",
+      "subject_scope": "Exact incident-linked Emergency profile, selected preauthorization and actual outcome; native human P61/P62 decisions and truthful retrospective status. Scoped investigation and controlled retrospective report receipts; no deployment, ordinary change closure or retrospective repair of missing preauthorization.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_change_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_change_execution/v1",
+      "subject_scope": "Exact native change revision and selected human authorization; scoped investigation and controlled document drafting/delivery. Human assessments, decisions, implementation attestations and signatures remain native. Emergency preauthorization and retrospective are not ordinary change authorization.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.rfp_outcome_reconciliation",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.rfp_outcome_reconciliation/v1",
@@ -11,12 +155,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -30,12 +191,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -49,12 +227,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -68,12 +263,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -87,12 +299,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -106,12 +335,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -125,12 +371,29 @@
       "value_schema": {
         "type": "object",
         "properties": {
-          "artifact_ref": {"type": "string", "minLength": 1},
-          "artifact_version": {"type": "integer", "minimum": 1},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"type": "string", "pattern": "^schema:"}
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
         },
-        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
         "additionalProperties": false
       }
     },
@@ -1177,6 +1440,438 @@
         ],
         "additionalProperties": false
       }
+    },
+    {
+      "id": "OPS.factory_ppe_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_ppe_execution/v1",
+      "subject_scope": "Exact supplied PPE register, native human source and output reviews, configured calculation and read-only accounting note reference. No ledger posting or owner acceptance inferred.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_schedules_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_schedules_execution/v1",
+      "subject_scope": "Exact supplied income detail or selected schedule inventory; native Finance decisions remain authoritative.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_escalation_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_escalation_execution/v1",
+      "subject_scope": "Exact native P44 issue/profile/request, current human client escalation or de-escalation decision, controlled communication and every recipient receipt. No issue resolution, clock invention, client approval waiver or new internal business approval.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_reporting_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_reporting_execution/v1",
+      "subject_scope": "P41 selected project period and exact native local source inventory; cited substantive client narrative, scoped investigation, native PMO Lead review, exact controlled publication and every configured recipient receipt. No new cadence, recipient, business approval, complete-source or live-delivery claim.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_minutes_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_minutes_execution/v1",
+      "subject_scope": "Selected authorized formal meeting notes, human attribution and native minutes; outward delivery is separately selected.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_engagement_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_engagement_execution/v1",
+      "subject_scope": "Exact engagement identity and internal planning handoff; native PMO source decisions remain authoritative.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_bu_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_bu_execution/v1",
+      "subject_scope": "F21 exact F17 payroll-bound exception rules and standard-pool exclusions; F44 supplied-event attribution with optional existing native Finance comparison. Native reviews, aggregate publication and recipient-owned receipts only; no private rows in coordination, inferred ratios, ledger writes or performance consumer.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_ledger_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_ledger_execution/v1",
+      "subject_scope": "Exact supplied incumbent transaction lineage; Finance retains posting, treatment, observation and independent review authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_leadership_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_leadership_execution/v1",
+      "subject_scope": "P40/P42 selected native reporting and current internal publication.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.leadership_review_authority",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.leadership_review_authority/v1",
+      "subject_scope": "Owner-selected existing D05 role for P42 internal leadership review. No P40 separate approval or role appointment.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.leadership_audience",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.leadership_audience/v1",
+      "subject_scope": "Owner-designated actual P40 PMO participants and P42 internal leadership recipients by report purpose. Unconfigured scope holds delivery only. No inferred membership or role appointment.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.factory_issue_execution",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.factory_issue_execution/v1",
+      "subject_scope": "Exact current P50 issue and permitted supplied/mock reference observations. Scoped investigation and native owner follow-up only; no severity, closure, source lifecycle or SLA authority.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
     }
   ],
   "operation_dependencies": [
@@ -1304,6 +1999,12 @@
         "D11.planning_alignment",
         "P02.owner_routes",
         "P02.evidence_contracts"
+      ]
+    },
+    {
+      "operation": "factory.minutes",
+      "required_components": [
+        "OPS.factory_minutes_execution"
       ]
     }
   ]

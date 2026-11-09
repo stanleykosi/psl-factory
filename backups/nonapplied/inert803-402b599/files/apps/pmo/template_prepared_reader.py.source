@@ -1,0 +1,366 @@
+"""INERT fixed-purpose PMO loader. Default native callers never use this path.
+
+Trusted complete template closure supplies Version/template IDs. No public route,
+visibility result, generic queryset proxy, payload cache or constructor commands.
+"""
+from functools import wraps
+from dataclasses import dataclass
+import hashlib,json
+from django.core.exceptions import ValidationError,PermissionDenied
+from apps.documents.template_operation_budget import Metadata
+from apps.policy.template_policy_budget_v2 import poison_active_entry
+from .template_prepared_budget import PMOLedger
+from . import template_prepared_transfer as transfer
+from . import template_prepared_ancestors as ancestors
+
+MESSAGE='Prepared report admission unavailable'
+def hold():raise ValidationError(MESSAGE) from None
+class _ReportDenied(Exception):
+    """Exact registered signal only, never a PermissionDenied/ValidationError."""
+    pass
+@dataclass(frozen=True,repr=False)
+class _PMODeniedOutcome:
+    marker:object
+    operation:object
+    identity:tuple
+    callsite:str
+
+def guarded(method):
+    @wraps(method)
+    def call(self,*args,**kwargs):
+        try:
+            self.check();self._version_identity()
+            return method(self,*args,**kwargs)
+        except _ReportDenied as signal:
+            try:self._accept_report_signal(signal)
+            except Exception:self.ledger.poison();raise
+            raise
+        except Exception:
+            self.ledger.poison();raise
+    return call
+
+def check_prepared(value,actor):
+    if type(value) is not PreparedLeadershipReader:
+        poison_active_entry();hold()
+    value.check(actor);return value
+
+class PreparedLeadershipReader:
+    def __init__(self,actor,keys,worklist,candidate):
+        self.ledger=None;self.actor=actor;self.running=False;self.operation=None
+        try:
+            from apps.documents.template_candidate_worklist import consume_pmo_candidate
+            template_case,row=consume_pmo_candidate(actor,keys,worklist,candidate)
+            self.ledger=PMOLedger(actor,keys)
+            self.worklist=worklist;self.candidate=candidate;self.keys=tuple(sorted(keys))
+            self.template_case_id=template_case
+            self.version_id=row[1];self.template_id=row[4]
+            self.version_pin=(row[1],row[4],row[5],row[6],row[7])
+            self.binding_pin=(row[0],row[1],row[2],row[3],row[8])
+            self.manifest_stamp=None;self.report_case=None;self.modern_pins=set();self.legacy_pins=set()
+            self.issue_states={};self.history_ids={};self.observation_ids=set();self.source_ids=set();self.content_id=None
+            self.version=self._version_identity()
+
+        except Exception:
+            if self.ledger is not None:self.ledger.poison()
+            else:poison_active_entry()
+            raise
+    def check(self,actor=None):
+        self.ledger.context()
+        if not self.running or actor is not None and actor is not self.actor:
+            self.ledger.fail()
+    def _rows(self,purpose,query,limit=1):
+        self.ledger.scalar(purpose);rows=list(query[:limit+1])
+        if len(rows)>limit:self.ledger.fail()
+        return rows
+    def _version_identity(self):
+        from apps.documents.template_candidate_worklist import consume_pmo_candidate
+        template_case,row=consume_pmo_candidate(self.actor,list(self.keys),self.worklist,self.candidate)
+        if (template_case!=self.template_case_id or self.version_pin!=(row[1],row[4],row[5],row[6],row[7])
+            or self.binding_pin!=(row[0],row[1],row[2],row[3],row[8])):hold()
+        from apps.documents.models import Version
+        rows=self._rows('version',Version.objects.filter(pk=self.version_id,template_id=self.template_id).select_related('document__case').only('id','template_id','document_id','created_at','document__id','document__case_id','document__case__id'))
+        if not rows:hold()
+        row=rows[0];pin=(row.pk,row.template_id,row.document_id,row.created_at,row.document.case_id)
+        if self.version_pin is None:self.version_pin=pin
+        elif self.version_pin!=pin:hold()
+        self.ledger.ids('version',[row.pk]);return row
+    def _case(self,case):
+        if self.report_case is None or self.binding_pin is None or case.pk!=self.binding_pin[-1]:hold()
+    def _payload(self,kind,row,*,history=False):
+        self.ledger.context()
+        context=ancestors.checked(ancestors.Context(self.version_pin,self.binding_pin,self.manifest_stamp,self.template_case_id))
+        fields=transfer.spec(kind)[2];expected=tuple(getattr(row,f) for f in fields)
+        ticket=self.ledger.begin_cell(kind,row.pk)
+        self.ledger.started(self.operation,ticket,history)
+        sql,params=ancestors.metadata_statement(kind,row.pk,context,history)
+        with self.ledger.connection.cursor() as cursor:
+            cursor.execute(sql,params);rows=cursor.fetchmany(2)
+        if len(rows)!=1 or len(rows[0])!=len(fields)+3:hold()
+        metadata=Metadata(tuple(rows[0][:len(fields)]),*rows[0][-3:])
+        if metadata.identity!=expected:hold()
+        self.ledger.reserve_pmo(ticket,metadata)
+        sql,params=ancestors.transfer_statement(kind,row.pk,metadata,context,history);self.ledger.before_transfer(ticket)
+        with self.ledger.connection.cursor() as cursor:
+            cursor.execute(sql,params);rows=cursor.fetchmany(2)
+        data=self.ledger.transfer_checked(ticket,rows);self.ledger.before_decode(ticket)
+        value=transfer.decode(kind,metadata,data)
+        if kind=='manifest':
+            if self.manifest_stamp is not None and self.manifest_stamp!=metadata:hold()
+            self.manifest_stamp=metadata
+        self.ledger.validated(ticket);self.ledger.completed(self.operation,ticket,metadata,history);return value
+    def _pin(self,pin):
+        if type(pin) is not dict or type(pin.get('reference')) is not dict:hold()
+        for key in ('issue_id',):transfer.positive(pin[key])
+        transfer.positive(pin['reference']['evidence_id'])
+        for key in ('revision_id','observation_id'):
+            if pin[key] is not None:transfer.positive(pin[key])
+    def _pin_record(self,pin):
+        self._pin(pin)
+        # Immutable equality witness, NOT DB byte/hash admission or authority.
+        digest=hashlib.sha256(json.dumps(pin,sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest()
+        return (pin['issue_id'],pin['revision_id'],pin['observation_id'],pin['reference']['evidence_id'],digest)
+    def _register_manifest(self,manifest):
+        if type(manifest) is not dict:hold()
+        sources=manifest['sources']
+        if type(sources) is not list or len(sources)>100:hold()
+        source_ids=[item['id'] for item in sources]
+        for pk in source_ids:transfer.positive(pk)
+        self.source_ids=set(source_ids)
+        self.ledger.ids('evidence',self.source_ids)
+        if 'incident_claims' in manifest:
+            pins=manifest['incident_claims']
+            if type(pins) is not list or len(pins)>100:hold()
+            for pin in pins:self._pin(pin)
+            self.modern_pins={self._pin_record(pin) for pin in pins}
+        else:
+            self.content_id=manifest['content']['id'];transfer.positive(self.content_id)
+            issues=manifest['issues']
+            if type(issues) is not list or len(issues)>100:hold()
+            for item in issues:
+                issue,state,_=item;transfer.positive(issue);transfer.positive(state)
+                self.issue_states.setdefault(issue,set()).add(state)
+    @guarded
+    def version_for(self,version):
+        transfer.positive(version.pk)
+        if version.pk!=self.version_id:hold()
+        return self._version_identity() # never trust mutated caller.created_at
+    @guarded
+    def binding_for(self,version):
+        from .models import MinutesReportBinding
+        from .leadership_reporting import MODE
+        transfer.positive(version.pk)
+        if version.pk!=self.version_id:hold()
+        rows=self._rows('binding',MinutesReportBinding.objects.filter(version_id=self.version_id,manifest__source_mode=MODE).select_related('report__case').only('id','version_id','report_id','meeting_id','report__id','report__case_id','report__case__id'))
+        if not rows:
+            if self.binding_pin is not None:hold()
+            return None
+        row=rows[0]
+        if row.report_id is None:hold() # never invent report case for meeting binding
+        pin=(row.pk,row.version_id,row.report_id,row.meeting_id,row.report.case_id)
+        if self.binding_pin is not None and self.binding_pin!=pin:hold()
+        self.binding_pin=pin;self.report_case=row.report.case
+        self._report_gate() # fixed native gate still precedes any manifest payload
+        self.ledger.ids('binding',[row.pk]);row.manifest=self._payload('manifest',row)
+        if row.manifest.get('source_mode')!=MODE:hold()
+        self._register_manifest(row.manifest);return row
+    @guarded
+    def selected_pin(self,case,pin):
+        self._case(case);self._pin(pin)
+        record=self._pin_record(pin)
+        if record not in self.modern_pins and record not in self.legacy_pins:hold()
+        self.ledger.ids('issue',[pin['issue_id']]);self.ledger.ids('evidence',[pin['reference']['evidence_id']])
+        if pin['observation_id'] is not None:self.observation_ids.add(pin['observation_id'])
+    @guarded
+    def derived_pin(self,case,pin):
+        self._case(case);self._pin(pin)
+        if pin['issue_id'] not in self.issue_states:hold()
+        if pin['revision_id'] is not None and pin['revision_id'] not in self.history_ids.get(pin['issue_id'],set()):hold()
+        record=self._pin_record(pin)
+        if record not in self.legacy_pins and len(self.legacy_pins)>=100:hold()
+        # Called only at unchanged native contiguous-origin selection point.
+        self.legacy_pins.add(record)
+    @guarded
+    def revision_for(self,case,revision_id,issue_id):
+        from .models import IssueReferenceRevision
+        self._case(case)
+        if not any(p[0]==issue_id and p[1]==revision_id for p in self.modern_pins|self.legacy_pins):hold()
+        fields=transfer.spec('references')[2]
+        rows=self._rows('revision',IssueReferenceRevision.objects.filter(pk=revision_id,issue_id=issue_id,issue__case=case).select_related('actor').only('id',*fields,'actor__id','actor__is_active'))
+        if not rows:return None
+        row=rows[0];self.ledger.ids('revision',[row.pk]);self.ledger.ids('evidence',[row.evidence_id])
+        row.references=self._payload('references',row);return row
+    @guarded
+    def narrative_for(self,case,evidence_id):
+        from apps.core.models import Evidence
+        self._case(case)
+        if evidence_id!=self.content_id:hold()
+        rows=self._rows('narrative',Evidence.objects.filter(case=case,pk=evidence_id).only('id',*transfer.spec('narrative')[2]))
+        if not rows:raise Evidence.DoesNotExist()
+        row=rows[0];self.ledger.ids('evidence',[row.pk]);row.body=self._payload('narrative',row);return row
+    @guarded
+    def issue_for(self,case,issue_id):
+        from .models import Issue
+        self._case(case)
+        if issue_id not in self.issue_states:hold()
+        rows=self._rows('issue',Issue.objects.filter(case=case,pk=issue_id).only('id','case_id'))
+        if not rows:raise Issue.DoesNotExist()
+        self.ledger.ids('issue',[issue_id]);return rows[0]
+    @guarded
+    def history_for(self,issue,recorded_at):
+        from .models import IssueReferenceRevision
+        if issue.pk not in self.issue_states or issue.case_id!=self.report_case.pk or recorded_at!=self.version_pin[3]:hold()
+        fields=transfer.spec('references')[2]
+        rows=self._rows('history',IssueReferenceRevision.objects.filter(issue_id=issue.pk,created_at__lte=recorded_at).only('id',*fields).order_by('-number'),100)
+        self.ledger.ids('revision',[r.pk for r in rows]);self.history_ids[issue.pk]={r.pk for r in rows}
+        for row in rows:row.references=self._payload('references',row,history=True)
+        return rows # ALL relevant history, no author/evidence recursion
+    @guarded
+    def state_for(self,issue,state_id,need_links):
+        from .models import IssueState
+        if type(need_links) is not bool or state_id not in self.issue_states.get(issue.pk,set()) or issue.case_id!=self.report_case.pk:hold()
+        rows=self._rows('state',IssueState.objects.filter(issue_id=issue.pk,pk=state_id).only('id',*transfer.spec('links')[2]))
+        if not rows:raise IssueState.DoesNotExist()
+        row=rows[0];self.ledger.ids('state',[row.pk])
+        if need_links:row.external_links=self._payload('links',row)
+        return row
+    @guarded
+    def observation_for(self,actor,case,pk,issue=None):
+        from .models import IssueReferenceObservation
+        self._case(case)
+        if actor is not self.actor or pk not in self.observation_ids:hold()
+        query=IssueReferenceObservation.objects.filter(pk=pk,issue__case=case).select_related('contract__case','contract__actor','evidence__created_by','actor').only(
+            'id','issue_id','contract_id','evidence_id','actor_id','source_ref','source_sha256',
+            'contract__id','contract__case_id','contract__kind','contract__evidence_id','contract__actor_id','contract__case__id','contract__actor__id','contract__actor__is_active',
+            'evidence__id','evidence__created_by_id','evidence__kind','evidence__sha256','evidence__created_by__id','evidence__created_by__is_active','actor__id','actor__is_active')
+        rows=self._rows('observation',query)
+        if not rows:return None
+        row=rows[0];self.ledger.ids('observation',[row.pk]);self.ledger.ids('contract',[row.contract_id]);self.ledger.ids('evidence',[row.evidence_id,row.contract.evidence_id])
+        return row
+    @guarded
+    def check_sources(self,case,evidence_ids):
+        self._case(case)
+        if type(evidence_ids) is not set or evidence_ids!=self.source_ids:hold()
+    @guarded
+    def sources_for(self,case,evidence_ids):
+        from apps.core.models import Evidence
+        self._case(case)
+        if type(evidence_ids) is not set or evidence_ids!=self.source_ids:hold()
+        return self._rows('sources',Evidence.objects.filter(case=case,pk__in=evidence_ids).only('id','case_id','kind','source').order_by('pk'),100)
+    def _operation_identity(self):
+        return (self.actor,self.actor.pk,self.keys,self.ledger.connection,self.ledger.raw,
+                self.worklist,self.candidate,self.template_case_id,self.version_pin,self.binding_pin)
+    def _registered_operation(self):
+        from apps.documents.template_candidate_worklist import consume_pmo_candidate
+        self.ledger.context()
+        case,row=consume_pmo_candidate(self.actor,list(self.keys),self.worklist,self.candidate)
+        identity=self._operation_identity();record=self.ledger.operation(self.operation);old=record['identity']
+        if (any(old[i] is not identity[i] for i in (0,3,4,5,6)) or old!=identity
+            or case!=self.template_case_id or row is not self.candidate):hold()
+        return record
+    def _accept_report_signal(self,signal):
+        record=self._registered_operation()
+        if type(signal) is not _ReportDenied or record['phase']!='native_running' or record['signal'] is not signal:hold()
+    def _report_gate(self):
+        from apps.identity.services import require
+        record=self._registered_operation()
+        if record['phase'] not in ('native_running','checking_success'):hold()
+        if record['signal'] is not None:hold()
+        try:require(self.actor,self.report_case,'report.read')
+        except PermissionDenied:
+            record=self._registered_operation()
+            if record['phase']!='native_running':raise
+            signal=_ReportDenied();record['signal']=signal
+            raise signal from None
+        self._registered_operation()
+    def _denial_checks(self):
+        record=self._registered_operation()
+        if record['phase']!='checking_denial':hold()
+        self._version_identity()
+        context=ancestors.checked(ancestors.Context(self.version_pin,self.binding_pin,self.manifest_stamp,self.template_case_id))
+        self.ledger.scalar('identity');sql,params=ancestors.identity_statement(context)
+        with self.ledger.connection.cursor() as cursor:
+            cursor.execute(sql,params);rows=cursor.fetchmany(2)
+        if len(rows)!=1 or type(rows[0]) is not tuple or len(rows[0])!=1 or type(rows[0][0]) is not int or rows[0][0]!=1:hold()
+        for (kind,pk),(expected,history) in self.ledger.completed_only(self.operation):
+            self.ledger.scalar('identity');self.ledger.debit()
+            sql,params=ancestors.metadata_statement(kind,pk,context,history)
+            with self.ledger.connection.cursor() as cursor:
+                cursor.execute(sql,params);rows=cursor.fetchmany(2)
+            count=len(transfer.spec(kind)[2])
+            if len(rows)!=1 or len(rows[0])!=count+3:hold()
+            actual=Metadata(tuple(rows[0][:count]),*rows[0][count:])
+            transfer.checked(kind,actual)
+            if actual!=expected:hold()
+        self._registered_operation()
+    def _finish_denied(self,callsite):
+        record=self._registered_operation()
+        if record['phase']!='native_running' or callsite not in ('REPORT_READ','NATIVE_BINDING') or record.get('native_denial')!=callsite:hold()
+        if callsite=='REPORT_READ':
+            self._accept_report_signal(record['signal']);record['signal']=None
+        elif record['signal'] is not None:hold()
+        record['phase']='checking_denial';self._denial_checks()
+        record=self._registered_operation()
+        if record['outcome'] is not None:hold()
+        outcome=_PMODeniedOutcome(self.ledger.marker,self.operation,record['identity'],callsite)
+        record['outcome']=outcome;record['phase']='denied';return outcome
+    def _consume_denied(self,worklist,candidate,outcome):
+        try:
+            from apps.documents.template_candidate_worklist import consume_pmo_candidate
+            self.ledger.context();case,row=consume_pmo_candidate(self.actor,list(self.keys),worklist,candidate)
+            if type(outcome) is not _PMODeniedOutcome:hold()
+            old=outcome.identity
+            if (outcome.marker is not self.ledger.marker or old[0] is not self.actor or old[1]!=self.actor.pk
+                or old[2]!=self.keys or old[3] is not self.ledger.connection or old[4] is not self.ledger.raw
+                or old[5] is not worklist or old[6] is not candidate or old[7]!=case or row is not candidate):hold()
+            record=self.ledger.operation(outcome.operation)
+            if record['phase']!='denied' or record['outcome'] is not outcome or record['consumed']:hold()
+            record['consumed']=True;return None
+        except Exception:
+            if type(outcome) is _PMODeniedOutcome:
+                outcome.marker['policy_budget_v2_failed']=True
+                state=outcome.marker.get('policy_operation_budget_v2')
+                if state is not None:state['poison']=True
+            self.ledger.poison();poison_active_entry();raise
+    def _consume_success(self,worklist,candidate):
+        try:
+            from apps.documents.template_candidate_worklist import consume_pmo_candidate
+            self.ledger.context();consume_pmo_candidate(self.actor,list(self.keys),worklist,candidate)
+            if self.worklist is not worklist or self.candidate is not candidate:hold()
+            record=self._registered_operation()
+            if record.get('reader') is not self or record['phase']!='complete' or record['consumed'] or record.get('native_denial') is not None or record['signal'] is not None:hold()
+            record['consumed']=True;return None
+        except Exception:
+            self.ledger.poison();poison_active_entry();raise
+    def read(self):
+        try:
+            self.ledger.context()
+            if self.running:hold()
+            if self.operation is not None:
+                previous=self.ledger.operation(self.operation)
+                if previous['phase']!='complete' or not previous['consumed']:hold()
+            self.operation=self.ledger.begin_operation(self._operation_identity());self.running=True
+            self.ledger.operation(self.operation)['reader']=self
+            from .leadership_reporting import binding_access
+            version=self._version_identity() # evaluated OUTSIDE native denial catcher
+            record=self._registered_operation();record['phase']='native_running'
+            try:binding_access(self.actor,version,_prepared=self)
+            except _ReportDenied as signal:
+                self._accept_report_signal(signal)
+                self._registered_operation()['native_denial']='REPORT_READ'
+                return self._finish_denied('REPORT_READ')
+            except PermissionDenied:
+                self._registered_operation()['native_denial']='NATIVE_BINDING'
+                return self._finish_denied('NATIVE_BINDING')
+            record=self._registered_operation()
+            if record['phase']!='native_running' or record['signal'] is not None or record.get('native_denial') is not None:hold()
+            record['phase']='checking_success'
+            self._version_identity()
+            if self.binding_pin is not None:self.binding_for(self.version)
+            self.ledger.completed_only(self.operation)
+            self._registered_operation()['phase']='complete'
+            return None
+        except Exception as exc:
+            self.ledger.poison();poison_active_entry()
+            if isinstance(exc,(ValidationError,PermissionDenied)):raise
+            raise ValidationError(MESSAGE) from None
+        finally:self.running=False

@@ -45,6 +45,8 @@ def decisions(f):
 class RoleEligibilityTests(TestCase):
     def test_exact_explicit_bundle_runs_native_decisions_and_baseline_without_new_gates(self):
         self.assertEqual(connection.vendor,'postgresql');f=fixture();decisions(f)
+        from tests.signature_helpers import packet_for
+        packet_for(f['actor'], f['case'], f['e'])
         sign_baseline(f['actor'],f['case'].pk,f['e']['signature'].pk,rev(f['case']))
         self.assertEqual(Decision.objects.count(),4)
         self.assertEqual(Baseline.objects.get(case=f['case']).signed_id,f['e']['signature'].pk)

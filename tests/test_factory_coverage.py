@@ -20,7 +20,8 @@ class FactoryCoverageTests(SimpleTestCase):
         for row in rows.values():
             self.assertEqual(row['factory_consolidation']['release_scope'],'first_release' if row['id'] in release else 'deferred_baas')
             self.assertEqual(row['status'],'partial')
-            self.assertEqual(row['factory_consolidation']['connected_process_acceptance'],'NOT_EVALUATED')
+        from scripts.check_internal_mock_acceptance import validate
+        validate(settings.BASE_DIR, current, {'rows': source})
         for key,count in [('requirements',25),('acceptance_tests',20),('activities',15),('agent_assertions',15),('routing_scenarios',16)]:
             self.assertEqual(len(current['factory_consolidation'][key]),count)
         self.assertFalse(current['factory_consolidation']['full_product_complete'])

@@ -3,8 +3,8 @@
 {% if d.can_reaffirm_go_live %}
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="reaffirm"><input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="dossier" value="{{ d.pk }}"><input type="hidden" name="previous_acceptance" value="{{ d.go_live_head.pk }}">
 <label>Exact delivered client report<select name="receipt" required>{% for r in d.go_live_receipts %}<option value="{{ r.pk }}">{{ r.publication.version.document.title }} · delivered {{ r.created_at|date:'d M Y, H:i T' }} · reference {{ r.pk }}</option>{% endfor %}</select></label>
-<label>New actual PM signature evidence<input name="pm_signature" type="number" min="1" required></label>
-<label>New distinct Client signature evidence<input name="client_signature" type="number" min="1" required></label>
+<label>Exact actual PM signature evidence<input name="pm_signature" type="number" min="1" required></label>
+{% include 'pmo/go_live_attestation_fields.html' %}<label>Evidence recording mode<select name="mode"><option value="fresh_signatures">Actual signatures for this report</option><option value="metadata_binding">Bind missing metadata only, exact unchanged historical artifact and signature evidence</option></select></label><label>Exact distinct Client signature evidence<input name="client_signature" type="number" min="1" required></label>
 <label>Reviewed evidence-change rationale<textarea name="note" maxlength="4000" required></textarea></label><button>Record authorised evidence reaffirmation</button></form>
 {% else %}<p>Further sign-off evidence requires current PM permission and explicit configured reaffirmation authority. Initial go-live history remains available.</p>{% endif %}
 <details><summary>Authority configuration</summary><p>The typed decision-action matrix supports reaffirm_go_live in schema version8. No grant is inferred when it is absent. Review and activate an actual owner decision in <a href="{% url 'policy' case.pk %}">policy configuration</a>.</p></details>

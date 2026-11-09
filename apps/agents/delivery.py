@@ -32,3 +32,12 @@ def investigate_delivery(actor,case_id,dossier_id,expected,closure_data=None):
         'Resolve the cited owner/source gaps, record actual outcomes truthfully and obtain only the prescribed current human decisions. Hypercare, archive, Support receipts, retrospective and Finance notification coverage stay separate from debt and release authority.')
     run=AgentRun.objects.create(case=case,actor=actor,evidence=d.evidence,provider='deterministic-delivery-investigation-v1',process_id='P39',result=result)
     event(actor,case,'agent.delivery_investigation',run=run.pk,dossier=d.pk);return run
+
+
+def investigate_phases(actor, case_id, dossier_id):
+    """Read-only tool: no AgentRun, task, approval or factory mutation."""
+    from apps.core.models import Case
+    from apps.pmo.phase_evidence import projection
+    case = Case.objects.get(pk=case_id)
+    require(actor, case, 'agent.delivery')
+    return projection(actor, case_id, dossier_id)

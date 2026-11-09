@@ -1,0 +1,57 @@
+"""Pure fake-atomic sequencing only: no database rollback proof."""
+import ast,unittest
+from contextvars import ContextVar
+from pathlib import Path
+from types import SimpleNamespace
+SOURCE=Path(__file__).resolve().parents[1]/'apps/policy/template_snapshot_entry.py'
+class ExitGuardTests(unittest.TestCase):
+    def setUp(self):
+        self.events=[];self.context=ContextVar('test_exit',default=None)
+        events=self.events
+        class Error(Exception):pass
+        class DatabaseError(Exception):pass
+        self.Error=Error
+        class User:
+            pk=1;is_authenticated=True;is_active=True
+            class DoesNotExist(Exception):pass
+        fresh=User();principal=User();self.principal=principal
+        User.objects=SimpleNamespace(using=lambda alias:SimpleNamespace(get=lambda **kw:fresh))
+        class Atomic:
+            def __enter__(self):events.append('atomic_enter')
+            def __exit__(self,*exc):events.append('atomic_error' if exc[0] else 'atomic_exit')
+        class Cursor:
+            def __enter__(self):return self
+            def __exit__(self,*a):pass
+            def execute(self,sql):events.append('isolation')
+        connection=SimpleNamespace(in_atomic_block=False,vendor='postgresql',get_autocommit=lambda:True,cursor=Cursor)
+        def materialize(value):events.append('materialize');return value
+        ns={'get_user_model':lambda:User,'selected':lambda keys:tuple(keys),'PermissionDenied':Error,'ValidationError':Error,'DatabaseError':DatabaseError,'SnapshotConflict':Error,'sqlstate':lambda e:None,'connections':{'default':connection},'transaction':SimpleNamespace(atomic=lambda **kw:Atomic()),'_CONTEXT':self.context,'materialize':materialize}
+        tree=ast.parse(SOURCE.read_text());fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='_run_authenticated')
+        exec(compile(ast.Module(body=[fn],type_ignores=[]),'<entry-exit>','exec'),ns)
+        self.run_entry=lambda callback:ns['_run_authenticated'](principal,['documents.template_claims'],callback)
+    def test_healthy_callback_materializes_inside_atomic(self):
+        self.assertEqual(self.run_entry(lambda actor:{'ok':True}),{'ok':True})
+        self.assertEqual(self.events,['atomic_enter','isolation','materialize','atomic_exit']);self.assertIsNone(self.context.get())
+    def test_each_poison_flag_rejects_before_materialize(self):
+        for key,value in [('policy_budget_v2_failed',True),('policy_operation_budget_v2',{'poison':True})]:
+            self.events.clear()
+            def callback(actor):self.context.get()[key]=value;return {'not':'delivered'}
+            with self.assertRaisesRegex(self.Error,'^Snapshot admission failed; result unavailable$'):self.run_entry(callback)
+            self.assertNotIn('materialize',self.events);self.assertEqual(self.events[-1],'atomic_error');self.assertIsNone(self.context.get())
+    def test_caught_callback_failure_still_rejected(self):
+        def callback(actor):
+            try:
+                self.context.get()['policy_budget_v2_failed']=True
+                raise RuntimeError('caught')
+            except RuntimeError:return {'not':'delivered'}
+        with self.assertRaises(self.Error):self.run_entry(callback)
+        self.assertNotIn('materialize',self.events);self.assertIsNone(self.context.get())
+    def test_marker_replacement_rejected_and_reset(self):
+        def callback(actor):self.context.set(dict(self.context.get()));return None
+        with self.assertRaises(self.Error):self.run_entry(callback)
+        self.assertNotIn('materialize',self.events);self.assertIsNone(self.context.get())
+    def test_uncaught_callback_exception_preserved_and_reset(self):
+        error=RuntimeError('callback failed')
+        def callback(actor):raise error
+        with self.assertRaises(RuntimeError) as caught:self.run_entry(callback)
+        self.assertIs(caught.exception,error);self.assertIsNone(self.context.get());self.assertNotIn('materialize',self.events)

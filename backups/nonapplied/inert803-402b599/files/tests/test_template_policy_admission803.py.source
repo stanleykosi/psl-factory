@@ -1,0 +1,189 @@
+"""Inert StageB native definitions, UNRUN. No impact routes or owner commands."""
+import json
+from django.test import TransactionTestCase
+from django.db import connection
+from django.core.exceptions import ValidationError,PermissionDenied
+from apps.core.services import add_evidence
+from apps.core.models import Case
+from apps.identity.models import Grant
+from apps.documents.controlled import register_template
+from apps.policy import scopes
+from apps.policy.models import Configuration
+from apps.policy.services import save_draft,transition
+from apps.policy.template_snapshot_entry import _run_authenticated
+from apps.policy.template_policy_admission import PolicyCellBudget,admit_selected_owner_policy,identity,CELLS,COMPONENT
+from .helpers import setup_case,envelope,rev
+from .document_helpers import DEFINITION,artifact
+KEYS=['documents.template_claims']
+
+class TemplatePolicyAdmissionTests(TransactionTestCase):
+    def setUp(self):
+        self.a,self.c=setup_case(username='admission803')
+        self.e=add_evidence(self.a,self.c.pk,'policy_decision','Synthetic policy admission','synthetic:803-admission')
+        self.t=register_template(self.a,self.c.pk,'Synthetic803',DEFINITION,self.e.pk,rev(self.c))
+        self.cfg=artifact(self.a,self.c,COMPONENT,'schema:psl/document-storage/v1',{'template_ids':[self.t.pk],'repository':'internal-versioned','retention_days':30},self.e)
+    def row(self,cfg):return Configuration.objects.filter(pk=cfg.pk).values('id',*CELLS['configuration'][2]).get()
+    def sized_draft(self,size):
+        env=envelope(self.c,COMPONENT,{'unused':'draft only'},self.e)
+        env['policy_revision']=Configuration.objects.filter(case=self.c,component=COMPONENT).order_by('-revision').first().revision+1
+        env['padding']=''
+        with connection.cursor() as c:c.execute("SELECT octet_length(convert_to(%s::jsonb::text,'UTF8'))",[json.dumps(env)]);base=c.fetchone()[0]
+        env['padding']='x'*(size-base)
+        cfg=save_draft(self.a,self.c.pk,env)
+        with connection.cursor() as c:c.execute("SELECT octet_length(convert_to(envelope::text,'UTF8')) FROM policy_configuration WHERE id=%s",[cfg.pk]);self.assertEqual(c.fetchone()[0],size)
+        return cfg
+    def test_local_exact_reference_closure_no_native_validation_or_effects(self):
+        from django.apps import apps
+        def facts():return {m._meta.label:list(m.objects.order_by('pk').values()) for m in apps.get_models() if m._meta.app_label in ('core','policy','documents','identity','agents')}
+        before=facts()
+        def callback(actor):
+            b=PolicyCellBudget(actor,KEYS);r=admit_selected_owner_policy(actor,self.c,b);self.assertEqual(len(b.cells),2);self.assertTrue(r['admitted']);return r
+        self.assertEqual(_run_authenticated(self.a,KEYS,callback)['configuration'],self.cfg.pk);self.assertEqual(before,facts())
+    def test_unentered_and_cross_snapshot_reuse_rejected(self):
+        with self.assertRaises(ValidationError):PolicyCellBudget(self.a,KEYS)
+        stored=[]
+        _run_authenticated(self.a,KEYS,lambda a:stored.append(PolicyCellBudget(a,KEYS)))
+        with self.assertRaises((ValidationError,PermissionDenied)):_run_authenticated(self.a,KEYS,lambda a:stored[0].context())
+    def test_envelope_exact_byte_boundary_before_hydration(self):
+        allowed=self.sized_draft(64*1024);denied=self.sized_draft(64*1024+1);queries=[]
+        def observe(execute,sql,params,many,context):queries.append((sql,params));return execute(sql,params,many,context)
+        def callback(actor):
+            b=PolicyCellBudget(actor,KEYS);r=self.row(allowed);b.load('configuration',r['id'],identity(r,'configuration'))
+            r=self.row(denied)
+            with self.assertRaises(ValidationError):b.load('configuration',r['id'],identity(r,'configuration'))
+        with connection.execute_wrapper(observe):_run_authenticated(self.a,KEYS,callback)
+        reads=[(s,p) for s,p in queries if s.startswith('SELECT convert_to("envelope"')]
+        self.assertTrue(any(p[0]==allowed.pk for s,p in reads));self.assertFalse(any(p[0]==denied.pk for s,p in reads))
+    def test_aggregate_boundary_dedup_and_no_partial_write(self):
+        configs=[self.sized_draft(64*1024) for _ in range(17)]
+        def callback(actor):
+            b=PolicyCellBudget(actor,KEYS)
+            for cfg in configs[:16]:r=self.row(cfg);b.load('configuration',r['id'],identity(r,'configuration'))
+            self.assertEqual(b.bytes,1024*1024)
+            r=self.row(configs[0]);b.load('configuration',r['id'],identity(r,'configuration'));self.assertEqual(b.bytes,1024*1024)
+            # A late limit hold rolls back an ordinary synthetic audit write too.
+            from apps.core.services import event
+            event(actor,self.c,'test.admission803.must_rollback')
+            r=self.row(configs[-1]);b.load('configuration',r['id'],identity(r,'configuration'))
+        with self.assertRaises(ValidationError):_run_authenticated(self.a,KEYS,callback)
+        self.assertFalse(self.c.audit.filter(action='test.admission803.must_rollback').exists())
+    def test_cell_count_boundary_uses_real_drafts(self):
+        configs=[save_draft(self.a,self.c.pk,envelope(self.c,COMPONENT,{},self.e)) for _ in range(101)]
+        def callback(actor):
+            b=PolicyCellBudget(actor,KEYS)
+            for cfg in configs[:100]:r=self.row(cfg);b.load('configuration',r['id'],identity(r,'configuration'))
+            self.assertEqual(len(b.cells),100);r=self.row(configs[-1])
+            with self.assertRaises(ValidationError):b.load('configuration',r['id'],identity(r,'configuration'))
+        _run_authenticated(self.a,KEYS,callback)
+    def test_missing_reader_and_wrong_identity_hold(self):
+        Grant.objects.filter(case=self.c,user=self.a,action='document.read').update(active=False)
+        with self.assertRaises(PermissionDenied):_run_authenticated(self.a,KEYS,lambda a:admit_selected_owner_policy(a,self.c,PolicyCellBudget(a,KEYS)))
+        def callback(actor):
+            r=self.row(self.cfg);expected=identity(r,'configuration');expected['revision']+=1
+            with self.assertRaises(ValidationError):PolicyCellBudget(actor,KEYS).load('configuration',r['id'],expected)
+        _run_authenticated(self.a,KEYS,callback)
+    def test_dedup_still_checks_immutable_identity(self):
+        def callback(actor):
+            b=PolicyCellBudget(actor,KEYS);r=self.row(self.cfg);expected=identity(r,'configuration');b.load('configuration',r['id'],expected)
+            expected['component']='other'
+            with self.assertRaises(ValidationError):b.load('configuration',r['id'],expected)
+        _run_authenticated(self.a,KEYS,callback)
+    def inherited(self):
+        source_cfg=save_draft(self.a,self.c.pk,envelope(self.c,COMPONENT,self.cfg.envelope['value'],self.e));transition(self.a,source_cfg.pk,'validated')
+        source=scopes.create(self.a,source_cfg.pk,'organization',self.c.tenant,['/0/template_ids/0'])
+        scopes.transition(self.a,source.pk,'validated');scopes.transition(self.a,source.pk,'active')
+        target=Case.objects.create(tenant=self.c.tenant,title='Synthetic admission target',kind='project',synthetic=True)
+        for action in Grant.objects.filter(case=self.c,user=self.a).values_list('action',flat=True):Grant.objects.create(case=target,user=self.a,action=action)
+        e=add_evidence(self.a,target.pk,'policy_decision','Synthetic target owner decision','synthetic:admission-target')
+        template=register_template(self.a,target.pk,'Target803',DEFINITION,e.pk,rev(target))
+        applied=scopes.apply(self.a,source.pk,target.pk,e.pk,[{'path':'/0/template_ids/0','value':template.pk}]);transition(self.a,applied.pk,'validated');transition(self.a,applied.pk,'active')
+        return target,source,source_cfg,applied
+    def test_inherited_exact_closure_and_native_family_head(self):
+        target,src,origin,cfg=self.inherited()
+        def callback(actor):
+            b=PolicyCellBudget(actor,KEYS);r=admit_selected_owner_policy(actor,target,b)
+            self.assertEqual(r['configuration'],cfg.pk);self.assertEqual(r['source'],src.pk);self.assertEqual(r['family_head'],src.pk)
+            self.assertEqual(len(b.cells),6);return r
+        _run_authenticated(self.a,KEYS,callback)
+    def test_source_reader_denied_before_source_payload(self):
+        target,src,origin,cfg=self.inherited();Grant.objects.filter(case=self.c,user=self.a,action='policy.read').update(active=False);reads=[]
+        def observe(execute,sql,params,many,context):reads.append((sql,params));return execute(sql,params,many,context)
+        with connection.execute_wrapper(observe),self.assertRaises(PermissionDenied):
+            _run_authenticated(self.a,KEYS,lambda a:admit_selected_owner_policy(a,target,PolicyCellBudget(a,KEYS)))
+        self.assertFalse(any(s.startswith('SELECT convert_to(') for s,p in reads))
+        self.assertFalse(any('octet_length(convert_to(' in s for s,p in reads))
+
+    def reference_boundary(self,content,multibyte=False):
+        """Reduced test cap only: NOT proof of production256KiB threshold."""
+        from unittest.mock import patch
+        from apps.policy.services import register_reference
+        from django.apps import apps
+        reference=register_reference(self.a,self.c.pk,'synthetic:boundary803','schema:synthetic/admission803',content,self.e.pk)
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT octet_length(convert_to(content::text,'UTF8')), length(content::text) FROM policy_registeredreference WHERE id=%s",[reference.pk])
+            size,characters=cursor.fetchone()
+        if multibyte:self.assertGreater(size,characters)
+        before={m._meta.label:list(m.objects.order_by('pk').values()) for m in apps.get_models() if m._meta.app_label in ('core','policy','documents','identity','agents')}
+        original=CELLS['reference'];self.assertGreater(size,0);self.assertLess(size,original[3]);expected={'case_id':reference.case_id,'ref':reference.ref,'version':reference.version}
+        def attempt(limit,allowed):
+            queries=[]
+            def observe(execute,sql,params,many,context):queries.append((sql,params));return execute(sql,params,many,context)
+            def callback(actor):
+                budget=PolicyCellBudget(actor,KEYS)
+                if allowed:self.assertEqual(budget.load('reference',reference.pk,expected),content)
+                else:
+                    with self.assertRaises(ValidationError):budget.load('reference',reference.pk,expected)
+                    self.assertEqual(budget.cells,{});self.assertEqual(budget.bytes,0)
+            with patch.dict(CELLS,{'reference':(*original[:3],limit)}),connection.execute_wrapper(observe):
+                _run_authenticated(self.a,KEYS,callback)
+            payload=[p[0] for s,p in queries if s.startswith('SELECT convert_to("content"')]
+            self.assertEqual(payload,[reference.pk] if allowed else [])
+        attempt(size,True);attempt(size-1,False)
+        self.assertEqual(CELLS['reference'],original)
+        after={m._meta.label:list(m.objects.order_by('pk').values()) for m in apps.get_models() if m._meta.app_label in ('core','policy','documents','identity','agents')}
+        self.assertEqual(before,after)
+
+    def test_reference_reduced_cap_exact_db_bytes(self):
+        self.reference_boundary({'value':'small legitimate reference'})
+
+    def test_reference_reduced_cap_multibyte_db_bytes(self):
+        self.reference_boundary({'value':'é🙂'},multibyte=True)
+
+    def successor(self):
+        cfg=save_draft(self.a,self.c.pk,envelope(self.c,COMPONENT,self.cfg.envelope['value'],self.e))
+        transition(self.a,cfg.pk,'validated')
+        return scopes.create(self.a,cfg.pk,'organization',self.c.tenant,['/0/template_ids/0'])
+
+    def observe_family(self,target,source,expected_head,excluded_source=None):
+        from django.apps import apps
+        def facts():return {m._meta.label:list(m.objects.order_by('pk').values()) for m in apps.get_models() if m._meta.app_label in ('core','policy','documents','identity','agents')}
+        before=facts();queries=[]
+        def observe(execute,sql,params,many,context):queries.append((sql,params));return execute(sql,params,many,context)
+        def callback(actor):
+            budget=PolicyCellBudget(actor,KEYS);result=admit_selected_owner_policy(actor,target,budget)
+            self.assertEqual(result['source'],source.pk);self.assertEqual(result['family_head'],expected_head)
+            self.assertEqual(len(budget.cells),6)
+            return result
+        with connection.execute_wrapper(observe):_run_authenticated(self.a,KEYS,callback)
+        heads=[s for s,p in queries if 'policy_scopeversion' in s and 'policy_scopestate' in s and 'JOIN' in s]
+        self.assertEqual(len(heads),1 if expected_head is not None else 0)
+        if excluded_source is not None:
+            self.assertFalse(any(s.startswith('SELECT convert_to("binding_paths"') and p[0]==excluded_source.pk for s,p in queries))
+            self.assertFalse(any(s.startswith('SELECT convert_to("envelope"') and p[0]==excluded_source.configuration_id for s,p in queries))
+        self.assertEqual(before,facts())
+
+    def test_newer_draft_and_validated_source_ignored_by_head(self):
+        target,source,origin,cfg=self.inherited();newer=self.successor()
+        self.observe_family(target,source,source.pk,newer)
+        scopes.transition(self.a,newer.pk,'validated')
+        self.observe_family(target,source,source.pk,newer)
+
+    def test_revoked_source_skips_family_head(self):
+        target,source,origin,cfg=self.inherited();scopes.transition(self.a,source.pk,'revoked')
+        self.observe_family(target,source,None)
+
+    def test_legitimate_successor_supersedes_source_and_skips_head(self):
+        target,source,origin,cfg=self.inherited();newer=self.successor()
+        scopes.transition(self.a,newer.pk,'validated');scopes.transition(self.a,newer.pk,'active')
+        self.assertEqual(scopes.state(source),'superseded')
+        self.observe_family(target,source,None,newer)

@@ -27,7 +27,7 @@ def source_for(case,pk):
     return s
 
 @transaction.atomic
-def capture_source(actor,case_id,batch_id,entity,accounting_basis,extracted_at,completeness,control_total,evidence_id,expected):
+def capture_source(actor,case_id,batch_id,entity,accounting_basis,extracted_at,completeness,control_total,evidence_id,expected,*,unit_declaration=None):
     case=lock_case(actor,case_id,'finance.source',expected)
     batch=FinancialImport.objects.filter(case=case,pk=batch_id).first()
     if not batch or not isinstance(entity,str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}',entity):raise ValidationError('Select this case import and explicit entity identifier')
@@ -35,7 +35,9 @@ def capture_source(actor,case_id,batch_id,entity,accounting_basis,extracted_at,c
     if not extracted_at or timezone.is_naive(extracted_at) or extracted_at>timezone.now():raise ValidationError('Actual aware extraction/as-of time must not be in the future')
     if completeness not in ['complete','partial','unknown']:raise ValidationError('Declare source completeness explicitly')
     amount=None if control_total is None else number(decimal(control_total))
-    s=FinanceSource.objects.create(case=case,batch=batch,entity=entity,accounting_basis=accounting_basis,extracted_at=extracted_at,
+    from .source_units import capture
+    units=capture(batch,unit_declaration)
+    s=FinanceSource.objects.create(case=case,batch=batch,unit_declaration=units,entity=entity,accounting_basis=accounting_basis,extracted_at=extracted_at,
         completeness=completeness,control_total=amount,evidence=subject(case,evidence_id,'finance_source'),actor=actor)
     event(actor,case,'finance.source_context',source=s.pk,batch=batch.pk);bump(case);return s
 
@@ -70,6 +72,9 @@ def current_review(case,purpose,**target):
     try:
         require(r.actor,case,'finance.review')
         item=r.source or r.configuration or r.adjustment or r.run
+        if r.run_id:
+            from .statement_ppe import recipient_access
+            recipient_access(r.run,[r.actor_id])
         preparer=item.created_by_id if r.configuration_id else item.actor_id
         current=review_authority(r.actor,case,purpose,r.role,r.verdict,preparer)
         # Unrelated D05 namespaces can change without manufacturing a new Finance decision.
@@ -129,11 +134,17 @@ def stage_snapshot(actor,source,kind,parent,request):
             decision=current_review(source.case,'adjustment',adjustment=adj)
             if not decision['valid']:raise ValidationError('Selected reporting adjustment needs current configured human review')
             adjustments.append({'id':adj.pk,'review':decision})
-    return {'source':source.pk,'source_hash':source.batch.source_sha256,'source_evidence':source.evidence_id,
+    from .source_units import inspect as inspect_units
+    units=inspect_units(source)
+    return {**({'source_units':units} if source.unit_declaration is not None else {}),'source':source.pk,'source_hash':source.batch.source_sha256,'source_evidence':source.evidence_id,
         'parent':{'id':parent.pk,'key':parent.operation_key} if parent else None,'policies':states,'reviews':reviews,
-        'source_review':current_review(source.case,'source',source=source),'adjustments':adjustments,**({'hr_basis_access':hr_basis_access} if hr_basis_access else {})},configs
+        'source_review':current_review(source.case,'source',source=source),'adjustments':adjustments,
+        **({'formula_result_implementation':'finance-note-lineage/v1'} if kind=='formula' else {}),**({'hr_basis_access':hr_basis_access} if hr_basis_access else {})},configs
 
 def ensure_current(run):
+    if run.kind=='statement':
+        from .statements import ensure_current as current_statement
+        return current_statement(run)
     parent=run.parent
     snapshot,_=stage_snapshot(run.actor,run.source,run.kind,parent,run.request)
     if snapshot!=run.snapshot:raise ValidationError('Source, policy, review or authority changed; rebuild the exact Finance preview')
@@ -150,6 +161,8 @@ def store(actor,case,source,kind,parent,request,snapshot,result):
 def map_source(actor,case_id,source_id,adjustment_ids,expected):
     case=lock_case(actor,case_id,'finance.calculate',expected);s=source_for(case,source_id)
     if not isinstance(adjustment_ids,list) or len(adjustment_ids)>100 or any(type(pk) is not int for pk in adjustment_ids) or len(set(adjustment_ids))!=len(adjustment_ids):raise ValidationError('Select a unique bounded adjustment inventory')
+    from .source_units import require_mapping
+    require_mapping(s)
     request={'adjustment_ids':sorted(adjustment_ids)};snapshot,configs=stage_snapshot(actor,s,'mapping',None,request)
     for component in MAP_COMPONENTS:
         if component not in configs:active_component(component,case)
@@ -192,6 +205,9 @@ def adjustment(actor,case_id,source_id,reference,kind,lines,evidence_id,note_tex
     event(actor,case,'finance.reporting_adjustment',adjustment=a.pk,ledger_posted=False);bump(case);return a
 
 def certification_findings(run):
+    if run.kind=='statement':
+        ensure_current(run)
+        return list(run.result['findings'])
     ensure_current(run);findings=[];cursor=run
     while cursor:
         if cursor.result['status']!='complete':findings.append(f'{cursor.kind} #{cursor.pk} contains unknowns, unallocated values or source exceptions')
@@ -229,14 +245,16 @@ def review(actor,case_id,purpose,target_id,role,verdict,evidence_id,note_text,ex
             source_for(case,item.source_id)
             if FinanceAdjustment.objects.filter(source=item.source,reference=item.reference).order_by('-number').first().pk!=item.pk:raise ValidationError('Select the latest adjustment revision')
     elif purpose=='output':
-        item=FinanceRun.objects.filter(case=case,pk=target_id,kind='formula').first();target={'run':item}
+        item=FinanceRun.objects.filter(case=case,pk=target_id,kind__in=['formula','statement']).first();target={'run':item}
         if item:
+            from .statement_ppe import recipient_access
+            recipient_access(item,[actor.pk])
             ensure_current(item)
             if verdict=='approve':
                 findings=certification_findings(item)
                 if findings:raise ValidationError(findings)
     else:
-        item=Configuration.objects.filter(case=case,pk=target_id,component__in=[k for k,v in PURPOSE.items() if v==purpose]).first();target={'configuration':item}
+        item=Configuration.objects.filter(case=case,pk=target_id,component__in=[k for k,v in PURPOSE.items() if v==purpose]+(['D06.statement_contract'] if purpose=='formula' else [])).first();target={'configuration':item}
         if item and active_component(item.component,case).pk!=item.pk:raise ValidationError('Review the exact active Finance configuration version')
     if item is None:raise ValidationError('Review target must match this case and Finance purpose')
     preparer=item.created_by_id if 'configuration' in target else item.actor_id

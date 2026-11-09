@@ -46,8 +46,12 @@ def snapshot(work,value,reader=None):
     ids={source.evidence_id}
     for key in planning.SOURCE_KINDS:
         if payload['payload'][key] is not None:ids.add(payload['payload'][key])
+    primary_ids=set(ids)
+    for pins in payload.get('source_pins',{}).values():
+        for key,pin in pins.items():
+            if key!='resolution' and pin is not None:ids.add(pin['id'])
     records=list(public_evidence(Evidence.objects.filter(case=work.case,pk__in=ids)).order_by('pk'))
-    latest={e.kind:e for e in records}
+    latest={e.kind:e for e in records if e.pk in primary_ids}
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     report=planning.report(actor,work.case_id)
@@ -75,6 +79,8 @@ def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
     if missing or stale:return [],'Planning source information needs correction: '+', '.join(missing+stale)
     key=digest(['ACT04',observed['sources'],work.source_head_id])
     if not Activity.objects.filter(work=work,key=key,status='succeeded').exists():return ['ACT04'],'Investigate planning evidence and dependencies'
+    correlation=observed['report'].get('source_correlation')
+    if correlation and not correlation['complete']:return [],observed['report'].get('finding','Resolve exact source correlation with the internal owner')
     if observed['requests'] is None:return ['ACT10'],'Open separate department-owned scope and estimate decisions'
     routed={j.request_id for j in jobs}
     if set(observed['requests']['requests'].values())-routed:return ['ACT10'],'Route each exact request to its current department owner'

@@ -26,6 +26,10 @@ def workbench(request,case_id):
    if set(request.POST)-set(f.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Unexpected fields; authority claims are not accepted')
    d=f.cleaned_data;k=d['action'];a=request.user;c=case.pk;v=d['revision']
    if k=='prepare':domain.prepare(a,c,d['reference'],d['payload'],d['evidence'].pk,v)
+   elif k=='preview_input':
+    from .recognition_preview import capture
+    row=capture(a,c,d['packet'].pk,d['operation_key'],d['evidence'].pk,d['note'],v)
+    messages.info(request,'Private proposed input #'+str(row.pk)+' hash '+row.sha256+'; unbound observation, not attestation')
    elif k=='investigate':investigate(a,c,v)
    elif k=='policy':
     from django.db import transaction

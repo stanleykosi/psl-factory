@@ -211,6 +211,7 @@ class EscalationTests(TestCase):
         from apps.pmo.reporting import draft_period_report
         t=register_template(self.a,self.c.pk,'Internal report',{'document_type':'status_report','required_fields':['executive_summary','status'],
             'audience_fields':{'internal':['executive_summary','status']}},self.owner.pk,rev(self.c))
+        Grant.objects.get_or_create(case=self.c,user=self.a,action='report.read')
         b=draft_period_report(self.a,self.c.pk,'internal_tuesday',timezone.now()-timedelta(days=7),timezone.now(),t.pk,'internal',rev(self.c))
         self.assertFalse(preflight(b.version))
         profile(self.a,self.c,self.state,self.source)

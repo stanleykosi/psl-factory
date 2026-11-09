@@ -33,6 +33,8 @@ def fixture(missing=False,configure=True,responsibility=True,username='factory-m
         transition(a,authority.pk,'validated');transition(a,authority.pk,'active')
         for role in ['PM','Head of PMO']:decide(a,c.pk,role,rev(c))
         for role,person in reviewers.items():decide(person,c.pk,role,rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(a, c, e)
         sign_baseline(a,c.pk,e['signature'].pk,rev(c))
     complete_milestone(a,c.pk,'Contract completion criterion',e['completion'].pk,rev(c));run_once(case_id=c.pk)
     handoff=Handoff.objects.get(case=c);cov=coverage(a,c,amount_basis='gross_including_tax')

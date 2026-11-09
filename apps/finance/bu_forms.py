@@ -22,7 +22,7 @@ def commands(actor,case,data=None):
  'publish':('Publish reviewed aggregate report',{'work':work(),'operation_key':key()}),
  'receive':('Acknowledge permitted aggregate',{'report':forms.ModelChoiceField(BUReport.objects.defer('payload').filter(work__case=case))}),
  'investigate':('Investigate references and draft owner questions',{}),
- 'policy':('Draft typed BU policy',{'component':forms.ChoiceField(choices=[(k,k) for k in SCHEMAS]),'content':forms.JSONField(widget=forms.Textarea(attrs={'rows':10})),'evidence':forms.ModelChoiceField(case.evidence.filter(kind='policy_decision')),'effective_from':forms.DateTimeField()})}
+ 'policy':('Draft typed BU policy',{'component':forms.ChoiceField(choices=[(k,k) for k in SCHEMAS]),'content':forms.JSONField(help_text='For explicit fixed-weight semantics include weight_contract (v2): mode, population, completeness, denominator, basis and evidence_id. See the typed shapes above.',widget=forms.Textarea(attrs={'rows':10})),'evidence':forms.ModelChoiceField(case.evidence.filter(kind='policy_decision')),'effective_from':forms.DateTimeField()})}
  grants=set(Grant.objects.filter(case=case,user=actor,active=True).values_list('action',flat=True));result=[]
  for action,(title,fields) in defs.items():
   permission='policy.configure' if action=='policy' else 'agent.bu' if action=='investigate' else 'bu.'+action

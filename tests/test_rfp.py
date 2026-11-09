@@ -18,7 +18,7 @@ from .document_helpers import artifact
 from . import test_commercial_changes as commercial_helpers
 
 DEFINITION={'document_type':'rfp_response','required_fields':['executive_summary','scope','requirements_mapping','commercial_terms'],
-    'audience_fields':{'client':['executive_summary','scope','requirements_mapping','commercial_terms']}}
+    'audience_fields':{'client':['executive_summary', 'scope', 'requirements_mapping', 'commercial_terms', 'timeline', 'risks', 'dependencies', 'status']}}
 
 def fixture():
     a,c,e,_=commercial_helpers.fixture();commercial_helpers.change_roles(a,c,e['policy_decision'])
@@ -70,6 +70,8 @@ class RFPTests(TestCase):
         artifact(a,c,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',{'template_ids':[st.pk],'repository':'internal-versioned','retention_days':30},e['policy_decision'])
         receipt=commercial_helpers.delivered(a,c,project,st)
         signed=commercial.capture_response(a,c.pk,project.pk,receipt.pk,'signed',e['signature'].pk,'Actual matching signature attestation',rev(c))
+        from tests.signature_helpers import packet_for
+        packet_for(a,c,e,project)
         commercial.adopt_signed(a,c.pk,project.pk,signed.pk,rev(c));self.assertTrue(Baseline.objects.get().signed_id)
 
     def test_lost_archive_requires_lessons_and_preserves_sources(self):
@@ -352,8 +354,9 @@ class RFPTests(TestCase):
         from apps.pmo.reporting import draft_period_report,binding_manifest
         a,c,e=self.a,self.c,self.e
         t=register_template(a,c.pk,'RFP status report',{'document_type':'status_report','required_fields':['executive_summary','status'],
-            'audience_fields':{'client':['executive_summary','status']}},e['policy_decision'].pk,rev(c))
+            'audience_fields':{'client':['executive_summary', 'status', 'scope', 'timeline', 'risks', 'dependencies']}},e['policy_decision'].pk,rev(c))
         artifact(a,c,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',{'template_ids':[t.pk],'repository':'internal-versioned','retention_days':30},e['policy_decision'])
+        Grant.objects.get_or_create(case=c,user=a,action='report.read')
         now=timezone.now();b=draft_period_report(a,c.pk,'weekly_client',now-timedelta(days=7),now,t.pk,'client',rev(c))
         b.refresh_from_db();self.assertEqual(b.manifest,binding_manifest(b));self.assertFalse(preflight(b.version))
         request_review(a,c.pk,b.version_id,rev(c));review_version(a,c.pk,b.version_id,'approve','Reviewed actual RFP report',rev(c));reserve_publication(a,c.pk,b.version_id,rev(c));run_publication_once()

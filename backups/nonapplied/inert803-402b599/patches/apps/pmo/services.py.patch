@@ -1,0 +1,12 @@
+--- a/apps/pmo/services.py
++++ b/apps/pmo/services.py
+@@ -11,2 +11,7 @@
+-def subject(case, pk, kind=None):
+-    evidence = Evidence.objects.filter(case=case, pk=pk).first()
++def subject(case, pk, kind=None, *, _reader_scalar=False):
++    if type(_reader_scalar) is not bool:
++        raise ValidationError('Internal reader projection must be boolean')
++    query = Evidence.objects.filter(case=case, pk=pk)
++    if _reader_scalar:
++        query = query.only('pk', 'case_id', 'kind')
++    evidence = query.first()

@@ -12,6 +12,9 @@ from .models import AgentRun
 def investigate(actor,case_id,coverage_id,preparation_id,expected):
     case=lock_case(actor,case_id,'agent.billing',expected);require(actor,case,'finance.read')
     cov=exact(case,BillingCoverage,coverage_id);prep=exact(case,BillingPreparation,preparation_id) if preparation_id else None
+    if prep and prep.kind == 'fixed_contract':
+        from .contract_coverage import investigate_charge
+        return investigate_charge(actor, case_id, prep.fixed_charge_id, case.revision)
     if prep and prep.coverage_id!=cov.pk:raise ValidationError('Preparation belongs to another coverage')
     findings=[];citations={cov.evidence_id};current=coverage_current(cov)
     batches=BillingUsage.objects.filter(coverage=cov).order_by('-pk')[:20]
@@ -34,5 +37,34 @@ def investigate(actor,case_id,coverage_id,preparation_id,expected):
         'figures':prep.result if prep else None,'citations':list(case.evidence.filter(pk__in=citations).values('id','kind','sha256')),
         'next_work':'Resolve exact missing pricing/stage terms and investigate duplicate source identities. Review a current preparation before the separate invoice workflow.',
         'invoice_issued':False,'approval_granted':False,'policy_changed':False,'cash_recorded':False,'release_authorized':False,'external_authenticity_verified':False}
+    from apps.finance.models import DraftGeneration
+    from apps.finance.draft_generation import report as generation_report
+    result['draft_generation']=[]
+    for generation in DraftGeneration.objects.filter(case=case,preparation__coverage=cov).order_by('-pk')[:20]:
+        try:result['draft_generation'].append(generation_report(actor,case_id,generation.pk))
+        except PermissionDenied:pass
     run=AgentRun.objects.create(case=case,actor=actor,evidence=cov.evidence,provider='deterministic-billing-investigation-v1',process_id='F29',result=result)
     event(actor,case,'agent.billing_investigation',run=run.pk,coverage=cov.pk);return run
+
+@transaction.atomic
+def investigate_identity(actor, case_id, invoice_id, expected):
+    """Read and explain only accessible exact identity pins; never infer or approve a key."""
+    from apps.finance.models import Invoice
+    from apps.finance.obligations import projection, latest
+    from apps.finance.fixed_charge import preparation_access
+    case = lock_case(actor, case_id, 'agent.billing', expected)
+    require(actor, case, 'finance.read')
+    invoice = exact(case, Invoice, invoice_id)
+    preparation_access(actor, invoice.preparation)
+    binding = latest(invoice)
+    evidence = binding.evidence if binding else invoice.preparation.coverage.evidence
+    result = {'invoice':invoice.pk, 'identity':projection(invoice),
+        'coverage':'Explicit claims only; historical unbound invoices require evidenced reconciliation.',
+        'next_work':'Supply the owner-backed namespace contract and exact invoice identity evidence. Resolve aliases only with configured resolver authority. Reconcile original attempted effects before any replacement.',
+        'citations':[{'id':evidence.pk, 'kind':evidence.kind, 'sha256':evidence.sha256}],
+        'invoice_issued':False, 'approval_granted':False, 'identity_inferred':False,
+        'external_authenticity_verified':False}
+    run = AgentRun.objects.create(case=case, actor=actor, evidence=evidence,
+        provider='deterministic-invoice-identity-v1', process_id='F30', result=result)
+    event(actor, case, 'agent.invoice_identity_investigation', run=run.pk, invoice=invoice.pk)
+    return run

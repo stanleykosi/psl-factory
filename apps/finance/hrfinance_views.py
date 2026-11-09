@@ -36,6 +36,11 @@ def workbench(request,case_id):
    elif k=='respond':domain.respond(a,c,d['request_record'].pk,d['successor'].pk,d['operation_key'],e,v)
    elif k=='bind':domain.draft_basis(a,c,d['snapshot'].pk,e,v)
    elif k=='investigate':investigate(a,c,v)
+   elif k in ['scope_request','scope_reply','scope_cancel']:
+    from . import hr_scope
+    if k=='scope_request':hr_scope.request(a,c,d['snapshot'].pk,v)
+    elif k=='scope_reply':hr_scope.respond(a,c,d['scope_task'].pk,d['task_revision'],d['reply'],v)
+    else:hr_scope.cancel(a,c,d['scope_task'].pk,d['task_revision'],v)
    elif k=='policy':
     with transaction.atomic():domain.locked(a,c,'policy.configure',v);draft_hrfinance_policy(a,c,d['component'],d['content'],e,d['effective_from'])
    messages.success(request,'HR/Finance workflow history updated; HR source remains read-only');return redirect('hrfinance',case_id=c)
@@ -43,6 +48,9 @@ def workbench(request,case_id):
    # Never reflect a supplied private export or schema instance in an error response.
    messages.error(request,str(exc) if request.POST.get('action')!='capture' else 'Capture held: check current authority, exact contract, operation key and export schema. No source rows are shown here.')
    return redirect('hrfinance',case_id=case.pk)
+ from .hr_scope import PURPOSE,projection
+ from apps.workflows.models import HumanTask
+ scope_questions=[projection(request.user,t) for t in HumanTask.objects.filter(case=case,context__purpose=PURPOSE).select_related('case','created_by').order_by('-pk')[:30]]
  contracts=list(HRDisclosure.objects.filter(need__case=case).order_by('-pk')[:30])
  for d in contracts:
   try:domain.authorized(d);d.status='Current HR-authorised disclosure'
@@ -54,7 +62,7 @@ def workbench(request,case_id):
    try:domain.check_snapshot_access(request.user,s);readable=True
    except (ValidationError,PermissionDenied):readable=False
    d.snapshot_status.append({'id':s.pk,'status':s.status,'current':current,'readable':readable,'retain_until':s.retain_until,'findings':s.manifest['findings']})
- response=render(request,'finance/hrfinance.html',{'case':case,'needs':HRFinanceNeed.objects.filter(case=case).order_by('-pk')[:30],'contracts':contracts,'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'need_schema':domain.NEED,'agents':AgentRun.objects.filter(case=case,provider='deterministic-hrfinance-v1').order_by('-pk')[:5]})
+ response=render(request,'finance/hrfinance.html',{'case':case,'scope_questions':scope_questions,'needs':HRFinanceNeed.objects.filter(case=case).order_by('-pk')[:30],'contracts':contracts,'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'need_schema':domain.NEED,'agents':AgentRun.objects.filter(case=case,provider='deterministic-hrfinance-v1').order_by('-pk')[:5]})
  response['Cache-Control']='no-store';return response
 
 @login_required

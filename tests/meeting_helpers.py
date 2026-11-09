@@ -1,6 +1,7 @@
 from datetime import timedelta
 from uuid import uuid4
 from django.utils import timezone
+from apps.identity.models import Grant
 from apps.core.services import add_evidence
 from apps.documents.controlled import register_template
 from apps.policy.services import register_reference
@@ -9,11 +10,13 @@ from .helpers import rev, activate
 from .document_helpers import publication_fixture, artifact
 
 MINUTES_DEFINITION={'document_type':'minutes','required_fields':['executive_summary','decisions','actions','owners','deadlines'],
-    'audience_fields':{a:['executive_summary','decisions','actions','owners','deadlines','participants','scope'] for a in ['client','internal','management']}}
+    'audience_fields':{a:['executive_summary','decisions','actions','owners','deadlines','participants','scope'] + (['timeline','risks','dependencies','status'] if a == 'client' else []) for a in ['client','internal','management']}}
 
 
 def meetings_fixture():
     actor,case,owner,source,report_template,recipient,_,_=publication_fixture()
+    # Explicit report-reader authority for this successful reporting fixture.
+    Grant.objects.get_or_create(case=case,user=actor,action='report.read')
     minutes=register_template(actor,case.pk,'Formal minutes',MINUTES_DEFINITION,owner.pk,rev(case))
     artifact(actor,case,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',
         {'template_ids':[report_template.pk,minutes.pk],'repository':'internal-versioned','retention_days':30},owner)

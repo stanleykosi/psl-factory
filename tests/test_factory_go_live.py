@@ -46,7 +46,7 @@ def accept(f):
     client=f.evidence('signature','SYNTHETIC actual Client sign-off for exact go-live report '+str(v.pk))
     from apps.pmo.delivery_closure import latest_go_live
     previous=latest_go_live(f.d,False)
-    return go_live.accept(f.actor,f.work.pk,f.work.revision,rev(f.case),v.pk,r.pk,pm.pk,client.pk,'Human PM attests actual distinct signatures for this exact delivered report',previous.pk if previous else None)
+    return go_live.accept(f.actor,f.work.pk,f.work.revision,rev(f.case),v.pk,r.pk,pm.pk,client.pk,'Human PM attests actual distinct signatures for this exact delivered report',previous.pk if previous else None,attestation=f.attestation(r,pm,client))
 
 class FactoryGoLiveDistinctAuthorityTests(TestCase):
     def test_actual_pm_attests_through_http_without_worker_configuration_or_publisher_privileges(self):
@@ -58,6 +58,8 @@ class FactoryGoLiveDistinctAuthorityTests(TestCase):
         ref=register_reference(f.actor,f.case.pk,'go-live:attesting-pm','schema:psl/role-assignment/v1',
             {'role':'PM','user_id':pm.pk},f.e['policy_decision'].pk)
         activate(f.actor,f.case,'D05.role_principal_assignments',['role:0','role:1','role:2','role:3',ref.ref],f.e['policy_decision'])
+        from tests.signature_helpers import reaffirm_for
+        reaffirm_for(f.actor, f.case)  # Explicit current baseline proof after synthetic role re-rostering.
         f.release();f=setup(base=f);factory.run_until_wait(f.work.pk);review(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         version=go_live.document(f.work);receipt=PublicationReceipt.objects.get(publication__version=version)
         signature_pm=f.evidence('signature','Synthetic supplied PM signature for distinct human attestation')
@@ -67,6 +69,7 @@ class FactoryGoLiveDistinctAuthorityTests(TestCase):
         self.assertNotContains(page,'Record reviewed source changes')
         response=self.client.post(url,{'action':'accept','revision':f.work.revision,'case_revision':rev(f.case),
             'version':version.pk,'receipt':receipt.pk,'pm_signature':signature_pm.pk,'client_signature':signature_client.pk,
+            'attestation':json.dumps(f.attestation(receipt,signature_pm,signature_client,actor=pm)),
             'note':'Distinct actual synthetic PM attests exact delivered report and supplied signature evidence'})
         self.assertRedirects(response,url)
         anchor=DeliveryRecord.objects.get(dossier=f.d,kind='go_live');self.assertEqual(anchor.actor_id,pm.pk)
@@ -131,7 +134,7 @@ class FactoryGoLiveConcurrencyTests(TransactionTestCase):
             close_old_connections()
             try:
                 barrier.wait(timeout=10)
-                try:return go_live.accept(f.actor,f.work.pk,work_revision,case_revision,version.pk,receipt.pk,*pair,'Exact human reaffirmation under race',old.pk).pk
+                try:return go_live.accept(f.actor,f.work.pk,work_revision,case_revision,version.pk,receipt.pk,*pair,'Exact human reaffirmation under race',old.pk,attestation=f.attestation(receipt,*pair)).pk
                 except ValidationError:return 'stale'
             finally:close_old_connections()
         with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(attest,pairs))
@@ -351,7 +354,7 @@ class FactoryGoLiveTests(TestCase):
         with self.assertRaises(DatabaseError),transaction.atomic():
             DeliveryRecord.objects.create(dossier=f.d,kind='go_live_reaffirmation',parent_id=old.parent_id,actor=f.actor,evidence=pm,data=data,snapshot=old.snapshot)
         from apps.pmo.delivery_closure import reaffirm_go_live
-        current=reaffirm_go_live(f.actor,f.case.pk,f.d.pk,old.pk,data['receipt_id'],pm.pk,client.pk,'Explicit synthetic reaffirmation',rev(f.case))
+        current=reaffirm_go_live(f.actor,f.case.pk,f.d.pk,old.pk,data['receipt_id'],pm.pk,client.pk,'Explicit synthetic reaffirmation',rev(f.case),attestation=f.attestation(data['receipt_id'],pm,client))
         new_pm=f.evidence('signature','Synthetic unused fork PM');new_client=f.evidence('signature','Synthetic unused fork Client')
         with self.assertRaises(DatabaseError),transaction.atomic():
             DeliveryRecord.objects.create(dossier=f.d,kind='go_live_reaffirmation',parent=old,actor=f.actor,evidence=new_pm,

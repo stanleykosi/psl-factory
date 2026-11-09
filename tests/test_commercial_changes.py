@@ -22,7 +22,7 @@ from .helpers import setup_case, project_evidence, roles, rev, signed, activate,
 from .document_helpers import artifact
 
 DEFINITION={'document_type':'sow','required_fields':['executive_summary','scope','timeline'],
-    'audience_fields':{'client':['executive_summary','scope','timeline']}}
+    'audience_fields':{'client':['executive_summary','scope','timeline','risks','dependencies','status']}}
 
 
 def fixture(existing=False,username='human'):
@@ -77,6 +77,8 @@ class CommercialTests(TestCase):
         self.assertContains(self.client.get(url),'Current proposal')
         receipt=delivered(a,c,v,t)
         response=capture_response(a,c.pk,v.pk,receipt.pk,'signed',e['signature'].pk,'PM verified matching signed artifact',rev(c))
+        from .signature_helpers import packet_for
+        packet_for(a,c,e,v)
         adoption=adopt_signed(a,c.pk,v.pk,response.pk,rev(c))
         self.assertEqual(Baseline.objects.get().signed_id,e['signature'].pk)
         self.assertEqual(adoption.before,{})
@@ -244,15 +246,39 @@ class CommercialTests(TestCase):
         with self.assertRaises(PolicyHold):valid_approvals(v,['PM'])
 
 
+def weekly_change_report(actor,case,evidence):
+    Grant.objects.get_or_create(case=case,user=actor,action='report.read')
+    from datetime import timedelta
+    from django.utils import timezone
+    from apps.pmo.reporting import draft_period_report
+    template=register_template(actor,case.pk,'Synthetic weekly change report',{'document_type':'status_report','required_fields':['executive_summary','status'],
+        'audience_fields':{'client':['executive_summary','status','timeline','scope','risks','dependencies']}},evidence.pk,rev(case))
+    now=timezone.now()
+    return draft_period_report(actor,case.pk,'weekly_client',now-timedelta(days=7),now,template.pk,'client',rev(case))
+
+
+def impact_fixture(team, timeline=False):
+    # Explicit synthetic owner statements, never production defaults.
+    return {'outputs':{'discipline':team+' reviewed its synthetic discipline impact',
+        'timeline':'Milestone moves from 2026-11-10 to 2026-11-12' if timeline else 'No timeline change',
+        'cost_resource':'No additional resources in this synthetic fixture',
+        'risk':'No additional risk in this synthetic fixture',
+        'dependency':'No additional dependency in this synthetic fixture'},
+        'production_impact':False if team=='Infra' else None,
+        'scope_items':['CR-001/item-1'] if team=='Engineering' else None}
+
+
 class ControlledChangeTests(TestCase):
     def setUp(self):
         self.actor,self.case,self.e,self.t=fixture(existing=True)
         change_roles(self.actor,self.case,self.e['policy_decision'])
+        from .signature_helpers import reaffirm_for
+        reaffirm_for(self.actor, self.case)
         self.source=add_evidence(self.actor,self.case.pk,'change_request','Client requests a scope change','synthetic:change')
         self.cv=log_change(self.actor,self.case.pk,'CR-001','Normal','Delivery','New work requested','Client evidence',self.source.pk,rev(self.case))
 
     def assessments(self,cost=True,timeline=True,client=True):
-        for team in CONTRIBUTORS:assess_change(self.actor,self.case.pk,self.cv.pk,team,cost,timeline,client,self.source.pk,'Owner impact assessment',rev(self.case))
+        for team in CONTRIBUTORS:assess_change(self.actor,self.case.pk,self.cv.pk,team,cost,timeline,client,self.source.pk,'Owner impact assessment',rev(self.case),**impact_fixture(team,timeline))
 
     def decisions(self):
         for role in ['Product','Engineering','Client','Engineering Lead','Security Manager']:
@@ -269,6 +295,8 @@ class ControlledChangeTests(TestCase):
         self.assessments();self.decisions();v,e=self.revised_commercial()
         receipt=delivered(a,c,v,self.t)
         response=capture_response(a,c.pk,v.pk,receipt.pk,'signed',e['signature'].pk,'Matching new signed document',rev(c))
+        from .signature_helpers import packet_for
+        packet_for(a,c,e,v)
         with self.assertRaises(ValidationError):adopt_signed(a,c.pk,v.pk,response.pk,rev(c))
         auth=authorize_change(a,c.pk,self.cv.pk,v.pk,rev(c))
         before=Baseline.objects.get(case=c).signed_id
@@ -345,12 +373,12 @@ class ChangeExecutionTests(TestCase):
         evidence={}
         for kind,e_kind in [('plan_updated','plan'),('implemented','change_implementation'),('testing_validated','change_validation'),('documentation_updated','document')]:
             source=add_evidence(self.actor,self.case.pk,e_kind,'Owner evidence '+kind,'synthetic:execution')
-            evidence[kind]=record_execution(self.actor,self.case.pk,auth.pk,kind,source.pk,'Captured exact change evidence',rev(self.case))
+            evidence[kind]=record_execution(self.actor,self.case.pk,auth.pk,kind,source.pk,'Captured exact change evidence',rev(self.case),scope_items=['CR-001/item-1'] if kind=='implemented' else None)
         return evidence
 
     def change_template(self):
         t=register_template(self.actor,self.case.pk,'Change status',{'document_type':'project_artifact','required_fields':['executive_summary','status'],
-            'audience_fields':{'client':['executive_summary','scope','status','timeline','next_steps']}},self.e['policy_decision'].pk,rev(self.case))
+            'audience_fields':{'client':['executive_summary','scope','status','timeline','next_steps','risks','dependencies']}},self.e['policy_decision'].pk,rev(self.case))
         artifact(self.actor,self.case,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',
             {'template_ids':[self.t.pk,t.pk],'repository':'internal-versioned','retention_days':30},self.e['policy_decision'])
         return t
@@ -371,7 +399,8 @@ class ChangeExecutionTests(TestCase):
         self.ready(auth);receipt=self.publish_change(auth,t,'go_live')
         pm=add_evidence(self.actor,self.case.pk,'signature','PM signature of exact change go-live','synthetic:PM')
         client=add_evidence(self.actor,self.case.pk,'signature','Client signature of exact change go-live','synthetic:Client')
-        closure=close_change(self.actor,self.case.pk,auth.pk,receipt.pk,pm.pk,client.pk,'PM verified both signatures on receipt version',rev(self.case))
+        from .change_signature_helpers import declaration_for
+        closure=close_change(self.actor,self.case.pk,auth.pk,receipt.pk,pm.pk,client.pk,'PM verified both signatures on receipt version',rev(self.case),attestation=declaration_for(self.actor,auth,receipt,pm,client))
         self.assertEqual(len(closure.execution_ids),4)
         self.assertEqual(ChangeClosure.objects.count(),1)
         with self.assertRaises(ValidationError):assess_change(self.actor,self.case.pk,self.cv.pk,'QA',False,False,False,self.source.pk,'After close',rev(self.case))
@@ -404,6 +433,8 @@ class SignedIntakeTests(TestCase):
         from adapters.signed_baselines import InternalSignedBaselineAdapter
         a,c,e,t=fixture();v=proposal(a,c,e);approvals(a,c,v);receipt=delivered(a,c,v,t)
         response=capture_response(a,c.pk,v.pk,receipt.pk,'signed',e['signature'].pk,'Matched signed artifact',rev(c))
+        from .signature_helpers import packet_for
+        packet_for(a,c,e,v)
         adoption=adopt_signed(a,c.pk,v.pk,response.pk,rev(c))
         intake=SignedBaselineIntake.objects.get()
         self.assertEqual(intake.payload['sources']['sow']['sha256'],e['sow'].sha256)
@@ -424,6 +455,8 @@ class CommercialConcurrencyTests(TransactionTestCase):
         from apps.finance.models import SignedBaselineIntake
         a,c,e,t=fixture();v=proposal(a,c,e);approvals(a,c,v);receipt=delivered(a,c,v,t)
         response=capture_response(a,c.pk,v.pk,receipt.pk,'signed',e['signature'].pk,'Matching signed artifact',rev(c))
+        from .signature_helpers import packet_for
+        packet_for(a,c,e,v)
         expected=rev(c)
         def adopt():
             close_old_connections()

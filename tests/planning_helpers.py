@@ -38,6 +38,11 @@ def fixture(configured=True,username='planning-human',owner_password=None):
     values=json.loads(Path('fixtures/planning-packet.json').read_text(encoding='utf-8'))
     f['payload']=values['capture'];f['rules']=values['criteria']
     f['payload'].update(prd_id=e['requirements'].pk,scope_id=e['plan'].pk,engineering_estimate_id=e['engineering_estimate'].pk,security_estimate_id=e['security_estimate'].pk)
+    f['payload']['source_correlations']=[{'key':field,'source_field':field,'source_id':f['payload'][field],
+        'document_version':'synthetic-declared-v1','target_prd_id':e['requirements'].pk,'target_scope_id':e['plan'].pk,
+        'evidence_id':e[field.removesuffix('_id') if field!='scope_id' else 'plan'].pk,
+        'state':'current','detail':'Explicit synthetic source-backed target declaration; not inferred from timestamps.','resolution_id':None}
+        for field in ['scope_id','engineering_estimate_id','security_estimate_id']]
     f['packet']=planning.capture(a,c.pk,f['payload'])
     for offset,purpose in enumerate(planning.PURPOSES):
         m=record_meeting(a,c.pk,'ALIGN-'+str(offset),'alignment',timezone.now()-timedelta(minutes=2-offset),purpose,'Actual full PRD or scope/estimate alignment source',[a.pk],[],e['requirements'].pk,rev(c))

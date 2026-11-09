@@ -8,6 +8,8 @@ from .rules import decimal,number,total,evaluate,formula_order
 def effective(values,entity,period):return [v for v in values if v['entity']==entity and v['from_period']<=period<=v['to_period']]
 
 def map_rows(source,data,configs,adjustments):
+    from .source_units import require_mapping
+    require_mapping(source)
     convention=reference_values(configs['D06.unit_sign_currency_period'])[0];period=convention['period'];currency=convention['currency']
     maps=effective(reference_values(configs['D06.account_bu_maps']),source.entity,period)
     rows=[];findings=[];counts=Counter(x['account'] for x in data['rows']);seen=set()
@@ -51,6 +53,22 @@ def calculate_formulas(parent,configuration):
     mapping=parent if parent.kind=='mapping' else parent.parent
     data=mapping.result;rules=effective(reference_values(configuration),data['entity'],data['period'])
     ordered=formula_order(rules);rows=data['rows']
+    # Private source detail is kept out of company metrics and aggregate publications.
+    lineage={'implementation':'finance-note-lineage/v1','mapping_run':mapping.pk,
+        'mapping_operation_key':mapping.operation_key,'source_id':mapping.source_id,
+        'source_hash':mapping.snapshot['source_hash'],'source_unit':data['unit'],
+        'source_sign_convention':data['sign_convention'],'report_lines':{},'formulas':{}}
+    for key in sorted({r['report_line'] for r in rows if r['report_line']}):
+        selected=[(index,row) for index,row in enumerate(rows) if row['report_line']==key]
+        original=[row['amount'] for _,row in selected if row['origin']!='reporting_adjustment']
+        adjustments=[row['amount'] for _,row in selected if row['origin']=='reporting_adjustment']
+        lineage['report_lines'][key]={'original_total':number(total(original)),
+            'adjustment_total':number(total(adjustments)) if adjustments else '0',
+            'adjusted_total':number(total(row['amount'] for _,row in selected)),
+            'rows':[dict(row,mapping_row_index=index) for index,row in selected]}
+    lineage['adjustments']=[{'id':a.pk,'reference':a.reference,'revision':a.number,'kind':a.kind,
+        'evidence_id':a.evidence_id,'review':next(x['review'] for x in mapping.snapshot['adjustments'] if x['id']==a.pk)}
+        for a in FinanceAdjustment.objects.filter(pk__in=data['reporting_adjustment_ids']).order_by('pk')]
     def group(items):
         keys={r['report_line'] for r in items if r['report_line']}
         return {key:number(total(r['amount'] for r in items if r['report_line']==key)) for key in keys}
@@ -65,7 +83,15 @@ def calculate_formulas(parent,configuration):
                     dependency=results.get(term['key'],{})
                     value=dependency.get('unrounded' if term['value_stage']=='unrounded_formula' else 'value')
                 operands[(term['kind'],term['key'])]=value
-            output=evaluate(rule,operands)
+            output=evaluate(rule,operands,include_provenance=not bu)
+            if not bu:
+                provenance=output.pop('calculation_provenance')
+                lineage['formulas'][rule['key']]={**provenance,'rule_key':rule['key'],
+                    'configuration_id':configuration.pk,'implementation':rule['implementation'],
+                    'oracle_evidence_id':rule['oracle_evidence_id'],
+                    'unrounded':output['unrounded'],'display_value':output['value'],
+                    'rounding_difference':output['rounding_difference'],
+                    'operands':[dict(t,value=operands[(t['kind'],t['key'])]) for t in rule['terms']]}
             output['lineage']=[dict(t,value=operands[(t['kind'],t['key'])]) for t in rule['terms']]
             output['rule_key']=rule['key'];output['implementation']=rule['implementation'];results[rule['key']]=output
         return results
@@ -93,6 +119,6 @@ def calculate_formulas(parent,configuration):
                 context.prec=512
                 difference=None if rollup is None or value['value'] is None else number(Decimal(value['value'])-rollup)
             comparison[key]={'company':value['value'],'bu_total':number(rollup),'difference':difference,'unit':value['unit']}
-    return {'bu_comparison':comparison,'status':'complete' if not findings and parent.result['status']=='complete' else 'needs_attention','findings':findings,'company':company,'by_bu':by_bu,
+    return {'note_lineage':lineage,'bu_comparison':comparison,'status':'complete' if not findings and parent.result['status']=='complete' else 'needs_attention','findings':findings,'company':company,'by_bu':by_bu,
         'entity':data['entity'],'period':data['period'],'currency':data['currency'],'base_unit':'major_currency','parent_run':parent.pk,
         'source_evidence_ids':data['source_evidence_ids'],'ledger_posted':False}

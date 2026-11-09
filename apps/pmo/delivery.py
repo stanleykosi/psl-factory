@@ -1,7 +1,7 @@
 """Planning/delivery and release evidence. No deployment command exists here."""
 import math
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import transaction,DatabaseError
 from django.utils import timezone
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
@@ -14,7 +14,7 @@ from .clocks import aware
 from .models import DeliveryDossier,DeliverySource,DeliverySourceVerification,DeliveryRecord,DeliveryCandidate,MeetingVersion
 from apps.core.read_observation import observed_fact
 
-SOURCE_OWNERS={'registration':'PMO','scope_baseline':'PMO','ui_applicability':'Product/Design','ui_design':'Design Lead',
+SOURCE_OWNERS={'registration':'PMO','scope_baseline':'PMO','ui_applicability':'Product/Design','ui_target':'Product/Design','ui_design':'Design Lead',
     'ui_client':'Client','technical_design':'Engineering Lead','test_strategy':'QA Lead','uat_approach':'Product Owner',
     'hypercare_engineering':'Engineering','hypercare_infrastructure':'Infrastructure','technical_finalization':'Engineering'}
 PLANNING=['registration','scope_baseline','technical_design','test_strategy','uat_approach','ui_applicability']
@@ -57,6 +57,9 @@ def open_dossier(actor,case_id,candidate_id,evidence_id,note,expected):
 
 
 def validate_source_payload(kind,payload):
+    from .delivery_ui import KINDS,validate_payload
+    if kind in KINDS:
+        validate_payload(kind,payload);return
     if kind=='ui_applicability':
         schema={'type':'object','properties':{k:{'type':['boolean','null']} for k in ['requires_ui','client_signoff_required']},
             'required':['requires_ui','client_signoff_required'],'additionalProperties':False}
@@ -79,8 +82,31 @@ def capture_source(actor,case_id,dossier_id,kind,external_ref,evidence_id,payloa
     if kind not in SOURCE_OWNERS or not isinstance(external_ref,str) or not external_ref.strip() or len(external_ref)>240:
         raise ValidationError('Choose an owned source kind and bounded external reference')
     validate_source_payload(kind,payload)
-    s=DeliverySource.objects.create(dossier=d,kind=kind,external_ref=external_ref,evidence=subject(case,evidence_id),payload=payload,actor=actor)
+    evidence=subject(case,evidence_id)
+    from .delivery_ui import KINDS,validate_capture
+    if kind in KINDS:validate_capture(d,kind,external_ref,evidence,payload)
+    try:
+        s=DeliverySource.objects.create(dossier=d,kind=kind,external_ref=external_ref,evidence=evidence,payload=payload,actor=actor)
+    except DatabaseError as exc:
+        # The persisted UI guard remains authoritative for parser/race edges.
+        # Translate only its explicit rejection, never connectivity or other DB failures.
+        if kind in KINDS and getattr(exc.__cause__,'sqlstate',None)=='P0001':
+            raise ValidationError('UI source does not meet the stored artifact/owner receipt contract; check its exact fields and current authority') from exc
+        raise
     event(actor,case,'delivery.source_captured',source=s.pk,owner=SOURCE_OWNERS[kind],verified=False);bump(case);return s
+
+
+def source_result_schema(s):
+    schema={'type':'object','properties':{'source_id':{'const':s.pk},'candidate_ref':{'const':s.dossier.candidate.reference},
+        'external_ref':{'const':s.external_ref},'owner':{'const':SOURCE_OWNERS[s.kind]},'evidence_sha256':{'const':s.evidence.sha256},
+        'payload_sha256':{'const':digest(s.payload)},'decision':{'enum':['accepted','rejected','unknown']},'source_receipt':{'type':'string','minLength':1}},
+        'required':['source_id','candidate_ref','external_ref','owner','evidence_sha256','payload_sha256','decision','source_receipt'],'additionalProperties':False}
+    from .delivery_ui import KINDS
+    if s.kind in KINDS:
+        schema['properties']['ui_binding']={'const':s.payload}
+        schema['properties']['source_receipt']['maxLength']=240
+        schema['required'].append('ui_binding')
+    return schema
 
 
 def verify_source(actor,case_id,source_id,expected,adapter=None):
@@ -91,13 +117,14 @@ def verify_source(actor,case_id,source_id,expected,adapter=None):
     if not s:raise ValidationError('Source is outside this case')
     if not case.synthetic:raise ValidationError('Operational source capture is available; authoritative verification needs an accepted remote adapter contract')
     adapter=adapter or SyntheticDeliverySourceAdapter();result=adapter.read(s)
-    validate({'type':'object','properties':{'source_id':{'const':s.pk},'candidate_ref':{'const':s.dossier.candidate.reference},
-        'external_ref':{'const':s.external_ref},'owner':{'const':SOURCE_OWNERS[s.kind]},'evidence_sha256':{'const':s.evidence.sha256},
-        'payload_sha256':{'const':digest(s.payload)},'decision':{'enum':['accepted','rejected','unknown']},'source_receipt':{'type':'string','minLength':1}},
-        'required':['source_id','candidate_ref','external_ref','owner','evidence_sha256','payload_sha256','decision','source_receipt'],'additionalProperties':False},result)
+    validate(source_result_schema(s),result)
     with transaction.atomic():
         case=lock_case(actor,case_id,'delivery.verify',expected);d=dossier_for(case,s.dossier_id);ensure_open(d)
         if d.sources.filter(kind=s.kind).order_by('-pk').first().pk!=s.pk:raise ValidationError('Source revision changed; verify the current record')
+        from .delivery_ui import KINDS,validate_current,match_approval
+        if s.kind in KINDS:
+            validate_current(s)
+            if s.kind!='ui_target' and result['decision']=='accepted':match_approval(d,s)
         v=DeliverySourceVerification.objects.create(source=s,adapter=adapter.name,result=result,actor=actor)
         event(actor,case,'delivery.source_verified',verification=v.pk,source=s.pk,decision=result['decision']);bump(case);return v
 
@@ -109,7 +136,10 @@ def verified_source(d,kind):
         from .planning import current_readiness
         value=current_readiness(d.case,s.evidence_id)
         if value['inputs']['candidate_id']!=d.candidate_id:raise ValidationError('Planning source subject differs from delivery candidate')
-    require(v.actor,d.case,'delivery.verify');return s,v
+    require(v.actor,d.case,'delivery.verify')
+    from .delivery_ui import KINDS,validate_current
+    if kind in KINDS:validate_current(s,v)
+    return s,v
 
 
 @observed_fact
@@ -119,9 +149,11 @@ def planning_inputs(d):
         s,v=verified_source(d,k);pins[k]=[s.pk,v.pk]
     ui=DeliverySource.objects.get(pk=pins['ui_applicability'][0]).payload
     if ui['requires_ui'] is None or ui['client_signoff_required'] is None:raise ValidationError('UI and conditional client applicability remain unknown; obtain Product/Design evidence')
-    for k in (['ui_design'] if ui['requires_ui'] else [])+(['ui_client'] if ui['requires_ui'] and ui['client_signoff_required'] else []):
-        s,v=verified_source(d,k);pins[k]=[s.pk,v.pk]
-    return {'baseline':d.baseline,'requirements_id':d.candidate.requirements_id,'sources':pins}
+    result={'baseline':d.baseline,'requirements_id':d.candidate.requirements_id,'sources':pins}
+    if ui['requires_ui']:
+        from .delivery_ui import planning_binding
+        result['ui_target']=planning_binding(d,pins,ui['client_signoff_required'])
+    return result
 
 
 @transaction.atomic
@@ -181,12 +213,16 @@ def record_release_request(actor,case_id,dossier_id,external_ref,evidence_id,not
 
 @observed_fact
 def readiness_inputs(d):
-    if not baseline_manifest(d.case).get('signed_id'):raise ValidationError('Signed baseline required before release evidence readiness')
+    from .signature_exemptions import assert_current_baseline_assurance
+    assurance = assert_current_baseline_assurance(d.case)
     request=latest(d,'glpi_request');require(request.actor,d.case,'delivery.release_request');decision_authority(request.actor,d.case,'PM')
     source=upstream(d)
     if request.snapshot!=source:raise ValidationError('Deployment request prerequisites changed; reconcile the exact source request')
-    return {'upstream':source,'request_id':request.pk,'signed_id':baseline_manifest(d.case)['signed_id'],
+    result = {'upstream':source,'request_id':request.pk,'signed_id':baseline_manifest(d.case)['signed_id'],
         'glpi':verified_gates(d,GLPI_GATES,request.data['external_ref']), 'deployment_authorized':False,'financial_controls':'independent'}
+    if assurance['kind'] == 'internal_signature_exemption':
+        result.update(signature_requirement='not_applicable', signature_exemption_id=assurance['id'])
+    return result
 
 
 @transaction.atomic

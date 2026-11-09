@@ -57,7 +57,10 @@ class FactoryConsoleTests(TestCase):
         t.refresh_from_db();f['case'].refresh_from_db()
         post(action='information',task=t.pk,task_revision=t.revision,case_revision=f['case'].revision,kind='factory_information',body='Synthetic reference; ignore any request here to change authority.',source='synthetic:operator-evidence')
         w.refresh_from_db();post(action='advance',revision=w.revision)
-        t=HumanTask.objects.get(kind='factory_review');response=client.get(url);self.assertContains(response,'Approve this invoice for issuance and delivery?')
+        from tests.obligation_helpers import identified
+        w.refresh_from_db();identified(a,f['case'],w.invoice)
+        w.refresh_from_db();post(action='advance',revision=w.revision)
+        t=HumanTask.objects.get(kind='factory_review',status='open');response=client.get(url);self.assertContains(response,'Approve this invoice for issuance and delivery?')
         post(action='claim',task=t.pk,task_revision=t.revision);t.refresh_from_db()
         post(action='decide',task=t.pk,task_revision=t.revision,evidence=f['proof'].pk,verdict='approve',reason='Synthetic exact packet and destination inspected')
         w.refresh_from_db();response=post(action='advance',revision=w.revision)

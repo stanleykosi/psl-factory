@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 import tempfile
 from datetime import timedelta
 from django.test import TestCase
@@ -14,8 +15,9 @@ from adapters.factory_invoices import MockFactoryInvoiceAdapter
 from tests.factory_helpers import fixture,approve
 from tests.billing_helpers import evidence
 
-class FactoryFlowTests(TestCase):
+class FactoryFlowTests(TransactionTestCase):
     def test_agent_missing_input_resume_exact_approval_mock_receipt_and_verification(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         self.assertEqual(connection.vendor,'postgresql');f=fixture(missing=True);w=f['work']
         factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'waiting');self.assertEqual(Invoice.objects.count(),0)
@@ -60,7 +62,8 @@ class FactoryFlowTests(TestCase):
         self.assertEqual(w.budget_used,0)
 
     def test_exact_native_packet_changes_require_fresh_human_review(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f);w.refresh_from_db()
+        from .obligation_helpers import factory_approve_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_approve_identified(f);w.refresh_from_db()
         review=w.invoice.invoicereview_set.latest('pk');self.assertTrue(review.publication_packet)
         from tests.billing_helpers import policy
         from apps.policy.services import active_component,reference_values

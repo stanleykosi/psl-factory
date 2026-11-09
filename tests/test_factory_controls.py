@@ -14,7 +14,7 @@ from adapters.factory_invoices import MockFactoryInvoiceAdapter
 from tests.factory_helpers import fixture,approve
 from tests.billing_helpers import evidence
 
-class FactoryControlTests(TestCase):
+class FactoryControlTests(TransactionTestCase):
     def test_returned_packet_reworks_changed_terms_without_rewriting_history(self):
         from apps.finance.models import InvoiceReview
         from tests.billing_helpers import policy
@@ -111,6 +111,7 @@ class FactoryControlTests(TestCase):
         self.assertFalse(row['can_advance']);self.assertFalse(row['can_reconcile']);self.assertFalse(row['needs_me'])
 
     def test_stop_after_exact_invoice_delivery_keeps_finance_followup_distinct_from_verification(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         from apps.workflows.factory_views import presentation
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f)
         with tempfile.TemporaryDirectory() as directory:
@@ -127,6 +128,7 @@ class FactoryControlTests(TestCase):
             self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),1)
 
     def test_positive_remote_proof_is_recorded_after_cancellation_without_new_delivery(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         from django.test import override_settings
         from apps.identity.models import Grant
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f)
@@ -143,6 +145,7 @@ class FactoryControlTests(TestCase):
             factory.run_until_wait(w.pk,adapter=adapter);self.assertFalse(InvoiceDelivery.objects.exists())
 
     def test_eventual_absence_parks_without_model_poll_or_duplicate_publication(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f)
         with tempfile.TemporaryDirectory() as directory:
             adapter=MockFactoryInvoiceAdapter(directory,lose_response=True,delayed_reads=2)

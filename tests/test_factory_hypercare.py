@@ -167,7 +167,7 @@ class FactoryHypercareTests(TestCase):
         panel=factory_hypercare.projection(f.actor,f.work);self.assertTrue(panel['can_accept_go_live'])
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk])
         payload={'action':'hypercare_observation','kind':'acceptance','revision':f.work.revision,'case_revision':rev(f.case),
-            'receipt':receipt.pk,'pm_signature':pm.pk,'client_signature':pm.pk,'packet':panel['acceptance_packet'],'note':'Actual fixture go-live source observation'}
+            'receipt':receipt.pk,'pm_signature':pm.pk,'client_signature':pm.pk,'attestation':json.dumps(f.attestation(receipt,pm,client)),'packet':panel['acceptance_packet'],'note':'Actual fixture go-live source observation'}
         page=self.client.get(url);self.assertContains(page,'Review the signature evidence')
         self.assertContains(page,'Synthetic actual PM signature for this report');self.assertContains(page,'<h4>Executive summary</h4>',html=True)
         self.assertNotContains(page,'&#x27;sections&#x27;:')

@@ -1,0 +1,46 @@
+"""Pure inert admission architecture checks, not database equivalence proof."""
+import ast
+from pathlib import Path
+import unittest
+ROOT=Path(__file__).resolve().parents[1]
+SOURCE=ROOT/'apps/policy/template_policy_admission.py'
+class TemplatePolicyAdmissionComponentTests(unittest.TestCase):
+    def test_no_native_validation_before_closure_or_routes(self):
+        tree=ast.parse(SOURCE.read_text())
+        calls={ast.unparse(n.func) for n in ast.walk(tree) if isinstance(n,ast.Call)}
+        for name in ['validate_envelope','application_health','source_health','owner_current','status','active_claims']:
+            self.assertNotIn(name,calls)
+        for name in ['documents.template_claims','documents.template_retractions','documents.template_resolutions']:
+            self.assertNotIn(name,(ROOT/'adapters/policy_impact.py').read_text())
+    def test_scalar_admission_before_payload_and_fixed_allowlist(self):
+        s=SOURCE.read_text()
+        self.assertLess(s.index('self.ledger.begin(kind,pk)'),s.index('cursor.execute(sql,params)'))
+        self.assertLess(s.index('self.ledger.reserve(ticket,metadata)'),s.index('self.ledger.before_transfer(ticket)'))
+        self.assertLess(s.index('self.ledger.before_decode(ticket)'),s.index('value=decode_canonical'))
+        ledger=(ROOT/'apps/policy/template_policy_budget_v2.py').read_text()
+        self.assertIn('raw is not self.raw',ledger)
+        self.assertIn("s['actor'] is not self.actor",ledger)
+    def test_descriptor_exact_types_and_dedup_identity(self):
+        tree=ast.parse(SOURCE.read_text());fn=next(x for x in tree.body if isinstance(x,ast.FunctionDef) and x.name=='descriptor')
+        def hold():raise ValueError('hold')
+        ns={'hold':hold};exec(compile(ast.Module(body=[fn],type_ignores=[]),'<descriptor>','exec'),ns)
+        good={'artifact_ref':'x','artifact_version':1,'schema_ref':'schema:x','sha256':'a'*64}
+        self.assertEqual(ns['descriptor']({'value':good}),good)
+        for bad in [True,'1',None,0]:
+            with self.assertRaises(ValueError):ns['descriptor']({'value':dict(good,artifact_version=bad)})
+        s=(ROOT/'apps/policy/template_policy_budget_v2.py').read_text();self.assertIn('existing.metadata!=metadata',s)
+    def test_source_authorization_and_conditional_exact_head(self):
+        s=SOURCE.read_text();self.assertLess(s.index("require(observer,source_case,'policy.read')"),s.index("env=budget.load('configuration',local"))
+        self.assertIn("src['kind']!='organization' and source_case.pk!=case.pk",s)
+        self.assertIn("if current=='active':",s);self.assertIn("states__state__in=['active','revoked']",s)
+        self.assertNotIn('latest_state__in',s)
+    def test_native_extensions_keep_legitimate_setup_and_reduced_cap_label(self):
+        s=(ROOT/'tests/test_template_policy_admission803.py').read_text()
+        self.assertIn('NOT proof of production256KiB threshold',s)
+        self.assertIn('attempt(size,True);attempt(size-1,False)',s)
+        self.assertIn("self.assertGreater(size,characters)",s)
+        self.assertIn("register_reference(self.a,self.c.pk,'synthetic:boundary803'",s)
+        self.assertIn("self.assertEqual(CELLS['reference'],original)",s)
+        self.assertNotIn('ScopeState.objects.create',s)
+        self.assertNotIn('RegisteredReference.objects.create',s)
+        self.assertIn("self.assertEqual(scopes.state(source),'superseded')",s)

@@ -33,9 +33,12 @@ def change_rule(f,relevant=True):
     return policy(f['actor'],f['case'],'D05.decision_action_matrix',value)
 
 
-class FactoryReviewAuthorityTests(TestCase):
-    def restored_rule(self,claimed=False):
+class FactoryReviewAuthorityTests(TransactionTestCase):
+    def restored_rule(self,claimed=False,*,identity=False):
         f=fixture();w=f['work'];factory.run_until_wait(w.pk)
+        if identity:
+            from tests.obligation_helpers import factory_identified
+            factory_identified(f)
         initial=deepcopy(reference_values(active_component('D05.decision_action_matrix',f['case']))[0])
         review=approve(f);change_rule(f);factory.run_until_wait(w.pk)
         obsolete=HumanTask.objects.get(kind='factory_review',status='open')
@@ -68,10 +71,10 @@ class FactoryReviewAuthorityTests(TestCase):
         return f
 
     def test_restored_valid_rule_closes_obsolete_wait_after_verified_receipts(self):
-        self.restored_rule()
+        self.restored_rule(identity=True)
 
     def test_restored_valid_rule_preserves_claim_history_when_retiring_obsolete_wait(self):
-        self.restored_rule(claimed=True)
+        self.restored_rule(claimed=True,identity=True)
 
     def restored_wait(self,**profile_values):
         f=fixture(**profile_values);w=f['work'];factory.run_until_wait(w.pk)
@@ -146,8 +149,11 @@ class FactoryReviewAuthorityTests(TestCase):
         self.assertFalse(row['review_needs_update']);self.assertFalse(row['can_advance'])
         self.assertEqual(row['next_action'],'Wait for the current worker observation');self.assertFalse(InvoiceReview.objects.exists())
 
-    def reserved_outside_console(self):
+    def reserved_outside_console(self,*,identity=False):
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);w.refresh_from_db()
+        if identity:
+            from tests.obligation_helpers import factory_identified
+            factory_identified(f)
         invoices.review(f['actor'],f['case'].pk,w.invoice_id,'Finance','approve',f['proof'].pk,'Synthetic native Finance review outside coordinator',rev(f['case']))
         job=invoices.reserve(f['actor'],f['case'].pk,w.invoice_id,'issue','Finance',rev(f['case']),factory_work_id=w.pk)
         return f,job
@@ -159,7 +165,7 @@ class FactoryReviewAuthorityTests(TestCase):
         self.assertEqual(job.status,'pending');self.assertEqual(job.attempts,0);self.assertFalse(InvoiceIssue.objects.exists())
 
     def test_uncertain_original_effect_precedes_review_message_and_stays_in_exceptions(self):
-        f,job=self.reserved_outside_console()
+        f,job=self.reserved_outside_console(identity=True)
         with tempfile.TemporaryDirectory() as directory:
             invoice_delivery.run_once(MockFactoryInvoiceAdapter(directory,lose_response=True),job_id=job.pk)
             change_rule(f);response=self.page(f);row=response.context['row']
@@ -177,6 +183,7 @@ class FactoryReviewAuthorityTests(TestCase):
         self.assertNotContains(response,'Update Finance review');self.assertEqual(w.budget_used,spent);self.assertFalse(InvoiceReview.objects.exists())
 
     def test_verified_receipts_remain_history_after_later_review_rule_change(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f)
         with tempfile.TemporaryDirectory() as directory:factory.run_until_wait(w.pk,adapter=MockFactoryInvoiceAdapter(directory))
         change_rule(f);response=self.page(f);row=response.context['row']
@@ -220,8 +227,9 @@ class FactoryReviewAuthorityTests(TestCase):
         self.assertFalse(InvoiceReview.objects.exists());self.assertFalse(InvoiceIssue.objects.exists())
 
     def test_changed_rule_after_claim_disables_ui_and_requires_fresh_routing(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk)
-        task=HumanTask.objects.get(kind='factory_review');task=factory.claim_task(f['actor'],task.pk,task.revision)
+        from tests.obligation_helpers import factory_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_identified(f)
+        task=HumanTask.objects.get(kind='factory_review',status='open');task=factory.claim_task(f['actor'],task.pk,task.revision)
         original=deepcopy(task.context);w.refresh_from_db();spent=w.budget_used;change_rule(f)
         client=Client();client.force_login(f['actor']);response=client.get(reverse('factory_detail',args=[w.pk]))
         self.assertNotContains(response,'Approve exact packet')
@@ -238,8 +246,9 @@ class FactoryReviewAuthorityTests(TestCase):
         self.assertEqual(InvoiceReview.objects.count(),1);self.assertEqual(InvoiceIssue.objects.count(),1)
 
     def test_obsolete_native_approval_does_not_auto_complete_or_block_fresh_review(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk);first=approve(f)
-        original=HumanTask.objects.get(kind='factory_review');change_rule(f)
+        from tests.obligation_helpers import factory_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_identified(f);first=approve(f)
+        original=HumanTask.objects.get(kind='factory_review',status='completed');change_rule(f)
         factory.run_until_wait(w.pk);w.refresh_from_db();original.refresh_from_db()
         fresh=HumanTask.objects.get(kind='factory_review',status='open')
         self.assertNotEqual(fresh.pk,original.pk);self.assertEqual(original.status,'completed')
@@ -249,8 +258,9 @@ class FactoryReviewAuthorityTests(TestCase):
         w.refresh_from_db();self.assertEqual(w.status,'verified',w.finding);self.assertEqual(Invoice.objects.count(),1)
 
     def test_unrelated_decision_namespace_preserves_claim_and_native_approval(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk)
-        task=HumanTask.objects.get(kind='factory_review');change_rule(f,relevant=False)
+        from tests.obligation_helpers import factory_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_identified(f)
+        task=HumanTask.objects.get(kind='factory_review',status='open');change_rule(f,relevant=False)
         factory.claim_task(f['actor'],task.pk,task.revision);review=approve(f)
         change_rule(f,relevant=False)
         with tempfile.TemporaryDirectory() as directory:factory.run_until_wait(w.pk,adapter=MockFactoryInvoiceAdapter(directory))
@@ -270,6 +280,7 @@ class FactoryReviewAuthorityTests(TestCase):
         self.assertFalse(InvoiceReview.objects.exists())
 
     def test_original_receipt_is_observed_before_changed_rule_requires_new_delivery_review(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f);w.refresh_from_db();invoice=w.invoice_id
         with tempfile.TemporaryDirectory() as directory:
             adapter=MockFactoryInvoiceAdapter(directory,lose_response=True)
@@ -313,6 +324,7 @@ class FactoryReviewAuthorityTests(TestCase):
 
 class FactoryReviewRetirementConcurrencyTests(TransactionTestCase):
     def test_verification_serializes_with_actual_claim_release_without_losing_revision(self):
+        from tests.obligation_helpers import factory_approve_identified as approve
         f=fixture();w=f['work'];factory.run_until_wait(w.pk)
         initial=deepcopy(reference_values(active_component('D05.decision_action_matrix',f['case']))[0])
         approve(f);change_rule(f);factory.run_until_wait(w.pk)

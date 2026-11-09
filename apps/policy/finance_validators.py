@@ -5,7 +5,7 @@ from apps.pmo.services import subject
 from apps.finance.rules import decimal,evaluate,formula_order
 from .document_validators import typed,ROLES
 
-SUPPORTED={'D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.join_overlap_rule_id',
+SUPPORTED={'D06.statement_contract','D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.join_overlap_rule_id',
     'D07.effective_membership_ref','D07.allocation_pool_rules','D07.rounding_residual_rule_id',
     'D10.report_category_effective_dates','D10.audience_projection_rules','D10.restatement_rule_id','D10.forecast_inclusion_rule_id'}
 KEY={'type':'string','pattern':'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$'}
@@ -61,6 +61,9 @@ def validate_reference(component,target,case,runtime=False):
         if 'bu_tolerance' in v['report_controls']:decimal(v['report_controls']['bu_tolerance'],nonnegative=True)
         if v3:validate_method(v['performance'],case)
         return
+    if component=='D06.statement_contract':
+        from .statement_validators import validate_reference as validate_statement
+        return validate_statement(target,case)
     name,schema=SCHEMAS[component]
     projection_v2=component=='D10.audience_projection_rules' and target.schema_ref=='schema:psl/finance-projection/v2'
     if projection_v2:
@@ -68,7 +71,12 @@ def validate_reference(component,target,case,runtime=False):
         schema=copy.deepcopy(schema);audience=schema['properties']['audiences']['items']
         audience['properties'].update(columns={'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['actual','budget','prior','variance','prior_variance','ratio']}},charts={'type':'boolean'})
         audience['required']+=['columns','charts']
-    v=typed(target,'schema:psl/'+name+('/v2' if projection_v2 else '/v1'),schema)
+    pool_v2=component=='D07.allocation_pool_rules' and target.schema_ref=='schema:psl/finance-pool/v2'
+    if pool_v2:
+        import copy
+        from .allocation_coverage import NULLABLE_COVERAGE
+        schema=copy.deepcopy(schema);schema['properties']['weight_contract']=NULLABLE_COVERAGE;schema['required'].append('weight_contract')
+    v=typed(target,'schema:psl/'+name+('/v2' if projection_v2 or pool_v2 else '/v1'),schema)
     if 'from_period' in v and v['to_period']<v['from_period']:raise ValidationError('Effective periods are reversed')
     if component=='D06.account_bu_maps':
         if v['account']!=v['account'].strip():raise ValidationError('Account identifier must match the supplied trimmed source exactly')
@@ -98,6 +106,9 @@ def validate_reference(component,target,case,runtime=False):
             known|=actual is not None;unknown|=actual is None
         if not known or not unknown:raise ValidationError('Supply known-value and unknown-propagation oracle scenarios')
     elif component=='D07.allocation_pool_rules':
+        if pool_v2:
+            from .allocation_coverage import validate_contract
+            validate_contract(v,case)
         if any(x!=x.strip() for x in v['excluded_accounts']):raise ValidationError('Excluded accounts must match exact supplied identifiers')
         if v['method']=='headcount_weighted' and v['weights'] or v['method']=='fixed_weights' and not v['weights']:raise ValidationError('Only fixed-weight rules supply explicit weights')
         if len({x['bu'] for x in v['weights']})!=len(v['weights']):raise ValidationError('Duplicate BU weight')

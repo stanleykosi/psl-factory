@@ -68,8 +68,12 @@ def allocate_rows(parent,metrics,configs,actor=None):
                 if set(rule['excluded_bu_keys'])-set(bus):raise ValidationError('Pool exclusions reference unknown BUs')
                 if rule['method']=='fixed_weights':
                     if any(x['bu'] not in eligible for x in rule['weights']):raise ValidationError('Fixed weights reference an unknown/excluded BU')
-                    weights={x['bu']:decimal(x['weight'],nonnegative=True) for x in rule['weights']}
-                    basis={'method':'explicit_fixed_weights','weights':{k:number(v) for k,v in weights.items()}}
+                    if 'weight_contract' in rule:
+                        from apps.policy.allocation_coverage import checked_weights
+                        record['weight_contract']=rule['weight_contract']
+                        weights=checked_weights(rule['weights'],rule['weight_contract'])
+                    else:weights={x['bu']:decimal(x['weight'],nonnegative=True) for x in rule['weights']}
+                    basis={'method':'explicit_fixed_weights','weight_contract':rule.get('weight_contract'),'weight_semantics':'explicit_contract' if 'weight_contract' in rule else 'legacy_relative_v1','weights':{k:number(v) for k,v in weights.items()}}
                 else:
                     used.update([INPUTS,JOIN,MEMBERSHIP]);weights,basis=headcount_weights(source,period,eligible,configs,actor)
                     unknown_bus=set(basis['membership_bu_keys'])-set(bus) if 'hr_snapshot_id' in basis else {x['bu'] for x in reference_values(configs[MEMBERSHIP])[0]['rows']}-set(bus)

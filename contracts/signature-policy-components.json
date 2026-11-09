@@ -1,0 +1,78 @@
+{
+  "classification": "Engineering interface for unresolved source Q09; no real signatories or methods are appointed",
+  "components": [
+    {
+      "id": "D11.client_signature_contract",
+      "parent_decision_id": "D11",
+      "schema_ref": "schema:psl/policy-component/D11.client_signature_contract/v1",
+      "subject_scope": "Exact project: owner-backed client/internal classification and required/not-applicable/unresolved signature requirement. Required signatures use actual eligible parties and methods; internal exemptions are distinct unsigned proof and never imply signature authenticity.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "D11.change_go_live_client_applicability",
+      "parent_decision_id": "D11",
+      "schema_ref": "schema:psl/policy-component/D11.change_go_live_client_applicability/v1",
+      "subject_scope": "Exact project with explicit per-change-authorization entries; unresolved defaults never authorize unsigned change closure. Does not change baseline applicability or delivery audience.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "schema_ref": {
+            "type": "string",
+            "pattern": "^schema:"
+          }
+        },
+        "required": [
+          "artifact_ref",
+          "artifact_version",
+          "sha256",
+          "schema_ref"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "operation_dependencies": []
+}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Coordinate BU aggregate</h1><p>Reuse exact native sources. Finance decides exception ratios and historical treatment. Only reviewed aggregates reach recipients. This creates no ledger entries.</p>
+<form method="get"><input type="hidden" name="definition" value="finance-bu/v1">{{ form.case.as_field_group }}<button>Select workspace</button></form>
+{% if case %}<p><a href="{% url 'bu' case.pk %}">Inspect native BU sources and rules</a></p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start BU work</button></form>{% endif %}
+{% endblock %}

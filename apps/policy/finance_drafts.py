@@ -12,7 +12,7 @@ from .services import register_reference,save_draft
 
 ARRAYS={'D06.account_bu_maps','D06.rule_oracle_refs','D07.authorized_input_refs','D07.allocation_pool_rules','D10.report_category_effective_dates'}
 STRINGS={'D07.join_overlap_rule_id','D07.effective_membership_ref','D07.rounding_residual_rule_id','D06.source_schema_ref','D10.restatement_rule_id'}
-EXTRA={'D10.restatement_rule_id':'schema:psl/finance-restatement/v1','D05.decision_action_matrix':'schema:psl/decision-actions/v4','D06.unit_sign_currency_period':'schema:psl/source-conventions/v2','D06.source_schema_ref':'schema:psl/controlled-csv/v1'}
+EXTRA={'D06.statement_contract':'schema:psl/finance-statement/v1','D10.restatement_rule_id':'schema:psl/finance-restatement/v1','D05.decision_action_matrix':'schema:psl/decision-actions/v4','D06.unit_sign_currency_period':'schema:psl/source-conventions/v2','D06.source_schema_ref':'schema:psl/controlled-csv/v1'}
 
 ARRAYS |= BILLING_ARRAYS | SETTLEMENT_ARRAYS
 STRINGS |= BILLING_STRINGS | SETTLEMENT_STRINGS | {'D10.forecast_inclusion_rule_id'}
@@ -29,11 +29,13 @@ def draft_finance_policy(actor,case_id,component,content,evidence_id,effective_f
     if component=='D05.decision_action_matrix' and isinstance(content,dict) and any(x.get('purpose') in ['forecast','forecast_rollover','forecast_priority'] for x in content.get('finance',[])):schema='schema:psl/decision-actions/v7'
     if component=='D10.audience_projection_rules' and isinstance(content,dict) and 'forecast' in content:schema='schema:psl/forecast-projection/v1'
     schema=schema_for(component,content,schema)
+    if component=='D06.statement_contract' and isinstance(content,dict) and 'completeness' in content:schema='schema:psl/finance-statement/v2'
+    if component=='D06.statement_contract' and isinstance(content,dict) and any(x.get('source_type')=='ppe_schedule' for x in content.get('inputs',[])):schema='schema:psl/finance-statement/v3'
     if component=='D06.unit_sign_currency_period' and isinstance(content,dict) and 'performance' in content:schema='schema:psl/source-conventions/v3'
     if component=='D10.audience_projection_rules' and isinstance(content,dict) and 'forecast' not in content and any('columns' in x for x in content.get('audiences',[])):schema='schema:psl/finance-projection/v2'
     if component in ARRAYS:
         if not isinstance(content,list) or not 1<=len(content)<=100:raise ValidationError('Supply 1–100 explicit configuration records')
-        value=[register_reference(actor,case.pk,'finance:'+str(uuid4()),schema_for(component,v,schema),v,evidence_id).ref for v in content]
+        value=[register_reference(actor,case.pk,'finance:'+str(uuid4()),('schema:psl/finance-pool/v2' if component=='D07.allocation_pool_rules' and isinstance(v,dict) and 'weight_contract' in v else schema_for(component,v,schema)),v,evidence_id).ref for v in content]
     else:
         r=register_reference(actor,case.pk,'finance:'+str(uuid4()),schema,content,evidence_id)
         value=r.ref if component in STRINGS else {'artifact_ref':r.ref,'artifact_version':r.version,'sha256':r.sha256,'schema_ref':r.schema_ref}

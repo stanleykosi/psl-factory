@@ -1,0 +1,52 @@
+{
+  "format": "NONAPPLIED_SOURCE_SNAPSHOT",
+  "source_commit": "e5439c469818d0ddd731790f3321eebe490bad63",
+  "parent_source_commit": "773ad4964dc163ce0c5c008057ca6a131a8918bb",
+  "required_public_chain": [
+    "17c4bb492bb37812aff6d6d80bbfb8b80f50572e",
+    "64473f74bb1d3857e3b6a16838a1dbd621b4aab8"
+  ],
+  "scope": "Five portable D11 pure-test fixture/test/design targets only; production source unchanged",
+  "files": [
+    {
+      "target_path": "docs/design/d11-storage-dispatch-isolation.md",
+      "snapshot_path": "files/docs/design/d11-storage-dispatch-isolation.md.source",
+      "target_git_blob": "ce49819cf92e03580922035fb3a0f94320f9b916",
+      "sha256": "4e5f5e9e4f52cb15a124efdb8f555ad2f0e92a12ffe0d36f4aad814b934dee29",
+      "bytes": 2513,
+      "mode": "100644"
+    },
+    {
+      "target_path": "tests/fixtures/d11_dispatch/PROVENANCE.json",
+      "snapshot_path": "files/tests/fixtures/d11_dispatch/PROVENANCE.json.source",
+      "target_git_blob": "fbc9ddf54b43cb9a5551655864311dd90c0a45b2",
+      "sha256": "c0996d72bc3b26f258871192d98550b49f7a2adc1fb30633466d095958797723",
+      "bytes": 533,
+      "mode": "100644"
+    },
+    {
+      "target_path": "tests/fixtures/d11_dispatch/four-map-hashes.json",
+      "snapshot_path": "files/tests/fixtures/d11_dispatch/four-map-hashes.json.source",
+      "target_git_blob": "f534026162267f2b0f6dd1db9cb6356249a2295f",
+      "sha256": "357e28e5974b5a83140155ed97b09440a19ca1bc2436f50f5aecc98c09c05b1a",
+      "bytes": 393,
+      "mode": "100644"
+    },
+    {
+      "target_path": "tests/fixtures/d11_dispatch/validate_envelope_before.py.txt",
+      "snapshot_path": "files/tests/fixtures/d11_dispatch/validate_envelope_before.py.txt.source",
+      "target_git_blob": "ba844c39292445dcb5692095f2162b86894a86c6",
+      "sha256": "9e2033f3ff1a3e51e13afb612e3f8a47f49b2d0454d293e9fba2edc88f2c1f1a",
+      "bytes": 16030,
+      "mode": "100644"
+    },
+    {
+      "target_path": "tests/test_d11_dispatch_isolation_component.py",
+      "snapshot_path": "files/tests/test_d11_dispatch_isolation_component.py.source",
+      "target_git_blob": "07309fbcb53cf37dc4556aa9837dde8b7d28cb92",
+      "sha256": "c5ebba96dc6702dd2b1cc43907cbda61ab7526d6715db1b4e2247f3c6403389b",
+      "bytes": 10788,
+      "mode": "100644"
+    }
+  ]
+}

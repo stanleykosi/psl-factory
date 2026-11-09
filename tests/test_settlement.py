@@ -1,3 +1,4 @@
+from django.test import TransactionTestCase
 import json,copy
 from datetime import timedelta
 from decimal import Decimal
@@ -16,11 +17,14 @@ from .helpers import rev
 from .billing_helpers import evidence,policy,coverage,usage,prepare,prices,FIXTURE as USAGE_FIXTURE
 from .settlement_helpers import fixture,draft,approve,issue,receipt,assign,allocate,FIXTURE
 
-class SettlementTests(TestCase):
+class SettlementTests(TransactionTestCase):
     def setUp(self):self.a,self.c,self.cov,self.p,self.e=fixture()
     def snap(self):return receivables.snapshot(self.a,self.c.pk,timezone.localdate(),rev(self.c))
     def test_generation_review_issuance_delivery_are_separate_real_facts(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);self.assertEqual(InvoiceIssue.objects.count(),0)
+        from tests.obligation_helpers import identified
+        identified(self.a,self.c,i)
         with self.assertRaises(ValidationError):invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c));self.assertEqual(InvoiceIssue.objects.count(),0)
         invoice_delivery.run_once();self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),0)
@@ -28,62 +32,77 @@ class SettlementTests(TestCase):
         delivery=InvoiceDelivery.objects.get();self.assertEqual(delivery.payload['amount'],'32.25');self.assertNotIn('preparation_key',delivery.payload)
         self.assertNotIn('rule',delivery.payload['lines'][0]);self.assertEqual(self.snap().result['groups'][0]['receivable'],'32.25000000')
     def test_missing_issuance_policy_does_not_prevent_draft_or_reported_cash(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         config=active_component('D08.adapter_contract_ref',self.c);transition(self.a,config.pk,'revoked')
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e)
         with self.assertRaises(ValidationError):invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         r,_=receipt(self.a,self.c,verify=False);self.assertEqual(CashReceipt.objects.count(),1)
     def test_unknown_after_accept_reconciles_before_later_grant_revocation(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         invoice_delivery.run_once(TimeoutAfterInvoiceAccept());j.refresh_from_db();self.assertEqual(j.status,'unknown')
         self.assertEqual(InvoiceIssue.objects.count(),1)
         Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.issue').update(active=False)
         invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'confirmed');self.assertEqual(InvoiceIssue.objects.count(),1)
     def test_newer_invoice_revision_blocks_old_reservation_and_single_canonical_debt(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);old=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
+        self.assertEqual(old.attempts,0);self.assertEqual(old.fence,0)
+        invoice_delivery.operate(self.a,self.c.pk,old.pk,'cancel','Explicitly cancel unattempted prior reservation',rev(self.c))
         newer=draft(self.a,self.c,self.p);self.assertEqual(newer.version,2);approve(self.a,self.c,newer,self.e);invoices.reserve(self.a,self.c.pk,newer.pk,'issue','Finance',rev(self.c))
-        invoice_delivery.run_once();old.refresh_from_db();self.assertEqual(old.status,'held');invoice_delivery.run_once()
+        invoice_delivery.run_once();old.refresh_from_db();self.assertEqual(old.status,'cancelled');invoice_delivery.run_once()
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceIssue.objects.get().invoice_id,newer.pk)
         with self.assertRaises(ValidationError):draft(self.a,self.c,self.p)
     def test_returned_review_holds_worker_then_explicit_intent_replacement_resumes(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         invoices.review(self.a,self.c.pk,i.pk,'Finance','return',self.e['invoice_review'].pk,'Return exact document',rev(self.c))
         invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'held')
+        from apps.finance.models import ObligationEffect
+        self.assertGreater(j.attempts,0);self.assertFalse(ObligationEffect.objects.filter(invoice=i).exists())
         approve(self.a,self.c,i,self.e)
         invoice_delivery.operate(self.a,self.c.pk,j.pk,'replace_intent','Fresh current review reservation',rev(self.c))
         self.assertEqual(InvoiceJob.objects.count(),2);invoice_delivery.run_once();self.assertEqual(InvoiceIssue.objects.count(),1)
     def test_cancel_is_sticky_and_does_not_cancel_a_proven_obligation(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         invoice_delivery.operate(self.a,self.c.pk,j.pk,'cancel','Explicit cancellation',rev(self.c));self.assertFalse(invoice_delivery.run_once());self.assertEqual(InvoiceIssue.objects.count(),0)
         with self.assertRaises(ValidationError):invoice_delivery.operate(self.a,self.c.pk,j.pk,'retry','Forbidden retry',rev(self.c))
     def test_recipient_revocation_holds_delivery_but_never_removes_issued_debt(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);issue(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'deliver','Finance',rev(self.c))
         Grant.objects.filter(case=self.c,user=self.a,action='finance.invoice.receive').update(active=False)
         invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'held');self.assertEqual(InvoiceDelivery.objects.count(),0)
         self.assertEqual(self.snap().result['groups'][0]['receivable'],'32.25000000')
     def test_reported_unknown_and_unverified_cash_never_settle_debt(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e)
         r,_=receipt(self.a,self.c,verify=False);unknown,_=receipt(self.a,self.c,None,'unknown',False)
         proof=evidence(self.a,self.c,'cash_verification',json.dumps(unknown.payload))
         with self.assertRaises(ValidationError):cash.verify(self.a,self.c.pk,unknown.pk,'Finance',proof.pk,rev(self.c))
         s=self.snap();self.assertEqual(len(s.result['reported_unverified']),2);self.assertEqual(s.result['groups'][0]['verified_cash'],'0')
     def test_cash_before_invoice_unmatched_assignment_and_partial_allocation(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         r,l=receipt(self.a,self.c);self.assertEqual(self.snap().result['unmatched_cash'][0]['amount'],'50.00000000')
         assign(self.a,self.c,r,self.cov,self.e);iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e)
         a=allocate(self.a,self.c,l,iss,'20.00',self.e);self.assertEqual(allocate(self.a,self.c,l,iss,'20.00',self.e).pk,a.pk)
         s=self.snap();g=s.result['groups'][0];self.assertEqual(g['receivable'],'12.25000000');self.assertEqual(g['verified_cash'],'50.00000000');self.assertEqual(g['unallocated_cash'],'30.00000000')
         self.assertFalse(s.result['deployment_authorized']);self.assertFalse(s.result['ledger_posted'])
     def test_multiple_receipts_settle_one_invoice_and_excess_stays_unallocated(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e)
         r,l=receipt(self.a,self.c,'10.00');assign(self.a,self.c,r,self.cov,self.e);allocate(self.a,self.c,l,iss,'10.00',self.e)
         r2,l2=receipt(self.a,self.c,'50.00','cash-2');assign(self.a,self.c,r2,self.cov,self.e);allocate(self.a,self.c,l2,iss,'22.25',self.e)
         g=self.snap().result['groups'][0];self.assertEqual(Decimal(g['receivable']),0);self.assertEqual(Decimal(g['verified_cash']),60);self.assertEqual(Decimal(g['unallocated_cash']),Decimal('27.75'))
     def test_one_receipt_can_settle_multiple_invoices_without_creating_cash(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         first=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e)
         body=json.loads(USAGE_FIXTURE.read_text(encoding='utf-8'))['csv'].replace('tx-example-1','tx-example-2')
         u=usage(self.a,self.c,self.cov,body);p=prepare(self.a,self.c,self.cov,u=u);second=issue(self.a,self.c,draft(self.a,self.c,p,'INV-SECOND'),self.e)
         r,l=receipt(self.a,self.c);assign(self.a,self.c,r,self.cov,self.e);allocate(self.a,self.c,l,first,'32.25',self.e);allocate(self.a,self.c,l,second,'17.75',self.e,'match-2')
         g=self.snap().result['groups'][0];self.assertEqual(Decimal(g['receivable']),Decimal('14.50'));self.assertEqual(Decimal(g['verified_cash']),50);self.assertEqual(Decimal(g['unallocated_cash']),0)
     def test_both_capacities_precision_and_operation_identity_are_enforced(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c,'20.00');assign(self.a,self.c,r,self.cov,self.e)
         for amount in ['20.01','32.26','0','-1','NaN','0.001']:
             with self.assertRaises(ValidationError):allocate(self.a,self.c,l,iss,amount,self.e)
@@ -95,6 +114,7 @@ class SettlementTests(TestCase):
         with self.assertRaises(ValidationError):cash.report(self.a,self.c.pk,e.pk,rev(self.c))
         self.assertEqual(CashVerification.objects.count(),1)
     def test_full_lot_reversal_reopens_debt_and_subtracts_cash_exactly_once(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c);assign(self.a,self.c,r,self.cov,self.e);a=allocate(self.a,self.c,l,iss,'32.25',self.e)
         cash.reverse(self.a,self.c.pk,'lot',l.pk,'Finance',self.e['cash_correction'].pk,'Full evidenced reversal',rev(self.c))
         self.assertEqual(CashReversal.objects.count(),2);g=self.snap().result['groups'][0]
@@ -102,16 +122,19 @@ class SettlementTests(TestCase):
         with self.assertRaises(ValidationError):cash.reverse(self.a,self.c.pk,'lot',l.pk,'Finance',self.e['cash_correction'].pk,'Second reversal refused',rev(self.c))
         with self.assertRaises(ValidationError):allocate(self.a,self.c,l,iss,'1',self.e,'after-reversal')
     def test_allocation_reversal_preserves_cash_and_full_reversal_later_does_not_double_reverse(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c);assign(self.a,self.c,r,self.cov,self.e);a=allocate(self.a,self.c,l,iss,'10',self.e)
         cash.reverse(self.a,self.c.pk,'allocation',a.pk,'Finance',self.e['cash_correction'].pk,'Unmatch exact allocation',rev(self.c))
         self.assertEqual(cash.cash_remaining(l),50);self.assertEqual(cash.open_amount(iss),Decimal('32.25'))
         cash.reverse(self.a,self.c.pk,'lot',l.pk,'Finance',self.e['cash_correction'].pk,'Full lot reversal',rev(self.c));self.assertEqual(CashReversal.objects.count(),2)
     def test_reassignment_reverses_existing_allocations_atomically_before_contract_move(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c);assign(self.a,self.c,r,self.cov,self.e);allocate(self.a,self.c,l,iss,'20',self.e)
         other=coverage(self.a,self.c,reference='other',contract='other-contract');assign(self.a,self.c,r,other,self.e)
         self.assertEqual(cash.open_amount(iss),Decimal('32.25'));self.assertEqual(cash.cash_remaining(l),50)
         with self.assertRaises(ValidationError):allocate(self.a,self.c,l,iss,'1',self.e,'wrong-contract')
     def test_missing_correction_policy_does_not_block_receipt_capture_or_independent_snapshot(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c);assign(self.a,self.c,r,self.cov,self.e);allocate(self.a,self.c,l,iss,'10',self.e)
         transition(self.a,active_component('D14.legal_document_requirements',self.c).pk,'revoked')
         with self.assertRaises(ValidationError):cash.reverse(self.a,self.c.pk,'lot',l.pk,'Finance',self.e['cash_correction'].pk,'Missing legal policy',rev(self.c))
@@ -129,17 +152,20 @@ class SettlementTests(TestCase):
         with self.assertRaises(ValidationError):policy(self.a,self.c,'D14.adjustment_correction_rule_refs',[dict(f['reversals'][0],implementation='partial_refund')])
         with self.assertRaises(ValidationError):policy(self.a,self.c,'D14.legal_document_requirements',[f['legal'][0],f['legal'][0]])
     def test_receivable_as_of_and_scope_are_not_caller_subsets_or_invented_zeros(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         issue(self.a,self.c,draft(self.a,self.c,self.p),self.e)
         with self.assertRaises(ValidationError):receivables.snapshot(self.a,self.c.pk,timezone.localdate()-timedelta(days=1),rev(self.c))
         transition(self.a,active_component('D14.allocation_rule_ref',self.c).pk,'revoked')
         s=self.snap();self.assertIsNone(s.result['groups'][0]['overdue']);self.assertEqual(Decimal(s.result['groups'][0]['receivable']),Decimal('32.25'))
         self.assertIn('UNKNOWN',s.result['payment_assessment'])
     def test_bounded_agent_cites_cash_and_review_sources_without_execution_tools(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c);s=self.snap()
         log=investigate(self.a,self.c.pk,s.pk,rev(self.c));self.assertTrue(log.result['current']);self.assertFalse(log.result['allocation_executed'])
         self.assertTrue(any(x['kind']=='cash_verification' for x in log.result['citations']))
         receipt(self.a,self.c,ref='new-pending',verify=False);log=investigate(self.a,self.c.pk,s.pk,rev(self.c));self.assertFalse(log.result['current'])
     def test_staff_forms_and_recipient_inbox_use_real_services_and_scoped_projection(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         self.client.force_login(self.a);url=f'/cases/{self.c.pk}/finance/settlement/'
         response=self.client.post(url,{'action':'draft','preparation':self.p.pk,'reference':'UI-INVOICE','due_date':timezone.localdate().isoformat(),'revision':rev(self.c)})
         self.assertEqual(response.status_code,302);i=Invoice.objects.get();issue(self.a,self.c,i,self.e)
@@ -154,12 +180,14 @@ class SettlementTests(TestCase):
         self.client.force_login(self.a);self.assertEqual(self.client.get(f'/cases/{private.pk}/finance/settlement/').status_code,404)
         with self.assertRaises(ValidationError):cash.verify(self.a,self.c.pk,999999,'Finance',self.e['cash_correction'].pk,rev(self.c))
     def test_postgresql_guards_protect_history_and_reserved_intent(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         self.assertEqual(connection.vendor,'postgresql');i=draft(self.a,self.c,self.p);approve(self.a,self.c,i,self.e);j=invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         for sql in ['UPDATE finance_invoice SET amount=1 WHERE id=%s',"UPDATE finance_invoicejob SET intent='{}' WHERE id=%s"]:
             with self.assertRaises(DatabaseError),transaction.atomic():
                 with connection.cursor() as cursor:cursor.execute(sql,[i.pk if 'SET amount' in sql else j.pk])
 
     def test_configured_due_terms_and_usage_completeness_hold_only_issuance(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=invoices.draft(self.a,self.c.pk,self.p.pk,'NO-DUE',None,rev(self.c));approve(self.a,self.c,i,self.e)
         with self.assertRaisesMessage(ValidationError,'due terms'):invoices.reserve(self.a,self.c.pk,i.pk,'issue','Finance',rev(self.c))
         f=json.loads(FIXTURE.read_text(encoding='utf-8'));policy(self.a,self.c,'D08.adapter_contract_ref',dict(f['adapter'],recipient_id=self.a.pk,require_due_date=False,allow_partial_usage=False))
@@ -174,6 +202,7 @@ class SettlementTests(TestCase):
         with self.assertRaises(ValidationError):cash.verify(self.a,self.c.pk,newer.pk,'Finance',proof.pk,rev(self.c))
         s=self.snap();self.assertEqual(Decimal(s.result['unmatched_cash'][0]['amount']),50);self.assertEqual(len(s.result['reported_unverified']),1)
     def test_mixed_currency_cannot_allocate_and_snapshot_keeps_dimensions_separate(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);f=json.loads(FIXTURE.read_text(encoding='utf-8'))
         policy(self.a,self.c,'D14.receipt_verification_source_ref',dict(f['source'],currency='USD'))
         value={'source':'synthetic-bank','transaction_ref':'usd-cash','customer':self.cov.customer,'amount':'50.00','currency':'USD','amount_basis':'gross_including_tax','received_at':timezone.now().isoformat()}
@@ -188,11 +217,13 @@ class SettlementTests(TestCase):
         proof=add_evidence(self.a,self.c.pk,'cash_verification',json.dumps(r.payload),'synthetic:independent-statement-locator')
         self.assertEqual(cash.verify(self.a,self.c.pk,r.pk,'Finance',proof.pk,rev(self.c)).amount,50)
     def test_reassignment_without_correction_policy_rolls_back_all_allocations_and_ownership(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c);a=assign(self.a,self.c,r,self.cov,self.e);allocate(self.a,self.c,l,iss,'20',self.e)
         other=coverage(self.a,self.c,reference='other',contract='other-contract');transition(self.a,active_component('D14.legal_document_requirements',self.c).pk,'revoked')
         with self.assertRaises(ValidationError):assign(self.a,self.c,r,other,self.e)
         self.assertEqual(cash.assigned(r).pk,a.pk);self.assertEqual(CashReversal.objects.count(),0);self.assertEqual(cash.open_amount(iss),Decimal('12.25'))
     def test_unknown_without_acceptance_has_bounded_reconciliation_and_no_blind_operator_retry(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         from adapters.invoices import InternalInvoiceAdapter
         class NoAcceptance(InternalInvoiceAdapter):
             def deliver(self,pk,fence):raise TimeoutError('Synthetic before acceptance uncertainty')
@@ -207,6 +238,7 @@ class SettlementTests(TestCase):
         value={'source':'synthetic-bank','transaction_ref':'wide','customer':self.cov.customer,'amount':'12345678901234567890123.12345678','currency':'NGN','amount_basis':'gross_including_tax','received_at':timezone.now().isoformat()}
         self.assertEqual(parse(json.dumps(value))['amount'],value['amount'])
     def test_agent_match_suggestions_are_individual_alternatives_and_never_execute(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         iss=issue(self.a,self.c,draft(self.a,self.c,self.p),self.e);r,l=receipt(self.a,self.c);assign(self.a,self.c,r,self.cov,self.e);s=self.snap()
         run=investigate(self.a,self.c.pk,s.pk,rev(self.c));suggestion=run.result['matching_alternatives'][0]
         self.assertTrue(suggestion['human_selection_required']);self.assertTrue(suggestion['alternatives_not_combined']);self.assertEqual(Decimal(suggestion['maximum_individual_amount']),Decimal('32.25'));self.assertEqual(CashAllocation.objects.count(),0)
@@ -216,6 +248,8 @@ class SettlementTests(TestCase):
         def post(action,**data):
             result=self.client.post(url,dict(action=action,revision=rev(self.c),**data));self.assertEqual(result.status_code,302,result.content[:500]);return result
         i=draft(self.a,self.c,self.p)
+        from tests.obligation_helpers import identified
+        identified(self.a,self.c,i)
         post('review',invoice=i.pk,role='Finance',verdict='approve',evidence=self.e['invoice_review'].pk,reason='UI exact configured review')
         post('reserve',invoice=i.pk,kind='issue',role='Finance');invoice_delivery.run_once();iss=InvoiceIssue.objects.get()
         value={'source':'synthetic-bank','transaction_ref':'ui-cash','customer':self.cov.customer,'amount':'50','currency':'NGN','amount_basis':'gross_including_tax','received_at':timezone.now().isoformat()}
@@ -243,6 +277,7 @@ class SettlementTests(TestCase):
         with self.assertRaisesMessage(ValidationError,'already registered in this tenant'):cash.report(self.a,other.pk,e.pk,rev(other))
         self.assertEqual(CashReceipt.objects.count(),1);self.assertEqual(CashVerification.objects.count(),1)
     def test_cash_sql_history_guards_cover_amounts_and_source_identity(self):
+        from tests.obligation_helpers import approve_identified as approve, issue_identified as issue
         i=draft(self.a,self.c,self.p);iss=issue(self.a,self.c,i,self.e);r,l=receipt(self.a,self.c);assign(self.a,self.c,r,self.cov,self.e);a=allocate(self.a,self.c,l,iss,'10',self.e)
         commands=[('UPDATE finance_cashreceipt SET tenant=%s WHERE id=%s',['other-tenant',r.pk]),('UPDATE finance_cashverification SET amount=%s WHERE id=%s',[1,l.pk]),('UPDATE finance_cashallocation SET amount=%s WHERE id=%s',[20,a.pk])]
         for sql,args in commands:

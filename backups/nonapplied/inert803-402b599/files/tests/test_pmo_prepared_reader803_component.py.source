@@ -1,0 +1,240 @@
+"""Pure prepared predicate/descriptor/ledger checks, no SQL or native fixture."""
+import ast,datetime,hashlib,json,unittest,uuid
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+from apps.pmo import template_prepared_transfer as d
+from apps.pmo.template_prepared_budget import PMOLedger
+from apps.pmo.template_prepared_reader import PreparedLeadershipReader,check_prepared
+from apps.policy import template_policy_budget_v2 as v2
+from apps.documents.template_operation_budget import Metadata,BudgetHold
+ROOT=Path(__file__).resolve().parents[1]
+FILES={'binding_access':'leadership_reporting','authorize_sources':'leadership_reporting','report_source_access':'reporting','selected_access':'incident_reporting','legacy_access':'incident_reporting','observation':'issue_references','read_scope':'issue_references'}
+class Error(Exception):pass
+class Trap:
+    """Access outside declared inventory simulates forbidden deferred hydration."""
+    def __init__(self,**fields):self.__dict__.update(fields)
+    def __getattr__(self,name):raise AssertionError('unadmitted deferred field: '+name)
+def functions(names,ns):
+    nodes=[]
+    class RemoveImports(ast.NodeTransformer):
+        def visit_ImportFrom(self,node):return None
+    for name in names:
+        tree=ast.parse((ROOT/'apps/pmo'/f'{FILES[name]}.py').read_text())
+        node=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name==name)
+        nodes.append(RemoveImports().visit(node))
+    ns.update({'ValidationError':Error,'PermissionDenied':Error,'check_prepared':lambda obj,actor:obj})
+    exec(compile(ast.fix_missing_locations(ast.Module(body=nodes,type_ignores=[])),'<native reader controlflow>','exec'),ns)
+    return ns
+class PMOPredicateTests(unittest.TestCase):
+    def test_legacy_only_contiguous_origin_author_and_state_always_checked(self):
+        link={'kind':'incident','evidence_id':8,'source_ref':'x'};calls=[];actor=Trap(pk=1);case=Trap(pk=2)
+        histories=[Trap(pk=30,references=[link]),Trap(pk=20,references=[link]),Trap(pk=10,references=[])]
+        selected=Trap(pk=20,references=[link],evidence_id=9,actor='allowed-origin')
+        class Loader:
+            def narrative_for(self,c,pk):calls.append('narrative');return Trap(body=json.dumps({'sections':{'s':{'evidence_ids':[8]}}}))
+            def issue_for(self,c,pk):return Trap(pk=5)
+            def history_for(self,issue,at):calls.append('history');return histories
+            def state_for(self,issue,pk,need):calls.append(('state',need));return Trap(pk=6) # no external_links allowed
+            def derived_pin(self,c,p):calls.append(('origin',p['revision_id']))
+            def selected_pin(self,c,p):pass
+            def revision_for(self,c,pk,issue):self_check=pk==20;assert self_check;return selected
+        def require(user,c,action):
+            calls.append(('grant',user if type(user) is str else 'reader',action))
+            if action=='issue.manage' and user!='allowed-origin':raise Error('unselected author must not be required')
+        ns=functions(['legacy_access','selected_access'],{'require':require,'issue_subject':lambda *a,**k:None})
+        ns['legacy_access'](actor,case,{'content':{'id':1},'issues':[(5,6,None)]},'cutoff',_prepared=Loader())
+        self.assertIn(('state',False),calls);self.assertIn(('origin',20),calls)
+        self.assertEqual([c for c in calls if type(c) is tuple and c[0]=='grant' and c[-1]=='issue.manage'],[('grant','allowed-origin','issue.manage')])
+    def test_legacy_fallback_only_without_history(self):
+        calls=[]
+        loader=SimpleNamespace(narrative_for=lambda *a:Trap(body='{"sections": {}}'),issue_for=lambda *a:Trap(pk=5),history_for=lambda *a:[],state_for=lambda i,s,need:(calls.append(need) or Trap(external_links=[])))
+        ns=functions(['legacy_access'],{'selected_access':lambda *a,**kw:None})
+        ns['legacy_access']('actor','case',{'content':{'id':1},'issues':[(5,6,None)]},'cutoff',_prepared=loader)
+        self.assertEqual(calls,[True])
+    def test_modern_empty_distinct_absent_and_source_order(self):
+        for modern in (True,False):
+            calls=[];manifest={'sources':[]}
+            if modern:manifest['incident_claims']=[]
+            loader=SimpleNamespace(version_for=lambda v:v,binding_for=lambda v:Trap(report=Trap(case='case'),manifest=manifest))
+            ns=functions(['binding_access'],{'report_source_access':lambda *a,**k:calls.append('report'), 'legacy_access':lambda *a,**k:calls.append('legacy'),'authorize_sources':lambda *a,**k:calls.append('sources'),'require':lambda *a:None})
+            ns['binding_access']('actor',Trap(pk=1,created_at='cutoff'),_prepared=loader)
+            self.assertEqual(calls,['report','sources'] if modern else ['report','legacy','sources'])
+    def test_observation_read_scope_scalar_inventory_trap(self):
+        case=Trap(pk=2);contract=Trap(case=case,kind='incident',actor='contract-author',evidence_id=7)
+        row=Trap(issue_id=5,contract=contract,actor='observer-author',evidence=Trap(created_by='evidence-author',kind='agent_private_issue_readback',sha256='hash'),source_sha256='hash')
+        calls=[];loader=SimpleNamespace(observation_for=lambda *a:row)
+        ns=functions(['observation','read_scope'],{'require':lambda a,c,k:calls.append((a,k)),'issue_subject':lambda *a,**k:None})
+        self.assertIs(ns['observation']('reader',case,4,_prepared=loader),row)
+        self.assertIn(('reader','issue.reference.incident.read'),calls);self.assertIn(('evidence-author','evidence.add'),calls)
+    def test_no_prepared_fallback_interface_and_version_reload_source(self):
+        with self.assertRaises(Exception):check_prepared(object(),object())
+        source=(ROOT/'apps/pmo/template_prepared_reader.py').read_text()
+        self.assertIn('return self._version_identity()',source)
+        self.assertIn('self.version_pin!=pin',source)
+        self.assertNotIn("require(revision.actor",source)
+        self.assertNotIn('public_evidence',source)
+        self.assertIn('row.body=self._payload',source)
+        self.assertNotIn('json.loads',source)
+
+class PMOTransferTests(unittest.TestCase):
+    def meta(self,kind,data):
+        now=datetime.datetime(2026,1,1,tzinfo=datetime.timezone.utc)
+        identities={'manifest':(1,2,None),'references':(1,2,1,3,4,now,None),'links':(1,1,2,3,now),'narrative':(uuid.UUID(int=1),'agent_private_report',1,'not-body-hash',2,now)}
+        return Metadata(identities[kind],d.spec(kind)[4],len(data),hashlib.sha256(data).hexdigest())
+    def test_text_original_bytes_utf8_only_not_jsonparse_or_storedhash(self):
+        data='not JSON: é🙂'.encode();m=self.meta('narrative',data)
+        self.assertEqual(d.decode('narrative',m,data),data.decode())
+        sql,params=d.transfer_statement('narrative',1,m)
+        self.assertNotIn('body"::text',sql);self.assertIn('not-body-hash',params);self.assertIn(m.fingerprint,params)
+        self.assertGreater(len(data),len(data.decode()))
+    def test_conditional_descriptors_and_json_fresh_objects(self):
+        for kind,data in [('manifest',b'{"x": []}'),('references',b'[]'),('links',b'[]')]:
+            m=self.meta(kind,data);sql,params=d.transfer_statement(kind,1,m)
+            self.assertIn('IS NOT DISTINCT FROM',sql);self.assertIn('sha256',sql);self.assertIn('<=%s',sql)
+            a=d.decode(kind,m,data);b=d.decode(kind,m,memoryview(data));self.assertEqual(a,b);self.assertIsNot(a,b)
+    def test_wrong_hash_length_type_and_closed_spec(self):
+        m=self.meta('manifest',b'{}')
+        for data in (b'[]',b'long',bytearray(b'{}')):
+            with self.assertRaises(d.PreparedHold):d.decode('manifest',m,data)
+        with self.assertRaises(d.PreparedHold):d.metadata_statement('arbitrary',1)
+        with self.assertRaises(d.PreparedHold):d.metadata_statement('manifest',True)
+
+class PMOLedgerTests(unittest.TestCase):
+    def setUp(self):
+        self.actor=SimpleNamespace(pk=1);self.marker={};self.connection=object();self.raw=object()
+        self.p=patch.object(v2,'_binding',lambda *a:(self.marker,self.connection,self.raw));self.p.start();self.addCleanup(self.p.stop)
+    def ledger(self):return PMOLedger(self.actor,['documents.template_claims'])
+    def test_three_phases_shared_global_local_and_no_refund(self):
+        ledger=self.ledger();data=b'{}';m=Metadata((1,2,None),'object',2,hashlib.sha256(data).hexdigest())
+        t=ledger.begin_cell('manifest',1);ledger.reserve_pmo(t,m);ledger.before_transfer(t);ledger.transfer_checked(t,[(data,)]);ledger.before_decode(t);ledger.validated(t)
+        self.assertEqual(ledger.state['attempts'],3);self.assertEqual(ledger.local['bytes'],2)
+        again=self.ledger();self.assertIs(again.state,ledger.state)
+        again.state['bytes']=1024*1024;t=again.begin_cell('manifest',2)
+        with self.assertRaises(BudgetHold):again.reserve_pmo(t,m)
+        self.assertEqual(again.local['bytes'],2)
+    def test_original_ids_reject_bool_before_dedup(self):
+        for values in ([1,True],[True,1],(1,True)):
+            self.marker={};ledger=self.ledger()
+            with self.assertRaises(BudgetHold):ledger.ids('evidence',values)
+            self.assertNotIn('evidence',ledger.local['ids'])
+            self.assertTrue(ledger.state['poison'])
+        self.marker={};ledger=self.ledger();ledger.ids('evidence',[1,1])
+        self.assertEqual(ledger.local['ids']['evidence'],frozenset({1}))
+    def test_manifest_original_source_ids_reject_bool_before_dedup(self):
+        for values in ([1,True],[True,1]):
+            obj=object.__new__(PreparedLeadershipReader);obj.ledger=self.ledger();obj.source_ids=set()
+            with self.assertRaises(d.PreparedHold):
+                obj._register_manifest({'sources':[{'id':v} for v in values],'incident_claims':[]})
+            self.assertEqual(obj.source_ids,set())
+            self.assertNotIn('evidence',obj.ledger.local['ids'])
+        obj._register_manifest({'sources':[{'id':1},{'id':1}],'incident_claims':[]})
+        self.assertEqual(obj.source_ids,{1})
+    def test_scalar_bounds_and_attempts_separate(self):
+        ledger=self.ledger();ledger.ids('revision',range(1,101))
+        with self.assertRaises(BudgetHold):ledger.ids('revision',[101])
+        self.marker={};ledger=self.ledger()
+        for _ in range(1000):ledger.scalar('history')
+        with self.assertRaises(BudgetHold):ledger.scalar('history')
+        self.assertEqual(ledger.state['attempts'],0)
+
+class DefaultPredicatePreservationTests(unittest.TestCase):
+    def test_default_ast_identical_to_a11ee88_after_removing_optin_branches(self):
+        expected={'authorize_sources': '05ed54e4d432661c58a46969b4e8eae0323e8e29ea7a09ad25b4569b24f8bfe5', 'binding_access': '05803852421d01f977612bf83ef6b06a9f6420eb5244bbacab5b48e395619bfd', 'legacy_access': 'c59deba475927c9b6221ffe0a18644f115ff44112d2fec21c770bd66ebc714d8', 'observation': 'b39cf605b9c74aaf8c024f3f0329344365abf84b652ede866a4096d0a8448ce3', 'read_scope': '370d2fe45a0bcc3332fdada40526ef0acf3bc0c5d5be2c97103d0102bb9f2b4c', 'report_source_access': '5e488d7440dd49c71e15e2440a6b5dfa8a1e5c9b24b68ffdd73996b2b985e811', 'selected_access': '387048d9f4bff77bd25808beb9ae6fd396b1316315e3781ba4f258b290962f12'}
+        class Defaults(ast.NodeTransformer):
+            def visit_If(self,node):
+                if '_prepared' in ast.unparse(node.test):return None
+                return self.generic_visit(node)
+            def visit_IfExp(self,node):
+                if '_prepared' in ast.unparse(node.test):return self.visit(node.orelse)
+                return self.generic_visit(node)
+            def visit_Call(self,node):
+                node.keywords=[k for k in node.keywords if k.arg!='_prepared'];return self.generic_visit(node)
+        for name,file in FILES.items():
+            node=next(n for n in ast.parse((ROOT/'apps/pmo'/f'{file}.py').read_text()).body if isinstance(n,ast.FunctionDef) and n.name==name)
+            pairs=[(a,d) for a,d in zip(node.args.kwonlyargs,node.args.kw_defaults) if a.arg!='_prepared']
+            node.args.kwonlyargs=[a for a,d in pairs];node.args.kw_defaults=[d for a,d in pairs]
+            node=Defaults().visit(node)
+            self.assertEqual(hashlib.sha256(ast.unparse(node).encode()).hexdigest(),expected[name],name)
+    def test_projection_inventory_excludes_unneeded_payloads(self):
+        source=(ROOT/'apps/pmo/template_prepared_reader.py').read_text();tree=ast.parse(source)
+        calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='only']
+        fields={a.value for c in calls for a in c.args if isinstance(a,ast.Constant)}
+        for field in ('payload','fields','policies','contract__allowed_fields','evidence__body'):
+            self.assertNotIn(field,fields)
+        for field in ('actor__is_active','contract__actor__is_active','evidence__created_by__is_active','document__case__id'):
+            self.assertIn(field,fields)
+
+class PreparedPayloadTransportTests(unittest.TestCase):
+    def setUp(self):
+        self.actor=SimpleNamespace(pk=1);self.marker={};self.raw=object();self.calls=[];self.responses=[]
+        owner=self
+        class Cursor:
+            def __enter__(self):return self
+            def __exit__(self,*a):pass
+            def execute(self,sql,params):owner.calls.append((sql,params));self.rows=owner.responses.pop(0)
+            def fetchmany(self,n):assert n==2;return self.rows
+        self.connection=SimpleNamespace(cursor=Cursor)
+        self.patch=patch.object(v2,'_binding',lambda *a:(self.marker,self.connection,self.raw));self.patch.start();self.addCleanup(self.patch.stop)
+        self.reader=object.__new__(PreparedLeadershipReader);self.reader.ledger=PMOLedger(self.actor,['documents.template_claims'])
+        self.reader.version_pin=(2,4,5,datetime.datetime(2026,1,1,tzinfo=datetime.timezone.utc),uuid.UUID(int=1))
+        self.reader.binding_pin=(1,2,3,None,uuid.UUID(int=2));self.reader.manifest_stamp=None;self.reader.template_case_id=uuid.UUID(int=3)
+        self.reader.operation=self.reader.ledger.begin_operation(())
+        self.reader.ledger.operation(self.reader.operation)['phase']='native_running'
+    def prepare(self,data=b'{"source_mode": "x"}',transfer=True):
+        row=Trap(pk=1,version_id=2,report_id=3,meeting_id=None)
+        metadata=(2,3,None,'object',len(data),hashlib.sha256(data).hexdigest())
+        self.responses.extend([[metadata],[(data,)] if transfer else []]);return row
+    def test_actual_loader_conditional_transfer_freshdecode_and_no_extra_fields(self):
+        row=self.prepare();one=self.reader._payload('manifest',row);one['source_mode']='mutated'
+        self.prepare();two=self.reader._payload('manifest',row)
+        self.assertEqual(two,{'source_mode':'x'});self.assertEqual(self.reader.ledger.state['attempts'],6)
+        self.assertEqual(len(self.reader.ledger.local['cells']),1)
+        self.assertIn('IS NOT DISTINCT FROM',self.calls[1][0]);self.assertIn('sha256',self.calls[1][0])
+    def test_missing_conditional_row_prevents_decode_and_poisoned_ledger(self):
+        row=self.prepare(transfer=False)
+        with patch.object(d,'decode',side_effect=AssertionError('no decode')):
+            with self.assertRaises(BudgetHold):self.reader._payload('manifest',row)
+        self.assertEqual(self.reader.ledger.state['attempts'],2)
+        self.assertTrue(self.marker['policy_budget_v2_failed'])
+    def test_shared_policy_cap_holds_before_payload(self):
+        row=self.prepare();self.reader.ledger.state['bytes']=1024*1024
+        with self.assertRaises(BudgetHold):self.reader._payload('manifest',row)
+        self.assertEqual(len(self.calls),1)
+
+class SharedPMOBoundaryTests(unittest.TestCase):
+    setUp=PMOLedgerTests.setUp
+    ledger=PMOLedgerTests.ledger
+    def test_actual_policy_finance_pmo_shared_exact_bytes(self):
+        from apps.documents.template_finance_budget import FinanceLedger
+        data=b'x'*(256*1024);digest=hashlib.sha256(data).hexdigest();case=uuid.UUID(int=1)
+        policy=v2.PolicyLedger(self.actor,['documents.template_claims']);t=policy.begin('reference',1)
+        policy.reserve(t,Metadata((case,'ref',1),'object',len(data),digest));policy.before_transfer(t);policy.transfer_checked(t,[(data,)]);policy.before_decode(t);policy.validated(t)
+        finance=FinanceLedger(self.actor,['documents.template_claims']);expected=(1,1,1,1,1,'statement',case,'tenant',True)
+        bt=finance.begin_binding(expected);finance.before_identity(bt,'entry');finance.identity_checked(bt,'entry',[expected]);ft=finance.begin_size(bt)
+        fm=Metadata((case,'statement'),'object',len(data),digest);finance.reserve_finance(ft,fm)
+        finance.before_count(ft);finance.count_checked(ft,[(True,0)]);finance.before_class(ft);finance.class_checked(ft,[(True,True,False)])
+        finance.before_identity(bt,'pretransfer');finance.identity_checked(bt,'pretransfer',[expected]);finance.before_transfer(ft);finance.transfer_checked(ft,[(data,)]);finance.before_decode(ft);finance.decoded(ft)
+        finance.before_identity(bt,'exit');finance.identity_checked(bt,'exit',[expected]);finance.before_final(ft);finance.final_checked(ft,fm)
+        pmo=self.ledger();now=datetime.datetime(2026,1,1,tzinfo=datetime.timezone.utc)
+        for kind,identity in [('manifest',(1,2,None)),('narrative',(case,'agent_private',1,'stored',1,now))]:
+            t=pmo.begin_cell(kind,1);m=Metadata(identity,'text' if kind=='narrative' else 'object',len(data),digest)
+            pmo.reserve_pmo(t,m);pmo.before_transfer(t);pmo.transfer_checked(t,[(data,)]);pmo.before_decode(t);pmo.validated(t)
+        self.assertEqual(pmo.state['bytes'],1024*1024);self.assertEqual(pmo.local['bytes'],512*1024)
+        t=pmo.begin_cell('manifest',2)
+        with self.assertRaises(BudgetHold):pmo.reserve_pmo(t,Metadata((2,2,None),'object',1,'a'*64))
+    def test_scalar_aggregate400_includes_state_then_hold(self):
+        ledger=self.ledger()
+        for kind in ('version','binding','revision','state'):ledger.ids(kind,range(1,101))
+        with self.assertRaises(BudgetHold):ledger.ids('observation',[1])
+    # Kept on SharedPMOBoundaryTests: real loader method with a deferred-field trap.
+    def test_real_version_loader_ignores_mutated_caller_created_at(self):
+        obj=object.__new__(PreparedLeadershipReader);obj.ledger=self.ledger();obj.running=True;obj.actor=self.actor;obj.version_id=1
+        fresh=Trap(pk=1,created_at='pinned-real-value');obj._version_identity=lambda:fresh
+        result=obj.version_for(Trap(pk=1,created_at='caller-mutated'))
+        self.assertIs(result,fresh);self.assertEqual(result.created_at,'pinned-real-value')
+    def test_admitted_pin_registration_cannot_alias_mutable_payload(self):
+        obj=object.__new__(PreparedLeadershipReader)
+        pin={'issue_id':1,'revision_id':2,'observation_id':None,'reference':{'evidence_id':3,'source_ref':'original'}}
+        record=obj._pin_record(pin);pin['reference']['source_ref']='mutated'
+        self.assertNotEqual(obj._pin_record(pin),record);self.assertIsInstance(record,tuple)

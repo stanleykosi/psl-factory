@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block content %}
+<a href="{% url 'meetings' case.pk %}">← Meetings and reports</a>
+<h1>Prepare {{ kind }}</h1>
+<p>Select native sources and write each required theme with citations. Unknown facts must stay unknown. This prepares a controlled draft, not approval or delivery.</p>
+{% if binding %}<h2>Draft prepared</h2><p>Version {{ binding.version_id }} is prepared. {% if kind == 'monthly_executive' %}Configured leadership review is required.{% else %}No separate Tuesday report approval is required.{% endif %} <a href="{% url 'documents' case.pk %}">Open controlled review and publication</a>.</p>
+<h3>Source coverage investigation</h3><pre>{{ investigation }}</pre>{% else %}
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Investigate coverage and prepare cited draft</button></form>{% endif %}
+{% endblock %}

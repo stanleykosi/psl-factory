@@ -1,0 +1,71 @@
+"""Closed inert PMO ancestor predicates. SQL construction only; no execution."""
+from dataclasses import dataclass
+import datetime,uuid
+from apps.documents.template_operation_budget import Metadata
+from . import template_prepared_transfer as cell
+MODE='leadership_selected_facts/v1'
+@dataclass(frozen=True)
+class Context:
+    version:tuple
+    binding:tuple
+    manifest:Metadata|None
+    template_case:uuid.UUID
+
+def checked(context):
+    if type(context) is not Context or type(context.version) is not tuple or type(context.binding) is not tuple:cell.hold()
+    v,b=context.version,context.binding
+    if type(context.template_case) is not uuid.UUID:cell.hold()
+    if len(v)!=5 or len(b)!=5:cell.hold()
+    for pk in (*v[:3],*b[:3]):cell.positive(pk)
+    if b[3] is not None:cell.positive(b[3])
+    if type(v[3]) is not datetime.datetime or v[3].utcoffset() is None:cell.hold()
+    if type(v[4]) is not uuid.UUID or type(b[4]) is not uuid.UUID or b[1]!=v[0]:cell.hold()
+    if context.manifest is not None:
+        cell.checked('manifest',context.manifest)
+        if context.manifest.identity!=b[1:4]:cell.hold()
+    return context
+
+def predicate(name,pk,context,history=False):
+    cell.positive(pk);cell.spec(name);checked(context)
+    if type(history) is not bool or history and name!='references':cell.hold()
+    if name!='manifest' and context.manifest is None:cell.hold()
+    v,b=context.version,context.binding
+    sql='''EXISTS (SELECT 1 FROM "pmo_minutesreportbinding" AS b
+JOIN "documents_version" AS v ON v.id=b.version_id
+JOIN "documents_document" AS d ON d.id=v.document_id
+JOIN "documents_template" AS t ON t.id=v.template_id
+JOIN "pmo_periodreport" AS r ON r.id=b.report_id
+WHERE b.id=%s AND b.version_id=%s AND b.report_id=%s AND b.meeting_id IS NOT DISTINCT FROM %s
+AND r.case_id=%s AND v.id=%s AND v.template_id=%s AND v.document_id=%s AND v.created_at=%s AND d.case_id=%s
+AND b.manifest->>'source_mode'=%s AND t.case_id=%s'''
+    params=(*b,*v,MODE,context.template_case)
+    # Common pins include actual distinct report/document cases, never equality.
+    if context.manifest is not None:
+        m=context.manifest
+        sql+=" AND jsonb_typeof(b.manifest)=%s AND octet_length(convert_to(b.manifest::text,'UTF8'))=%s AND encode(sha256(convert_to(b.manifest::text,'UTF8')),'hex')=%s"
+        params+= (m.shape,m.size,m.fingerprint)
+    table=cell.spec(name)[0]
+    if name=='manifest':
+        if pk!=b[0]:cell.hold()
+        sql+=' AND b.id="pmo_minutesreportbinding".id'
+    elif name in ('references','links'):
+        sql+=f' AND EXISTS (SELECT 1 FROM "pmo_issue" AS i WHERE i.id="{table}".issue_id AND i.case_id=%s)'
+        params+=(b[4],)
+        if history:
+            sql+=f' AND "{table}".created_at<=%s';params+=(v[3],)
+    else:
+        sql+=' AND "core_evidence".case_id=%s';params+=(b[4],)
+    return sql+')',params
+
+def metadata_statement(name,pk,context,history=False):
+    sql,params=cell.metadata_statement(name,pk);guard,pins=predicate(name,pk,context,history)
+    return sql+' AND '+guard,params+pins
+
+def transfer_statement(name,pk,metadata,context,history=False):
+    sql,params=cell.transfer_statement(name,pk,metadata);guard,pins=predicate(name,pk,context,history)
+    return sql+' AND '+guard,params+pins
+
+def identity_statement(context):
+    checked(context);pk=context.binding[0]
+    guard,params=predicate('manifest',pk,context)
+    return 'SELECT 1 FROM "pmo_minutesreportbinding" WHERE id=%s AND '+guard,(pk,*params)

@@ -5,8 +5,44 @@ from apps.identity.services import require
 
 
 def authorize(actor,case,key,row):
+    if key=='workflows.factory_planning_execution_bindings':
+        from .factory_planning_binding_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='workflows.factory_engagement_profiles':
+        from .factory_engagement_policy_impact import authorize_row
+        return authorize_row(actor,case,row)
+    if key=='workflows.factory_planning_profiles':
+        from .factory_planning_policy_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='pmo.baseline_signature_exemptions':
+        from .exemption_policy_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='pmo.signature_packets':
+        from .signature_policy_impact import authorize_row
+        authorize_row(actor,case,row)
     if not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current metadata reader required')
     require(actor,case,'case.read')
+    if key=='pmo.planning_comparisons':
+        from .planning_comparison_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='pmo.emergency_recovery_requests':
+        from .emergency_recovery_policy_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='pmo.signed_adoption_recovery_requests':
+        from .recovery_policy_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='pmo.delivery_prerequisites':
+        from .delivery_policy_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='pmo.approval_routing_jobs':
+        from .approval_routing_policy_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='finance.payment_assessments':
+        from .payment_policy_impact import authorize_row
+        authorize_row(actor,case,row)
+    if key=='pmo.planning_readiness':
+        from .planning_policy_impact import authorize_row
+        authorize_row(actor,case,row)
     if key in ['finance.ledger_projections','finance.ledger_drafts']:
         from apps.finance.ledger_agents import projection_access
         projection_access(actor,row.projection if key.endswith('projections') else row.source.projection)
@@ -21,7 +57,46 @@ def authorize(actor,case,key,row):
 
 
 def project(row,key):
+    if key=='workflows.factory_planning_execution_bindings':
+        from .factory_planning_binding_impact import project as binding_project
+        return binding_project(row)
+    if key=='workflows.factory_engagement_profiles':
+        from .factory_engagement_policy_impact import project as engagement_project
+        return engagement_project(row)
+    if key=='workflows.factory_planning_profiles':
+        from .factory_planning_policy_impact import project as planning_factory_project
+        return planning_factory_project(row)
+    if key=='pmo.baseline_signature_exemptions':
+        from .exemption_policy_impact import project as exemption_project
+        return exemption_project(row)
+    if key=='pmo.emergency_recovery_requests':
+        from .emergency_recovery_policy_impact import project as emergency_project
+        return emergency_project(row)
+    if key=='pmo.signature_packets':
+        from .signature_policy_impact import project as signature_project
+        return signature_project(row)
+    if key=='pmo.signed_adoption_recovery_requests':
+        from .recovery_policy_impact import project as recovery_project
+        return recovery_project(row)
+    if key=='pmo.delivery_prerequisites':
+        from .delivery_policy_impact import project as delivery_project
+        return delivery_project(row)
+    if key=='pmo.approval_routing_jobs':
+        from .approval_routing_policy_impact import project as routing_project
+        return routing_project(row)
+    if key=='pmo.planning_comparisons':
+        from .planning_comparison_impact import project as comparison_project
+        return comparison_project(row)
+    if key=='finance.payment_assessments':
+        from .payment_policy_impact import project as payment_project
+        return payment_project(row)
     value={'id':row.pk,'kind':key,'metadata_only':True}
+    if key=='pmo.planning_readiness':
+        from .planning_policy_impact import project as planning_project
+        return planning_project(row)
+    if key=='finance.recognition_records':
+        from .recognition_policy_impact import project as recognition_project
+        return recognition_project(row)
     if key=='finance.ledger_projections':
         from apps.finance.ledger_agent_models import LedgerProjection
         head=LedgerProjection.objects.filter(case=row.case,lineage=row.lineage).order_by('-pk').first()

@@ -45,6 +45,8 @@ def draft_delivery_document(actor,case_id,dossier_id,purpose,template_id,data,ex
     if purpose=='handover' and not {'scope','next_steps'}.issubset(template.definition['audience_fields'].get('internal',[])):
         raise ValidationError('Handover projection must contain support and escalation documents')
     title='Go-live report' if purpose=='go_live' else purpose.replace('_',' ').title()
+    from apps.documents.pmo_sections import complete_native_client_sections
+    fields = complete_native_client_sections(fields, audience, [source])
     v=create_version(actor,case.pk,template.pk,title+': '+d.candidate.reference,audience,fields,case.revision)
     DeliveryDocumentBinding.objects.create(version=v,dossier=d,purpose=purpose,data=data,snapshot=snapshot)
     return v

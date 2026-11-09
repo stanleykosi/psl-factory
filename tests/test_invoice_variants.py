@@ -31,7 +31,7 @@ class InvoiceVariantTests(TransactionTestCase):
             return metadata,payload,adapter.receipt(db,metadata,payload)
 
     def test_exact_four_variants_credit_debit_void_and_negative_receipts(self):
-        a,c,iss,e,jobs=documents();seen=[]
+        a,c,iss,e,jobs=documents(identity=True);seen=[]
         for j in jobs:
             m,p,r=self.original(j,c);self.assertEqual(r[0],'present',j.kind);seen.append(m['variant'])
             self.assertNotEqual(m['source_row_sha256'],m['payload_sha256']);self.assertNotEqual(m['source_intent_sha256'],m['payload_sha256'])
@@ -47,7 +47,7 @@ class InvoiceVariantTests(TransactionTestCase):
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceCorrectionAcceptance.objects.count(),3)
 
     def test_source_owned_ui_missing_policy_idempotency_permissions_sql_and_agent(self):
-        a,c,iss,e,jobs=documents()
+        a,c,iss,e,jobs=documents(identity=True)
         m,p,r=self.original(jobs[0],c)
         projection=dict(format='psl.finance-receipt-followup/v1',source_case_id=str(c.pk),source_invoice_id=iss.invoice_id,source_correction_id=None,
             variant='issue',mapping_sha256='a'*64,observation_sha256='b'*64,packet_sha256='c'*64,publication_operation='d'*64,outcome='unknown',
@@ -88,15 +88,22 @@ class InvoiceVariantTests(TransactionTestCase):
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceCorrectionDelivery.objects.count(),3);self.assertEqual(CashVerification.objects.count(),0)
 
     def test_canonical_receipt_successor_generation_and_two_connection_intake(self):
-        from tests.settlement_helpers import fixture,draft,approve
+        from tests.settlement_helpers import fixture,draft
+        from tests.obligation_helpers import approve_identified as approve
         from tests.helpers import rev
         from apps.finance import invoices,invoice_delivery
         from apps.finance.models import InvoiceJob
         from adapters.invoices import InternalInvoiceAdapter
         a,c,_,p,e=fixture();i=draft(a,c,p);approve(a,c,i,e)
         j=invoices.reserve(a,c.pk,i.pk,'issue','Finance',rev(c))
-        with patch.object(InternalInvoiceAdapter,'deliver',side_effect=ValidationError('Synthetic pre-effect hold')):invoice_delivery.run_once()
+        # A deliver exception is already beyond the durable attempt boundary.
+        # Use a real returned-review hold, before dispatch can retain an effect.
+        invoices.review(a,c.pk,i.pk,'Finance','return',e['invoice_review'].pk,'Return before any send',rev(c))
+        invoice_delivery.run_once()
         j.refresh_from_db();self.assertEqual(j.status,'held')
+        from apps.finance.models import ObligationEffect
+        self.assertGreater(j.attempts,0);self.assertFalse(ObligationEffect.objects.filter(invoice=i).exists())
+        approve(a,c,i,e)
         invoice_delivery.operate(a,c.pk,j.pk,'replace_intent','Synthetic explicit current source-owned replacement',rev(c))
         invoice_delivery.run_once();j.refresh_from_db();self.assertEqual(j.status,'replaced')
         issue=InvoiceIssue.objects.get(invoice=i);self.assertNotEqual(issue.job_id,j.pk)

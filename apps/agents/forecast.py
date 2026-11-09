@@ -5,7 +5,7 @@ from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.agents.models import AgentRun
 from apps.finance import forecast
-from apps.finance.models import ForecastRun,ForecastMatch,ForecastActual,ForecastActualVerification,ForecastReview,ForecastMatchReversal,InvoiceCorrection
+from apps.finance.models import ForecastItemSupport,ForecastRun,ForecastMatch,ForecastActual,ForecastActualVerification,ForecastReview,ForecastMatchReversal,InvoiceCorrection
 
 @transaction.atomic
 def investigate(actor,case_id,run_id,expected):
@@ -14,7 +14,15 @@ def investigate(actor,case_id,run_id,expected):
     try:forecast.ensure_current(run);current=True
     except (ValidationError,PermissionDenied) as exc:findings.append(str(exc));current=False
     sources=[run.scenario.evidence]
+    from apps.finance.forecast_workbook import source_ids
+    sources += list(case.evidence.filter(pk__in=source_ids(run.scenario)))
+    provenance=forecast.item_provenance(run.scenario)
+    sources += [x.evidence for x in ForecastItemSupport.objects.filter(root=forecast.root_of(run.scenario))]
+    for key,p in provenance.items():
+        if p['continued_review_required'] and not any(key in f and 'Continued review' in f for f in findings):findings.append('Continued review uncertainty: '+key+'; human review is not fresh support')
     for i in run.scenario.payload['items']+run.scenario.payload['openings']:sources.append(case.evidence.get(pk=i['evidence_id']))
+    for o in run.scenario.payload['openings']:
+        if o.get('boundary',{}).get('evidence_id'):sources.append(case.evidence.get(pk=o['boundary']['evidence_id']))
     for a in ForecastActual.objects.filter(case=case):sources.append(a.evidence)
     sources += [v.evidence for v in ForecastActualVerification.objects.filter(actual__case=case)]
     sources += [v.evidence for v in ForecastReview.objects.filter(run=run)]
@@ -29,11 +37,13 @@ def investigate(actor,case_id,run_id,expected):
         c=Configuration.objects.get(case=case,pk=method_id)
         if run.manifest['method']['status']=='ACTIVE':sources.append(case.evidence.get(pk=reference_values(c)[0]['oracle_evidence_id']))
     result={'capabilities':['A05','A03','A06','A07'],'current':current,'findings':findings,'scope':run.result['scope'],
-        'assumptions':[{'item':i['key'],'owner':i['owner'],'original_due':i['original_due'],'expected_on':i['expected_on'],'remaining':i['residual']} for i in run.result['items']],
+        'assumptions':[{'item':i['key'],'owner':i['owner'],'original_due':i['original_due'],'expected_on':i['expected_on'],'remaining':i['residual'],'provenance':provenance[i['key']]} for i in run.result['items']],
         'actual_links':list(ForecastMatch.objects.filter(case=case).values('pk','root_id','item_key','actual_id','amount')),
         'citations':[{'id':e.pk,'sha256':e.sha256,'kind':e.kind} for e in {e.pk:e for e in sources}.values()],
         'next_steps':['Review omitted, unknown and out-of-horizon assumptions with Finance.','Reconcile unmatched actuals and source reversals before roll-forward.','Obtain exact human review before audience publication.'],
         'approval_granted':False,'cash_mutated':False,'execution_authorized':False,'tools':['case_evidence_read','forecast_lineage_compare']}
+    if 'opening_provenance' in run.result:result['opening_provenance']=run.result['opening_provenance']
+    if 'workbook_comparison' in run.result:result['workbook_comparison']=run.result['workbook_comparison']
     for r in result['actual_links']:r['amount']=str(r['amount'])
     log=AgentRun.objects.create(case=case,actor=actor,evidence=run.scenario.evidence,process_id='F39',provider='deterministic-forecast-v1',result=result)
     event(actor,case,'agent.forecast_investigated',run=run.pk,agent_run=log.pk);bump(case);return log

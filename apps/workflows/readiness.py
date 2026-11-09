@@ -16,7 +16,7 @@ from adapters.readiness import binding,CAPS,VERSION
 from .operator_inventory import ROUTES,family_access,can_private,PRIVATE_FAMILY,PRIVATE_FAMILIES,lock_scope
 from .readiness_models import IntegrationContract,IntegrationProbe,IntegrationObservation,IntegrationAssessment,IntegrationReview,IntegrationSelection
 NULLKEY={'anyOf':[VERSION,{'type':'null'}]}
-CONTRACT=obj({'kind':{'enum':['adapter','provider']},'family':{'enum':list(ROUTES)+['provider']},'implementation':{'enum':['internal_postgres_session_v1','authenticated_json_v1','reference_only']},'target_key':{'anyOf':[{'type':'string','pattern':'^(internal:[a-z]+|endpoint:[a-z][a-z0-9_.-]{0,79})$'},{'type':'null'}]},'credential_ref':{'anyOf':[{'type':'string','pattern':'^(runtime:postgres|secret:[a-z][a-z0-9_.-]{0,79})$'},{'type':'null'}]},'credential_revision':NULLKEY,'principal_ref':{'anyOf':[{'type':'string','pattern':'^principal:[A-Za-z0-9_.@-]{1,80}$'},{'type':'null'}]},'contract_version':NULLKEY,'model_id':NULLKEY,'capabilities':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':CAPS}},'data_scope':{'const':'public_canary_and_scoped_receipt_metadata_only'}})
+CONTRACT=obj({'kind':{'enum':['adapter','provider']},'family':{'enum':list(ROUTES)+['provider']},'implementation':{'enum':['internal_postgres_session_v1','authenticated_json_v1','hosted_mcp_read_v1','reference_only']},'target_key':{'anyOf':[{'type':'string','pattern':'^(internal:[a-z]+|endpoint:[a-z][a-z0-9_.-]{0,79})$'},{'type':'null'}]},'credential_ref':{'anyOf':[{'type':'string','pattern':'^(runtime:postgres|secret:[a-z][a-z0-9_.-]{0,79})$'},{'type':'null'}]},'credential_revision':NULLKEY,'principal_ref':{'anyOf':[{'type':'string','pattern':'^principal:[A-Za-z0-9_.@-]{1,80}$'},{'type':'null'}]},'contract_version':NULLKEY,'model_id':NULLKEY,'capabilities':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':CAPS}},'data_scope':{'enum':['public_canary_and_scoped_receipt_metadata_only','scoped_qbo_invoice_identity_read_v1']}})
 SUPPLIED=obj({'contract_sha256':{'type':'string','pattern':'^[a-f0-9]{64}$'},'kind':{'enum':['health','receipt','evaluation']},'outcome':{'enum':['passed','failed','unknown','unavailable']},'recorded_at':{'type':'string'},'source_ref':KEY})
 
 def readable(a,c,private=False):
@@ -57,6 +57,7 @@ def authority(a,r,purpose):
 @evaluated
 def capture(a,case_id,reference,payload,evidence_id,expected=None,predecessor=None,native_publication_job=None,native_protection_job=None,native_file_job=None,native_accepted_protection_job=None):
  c=locked(a,case_id,'integration.capture',expected);readable(a,c,True);validate(KEY,reference);validate(CONTRACT,payload);private_payload_access(a,c,payload);e=subject(c,evidence_id,'integration_contract')
+ if payload['data_scope']!=('scoped_qbo_invoice_identity_read_v1' if payload['implementation']=='hosted_mcp_read_v1' else 'public_canary_and_scoped_receipt_metadata_only'):raise ValidationError('Exact implementation data scope required')
  if (payload['kind']=='provider')!=(payload['family']=='provider') or payload['kind']=='provider' and payload['implementation']=='internal_postgres_session_v1':raise ValidationError('Exact adapter/provider family required')
  if 'health' not in payload['capabilities'] or payload['kind']=='adapter' and 'evaluation' in payload['capabilities']:raise ValidationError('Reviewed health/capability set required')
  from apps.finance import publication_readiness as native
@@ -181,10 +182,12 @@ def snapshot(r):
   from .accepted_protection_readiness import findings as accepted_findings
   findings.extend(accepted_findings(r,head))
   if (timezone.now()-timestamp(head.payload['observed_at'])).total_seconds()>v['freshness_seconds']:findings.append('Current '+kind+' expired')
- native=r.payload['implementation']=='internal_postgres_session_v1' and r.payload['kind']=='adapter'
+ mcp=r.payload['implementation']=='hosted_mcp_read_v1' and r.payload['kind']=='adapter' and r.payload['family']=='ledgerdata'
+ native=mcp or r.payload['implementation']=='internal_postgres_session_v1' and r.payload['kind']=='adapter'
  provider=r.payload['implementation']=='authenticated_json_v1' and r.payload['kind']=='provider'
  if not (native or provider):findings.append('Matching native dispatch/provider implementation is not installed')
  result={'capability_ready':not findings,'findings':findings,'scope':'internal receipt readiness or public provider canary only','business_dispatch_verified':False,'real_model_evaluated':False,'operational_provider_canary_evaluated':provider and b['classification']=='authenticated_remote_claim' and not findings,'synthetic_provider_evaluated':provider and b['classification']=='synthetic_authenticated_http' and not findings,'operational_ready':False,'deployment_authorized':False}
+ if mcp:result['scope']='reviewed MCP discovery and bounded invoice identity read; not accounting verification'
  return {'contract':r.sha256,'policy':p.pk,'binding':b,'heads':heads},result
 @transaction.atomic
 @evaluated

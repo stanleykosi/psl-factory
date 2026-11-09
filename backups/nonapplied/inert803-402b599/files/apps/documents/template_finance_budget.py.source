@@ -1,0 +1,171 @@
+"""Inert Finance schedule sharing the policy entry ledger, not authorization."""
+from dataclasses import dataclass
+from apps.policy.template_policy_budget_v2 import PolicyLedger,MAX_BYTES,MAX_CELLS
+from apps.documents.template_operation_budget import Cell
+from .template_finance_transfer_descriptor import checked,binding
+
+@dataclass(frozen=True)
+class BindingTicket:
+    entry:object
+    number:int
+    expected:tuple
+@dataclass(frozen=True)
+class FinanceTicket:
+    entry:object
+    number:int
+    binding_number:int
+    run:int
+
+class FinanceLedger(PolicyLedger):
+    def __init__(self,actor,keys):
+        super().__init__(actor,keys)
+        self.local=self.state.setdefault('finance_local',{'bytes':0,'cells':{},'runs':{},'bindings':{},'processing':0,'queries':0,'tickets':{}})
+    def worklist(self,items):
+        try:
+            self.context()
+            if type(items) is not list or len(items)>100:self.fail()
+            seen=set()
+            for item in items:
+                binding(item)
+                if item[0] in seen:self.fail()
+                seen.add(item[0])
+        except Exception:self.poison();raise
+        return items
+    def begin_binding(self,expected):
+        self.context();local=self.local
+        if local['processing']>=100:self.fail()
+        local['processing']+=1
+        try:binding(expected)
+        except Exception:self.poison();raise
+        if len(set(local['bindings'])|{expected[0]})>100 or len(set(local['runs'])|{expected[1]})>100:self.fail()
+        old=local['bindings'].get(expected[0]);run=local['runs'].get(expected[1])
+        if old is not None and old!=expected:self.fail()
+        if run is not None and run!=(expected[6],expected[5]):self.fail()
+        local['bindings'][expected[0]]=expected;local['runs'][expected[1]]=(expected[6],expected[5])
+        ticket=BindingTicket(self.state['entry'],local['processing'],expected)
+        local['tickets'][ticket.number]={'ticket':ticket,'phase':'new','cell':None}
+        return ticket
+    def binding_record(self,ticket):
+        self.context()
+        if type(ticket) is not BindingTicket or ticket.entry is not self.state['entry']:self.fail()
+        record=self.local['tickets'].get(ticket.number)
+        if record is None or record['ticket']!=ticket:self.fail()
+        return record
+    def before_identity(self,ticket,phase):
+        record=self.binding_record(ticket);current=record['phase']
+        valid=(phase=='entry' and current=='new' or phase=='pretransfer' and current=='classified'
+               or phase=='exit' and (current=='decoded' or current=='entry_checked' and ticket.expected[5]!='statement')
+               or phase=='denial_exit' and current=='classified' and record.get('ppe') is True)
+        if not valid or self.local['queries']>=300:self.fail()
+        self.local['queries']+=1;record['phase']='checking_'+phase
+    def identity_checked(self,ticket,phase,rows):
+        record=self.binding_record(ticket)
+        if record['phase']!='checking_'+phase or type(rows) is not list or len(rows)!=1 or tuple(rows[0])!=ticket.expected:self.fail()
+        record['phase']=phase+'_checked'
+    def begin_size(self,binding_ticket):
+        record=self.binding_record(binding_ticket)
+        if record['phase']!='entry_checked' or record['cell'] is not None or binding_ticket.expected[5]!='statement':self.fail()
+        self.debit();ticket=FinanceTicket(self.state['entry'],self.state['attempts'],binding_ticket.number,binding_ticket.expected[1])
+        self.state['tickets'][ticket.number]=(ticket,'size',None);record['cell']=ticket;record['phase']='size_started'
+        return ticket
+    def phase(self,ticket,wanted):
+        self.context()
+        if type(ticket) is not FinanceTicket or ticket.entry is not self.state['entry']:self.fail()
+        record=self.state['tickets'].get(ticket.number)
+        if record is None or record[0]!=ticket or record[1]!=wanted:self.fail()
+        return record[2]
+    def reserve_finance(self,ticket,metadata):
+        self.phase(ticket,'size')
+        try:checked(metadata)
+        except Exception:self.poison();raise
+        s=self.state;local=self.local;key=('finance_financerun',ticket.run,'snapshot')
+        expected=local['tickets'][ticket.binding_number]['ticket'].expected
+        if metadata.identity!=(expected[6],expected[5]):self.fail()
+        prior=s['cells'].get(key)
+        if prior is not None and (prior.state not in ('validated','denied_unvalidated') or prior.metadata!=metadata):self.fail()
+        new=prior is None;localnew=key not in local['cells']
+        if new and (len(s['cells'])>=MAX_CELLS or s['bytes']+metadata.size>MAX_BYTES):self.fail()
+        if localnew and (len(local['cells'])>=100 or local['bytes']+metadata.size>MAX_BYTES):self.fail()
+        for domain in self.keys:
+            record=s['domains'].get(domain,{'cells':frozenset(),'bytes':0})
+            if key not in record['cells'] and (len(record['cells'])>=MAX_CELLS or record['bytes']+metadata.size>MAX_BYTES):self.fail()
+        if new:s['bytes']+=metadata.size
+        if localnew:local['cells'][key]=metadata;local['bytes']+=metadata.size
+        for domain in self.keys:
+            record=s['domains'].get(domain,{'cells':frozenset(),'bytes':0})
+            if key not in record['cells']:s['domains'][domain]={'cells':record['cells']|{key},'bytes':record['bytes']+metadata.size}
+        s['cells'][key]=Cell(metadata,'reserved');self.mark(ticket,'reserved',metadata)
+    def before_count(self,ticket):
+        metadata=self.phase(ticket,'reserved');self.debit();self.mark(ticket,'count',metadata)
+    def count_checked(self,ticket,rows):
+        metadata=self.phase(ticket,'count')
+        if type(rows) is not list or len(rows)!=1 or len(rows[0])!=2 or rows[0][0] is not True or type(rows[0][1]) is not int or not 0<=rows[0][1]<=1000:self.fail()
+        self.mark(ticket,'count_checked',metadata);return rows[0][1]
+    def before_class(self,ticket):
+        metadata=self.phase(ticket,'count_checked');self.debit();self.mark(ticket,'class',metadata)
+    def class_checked(self,ticket,rows):
+        metadata=self.phase(ticket,'class')
+        if type(rows) is not list or len(rows)!=1 or len(rows[0])!=3 or rows[0][0] is not True or rows[0][1] is not True or type(rows[0][2]) is not bool:self.fail()
+        self.mark(ticket,'classified',metadata);self.local['tickets'][ticket.binding_number]['phase']='classified'
+        self.local['tickets'][ticket.binding_number]['ppe']=rows[0][2]
+        return rows[0][2]
+    def before_transfer(self,ticket):
+        metadata=self.phase(ticket,'classified')
+        if self.local['tickets'][ticket.binding_number]['phase']!='pretransfer_checked':self.fail()
+        self.debit();self.mark(ticket,'transfer',metadata)
+    def decoded(self,ticket):
+        metadata=self.phase(ticket,'decode');self.mark(ticket,'decoded',metadata)
+        self.local['tickets'][ticket.binding_number]['phase']='decoded'
+    def before_final(self,ticket):
+        metadata=self.phase(ticket,'decoded')
+        if self.local['tickets'][ticket.binding_number]['phase']!='exit_checked':self.fail()
+        self.debit();self.mark(ticket,'final',metadata)
+    def final_checked(self,ticket,metadata):
+        expected=self.phase(ticket,'final')
+        try:checked(metadata)
+        except Exception:self.poison();raise
+        if metadata!=expected:self.fail()
+        self.state['cells'][('finance_financerun',ticket.run,'snapshot')]=Cell(metadata,'validated')
+        self.mark(ticket,'validated',metadata)
+    def complete_binding(self,ticket):
+        record=self.binding_record(ticket)
+        if record['ticket'] is not ticket or record['phase']!='exit_checked' or record.get('native_denial_pending') is not None:self.fail()
+        if ticket.expected[5]=='statement':
+            cell=record['cell']
+            if cell is None:self.fail()
+            self.phase(cell,'validated')
+        elif record['cell'] is not None:self.fail()
+        record['phase']='complete'
+    def native_gate_ready(self,ticket,callsite):
+        record=self.binding_record(ticket)
+        if callsite=='EARLY_PPE':
+            if record['phase']!='classified' or record['cell'] is None or record.get('ppe') is not True:self.fail()
+            self.phase(record['cell'],'classified')
+        elif callsite=='FINAL_RECIPIENT':
+            if record['phase']!='decoded' or record['cell'] is None:self.fail()
+            self.phase(record['cell'],'decoded')
+        elif callsite=='NONSTATEMENT_RECIPIENT':
+            if record['phase']!='entry_checked' or record['cell'] is not None or ticket.expected[5]=='statement':self.fail()
+        else:self.fail()
+    def terminal_denied(self,ticket,callsite):
+        record=self.binding_record(ticket);cell=record['cell']
+        if record['ticket'] is not ticket or record.get('native_denial_pending')!=callsite:self.fail()
+        phases={'EARLY_PPE':('denial_exit_checked','classified'),
+                'FINAL_RECIPIENT':('exit_checked','decoded'),
+                'NONSTATEMENT_RECIPIENT':('exit_checked','entry_checked')}
+        if callsite not in phases:self.fail()
+        checked_phase,attained=phases[callsite]
+        if record['phase']!=checked_phase:self.fail()
+        if callsite=='NONSTATEMENT_RECIPIENT':
+            if cell is not None or ticket.expected[5]=='statement':self.fail()
+        else:
+            if cell is None:self.fail()
+            metadata=self.phase(cell,attained)
+            key=('finance_financerun',cell.run,'snapshot')
+            current=self.state['cells'].get(key)
+            if current is None or current.metadata!=metadata or current.state!='reserved':self.fail()
+            self.state['cells'][key]=Cell(metadata,'denied_unvalidated')
+            self.mark(cell,'denied',metadata)
+        record['phase']='denied';record['denial']=(callsite,attained)
+        return attained
+    def validated(self,ticket):self.fail() # policy early validation is never a Finance path

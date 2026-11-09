@@ -1,11 +1,13 @@
 {% if row.go_live.previous_acceptance %}
-<section class="card"><h2>Earlier go-live evidence</h2><p>The original go-live event and every prior attestation remain in history. Reviewed evidence changes need explicitly configured PM reaffirmation authority and new distinct signature records.</p><details><summary>Current recorded evidence head</summary><p>{{ row.go_live.previous_acceptance.pk }} · {{ row.go_live.previous_acceptance.created_at|date:'d M Y, H:i T' }}</p><p>{{ row.go_live.previous_acceptance.data.note }}</p></details>{% if can_configure %}<p><a href="{% url 'policy' case.pk %}">Review evidence-reaffirmation authority →</a></p>{% endif %}</section>
+<section class="card"><h2>Earlier go-live evidence</h2><p>The original go-live event and every prior attestation remain in history. Reviewed evidence changes need explicitly configured PM reaffirmation authority and actual signatures for changed artifacts. Unchanged historical artifacts can use explicit metadata binding without another physical signature.</p><details><summary>Current recorded evidence head</summary><p>{{ row.go_live.previous_acceptance.pk }} · {{ row.go_live.previous_acceptance.created_at|date:'d M Y, H:i T' }}</p><p>{{ row.go_live.previous_acceptance.data.note }}</p></details>{% if can_configure %}<p><a href="{% url 'policy' case.pk %}">Review evidence-reaffirmation authority →</a></p>{% endif %}</section>
 {% endif %}
 {% if row.go_live.can_accept %}
 <section class="card">
 <h2>{% if row.go_live.previous_acceptance %}Reaffirm the exact delivered report{% else %}Record actual PM and Client sign-off{% endif %}</h2>
 <p>Attest actual distinct signature evidence for this exact delivered client report. The agent cannot supply this attestation.</p>
 {% if signature_limited %}<p>The 100 most recent signature records are shown.</p>{% endif %}
+{% if row.go_live.legacy_unbound %}<p>Historical go-live is legacy_unbound. It remains visible but does not supply verified acceptance until actual missing facts are bound.</p>{% endif %}
+{% for r in row.go_live.receipts %}<details><summary>Declaration template for receipt {{ r.pk }}. Null fields require actual human-supplied facts.</summary><pre>{{ r.attestation_draft }}</pre></details>{% endfor %}
 <form method="post">{% csrf_token %}
 <input type="hidden" name="action" value="accept">
 <input type="hidden" name="revision" value="{{ row.work.revision }}">
@@ -16,7 +18,7 @@
 <select name="receipt" id="go-live-receipt" required>{% for r in row.go_live.receipts %}<option value="{{ r.pk }}">Delivered {{ r.created_at|date:'d M Y, H:i T' }} · reference {{ r.pk }}</option>{% endfor %}</select>
 <label for="pm-signature">PM signature evidence</label>
 <select name="pm_signature" id="pm-signature" required><option value="">Choose actual recorded evidence</option>{% for e in signature_choices %}<option value="{{ e.pk }}">{{ e.body|truncatechars:80 }} · version {{ e.version }} · reference {{ e.pk }}</option>{% endfor %}</select>
-<label for="client-signature">Client signature evidence</label>
+{% include 'pmo/go_live_attestation_fields.html' %}<label>Evidence recording mode<select name="mode"><option value="fresh_signatures">Actual signatures for this report</option>{% if row.go_live.previous_acceptance %}<option value="metadata_binding">Bind missing metadata only, exact unchanged historical artifact and signature evidence</option>{% endif %}</select></label><label for="client-signature">Client signature evidence</label>
 <select name="client_signature" id="client-signature" required><option value="">Choose different actual recorded evidence</option>{% for e in signature_choices %}<option value="{{ e.pk }}">{{ e.body|truncatechars:80 }} · version {{ e.version }} · reference {{ e.pk }}</option>{% endfor %}</select>
 <details><summary>Review recorded signature sources</summary>{% for e in signature_choices %}<p><strong>Reference {{ e.pk }} · version {{ e.version }}</strong></p><p>{{ e.body|truncatechars:600 }}</p><p>{{ e.source }}</p>{% endfor %}</details>
 <label>Actual sign-off rationale<textarea name="note" required maxlength="4000"></textarea></label>

@@ -124,13 +124,21 @@ def authority(a,x):
  c=x.lineage.case;readable(a,c);require(a,c,'ledger.review');p,v=config(c,AUTH)
  if a.pk not in v['user_ids'] or (v['independent_reviewer'] and a.pk in [x.actor_id,x.lineage.actor_id]):raise PermissionDenied('Configured independent Finance reviewer required')
  return {AUTH:p.pk,**decision_authority(a,c,'Finance')}
+def guard_review(a,c,check_id,evidence_id,verdict='approve'):
+ readable(a,c);require(a,c,'ledger.review')
+ x=LedgerCheck.objects.filter(lineage__case=c,pk=check_id).first()
+ if not x or verdict not in ['approve','reject']:raise ValidationError('Exact check and decision required')
+ auth=authority(a,x)
+ if verdict=='approve':current(x)
+ return x,auth,subject(c,evidence_id)
+
 @transaction.atomic
 def review(a,case_id,pk,evidence_id,verdict='approve',expected=None):
  c=locked(a,case_id,'ledger.review',expected);x=LedgerCheck.objects.filter(lineage__case=c,pk=pk).first()
  if not x or verdict not in ['approve','reject']:raise ValidationError('Exact check and decision required')
- identity_lock(x.lineage.identity);target_lock(c,x.lineage.payload);auth=authority(a,x)
- if verdict=='approve':current(x)
- r=LedgerDecision.objects.create(verification=x,actor=a,evidence=subject(c,evidence_id),verdict=verdict,authority=auth)
+ identity_lock(x.lineage.identity);target_lock(c,x.lineage.payload)
+ x,auth,evidence=guard_review(a,c,pk,evidence_id,verdict)
+ r=LedgerDecision.objects.create(verification=x,actor=a,evidence=evidence,verdict=verdict,authority=auth)
  event(a,c,'ledger.review',decision=r.pk,verdict=verdict);bump(c);return r
 @transaction.atomic
 def report(a,case_id,pk):

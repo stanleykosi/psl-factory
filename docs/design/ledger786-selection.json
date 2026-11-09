@@ -1,0 +1,135 @@
+{
+  "status": "SOURCE_ONLY_NOT_RUNTIME_CLEARED",
+  "count": 20,
+  "total_native_count": 21,
+  "upgrade_id": "scripts.ledger786_upgrade_lifecycle.LedgerReviewUpgradeTests.test_populated_old_pmo_binding_survives_one_way_upgrade",
+  "batches": [
+    {
+      "ids": [
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_shared_ready_preview_is_read_only_and_native_review_creates_only_decision",
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_observer_revocation_denies_before_subject_lookup"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_independent_reviewer_and_actor_revocation_match_native",
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_expired_approval_holds_but_rejection_preserves_native_semantics"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_new_check_and_policy_change_invalidate_observed_approval",
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_duplicate_source_holds_approval_but_allows_reject"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_foreign_case_and_private_review_evidence_never_leak",
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_binding_form_agent_projection_and_sql_types"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_http_csrf_and_observer_revoked_choices",
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_cross_tenant_subject_is_held_even_with_grants_on_both_cases"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger_review_preview.LedgerReviewPreviewTests.test_sql_missing_null_and_foreign_subjects_fail_closed",
+        "tests.test_ledger.LedgerTests.test_f01_n01_tx001_qb101_lineage_no_second_post"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger.LedgerTests.test_f01_e01_duplicate_source_invalidates_previous_review",
+        "tests.test_ledger.LedgerTests.test_policy_successor_invalidates_existing_decision"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger.LedgerTests.test_review_is_independent_and_rechecked_on_read",
+        "tests.test_ledger.LedgerTests.test_inactive_cached_actor_and_rejected_decision"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_ledger.LedgerTests.test_cross_case_identity_and_evidence_are_scoped",
+        "tests.test_pilot_bindings.NativeGuardTests.test_shared_guard_matches_actual_decision_and_does_not_write_domain_records"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "ids": [
+        "tests.test_pilot_bindings.NativeGuardTests.test_closed_binding_validator_and_foreign_sources",
+        "tests.test_pilot_bindings.NativeGuardTests.test_sql_history_identity_and_self_review_guards"
+      ],
+      "component": "ledger-preview-regression",
+      "outer_timeout_seconds": 300
+    }
+  ],
+  "runtime_inputs": {
+    "primary": {
+      "path": "/workspace/scratch/6bb434063736/native784/run784c/after-restart/before.json.gz",
+      "sha256": "eb76be31d1738f46ca95f80320bc66dbcaae24962f80b446092e710d8f650d00"
+    },
+    "test": {
+      "path": "/workspace/scratch/6bb434063736/native784/run784c/test-restart/before.json.gz",
+      "sha256": "909ce1b62f3a53cd00777dd76ab55352142dd321327e822aa60820a4928d8946"
+    },
+    "review_manifest": {
+      "path": "/workspace/scratch/6bb434063736/native784/review784final/ARTIFACT-MANIFEST.json",
+      "sha256": "088fc4a6811bc81874efdf0293974f582d12f5b32a12eaebcbe5a3e456b89613"
+    }
+  },
+  "source_pins": {
+    "apps/finance/ledger.py": "b03bf2eeaca14abfa4954f7623e121566502b96ea7feda6f7eede4d88dbd1fb9",
+    "adapters/ledger_review_guard.py": "84ce2a716291099c9e07d4c03ff91b268e419498dfc8ee00714a2e30327e255f",
+    "adapters/pilot_guards.py": "c34eaea33dc3f5fb3044a82ecb5fdeb5addb20e2712d67e5cc38eda2325c1070",
+    "apps/agents/pilot.py": "fe4407c8541161ef0998cad2381259d45b24fcdaa76613a5c06bf9055fd8d6b2",
+    "apps/policy/pilot_bindings.py": "e46379485e8c8ef27341a49c938cffe17df92eca8791e1dbc77749ecd3693ea1",
+    "apps/policy/pilot_binding_validators.py": "8c0f31c11b6898d1a99d456a8c0c8ecde996fd8c015e240c530ae34db08c1912",
+    "apps/policy/pilot_binding_views.py": "26efbc38046cf0cff9d7408e8322fd9bff056d7f32dbccf26275fdf9720081be",
+    "apps/policy/migrations/0017_ledger_review_preview.py": "e8ad37505d0f26e421905a9e0bd0a4610546aa76596722177f08d4a98fd82b20",
+    "tests/test_ledger_review_preview.py": "c870121780d1874550802cf39523a42c20b0f97785069b8aff18377d8f036829",
+    "tests/test_ledger_review_preview_component.py": "0904b0c5b7aa334da833d2ff20173c58e465396e88d06dd9b24b8b0f0a01086b",
+    "tests/test_ledger.py": "6ab8c106fc82de6d5d4fbd35f4f579c98c4bba0de55113004ea56a9eb823804e",
+    "tests/test_pilot_bindings.py": "a5c14c6fa04875b3ab0437cb9e9ecd13395ec3a450ead8bd266bb073b3d8140d",
+    "tests/ledger_helpers.py": "643d96780cf0140b5278bbefa2e8ebc2f1b5b2d99e291331b65fc9734cc4879c",
+    "tests/helpers.py": "d4c2a11bee1e9a2860dd517e976face01b965181092db89757753ba3609d25be",
+    "fixtures/ledger.json": "659f38fea1a5906e051174a0eb8f5304fb8ad5a4ad2e604fd67ca0409852a28e",
+    "fixtures/pilot-preflight.json": "1e2fed1285cdd28677bfe13f8312b9968e07f39bd722872d8d793269a2b74458",
+    "fixtures/pilot-bindings.json": "30835f1b89f629a20efa939f65f8f39ed0120976d65e7c76b7a1c8bc16625487",
+    "scripts/ledger786_harness.py": "e9891cfd8417621b85b1aad3df59c2ebb95f912e5ddc8afbd888984c4c1d6c4b",
+    "scripts/ledger786_inputs.py": "b1f07ef230705504fbffd3868f7c8090d90036b323c3514a0d84ca37f84570a9",
+    "scripts/ledger786_upgrade.py": "89e8c73f49297a79ab616dfd436b6b2efe417130e76932be36d6b4fef953fbd7",
+    "scripts/ledger786_run.sh": "8dc7eb09e2774ddc8a9273af46348dfbeda507650d2c9cc113c0b4408a5a6a88",
+    "scripts/native_stage_supervisor782.py": "17ee0bfa2095a6705883ddd571ef77025fc94cd154fde284690388ce38ff5cee",
+    "scripts/source_units777_snapshot.py": "31f0d3b370cfb696b02edb1d5919346ed186ba1b3b8bd0714647a673f8d2aaa5",
+    "scripts/qbo781_preservation.py": "f08a24e314e7eb7b111183392d9ae53528000def1229961f4eaa17fb89058af3",
+    "scripts/native782_compare.py": "1c5a30cf2a27cc2091c79ed14d512a462255180e3b837f66f1a9f962ff566d3c",
+    "tests/test_ledger786_upgrade_component.py": "69e934404907bec733c3532914f85e3e98d48bd76c9cc0a61c84b5277d257992",
+    "tests/test_pilot_preflight.py": "8a06576a82bfda25b028f4b5aef36ffc763e874ae7ffaea0152a15a76a15e6ff",
+    "tests/test_document_guard.py": "71ea4214a25877b1ba5ab59e1df4fd66aa1149f015f826ebf4e92cc774d21cbb",
+    "tests/test_ledger786_wrapper_component.py": "fa2c2722581017a47d001f85b6ed5d23bddbfae1d62b587bd393f5fc6abe54f2",
+    "docs/design/ledger-review-preview786-runtime-plan.md": "7868ec5f2097636272f60e3f0e1fc9d02f5f124ddeeecd4b5870d4608d698f70",
+    "scripts/ledger786_upgrade_lifecycle.py": "feed295cc83d835103811fd4a6730138a5072c70c2152d79d95b4b008e40ce15"
+  }
+}

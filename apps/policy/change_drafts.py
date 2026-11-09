@@ -7,7 +7,9 @@ from apps.pmo.services import subject
 from .registry import components
 from .services import register_reference, save_draft
 
-SCHEMAS = {'D01.change_type_catalogue': 'schema:psl/standard-catalogue-entry/v1',
+SCHEMAS = {'D11.change_go_live_client_applicability': 'schema:psl/change-go-live-client-applicability/v1',
+    'D11.client_signature_contract': 'schema:psl/client-signature-contract/v1',
+    'D01.change_type_catalogue': 'schema:psl/standard-catalogue-entry/v1',
     'D01.satisfied_gate_map': 'schema:psl/standard-satisfied-gates/v1',
     'D01.emergency_glpi_relationship':'schema:psl/emergency-glpi/v1',
     'D05.revision_invalidation_rules':'schema:psl/commercial-revision/v2',
@@ -30,6 +32,8 @@ def draft_standard_policy(actor, case_id, component, value, evidence_id, effecti
         value = [r.ref for r in records]
     else:
         schema=SCHEMAS[component]
+        if component=='D11.template_storage_retention_rules' and isinstance(value,dict) and 'template_owners' in value:
+            schema='schema:psl/document-storage/v3'
         if component=='D05.decision_action_matrix' and isinstance(value,dict) and any(
             isinstance(rule,dict) and 'reaffirm_go_live' in rule.get('actions',[]) for rule in value.get('rules',[])):
             schema='schema:psl/decision-actions/v8'

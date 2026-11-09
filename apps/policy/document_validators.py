@@ -23,11 +23,13 @@ def validate_reference(component,target,case,runtime=False):
             raise ValidationError('Recipient needs an active authenticated principal and explicit audience receive grant')
     elif component == 'D11.template_storage_retention_rules':
         extra={}
-        if target.schema_ref=='schema:psl/document-storage/v2':
+        if target.schema_ref in ['schema:psl/document-storage/v2', 'schema:psl/document-storage/v3']:
             extra={'closure_inventory':{'type':'object','properties':{
                 'required_kinds':{'type':'array','minItems':3,'maxItems':20,'uniqueItems':True,'items':{'type':'string','pattern':'^[a-z][a-z0-9_]{0,49}$'}},
                 'archive_mode':{'const':'immutable_local_manifest'}},'required':['required_kinds','archive_mode'],'additionalProperties':False}}
-        content=typed(target,'schema:psl/document-storage/v2' if extra else 'schema:psl/document-storage/v1',{'type':'object','properties':{
+        if target.schema_ref == 'schema:psl/document-storage/v3':
+            extra['template_owners'] = {'type':'array','minItems':1,'maxItems':100,'uniqueItems':True,'items':{'type':'object','properties':{'scope_id':{'type':'integer','minimum':1},'user_id':{'type':'integer','minimum':1}},'required':['scope_id','user_id'],'additionalProperties':False}}
+        content=typed(target, target.schema_ref if extra else 'schema:psl/document-storage/v1',{'type':'object','properties':{
             **extra,
             'template_ids':{'type':'array','minItems':1,'uniqueItems':True,'items':{'type':'integer','minimum':1}},
             'repository':{'const':'internal-versioned'},'retention_days':{'type':'integer','minimum':1}},
@@ -35,6 +37,9 @@ def validate_reference(component,target,case,runtime=False):
         from apps.documents.models import Template
         if Template.objects.filter(case=case,pk__in=content['template_ids']).count()!=len(content['template_ids']):
             raise ValidationError('Template must be a registered immutable version on this case')
+        if target.schema_ref == 'schema:psl/document-storage/v3':
+            from apps.documents.template_validators import validate_owners
+            validate_owners(case, content, runtime=runtime)
         if extra and 'closure_inventory' in content and not {'technical_document','test_results','project_artifact'}.issubset(content['closure_inventory']['required_kinds']):
             raise ValidationError('Closure inventory must include technical_document, test_results and project_artifact')
     elif component == 'D05.decision_action_matrix':

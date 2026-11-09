@@ -17,7 +17,15 @@ ACCOUNTING_VALUE['properties']['required_evidence_kinds']['maxItems']=2
 
 def validate_reference(component,target,case,runtime=False):
     from .factory_provider_profiles import shape_for,scope
-    value=typed(target,*shape_for(target,SCHEMA,ACCOUNTING_VALUE));scope(case,value)
+    if target.schema_ref=='schema:psl/factory-accounting-execution/v3':
+        shape=deepcopy(ACCOUNTING_VALUE)
+        shape['properties']['statement_contract_id']=deepcopy(ID)
+        shape['required']+=['statement_contract_id']
+        from .factory_provider_profiles import SYNTHETIC,GOVERNED
+        shape['properties']['provider']={'enum':[None,SYNTHETIC,GOVERNED]}
+        value=typed(target,target.schema_ref,shape)
+    else:value=typed(target,*shape_for(target,SCHEMA,ACCOUNTING_VALUE))
+    scope(case,value)
     from apps.identity.models import Grant
     from apps.documents.models import Template
     for field in ['template_id','executor_id','information_resolver_id']:

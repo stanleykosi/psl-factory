@@ -62,3 +62,17 @@ class FactoryAttempt(AppendOnly):
     created_at=models.DateTimeField(auto_now_add=True)
     class Meta:
         constraints=[models.UniqueConstraint(fields=['activity','number','phase'],name='factory_attempt_event_identity')]
+
+
+class FactoryInvoicePreparationBinding(AppendOnly):
+    """An explicit same-obligation successor, never a replacement of intake history."""
+    work=models.ForeignKey(FactoryWork,on_delete=models.PROTECT,related_name='preparation_bindings')
+    previous=models.ForeignKey('self',null=True,on_delete=models.PROTECT,related_name='+')
+    preparation=models.ForeignKey('finance.BillingPreparation',on_delete=models.PROTECT)
+    sequence=models.PositiveIntegerField()
+    actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    payload=models.JSONField()
+    reason=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    class Meta:
+        constraints=[models.UniqueConstraint(fields=['work','sequence'],name='factory_invoice_binding_sequence')]

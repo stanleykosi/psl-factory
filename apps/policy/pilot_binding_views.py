@@ -15,6 +15,7 @@ class IdentityChoice(forms.ModelChoiceField):
 
 
 class BindingForm(forms.Form):
+    planning_packet_id=IdentityChoice(queryset=Evidence.objects.none(),required=False)
     operation=forms.ChoiceField(choices=[(k,k) for k in pilot_guards.REGISTRY])
     participant=forms.ChoiceField(choices=[])
     expected_revision=forms.IntegerField(min_value=1)
@@ -39,6 +40,13 @@ class BindingForm(forms.Form):
     issued_invoice_id=IdentityChoice(required=False,queryset=Evidence.objects.none(),label='Exact proven invoice issue')
     cash_verification_evidence_id=IdentityChoice(required=False,queryset=Evidence.objects.none(),label='Exact cash verification evidence')
     cash_allocation_evidence_id=IdentityChoice(required=False,queryset=Evidence.objects.none(),label='Exact cash allocation evidence')
+    recognition_input_id=IdentityChoice(required=False,queryset=Evidence.objects.none(),label='Private proposed attestation input ID')
+    recognition_input_sha256=forms.RegexField(required=False,regex=r'^[a-f0-9]{64}$',label='Exact private input hash')
+    approval_request_id=IdentityChoice(required=False,queryset=Evidence.objects.none(),label='Exact prerequisite request')
+    approval_purpose=forms.ChoiceField(required=False,choices=[('request','Request'),('reminder','Reminder')])
+    ledger_check_id=IdentityChoice(required=False,queryset=Evidence.objects.none(),label='Exact ledger verification')
+    ledger_review_evidence_id=IdentityChoice(required=False,queryset=Evidence.objects.none(),label='Public Finance review evidence')
+    ledger_verdict=forms.ChoiceField(required=False,choices=[('approve','Approve'),('reject','Reject')])
     cash_amount=forms.CharField(required=False,max_length=70,label='Exact cash allocation amount; no rounding')
     operation_key=forms.CharField(required=False,max_length=100,label='Exact cash allocation operation identity')
     verdict=forms.ChoiceField(required=False,choices=[('release','Release'),('withdraw','Withdraw')])
@@ -58,6 +66,10 @@ class BindingForm(forms.Form):
         self.fields['participant'].choices=[(str(p['user_id']),'Participant #'+str(p['user_id'])) for p in contract.payload['participants']]
         for key,kind in [('plan_id','plan'),('cost_id','costing'),('sow_id','sow'),('signature_id','signature'),('evidence_id','completion')]:
             self.fields[key].queryset=public_evidence(Evidence.objects.filter(case=contract.case,kind=kind))
+        try:
+            from adapters.planning_readiness_guard import choices as planning_choices
+            self.fields['planning_packet_id'].queryset=planning_choices(actor,contract.case)
+        except PermissionDenied:pass
         from apps.finance.models import Invoice,InvoiceCorrection
         from apps.baas.support_release import Packet,access
         try:
@@ -70,6 +82,20 @@ class BindingForm(forms.Form):
             self.fields['issued_invoice_id'].queryset=InvoiceIssue.objects.filter(invoice__case=contract.case)
             for key,kind in [('cash_verification_evidence_id','cash_verification'),('cash_allocation_evidence_id','cash_allocation')]:
                 self.fields[key].queryset=public_evidence(Evidence.objects.filter(case=contract.case,kind=kind))
+        except PermissionDenied:pass
+        try:
+            from apps.finance.recognition_preview import choices
+            self.fields['recognition_input_id'].queryset=choices(actor,contract.case)
+        except PermissionDenied:pass
+        try:
+            from adapters.approval_route_guard import choices
+            self.fields['approval_request_id'].queryset=choices(actor,contract.case)
+        except PermissionDenied:pass
+        try:
+            from apps.finance.ledger import readable,LedgerCheck
+            readable(actor,contract.case)
+            self.fields['ledger_check_id'].queryset=LedgerCheck.objects.filter(lineage__case=contract.case)
+            self.fields['ledger_review_evidence_id'].queryset=public_evidence(Evidence.objects.filter(case=contract.case))
         except PermissionDenied:pass
         try:
             from apps.pmo.models import DeliveryDossier

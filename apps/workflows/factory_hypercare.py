@@ -147,6 +147,8 @@ def projection(actor,work):
     author_current=True
     try:intake_authority(work)
     except PermissionDenied:author_current=False
+    from apps.pmo.go_live_attestations import declaration_draft
+    for receipt in current_receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
     return {'dossier':d,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,'can_record_release':can_release,
         'can_reaffirm':instruction_packet is not None,'intake_authority_current':author_current,
         'can_accept_go_live':can_accept,'acceptance_packet':packet,'go_live_receipts':current_receipts,'readiness_changed':changed,
@@ -171,7 +173,7 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     elif kind=='acceptance':
         if not panel['can_accept_go_live'] or data['packet']!=panel['acceptance_packet']:raise ValidationError('STALE_VERSION: exact current go-live receipt and authority required')
         if data['receipt'] not in [r.pk for r in panel['go_live_receipts']]:raise ValidationError('Select an available current go-live receipt')
-        result=closure.accept_go_live(actor,case.pk,d.pk,data['receipt'],data['pm_signature'],data['client_signature'],data['note'],case.revision)
+        result=closure.accept_go_live(actor,case.pk,d.pk,data['receipt'],data['pm_signature'],data['client_signature'],data['note'],case.revision,attestation=data.get('attestation'))
     else:raise ValidationError('Choose an actual event or go-live acceptance observation')
     work.revision+=1
     if work.status not in ['configuration_needed','owner_needed','blocked']:work.status='ready';work.finding=''

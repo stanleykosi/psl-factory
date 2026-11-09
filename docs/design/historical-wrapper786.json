@@ -1,0 +1,49 @@
+{
+  "audits": {
+    "782-launch": {
+      "original_path": "tests/test_native782_launch_contract.py",
+      "check_path": "scripts/check_native782_launch_contract.py",
+      "sha256": "1d19a5b651a80680cd7950126135998699a0d46343f4d32c40bbd6a5701d0615",
+      "frozen_source": "d32ad7a0a4c57f1854764b38293af8cbddc9be51",
+      "test_count": 4
+    },
+    "782-final": {
+      "original_path": "tests/test_native782_final_wrapper.py",
+      "check_path": "scripts/check_native782_final_wrapper.py",
+      "sha256": "803fccff55b68c0613dba753d35339841506626013af09d22554f7b6ed640040",
+      "frozen_source": "d32ad7a0a4c57f1854764b38293af8cbddc9be51",
+      "test_count": 3
+    },
+    "783": {
+      "original_path": "tests/test_native783_wrapper_component.py",
+      "check_path": "scripts/check_native783_wrapper_component.py",
+      "sha256": "34ea085a819878f1a01317ee4e54ad6bc77538a8dba4b2afe53fa573a999156a",
+      "frozen_source": "d60d5bcc4bba24b880db9692eb2a777b9fac393b",
+      "test_count": 6
+    },
+    "784": {
+      "original_path": "tests/test_native784_wrapper_component.py",
+      "check_path": "scripts/check_native784_wrapper_component.py",
+      "sha256": "7b96cc887ad70da9f77ad39ae46dd6571e9f019ffd209fd50e3a56e14220a2b4",
+      "frozen_source": "56d125049eb985ff2406ce9214b643ec1b249cca",
+      "test_count": 3
+    },
+    "784-resume": {
+      "original_path": "tests/test_native784_resume_wrapper_component.py",
+      "check_path": "scripts/check_native784_resume_wrapper_component.py",
+      "sha256": "8e86dec24955e151e2bc1d4760342fac9864f81c1a091b0a8668d595d6225a9e",
+      "frozen_source": "b7567bd4a4fe24ef9fda116388f57094b90c6b0b",
+      "test_count": 3
+    },
+    "785": {
+      "original_path": "tests/test_native785_wrapper_component.py",
+      "check_path": "scripts/check_native785_wrapper_component.py",
+      "sha256": "93a38fbf531886ec1d3060b79732736356b518ae09c3823d19860f1c7e65449e",
+      "frozen_source": "3548a10b019a03525359d2999f17c6b4766ba8e3",
+      "test_count": 6
+    }
+  },
+  "historical_methods": 25,
+  "current_component_methods": 46,
+  "production_changes": false
+}

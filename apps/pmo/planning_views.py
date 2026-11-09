@@ -21,15 +21,16 @@ def workbench(request,case_id):
     report=d.report(request.user,c.pk)
     ordinary=None
     capture_data=request.POST if request.method=='POST' and request.POST.get('action')=='capture_fields' else None
-    preview=bool(capture_data is not None and request.POST.get('edit_rows')=='add_question')
+    preview=bool(capture_data is not None and request.POST.get('edit_rows') in ['add_question','add_correlation'])
     row_error=None
     if preview:
         capture_data=request.POST.copy()
         try:
-            total=int(capture_data.get('questions-TOTAL_FORMS',''))
-            if not 0<=total<100:raise ValueError
-            capture_data['questions-TOTAL_FORMS']=str(total+1)
-        except (ValueError,TypeError):row_error='At most 100 question rows are available; use a valid form management count.'
+            prefix,limit=('questions',100) if request.POST.get('edit_rows')=='add_question' else ('correlations',50)
+            total=int(capture_data.get(prefix+'-TOTAL_FORMS',''))
+            if not 0<=total<limit:raise ValueError
+            capture_data[prefix+'-TOTAL_FORMS']=str(total+1)
+        except (ValueError,TypeError):row_error='At most '+str(limit)+' '+('question' if prefix=='questions' else 'correlation')+' rows are available; use a valid form management count.'
     if 'planning.coordinate' in grants:
         ordinary=planning_forms.capture_forms(c,capture_data,report.get('payload'),report.get('current_packet_id'))
         if row_error:ordinary[0].add_error(None,row_error)
@@ -42,7 +43,11 @@ def workbench(request,case_id):
                 return redirect('planning',case_id=c.pk)
             except (ValidationError,PermissionDenied) as exc:ordinary[0].add_error(None,str(exc))
     number=lambda:forms.IntegerField(min_value=1)
+    from django.contrib.auth import get_user_model
+    owners=get_user_model().objects.filter(is_active=True,grant__case=c,grant__active=True,grant__action='planning.participate').filter(grant__case=c,grant__active=True,grant__action='action.own').distinct()
     commands={
+        'clarify_source':('Route exact source clarification internally','planning.coordinate',{'packet_id':number(),'key':forms.CharField(max_length=100),'owner_id':forms.ModelChoiceField(owners,required=False,empty_label='Unassigned owner; do not infer an approver')}),
+        'resolve_source':('Record the assigned owner source response','planning.participate',{'packet_id':number(),'key':forms.CharField(max_length=100),'action_id':number(),'expected_action':number(),'disposition':forms.ChoiceField(choices=[('source_correction_required','Source correction required'),('exclude_in_successor','Evidence supports excluding this source in a successor')]),'evidence_id':number(),'replacement_source_id':forms.IntegerField(min_value=1,required=False),'target_prd_id':forms.IntegerField(min_value=1,required=False),'target_scope_id':forms.IntegerField(min_value=1,required=False)}),
         'capture':('Advanced typed JSON capture','planning.coordinate',{'payload':forms.JSONField(widget=forms.Textarea),'predecessor':forms.IntegerField(min_value=1,required=False)}),
         'align':('Link an actual formal alignment session','planning.coordinate',{'packet_id':number(),'purpose':forms.ChoiceField(choices=[(k,k) for k in PURPOSES]),'meeting_version_id':number()}),
         'open_requests':('Open separate department-owned scope/estimate requests','planning.route',{'packet_id':number()}),
@@ -59,7 +64,11 @@ def workbench(request,case_id):
         if form.is_bound and form.is_valid():
             try:
                 v={k:x for k,x in form.cleaned_data.items() if k not in ['action','revision']}
-                if action=='policy':draft_operator_policy(request.user,c.pk,COMPONENT,v['content'],v['evidence_id'],timezone.now())
+                if action in ['clarify_source','resolve_source']:
+                    from . import planning_sources
+                    if action=='clarify_source':v['owner_id']=v['owner_id'].pk if v['owner_id'] else None
+                    getattr(planning_sources,'clarify' if action=='clarify_source' else 'resolve')(request.user,c.pk,**v)
+                elif action=='policy':draft_operator_policy(request.user,c.pk,COMPONENT,v['content'],v['evidence_id'],timezone.now())
                 elif action=='investigate':
                     from apps.agents.planning import investigate
                     return JsonResponse(investigate(request.user,c.pk),headers={'Cache-Control':'no-store'})

@@ -59,6 +59,40 @@ GO_LIVE_VALUE=deepcopy(COMMERCIAL_VALUE)
 GO_LIVE_VALUE['properties'].update(definition={'const':'delivery-go-live/v1'},preparer_id=deepcopy(ID))
 GO_LIVE_VALUE['required'].append('preparer_id')
 
+CHANGE_COMPONENT='OPS.factory_change_execution'
+CHANGE_SCHEMA='schema:psl/factory-change-execution/v1'
+CHANGE_VALUE=deepcopy(GO_LIVE_VALUE)
+CHANGE_VALUE['properties']['definition']={'const':'pmo-change/v1'}
+
+PPE_COMPONENT='OPS.factory_ppe_execution'
+PPE_SCHEMA='schema:psl/factory-ppe-execution/v1'
+PPE_VALUE=deepcopy(PLANNING_VALUE)
+PPE_VALUE['properties']['definition']={'const':'finance-ppe/v1'}
+PAYROLL_COMPONENT='OPS.factory_payroll_execution'
+PAYROLL_SCHEMA='schema:psl/factory-payroll-execution/v1'
+PAYROLL_VALUE=deepcopy(PLANNING_VALUE)
+PAYROLL_VALUE['properties']['definition']={'const':'finance-payroll/v1'}
+
+LEDGER_COMPONENT='OPS.factory_ledger_execution'
+LEDGER_SCHEMA='schema:psl/factory-ledger-execution/v1'
+LEDGER_VALUE=deepcopy(PLANNING_VALUE)
+LEDGER_VALUE['properties']['definition']={'const':'finance-ledger/v1'}
+
+BU_COMPONENT='OPS.factory_bu_execution'
+BU_SCHEMA='schema:psl/factory-bu-execution/v1'
+BU_VALUE=deepcopy(PLANNING_VALUE)
+BU_VALUE['properties']['definition']={'const':'finance-bu/v1'}
+
+SCHEDULES_COMPONENT='OPS.factory_schedules_execution'
+SCHEDULES_SCHEMA='schema:psl/factory-schedules-execution/v1'
+SCHEDULES_VALUE=deepcopy(PLANNING_VALUE)
+SCHEDULES_VALUE['properties']['definition']={'const':'finance-schedules/v1'}
+
+ENGAGEMENT_COMPONENT='OPS.factory_engagement_execution'
+ENGAGEMENT_SCHEMA='schema:psl/factory-engagement-execution/v1'
+ENGAGEMENT_VALUE=deepcopy(PLANNING_VALUE)
+ENGAGEMENT_VALUE['properties']['definition']={'const':'engagement/v1'}
+
 def validate_reference(component,target,case,runtime=False):
     planning=component==PLANNING_COMPONENT
     commercial=component==COMMERCIAL_COMPONENT
@@ -67,18 +101,20 @@ def validate_reference(component,target,case,runtime=False):
     archive=component==ARCHIVE_COMPONENT
     handover=component==HANDOVER_COMPONENT
     closure=component==CLOSURE_COMPONENT
-    go_live=component==GO_LIVE_COMPONENT
-    schema,shape={COMPONENT:(SCHEMA,VALUE),PLANNING_COMPONENT:(PLANNING_SCHEMA,PLANNING_VALUE),
+    change=component==CHANGE_COMPONENT
+    go_live=component==GO_LIVE_COMPONENT or change
+    schema,shape={LEDGER_COMPONENT:(LEDGER_SCHEMA,LEDGER_VALUE),BU_COMPONENT:(BU_SCHEMA,BU_VALUE),ENGAGEMENT_COMPONENT:(ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE),PAYROLL_COMPONENT:(PAYROLL_SCHEMA,PAYROLL_VALUE),COMPONENT:(SCHEMA,VALUE),PLANNING_COMPONENT:(PLANNING_SCHEMA,PLANNING_VALUE),
         COMMERCIAL_COMPONENT:(COMMERCIAL_SCHEMA,COMMERCIAL_VALUE),DELIVERY_COMPONENT:(DELIVERY_SCHEMA,DELIVERY_VALUE),
         HYPERCARE_COMPONENT:(HYPERCARE_SCHEMA,HYPERCARE_VALUE),ARCHIVE_COMPONENT:(ARCHIVE_SCHEMA,ARCHIVE_VALUE),
         HANDOVER_COMPONENT:(HANDOVER_SCHEMA,HANDOVER_VALUE),CLOSURE_COMPONENT:(CLOSURE_SCHEMA,CLOSURE_VALUE),
-        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE)}.get(component,(SCHEMA,VALUE))
+        GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE),PPE_COMPONENT:(PPE_SCHEMA,PPE_VALUE),SCHEDULES_COMPONENT:(SCHEDULES_SCHEMA,SCHEDULES_VALUE)}.get(component,(SCHEMA,VALUE))
     from .factory_provider_profiles import shape_for,scope
     value=typed(target,*shape_for(target,schema,shape));scope(case,value)
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')
     from types import SimpleNamespace
     from apps.core.evidence_access import restricted
-    if any(restricted(SimpleNamespace(kind=k)) for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
+    if any(restricted(SimpleNamespace(kind=k)) and not (component==BU_COMPONENT and k=='agent_private_bu_intake' or component==SCHEDULES_COMPONENT and k=='agent_private_schedules_intake' or component==ENGAGEMENT_COMPONENT and k=='agent_private_engagement_intake') and not (component==LEDGER_COMPONENT and k in ['agent_private_ledger_intake','ledger_source']) for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
+    if component==LEDGER_COMPONENT and any(k not in ['agent_private_ledger_intake','ledger_source'] for k in value['required_evidence_kinds']):raise ValidationError('Selected private ledger intake only')
     from django.contrib.auth import get_user_model
     from apps.identity.models import Grant
     for name in ['information_resolver_id','executor_id']+(['preparer_id'] if go_live else []):
@@ -97,8 +133,8 @@ def validate_reference(component,target,case,runtime=False):
                 for required in ['case.read','delivery.read','delivery.manage']:
                     if not Grant.objects.filter(case=case,user_id=value[name],action=required,active=True).exists():raise ValidationError('Closure finaliser requires current same-case delivery permissions; PM business authority is rechecked at runtime')
             if go_live:
-                required_actions=['case.read','delivery.read']+(['document.publish'] if name=='executor_id' else
-                    ['delivery.manage','document.draft','document.request_review'] if name=='preparer_id' else [])
+                required_actions=['case.read','change.read' if change else 'delivery.read']+(['document.publish'] if name=='executor_id' else
+                    ['change.manage' if change else 'delivery.manage','document.draft','document.request_review'] if name=='preparer_id' else [])
                 for required in required_actions:
                     if not Grant.objects.filter(case=case,user_id=value[name],action=required,active=True).exists():raise ValidationError('Go-live principal requires current same-project permissions; selection does not appoint a PM')
     return value
