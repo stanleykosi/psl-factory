@@ -48,12 +48,12 @@ def descriptor(config, kind, ref):
     raise ValidationError('Scope must identify this tenant, project, service or recorded SOW')
 
 
-def values(config):
+def values(config, *, budget=None):
     from .services import reference_values
-    return [config.envelope['value']] if config.component == 'D04.iana_timezone' else reference_values(config)
+    return [config.envelope['value']] if config.component == 'D04.iana_timezone' else reference_values(config, budget=budget)
 
 
-def source_health(source, at=None):
+def source_health(source, at=None, *, budget=None):
     from .services import validate_envelope
     mutex(source)
     at = at or timezone.now()
@@ -62,13 +62,14 @@ def source_health(source, at=None):
         return 'REVOKED'
     if current != 'active':
         return 'INVALID'
-    if family(source).filter(states__state__in=['active', 'revoked']).order_by('-revision').first().pk != source.pk:
+    head = family(source).filter(states__state__in=['active', 'revoked']).only('id').order_by('-revision').first()
+    if head.pk != source.pk:
         return 'INVALID'
     try:
         activated = source.states.filter(state='active').latest('pk')
         authorized(activated.actor, source.configuration.case, 'policy.activate')
         descriptor(source.configuration, source.kind, source.ref)
-        validate_envelope(source.configuration.case, source.configuration.envelope, runtime=True)
+        validate_envelope(source.configuration.case, source.configuration.envelope, runtime=True, budget=budget)
         if source.configuration.states.order_by('-pk').first().state != 'validated':
             return 'INVALID'
     except (PermissionDenied, ValidationError, ValueError, KeyError):
@@ -176,8 +177,11 @@ def apply(actor, source_id, case_id, decision_id, bindings):
     return config
 
 
-def application_health(config, at=None):
-    application = ScopeApplication.objects.select_related('source__configuration__case', 'actor').filter(configuration=config).first()
+def application_health(config, at=None, *, budget=None):
+    applications = ScopeApplication.objects.select_related('source__configuration__case', 'actor').filter(configuration=config)
+    if budget is not None:
+        applications = applications.defer('bindings', 'source__binding_paths', 'source__configuration__envelope')
+    application = applications.first()
     if not application:
         return 'ACTIVE'
     try:
@@ -188,16 +192,21 @@ def application_health(config, at=None):
             return 'INVALID'
         if config.component != source.configuration.component or (source.kind != 'organization' and config.case_id != source.configuration.case_id):
             return 'INVALID'
-        bound = bind(values(source.configuration), source.binding_paths, application.bindings,
+        if budget is not None:
+            budget.load(config, 'envelope')
+            budget.load(source.configuration, 'envelope')
+            budget.load(source, 'binding_paths')
+            budget.load(application, 'bindings')
+        bound = bind(values(source.configuration, budget=budget), source.binding_paths, application.bindings,
             cross_case=config.case_id != source.configuration.case_id)
-        if bound != values(config):
+        if bound != values(config, budget=budget):
             return 'INVALID'
         for key in ['effective_from','effective_until','implementation_id','implementation_version','reviewed_implementation_ref','component_schema_ref','schema_version','fixture_scope']:
             if config.envelope.get(key) != source.configuration.envelope.get(key):
                 return 'INVALID'
     except (PermissionDenied, ValidationError, ValueError, KeyError, ObjectDoesNotExist):
         return 'INVALID'
-    return source_health(application.source, at)
+    return source_health(application.source, at, budget=budget)
 
 
 def report(actor, case_id):

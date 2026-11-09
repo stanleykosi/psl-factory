@@ -74,6 +74,12 @@ class IncidentReportBindingTests(LeadershipReportTests):
             return cur.fetchone()[0]
 
     def test_exact_selected_provenance_and_sql_parity(self):
+        from django.db import connection
+        from apps.core.read_budget import ReadBudget
+        from apps.documents import template_current, template_source_reader
+        from apps.pmo import incident_reporting, leadership_reporting
+        from .test_template_current import claim, scope
+
         observation=self.external_incident();binding=self.prepare()
         pin=binding.manifest['incident_claims'][0]
         self.assertEqual(pin['observation_id'],observation.pk)
@@ -85,8 +91,42 @@ class IncidentReportBindingTests(LeadershipReportTests):
         self.assertTrue(self.sql_access(self.actor,binding.manifest))
         self.assertIn(pin['observed_at'],binding.version.fields['executive_summary']['text'])
         self.assertNotIn('ENG-RCA-765',json.dumps(binding.version.payload))
+        statements = []
+
+        def trace(execute, sql, params, many, context):
+            statements.append(sql)
+            return execute(sql, params, many, context)
+
+        with connection.execute_wrapper(trace):
+            leadership_reporting.binding_access(self.actor, binding.version, budget=ReadBudget())
+        for field in ('pmo_minutesreportbinding"."manifest', 'pmo_issuereferencerevision"."references'):
+            self.assertTrue(any(field in sql and 'CASE WHEN' in sql for sql in statements))
+        for field in ('core_evidence"."body', 'pmo_issuereferenceobservation"."fields', 'pmo_issuereferencecontract"."allowed_fields'):
+            self.assertFalse(any(field in sql for sql in statements))
+
+        legacy = dict(binding.manifest)
+        del legacy['incident_claims']
+        statements.clear()
+        with connection.execute_wrapper(trace):
+            incident_reporting.legacy_access(self.actor, self.case, legacy, binding.version.created_at, budget=ReadBudget())
+        for field in ('core_evidence"."body', 'pmo_issuereferencerevision"."references'):
+            queries = [sql for sql in statements if field in sql]
+            self.assertTrue(queries)
+            self.assertTrue(all('CASE WHEN' in sql for sql in queries), queries)
+
+        source = template_current.capture_source(self.actor, self.case.pk, 'Private incident report template rationale',
+                                                 'synthetic:incident-template', rev(self.case))
+        applicability = scope(self.actor, self.case, source, document_type='status_report', audience='internal')
+        claim(self.actor, self.case, applicability, self.template, source, False)
+        statements.clear()
+        with connection.execute_wrapper(trace):
+            _, selected = template_source_reader._source(self.actor, self.case, ReadBudget(), source.pk)
+        self.assertEqual(selected['body'], source.body)
+        # Account, case and outer document-grant reads occur before _source.
+        self.assertLessEqual(len(statements) + 3, template_source_reader.MAX_QUERIES)
 
     def test_revoked_selected_scope_blocks_current_and_historical_not_receipts(self):
+        from apps.core.read_budget import ReadBudget
         from django.core.exceptions import PermissionDenied
         from apps.pmo import leadership_reporting as reports
         from apps.documents.controlled import reserve_publication
@@ -98,6 +138,7 @@ class IncidentReportBindingTests(LeadershipReportTests):
         original=list(PublicationReceipt.objects.filter(publication=publication).values())
         Grant.objects.filter(case=self.case,user=self.actor,action='issue.reference.incident.read').update(active=False)
         with self.assertRaises(PermissionDenied): reports.binding_access(self.actor,binding.version)
+        with self.assertRaises(PermissionDenied): reports.binding_access(self.actor,binding.version,budget=ReadBudget())
         with self.assertRaises(ValidationError): current_version(self.case,binding.version_id)
         self.assertFalse(self.sql_access(self.actor,binding.manifest))
         self.assertEqual(original,list(PublicationReceipt.objects.filter(publication=publication).values()))

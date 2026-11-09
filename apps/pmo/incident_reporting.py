@@ -63,18 +63,23 @@ def claims(actor, case, selections, sections, *, historical_at=None, states=None
     return result
 
 
-def selected_access(actor, case, pin):
+def selected_access(actor, case, pin, *, budget=None):
     """Historical permission is independent of current source availability."""
     require(actor, case, 'issue.read')
-    issue_subject(case, pin['reference']['evidence_id'])
+    issue_subject(case, pin['reference']['evidence_id'], metadata_only=budget is not None)
     if pin['revision_id'] is not None:
-        revision = IssueReferenceRevision.objects.filter(pk=pin['revision_id'], issue_id=pin['issue_id'], issue__case=case).first()
+        revisions = IssueReferenceRevision.objects.filter(pk=pin['revision_id'], issue_id=pin['issue_id'], issue__case=case)
+        if budget is not None:
+            revisions = revisions.defer('references', 'relations')
+        revision = revisions.first()
+        if budget is not None and revision is not None:
+            budget.load(revision, 'references', ceiling=64 * 1024)
         if not revision or pin['reference'] not in revision.references:
             raise ValidationError('Exact retained incident membership required')
-        issue_subject(case, revision.evidence_id)
+        issue_subject(case, revision.evidence_id, metadata_only=budget is not None)
         require(revision.actor, case, 'issue.manage')
     if pin['observation_id'] is not None:
-        row = refs.observation(actor, case, pin['observation_id'])
+        row = refs.observation(actor, case, pin['observation_id'], metadata_only=budget is not None)
         if row.issue_id != pin['issue_id'] or row.contract.kind != 'incident' or row.source_ref != pin['reference']['source_ref']:
             raise ValidationError('Exact retained incident observation required')
 
@@ -93,7 +98,7 @@ def summary(manifest):
         '; freshness unknown; source authenticity unverified.' for pin in manifest.get('incident_claims', []))
 
 
-def legacy_access(actor, case, manifest, recorded_at):
+def legacy_access(actor, case, manifest, recorded_at, *, budget=None):
     """Conservative scopes from recorded history, NOT an original claim binding.
 
     Never persist these candidates or treat them as current report provenance.
@@ -101,12 +106,27 @@ def legacy_access(actor, case, manifest, recorded_at):
     """
     import json
     from apps.core.models import Evidence
-    narrative = Evidence.objects.get(case=case, pk=manifest['content']['id'])
+    evidence = Evidence.objects.filter(case=case, pk=manifest['content']['id'])
+    if budget is not None:
+        evidence = evidence.defer('body')
+    narrative = evidence.get()
+    if budget is not None:
+        budget.load(narrative, 'body')
     citations = {pk for section in json.loads(narrative.body)['sections'].values() for pk in section['evidence_ids']}
     for issue_id, state_id, _ in manifest['issues']:
         issue = Issue.objects.get(case=case, pk=issue_id)
-        revisions = list(issue.reference_revisions.filter(created_at__lte=recorded_at).order_by('-number'))
-        state = IssueState.objects.get(issue=issue, pk=state_id)
+        history = issue.reference_revisions.filter(created_at__lte=recorded_at).order_by('-number')
+        states = IssueState.objects.filter(issue=issue, pk=state_id)
+        if budget is not None:
+            revisions = budget.take(history.defer('references', 'relations'))
+            for revision in revisions:
+                budget.load(revision, 'references', ceiling=64 * 1024)
+            states = states.defer('external_links', 'note')
+        else:
+            revisions = list(history)
+        state = states.get()
+        if budget is not None and not revisions:
+            budget.load(state, 'external_links', ceiling=64 * 1024)
         links = revisions[0].references if revisions else state.external_links
         for link in links:
             if link['kind'] != 'incident' or link['evidence_id'] not in citations:
@@ -116,4 +136,4 @@ def legacy_access(actor, case, manifest, recorded_at):
                 if link not in revision.references: break
                 origin = revision
             selected_access(actor, case, {'issue_id': issue_id, 'reference': link,
-                'revision_id': origin.pk if origin else None, 'observation_id': link.get('observation_id')})
+                'revision_id': origin.pk if origin else None, 'observation_id': link.get('observation_id')}, budget=budget)

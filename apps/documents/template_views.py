@@ -12,7 +12,7 @@ from apps.identity.models import Grant
 from .models import Template, TemplateScope
 from .template_forms import SourceForm, ScopeForm, ClaimForm, OwnerPolicyForm
 from . import template_current as current
-from .template_source_reader import read_source, SourceReadUnavailable
+from .template_source_reader import read_owner_pin, read_source, SourceReadUnavailable
 
 
 @transaction.non_atomic_requests
@@ -28,6 +28,21 @@ def source_detail(request, case_id, source_id):
         raise Http404
     case, source = result
     return render(request, 'documents/template_source.html', {'case': case, 'source': source})
+
+
+@transaction.non_atomic_requests
+@login_required
+@require_safe
+@never_cache
+def owner_pin_detail(request, case_id, kind, pk):
+    try:
+        result = read_owner_pin(request.user, case_id, kind, pk)
+    except SourceReadUnavailable:
+        return render(request, 'documents/template_owner_pin.html', status=503)
+    if result is None:
+        raise Http404
+    case, pin = result
+    return render(request, 'documents/template_owner_pin.html', {'case': case, 'pin': pin})
 
 
 @login_required

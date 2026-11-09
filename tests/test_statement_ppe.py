@@ -220,6 +220,10 @@ class StatementPPETests(TestCase):
         with self.assertRaises(DatabaseError),transaction.atomic():type(work).objects.filter(pk=work.pk).update(status='verified')
 
     def test_native_publication_requires_source_reader_and_historical_inbox_rechecks(self):
+        from apps.core.read_budget import ReadBudget, ReadLimit
+        from apps.documents import template_current
+        from apps.documents.template_access import visible_sources
+        from .test_template_current import claim, scope
         from apps.finance.documents import draft_report
         from apps.documents.models import Template,PublicationReceipt
         from apps.documents.controlled import reserve_publication
@@ -230,6 +234,31 @@ class StatementPPETests(TestCase):
         analysis.review(f['reviewer'],f['case'].pk,'output',run.pk,'Finance','approve',f['e']['finance_review'].pk,'Independent selected PPE line reviewed',rev(f['case']))
         template=Template.objects.get(case=f['case'],definition__document_type='finance_report')
         document=draft_report(f['actor'],f['case'].pk,run.pk,template.pk,'internal',rev(f['case']))
+        source = template_current.capture_source(f['actor'], f['case'].pk, 'Private statement template rationale',
+                                                 'synthetic:finance-template', rev(f['case']))
+        applicability = scope(f['actor'], f['case'], source, document_type='finance_report', audience='internal')
+        claim(f['actor'], f['case'], applicability, template, source, False)
+        for action in ('case.read', 'finance.read', 'document.read'):
+            Grant.objects.get_or_create(case=f['case'], user=f['recipient'], action=action)
+        candidates = dict(source_id=source.pk)
+        self.assertFalse(visible_sources(f['recipient'], f['case'], budget=ReadBudget(), **candidates).exists())
+        budget = ReadBudget()
+        budget.remaining = 1
+        with self.assertRaises(ReadLimit):
+            visible_sources(f['actor'], f['case'], budget=budget, **candidates).exists()
+        statements = []
+
+        def trace(execute, sql, params, many, context):
+            statements.append(sql)
+            return execute(sql, params, many, context)
+
+        with connection.execute_wrapper(trace):
+            self.assertTrue(visible_sources(f['actor'], f['case'], budget=ReadBudget(), **candidates).exists())
+        payloads = [sql for sql in statements if 'finance_financerun"."snapshot' in sql]
+        self.assertTrue(payloads)
+        self.assertTrue(all('CASE WHEN' in sql for sql in payloads), payloads)
+        self.assertFalse(any('finance_financerun"."result' in sql or 'finance_financedocumentbinding"."snapshot' in sql
+                             for sql in statements))
         from apps.core.evidence_access import restricted,public_evidence,public_agent_runs
         from apps.core.models import Evidence
         from apps.agents.models import AgentRun
@@ -242,6 +271,7 @@ class StatementPPETests(TestCase):
         with self.assertRaises(ValidationError):create_version(f['actor'],f['case'].pk,template.pk,'Forbidden generic PPE copy','internal',document.fields,rev(f['case']))
         with self.assertRaises(PermissionDenied):reserve_publication(f['actor'],f['case'].pk,document.pk,rev(f['case']))
         for action in ['case.read','ppe.read']:Grant.objects.get_or_create(case=f['case'],user=f['recipient'],action=action)
+        self.assertTrue(visible_sources(f['recipient'], f['case'], budget=ReadBudget(), **candidates).exists())
         reserve_publication(f['actor'],f['case'].pk,document.pk,rev(f['case']));self.assertTrue(run_publication_once())
         receipt=PublicationReceipt.objects.get();payload=json.dumps(receipt.payload)
         self.assertIn('500.00',payload);self.assertNotIn('asset_id',payload);self.assertNotIn('opening_cost',payload)

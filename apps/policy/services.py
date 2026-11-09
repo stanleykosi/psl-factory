@@ -28,7 +28,7 @@ class PolicyHold(ValidationError):
         super().__init__([f'{r.component}: {r.status} {r.reason}' for r in results])
 
 
-def validate_envelope(case, envelope, runtime=False):
+def validate_envelope(case, envelope, runtime=False, *, budget=None):
     errors = sorted(Draft202012Validator(envelope_schema(), format_checker=FormatChecker()).iter_errors(envelope), key=lambda e: str(e.path))
     if errors:
         raise ValidationError([f'{list(e.path)}: {e.message}' for e in errors])
@@ -69,9 +69,14 @@ def validate_envelope(case, envelope, runtime=False):
             ref, version = item['artifact_ref'], item['artifact_version']
         else:
             ref, version = item, 1
-        target = RegisteredReference.objects.filter(case=case, ref=ref, version=version).first()
+        targets = RegisteredReference.objects.filter(case=case, ref=ref, version=version)
+        if budget is not None:
+            targets = targets.defer('content')
+        target = targets.first()
         if not target:
             raise ValidationError('Registered domain reference is missing')
+        if budget is not None:
+            budget.load(target, 'content')
         resolved_contents.append(target.content)
         digest = hashlib.sha256(json.dumps(target.content, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
         if target.sha256 != digest or (isinstance(item, dict) and (item['sha256'] != digest or item['schema_ref'] != target.schema_ref)):
@@ -282,7 +287,7 @@ def _resolution_candidate(component, case):
     return candidate
 
 
-def resolve(component, case, at=None, expected_revision=None):
+def resolve(component, case, at=None, expected_revision=None, *, budget=None):
     at = at or timezone.now()
     config = _resolution_candidate(component, case)
     if config is None:
@@ -291,13 +296,15 @@ def resolve(component, case, at=None, expected_revision=None):
     if state == 'revoked':
         return Resolution('REVOKED', component)
     from .scopes import application_health
-    origin_status = application_health(config, at)
+    origin_status = application_health(config, at, budget=budget)
     if origin_status != 'ACTIVE':
         return Resolution(origin_status, component, reason='Explicit scoped source is unavailable; no fallback')
     if expected_revision is not None and config.revision != expected_revision:
         return Resolution('INVALID', component, reason='Stale policy revision')
     try:
-        validate_envelope(case, config.envelope, runtime=True)
+        if budget is not None and 'envelope' in config.get_deferred_fields():
+            budget.load(config, 'envelope')
+        validate_envelope(case, config.envelope, runtime=True, budget=budget)
     except (ValidationError, ValueError, KeyError) as exc:
         return Resolution('INVALID', component, reason=str(exc))
     start = datetime.fromisoformat(config.envelope['effective_from'])
@@ -345,19 +352,29 @@ def register_reference(actor, case_id, ref, schema_ref, content, evidence_id):
     return reference
 
 
-def active_component(component,case):
-    result=resolve(component,case)
+def active_component(component,case,*,budget=None):
+    result=resolve(component,case,budget=budget)
     if result.status!='ACTIVE':
         raise PolicyHold([result])
     return result.configuration
 
 
-def reference_values(configuration):
+def reference_values(configuration, *, budget=None):
+    if budget is not None and 'envelope' in configuration.get_deferred_fields():
+        budget.load(configuration, 'envelope')
     value=configuration.envelope['value']
     if isinstance(value,dict):
-        return [RegisteredReference.objects.get(case=configuration.case,ref=value['artifact_ref'],version=value['artifact_version']).content]
-    refs=[value] if isinstance(value,str) else value
-    return [RegisteredReference.objects.get(case=configuration.case,ref=ref,version=1).content for ref in refs]
+        refs = [(value['artifact_ref'], value['artifact_version'])]
+    else:
+        refs = [(ref, 1) for ref in ([value] if isinstance(value,str) else value)]
+    records = RegisteredReference.objects.filter(case_id=configuration.case_id)
+    if budget is not None:
+        records = records.defer('content')
+    values = []
+    for ref, version in refs:
+        record = records.get(ref=ref, version=version)
+        values.append(record.content if budget is None else budget.load(record, 'content'))
+    return values
 
 
 def decision_authority(actor,case,role,action='approve',delegated=False,delegation_context=None):

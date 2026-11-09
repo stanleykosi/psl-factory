@@ -37,24 +37,24 @@ def scope_for(case, pk):
     return scope
 
 
-def owner_policy(actor, scope):
+def owner_policy(actor, scope, *, budget=None):
     require(actor, scope.case, 'case.read')
     require(actor, scope.case, 'document.read')
     require(actor, scope.case, 'document.template')
     if scope.document_type in ['finance_report','finance_group_report']:
         require(actor,scope.case,'finance.read')
-    policy = active_component(COMPONENT, scope.case)
-    rules = reference_values(policy)[0].get('template_owners', [])
+    policy = active_component(COMPONENT, scope.case, budget=budget)
+    rules = reference_values(policy, budget=budget)[0].get('template_owners', [])
     if not any(r['scope_id'] == scope.pk and r['user_id'] == actor.pk for r in rules):
         raise PermissionDenied('Document owner is unconfigured for this exact scope or is a different principal')
     return policy
 
 
-def owner_current(record):
+def owner_current(record, *, budget=None):
     if record.owner_policy_id is None:
         return False
     try:
-        return owner_policy(record.actor, record.scope).pk == record.owner_policy_id
+        return owner_policy(record.actor, record.scope, budget=budget).pk == record.owner_policy_id
     except (ValidationError, PermissionDenied):
         return False
 

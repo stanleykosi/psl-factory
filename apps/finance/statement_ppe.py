@@ -40,7 +40,9 @@ def is_ppe_statement(run):
     return run.kind=='statement' and any(i['declaration'].get('source_type')=='ppe_schedule' for i in run.snapshot['inputs'])
 
 
-def recipient_access(run,recipients):
+def recipient_access(run,recipients,*,budget=None):
+    if budget is not None and run.kind == 'statement':
+        budget.load(run, 'snapshot')
     if not is_ppe_statement(run):return
     from django.contrib.auth import get_user_model
     for user in get_user_model().objects.filter(pk__in=recipients):ppe.readable(user,run.case)

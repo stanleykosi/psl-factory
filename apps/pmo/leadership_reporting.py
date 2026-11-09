@@ -191,13 +191,19 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
     return binding
 
 
-def binding_access(actor, version):
-    b = MinutesReportBinding.objects.filter(version=version, manifest__source_mode=MODE).select_related('report__case').first()
+def binding_access(actor, version, *, budget=None):
+    bindings = MinutesReportBinding.objects.filter(version=version, manifest__source_mode=MODE).select_related('report__case')
+    if budget is not None:
+        bindings = bindings.defer('manifest', 'policies')
+    b = bindings.first()
     if not b: return
-    report_source_access(actor, b.report.case, b.manifest)
+    if budget is not None:
+        require(actor, b.report.case, 'report.read')
+        budget.load(b, 'manifest')
+    report_source_access(actor, b.report.case, b.manifest, budget=budget)
     if 'incident_claims' not in b.manifest:
         from .incident_reporting import legacy_access
-        legacy_access(actor, b.report.case, b.manifest, version.created_at)
+        legacy_access(actor, b.report.case, b.manifest, version.created_at, budget=budget)
     if b.manifest.get('escalations'): require(actor, b.report.case, 'issue.read')
     for action in b.manifest.get('source_actions', []): require(actor, b.report.case, action)
     ids = {s['id'] for s in b.manifest['sources']}
