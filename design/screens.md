@@ -33,12 +33,14 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-10 | J-05 | Exceptions | states: default, empty | components: CMP-01, CMP-03, CMP-05 | artboards: SCR-10-desktop, SCR-10-mobile
 - SCR-11 | J-08 | Registers: issues, changes, RFPs | states: default, empty | components: CMP-01, CMP-07 | artboards: SCR-11-desktop, SCR-11-mobile
 - SCR-12 | J-11 | Report with drill-down | states: default, loading | components: CMP-01 | artboards: SCR-12-desktop, SCR-12-mobile
-- SCR-13 | J-07 | Setup: roles, rules and delegation | states: default, validation, permission | components: CMP-01 | artboards: SCR-13-desktop, SCR-13-mobile, SCR-13-desktop-validation, SCR-13-mobile-validation, SCR-13-desktop-permission, SCR-13-mobile-permission
+- SCR-13 | J-07 | Setup: roles, rules and delegation | states: default, validation, permission, fields | components: CMP-01 | artboards: SCR-13-desktop, SCR-13-mobile, SCR-13-desktop-validation, SCR-13-mobile-validation, SCR-13-desktop-permission, SCR-13-mobile-permission, SCR-13-desktop-fields, SCR-13-mobile-fields
 - SCR-14 | J-01, J-04 | Verified outputs | states: default, empty | components: CMP-01, CMP-04, CMP-05, CMP-07, CMP-16 | artboards: SCR-14-desktop, SCR-14-mobile
-- SCR-15 | J-09, J-02 | Alerts and notification settings | states: default, empty | components: CMP-01, CMP-18, CMP-19 | artboards: SCR-15-desktop, SCR-15-mobile, SCR-15-desktop-email, SCR-15-mobile-whatsapp, SCR-15-desktop-settings, SCR-15-mobile-settings
+- SCR-15 | J-09, J-02 | Alerts and notification settings | states: default, empty, account | components: CMP-01, CMP-18, CMP-19 | artboards: SCR-15-desktop, SCR-15-mobile, SCR-15-desktop-email, SCR-15-mobile-whatsapp, SCR-15-desktop-settings, SCR-15-mobile-settings, SCR-15-desktop-account, SCR-15-mobile-account, SCR-15-desktop-whatsapp, SCR-15-mobile-email
 - SCR-16 | J-03 | Record a response | states: default, validation, success | components: CMP-01, CMP-16, CMP-20 | artboards: SCR-16-desktop, SCR-16-mobile, SCR-16-desktop-validation, SCR-16-mobile-validation, SCR-16-desktop-success, SCR-16-mobile-success
-- SCR-17 | J-02 | Sign in | states: default, error | components: CMP-21 | artboards: SCR-17-mobile, SCR-17-desktop, SCR-17-desktop-error, SCR-17-mobile-error
+- SCR-17 | J-02 | Sign in | states: default, error, reset | components: CMP-21 | artboards: SCR-17-mobile, SCR-17-desktop, SCR-17-desktop-error, SCR-17-mobile-error, SCR-17-desktop-reset, SCR-17-mobile-reset
 - SCR-18 | J-06 | Restricted payroll matching | states: default, permission | components: CMP-01, CMP-09, CMP-16, CMP-18 | artboards: SCR-18-desktop, SCR-18-mobile, SCR-18-desktop-permission, SCR-18-mobile-permission
+- SCR-19 | J-01, J-04 | Mark a milestone complete | states: default | components: CMP-01, CMP-16 | artboards: SCR-19-desktop, SCR-19-mobile
+- SCR-20 | J-04 | Payments and follow-up | states: default, record | components: CMP-01, CMP-04, CMP-09, CMP-16, CMP-18 | artboards: SCR-20-desktop, SCR-20-mobile, SCR-20-desktop-record, SCR-20-mobile-record
 
 - Shared states | all lists and reports | Empty, loading and error pattern for SCR-01, 07, 10, 11, 12, 14, 15 | artboards: STATES-desktop, STATES-mobile
 
@@ -64,6 +66,8 @@ Sample data until the architecture package exists. Sources are the current backe
 - SCR-16 — the step waiting for an outside response, the response, the uploaded proof and who recorded it.
 - SCR-17 — sign-in only.
 - SCR-18 — payroll inputs, staff-matching results and what this role may see.
+- SCR-19 — the milestone from the signed SOW, completion date, the evidence record and proof, who confirmed it.
+- SCR-20 — issued invoices with amounts invoiced, received and still owed (Unknown where bank data is missing), overdue age, receipts with bank reference and proof, and allocations kept separate from receipts.
 
 ## Revisions
 
@@ -76,3 +80,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — journeys J-08 to J-11 drawn in pairs: SCR-06 factory floor, SCR-07 project journey, SCR-11 registers, SCR-12 report drill-down, SCR-15 notifications and alert settings, SCR-05 assistant and conversation, SCR-08 document review. Design lint: ready for client approval — canvas version 1794454032-781f.
 - 2026-11-12 — states that carry a rule drawn in pairs on the new "States" page: SCR-02 processing and no access, SCR-03 not yours, SCR-04 and SCR-13 validation, SCR-05 draft started and can't share, SCR-08 returned, SCR-09 file error, SCR-13 view only, SCR-16 recorded, SCR-17 sign-in error; plus one shared empty/loading/error pattern (STATES-desktop, STATES-mobile).
 - 2026-11-12 — scope gaps closed: all ten work-item states from S-04 (added ready, waiting, setup needed, awaiting reconciliation, cancelled), "My work" as the queue's "Started by me" tab, and decisions for the CEO (final costing) and CTO (emergency change), each in desktop and phone, on the page "Work-item states, My work, CEO and CTO".
+- 2026-11-12 — role gaps closed: SCR-19 mark a milestone complete (PMO), SCR-20 payments and recording a receipt (Finance; short payments stay owed until a Finance Lead decides, no rule invented), SCR-13 payroll field visibility (HR Lead), SCR-17 password reset, SCR-15 account menu with sign-out, WhatsApp alert on desktop and email alert on a phone, all in pairs on the page "Milestones, payments, HR visibility, account".

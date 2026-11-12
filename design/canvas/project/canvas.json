@@ -65,6 +65,10 @@
     {
       "id": "scope",
       "name": "Work-item states, My work, CEO and CTO"
+    },
+    {
+      "id": "roles",
+      "name": "Milestones, payments, HR visibility, account"
     }
   ],
   "boards": {
@@ -1092,6 +1096,125 @@
       "h": 844,
       "page": "scope",
       "title": "Phone · CTO emergency"
+    },
+    "SCR-19-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 960,
+      "page": "roles",
+      "title": "Mark a milestone complete",
+      "expand": "fill"
+    },
+    "SCR-19-mobile.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "roles",
+      "title": "Phone · Mark a milestone complete"
+    },
+    "SCR-20-desktop.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "roles",
+      "title": "Payments and follow-up",
+      "expand": "fill"
+    },
+    "SCR-20-mobile.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "roles",
+      "title": "Phone · Payments and follow-up"
+    },
+    "SCR-20-desktop-record.dc.html": {
+      "x": 0,
+      "y": 1080,
+      "w": 1440,
+      "h": 960,
+      "page": "roles",
+      "title": "Record a payment received",
+      "expand": "fill"
+    },
+    "SCR-20-mobile-record.dc.html": {
+      "x": 1520,
+      "y": 1080,
+      "w": 390,
+      "h": 844,
+      "page": "roles",
+      "title": "Phone · Record a payment received"
+    },
+    "SCR-13-desktop-fields.dc.html": {
+      "x": 1990,
+      "y": 1080,
+      "w": 1440,
+      "h": 820,
+      "page": "roles",
+      "title": "HR Lead · what Finance may see",
+      "expand": "fill"
+    },
+    "SCR-13-mobile-fields.dc.html": {
+      "x": 3510,
+      "y": 1080,
+      "w": 390,
+      "h": 844,
+      "page": "roles",
+      "title": "Phone · HR Lead · what Finance may see"
+    },
+    "SCR-17-desktop-reset.dc.html": {
+      "x": 0,
+      "y": 2160,
+      "w": 1440,
+      "h": 760,
+      "page": "roles",
+      "title": "Reset password",
+      "expand": "fill"
+    },
+    "SCR-17-mobile-reset.dc.html": {
+      "x": 1520,
+      "y": 2160,
+      "w": 390,
+      "h": 844,
+      "page": "roles",
+      "title": "Phone · Reset password"
+    },
+    "SCR-15-desktop-account.dc.html": {
+      "x": 1990,
+      "y": 2160,
+      "w": 1440,
+      "h": 700,
+      "page": "roles",
+      "title": "Account menu and sign out",
+      "expand": "fill"
+    },
+    "SCR-15-mobile-account.dc.html": {
+      "x": 3510,
+      "y": 2160,
+      "w": 390,
+      "h": 844,
+      "page": "roles",
+      "title": "Phone · Account menu and sign out"
+    },
+    "SCR-15-desktop-whatsapp.dc.html": {
+      "x": 0,
+      "y": 3124,
+      "w": 1440,
+      "h": 720,
+      "page": "roles",
+      "title": "WhatsApp alert · desktop",
+      "expand": "fill"
+    },
+    "SCR-15-mobile-email.dc.html": {
+      "x": 1520,
+      "y": 3124,
+      "w": 390,
+      "h": 844,
+      "page": "roles",
+      "title": "Phone · email alert"
     }
   },
   "order": [
@@ -1210,7 +1333,21 @@
     "SCR-03-desktop-ceo-costing.dc.html",
     "SCR-03-mobile-ceo-costing.dc.html",
     "SCR-03-desktop-cto-emergency.dc.html",
-    "SCR-03-mobile-cto-emergency.dc.html"
+    "SCR-03-mobile-cto-emergency.dc.html",
+    "SCR-19-desktop.dc.html",
+    "SCR-19-mobile.dc.html",
+    "SCR-20-desktop.dc.html",
+    "SCR-20-mobile.dc.html",
+    "SCR-20-desktop-record.dc.html",
+    "SCR-20-mobile-record.dc.html",
+    "SCR-13-desktop-fields.dc.html",
+    "SCR-13-mobile-fields.dc.html",
+    "SCR-17-desktop-reset.dc.html",
+    "SCR-17-mobile-reset.dc.html",
+    "SCR-15-desktop-account.dc.html",
+    "SCR-15-mobile-account.dc.html",
+    "SCR-15-desktop-whatsapp.dc.html",
+    "SCR-15-mobile-email.dc.html"
   ],
   "notes": {
     "a-title": {
@@ -1372,6 +1509,14 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "scope"
+    },
+    "roles-title": {
+      "x": 0,
+      "y": -300,
+      "text": "Role gaps: PMO marks milestones complete · Finance payments · HR Lead field visibility · password reset, account, alerts on every device",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "roles"
     }
   },
   "designSystems": [
