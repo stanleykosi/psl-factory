@@ -2488,6 +2488,23 @@
       "h": 844,
       "page": "p-presale",
       "title": "Phone · register"
+    },
+    "SCR-39-desktop-example.dc.html": {
+      "x": 1990,
+      "y": 5820,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing rule review · worked example opened",
+      "expand": "fill"
+    },
+    "SCR-39-mobile-example.dc.html": {
+      "x": 3510,
+      "y": 5820,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · worked example"
     }
   },
   "createdOnFiles": {
@@ -3393,7 +3410,9 @@
     "SCR-41-desktop.dc.html",
     "SCR-41-mobile.dc.html",
     "SCR-41-desktop-register.dc.html",
-    "SCR-41-mobile-register.dc.html"
+    "SCR-41-mobile-register.dc.html",
+    "SCR-39-desktop-example.dc.html",
+    "SCR-39-mobile-example.dc.html"
   ],
   "pages": [
     {

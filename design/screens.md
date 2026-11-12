@@ -54,7 +54,7 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-31 | J-08 | Change request detail | states: default | components: CMP-01, CMP-09, CMP-18 | artboards: SCR-31-desktop, SCR-31-mobile
 - SCR-33 | J-08 | Project retrospective | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-33-desktop, SCR-33-mobile
 - SCR-38 | J-04, J-08 | Project milestones | states: default | components: CMP-01 | artboards: SCR-38-desktop, SCR-38-mobile
-- SCR-39 | J-07 | Setup · costing rule (studio-wide) | states: default, review | components: CMP-01, CMP-09, CMP-10, CMP-18, CMP-24 | artboards: SCR-39-desktop, SCR-39-mobile, SCR-39-desktop-review, SCR-39-mobile-review
+- SCR-39 | J-07 | Setup · costing rule (studio-wide) | states: default, review, example | components: CMP-01, CMP-09, CMP-10, CMP-18, CMP-24 | artboards: SCR-39-desktop, SCR-39-mobile, SCR-39-desktop-review, SCR-39-mobile-review, SCR-39-desktop-example, SCR-39-mobile-example
 - SCR-40 | J-01 | RFP submission (draft, review, submitted) | states: default, review, submitted | components: CMP-01, CMP-09, CMP-10, CMP-24 | artboards: SCR-40-desktop-draft, SCR-40-mobile-draft, SCR-40-desktop-review, SCR-40-mobile-review, SCR-40-desktop-submitted, SCR-40-mobile-submitted
 - SCR-41 | J-01 | Engagement (planning packet, confirm PM, register) | states: default, register | components: CMP-01, CMP-24 | artboards: SCR-41-desktop, SCR-41-mobile, SCR-41-desktop-register, SCR-41-mobile-register
 - SCR-32 | J-04 | Payment reminder | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-32-desktop, SCR-32-mobile
@@ -151,3 +151,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — SCR-16 team input: each team option shows whether it is given (tick) or missing and blocking review (orange square), with a one-line key naming the blocking teams (design engineer).
 - 2026-11-12 — SCR-16 team input, revised (design engineer: too many icons): no icons. Teams still missing are bold ink, teams already given are quiet grey, and one sentence under the picker names who is blocking review.
 - 2026-11-12 — RFP team input: concept 1 (checklist) chosen by the design engineer and applied to the "Before review" panel on SCR-26 desktop and phone: one row per team, done rows show the date and proof, missing rows show Record. Marked chosen on the concepts board.
+- 2026-11-12 — SCR-39 rule review: each worked example opens (design engineer). Desktop side panel / phone screen shows the example inputs, v4 and v5 calculations, the expected total set by the examples owner, the match result and the source document (signed quote), with previous / next example.
