@@ -1,46 +1,461 @@
 {
   "v": 3,
-  "createdOnFiles": {"v": 1, "at": "2026-11-12T09:00:00Z"},
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-12T09:00:00Z"
+  },
   "title": "PSL operations factory design",
-  "launch": {"view": "canvas", "page": "overview"},
+  "launch": {
+    "view": "canvas",
+    "page": "overview"
+  },
   "pages": [
-    {"id": "overview", "name": "Start here"},
-    {"id": "con-a", "name": "A · Control room"},
-    {"id": "con-b", "name": "B · Studio ledger"},
-    {"id": "con-c", "name": "C · Assembly line"},
-    {"id": "con-d", "name": "D · Linear-style"},
-    {"id": "mascots", "name": "Mascots"}
+    {
+      "id": "overview",
+      "name": "Start here"
+    },
+    {
+      "id": "con-a",
+      "name": "A · Control room"
+    },
+    {
+      "id": "con-b",
+      "name": "B · Studio ledger"
+    },
+    {
+      "id": "con-c",
+      "name": "C · Assembly line"
+    },
+    {
+      "id": "con-d",
+      "name": "D · Linear-style"
+    },
+    {
+      "id": "mascots",
+      "name": "Mascots"
+    },
+    {
+      "id": "j01",
+      "name": "J-01 · Start work to verified"
+    },
+    {
+      "id": "j02",
+      "name": "J-02 · Decision from an alert"
+    }
   ],
   "boards": {
-    "Main.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 720, "page": "overview", "title": "Start here"},
-    "a-queue.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 980, "page": "con-a", "title": "A · Work queue", "expand": "fill"},
-    "a-item.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1120, "page": "con-a", "title": "A · Work item", "expand": "fill"},
-    "a-phone.dc.html": {"x": 3040, "y": 0, "w": 390, "h": 844, "page": "con-a", "title": "A · Decision (phone)"},
-    "b-queue.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1180, "page": "con-b", "title": "B · Work queue", "expand": "fill"},
-    "b-item.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1320, "page": "con-b", "title": "B · Work item", "expand": "fill"},
-    "b-phone.dc.html": {"x": 3040, "y": 0, "w": 390, "h": 844, "page": "con-b", "title": "B · Decision (phone)"},
-    "c-queue.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1060, "page": "con-c", "title": "C · Work queue", "expand": "fill"},
-    "c-item.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1200, "page": "con-c", "title": "C · Work item", "expand": "fill"},
-    "c-phone.dc.html": {"x": 3040, "y": 0, "w": 390, "h": 844, "page": "con-c", "title": "C · Decision (phone)"},
-    "c-assistant.dc.html": {"x": 0, "y": 1320, "w": 1440, "h": 1040, "page": "con-c", "title": "C · Assistant", "expand": "fill", "is_interactive": true},
-    "mascot-family.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 900, "page": "mascots", "title": "Mascot family · master"},
-    "mascot-poses.dc.html": {"x": 0, "y": 1020, "w": 1440, "h": 1180, "page": "mascots", "title": "Mascot poses and avatars"},
-    "d-queue.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 900, "page": "con-d", "title": "D · Work queue", "expand": "fill"},
-    "d-item.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 900, "page": "con-d", "title": "D · Work item", "expand": "fill"},
-    "d-phone.dc.html": {"x": 3040, "y": 0, "w": 390, "h": 844, "page": "con-d", "title": "D · Decision (phone)"}
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "page": "overview",
+      "title": "Start here"
+    },
+    "a-queue.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 980,
+      "page": "con-a",
+      "title": "A · Work queue",
+      "expand": "fill"
+    },
+    "a-item.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1120,
+      "page": "con-a",
+      "title": "A · Work item",
+      "expand": "fill"
+    },
+    "a-phone.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "con-a",
+      "title": "A · Decision (phone)"
+    },
+    "b-queue.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1180,
+      "page": "con-b",
+      "title": "B · Work queue",
+      "expand": "fill"
+    },
+    "b-item.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1320,
+      "page": "con-b",
+      "title": "B · Work item",
+      "expand": "fill"
+    },
+    "b-phone.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "con-b",
+      "title": "B · Decision (phone)"
+    },
+    "c-queue.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1060,
+      "page": "con-c",
+      "title": "C · Work queue",
+      "expand": "fill"
+    },
+    "c-item.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1260,
+      "page": "con-c",
+      "title": "C · Work item",
+      "expand": "fill"
+    },
+    "c-phone.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "con-c",
+      "title": "C · Decision (phone)"
+    },
+    "c-assistant.dc.html": {
+      "x": 0,
+      "y": 1320,
+      "w": 1440,
+      "h": 1040,
+      "page": "con-c",
+      "title": "C · Assistant",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "mascot-family.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "mascots",
+      "title": "Mascot family · master"
+    },
+    "mascot-poses.dc.html": {
+      "x": 0,
+      "y": 1020,
+      "w": 1440,
+      "h": 1180,
+      "page": "mascots",
+      "title": "Mascot poses and avatars"
+    },
+    "d-queue.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "con-d",
+      "title": "D · Work queue",
+      "expand": "fill"
+    },
+    "d-item.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "con-d",
+      "title": "D · Work item",
+      "expand": "fill"
+    },
+    "d-phone.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "con-d",
+      "title": "D · Decision (phone)"
+    },
+    "SCR-15-mobile-whatsapp.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j02",
+      "title": "1 · WhatsApp alert",
+      "is_interactive": true
+    },
+    "SCR-17-mobile.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j02",
+      "title": "2 · Sign in",
+      "is_interactive": true
+    },
+    "SCR-03-mobile.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j02",
+      "title": "3 · Decision",
+      "is_interactive": true
+    },
+    "SCR-03-mobile-done.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j02",
+      "title": "4 · Approved",
+      "is_interactive": true
+    },
+    "SCR-03-mobile-stale.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j02",
+      "title": "State · newer version",
+      "is_interactive": true
+    },
+    "SCR-01-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1060,
+      "page": "j01",
+      "title": "1 · Work queue",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-04-desktop.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "page": "j01",
+      "title": "2 · Start work",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-02-desktop.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 1260,
+      "page": "j01",
+      "title": "3 · Work item",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-14-desktop.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "j01",
+      "title": "4 · Verified outputs",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-01-desktop-empty.dc.html": {
+      "x": 0,
+      "y": 1400,
+      "w": 1440,
+      "h": 760,
+      "page": "j01",
+      "title": "State · queue empty",
+      "expand": "fill"
+    },
+    "SCR-01-mobile.dc.html": {
+      "x": 1520,
+      "y": 1400,
+      "w": 390,
+      "h": 844,
+      "page": "j01",
+      "title": "Phone · queue",
+      "is_interactive": true
+    },
+    "SCR-04-mobile.dc.html": {
+      "x": 1990,
+      "y": 1400,
+      "w": 390,
+      "h": 844,
+      "page": "j01",
+      "title": "Phone · start work",
+      "is_interactive": true
+    },
+    "SCR-02-mobile.dc.html": {
+      "x": 2460,
+      "y": 1400,
+      "w": 390,
+      "h": 844,
+      "page": "j01",
+      "title": "Phone · work item",
+      "is_interactive": true
+    }
   },
-  "order": ["Main.dc.html", "a-queue.dc.html", "a-item.dc.html", "a-phone.dc.html", "b-queue.dc.html", "b-item.dc.html", "b-phone.dc.html", "c-queue.dc.html", "c-item.dc.html", "c-phone.dc.html", "c-assistant.dc.html","d-queue.dc.html", "d-item.dc.html", "d-phone.dc.html", "mascot-family.dc.html", "mascot-poses.dc.html"],
+  "order": [
+    "Main.dc.html",
+    "a-queue.dc.html",
+    "a-item.dc.html",
+    "a-phone.dc.html",
+    "b-queue.dc.html",
+    "b-item.dc.html",
+    "b-phone.dc.html",
+    "c-queue.dc.html",
+    "c-item.dc.html",
+    "c-phone.dc.html",
+    "c-assistant.dc.html",
+    "d-queue.dc.html",
+    "d-item.dc.html",
+    "d-phone.dc.html",
+    "mascot-family.dc.html",
+    "mascot-poses.dc.html",
+    "SCR-15-mobile-whatsapp.dc.html",
+    "SCR-17-mobile.dc.html",
+    "SCR-03-mobile.dc.html",
+    "SCR-03-mobile-done.dc.html",
+    "SCR-03-mobile-stale.dc.html",
+    "SCR-01-desktop.dc.html",
+    "SCR-04-desktop.dc.html",
+    "SCR-02-desktop.dc.html",
+    "SCR-14-desktop.dc.html",
+    "SCR-01-desktop-empty.dc.html",
+    "SCR-01-mobile.dc.html",
+    "SCR-04-mobile.dc.html",
+    "SCR-02-mobile.dc.html"
+  ],
   "notes": {
-    "a-title": {"x": 0, "y": -420, "text": "Concept A · Control room", "kind": "title1", "maxW": 3430, "page": "con-a"},
-    "a-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-a", "fill": "gray", "text": "Thesis: people who handle a lot of work want a dense, dark, keyboard-fast console where every state reads at a glance.\n\nBest for heavy daily use. Feels technical for occasional users; dark is harder in bright offices.\n\nBuilt from: REF-01 Linear activity trail, REF-02 Linear cards with counts, REF-04 Temporal lanes and recovery, REF-05 Inngest status table, REF-06 n8n nodes.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"},
-    "b-title": {"x": 0, "y": -420, "text": "Concept B · Studio ledger", "kind": "title1", "maxW": 3430, "page": "con-b"},
-    "b-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-b", "fill": "gray", "text": "Thesis: PSL is a design studio, so its factory should read like a calm, well-set document anyone can pick up without training.\n\nBest for clarity and first impressions, including leadership. Shows fewer items at once.\n\nBuilt from: REF-03 Linear isometric line art, REF-07 Railway mood and view switch, REF-08 Mercury split invoice counts, REF-12 Attio calm light shell.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"},
-    "m-title": {"x": 0, "y": -300, "text": "Department mascots", "kind": "title1", "maxW": 1440, "page": "mascots"},
-    "m-note": {"x": 1520, "y": 0, "w": 420, "page": "mascots", "fill": "orange", "text": "Master reference, locked 12 Nov 2026: every later pose must match this image (design/mascots/family-master.png).\n\nStill to come: names, pose sheets (idle, working, waiting for you, done, can't do that), transparent PNGs, avatar crops.\n\nMascots are the department agents. People keep their own avatars, so agent work never looks like a person's decision."},
-    "d-title": {"x": 0, "y": -420, "text": "Concept D · Linear-style", "kind": "title1", "maxW": 3430, "page": "con-d"},
-    "d-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-d", "fill": "purple", "text": "Thesis: work feels like a fast, quiet issue tracker. Linear's patterns (lists grouped by state, a progress circle per item, properties at the side, activity feed, ⌘K), rebuilt with PSL's own colour and content.\n\nThe progress circle fills as stations complete; orange means it needs you.\n\nBest for people used to modern work tools. Close to concept A in feel, and it borrows another product's conventions instead of a PSL identity.\n\nBuilt from: REF-01 Linear issue detail and activity, REF-02 Linear grouped cards and counts, REF-03 Linear line drawings.\n\nSame sections as A to C."},
-    "c-title": {"x": 0, "y": -420, "text": "Concept C · Assembly line", "kind": "title1", "maxW": 3430, "page": "con-c"},
-    "c-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-c", "fill": "orange", "text": "Recommended. Thesis: the stations are the product, so every screen leads with the line a piece of work travels and the separate facts it has earned.\n\nBest for understanding where work is and why it is held. Bold structure; the track takes space on small phones.\n\nBuilt from: REF-04 Temporal lanes and recovery, REF-06 n8n nodes and joins, REF-09 Ramp agent filling fields, REF-11 Devin step ticks.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"}
+    "a-title": {
+      "x": 0,
+      "y": -420,
+      "text": "Concept A · Control room",
+      "kind": "title1",
+      "maxW": 3430,
+      "page": "con-a"
+    },
+    "a-thesis": {
+      "x": 3510,
+      "y": 0,
+      "w": 440,
+      "page": "con-a",
+      "fill": "gray",
+      "text": "Thesis: people who handle a lot of work want a dense, dark, keyboard-fast console where every state reads at a glance.\n\nBest for heavy daily use. Feels technical for occasional users; dark is harder in bright offices.\n\nBuilt from: REF-01 Linear activity trail, REF-02 Linear cards with counts, REF-04 Temporal lanes and recovery, REF-05 Inngest status table, REF-06 n8n nodes.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"
+    },
+    "b-title": {
+      "x": 0,
+      "y": -420,
+      "text": "Concept B · Studio ledger",
+      "kind": "title1",
+      "maxW": 3430,
+      "page": "con-b"
+    },
+    "b-thesis": {
+      "x": 3510,
+      "y": 0,
+      "w": 440,
+      "page": "con-b",
+      "fill": "gray",
+      "text": "Thesis: PSL is a design studio, so its factory should read like a calm, well-set document anyone can pick up without training.\n\nBest for clarity and first impressions, including leadership. Shows fewer items at once.\n\nBuilt from: REF-03 Linear isometric line art, REF-07 Railway mood and view switch, REF-08 Mercury split invoice counts, REF-12 Attio calm light shell.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"
+    },
+    "m-title": {
+      "x": 0,
+      "y": -300,
+      "text": "Department mascots",
+      "kind": "title1",
+      "maxW": 1440,
+      "page": "mascots"
+    },
+    "m-note": {
+      "x": 1520,
+      "y": 0,
+      "w": 420,
+      "page": "mascots",
+      "fill": "orange",
+      "text": "Master reference, locked 12 Nov 2026: every later pose must match this image (design/mascots/family-master.png).\n\nStill to come: names, pose sheets (idle, working, waiting for you, done, can't do that), transparent PNGs, avatar crops.\n\nMascots are the department agents. People keep their own avatars, so agent work never looks like a person's decision."
+    },
+    "d-title": {
+      "x": 0,
+      "y": -420,
+      "text": "Concept D · Linear-style",
+      "kind": "title1",
+      "maxW": 3430,
+      "page": "con-d"
+    },
+    "d-thesis": {
+      "x": 3510,
+      "y": 0,
+      "w": 440,
+      "page": "con-d",
+      "fill": "purple",
+      "text": "Thesis: work feels like a fast, quiet issue tracker. Linear's patterns (lists grouped by state, a progress circle per item, properties at the side, activity feed, ⌘K), rebuilt with PSL's own colour and content.\n\nThe progress circle fills as stations complete; orange means it needs you.\n\nBest for people used to modern work tools. Close to concept A in feel, and it borrows another product's conventions instead of a PSL identity.\n\nBuilt from: REF-01 Linear issue detail and activity, REF-02 Linear grouped cards and counts, REF-03 Linear line drawings.\n\nSame sections as A to C."
+    },
+    "c-title": {
+      "x": 0,
+      "y": -420,
+      "text": "Concept C · Assembly line",
+      "kind": "title1",
+      "maxW": 3430,
+      "page": "con-c"
+    },
+    "c-thesis": {
+      "x": 3510,
+      "y": 0,
+      "w": 440,
+      "page": "con-c",
+      "fill": "orange",
+      "text": "Recommended. Thesis: the stations are the product, so every screen leads with the line a piece of work travels and the separate facts it has earned.\n\nBest for understanding where work is and why it is held. Bold structure; the track takes space on small phones.\n\nBuilt from: REF-04 Temporal lanes and recovery, REF-06 n8n nodes and joins, REF-09 Ramp agent filling fields, REF-11 Devin step ticks.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"
+    },
+    "j02-title": {
+      "x": 0,
+      "y": -300,
+      "text": "J-02 · An approver acts on a decision from an alert",
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "j02"
+    },
+    "j02-note": {
+      "x": 2350,
+      "y": 0,
+      "w": 420,
+      "page": "j02",
+      "fill": "gray",
+      "text": "Click through with Play: alert → sign in → decision → approved. The last board shows the state when a newer version arrives while you are reading.\n\nDrawn on sample data before architecture (early start, 12 Nov). Alert wording must become a Meta-approved WhatsApp template; no amounts or client details in the message."
+    },
+    "j01-title": {
+      "x": 0,
+      "y": -300,
+      "text": "J-01 · A PM starts work and follows it to verified",
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "j01"
+    },
+    "j01-note": {
+      "x": 2930,
+      "y": 1400,
+      "w": 420,
+      "page": "j01",
+      "fill": "gray",
+      "text": "Top row, desktop in journey order: queue → start work → work item → verified outputs. Bottom row: the empty queue and the phone versions.\n\nSample data, drawn before architecture (early start, 12 Nov)."
+    }
   },
-  "designSystems": [{"title": "PSL Factory", "namespace": "pslfactory", "artifact": "https://claude.ai/artifact/ALgwhfGiFdPVHCgfUQWNP6", "version": "1794451525-fa9e", "copiedAt": "2026-11-12T12:40:00Z"}]
+  "designSystems": [
+    {
+      "title": "PSL Factory",
+      "namespace": "pslfactory",
+      "artifact": "https://claude.ai/artifact/ALgwhfGiFdPVHCgfUQWNP6",
+      "version": "1794451525-fa9e",
+      "copiedAt": "2026-11-12T12:40:00Z"
+    }
+  ]
 }

@@ -24,6 +24,7 @@ a{color:#2459D6}a:hover{color:#16388F}
         <a href="#" style="padding: 18px 14px 16px; color: #FFFFFF; text-decoration: none; border-bottom: 3px solid #C8401C; font-weight: 500;">Queue</a>
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Floor</a>
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Projects</a>
+        <a href="c-assistant.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Assistant</a>
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Outputs</a>
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Setup</a>
       </div>
@@ -88,7 +89,7 @@ a{color:#2459D6}a:hover{color:#16388F}
             <tr>
               <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><a href="c-item.dc.html" style="display: block; color: #1F2427; font-weight: 600; text-decoration: none;">{{r.title}}</a><span style="display: block; font-size: 12px; color: #4A5357;">{{r.line}} · <span style="font-family: 'IBM Plex Mono', monospace;">{{r.ref}}</span></span></td>
               <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: flex; align-items: center; gap: 4px;"><sc-for list="{{r.steps}}" as="s" hint-placeholder-count="6"><span style="width: 18px; height: 6px; background: {{s}};"></span></sc-for></span><span style="display: block; margin-top: 4px; font-size: 12px; color: #4A5357;">{{r.station}}</span></td>
-              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 600; background: {{r.bg}}; color: {{r.color}};">{{r.state}}</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #4A5357;">{{r.waiting}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 600; background: {{r.bg}}; color: {{r.color}};">{{r.state}}</span><span style="display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 12px; color: #4A5357;"><sc-if value="{{r.hasAv}}" hint-placeholder-val="{{false}}"><img src="{{r.av}}" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: {{r.avBg}};"></sc-if>{{r.waiting}}</span></td>
               <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3; font-family: 'IBM Plex Mono', monospace; color: #4A5357;">{{r.age}}</td>
             </tr>
           </sc-for>
@@ -114,11 +115,11 @@ class Component extends DCLogic {
       ],
       tabs: [tab('Needs me', 4, true), tab('Decisions', 3), tab('Exceptions', 2), tab('Active', 12), tab('Unassigned', 1), tab('Verified', 28)],
       rows: [
-        { title: 'Lagoon Health · Milestone 2 invoice', line: 'Prepare an invoice', ref: 'INV-0412', steps: steps(7, 3, true), station: 'Station 4 of 7 · Finance review', state: 'AWAITING FINANCE DECISION', bg: '#FBE3D9', color: '#9A2F10', waiting: 'You · Finance Lead', age: '2h' },
+        { title: 'Lagoon Health · Milestone 2 invoice', line: 'Prepare an invoice', ref: 'INV-0412', steps: steps(7, 3, true), station: 'Station 4 of 7 · Finance review', state: 'AWAITING FINANCE DECISION', bg: '#FBE3D9', color: '#9A2F10', waiting: 'You · Finance Lead (Chidi drafted v2)', age: '2h', hasAv: true, av: '/_blob/ecfb1b0df62c4684b66a6b97230ae2c5', avBg: '#DFE8FB' },
         { title: 'Harmattan Bank · go-live report', line: 'Obtain go-live acceptance', ref: 'GLV-0087', steps: steps(5, 3, true), station: 'Station 4 of 5 · Deliver report', state: 'EFFECT UNCERTAIN', bg: '#FBE3D9', color: '#9A2F10', waiting: 'Checking delivery before any resend', age: '40m' },
         { title: 'Kora Logistics · fleet tracker SOW v3', line: 'Commercial submission', ref: 'COM-0233', steps: steps(6, 4, false), station: 'Station 5 of 6 · CEO approval', state: 'WAITING', bg: '#FFF1D6', color: '#6E4700', waiting: 'CEO · step 3 of 3', age: '1d' },
         { title: 'Ojo Foods · ordering app plan', line: 'Plan a project', ref: 'PLN-0151', steps: steps(6, 2, true), station: 'Station 3 of 6 · Design sign-off', state: 'OWNER NEEDED', bg: '#FBE3D9', color: '#9A2F10', waiting: 'No Design Lead role set up', age: '3d' },
-        { title: 'October payroll · staff matching', line: 'Restricted payroll', ref: 'PAY-0010', steps: steps(5, 1, false), station: 'Station 2 of 5 · Match staff', state: 'PROCESSING', bg: '#E1E9FA', color: '#16388F', waiting: 'Agent matching records', age: '5m' },
+        { title: 'October payroll · staff matching', line: 'Restricted payroll', ref: 'PAY-0010', steps: steps(5, 1, false), station: 'Station 2 of 5 · Match staff', state: 'PROCESSING', bg: '#E1E9FA', color: '#16388F', waiting: 'Zainab · HR agent, matching records', age: '5m', hasAv: true, av: '/_blob/0a29514f8f0d959d4d8f09bcda0ac32d', avBg: '#DFF0E3' },
         { title: 'Sabi Market · web store closure', line: 'Close a project', ref: 'CLS-0044', steps: steps(4, 4, false), station: 'All 4 stations done', state: 'VERIFIED', bg: '#DDEFE3', color: '#16502F', waiting: 'Archived 09:12', age: '09:12' }
       ]
     };
