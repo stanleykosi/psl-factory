@@ -8,7 +8,8 @@
     {"id": "con-a", "name": "A · Control room"},
     {"id": "con-b", "name": "B · Studio ledger"},
     {"id": "con-c", "name": "C · Assembly line"},
-    {"id": "con-d", "name": "D · Linear-style"}
+    {"id": "con-d", "name": "D · Linear-style"},
+    {"id": "mascots", "name": "Mascots"}
   ],
   "boards": {
     "Main.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 720, "page": "overview", "title": "Start here"},
@@ -22,20 +23,25 @@
     "c-item.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1200, "page": "con-c", "title": "C · Work item", "expand": "fill"},
     "c-phone.dc.html": {"x": 3040, "y": 0, "w": 390, "h": 844, "page": "con-c", "title": "C · Decision (phone)"},
     "c-assistant.dc.html": {"x": 0, "y": 1320, "w": 1440, "h": 980, "page": "con-c", "title": "C · Assistant", "expand": "fill", "is_interactive": true},
+    "m1-blocks.dc.html": {"x": 0, "y": 0, "w": 1200, "h": 600, "page": "mascots", "title": "M1 · Station blocks"},
+    "m2-soft.dc.html": {"x": 0, "y": 720, "w": 1200, "h": 600, "page": "mascots", "title": "M2 · Soft companions"},
+    "m3-line.dc.html": {"x": 0, "y": 1440, "w": 1200, "h": 600, "page": "mascots", "title": "M3 · Line drawn"},
     "d-queue.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 900, "page": "con-d", "title": "D · Work queue", "expand": "fill"},
     "d-item.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 900, "page": "con-d", "title": "D · Work item", "expand": "fill"},
     "d-phone.dc.html": {"x": 3040, "y": 0, "w": 390, "h": 844, "page": "con-d", "title": "D · Decision (phone)"}
   },
-  "order": ["Main.dc.html", "a-queue.dc.html", "a-item.dc.html", "a-phone.dc.html", "b-queue.dc.html", "b-item.dc.html", "b-phone.dc.html", "c-queue.dc.html", "c-item.dc.html", "c-phone.dc.html", "c-assistant.dc.html","d-queue.dc.html", "d-item.dc.html", "d-phone.dc.html"],
+  "order": ["Main.dc.html", "a-queue.dc.html", "a-item.dc.html", "a-phone.dc.html", "b-queue.dc.html", "b-item.dc.html", "b-phone.dc.html", "c-queue.dc.html", "c-item.dc.html", "c-phone.dc.html", "c-assistant.dc.html","d-queue.dc.html", "d-item.dc.html", "d-phone.dc.html", "m1-blocks.dc.html", "m2-soft.dc.html", "m3-line.dc.html"],
   "notes": {
     "a-title": {"x": 0, "y": -420, "text": "Concept A · Control room", "kind": "title1", "maxW": 3430, "page": "con-a"},
     "a-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-a", "fill": "gray", "text": "Thesis: people who handle a lot of work want a dense, dark, keyboard-fast console where every state reads at a glance.\n\nBest for heavy daily use. Feels technical for occasional users; dark is harder in bright offices.\n\nBuilt from: REF-01 Linear activity trail, REF-02 Linear cards with counts, REF-04 Temporal lanes and recovery, REF-05 Inngest status table, REF-06 n8n nodes.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"},
     "b-title": {"x": 0, "y": -420, "text": "Concept B · Studio ledger", "kind": "title1", "maxW": 3430, "page": "con-b"},
     "b-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-b", "fill": "gray", "text": "Thesis: PSL is a design studio, so its factory should read like a calm, well-set document anyone can pick up without training.\n\nBest for clarity and first impressions, including leadership. Shows fewer items at once.\n\nBuilt from: REF-03 Linear isometric line art, REF-07 Railway mood and view switch, REF-08 Mercury split invoice counts, REF-12 Attio calm light shell.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"},
+    "m-title": {"x": 0, "y": -300, "text": "Department mascots · three styles", "kind": "title1", "maxW": 1200, "page": "mascots"},
+    "m-note": {"x": 1280, "y": 0, "w": 420, "page": "mascots", "fill": "orange", "text": "Mascots are the department agents: PMO agent, Finance agent, HR agent. Agents get a mascot face; people keep their own avatar or initials, so agent work never looks like a person's decision.\n\nDepartment colours (clay, sky, sage) are identity only, never states.\n\nInspired by Strawberry's companions (REF-17) without copying their characters. Pick a style, then we name them and design their poses: idle, working, waiting for you, done."},
     "d-title": {"x": 0, "y": -420, "text": "Concept D · Linear-style", "kind": "title1", "maxW": 3430, "page": "con-d"},
     "d-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-d", "fill": "purple", "text": "Thesis: work feels like a fast, quiet issue tracker. Linear's patterns (lists grouped by state, a progress circle per item, properties at the side, activity feed, ⌘K), rebuilt with PSL's own colour and content.\n\nThe progress circle fills as stations complete; orange means it needs you.\n\nBest for people used to modern work tools. Close to concept A in feel, and it borrows another product's conventions instead of a PSL identity.\n\nBuilt from: REF-01 Linear issue detail and activity, REF-02 Linear grouped cards and counts, REF-03 Linear line drawings.\n\nSame sections as A to C."},
     "c-title": {"x": 0, "y": -420, "text": "Concept C · Assembly line", "kind": "title1", "maxW": 3430, "page": "con-c"},
     "c-thesis": {"x": 3510, "y": 0, "w": 440, "page": "con-c", "fill": "orange", "text": "Recommended. Thesis: the stations are the product, so every screen leads with the line a piece of work travels and the separate facts it has earned.\n\nBest for understanding where work is and why it is held. Bold structure; the track takes space on small phones.\n\nBuilt from: REF-04 Temporal lanes and recovery, REF-06 n8n nodes and joins, REF-09 Ramp agent filling fields, REF-11 Devin step ticks.\n\nSections: SEC-nav, SEC-floor, SEC-queues, SEC-list · SEC-header, SEC-facts, SEC-stations, SEC-agent, SEC-decision · SEC-ask, SEC-detail, SEC-actions"}
   },
-  "designSystems": []
+  "designSystems": [{"title": "PSL Factory", "namespace": "pslfactory", "artifact": "https://claude.ai/artifact/ALgwhfGiFdPVHCgfUQWNP6", "version": "1794444230-4e33", "copiedAt": "2026-11-12T10:32:00Z"}]
 }

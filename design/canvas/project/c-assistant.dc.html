@@ -23,7 +23,7 @@ a{color:#2459D6}a:hover{color:#16388F}
         <a href="c-queue.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Queue</a>
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Floor</a>
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Projects</a>
-        <a href="#" style="padding: 18px 14px 16px; color: #FFFFFF; text-decoration: none; border-bottom: 3px solid #D8461F; font-weight: 500;">Assistant</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #FFFFFF; text-decoration: none; border-bottom: 3px solid #C8401C; font-weight: 500;">Assistant</a>
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Outputs</a>
       </div>
       <span style="margin-left: auto; font-size: 13px; color: #C8CDD0;">{{who}}</span>
@@ -82,7 +82,7 @@ a{color:#2459D6}a:hover{color:#16388F}
               </sc-for>
             </dl>
             <div style="padding: 0 14px 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-              <button type="button" onClick="{{startLine}}" style="min-height: 44px; padding: 0 16px; border: none; background: #D8461F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer;">{{current.startLabel}}</button>
+              <button type="button" onClick="{{startLine}}" style="min-height: 44px; padding: 0 16px; border: none; background: #C8401C; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer;">{{current.startLabel}}</button>
               <button type="button" style="min-height: 44px; padding: 0 16px; border: 2px solid #1F2427; background: #FFFFFF; font: inherit; font-weight: 500; cursor: pointer;">Edit draft</button>
               <span style="font-size: 12px; color: #4A5357;">{{current.next}}</span>
             </div>
@@ -155,7 +155,7 @@ class Component extends DCLogic {
       startLine: () => this.setState({ started: true }),
       newChat: () => this.setState({ pick: 0, started: false }),
       noop: (e) => { if (e && e.preventDefault) e.preventDefault(); },
-      threads: T.map((t, i) => ({ title: t.title, sub: t.sub, pick: pickFn(i), bg: i === this.state.pick ? '#EEF0ED' : '#FFFFFF', mark: i === this.state.pick ? '#D8461F' : 'transparent' })),
+      threads: T.map((t, i) => ({ title: t.title, sub: t.sub, pick: pickFn(i), bg: i === this.state.pick ? '#EEF0ED' : '#FFFFFF', mark: i === this.state.pick ? '#C8401C' : 'transparent' })),
       suggestions: [
         { label: 'Create an invoice for a completed milestone', pick: pickFn(0) },
         { label: 'Ask about a project', pick: pickFn(1) },

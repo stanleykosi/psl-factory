@@ -25,6 +25,8 @@ for every reference below.
 - NEED-03 Decision on a phone: approve, return or reject one exact version, reached from an alert (J-02, G-04, C-01).
 - NEED-04 Factory floor: a signature overview of lines, stations and work moving through them, using 3D and motion (S-05, C-04).
 - NEED-05 Finance data: amounts, statuses and reconciliation shown clearly without merging facts (J-04, J-05, R-01, R-02).
+- NEED-07 Department mascots: one character per department agent (PMO, Finance, HR), used across the platform (design engineer request, 12 Nov; S-01 visual identity, R-03).
+- NEED-08 Assistant composer: a rich chat input for the assistant page (S-10).
 - NEED-06 Agent work made visible: what an agent read and drafted, shown so it never looks like a person's approval (R-03, J-01).
 
 ## References
@@ -46,6 +48,9 @@ for every reference below.
 - REF-15 | need: NEED-01 | source: https://www.plain.com | credit: Plain | found: live site | evidence: live | seen: 2026-11-12 | takes: none usable; the product window had not loaded and a cookie banner covered it | adapt: — | conflicts: nothing seen to judge | confidence: low
 - REF-16 | need: NEED-04 | source: https://factory.ai | credit: Factory | found: live site, two scroll positions | evidence: live | seen: 2026-11-12 | takes: none usable; the hero was blank while loading and the second view showed only customer logos | adapt: — | conflicts: nothing seen to judge | confidence: low
 
+- REF-17 | need: NEED-07 | source: https://strawberrybrowser.com | credit: Strawberry Browser | found: link supplied by the design engineer, opened live at desktop and phone width | evidence: live | seen: 2026-11-12 | takes: AI agents as named characters with one signature hue each (Sales Sally, Talent Theo), shown above the empty chat box, as avatar chips to switch companions and on cards with a name pill | adapt: one mascot per PSL department agent in our own geometric style and department colours; agents get mascots, people keep their own avatars, which reinforces R-03 | conflicts: their soft 3D renders need a 3D artist or a three.js build; we must not copy their characters or names | confidence: high
+- REF-18 | need: NEED-08 | source: https://strawberrybrowser.com | credit: Strawberry Browser | found: same visit | evidence: live | seen: 2026-11-12 | takes: a large soft composer where connected apps appear as coloured inline mentions, with attach, mode picker, mic and round send, plus Skills, Meetings and Apps shortcuts below, and the companion standing above the empty box | adapt: inline mentions of projects, invoices and documents (@Lagoon Health, #INV-0412); shortcuts for Create invoice, Draft SOW, Ask about a project | conflicts: their apps are third-party tools; ours are factory records the person may see | confidence: high
+
 ## Shortlists
 
 - NEED-01 → REF-02, REF-05, REF-12 — Linear's compact item cards with counts, Inngest's status-dot table for density, Attio's calm light shell for a less technical feel.
@@ -54,3 +59,5 @@ for every reference below.
 - NEED-04 → REF-06, REF-03, REF-07 — n8n's node line with joins, Linear's isometric line drawings, Railway's illustrated mood and view switch.
 - NEED-05 → REF-08, REF-09, REF-05 — Mercury's split invoice counts and right-aligned amounts, Ramp's line items with VAT and totals, Inngest's dense table.
 - NEED-06 → REF-11, REF-09, REF-01 — Devin's step list, Ramp's agent filling fields visibly, Linear's activity line naming the automation that acted.
+- NEED-07 → REF-17 only — one strong reference supplied by the design engineer; the mascots are otherwise our own design.
+- NEED-08 → REF-18, REF-11, REF-12 — Strawberry's composer and inline mentions, Devin's visible steps, Attio's calm ask box.
