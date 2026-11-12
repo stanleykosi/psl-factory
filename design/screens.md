@@ -43,6 +43,9 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-20 | J-04 | Payments and follow-up | states: default, record | components: CMP-01, CMP-04, CMP-09, CMP-16, CMP-18, CMP-22, CMP-24 | artboards: SCR-20-desktop, SCR-20-mobile, SCR-20-desktop-record, SCR-20-mobile-record
 - SCR-21 | J-07 | Staff accounts | states: default, invite, deactivate | components: CMP-01, CMP-16, CMP-22, CMP-24 | artboards: SCR-21-desktop, SCR-21-mobile, SCR-21-desktop-invite, SCR-21-mobile-invite, SCR-21-desktop-deactivate, SCR-21-mobile-deactivate
 - SCR-22 | J-08 | Project list | states: default | components: CMP-01, CMP-16, CMP-22 | artboards: SCR-22-desktop, SCR-22-mobile
+- SCR-23 | J-01 | Log a received RFP | states: default | components: CMP-01, CMP-23, CMP-24 | artboards: SCR-23-desktop, SCR-23-mobile
+- SCR-24 | J-01, J-07 | Assign the accountable PM | states: default | components: CMP-01, CMP-06, CMP-24 | artboards: SCR-24-desktop, SCR-24-mobile
+- SCR-25 | J-03 | Write the weekly client update | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-25-desktop, SCR-25-mobile
 
 - Shared states | all lists and reports | Empty, loading and error pattern for SCR-01, 07, 10, 11, 12, 14, 15 | artboards: STATES-desktop, STATES-mobile
 - Journey J-04 | J-04 | Storyboard: Finance prepares an invoice, step by step, each step linking to its screen | artboards: J04-desktop, J04-mobile
@@ -74,6 +77,9 @@ Sample data until the architecture package exists. Sources are the current backe
 - SCR-20 — issued invoices with amounts invoiced, received and still owed (Unknown where bank data is missing), overdue age, receipts with bank reference and proof, and allocations kept separate from receipts.
 - SCR-21 — staff accounts with roles and scopes, account state (invited, active, deactivated), last sign-in; on deactivation, the person's open items and who may take each over.
 - SCR-22 — projects the person's roles cover, with PM, where each stands, next milestone, and counts waiting on a person or stopped.
+- SCR-23 — RFP reference, client, RFP document, actual received time, deadline (unknown / stated with proof / not stated), note; creates a pre-engagement workspace (backend: rfp.intake).
+- SCR-24 — the unassigned RFP, PMs allowed to prepare RFPs on it, the role the assigner acts under (PSL-configured), proof, note (backend: rfp.assign).
+- SCR-25 — the week's meetings, actions, completed milestones, open issues and changes; the PM's four sections, each citing at least one record (backend: client content for pmo-weekly-report).
 
 ## Revisions
 
@@ -97,3 +103,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — Start work split button moved into the top bar on every desktop page (design engineer); removed from page bodies and from the project list header.
 - 2026-11-12 — tab counts set apart as small square count badges on every tab bar (My work, Projects, Registers), per design engineer feedback.
 - 2026-11-12 — every callout's left border replaced with a leading icon (warning, info, success); recorded as CMP-24.
+- 2026-11-12 — added SCR-23 Log a received RFP, SCR-24 Assign the accountable PM, SCR-25 Write the weekly client update; weekly report line flow now shows the PM writing the client text (backend requires human-written, cited content).

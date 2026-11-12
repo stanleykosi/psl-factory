@@ -1355,6 +1355,65 @@
       "page": "p-mywork",
       "title": "Phone · choose a line"
     },
+    "SCR-01-mobile-lead.dc.html": {
+      "x": 7960,
+      "y": 140,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Phone · My work · Lead view (sees Unassigned)"
+    },
+    "SCR-23-desktop.dc.html": {
+      "x": 0,
+      "y": 4100,
+      "w": 1440,
+      "h": 940,
+      "page": "p-mywork",
+      "title": "Log a received RFP · PMO Lead",
+      "expand": "fill"
+    },
+    "SCR-23-mobile.dc.html": {
+      "x": 1520,
+      "y": 4100,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Phone · log an RFP"
+    },
+    "SCR-24-desktop.dc.html": {
+      "x": 1990,
+      "y": 4100,
+      "w": 1440,
+      "h": 940,
+      "page": "p-mywork",
+      "title": "Assign accountable PM · from Unassigned",
+      "expand": "fill"
+    },
+    "SCR-24-mobile.dc.html": {
+      "x": 3510,
+      "y": 4100,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Phone · assign PM"
+    },
+    "SCR-25-desktop.dc.html": {
+      "x": 0,
+      "y": 8640,
+      "w": 1440,
+      "h": 1180,
+      "page": "p-item",
+      "title": "Weekly report · PM writes the client update",
+      "expand": "fill"
+    },
+    "SCR-25-mobile.dc.html": {
+      "x": 1520,
+      "y": 8640,
+      "w": 390,
+      "h": 844,
+      "page": "p-item",
+      "title": "Phone · client update"
+    },
     "LINES-desktop.dc.html": {
       "x": 0,
       "y": 0,
@@ -1796,14 +1855,6 @@
       "h": 844,
       "page": "lines",
       "title": "Phone · Payroll matching (restricted)"
-    },
-    "SCR-01-mobile-lead.dc.html": {
-      "x": 7960,
-      "y": 140,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Phone · My work · Lead view (sees Unassigned)"
     }
   },
   "createdOnFiles": {
@@ -2188,6 +2239,22 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "p-mywork"
+    },
+    "p-mywork-23-title": {
+      "x": 0,
+      "y": 3960,
+      "text": "SCR-23 · Log a received RFP · SCR-24 · Assign the accountable PM (from Unassigned)",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-mywork"
+    },
+    "p-item-25-title": {
+      "x": 0,
+      "y": 8500,
+      "text": "SCR-25 · Write the weekly client update (PM)",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-item"
     }
   },
   "order": [
@@ -2397,7 +2464,13 @@
     "LINE-finance-ledger-mobile.dc.html",
     "LINE-finance-payroll-desktop.dc.html",
     "LINE-finance-payroll-mobile.dc.html",
-    "SCR-01-mobile-lead.dc.html"
+    "SCR-01-mobile-lead.dc.html",
+    "SCR-23-desktop.dc.html",
+    "SCR-23-mobile.dc.html",
+    "SCR-24-desktop.dc.html",
+    "SCR-24-mobile.dc.html",
+    "SCR-25-desktop.dc.html",
+    "SCR-25-mobile.dc.html"
   ],
   "pages": [
     {
