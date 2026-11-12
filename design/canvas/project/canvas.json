@@ -51,6 +51,10 @@
       "name": "J-03 & J-06 · Responses and payroll"
     },
     {
+      "id": "j04",
+      "name": "J-04 · Finance prepares an invoice"
+    },
+    {
       "id": "j08",
       "name": "J-08 & J-09 · Overview and alerts"
     },
@@ -69,6 +73,10 @@
     {
       "id": "roles",
       "name": "Milestones, payments, HR visibility, account"
+    },
+    {
+      "id": "accounts",
+      "name": "Staff accounts"
     }
   ],
   "boards": {
@@ -1215,6 +1223,110 @@
       "h": 844,
       "page": "roles",
       "title": "Phone · email alert"
+    },
+    "SCR-21-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "page": "accounts",
+      "title": "Staff accounts",
+      "expand": "fill"
+    },
+    "SCR-21-mobile.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "accounts",
+      "title": "Phone · staff accounts"
+    },
+    "SCR-21-desktop-invite.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "accounts",
+      "title": "Invite someone",
+      "expand": "fill"
+    },
+    "SCR-21-mobile-invite.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "accounts",
+      "title": "Phone · invite"
+    },
+    "SCR-17-desktop-setup.dc.html": {
+      "x": 0,
+      "y": 1120,
+      "w": 1440,
+      "h": 860,
+      "page": "accounts",
+      "title": "Invited person sets up",
+      "expand": "fill"
+    },
+    "SCR-17-mobile-setup.dc.html": {
+      "x": 1520,
+      "y": 1120,
+      "w": 390,
+      "h": 844,
+      "page": "accounts",
+      "title": "Phone · set up account"
+    },
+    "SCR-21-desktop-deactivate.dc.html": {
+      "x": 1990,
+      "y": 1120,
+      "w": 1440,
+      "h": 860,
+      "page": "accounts",
+      "title": "Deactivate when someone leaves",
+      "expand": "fill"
+    },
+    "SCR-21-mobile-deactivate.dc.html": {
+      "x": 3510,
+      "y": 1120,
+      "w": 390,
+      "h": 844,
+      "page": "accounts",
+      "title": "Phone · deactivate"
+    },
+    "J04-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 820,
+      "page": "j04",
+      "title": "J-04 storyboard · click a step",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "J04-mobile.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j04",
+      "title": "Phone · J-04 steps",
+      "is_interactive": true
+    },
+    "SCR-02-desktop-issue.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "page": "j04",
+      "title": "Step 5 · approved, ready to send",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-issue.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j04",
+      "title": "Phone · ready to send"
     }
   },
   "order": [
@@ -1347,7 +1459,19 @@
     "SCR-15-desktop-account.dc.html",
     "SCR-15-mobile-account.dc.html",
     "SCR-15-desktop-whatsapp.dc.html",
-    "SCR-15-mobile-email.dc.html"
+    "SCR-15-mobile-email.dc.html",
+    "SCR-21-desktop.dc.html",
+    "SCR-21-mobile.dc.html",
+    "SCR-21-desktop-invite.dc.html",
+    "SCR-21-mobile-invite.dc.html",
+    "SCR-17-desktop-setup.dc.html",
+    "SCR-17-mobile-setup.dc.html",
+    "SCR-21-desktop-deactivate.dc.html",
+    "SCR-21-mobile-deactivate.dc.html",
+    "J04-desktop.dc.html",
+    "J04-mobile.dc.html",
+    "SCR-02-desktop-issue.dc.html",
+    "SCR-02-mobile-issue.dc.html"
   ],
   "notes": {
     "a-title": {
@@ -1517,6 +1641,22 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "roles"
+    },
+    "accounts-title": {
+      "x": 0,
+      "y": -300,
+      "text": "Staff accounts: invite, first set-up, deactivate when someone leaves",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "accounts"
+    },
+    "j04-title": {
+      "x": 0,
+      "y": -300,
+      "text": "J-04 · Finance prepares an invoice: milestone → draft → review → approve → send → delivered → verified → paid",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "j04"
     }
   },
   "designSystems": [
