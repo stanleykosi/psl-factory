@@ -29,7 +29,7 @@ a{color:#2459D6}a:hover{color:#16388F}
         <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Setup</a>
       </div>
       <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
-        <a href="#" style="min-height: 40px; display: inline-flex; align-items: center; padding: 0 16px; background: #C8401C; color: #FFFFFF; text-decoration: none; font-weight: 600; border-radius: 2px;">Start work</a>
+        <a href="#" style="min-height: 40px; display: inline-flex; align-items: center; padding: 0 16px; background: #C8401C; color: #FFFFFF; text-decoration: none; font-weight: 600; border-radius: 2px; white-space: nowrap;">Start work</a>
         <span style="font-size: 13px; color: #C8CDD0;">Ada Okafor · Finance Lead</span>
       </div>
     </div>
@@ -69,7 +69,7 @@ a{color:#2459D6}a:hover{color:#16388F}
     <!-- SEC-queues -->
     <div role="tablist" aria-label="Queues" style="display: flex; flex-wrap: wrap; border: 2px solid #1F2427; align-self: flex-start;">
       <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
-        <button type="button" role="tab" aria-selected="{{t.selected}}" style="min-height: 44px; padding: 0 16px; border: none; border-right: 2px solid #1F2427; background: {{t.bg}}; color: {{t.color}}; font: inherit; font-weight: 500; cursor: pointer;">{{t.label}} <span style="font-family: 'IBM Plex Mono', monospace;">{{t.count}}</span></button>
+        <button type="button" role="tab" aria-selected="{{t.selected}}" style="min-height: 44px; padding: 0 16px; border: none; border-right: 2px solid #1F2427; background: {{t.bg}}; color: {{t.color}}; font: inherit; font-weight: 500; cursor: pointer; white-space: nowrap;">{{t.label}} <span style="font-family: 'IBM Plex Mono', monospace;">{{t.count}}</span></button>
       </sc-for>
     </div>
 

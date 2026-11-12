@@ -45,8 +45,8 @@ a{color:#E3E4E8}a:hover{color:#E8693E}
         <span style="font-size: 11px; padding: 2px 7px; border: 1px dashed #D9A23C; color: #D9A23C; border-radius: 4px;">Sample data</span>
       </div>
       <div style="display: flex; gap: 6px;">
-        <button type="button" style="height: 28px; padding: 0 10px; border: 1px solid #26282E; border-radius: 6px; background: none; color: #C9CBD1; font: inherit; cursor: pointer;">Filter</button>
-        <button type="button" style="height: 28px; padding: 0 10px; border: 1px solid #26282E; border-radius: 6px; background: none; color: #C9CBD1; font: inherit; cursor: pointer;">Display</button>
+        <button type="button" style="height: 28px; padding: 0 10px; border: 1px solid #26282E; border-radius: 6px; background: none; color: #C9CBD1; font: inherit; cursor: pointer; white-space: nowrap;">Filter</button>
+        <button type="button" style="height: 28px; padding: 0 10px; border: 1px solid #26282E; border-radius: 6px; background: none; color: #C9CBD1; font: inherit; cursor: pointer; white-space: nowrap;">Display</button>
       </div>
     </header>
 
@@ -60,7 +60,7 @@ a{color:#E3E4E8}a:hover{color:#E8693E}
     <!-- SEC-queues -->
     <div role="tablist" aria-label="Queues" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px; border-bottom: 1px solid #26282E;">
       <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
-        <button type="button" role="tab" aria-selected="{{t.selected}}" style="height: 28px; padding: 0 10px; border-radius: 6px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.color}}; font: inherit; cursor: pointer;">{{t.label}} <span style="color: #8C919B;">{{t.count}}</span></button>
+        <button type="button" role="tab" aria-selected="{{t.selected}}" style="height: 28px; padding: 0 10px; border-radius: 6px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.color}}; font: inherit; cursor: pointer; white-space: nowrap;">{{t.label}} <span style="color: #8C919B;">{{t.count}}</span></button>
       </sc-for>
     </div>
 

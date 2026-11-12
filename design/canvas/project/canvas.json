@@ -1785,6 +1785,42 @@
       "x": 1520,
       "y": 8008
     },
+    "SCR-26-desktop-accepted.dc.html": {
+      "expand": "fill",
+      "h": 1060,
+      "page": "p-presale",
+      "title": "SCR-26 · Accepted, next suggestion, Undo",
+      "w": 1440,
+      "x": 1990,
+      "y": 4280
+    },
+    "SCR-26-desktop-edit.dc.html": {
+      "expand": "fill",
+      "h": 1060,
+      "page": "p-presale",
+      "title": "SCR-26 · Edit, then accept",
+      "w": 1440,
+      "x": 0,
+      "y": 4280
+    },
+    "SCR-26-desktop-reject.dc.html": {
+      "expand": "fill",
+      "h": 1180,
+      "page": "p-presale",
+      "title": "SCR-26 · Reject, write my own",
+      "w": 1440,
+      "x": 0,
+      "y": 5540
+    },
+    "SCR-26-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 1060,
+      "page": "p-presale",
+      "title": "Review Tola's suggested answers",
+      "w": 1440,
+      "x": 0,
+      "y": 3020
+    },
     "SCR-26-desktop.dc.html": {
       "expand": "fill",
       "h": 1120,
@@ -1794,6 +1830,41 @@
       "x": 0,
       "y": 140
     },
+    "SCR-26-mobile-accepted.dc.html": {
+      "expand": "fill",
+      "h": 844,
+      "page": "p-presale",
+      "title": "SCR-26 · Accepted on a phone",
+      "w": 390,
+      "x": 3510,
+      "y": 4280
+    },
+    "SCR-26-mobile-edit.dc.html": {
+      "expand": "fill",
+      "h": 844,
+      "page": "p-presale",
+      "title": "SCR-26 · Edit on a phone",
+      "w": 390,
+      "x": 1520,
+      "y": 4280
+    },
+    "SCR-26-mobile-reject.dc.html": {
+      "expand": "fill",
+      "h": 844,
+      "page": "p-presale",
+      "title": "SCR-26 · Write my own on a phone",
+      "w": 390,
+      "x": 1520,
+      "y": 5540
+    },
+    "SCR-26-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · review tola's suggested answers",
+      "w": 390,
+      "x": 1520,
+      "y": 3020
+    },
     "SCR-26-mobile.dc.html": {
       "h": 844,
       "page": "p-presale",
@@ -1801,6 +1872,15 @@
       "w": 390,
       "x": 1520,
       "y": 140
+    },
+    "SCR-27-desktop-adjust.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing · add an adjustment",
+      "w": 1440,
+      "x": 2070,
+      "y": 3020
     },
     "SCR-27-desktop.dc.html": {
       "expand": "fill",
@@ -1810,6 +1890,14 @@
       "w": 1440,
       "x": 0,
       "y": 1660
+    },
+    "SCR-27-mobile-adjust.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · costing · add an adjustment",
+      "w": 390,
+      "x": 3590,
+      "y": 3020
     },
     "SCR-27-mobile.dc.html": {
       "h": 844,
@@ -2023,6 +2111,23 @@
       "x": 1520,
       "y": 9488
     },
+    "SCR-39-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "page": "p-setup",
+      "title": "Costing rule · PSL standard pricing",
+      "w": 1440,
+      "x": 0,
+      "y": 6364
+    },
+    "SCR-39-mobile.dc.html": {
+      "h": 844,
+      "page": "p-setup",
+      "title": "Phone · costing rule · psl standard pricing",
+      "w": 390,
+      "x": 1520,
+      "y": 6364
+    },
     "SITEMAP-desktop.dc.html": {
       "expand": "fill",
       "h": 1500,
@@ -2178,111 +2283,6 @@
       "w": 1440,
       "x": 0,
       "y": 1020
-    },
-    "SCR-26-desktop-review.dc.html": {
-      "x": 0,
-      "y": 3020,
-      "w": 1440,
-      "h": 1060,
-      "page": "p-presale",
-      "title": "Review Tola's suggested answers",
-      "expand": "fill"
-    },
-    "SCR-26-mobile-review.dc.html": {
-      "x": 1520,
-      "y": 3020,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · review tola's suggested answers"
-    },
-    "SCR-27-desktop-adjust.dc.html": {
-      "x": 2070,
-      "y": 3020,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-presale",
-      "title": "Costing · add an adjustment",
-      "expand": "fill"
-    },
-    "SCR-27-mobile-adjust.dc.html": {
-      "x": 3590,
-      "y": 3020,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · costing · add an adjustment"
-    },
-    "SCR-39-desktop.dc.html": {
-      "x": 0,
-      "y": 6364,
-      "w": 1440,
-      "h": 1500,
-      "page": "p-setup",
-      "title": "Costing rule · PSL standard pricing",
-      "expand": "fill"
-    },
-    "SCR-39-mobile.dc.html": {
-      "x": 1520,
-      "y": 6364,
-      "w": 390,
-      "h": 844,
-      "page": "p-setup",
-      "title": "Phone · costing rule · psl standard pricing"
-    },
-    "SCR-26-desktop-edit.dc.html": {
-      "x": 0,
-      "y": 4280,
-      "w": 1440,
-      "h": 1060,
-      "page": "p-presale",
-      "title": "SCR-26 · Edit, then accept",
-      "expand": "fill"
-    },
-    "SCR-26-mobile-edit.dc.html": {
-      "x": 1520,
-      "y": 4280,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "SCR-26 · Edit on a phone",
-      "expand": "fill"
-    },
-    "SCR-26-desktop-accepted.dc.html": {
-      "x": 1990,
-      "y": 4280,
-      "w": 1440,
-      "h": 1060,
-      "page": "p-presale",
-      "title": "SCR-26 · Accepted, next suggestion, Undo",
-      "expand": "fill"
-    },
-    "SCR-26-mobile-accepted.dc.html": {
-      "x": 3510,
-      "y": 4280,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "SCR-26 · Accepted on a phone",
-      "expand": "fill"
-    },
-    "SCR-26-desktop-reject.dc.html": {
-      "x": 0,
-      "y": 5540,
-      "w": 1440,
-      "h": 1180,
-      "page": "p-presale",
-      "title": "SCR-26 · Reject, write my own",
-      "expand": "fill"
-    },
-    "SCR-26-mobile-reject.dc.html": {
-      "x": 1520,
-      "y": 5540,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "SCR-26 · Write my own on a phone",
-      "expand": "fill"
     }
   },
   "createdOnFiles": {
@@ -2677,6 +2677,15 @@
       "x": 0,
       "y": 1405
     },
+    "p-presale-review": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "SCR-26 · Review Tola's suggested answers · SCR-27 · Add a project adjustment",
+      "w": 240,
+      "x": 0,
+      "y": 2815
+    },
     "p-projects-07-title": {
       "kind": "title1",
       "maxW": 3800,
@@ -2794,6 +2803,15 @@
       "x": 0,
       "y": 2364
     },
+    "p-setup-39": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-setup",
+      "text": "SCR-39 · Costing rule (studio-wide)",
+      "w": 240,
+      "x": 0,
+      "y": 6224
+    },
     "p-setup-SCR-13-desktop-rules": {
       "kind": "title1",
       "maxW": 3800,
@@ -2811,22 +2829,6 @@
       "w": 240,
       "x": 0,
       "y": 5024
-    },
-    "p-presale-review": {
-      "x": 0,
-      "y": 2880,
-      "text": "SCR-26 · Review Tola's suggested answers · SCR-27 · Add a project adjustment",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale"
-    },
-    "p-setup-39": {
-      "x": 0,
-      "y": 6224,
-      "text": "SCR-39 · Costing rule (studio-wide)",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-setup"
     }
   },
   "order": [
@@ -3073,6 +3075,8 @@
     "SCR-35-mobile.dc.html",
     "SCR-35-desktop-detail.dc.html",
     "SCR-35-mobile-detail.dc.html",
+    "SCR-39-desktop.dc.html",
+    "SCR-39-mobile.dc.html",
     "SCR-26-desktop.dc.html",
     "SCR-26-mobile.dc.html",
     "SCR-16-desktop-team-input.dc.html",
@@ -3085,8 +3089,6 @@
     "SCR-26-mobile-review.dc.html",
     "SCR-27-desktop-adjust.dc.html",
     "SCR-27-mobile-adjust.dc.html",
-    "SCR-39-desktop.dc.html",
-    "SCR-39-mobile.dc.html",
     "SCR-26-desktop-edit.dc.html",
     "SCR-26-mobile-edit.dc.html",
     "SCR-26-desktop-accepted.dc.html",
