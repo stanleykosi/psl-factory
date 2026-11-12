@@ -81,3 +81,4 @@ Only when concepts are mixed: which concept each section comes from.
 - 2026-11-12 — design engineer (hunchoweb) — chose CON-C Assembly line overall; A and B not taken forward. Asked for an AI assistant, as a page or a drawer, which needs a scope change first. PSL confirms the direction when it approves the design.
 - 2026-11-12 — design engineer — asked to also see a Linear-style concept; CON-D added for comparison, CON-C stays chosen until decided.
 - 2026-11-12 — design engineer — stays with CON-C; D not taken forward. The assistant becomes its own page in C's style (scope v2: S-10, J-10, J-11, R-08).
+- 2026-11-12 — design engineer — mascots named: Tola (PMO agent), Chidi (Finance agent), Zainab (HR agent). PSL to confirm no staff share these names.

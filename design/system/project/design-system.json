@@ -6,9 +6,18 @@
   "namespace": "PSLFactory",
   "libraries": [],
   "sections": {},
-  "groups": [],
-  "assetGroups": {},
+  "groups": ["Mascots"],
+  "assetGroups": {
+    "Mascots": {"name": "Mascots", "tile": "m", "order": ["tola-avatar.png", "chidi-avatar.png", "zainab-avatar.png", "tola-idle.png", "chidi-idle.png", "zainab-idle.png"], "files": {
+      "tola-avatar.png": {"name": "tola-avatar.png", "blob": "f8f28e5f6e9980b79676c5d1c5b3985b", "size": 1098998, "type": "image/png"},
+      "chidi-avatar.png": {"name": "chidi-avatar.png", "blob": "061e9b8ba8b145863d6178baf3f59ef6", "size": 1158567, "type": "image/png"},
+      "zainab-avatar.png": {"name": "zainab-avatar.png", "blob": "06f735aee484ebdf01d756e35a520ff7", "size": 945767, "type": "image/png"},
+      "tola-idle.png": {"name": "tola-idle.png", "blob": "10a443802c4bbc6895a762d042c4f5b4", "size": 784084, "type": "image/png"},
+      "chidi-idle.png": {"name": "chidi-idle.png", "blob": "675b61a8f40ca3e62b4fa6902015acc0", "size": 645010, "type": "image/png"},
+      "zainab-idle.png": {"name": "zainab-idle.png", "blob": "d94591e7ff5005db1f159395cca20765", "size": 620110, "type": "image/png"}
+    }}
+  },
   "blobs": {},
   "docs": {"readme": "project/README.md", "sections": []},
-  "lastChange": {"by": "hunchoweb", "at": "2026-11-12T10:30:00Z", "via": "Claude Code", "note": "First system from concept C, Assembly line: tokens, brand book, cover."}
+  "lastChange": {"by": "hunchoweb", "at": "2026-11-12T12:30:00Z", "via": "Claude Code", "note": "Added the mascots Tola, Chidi and Zainab: colours, usage rules and avatar and idle assets."}
 }

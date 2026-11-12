@@ -37,6 +37,32 @@ The design system for PSL's operations factory, from concept C, Assembly line. E
 - **Reduced motion:** for people who have turned motion down, the floor shows counts without movement, and state changes cross-fade in 120ms.
 - Dense working screens (queue, decisions, Finance tables) do not animate content while people read.
 
+## Mascots
+
+The department agents have faces. People keep their own photo or initials, so agent work can never be mistaken for a person's decision.
+
+| Mascot | Agent | Colour | Personality | Props |
+|---|---|---|---|---|
+| **Tola** | PMO agent | `mascot-tola` | Organised, upbeat, keeps work moving | Clipboard, milestone flag |
+| **Chidi** | Finance agent | `mascot-chidi` | Calm, precise, trustworthy | Glasses, ledger with receipt |
+| **Zainab** | HR agent | `mascot-zainab` | Warm, discreet, guards private data | Lanyard, folder with a lock |
+
+- **Poses and states:** each agent has five poses, mapped to what it is doing.
+  - **Idle:** on screen, nothing running.
+  - **Working:** reading records or drafting.
+  - **Waiting:** needs your answer.
+  - **Done:** a draft is ready.
+  - **Can't:** no access, or not allowed.
+  - Zainab's folder-to-chest pose is her privacy refusal.
+- **Where they appear:** the assistant page (the full figure above an empty chat box, avatars in the thread), agent work panels (avatar beside the steps), empty states, and WhatsApp and email alerts (avatar only).
+- **Where they never appear:** inside dense tables, on decision buttons, or next to an approval, amount or signature, where a person's decision is shown.
+- **Naming:** use the name with the role on first mention ("Tola · PMO agent"), then the name alone.
+  - Say "Chidi drafted invoice v2", never "Chidi approved it".
+  - Agents draft, read, check and explain; only people approve, send or pay.
+- **Colour rule:** mascot colours are identity only. A mascot colour never signals a state, and state colours never stand in for a mascot.
+- **Files:** transparent PNGs in `design/mascots/` in the repo, and avatars plus idle poses in this system's Mascots asset group. Final production exports at 2× will replace the current cut-outs.
+- **Motion:** in the build, poses change with a short cross-fade (GSAP). For people who have turned motion down, the pose swaps with no animation.
+
 ## Iconography
 
 - Stroke icons, 2px with square caps, drawn on a 20px grid in `ink`.
