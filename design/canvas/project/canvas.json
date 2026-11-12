@@ -2633,6 +2633,24 @@
       "h": 844,
       "page": "p-presale",
       "title": "Phone · outcome unknown"
+    },
+    "SCR-05-desktop-working.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "is_interactive": true,
+      "page": "p-assistant",
+      "title": "Assistant · agent working, steps live",
+      "w": 1440,
+      "x": 5970,
+      "y": 140
+    },
+    "SCR-05-mobile-working.dc.html": {
+      "x": 7490,
+      "y": 140,
+      "w": 390,
+      "h": 844,
+      "page": "p-assistant",
+      "title": "Phone · agent working in the chat"
     }
   },
   "createdOnFiles": {
@@ -3565,7 +3583,9 @@
     "SCR-16-desktop-rfp-pending.dc.html",
     "SCR-16-mobile-rfp-pending.dc.html",
     "SCR-16-desktop-rfp-unknown.dc.html",
-    "SCR-16-mobile-rfp-unknown.dc.html"
+    "SCR-16-mobile-rfp-unknown.dc.html",
+    "SCR-05-desktop-working.dc.html",
+    "SCR-05-mobile-working.dc.html"
   ],
   "pages": [
     {

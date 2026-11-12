@@ -13,7 +13,7 @@
 body{margin:0;background:#EEF0ED}
 a{color:#2459D6}a:hover{color:#16388F}
 </style>
-</helmet>
+<style>@keyframes agentpulse{0%,100%{opacity:1}50%{opacity:.35}} .agent-now{animation:agentpulse 1.4s ease-in-out infinite} @media (prefers-reduced-motion: reduce){.agent-now{animation:none}}</style></helmet>
 <div style="min-height: 1040px; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; display: flex; flex-direction: column;">
 
   <nav aria-label="Main" style="background: #1F2427; color: #FFFFFF;">
@@ -66,9 +66,9 @@ a{color:#2459D6}a:hover{color:#16388F}
             <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;">
               <span style="font-weight: 600;">{{thread.agentName}} <span style="font-weight: 400; color: #4A5357;">· {{thread.agentRole}}</span></span>
               <sc-if value="{{thread.handoff}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; color: #4A5357;">{{thread.handoff}}</span></sc-if>
-              <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px;">
-                <sc-for list="{{thread.steps}}" as="s" hint-placeholder-count="3"><li style="display: flex; gap: 10px; font-size: 13px; color: #33415E;"><span aria-hidden="true" style="color: #22764A;">✓</span>{{s}}</li></sc-for>
-              </ol>
+              <div style="border: 2px solid #2459D6; background: #FFFFFF; padding: 6px 12px; max-width: 640px;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: #16388F;">{{thread.stepHead}}</span><ol style="list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column;">
+                <sc-for list="{{thread.stepRows}}" as="s" hint-placeholder-count="3"><li style="display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; border-top: 1px solid #EEF0ED;"><span class="{{s.cls}}" aria-hidden="true" style="{{s.box}}">{{s.mark}}</span><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;"><span style="font-size: 14px; {{s.txt}}">{{s.t}}</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: #4A5357;">{{s.ref}}</span></span></li></sc-for>
+              </ol></div>
               <p style="margin: 0; line-height: 1.6;">{{thread.answer}}</p>
               <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                 <sc-for list="{{thread.sources}}" as="c" hint-placeholder-count="3"><a href="SCR-02-desktop.dc.html" style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 4px 8px; border: 1.5px solid #2459D6; text-decoration: none;">{{c}}</a></sc-for>
@@ -175,8 +175,23 @@ class Component extends DCLogic {
         steps: ['Checked your access to payroll records'],
         answer: 'I can’t share an individual’s pay with you; that is restricted to HR roles. I can show you staff-cost totals for your business unit, or you can ask the HR Lead for access if your work needs it.',
         sources: ['ACCESS · payroll (restricted)'], hasDraft: false,
-        project: 'October payroll', access: 'PMO · no payroll access', mentions: [] }
+        project: 'October payroll', access: 'PMO · no payroll access', mentions: [] },
+      { agent: 'tola', title: 'Planning packet · Tamarind Loans', sub: 'Working · step 3 of 5', pose: 'working',
+        ask: 'We won the Tamarind Loans RFP. Build the planning packet for the engagement.',
+        handoff: '',
+        steps: [{ t: 'Read the award letter', st: 'done', ref: 'AWARD LETTER · 04 DEC' }, { t: 'Pulled the approved response and costing', st: 'done', ref: 'RESPONSE v3 · COSTING v2' }, { t: 'Matching team estimates to the scope', st: 'now', ref: 'ENGINEERING 210D · SECURITY 18D' }, { t: 'List what is still unknown', st: 'next', ref: '' }, { t: 'Hand the packet to you', st: 'next', ref: '' }],
+        answer: 'Working on it. I will show the packet here when it is ready. Nothing is decided until you confirm the PM and register the engagement.',
+        sources: [], hasDraft: false,
+        project: 'Tamarind Loans · EN-0042', access: 'PMO · this engagement', mentions: [] }
     ];
+
+    const BOX = { done: 'width: 20px; height: 20px; flex: none; background: #2459D6; color: #FFFFFF; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;',
+      now: 'width: 20px; height: 20px; flex: none; box-sizing: border-box; border: 2px solid #2459D6; color: #2459D6; font-size: 10px; display: inline-flex; align-items: center; justify-content: center;',
+      next: 'width: 20px; height: 20px; flex: none; box-sizing: border-box; border: 2px solid #C9CDC7; color: #6B7478; font-family: IBM Plex Mono, monospace; font-size: 10px; display: inline-flex; align-items: center; justify-content: center;' };
+    const stepRows = (t) => t.steps.map((x, i) => { const o = typeof x === 'string' ? { t: x, st: 'done', ref: (t.sources || [])[i] || '' } : x; const st = o.st || 'done';
+      return { t: o.t, ref: o.ref || '', box: BOX[st], mark: st === 'done' ? '✓' : (st === 'now' ? '■' : String(i + 1)), cls: st === 'now' ? 'agent-now' : '',
+        txt: st === 'next' ? 'color: #6B7478;' : (st === 'now' ? 'font-weight: 600; color: #1F2427;' : 'color: #1F2427;') }; });
+    const stepHead = (t) => { const n = t.steps.length; const d = t.steps.filter((x) => typeof x === 'string' || x.st === 'done').length; return d === n ? n + ' STEPS · DONE' : 'WORKING · STEP ' + (d + 1) + ' OF ' + n; };
     const s = this.state;
     const agent = A[s.agent];
     const th = T[s.t];
@@ -184,11 +199,11 @@ class Component extends DCLogic {
     const isThread = s.view === 'thread';
     const poseKey = isThread ? (th.pose === 'done' && th.hasDraft && !s.started ? 'done' : th.pose) : 'idle';
     const sideAgent = isThread ? ta : agent;
-    const statusText = isThread ? ({ done: sideAgent.name + ' has a draft ready for you to check.', idle: sideAgent.name + ' answered from records you can see.', cant: sideAgent.name + ' can’t do that with your access.' }[poseKey] || '') : sideAgent.name + ' is ready.';
+    const statusText = isThread ? ({ done: sideAgent.name + ' has a draft ready for you to check.', idle: sideAgent.name + ' answered from records you can see.', cant: sideAgent.name + ' can’t do that with your access.', working: sideAgent.name + ' is working on it. You can leave; you’ll be alerted.' }[poseKey] || '') : sideAgent.name + ' is ready.';
     return {
       isHome: !isThread, isThread, started: s.started,
       agent,
-      thread: Object.assign({}, th, { avatar: ta.avatar, tint: ta.tint, agentName: ta.name, agentRole: ta.role + ' agent' }),
+      thread: Object.assign({}, th, { avatar: ta.avatar, tint: ta.tint, agentName: ta.name, agentRole: ta.role + ' agent', stepRows: stepRows(th), stepHead: stepHead(th) }),
       side: { tint: sideAgent.tint, pose: sideAgent[poseKey] || sideAgent.idle, alt: sideAgent.name + ' pose', status: statusText,
         project: isThread ? th.project : 'Pick a project with @', access: isThread ? th.access : 'Records you can see' },
       mentions: isThread ? th.mentions : [],
