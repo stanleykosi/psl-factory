@@ -2651,6 +2651,108 @@
       "h": 844,
       "page": "p-assistant",
       "title": "Phone · agent working in the chat"
+    },
+    "SCR-42-desktop.dc.html": {
+      "x": 0,
+      "y": 14712,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Planning · departments asked",
+      "expand": "fill"
+    },
+    "SCR-42-mobile.dc.html": {
+      "x": 1520,
+      "y": 14712,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · planning"
+    },
+    "SCR-42-desktop-record.dc.html": {
+      "x": 1990,
+      "y": 14712,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Planning · record department input",
+      "expand": "fill"
+    },
+    "SCR-42-mobile-record.dc.html": {
+      "x": 3510,
+      "y": 14712,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record department input"
+    },
+    "SCR-42-desktop-held.dc.html": {
+      "x": 3980,
+      "y": 14712,
+      "w": 1440,
+      "h": 860,
+      "page": "p-presale",
+      "title": "Planning held · owner needed",
+      "expand": "fill"
+    },
+    "SCR-42-mobile-held.dc.html": {
+      "x": 5500,
+      "y": 14712,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · planning held"
+    },
+    "SCR-42-desktop-readiness.dc.html": {
+      "x": 5970,
+      "y": 14712,
+      "w": 1440,
+      "h": 960,
+      "page": "p-presale",
+      "title": "Planning · Tola preparing readiness",
+      "expand": "fill"
+    },
+    "SCR-42-mobile-readiness.dc.html": {
+      "x": 7490,
+      "y": 14712,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · readiness"
+    },
+    "SCR-42-desktop-ready.dc.html": {
+      "x": 7960,
+      "y": 14712,
+      "w": 1440,
+      "h": 980,
+      "page": "p-presale",
+      "title": "Planning ready · handed to delivery",
+      "expand": "fill"
+    },
+    "SCR-42-mobile-ready.dc.html": {
+      "x": 9480,
+      "y": 14712,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · planning ready"
+    },
+    "SCR-16-desktop-sow-signed.dc.html": {
+      "x": 0,
+      "y": 15988,
+      "w": 1440,
+      "h": 960,
+      "page": "p-presale",
+      "title": "Record the client's SOW signature",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-sow-signed.dc.html": {
+      "x": 1520,
+      "y": 15988,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · SOW signature"
     }
   },
   "createdOnFiles": {
@@ -2731,7 +2833,9 @@
     "p-presale-row7",
     "p-presale-row8",
     "p-presale-row9",
-    "p-presale-row8b"
+    "p-presale-row8b",
+    "p-presale-row10",
+    "p-presale-row11"
   ],
   "notes": {
     "a-thesis": {
@@ -3277,6 +3381,24 @@
       "w": 240,
       "x": 0,
       "y": 12244
+    },
+    "p-presale-row10": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "10 · Planning: departments give scope and estimates, Tola prepares readiness (SCR-42)",
+      "w": 240,
+      "x": 0,
+      "y": 14596
+    },
+    "p-presale-row11": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "11 · Client signs the SOW, recorded by the PM (SCR-16) · the SOW draft and review are on the project's Documents (SCR-08)",
+      "w": 240,
+      "x": 0,
+      "y": 15872
     }
   },
   "order": [
@@ -3585,7 +3707,19 @@
     "SCR-16-desktop-rfp-unknown.dc.html",
     "SCR-16-mobile-rfp-unknown.dc.html",
     "SCR-05-desktop-working.dc.html",
-    "SCR-05-mobile-working.dc.html"
+    "SCR-05-mobile-working.dc.html",
+    "SCR-42-desktop.dc.html",
+    "SCR-42-mobile.dc.html",
+    "SCR-42-desktop-record.dc.html",
+    "SCR-42-mobile-record.dc.html",
+    "SCR-42-desktop-held.dc.html",
+    "SCR-42-mobile-held.dc.html",
+    "SCR-42-desktop-readiness.dc.html",
+    "SCR-42-mobile-readiness.dc.html",
+    "SCR-42-desktop-ready.dc.html",
+    "SCR-42-mobile-ready.dc.html",
+    "SCR-16-desktop-sow-signed.dc.html",
+    "SCR-16-mobile-sow-signed.dc.html"
   ],
   "pages": [
     {
