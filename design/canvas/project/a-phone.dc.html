@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A · Decision on a phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#E7EBED}a:hover{color:#F0A43A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0E1113; color: #E7EBED; font-family: Geist, system-ui, sans-serif; font-size: 14px; padding: 18px 18px 22px; display: flex; flex-direction: column; gap: 16px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; color: #9BA6AC; font-size: 12px;">
+    <a href="#" style="color: #9BA6AC; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px;">← Decisions</a>
+    <span style="font-family: 'Geist Mono', monospace;">1 of 3</span>
+    <span style="font-size: 11px; padding: 3px 8px; border: 1px dashed #F0A43A; color: #F0A43A; border-radius: 4px;">Sample</span>
+  </div>
+
+  <!-- SEC-ask -->
+  <section aria-label="Decision" style="display: flex; flex-direction: column; gap: 8px;">
+    <span style="font-size: 12px; color: #9BA6AC;">From WhatsApp alert · 10:42 · INV-0412</span>
+    <h1 style="margin: 0; font-size: 22px; line-height: 1.25; font-weight: 600;">Approve invoice v2 for Lagoon Health, milestone 2?</h1>
+    <span style="display: inline-flex; align-self: flex-start; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 999px; background: #2E2617; color: #F0A43A; font-size: 12px;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #F0A43A;"></span>Waiting for you · 2h</span>
+  </section>
+
+  <!-- SEC-detail -->
+  <section aria-label="What you are approving" style="border: 1px solid #2A3136; border-radius: 8px; background: #161A1E;">
+    <dl style="margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; padding: 14px;">
+      <dt style="color: #9BA6AC;">Amount</dt><dd style="margin: 0; font-family: 'Geist Mono', monospace; font-size: 16px;">₦4,250,000.00</dd>
+      <dt style="color: #9BA6AC;">Basis</dt><dd style="margin: 0;">Contract stage 2 of 4</dd>
+      <dt style="color: #9BA6AC;">To</dt><dd style="margin: 0; overflow-wrap: anywhere;">accounts@lagoonhealth.example</dd>
+      <dt style="color: #9BA6AC;">Changed</dt><dd style="margin: 0;">PO number corrected after your return note</dd>
+    </dl>
+    <div style="border-top: 1px solid #2A3136; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px;">
+      <span style="color: #9BA6AC;">Drafted by the Finance evidence agent from 3 sources</span>
+      <a href="a-item.dc.html" style="min-height: 44px; display: inline-flex; align-items: center;">See sources and full history</a>
+    </div>
+  </section>
+
+  <!-- SEC-actions -->
+  <section aria-label="Actions" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+    <p style="margin: 0; font-size: 12px; color: #9BA6AC;">Approving does not send it. Sending happens next and is recorded separately.</p>
+    <button type="button" style="height: 52px; border: none; border-radius: 8px; background: #F0A43A; color: #0E1113; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer;">Approve v2</button>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+      <button type="button" style="height: 48px; border: 1px solid #2A3136; border-radius: 8px; background: none; color: #E7EBED; font: inherit; cursor: pointer;">Return with note</button>
+      <button type="button" style="height: 48px; border: 1px solid #5A3A33; border-radius: 8px; background: none; color: #FF8466; font: inherit; cursor: pointer;">Reject</button>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

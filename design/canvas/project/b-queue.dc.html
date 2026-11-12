@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>B · Work queue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;family=Instrument+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F2F3F5}
+a{color:#2F45C9}a:hover{color:#1F2F94}
+</style>
+</helmet>
+<div style="min-height: 1180px; background: #F2F3F5; color: #1A1D23; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px;">
+
+  <!-- SEC-nav -->
+  <nav aria-label="Main" style="background: #FFFFFF; border-bottom: 1px solid #E1E3E8;">
+    <div style="max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 0 32px; min-height: 64px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px;">
+      <span style="font-family: Newsreader, serif; font-size: 22px; font-weight: 600;">PSL Factory</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+        <a href="#" style="padding: 8px 14px; border-radius: 999px; background: #EEF0FB; color: #1A1D23; text-decoration: none; font-weight: 500;">Today</a>
+        <a href="#" style="padding: 8px 14px; border-radius: 999px; color: #5A6270; text-decoration: none;">Floor</a>
+        <a href="#" style="padding: 8px 14px; border-radius: 999px; color: #5A6270; text-decoration: none;">Projects</a>
+        <a href="#" style="padding: 8px 14px; border-radius: 999px; color: #5A6270; text-decoration: none;">Finance</a>
+        <a href="#" style="padding: 8px 14px; border-radius: 999px; color: #5A6270; text-decoration: none;">Outputs</a>
+      </div>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 14px;">
+        <a href="#" style="padding: 10px 18px; border-radius: 999px; background: #2F45C9; color: #FFFFFF; text-decoration: none; font-weight: 500;">Start work</a>
+        <span aria-label="Ada Okafor, Finance Lead" style="width: 36px; height: 36px; border-radius: 50%; background: #E1E3E8; display: inline-flex; align-items: center; justify-content: center; font-size: 13px;">AO</span>
+      </div>
+    </div>
+  </nav>
+
+  <main style="max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 40px 32px 64px; display: flex; flex-direction: column; gap: 32px;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <p style="margin: 0; color: #5A6270;">Wednesday 12 November · updated 10:42 · <span style="color: #9A5B00;">sample data</span></p>
+        <h1 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 44px; line-height: 1.05; letter-spacing: -0.01em;">Good morning, Ada. <span style="color: #5A6270;">Four things need you.</span></h1>
+      </div>
+    </header>
+
+    <!-- SEC-floor -->
+    <section aria-label="Factory floor" style="background: #FFFFFF; border: 1px solid #E1E3E8; border-radius: 18px; padding: 24px 28px; display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 24px;">On the floor now</h2>
+        <a href="#">Walk the floor</a>
+      </div>
+      <svg aria-hidden="true" viewBox="0 0 1100 150" style="width: 100%; height: auto; display: block;">
+        <g fill="none" stroke="#1A1D23" stroke-width="1.2">
+          <path d="M20 110 L1080 110"/>
+          <path d="M60 110 l40 -22 l40 22 l-40 22 z"/><path d="M60 110 v-26 l40 -22 l40 22 v26"/><path d="M100 88 v-26"/>
+          <path d="M210 110 l40 -22 l40 22 l-40 22 z"/><path d="M210 110 v-34 l40 -22 l40 22 v34"/><path d="M250 88 v-34"/>
+          <path d="M360 110 l40 -22 l40 22 l-40 22 z"/><path d="M360 110 v-44 l40 -22 l40 22 v44"/><path d="M400 88 v-44"/>
+          <path d="M510 110 l40 -22 l40 22 l-40 22 z"/><path d="M510 110 v-22 l40 -22 l40 22 v22"/><path d="M550 88 v-22"/>
+          <path d="M660 110 l40 -22 l40 22 l-40 22 z"/><path d="M660 110 v-18 l40 -22 l40 22 v18"/><path d="M700 88 v-18"/>
+          <path d="M810 110 l40 -22 l40 22 l-40 22 z"/><path d="M810 110 v-52 l40 -22 l40 22 v52"/><path d="M850 88 v-52"/>
+          <path d="M960 110 l40 -22 l40 22 l-40 22 z"/><path d="M960 110 v-30 l40 -22 l40 22 v30"/><path d="M1000 88 v-30"/>
+        </g>
+        <circle cx="400" cy="30" r="6" fill="#9A5B00"/><circle cx="550" cy="52" r="6" fill="#9A5B00"/><circle cx="850" cy="22" r="6" fill="#2F45C9"/>
+      </svg>
+      <ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; text-align: center;">
+        <sc-for list="{{lines}}" as="l" hint-placeholder-count="7">
+          <li style="display: flex; flex-direction: column; gap: 2px;"><span style="font-family: Newsreader, serif; font-size: 26px;">{{l.count}}</span><span style="color: #5A6270; font-size: 13px;">{{l.name}}</span><span style="color: {{l.noteColor}}; font-size: 12px; min-height: 16px;">{{l.note}}</span></li>
+        </sc-for>
+      </ul>
+    </section>
+
+    <!-- SEC-queues -->
+    <div role="tablist" aria-label="Queues" style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
+        <button type="button" role="tab" aria-selected="{{t.selected}}" style="min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.color}}; font: inherit; cursor: pointer;">{{t.label}} · {{t.count}}</button>
+      </sc-for>
+    </div>
+
+    <!-- SEC-list -->
+    <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+        <li style="background: #FFFFFF; border: 1px solid #E1E3E8; border-radius: 16px; padding: 18px 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 18px;">
+          <div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 13px; color: #5A6270;">{{r.line}}</span>
+            <span style="font-family: Newsreader, serif; font-size: 21px;">{{r.title}}</span>
+            <span style="color: {{r.color}};">{{r.sentence}}</span>
+          </div>
+          <a href="b-item.dc.html" style="flex: 0 0 auto; min-height: 44px; display: inline-flex; align-items: center; padding: 0 18px; border-radius: 999px; border: 1px solid #C9CEDA; text-decoration: none; color: #1A1D23;">{{r.action}}</a>
+        </li>
+      </sc-for>
+    </ul>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ochre = '#9A5B00', moss = '#23704F', slate = '#5A6270', ultra = '#2F45C9';
+    const tab = (label, count, on) => ({ label, count, selected: on ? 'true' : 'false', bg: on ? '#1A1D23' : '#FFFFFF', color: on ? '#FFFFFF' : '#1A1D23', border: on ? '#1A1D23' : '#C9CEDA' });
+    return {
+      lines: [
+        { name: 'Pre-sale', count: 3, note: '', noteColor: slate },
+        { name: 'Planning', count: 2, note: '1 stopped', noteColor: ochre },
+        { name: 'Release', count: 4, note: '', noteColor: slate },
+        { name: 'Go-live', count: 1, note: '1 to check', noteColor: ochre },
+        { name: 'Closure', count: 1, note: '', noteColor: slate },
+        { name: 'Invoices', count: 5, note: '2 waiting', noteColor: ultra },
+        { name: 'Month-end', count: 2, note: '', noteColor: slate }
+      ],
+      tabs: [tab('Needs me', 4, true), tab('Decisions', 3), tab('Exceptions', 2), tab('Active', 12), tab('Unassigned', 1), tab('Verified', 28)],
+      rows: [
+        { line: 'Prepare an invoice · INV-0412', title: 'Lagoon Health · Milestone 2 invoice', sentence: 'Waiting for your Finance review since 10:40.', color: ochre, action: 'Review' },
+        { line: 'Go-live acceptance · GLV-0087', title: 'Harmattan Bank · onboarding go-live report', sentence: 'We could not confirm the report was delivered. Checking before any resend.', color: ochre, action: 'See check' },
+        { line: 'Commercial submission · COM-0233', title: 'Kora Logistics · fleet tracker SOW v3', sentence: 'With the CEO for final approval, step 3 of 3, since yesterday.', color: slate, action: 'Open' },
+        { line: 'Plan a project · PLN-0151', title: 'Ojo Foods · ordering app plan', sentence: 'Stopped: no Design Lead role is set up to sign off the UI design.', color: ochre, action: 'Fix setup' },
+        { line: 'Restricted payroll · PAY-0010', title: 'October payroll · staff matching', sentence: 'An agent is matching staff records now.', color: slate, action: 'Open' },
+        { line: 'Close a project · CLS-0044', title: 'Sabi Market · web store closure', sentence: 'Verified at 09:12. Closure report archived.', color: moss, action: 'View' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

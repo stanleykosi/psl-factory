@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PSL factory design · start here</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1F2427}a:hover{color:#D8461F}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; padding: 64px 72px; background: #FFFFFF; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 36px;">
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #5C6468;">PSL operations factory · design concepts · round 1</p>
+    <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 52px; line-height: 1.02; letter-spacing: -0.02em; max-width: 900px;">Three directions for the same three screens</h1>
+    <p style="margin: 0; font-size: 18px; line-height: 1.55; color: #3E464B; max-width: 820px;">Each concept shows the work queue, one work item and a decision on a phone, using the same sample content. Compare them section by section; you can keep a section from one concept and combine it with another.</p>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px;">
+    <div style="border: 1.5px solid #D5D9D3; border-radius: 4px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #5C6468;">Page A</p>
+      <h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 24px;">Control room</h2>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #3E464B;">Dense, dark and keyboard-fast, with a live schematic of the floor. Built for people who clear a lot of work every day.</p>
+    </div>
+    <div style="border: 1.5px solid #D5D9D3; border-radius: 4px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #5C6468;">Page B</p>
+      <h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 24px;">Studio ledger</h2>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #3E464B;">Light, spacious and editorial, like a well-set project document. Easy to read for anyone, including leadership.</p>
+    </div>
+    <div style="border: 2px solid #1F2427; border-radius: 4px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #B23A17;">Page C · recommended</p>
+      <h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 24px;">Assembly line</h2>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #3E464B;">Every screen leads with the line the work travels and the facts it has earned, so a draft never looks like an approval.</p>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1.5px solid #D5D9D3; padding-top: 20px;">
+    <p style="margin: 0; font-size: 15px; color: #3E464B;"><strong style="color: #1F2427;">Sections you can mix:</strong> navigation, floor overview, queue tabs, work list · item header, facts strip, stations, agent work, decision panel · on the phone: the question, the detail, the actions.</p>
+    <p style="margin: 0; font-size: 15px; color: #3E464B;"><strong style="color: #1F2427;">All names, amounts and dates are sample data.</strong> Leave a comment on any section you like or dislike.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

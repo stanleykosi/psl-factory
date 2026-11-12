@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>B · Work item</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;family=Instrument+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F2F3F5}
+a{color:#2F45C9}a:hover{color:#1F2F94}
+</style>
+</helmet>
+<div style="min-height: 1320px; background: #F2F3F5; color: #1A1D23; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px;">
+  <main style="max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 36px 32px 64px; display: flex; flex-direction: column; gap: 28px;">
+
+    <!-- SEC-header -->
+    <header style="display: flex; flex-direction: column; gap: 12px;">
+      <p style="margin: 0; color: #5A6270;"><a href="b-queue.dc.html">Today</a> · Prepare an invoice · INV-0412 · <span style="color: #9A5B00;">sample data</span></p>
+      <h1 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 44px; line-height: 1.08; letter-spacing: -0.01em; max-width: 900px;">Lagoon Health · Milestone 2 invoice</h1>
+      <p style="margin: 0; font-size: 18px; color: #9A5B00;">Waiting for a Finance Lead to review version 2. Started by Tunde Bello on Monday 10 November.</p>
+    </header>
+
+    <!-- SEC-facts -->
+    <section aria-label="What is true so far" style="background: #FFFFFF; border: 1px solid #E1E3E8; border-radius: 18px; padding: 22px 26px; display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 22px;">What is true so far</h2>
+      <ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 24px;">
+        <sc-for list="{{facts}}" as="f" hint-placeholder-count="6">
+          <li style="display: flex; gap: 10px; align-items: baseline;"><span aria-hidden="true" style="color: {{f.color}}; font-weight: 600;">{{f.mark}}</span><span><span style="font-weight: 500;">{{f.label}}</span> <span style="color: #5A6270;">{{f.value}}</span></span></li>
+        </sc-for>
+      </ul>
+      <p style="margin: 0; font-size: 14px; color: #5A6270;">Payment is tracked separately by Finance and never marks this invoice as done.</p>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start;">
+      <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 28px;">
+
+        <!-- SEC-stations -->
+        <section aria-label="The journey" style="background: #FFFFFF; border: 1px solid #E1E3E8; border-radius: 18px; padding: 22px 26px;">
+          <h2 style="margin: 0 0 14px; font-family: Newsreader, serif; font-weight: 500; font-size: 22px;">The journey</h2>
+          <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column;">
+            <sc-for list="{{stations}}" as="s" hint-placeholder-count="7">
+              <li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-top: 1px solid #EEF0F3;">
+                <span aria-hidden="true" style="margin-top: 5px; width: 12px; height: 12px; border-radius: 50%; background: {{s.fill}}; border: 2px solid {{s.color}};"></span>
+                <span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-weight: 500; color: {{s.text}};">{{s.name}}</span><span style="color: #5A6270;">{{s.detail}}</span></span>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+
+        <!-- SEC-agent -->
+        <section aria-label="What the agent did" style="background: #F7F8FC; border: 1px dashed #B9C1E6; border-radius: 18px; padding: 22px 26px; display: flex; flex-direction: column; gap: 12px;">
+          <h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 22px;">What the agent prepared</h2>
+          <p style="margin: 0; color: #5A6270;">The Finance evidence agent read three sources and drafted version 2. It cannot approve or send anything.</p>
+          <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+            <li>Read Tunde's milestone completion record and the UAT sign-off proof.</li>
+            <li>Applied stage 2 of the signed SOW (version 3) to find the amount.</li>
+            <li>Matched the billing contact from the Lagoon Health record.</li>
+            <li>Corrected the PO number you asked for when you returned version 1.</li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- SEC-decision -->
+      <aside aria-label="Your decision" style="flex: 1 1 320px; max-width: 400px; background: #FFFFFF; border: 1px solid #E1E3E8; border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 24px;">Your review</h2>
+        <div style="display: flex; flex-direction: column; gap: 2px;"><span style="color: #5A6270;">Invoice version 2</span><span style="font-family: Newsreader, serif; font-size: 34px;">₦4,250,000.00</span><span style="color: #5A6270;">Contract stage 2 of 4 · to accounts@lagoonhealth.example</span></div>
+        <label for="b-note" style="font-weight: 500;">Note <span style="font-weight: 400; color: #5A6270;">(needed to return or reject)</span></label>
+        <textarea id="b-note" rows="3" style="border: 1px solid #C9CEDA; border-radius: 12px; font: inherit; padding: 10px 12px;"></textarea>
+        <button type="button" style="min-height: 52px; border: none; border-radius: 999px; background: #2F45C9; color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer;">Approve version 2</button>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+          <button type="button" style="min-height: 48px; border: 1px solid #C9CEDA; border-radius: 999px; background: #FFFFFF; font: inherit; cursor: pointer;">Return</button>
+          <button type="button" style="min-height: 48px; border: 1px solid #E3C3A0; border-radius: 999px; background: #FFFFFF; color: #8A4B00; font: inherit; cursor: pointer;">Reject</button>
+        </div>
+        <p style="margin: 0; font-size: 14px; color: #5A6270;">Approving does not send the invoice. Sending is the next step and is recorded on its own.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1320}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const moss = '#23704F', ochre = '#9A5B00', grey = '#9AA1AD';
+    return {
+      facts: [
+        { mark: '✓', label: 'Drafted', value: 'version 2', color: moss },
+        { mark: '…', label: 'Reviewed', value: 'waiting for you', color: ochre },
+        { mark: '–', label: 'Approved', value: 'not yet', color: grey },
+        { mark: '–', label: 'Sent', value: 'not yet', color: grey },
+        { mark: '–', label: 'Receipt recorded', value: 'not yet', color: grey },
+        { mark: '–', label: 'Verified', value: 'not yet', color: grey }
+      ],
+      stations: [
+        { name: 'Milestone evidence recorded', detail: 'Tunde Bello · Monday 14:05', color: moss, fill: moss, text: '#1A1D23' },
+        { name: 'Amount worked out from the contract', detail: 'Finance service · stage 2 terms', color: moss, fill: moss, text: '#1A1D23' },
+        { name: 'Invoice drafted', detail: 'Agent · version 2 at 10:38', color: moss, fill: moss, text: '#1A1D23' },
+        { name: 'Finance review', detail: 'Waiting for a Finance Lead since 10:40', color: ochre, fill: '#FFFFFF', text: '#1A1D23' },
+        { name: 'Issue', detail: 'After approval', color: grey, fill: '#FFFFFF', text: '#5A6270' },
+        { name: 'Deliver to Lagoon Health', detail: 'By email, with a delivery receipt', color: grey, fill: '#FFFFFF', text: '#5A6270' },
+        { name: 'Verify', detail: 'Checked against the decision and the receipt', color: grey, fill: '#FFFFFF', text: '#5A6270' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

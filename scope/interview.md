@@ -42,3 +42,7 @@ answer's source so scope.md never states a guess as a client decision.
 - Settled: purpose, people, boundaries, constraints, existing assets, integrations (API with Django; WhatsApp/email designed but not connected).
 - Journeys and rules: drafted from the repo's factory lines and product invariants, pending the design engineer's confirmation.
 - Open for PSL: who approves (name, role, record); whether CEO and CTO log in; whether a brand guide exists.
+
+## Round 4 (12 Nov 2026)
+
+- Assistant — answer: its own page, as interactive as possible; it creates what PMs usually create (invoices, SOWs, and similar) and answers Finance's questions about projects — source: design engineer, 12 Nov. Recorded as S-10, J-10, J-11, R-08 in scope version 2; drafts follow normal review, per the repo's product rules.

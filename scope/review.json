@@ -8,6 +8,12 @@
       "authorized_by": "hunchoweb (PSL factory design engineer)",
       "reason": "Design engineer authorised starting the design stage before PSL names an approver (Q-01 open); PSL approval of scope version 1 still required",
       "recorded_at": "2026-11-11T23:54:59Z"
+    },
+    {
+      "scope_sha256": "d3152ccdbfd302680d07d6e2a9d49097c9875df984296e97e16f1ebec8a4b727",
+      "authorized_by": "hunchoweb (PSL factory design engineer)",
+      "reason": "Design engineer authorised continuing design on scope version 2 (assistant page added) before PSL names an approver (Q-01 open); PSL approval still required",
+      "recorded_at": "2026-11-12T00:41:08Z"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Scope: PSL operations factory — frontend and experience redesign
 
-VERSION: 1
+VERSION: 2
 Client: PSL Product Studio
 Prepared by: PSL factory design engineer (hunchoweb)
 Date: 2026-11-12
@@ -41,6 +41,8 @@ Date: 2026-11-12
 - J-06 HR matches staff for payroll so that Finance gets accurate totals without seeing private details — from the payroll inputs to a reviewed, restricted result.
 - J-07 A Lead clears a stop so that held work resumes — from a work item showing "Owner needed" or "Setup needed" to the missing role or rule being set and the work continuing.
 - J-08 Anyone with access checks a project's whole journey so that they know where it stands — from a project to one view of every line it has passed through and what is next.
+- J-10 A PM asks the assistant to create an invoice, SOW or other document so that a draft is ready without assembling it by hand — from a request in plain words to a draft in the right line, waiting for its normal review.
+- J-11 A Finance user asks the assistant about a project so that they get an answer without chasing the PM — from a question to an answer that cites the records it came from, using only records they may see.
 - J-09 A user sets their own alert preferences so that they get what they need without noise — from their settings to choosing WhatsApp, email or both and how often.
 
 ## In scope
@@ -53,6 +55,7 @@ Date: 2026-11-12
 - S-06 Designs for WhatsApp and email alerts and the in-app notification centre.
 - S-07 A reusable "record a response" step for responses from clients and from teams that don't log in.
 - S-08 The approved design built as a new frontend app in the `frontend/` folder of the PSL repo, using Next.js, GSAP and three.js/WebGL, working with the existing backend through a data API.
+- S-10 An assistant page where PMO, Finance and HR users ask, in plain words, for answers about work they can see and for new drafts of what they usually prepare (invoices, SOWs, plans, reports, minutes, client messages); each draft starts in its normal line and waits for the usual review, and every answer shows where it came from.
 - S-09 Realistic sample data for designs and early builds, clearly labelled as sample data.
 
 ## Out of scope
@@ -85,6 +88,7 @@ Date: 2026-11-12
 - R-05 Project planning and costing come before the signed SOW.
 - R-06 Anything shown as sample, test or mock data is visibly labelled.
 - R-07 A send whose outcome is unknown is checked before anything is resent.
+- R-08 The assistant only uses records the person asking may see, shows the source of every answer, and anything it creates is a draft that goes through the usual reviews and approvals; it never approves, sends, pays or changes a record on its own.
 
 ## Integrations and data
 
@@ -98,6 +102,7 @@ Date: 2026-11-12
 - A-01 The backend developer will agree to build a data API for the new frontend — the design engineer chose a separate Next.js frontend; the repo's current console is server-rendered.
 - A-02 The same person at PSL approves both this scope and the final design — PSL has not named anyone yet.
 - A-03 Approvers who work in other systems, such as production deployment approvals in GLPI, keep doing so there; the app records the reference — this is how the backend works today.
+- A-05 "Create a score" in the design engineer's request is read as creating a SOW — likely a transcription of "SOW"; to be confirmed.
 - A-04 Designs can start on sample data before the backend API exists — the screens need realistic data, not live data.
 
 ## Open questions
@@ -107,3 +112,4 @@ Date: 2026-11-12
 ## Change log
 
 - Version 1: first draft for client review.
+- Version 2: added the assistant page (S-10), its journeys (J-10, J-11) and rule (R-08), at the design engineer's request on 12 Nov 2026.

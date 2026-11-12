@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>C · Work item</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#EEF0ED}
+a{color:#2459D6}a:hover{color:#16388F}
+</style>
+</helmet>
+<div style="min-height: 1200px; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px;">
+  <main style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 28px 28px 56px; display: flex; flex-direction: column; gap: 22px;">
+
+    <!-- SEC-header -->
+    <header style="display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;"><a href="c-queue.dc.html">QUEUE</a> / PREPARE AN INVOICE / INV-0412 · <span style="color: #8A5A00;">SAMPLE DATA</span></p>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px;">
+        <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 34px; line-height: 1.05;">Lagoon Health · Milestone 2 invoice</h1>
+        <span style="padding: 5px 10px; font-size: 12px; font-weight: 600; background: #FBE3D9; color: #9A2F10;">AWAITING FINANCE DECISION</span>
+      </div>
+      <p style="margin: 0; color: #4A5357;">Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2</p>
+    </header>
+
+    <!-- SEC-facts -->
+    <section aria-label="Facts earned" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 2px solid #1F2427; background: #FFFFFF;">
+      <sc-for list="{{facts}}" as="f" hint-placeholder-count="6">
+        <div style="padding: 12px 14px; border-right: 2px solid #1F2427; background: {{f.bg}}; color: {{f.color}}; display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;">{{f.label}}</span>
+          <span style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 16px;">{{f.value}}</span>
+        </div>
+      </sc-for>
+    </section>
+    <p style="margin: -12px 0 0; font-size: 12px; color: #4A5357;">Paid is a separate Finance fact and is not part of this line.</p>
+
+    <!-- SEC-stations -->
+    <section aria-label="Stations" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0; border: 2px solid #1F2427; background: #FFFFFF; overflow-x: auto;">
+      <sc-for list="{{stations}}" as="s" hint-placeholder-count="7">
+        <div style="min-width: 120px; padding: 12px; border-right: 2px solid #1F2427; background: {{s.bg}}; color: {{s.color}}; display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">{{s.num}}</span>
+          <span style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 15px; line-height: 1.15;">{{s.name}}</span>
+          <span style="font-size: 12px;">{{s.detail}}</span>
+        </div>
+      </sc-for>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start;">
+
+      <!-- SEC-agent -->
+      <section aria-label="Agent work" style="flex: 999 1 520px; min-width: 0; background: #E9EEFB; border: 2px solid #2459D6;">
+        <div style="padding: 12px 16px; border-bottom: 2px solid #2459D6; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;">
+          <h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.04em;">Agent · Finance evidence</h2>
+          <span style="font-size: 12px; color: #16388F;">Prepares drafts. Cannot approve, send or pay.</span>
+        </div>
+        <ol style="list-style: none; margin: 0; padding: 4px 16px 12px;">
+          <sc-for list="{{agent}}" as="g" hint-placeholder-count="4">
+            <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; padding: 10px 0; border-bottom: 1px solid #C6D3F3;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #16388F;">{{g.n}}</span>
+              <span><span style="display: block; font-weight: 500;">{{g.text}}</span><span style="display: block; font-size: 12px; color: #33415E;">Read: {{g.source}}</span></span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #33415E;">{{g.when}}</span>
+            </li>
+          </sc-for>
+        </ol>
+        <p style="margin: 0; padding: 0 16px 14px; font-size: 13px; color: #16388F;">Result: invoice v2 drafted. Marked DRAFTED, not REVIEWED.</p>
+      </section>
+
+      <!-- SEC-decision -->
+      <aside aria-label="Your decision" style="flex: 1 1 320px; max-width: 420px; background: #FFFFFF; border: 2px solid #D8461F; display: flex; flex-direction: column;">
+        <div style="padding: 12px 16px; background: #D8461F; color: #FFFFFF;">
+          <h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;">Station 4 · Finance review</h2>
+        </div>
+        <div style="padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+          <p style="margin: 0; color: #4A5357;">Only a Finance Lead can decide. You are Finance Lead.</p>
+          <dl style="margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px;">
+            <dt style="color: #4A5357;">Amount</dt><dd style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 500;">₦4,250,000.00</dd>
+            <dt style="color: #4A5357;">Basis</dt><dd style="margin: 0;">Contract stage 2 of 4 · terms v1</dd>
+            <dt style="color: #4A5357;">To</dt><dd style="margin: 0; overflow-wrap: anywhere;">accounts@lagoonhealth.example</dd>
+            <dt style="color: #4A5357;">Version</dt><dd style="margin: 0;">v2 · changed: PO number</dd>
+          </dl>
+          <label for="c-note" style="font-weight: 500;">Note <span style="font-weight: 400; color: #4A5357;">(required to return or reject)</span></label>
+          <textarea id="c-note" rows="3" style="border: 2px solid #1F2427; border-radius: 0; font: inherit; padding: 8px;"></textarea>
+          <button type="button" style="min-height: 48px; border: none; background: #2459D6; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;">Approve v2</button>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+            <button type="button" style="min-height: 44px; border: 2px solid #1F2427; background: #FFFFFF; font: inherit; font-weight: 500; cursor: pointer;">Return</button>
+            <button type="button" style="min-height: 44px; border: 2px solid #9A2F10; background: #FFFFFF; color: #9A2F10; font: inherit; font-weight: 500; cursor: pointer;">Reject</button>
+          </div>
+          <p style="margin: 0; font-size: 12px; color: #4A5357;">Approving earns APPROVED only. SENT is earned at station 6.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ink = '#1F2427', white = '#FFFFFF', muted = '#6B7478';
+    const fact = (label, value, on, current) => ({ label, value, bg: on ? ink : current ? '#FBE3D9' : white, color: on ? white : current ? '#9A2F10' : muted });
+    const st = (num, name, detail, mode) => ({ num, name, detail, bg: mode === 'done' ? ink : mode === 'now' ? '#D8461F' : white, color: mode === 'done' || mode === 'now' ? white : muted });
+    return {
+      facts: [fact('Drafted', 'v2', true), fact('Reviewed', 'Waiting', false, true), fact('Approved', '—'), fact('Sent', '—'), fact('Receipt', '—'), fact('Verified', '—')],
+      stations: [
+        st('01', 'Milestone evidence', 'Done · Mon 14:05', 'done'),
+        st('02', 'Contract amount', 'Done · Mon 14:06', 'done'),
+        st('03', 'Draft invoice', 'Done · 10:38', 'done'),
+        st('04', 'Finance review', 'Waiting 2h · you', 'now'),
+        st('05', 'Issue', 'Next', 'todo'),
+        st('06', 'Deliver', 'Email + receipt', 'todo'),
+        st('07', 'Verify', 'Last', 'todo')
+      ],
+      agent: [
+        { n: '01', text: 'Read the milestone completion record', source: 'PM record v1', when: '10:31' },
+        { n: '02', text: 'Read stage 2 terms of the signed SOW', source: 'Signed SOW v3', when: '10:33' },
+        { n: '03', text: 'Matched the billing contact', source: 'Client register', when: '10:35' },
+        { n: '04', text: 'Drafted v2 with the corrected PO number', source: 'Return note, 09:55', when: '10:38' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

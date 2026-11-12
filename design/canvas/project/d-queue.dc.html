@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>D · Work queue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#101114}
+a{color:#E3E4E8}a:hover{color:#E8693E}
+</style>
+</helmet>
+<div style="min-height: 900px; background: #101114; color: #E3E4E8; font-family: Inter, system-ui, sans-serif; font-size: 13px; font-variant-numeric: tabular-nums; display: flex; flex-wrap: wrap;">
+
+  <!-- SEC-nav -->
+  <nav aria-label="Main" style="flex: 1 1 220px; max-width: 232px; box-sizing: border-box; padding: 12px 10px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 8px;">
+      <span style="display: flex; align-items: center; gap: 8px; font-weight: 600;"><span style="width: 20px; height: 20px; border-radius: 5px; background: #E8693E; color: #101114; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">P</span>PSL Factory</span>
+      <a href="#" aria-label="Start work" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid #26282E; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: #8C919B;">+</a>
+    </div>
+    <a href="#" style="display: flex; justify-content: space-between; align-items: center; height: 30px; padding: 0 8px; border-radius: 6px; border: 1px solid #26282E; color: #8C919B; text-decoration: none;">Search <span style="font-size: 11px;">⌘K</span></a>
+    <div style="display: flex; flex-direction: column; gap: 1px;">
+      <a href="#" style="display: flex; justify-content: space-between; height: 30px; align-items: center; padding: 0 8px; border-radius: 6px; background: #1E1F24; text-decoration: none;">Inbox <span style="color: #E8693E;">4</span></a>
+      <a href="#" style="display: flex; height: 30px; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none; color: #C9CBD1;">My work</a>
+      <a href="#" style="display: flex; justify-content: space-between; height: 30px; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none; color: #C9CBD1;">Decisions <span style="color: #8C919B;">3</span></a>
+      <a href="#" style="display: flex; height: 30px; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none; color: #C9CBD1;">Floor</a>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 1px;">
+      <p style="margin: 0 0 4px; padding: 0 8px; font-size: 12px; color: #8C919B;">Lines</p>
+      <sc-for list="{{lines}}" as="l" hint-placeholder-count="7">
+        <a href="#" style="display: flex; justify-content: space-between; height: 28px; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none; color: #C9CBD1;">{{l.name}} <span style="color: {{l.color}};">{{l.count}}</span></a>
+      </sc-for>
+    </div>
+  </nav>
+
+  <main style="flex: 999 1 560px; min-width: 0; margin: 8px 8px 8px 0; background: #16171B; border: 1px solid #26282E; border-radius: 10px; display: flex; flex-direction: column;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid #26282E;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <h1 style="margin: 0; font-size: 13px; font-weight: 500;">Inbox</h1>
+        <span style="color: #8C919B;">· Needs me</span>
+        <span style="font-size: 11px; padding: 2px 7px; border: 1px dashed #D9A23C; color: #D9A23C; border-radius: 4px;">Sample data</span>
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <button type="button" style="height: 28px; padding: 0 10px; border: 1px solid #26282E; border-radius: 6px; background: none; color: #C9CBD1; font: inherit; cursor: pointer;">Filter</button>
+        <button type="button" style="height: 28px; padding: 0 10px; border: 1px solid #26282E; border-radius: 6px; background: none; color: #C9CBD1; font: inherit; cursor: pointer;">Display</button>
+      </div>
+    </header>
+
+    <!-- SEC-floor -->
+    <section aria-label="Factory floor" style="display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid #26282E;">
+      <sc-for list="{{floor}}" as="f" hint-placeholder-count="5">
+        <span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border: 1px solid #26282E; border-radius: 999px; color: #C9CBD1;"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: {{f.color}};"></span>{{f.text}}</span>
+      </sc-for>
+    </section>
+
+    <!-- SEC-queues -->
+    <div role="tablist" aria-label="Queues" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px; border-bottom: 1px solid #26282E;">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
+        <button type="button" role="tab" aria-selected="{{t.selected}}" style="height: 28px; padding: 0 10px; border-radius: 6px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.color}}; font: inherit; cursor: pointer;">{{t.label}} <span style="color: #8C919B;">{{t.count}}</span></button>
+      </sc-for>
+    </div>
+
+    <!-- SEC-list -->
+    <div style="display: flex; flex-direction: column;">
+      <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+        <div style="display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 16px; background: #1A1B20; color: #C9CBD1; font-weight: 500;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: {{g.color}};"></span>{{g.name}} <span style="color: #8C919B; font-weight: 400;">{{g.count}}</span></div>
+          <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="2">
+            <a href="d-item.dc.html" style="display: grid; grid-template-columns: 20px 76px minmax(0, 1fr) auto 64px 44px; align-items: center; gap: 12px; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #1E2025; text-decoration: none; color: #E3E4E8;">
+              <span role="img" aria-label="{{r.progressLabel}}" style="width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid {{r.ring}}; background: {{r.fill}}; box-sizing: border-box;"></span>
+              <span style="color: #8C919B;">{{r.ref}}</span>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{r.title}}</span>
+              <span style="font-size: 12px; padding: 2px 8px; border: 1px solid #26282E; border-radius: 999px; color: #C9CBD1; white-space: nowrap;">{{r.line}}</span>
+              <span style="font-size: 12px; color: #8C919B; text-align: right;">{{r.who}}</span>
+              <span style="font-size: 12px; color: #8C919B; text-align: right;">{{r.age}}</span>
+            </a>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const orange = '#E8693E', green = '#4CB782', amber = '#D9A23C', coral = '#EB6E6E', muted = '#8C919B';
+    const prog = (done, total, color) => ({ ring: color, fill: 'conic-gradient(' + color + ' 0 ' + Math.round(done / total * 100) + '%, transparent 0)', progressLabel: 'Station ' + Math.min(done + 1, total) + ' of ' + total });
+    const tab = (label, count, on) => ({ label, count, selected: on ? 'true' : 'false', bg: on ? '#1E1F24' : 'transparent', border: on ? '#33353C' : 'transparent', color: on ? '#E3E4E8' : '#C9CBD1' });
+    return {
+      lines: [
+        { name: 'Invoices', count: 5, color: orange }, { name: 'Pre-sale', count: 3, color: muted }, { name: 'Planning', count: 2, color: coral },
+        { name: 'Release', count: 4, color: muted }, { name: 'Go-live', count: 1, color: coral }, { name: 'Closure', count: 1, color: muted }, { name: 'Month-end', count: 2, color: muted }
+      ],
+      floor: [
+        { text: '18 in progress', color: '#6B9BEA' }, { text: '3 waiting for decisions', color: amber }, { text: '2 stopped', color: coral }, { text: '1 uncertain send', color: coral }, { text: '28 verified this month', color: green }
+      ],
+      tabs: [tab('Needs me', 4, true), tab('Decisions', 3), tab('Exceptions', 2), tab('Active', 12), tab('Unassigned', 1), tab('Verified', 28)],
+      groups: [
+        { name: 'Waiting for you', count: 2, color: orange, rows: [
+          Object.assign({ ref: 'INV-0412', title: 'Lagoon Health · Milestone 2 invoice · Finance review', line: 'Invoice', who: 'You', age: '2h' }, prog(3, 7, orange)),
+          Object.assign({ ref: 'COM-0233', title: 'Kora Logistics · fleet tracker SOW v3 · CEO approval', line: 'Commercial', who: 'CEO', age: '1d' }, prog(4, 6, amber))
+        ] },
+        { name: 'Stopped', count: 2, color: coral, rows: [
+          Object.assign({ ref: 'GLV-0087', title: 'Harmattan Bank · go-live report · delivery uncertain, checking first', line: 'Go-live', who: 'Check', age: '40m' }, prog(3, 5, coral)),
+          Object.assign({ ref: 'PLN-0151', title: 'Ojo Foods · ordering app plan · owner needed: Design Lead', line: 'Planning', who: 'Setup', age: '3d' }, prog(2, 6, coral))
+        ] },
+        { name: 'In progress', count: 1, color: '#6B9BEA', rows: [
+          Object.assign({ ref: 'PAY-0010', title: 'October payroll · agent matching staff', line: 'Payroll', who: 'Agent', age: '5m' }, prog(1, 5, '#6B9BEA'))
+        ] },
+        { name: 'Verified', count: 1, color: green, rows: [
+          Object.assign({ ref: 'CLS-0044', title: 'Sabi Market · web store closure', line: 'Closure', who: '—', age: '09:12' }, prog(4, 4, green))
+        ] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

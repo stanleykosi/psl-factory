@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>D · Work item</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#101114}
+a{color:#E3E4E8}a:hover{color:#E8693E}
+</style>
+</helmet>
+<div style="min-height: 900px; background: #101114; color: #E3E4E8; font-family: Inter, system-ui, sans-serif; font-size: 13px; font-variant-numeric: tabular-nums; box-sizing: border-box; padding: 8px;">
+  <div style="min-height: 884px; background: #16171B; border: 1px solid #26282E; border-radius: 10px; display: flex; flex-direction: column;">
+
+    <!-- SEC-header -->
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid #26282E; color: #8C919B;">
+      <span><a href="d-queue.dc.html" style="color: #8C919B;">Inbox</a> › <span style="color: #E3E4E8;">INV-0412</span> <span style="margin-left: 8px; font-size: 11px; padding: 2px 7px; border: 1px dashed #D9A23C; color: #D9A23C; border-radius: 4px;">Sample data</span></span>
+      <span style="display: flex; gap: 10px; align-items: center;">1 / 4 <a href="#" aria-label="Previous item" style="color: #8C919B;">↑</a><a href="#" aria-label="Next item" style="color: #8C919B;">↓</a></span>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; flex-grow: 1;">
+      <main style="flex: 999 1 560px; min-width: 0; padding: 32px 48px; display: flex; flex-direction: column; gap: 22px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h1 style="margin: 0; font-size: 22px; font-weight: 600;">Lagoon Health · Milestone 2 invoice</h1>
+          <p style="margin: 0; color: #C9CBD1; line-height: 1.6;">Invoice for stage 2 of the signed SOW after UAT was signed off. Version 2 corrects the PO number from the return note.</p>
+        </div>
+
+        <!-- SEC-facts -->
+        <section aria-label="Facts" style="border: 1px solid #26282E; border-radius: 8px;">
+          <h2 style="margin: 0; padding: 10px 14px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #26282E;">Facts <span style="color: #8C919B; font-weight: 400;">1 of 6 earned · paid is tracked by Finance</span></h2>
+          <ul style="list-style: none; margin: 0; padding: 4px 0;">
+            <sc-for list="{{facts}}" as="f" hint-placeholder-count="6">
+              <li style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 14px;"><span aria-hidden="true" style="width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid {{f.color}}; background: {{f.fill}}; color: #101114; font-size: 10px; display: inline-flex; align-items: center; justify-content: center;">{{f.mark}}</span><span style="color: {{f.text}};">{{f.label}}</span><span style="margin-left: auto; color: #8C919B;">{{f.note}}</span></li>
+            </sc-for>
+          </ul>
+        </section>
+
+        <!-- SEC-agent -->
+        <section aria-label="Activity" style="display: flex; flex-direction: column; gap: 10px;">
+          <h2 style="margin: 0; font-size: 13px; font-weight: 500;">Activity</h2>
+          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+            <sc-for list="{{activity}}" as="a" hint-placeholder-count="6">
+              <li style="display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 10px; color: #8C919B;">
+                <span aria-hidden="true" style="width: 16px; height: 16px; border-radius: {{a.radius}}; background: {{a.badge}}; font-size: 9px; color: #101114; display: inline-flex; align-items: center; justify-content: center;">{{a.initial}}</span>
+                <span><span style="color: #E3E4E8;">{{a.actor}}</span> {{a.text}}</span>
+                <span>{{a.when}}</span>
+              </li>
+            </sc-for>
+          </ul>
+          <p style="margin: 0; font-size: 12px; color: #8C919B;">Square marks are agents and services; round marks are people. Only people decide.</p>
+        </section>
+      </main>
+
+      <aside style="flex: 1 1 300px; max-width: 340px; border-left: 1px solid #26282E; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+        <!-- SEC-stations -->
+        <section aria-label="Properties and stations" style="display: flex; flex-direction: column; gap: 2px;">
+          <sc-for list="{{props}}" as="p" hint-placeholder-count="6">
+            <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; min-height: 30px;"><span style="color: #8C919B;">{{p.k}}</span><span style="color: {{p.color}}; overflow-wrap: anywhere;">{{p.v}}</span></div>
+          </sc-for>
+          <ol style="list-style: none; margin: 10px 0 0; padding: 0; display: flex; gap: 3px;" aria-label="Stations, 4 of 7">
+            <sc-for list="{{stations}}" as="s" hint-placeholder-count="7"><li title="{{s.name}}" style="flex: 1; height: 5px; border-radius: 3px; background: {{s.color}};"></li></sc-for>
+          </ol>
+          <span style="margin-top: 6px; font-size: 12px; color: #8C919B;">Station 4 of 7 · Finance review</span>
+        </section>
+
+        <!-- SEC-decision -->
+        <section aria-label="Your decision" style="border: 1px solid #5B3626; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #1C1715;">
+          <h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #F0A27F;">Your decision · Finance review v2</h2>
+          <span style="color: #C9CBD1;">Only a Finance Lead can decide. You are Finance Lead.</span>
+          <label for="d-note" style="color: #8C919B; font-size: 12px;">Note (needed to return or reject)</label>
+          <textarea id="d-note" rows="2" style="background: #101114; border: 1px solid #26282E; border-radius: 6px; color: #E3E4E8; font: inherit; padding: 8px;"></textarea>
+          <button type="button" style="height: 36px; border: none; border-radius: 6px; background: #E8693E; color: #101114; font: inherit; font-weight: 600; cursor: pointer;">Approve v2 <span style="opacity: .7;">⌘↵</span></button>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+            <button type="button" style="height: 34px; border: 1px solid #26282E; border-radius: 6px; background: none; color: #E3E4E8; font: inherit; cursor: pointer;">Return</button>
+            <button type="button" style="height: 34px; border: 1px solid #5B2F2F; border-radius: 6px; background: none; color: #EB6E6E; font: inherit; cursor: pointer;">Reject</button>
+          </div>
+          <span style="font-size: 12px; color: #8C919B;">Approving does not send. Sending is station 6.</span>
+        </section>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const green = '#4CB782', amber = '#D9A23C', dim = '#3A3D45', muted = '#8C919B', orange = '#E8693E';
+    const f = (label, state, note) => ({ label, note, mark: state === 'yes' ? '✓' : '', fill: state === 'yes' ? green : 'transparent', color: state === 'yes' ? green : state === 'now' ? amber : dim, text: state === 'no' ? muted : '#E3E4E8' });
+    const person = (initial) => ({ initial, radius: '50%', badge: '#C9CBD1' });
+    const machine = (initial) => ({ initial, radius: '3px', badge: '#6B9BEA' });
+    return {
+      facts: [f('Drafted', 'yes', 'v2 · 10:38'), f('Reviewed', 'now', 'waiting for you'), f('Approved', 'no', ''), f('Sent', 'no', ''), f('Receipt recorded', 'no', ''), f('Verified', 'no', '')],
+      activity: [
+        Object.assign({ actor: 'Tunde Bello', text: 'recorded milestone 2 complete with UAT sign-off proof', when: 'Mon 14:05' }, person('T')),
+        Object.assign({ actor: 'Finance service', text: 'set the amount from stage 2 terms v1', when: 'Mon 14:06' }, machine('S')),
+        Object.assign({ actor: 'Finance evidence agent', text: 'drafted invoice v1 from 3 sources', when: 'Tue 09:12' }, machine('A')),
+        Object.assign({ actor: 'Ada Okafor', text: 'returned v1: wrong PO number', when: '09:55' }, person('A')),
+        Object.assign({ actor: 'Finance evidence agent', text: 'drafted v2 with the corrected PO number', when: '10:38' }, machine('A')),
+        Object.assign({ actor: 'Factory', text: 'asked a Finance Lead to review v2 and sent you a WhatsApp alert', when: '10:40' }, machine('F'))
+      ],
+      props: [
+        { k: 'State', v: 'Awaiting Finance decision', color: amber },
+        { k: 'Waiting for', v: 'You · 2h', color: '#E3E4E8' },
+        { k: 'Line', v: 'Prepare an invoice', color: '#E3E4E8' },
+        { k: 'Amount', v: '₦4,250,000.00', color: '#E3E4E8' },
+        { k: 'To', v: 'accounts@lagoonhealth.example', color: '#E3E4E8' },
+        { k: 'Version', v: 'v2 · revision 2', color: '#E3E4E8' }
+      ],
+      stations: [
+        { name: 'Milestone evidence', color: green }, { name: 'Contract amount', color: green }, { name: 'Draft invoice', color: green },
+        { name: 'Finance review', color: orange }, { name: 'Issue', color: dim }, { name: 'Deliver', color: dim }, { name: 'Verify', color: dim }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

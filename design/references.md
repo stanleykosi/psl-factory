@@ -1,0 +1,56 @@
+# Design references
+
+Inspiration behind the concepts. Each line records where a reference came from, how
+it was found, what was actually seen, and what we take from it. Keep links and our
+own analysis; keep no copies of other people's images unless the user saved them for
+this project (evidence: user-saved).
+
+Evidence: full (whole shot seen), thumbnail (small preview seen), live (a live
+website seen), user-saved (screenshot the user saved), text-only (only the page
+text was read), unavailable (could not be opened). Only the first four can support
+a concept.
+
+How these were found (12 Nov 2026): no design-search tool is configured and the user
+saved no screenshots, so each candidate is a live public product site opened in a
+desktop browser (1440×900, one phone view at 390×844), one page at a time, and
+looked at directly. 16 sites, 21 captures. Screenshots stayed in a temporary folder
+and are not kept in the project. Marketing pages show product UI as staged
+illustrations, so behaviour (keyboard, loading, errors, real mobile app) is unproven
+for every reference below.
+
+## Needs
+
+- NEED-01 Work queue: a task-first list of work items that shows state, owner, age and what needs me, for people who handle a lot of work (scope J-01, J-02, C-06, S-03).
+- NEED-02 Work item: one piece of work moving through stations, with a timeline of what happened, who or what did it, and the current action (J-01, J-04, S-04, R-01).
+- NEED-03 Decision on a phone: approve, return or reject one exact version, reached from an alert (J-02, G-04, C-01).
+- NEED-04 Factory floor: a signature overview of lines, stations and work moving through them, using 3D and motion (S-05, C-04).
+- NEED-05 Finance data: amounts, statuses and reconciliation shown clearly without merging facts (J-04, J-05, R-01, R-02).
+- NEED-06 Agent work made visible: what an agent read and drafted, shown so it never looks like a person's approval (R-03, J-01).
+
+## References
+
+- REF-01 | need: NEED-02 | source: https://linear.app | credit: Linear | found: live site, product hero | evidence: live | seen: 2026-11-12 | takes: issue detail with a quiet Activity timeline ("created via Slack on behalf of…", "Triage Intelligence added labels"), item position "1 / 84" with up/down to step through items, sidebar of Inbox, My issues, Reviews | adapt: Activity lines become station events that name the actor type (person, agent, service); stepping through items fits a decision-maker clearing a queue | conflicts: the floating agent chat window invites free conversation; our agents run scoped steps, so agent output must sit inside the item, not as a chat | confidence: high
+- REF-02 | need: NEED-01 | source: https://linear.app | credit: Linear | found: live site, "Intake and integrations" section | evidence: live | seen: 2026-11-12 | takes: compact cards with ID, title and small label chips; column counts ("Todo 71", "In Progress 3") | adapt: rows rather than kanban columns, since items move through station lines, not one status board; counts per queue (Needs me, Decisions, Exceptions) | conflicts: drag between columns implies anyone can change state; state changes in the factory come from services and decisions only | confidence: high
+- REF-03 | need: NEED-04 | source: https://linear.app | credit: Linear | found: live site, "FIG 0.1–0.3" section | evidence: live | seen: 2026-11-12 | takes: monochrome isometric wireframe objects as a technical illustration language | adapt: an isometric line-drawn factory floor whose stations light up with live counts | conflicts: only the tops of the figures were in view, so the detail is unseen | confidence: low
+- REF-04 | need: NEED-02 | source: https://temporal.io | credit: Temporal | found: live site, interactive demo section | evidence: live | seen: 2026-11-12 | takes: a story strip "Workflow runs → Something breaks → It recovers" and an event timeline with activity lanes (send_email, charge_customer) over a time axis | adapt: the "it recovers" story is exactly our uncertain-effect reconciliation; a lane per station with events placed in time | conflicts: code-first panels and developer vocabulary; PSL users need plain language | confidence: high
+- REF-05 | need: NEED-01 | source: https://www.inngest.com | credit: Inngest | found: live site, product screenshot below hero | evidence: live | seen: 2026-11-12 | takes: a dense runs table with a coloured status dot and word (Running, Completed), trigger, function, queued and ended times, filter chips and a run count | adapt: status words must be our state labels (Owner needed, Effect uncertain, Verified); add age and "who it waits for" columns | conflicts: run IDs lead each row; we lead with the business name and keep IDs secondary | confidence: medium
+- REF-06 | need: NEED-04 | source: https://n8n.io | credit: n8n | found: live site, workflow canvas section | evidence: live | seen: 2026-11-12 | takes: square nodes joined by curved connectors on a dotted grid, branching and joining ("Wait for all accounts"), short two-line labels under each node | adapt: stations as nodes on a line with work items as moving tokens; the join pattern shows "all approvals needed" | conflicts: an editable node editor; our lines are fixed by the factory, so the floor is a view, not a builder | confidence: high
+- REF-07 | need: NEED-04 | source: https://railway.com | credit: Railway | found: live site, hero and product strip | evidence: live | seen: 2026-11-12 | takes: an illustrated atmospheric scene behind a calm product canvas; a segmented control (Deploy, Network, Scale, Monitor, Evolve) to switch views | adapt: a hand-made scene language that gives PSL, a design studio, a signature mood; the segmented control as the switch between Floor, Queue and Projects | conflicts: heavy illustrated backgrounds behind working screens would hurt contrast and speed; use only on the overview | confidence: medium
+- REF-08 | need: NEED-05 | source: https://mercury.com | credit: Mercury | found: live site, hero product video frame | evidence: live | seen: 2026-11-12 | takes: dark finance dashboard with one balance chart, an accounts list with right-aligned amounts, and small cards that split invoicing into Overdue, Paid and Open with counts and totals | adapt: invoice cards split Drafted, Approved, Sent, Receipt recorded and Paid as separate counts, never one "status" | conflicts: a headline balance invites a single number; we show "unknown" where a value is not known, never zero | confidence: medium
+- REF-09 | need: NEED-06 | source: https://ramp.com | credit: Ramp | found: live site, hero illustration | evidence: live | seen: 2026-11-12 | takes: an "Auto-coding" panel beside an invoice, filling Memo, Amount, Category and Location with small loading marks as it works, over a line-item invoice with subtotal, VAT and total | adapt: agent-drafted fields marked as drafted with their source, distinct from approved fields; the person confirms | conflicts: the panel looks like the system decided; our design must label it "Drafted by agent · needs review" | confidence: medium
+- REF-10 | need: NEED-03 | source: https://ramp.com | credit: Ramp | found: live site, phone view 390×844 | evidence: live | seen: 2026-11-12 | takes: large clear type at phone width, two-column tiles with one icon, short title and one line; mentions submitting receipts through WhatsApp | adapt: phone decision screens use one large statement of what is being decided and full-width actions | conflicts: marketing page, not an approval screen; the decision flow itself is our own design | confidence: low
+- REF-11 | need: NEED-06 | source: https://devin.ai | credit: Cognition (Devin) | found: live site, product section | evidence: live | seen: 2026-11-12 | takes: an agent task list with elapsed times, ticks for finished steps and empty circles for pending ones ("Testing 3/12"), beside the work being produced | adapt: an agent step list inside the work item, each step citing what it read; ticks mean "step finished", never "approved" | conflicts: timestamps as seconds since start suit coding runs; we show real times and dates | confidence: medium
+- REF-12 | need: NEED-01 | source: https://attio.com | credit: Attio | found: live site, hero product window | evidence: live | seen: 2026-11-12 | takes: a light, calm app shell: workspace switcher, Quick actions with a keyboard shortcut, search, and a greeting home with one input | adapt: a light shell for the "Studio" direction; a home that says what needs me today | conflicts: an open "ask anything" box suggests a chatbot; the factory is not a chatbot (scope summary) | confidence: medium
+- REF-13 | need: NEED-04 | source: https://vercel.com | credit: Vercel | found: live site, hero | evidence: live | seen: 2026-11-12 | takes: stark black-on-white type, one geometric object as the hero, three short entry lines | adapt: restraint for the most technical concept | conflicts: no product UI in view; tone only | confidence: low
+- REF-14 | need: NEED-05 | source: https://stripe.com/invoicing | credit: Stripe | found: live site | evidence: live | seen: 2026-11-12 | takes: none usable in view (feature cards and copy only) | adapt: — | conflicts: no invoice UI visible in the captures | confidence: low
+- REF-15 | need: NEED-01 | source: https://www.plain.com | credit: Plain | found: live site | evidence: live | seen: 2026-11-12 | takes: none usable; the product window had not loaded and a cookie banner covered it | adapt: — | conflicts: nothing seen to judge | confidence: low
+- REF-16 | need: NEED-04 | source: https://factory.ai | credit: Factory | found: live site, two scroll positions | evidence: live | seen: 2026-11-12 | takes: none usable; the hero was blank while loading and the second view showed only customer logos | adapt: — | conflicts: nothing seen to judge | confidence: low
+
+## Shortlists
+
+- NEED-01 → REF-02, REF-05, REF-12 — Linear's compact item cards with counts, Inngest's status-dot table for density, Attio's calm light shell for a less technical feel.
+- NEED-02 → REF-01, REF-04, REF-11 — Linear's quiet activity trail, Temporal's lanes and "it recovers" story, Devin's step list with ticks for agent progress.
+- NEED-03 → REF-10, REF-01, REF-09 — Ramp's large phone type, Linear's "1 / 84" stepping through items, Ramp's line-item panel for showing exactly what is being approved. Weak evidence: no real phone approval screen was seen, so this flow is mostly our own design.
+- NEED-04 → REF-06, REF-03, REF-07 — n8n's node line with joins, Linear's isometric line drawings, Railway's illustrated mood and view switch.
+- NEED-05 → REF-08, REF-09, REF-05 — Mercury's split invoice counts and right-aligned amounts, Ramp's line items with VAT and totals, Inngest's dense table.
+- NEED-06 → REF-11, REF-09, REF-01 — Devin's step list, Ramp's agent filling fields visibly, Linear's activity line naming the automation that acted.

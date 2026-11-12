@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>B · Decision on a phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;family=Instrument+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2F45C9}a:hover{color:#1F2F94}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F2F3F5; color: #1A1D23; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px; padding: 16px 18px 22px; display: flex; flex-direction: column; gap: 18px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; color: #5A6270; font-size: 14px;">
+    <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; text-decoration: none;">← Back</a>
+    <span>Decision 1 of 3 · <span style="color: #9A5B00;">sample</span></span>
+  </div>
+
+  <!-- SEC-ask -->
+  <section aria-label="Decision" style="display: flex; flex-direction: column; gap: 10px;">
+    <p style="margin: 0; color: #5A6270; font-size: 14px;">You were sent this on WhatsApp at 10:42</p>
+    <h1 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 30px; line-height: 1.15;">Should Lagoon Health's milestone 2 invoice go ahead?</h1>
+  </section>
+
+  <!-- SEC-detail -->
+  <section aria-label="What you are approving" style="background: #FFFFFF; border: 1px solid #E1E3E8; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+    <span style="color: #5A6270;">Invoice version 2</span>
+    <span style="font-family: Newsreader, serif; font-size: 34px;">₦4,250,000.00</span>
+    <span style="color: #5A6270;">Stage 2 of 4 of the signed SOW, to accounts@lagoonhealth.example</span>
+    <span style="color: #1A1D23;">Changed since your return: the PO number is now correct.</span>
+    <a href="b-item.dc.html" style="min-height: 44px; display: inline-flex; align-items: center;">Read the full journey</a>
+  </section>
+
+  <!-- SEC-actions -->
+  <section aria-label="Actions" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+    <button type="button" style="min-height: 54px; border: none; border-radius: 999px; background: #2F45C9; color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 500; cursor: pointer;">Approve version 2</button>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+      <button type="button" style="min-height: 50px; border: 1px solid #C9CEDA; border-radius: 999px; background: #FFFFFF; font: inherit; cursor: pointer;">Return</button>
+      <button type="button" style="min-height: 50px; border: 1px solid #E3C3A0; border-radius: 999px; background: #FFFFFF; color: #8A4B00; font: inherit; cursor: pointer;">Reject</button>
+    </div>
+    <p style="margin: 0; font-size: 13px; color: #5A6270; text-align: center;">Approving does not send it. That happens next, on its own.</p>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
