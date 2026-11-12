@@ -1855,6 +1855,74 @@
       "w": 1440,
       "x": 0,
       "y": 1020
+    },
+    "SCR-26-desktop.dc.html": {
+      "x": 0,
+      "y": 140,
+      "w": 1440,
+      "h": 1120,
+      "page": "p-presale",
+      "title": "RFP workspace · requirements",
+      "expand": "fill"
+    },
+    "SCR-26-mobile.dc.html": {
+      "x": 1520,
+      "y": 140,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · RFP requirements"
+    },
+    "SCR-16-desktop-team-input.dc.html": {
+      "x": 1990,
+      "y": 140,
+      "w": 1440,
+      "h": 900,
+      "page": "p-presale",
+      "title": "Record team input (Engineering, QA, Security, Product)",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-team-input.dc.html": {
+      "x": 3510,
+      "y": 140,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · team input"
+    },
+    "SCR-27-desktop.dc.html": {
+      "x": 0,
+      "y": 1660,
+      "w": 1440,
+      "h": 1060,
+      "page": "p-presale",
+      "title": "Costing sheet · total Unknown until all estimates are in",
+      "expand": "fill"
+    },
+    "SCR-27-mobile.dc.html": {
+      "x": 1520,
+      "y": 1660,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · costing"
+    },
+    "SCR-16-desktop-rfp-outcome.dc.html": {
+      "x": 1990,
+      "y": 1660,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Record the RFP outcome (won / lost)",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-outcome.dc.html": {
+      "x": 3510,
+      "y": 1660,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · RFP outcome"
     }
   },
   "createdOnFiles": {
@@ -2271,6 +2339,22 @@
       "w": 240,
       "x": 0,
       "y": 7868
+    },
+    "p-presale-26": {
+      "x": 0,
+      "y": 0,
+      "text": "SCR-26 · RFP response workspace · requirements matrix",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale"
+    },
+    "p-presale-27": {
+      "x": 0,
+      "y": 1520,
+      "text": "SCR-27 · Costing sheet · SCR-16 · Record the RFP outcome",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale"
     }
   },
   "order": [
@@ -2486,7 +2570,15 @@
     "SCR-23-desktop.dc.html",
     "SCR-23-mobile.dc.html",
     "SCR-24-desktop.dc.html",
-    "SCR-24-mobile.dc.html"
+    "SCR-24-mobile.dc.html",
+    "SCR-26-desktop.dc.html",
+    "SCR-26-mobile.dc.html",
+    "SCR-16-desktop-team-input.dc.html",
+    "SCR-16-mobile-team-input.dc.html",
+    "SCR-27-desktop.dc.html",
+    "SCR-27-mobile.dc.html",
+    "SCR-16-desktop-rfp-outcome.dc.html",
+    "SCR-16-mobile-rfp-outcome.dc.html"
   ],
   "pages": [
     {
@@ -2508,6 +2600,10 @@
     {
       "id": "p-item",
       "name": "Work item, decisions and responses"
+    },
+    {
+      "id": "p-presale",
+      "name": "Pre-sale (RFP, costing)"
     },
     {
       "id": "p-projects",

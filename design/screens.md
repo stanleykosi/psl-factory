@@ -36,7 +36,7 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-13 | J-07 | Setup: roles, rules and delegation | states: default, validation, permission, fields | components: CMP-01, CMP-24 | artboards: SCR-13-desktop, SCR-13-mobile, SCR-13-desktop-validation, SCR-13-mobile-validation, SCR-13-desktop-permission, SCR-13-mobile-permission, SCR-13-desktop-fields, SCR-13-mobile-fields
 - SCR-14 | J-01, J-04 | Verified outputs | states: default, empty | components: CMP-01, CMP-04, CMP-05, CMP-07, CMP-16, CMP-22 | artboards: SCR-14-desktop, SCR-14-mobile
 - SCR-15 | J-09, J-02 | Alerts and notification settings | states: default, empty, account | components: CMP-01, CMP-18, CMP-19, CMP-22 | artboards: SCR-15-desktop, SCR-15-mobile, SCR-15-desktop-email, SCR-15-mobile-whatsapp, SCR-15-desktop-settings, SCR-15-mobile-settings, SCR-15-desktop-account, SCR-15-mobile-account, SCR-15-desktop-whatsapp, SCR-15-mobile-email
-- SCR-16 | J-03 | Record a response | states: default, validation, success | components: CMP-01, CMP-16, CMP-20, CMP-24 | artboards: SCR-16-desktop, SCR-16-mobile, SCR-16-desktop-validation, SCR-16-mobile-validation, SCR-16-desktop-success, SCR-16-mobile-success
+- SCR-16 | J-03 | Record a response | states: default, validation, success, team-input, rfp-outcome | components: CMP-01, CMP-16, CMP-20, CMP-24 | artboards: SCR-16-desktop, SCR-16-mobile, SCR-16-desktop-validation, SCR-16-mobile-validation, SCR-16-desktop-success, SCR-16-mobile-success, SCR-16-desktop-team-input, SCR-16-mobile-team-input, SCR-16-desktop-rfp-outcome, SCR-16-mobile-rfp-outcome
 - SCR-17 | J-02 | Sign in | states: default, error, reset, setup | components: CMP-21, CMP-24 | artboards: SCR-17-mobile, SCR-17-desktop, SCR-17-desktop-error, SCR-17-mobile-error, SCR-17-desktop-reset, SCR-17-mobile-reset, SCR-17-desktop-setup, SCR-17-mobile-setup
 - SCR-18 | J-06 | Restricted payroll matching | states: default, permission | components: CMP-01, CMP-09, CMP-16, CMP-18 | artboards: SCR-18-desktop, SCR-18-mobile, SCR-18-desktop-permission, SCR-18-mobile-permission
 - SCR-19 | J-01, J-04 | Mark a milestone complete | states: default | components: CMP-01, CMP-16 | artboards: SCR-19-desktop, SCR-19-mobile
@@ -46,6 +46,8 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-23 | J-01 | Log a received RFP | states: default | components: CMP-01, CMP-23, CMP-24 | artboards: SCR-23-desktop, SCR-23-mobile
 - SCR-24 | J-01, J-07 | Assign the accountable PM | states: default | components: CMP-01, CMP-06, CMP-24 | artboards: SCR-24-desktop, SCR-24-mobile
 - SCR-25 | J-03 | Write the weekly client update | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-25-desktop, SCR-25-mobile
+- SCR-26 | J-01 | RFP response workspace (requirements matrix) | states: default | components: CMP-01, CMP-09, CMP-18, CMP-22, CMP-24 | artboards: SCR-26-desktop, SCR-26-mobile
+- SCR-27 | J-01 | Costing sheet | states: default | components: CMP-01, CMP-24 | artboards: SCR-27-desktop, SCR-27-mobile
 
 - Shared states | all lists and reports | Empty, loading and error pattern for SCR-01, 07, 10, 11, 12, 14, 15 | artboards: STATES-desktop, STATES-mobile
 - Journey J-04 | J-04 | Storyboard: Finance prepares an invoice, step by step, each step linking to its screen | artboards: J04-desktop, J04-mobile
@@ -80,6 +82,8 @@ Sample data until the architecture package exists. Sources are the current backe
 - SCR-23 — RFP reference, client, RFP document, actual received time, deadline (unknown / stated with proof / not stated), note; creates a pre-engagement workspace (backend: rfp.intake).
 - SCR-24 — the unassigned RFP, PMs allowed to prepare RFPs on it, the role the assigner acts under (PSL-configured), proof, note (backend: rfp.assign).
 - SCR-25 — the week's meetings, actions, completed milestones, open issues and changes; the PM's four sections, each citing at least one record (backend: client content for pmo-weekly-report).
+- SCR-26 — RFP requirements matrix (up to 100 rows: requirement, RFP page, our response, addressed / needs clarification / out of scope), team input status, reviewers (backend: rfp.prepare, rfp.review).
+- SCR-27 — costing inputs (requirements, plan, engineering and security estimates, PSL costing rule), calculation from the rule, total Unknown while any estimate is missing, approval order PM → Head of PMO → CEO → PMO Lead (backend: commercial line).
 
 ## Revisions
 
@@ -104,3 +108,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — tab counts set apart as small square count badges on every tab bar (My work, Projects, Registers), per design engineer feedback.
 - 2026-11-12 — every callout's left border replaced with a leading icon (warning, info, success); recorded as CMP-24.
 - 2026-11-12 — added SCR-23 Log a received RFP, SCR-24 Assign the accountable PM, SCR-25 Write the weekly client update; weekly report line flow now shows the PM writing the client text (backend requires human-written, cited content).
+- 2026-11-12 — audit batch 1 (pre-sale): SCR-26 RFP response workspace, SCR-27 costing sheet, SCR-16 team-input and RFP-outcome variants; new canvas page "Pre-sale (RFP, costing)".
