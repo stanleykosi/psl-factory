@@ -1429,8 +1429,8 @@
       "page": "p-presale",
       "title": "Record the RFP outcome (won / lost)",
       "w": 1440,
-      "x": 1990,
-      "y": 1660
+      "x": 0,
+      "y": 10904
     },
     "SCR-16-desktop-success.dc.html": {
       "expand": "fill",
@@ -1447,8 +1447,8 @@
       "page": "p-presale",
       "title": "Record team input (Engineering, QA, Security, Product)",
       "w": 1440,
-      "x": 1990,
-      "y": 140
+      "x": 0,
+      "y": 3288
     },
     "SCR-16-desktop-validation.dc.html": {
       "expand": "fill",
@@ -1474,8 +1474,8 @@
       "page": "p-presale",
       "title": "Phone · RFP outcome",
       "w": 390,
-      "x": 3510,
-      "y": 1660
+      "x": 1520,
+      "y": 10904
     },
     "SCR-16-mobile-success.dc.html": {
       "h": 844,
@@ -1490,8 +1490,8 @@
       "page": "p-presale",
       "title": "Phone · team input",
       "w": 390,
-      "x": 3510,
-      "y": 140
+      "x": 1520,
+      "y": 3288
     },
     "SCR-16-mobile-validation.dc.html": {
       "h": 844,
@@ -1791,8 +1791,8 @@
       "page": "p-presale",
       "title": "SCR-26 · Accepted, next suggestion, Undo",
       "w": 1440,
-      "x": 1990,
-      "y": 4280
+      "x": 5970,
+      "y": 1892
     },
     "SCR-26-desktop-edit.dc.html": {
       "expand": "fill",
@@ -1800,17 +1800,17 @@
       "page": "p-presale",
       "title": "SCR-26 · Edit, then accept",
       "w": 1440,
-      "x": 0,
-      "y": 4280
+      "x": 3980,
+      "y": 1892
     },
     "SCR-26-desktop-reject.dc.html": {
       "expand": "fill",
-      "h": 1180,
+      "h": 1060,
       "page": "p-presale",
       "title": "SCR-26 · Reject, write my own",
       "w": 1440,
-      "x": 0,
-      "y": 5540
+      "x": 7960,
+      "y": 1892
     },
     "SCR-26-desktop-review.dc.html": {
       "expand": "fill",
@@ -1818,8 +1818,8 @@
       "page": "p-presale",
       "title": "Review Tola's suggested answers",
       "w": 1440,
-      "x": 0,
-      "y": 3020
+      "x": 1990,
+      "y": 1892
     },
     "SCR-26-desktop.dc.html": {
       "expand": "fill",
@@ -1828,7 +1828,7 @@
       "title": "RFP workspace · requirements",
       "w": 1440,
       "x": 0,
-      "y": 140
+      "y": 1892
     },
     "SCR-26-mobile-accepted.dc.html": {
       "expand": "fill",
@@ -1836,8 +1836,8 @@
       "page": "p-presale",
       "title": "SCR-26 · Accepted on a phone",
       "w": 390,
-      "x": 3510,
-      "y": 4280
+      "x": 7490,
+      "y": 1892
     },
     "SCR-26-mobile-edit.dc.html": {
       "expand": "fill",
@@ -1845,8 +1845,8 @@
       "page": "p-presale",
       "title": "SCR-26 · Edit on a phone",
       "w": 390,
-      "x": 1520,
-      "y": 4280
+      "x": 5500,
+      "y": 1892
     },
     "SCR-26-mobile-reject.dc.html": {
       "expand": "fill",
@@ -1854,16 +1854,16 @@
       "page": "p-presale",
       "title": "SCR-26 · Write my own on a phone",
       "w": 390,
-      "x": 1520,
-      "y": 5540
+      "x": 9480,
+      "y": 1892
     },
     "SCR-26-mobile-review.dc.html": {
       "h": 844,
       "page": "p-presale",
       "title": "Phone · review tola's suggested answers",
       "w": 390,
-      "x": 1520,
-      "y": 3020
+      "x": 3510,
+      "y": 1892
     },
     "SCR-26-mobile.dc.html": {
       "h": 844,
@@ -1871,7 +1871,7 @@
       "title": "Phone · RFP requirements",
       "w": 390,
       "x": 1520,
-      "y": 140
+      "y": 1892
     },
     "SCR-27-desktop-adjust.dc.html": {
       "expand": "fill",
@@ -1879,8 +1879,8 @@
       "page": "p-presale",
       "title": "Costing · add an adjustment",
       "w": 1440,
-      "x": 2070,
-      "y": 3020
+      "x": 3980,
+      "y": 7096
     },
     "SCR-27-desktop.dc.html": {
       "expand": "fill",
@@ -1889,15 +1889,15 @@
       "title": "Costing sheet · total Unknown until all estimates are in",
       "w": 1440,
       "x": 0,
-      "y": 1660
+      "y": 7096
     },
     "SCR-27-mobile-adjust.dc.html": {
       "h": 844,
       "page": "p-presale",
       "title": "Phone · costing · add an adjustment",
       "w": 390,
-      "x": 3590,
-      "y": 3020
+      "x": 5500,
+      "y": 7096
     },
     "SCR-27-mobile.dc.html": {
       "h": 844,
@@ -1905,7 +1905,7 @@
       "title": "Phone · costing",
       "w": 390,
       "x": 1520,
-      "y": 1660
+      "y": 7096
     },
     "SCR-28-desktop.dc.html": {
       "expand": "fill",
@@ -2292,6 +2292,202 @@
       "w": 1440,
       "x": 6400,
       "y": 0
+    },
+    "PRESALE-flow-desktop.dc.html": {
+      "x": 0,
+      "y": 116,
+      "w": 1440,
+      "h": 1500,
+      "page": "p-presale",
+      "title": "Pre-sale · end to end",
+      "expand": "fill"
+    },
+    "SCR-26-desktop-response-review.dc.html": {
+      "x": 0,
+      "y": 4464,
+      "w": 1440,
+      "h": 1080,
+      "page": "p-presale",
+      "title": "Review the response · PMO Lead",
+      "expand": "fill"
+    },
+    "SCR-26-mobile-response-review.dc.html": {
+      "x": 1520,
+      "y": 4464,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · review the response"
+    },
+    "SCR-39-desktop-review.dc.html": {
+      "x": 0,
+      "y": 5820,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing rule v5 · review",
+      "expand": "fill"
+    },
+    "SCR-39-mobile-review.dc.html": {
+      "x": 1520,
+      "y": 5820,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · costing rule review"
+    },
+    "SCR-27-desktop-ask.dc.html": {
+      "x": 1990,
+      "y": 7096,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing · ask Security for an estimate",
+      "expand": "fill"
+    },
+    "SCR-27-mobile-ask.dc.html": {
+      "x": 3510,
+      "y": 7096,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · ask Security"
+    },
+    "SCR-27-desktop-approvals.dc.html": {
+      "x": 0,
+      "y": 8432,
+      "w": 1440,
+      "h": 960,
+      "page": "p-presale",
+      "title": "Costing · approvals in order",
+      "expand": "fill"
+    },
+    "SCR-27-mobile-approvals.dc.html": {
+      "x": 1520,
+      "y": 8432,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · approvals"
+    },
+    "SCR-40-desktop-draft.dc.html": {
+      "x": 0,
+      "y": 9668,
+      "w": 1440,
+      "h": 960,
+      "page": "p-presale",
+      "title": "Submission pack · drafted by Tola",
+      "expand": "fill"
+    },
+    "SCR-40-mobile-draft.dc.html": {
+      "x": 1520,
+      "y": 9668,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · submission pack"
+    },
+    "SCR-40-desktop-review.dc.html": {
+      "x": 1990,
+      "y": 9668,
+      "w": 1440,
+      "h": 960,
+      "page": "p-presale",
+      "title": "Review the submission · document reviewer",
+      "expand": "fill"
+    },
+    "SCR-40-mobile-review.dc.html": {
+      "x": 3510,
+      "y": 9668,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · review the submission"
+    },
+    "SCR-40-desktop-submitted.dc.html": {
+      "x": 3980,
+      "y": 9668,
+      "w": 1440,
+      "h": 880,
+      "page": "p-presale",
+      "title": "Submitted · receipt confirmed",
+      "expand": "fill"
+    },
+    "SCR-40-mobile-submitted.dc.html": {
+      "x": 5500,
+      "y": 9668,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · submitted"
+    },
+    "SCR-16-desktop-rfp-won.dc.html": {
+      "x": 1990,
+      "y": 10904,
+      "w": 1440,
+      "h": 820,
+      "page": "p-presale",
+      "title": "Won · handed off to engagement",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-won.dc.html": {
+      "x": 3510,
+      "y": 10904,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · won"
+    },
+    "SCR-16-desktop-rfp-lost.dc.html": {
+      "x": 3980,
+      "y": 10904,
+      "w": 1440,
+      "h": 820,
+      "page": "p-presale",
+      "title": "Lost · archived with lessons",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-lost.dc.html": {
+      "x": 5500,
+      "y": 10904,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · lost"
+    },
+    "SCR-41-desktop.dc.html": {
+      "x": 0,
+      "y": 12180,
+      "w": 1440,
+      "h": 900,
+      "page": "p-presale",
+      "title": "Engagement · planning packet and PM",
+      "expand": "fill"
+    },
+    "SCR-41-mobile.dc.html": {
+      "x": 1520,
+      "y": 12180,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · engagement"
+    },
+    "SCR-41-desktop-register.dc.html": {
+      "x": 1990,
+      "y": 12180,
+      "w": 1440,
+      "h": 900,
+      "page": "p-presale",
+      "title": "Engagement · register",
+      "expand": "fill"
+    },
+    "SCR-41-mobile-register.dc.html": {
+      "x": 3510,
+      "y": 12180,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · register"
     }
   },
   "createdOnFiles": {
@@ -2361,10 +2557,17 @@
     "p-setup-SCR-13-desktop-rules",
     "p-setup-SCR-34-desktop",
     "p-projects-SCR-35-desktop",
-    "p-presale-26",
-    "p-presale-27",
-    "p-presale-review",
-    "p-setup-39"
+    "p-setup-39",
+    "p-presale-row0",
+    "p-presale-row1",
+    "p-presale-row2",
+    "p-presale-row3",
+    "p-presale-row4",
+    "p-presale-row5",
+    "p-presale-row6",
+    "p-presale-row7",
+    "p-presale-row8",
+    "p-presale-row9"
   ],
   "notes": {
     "a-thesis": {
@@ -2668,33 +2871,6 @@
       "x": 0,
       "y": 1460
     },
-    "p-presale-26": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "SCR-26 · RFP response workspace · requirements matrix",
-      "w": 240,
-      "x": 0,
-      "y": -116
-    },
-    "p-presale-27": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "SCR-27 · Costing sheet · SCR-16 · Record the RFP outcome",
-      "w": 240,
-      "x": 0,
-      "y": 1405
-    },
-    "p-presale-review": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "SCR-26 · Review Tola's suggested answers · SCR-27 · Add a project adjustment",
-      "w": 240,
-      "x": 0,
-      "y": 2815
-    },
     "p-projects-07-title": {
       "kind": "title1",
       "maxW": 3800,
@@ -2838,6 +3014,96 @@
       "w": 240,
       "x": 0,
       "y": 5024
+    },
+    "p-presale-row0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "Pre-sale, end to end",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "p-presale-row1": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "1 · Tola suggests answers, the PM reviews each one (SCR-26)",
+      "w": 240,
+      "x": 0,
+      "y": 1776
+    },
+    "p-presale-row2": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "2 · Teams give input, recorded by the PM (SCR-16)",
+      "w": 240,
+      "x": 0,
+      "y": 3172
+    },
+    "p-presale-row3": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "3 · Review the response · PMO Lead and Engineering Lead (SCR-26)",
+      "w": 240,
+      "x": 0,
+      "y": 4348
+    },
+    "p-presale-row4": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "4 · Costing rule review, only when the rule changes (SCR-39)",
+      "w": 240,
+      "x": 0,
+      "y": 5704
+    },
+    "p-presale-row5": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "5 · Costing sheet: calculate, ask for estimates, adjust (SCR-27)",
+      "w": 240,
+      "x": 0,
+      "y": 6980
+    },
+    "p-presale-row6": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "6 · Commercial approvals in order (SCR-27; the CEO decides on SCR-03)",
+      "w": 240,
+      "x": 0,
+      "y": 8316
+    },
+    "p-presale-row7": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "7 · Submission: draft, review, submitted (SCR-40)",
+      "w": 240,
+      "x": 0,
+      "y": 9552
+    },
+    "p-presale-row8": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "8 · Outcome: record it, then won → engagement or lost → archive (SCR-16)",
+      "w": 240,
+      "x": 0,
+      "y": 10788
+    },
+    "p-presale-row9": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "9 · Engagement: planning packet, confirm the PM, register (SCR-41)",
+      "w": 240,
+      "x": 0,
+      "y": 12064
     }
   },
   "order": [
@@ -3104,7 +3370,30 @@
     "SCR-26-mobile-accepted.dc.html",
     "SCR-26-desktop-reject.dc.html",
     "SCR-26-mobile-reject.dc.html",
-    "SCR-26-team-input-concepts.dc.html"
+    "SCR-26-team-input-concepts.dc.html",
+    "PRESALE-flow-desktop.dc.html",
+    "SCR-26-desktop-response-review.dc.html",
+    "SCR-26-mobile-response-review.dc.html",
+    "SCR-39-desktop-review.dc.html",
+    "SCR-39-mobile-review.dc.html",
+    "SCR-27-desktop-ask.dc.html",
+    "SCR-27-mobile-ask.dc.html",
+    "SCR-27-desktop-approvals.dc.html",
+    "SCR-27-mobile-approvals.dc.html",
+    "SCR-40-desktop-draft.dc.html",
+    "SCR-40-mobile-draft.dc.html",
+    "SCR-40-desktop-review.dc.html",
+    "SCR-40-mobile-review.dc.html",
+    "SCR-40-desktop-submitted.dc.html",
+    "SCR-40-mobile-submitted.dc.html",
+    "SCR-16-desktop-rfp-won.dc.html",
+    "SCR-16-mobile-rfp-won.dc.html",
+    "SCR-16-desktop-rfp-lost.dc.html",
+    "SCR-16-mobile-rfp-lost.dc.html",
+    "SCR-41-desktop.dc.html",
+    "SCR-41-mobile.dc.html",
+    "SCR-41-desktop-register.dc.html",
+    "SCR-41-mobile-register.dc.html"
   ],
   "pages": [
     {
