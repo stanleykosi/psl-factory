@@ -2539,6 +2539,15 @@
       "h": 844,
       "page": "p-presale",
       "title": "Phone · portal variant"
+    },
+    "AGENT-concepts.dc.html": {
+      "x": 8000,
+      "y": 0,
+      "w": 1440,
+      "h": 1520,
+      "page": "open",
+      "title": "Agent at work · 4 concepts",
+      "expand": "fill"
     }
   },
   "createdOnFiles": {
@@ -3450,7 +3459,8 @@
     "SCR-39-desktop-review-own.dc.html",
     "SCR-39-mobile-review-own.dc.html",
     "SCR-40-desktop-submitted-portal.dc.html",
-    "SCR-40-mobile-submitted-portal.dc.html"
+    "SCR-40-mobile-submitted-portal.dc.html",
+    "AGENT-concepts.dc.html"
   ],
   "pages": [
     {
