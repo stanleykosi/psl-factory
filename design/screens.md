@@ -48,6 +48,12 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-25 | J-03 | Write the weekly client update | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-25-desktop, SCR-25-mobile
 - SCR-26 | J-01 | RFP response workspace (requirements matrix) | states: default | components: CMP-01, CMP-09, CMP-18, CMP-22, CMP-24 | artboards: SCR-26-desktop, SCR-26-mobile
 - SCR-27 | J-01 | Costing sheet | states: default | components: CMP-01, CMP-24 | artboards: SCR-27-desktop, SCR-27-mobile
+- SCR-28 | J-03 | Confirm the minutes | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-28-desktop, SCR-28-mobile
+- SCR-29 | J-08 | Project actions | states: default | components: CMP-01, CMP-22 | artboards: SCR-29-desktop, SCR-29-mobile
+- SCR-30 | J-08 | Issue detail | states: default | components: CMP-01, CMP-04, CMP-09, CMP-18 | artboards: SCR-30-desktop, SCR-30-mobile
+- SCR-31 | J-08 | Change request detail | states: default | components: CMP-01, CMP-09, CMP-18 | artboards: SCR-31-desktop, SCR-31-mobile
+- SCR-33 | J-08 | Project retrospective | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-33-desktop, SCR-33-mobile
+- SCR-38 | J-04, J-08 | Project milestones | states: default | components: CMP-01 | artboards: SCR-38-desktop, SCR-38-mobile
 
 - Shared states | all lists and reports | Empty, loading and error pattern for SCR-01, 07, 10, 11, 12, 14, 15 | artboards: STATES-desktop, STATES-mobile
 - Journey J-04 | J-04 | Storyboard: Finance prepares an invoice, step by step, each step linking to its screen | artboards: J04-desktop, J04-mobile
@@ -84,6 +90,12 @@ Sample data until the architecture package exists. Sources are the current backe
 - SCR-25 — the week's meetings, actions, completed milestones, open issues and changes; the PM's four sections, each citing at least one record (backend: client content for pmo-weekly-report).
 - SCR-26 — RFP requirements matrix (up to 100 rows: requirement, RFP page, our response, addressed / needs clarification / out of scope), team input status, reviewers (backend: rfp.prepare, rfp.review).
 - SCR-27 — costing inputs (requirements, plan, engineering and security estimates, PSL costing rule), calculation from the rule, total Unknown while any estimate is missing, approval order PM → Head of PMO → CEO → PMO Lead (backend: commercial line).
+- SCR-28 — meeting, notes evidence, agent-suggested decisions and actions (owner, due date), audience; nothing becomes a decision or action until confirmed (backend: pmo-minutes confirm, meeting.record).
+- SCR-29 — the project's action items with owner (or none), due date (or Unknown), state and the meeting they came from.
+- SCR-30 — issue facts, history, owner follow-up (acknowledge / started / progress only; backend: issue.work).
+- SCR-31 — change stages, impact assessments by team (recorded by PM), decision roles, agent-drafted notice (backend: pmo-change).
+- SCR-33 — retrospective sections citing project records, participants, closure checklist (closure prerequisite).
+- SCR-38 — milestones from the signed SOW: contract amount (or Unknown), completion and proof, invoice state, paid state — each a separate fact.
 
 ## Revisions
 
@@ -109,3 +121,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — every callout's left border replaced with a leading icon (warning, info, success); recorded as CMP-24.
 - 2026-11-12 — added SCR-23 Log a received RFP, SCR-24 Assign the accountable PM, SCR-25 Write the weekly client update; weekly report line flow now shows the PM writing the client text (backend requires human-written, cited content).
 - 2026-11-12 — audit batch 1 (pre-sale): SCR-26 RFP response workspace, SCR-27 costing sheet, SCR-16 team-input and RFP-outcome variants; new canvas page "Pre-sale (RFP, costing)".
+- 2026-11-12 — audit batch 2 (delivery): SCR-28 confirm minutes, SCR-29 actions tab, SCR-30 issue detail, SCR-31 change detail, SCR-33 retrospective, SCR-38 milestones tab; one project tab bar (Journey, Milestones, Documents, Money, Registers, Actions) added to SCR-07, 08, 11, 12.

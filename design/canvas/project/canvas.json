@@ -1923,6 +1923,108 @@
       "h": 844,
       "page": "p-presale",
       "title": "Phone · RFP outcome"
+    },
+    "SCR-38-desktop.dc.html": {
+      "x": 0,
+      "y": 9488,
+      "w": 1440,
+      "h": 860,
+      "page": "p-projects",
+      "title": "Milestones tab",
+      "expand": "fill"
+    },
+    "SCR-38-mobile.dc.html": {
+      "x": 1520,
+      "y": 9488,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · milestones tab"
+    },
+    "SCR-29-desktop.dc.html": {
+      "x": 2070,
+      "y": 9488,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Actions tab",
+      "expand": "fill"
+    },
+    "SCR-29-mobile.dc.html": {
+      "x": 3590,
+      "y": 9488,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · actions tab"
+    },
+    "SCR-28-desktop.dc.html": {
+      "x": 0,
+      "y": 10788,
+      "w": 1440,
+      "h": 1100,
+      "page": "p-projects",
+      "title": "Confirm the minutes",
+      "expand": "fill"
+    },
+    "SCR-28-mobile.dc.html": {
+      "x": 1520,
+      "y": 10788,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · confirm the minutes"
+    },
+    "SCR-30-desktop.dc.html": {
+      "x": 2070,
+      "y": 10788,
+      "w": 1440,
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Issue detail · owner follow-up",
+      "expand": "fill"
+    },
+    "SCR-30-mobile.dc.html": {
+      "x": 3590,
+      "y": 10788,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · issue detail · owner follow-up"
+    },
+    "SCR-31-desktop.dc.html": {
+      "x": 0,
+      "y": 12188,
+      "w": 1440,
+      "h": 900,
+      "page": "p-projects",
+      "title": "Change request detail",
+      "expand": "fill"
+    },
+    "SCR-31-mobile.dc.html": {
+      "x": 1520,
+      "y": 12188,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · change request detail"
+    },
+    "SCR-33-desktop.dc.html": {
+      "x": 2070,
+      "y": 12188,
+      "w": 1440,
+      "h": 1060,
+      "page": "p-projects",
+      "title": "Retrospective · before closure",
+      "expand": "fill"
+    },
+    "SCR-33-mobile.dc.html": {
+      "x": 3590,
+      "y": 12188,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · retrospective · before closure"
     }
   },
   "createdOnFiles": {
@@ -2355,6 +2457,30 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "p-presale"
+    },
+    "p-projects-SCR-38": {
+      "x": 0,
+      "y": 9348,
+      "text": "SCR-38 · Milestones tab · SCR-29 · Actions tab",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects"
+    },
+    "p-projects-SCR-28": {
+      "x": 0,
+      "y": 10648,
+      "text": "SCR-28 · Confirm the minutes · SCR-30 · Issue detail",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects"
+    },
+    "p-projects-SCR-31": {
+      "x": 0,
+      "y": 12048,
+      "text": "SCR-31 · Change request detail · SCR-33 · Retrospective",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects"
     }
   },
   "order": [
@@ -2578,7 +2704,19 @@
     "SCR-27-desktop.dc.html",
     "SCR-27-mobile.dc.html",
     "SCR-16-desktop-rfp-outcome.dc.html",
-    "SCR-16-mobile-rfp-outcome.dc.html"
+    "SCR-16-mobile-rfp-outcome.dc.html",
+    "SCR-38-desktop.dc.html",
+    "SCR-38-mobile.dc.html",
+    "SCR-29-desktop.dc.html",
+    "SCR-29-mobile.dc.html",
+    "SCR-28-desktop.dc.html",
+    "SCR-28-mobile.dc.html",
+    "SCR-30-desktop.dc.html",
+    "SCR-30-mobile.dc.html",
+    "SCR-31-desktop.dc.html",
+    "SCR-31-mobile.dc.html",
+    "SCR-33-desktop.dc.html",
+    "SCR-33-mobile.dc.html"
   ],
   "pages": [
     {
