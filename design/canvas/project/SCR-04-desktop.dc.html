@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SCR-04 · Start work</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>body{margin:0;background:#EEF0ED} a{color:#2459D6}a:hover{color:#16388F}</style>
+</helmet>
+<div style="min-height: 1000px; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px;">
+  <nav aria-label="Main" style="background: #1F2427; color: #FFFFFF;">
+    <div style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 0 28px; min-height: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px;">
+      <span style="font-family: Archivo, sans-serif; font-stretch: 125%; font-weight: 800; font-size: 17px; letter-spacing: 0.02em;">PSL FACTORY</span>
+      <div style="display: flex; flex-wrap: wrap;">
+        <a href="SCR-01-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Queue</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Floor</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Projects</a>
+        <a href="c-assistant.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Assistant</a>
+        <a href="SCR-14-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Outputs</a>
+      </div>
+      <span style="margin-left: auto; font-size: 13px; color: #C8CDD0;">Tunde Bello · PMO</span>
+    </div>
+  </nav>
+  <main style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 28px 28px 56px; display: flex; flex-direction: column; gap: 22px;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;"><a href="SCR-01-desktop.dc.html">QUEUE</a> / START WORK · <span style="color: #8A5A00;">SAMPLE DATA</span></p>
+        <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 40px; line-height: 1;">Start work</h1>
+      </div>
+      <a href="c-assistant.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px 0 4px; border: 2px solid #1F2427; background: #FFFFFF; text-decoration: none; color: #1F2427; font-weight: 500;"><img src="/_blob/5634048ca00275f89dc5d18763842f47" alt="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #F8E1D3;">Or ask Tola to start it for you</a>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start;">
+      <section aria-label="Choose a line" style="flex: 1 1 320px; max-width: 420px; background: #FFFFFF; border: 2px solid #1F2427;">
+        <div style="padding: 12px 14px; border-bottom: 2px solid #1F2427;">
+          <label for="find" style="display: block; font-size: 12px; color: #4A5357; margin-bottom: 6px;">Find a line</label>
+          <input id="find" type="search" placeholder="Invoice, plan, change, minutes…" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border: 2px solid #1F2427; font: inherit;">
+        </div>
+        <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+          <div style="border-bottom: 1px solid #D5D9D3;">
+            <p style="margin: 0; padding: 10px 14px 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #4A5357;">{{g.name}}</p>
+            <sc-for list="{{g.lines}}" as="l" hint-placeholder-count="3">
+              <button type="button" onClick="{{l.pick}}" style="width: 100%; text-align: left; min-height: 44px; padding: 8px 14px; border: none; border-left: 4px solid {{l.mark}}; background: {{l.bg}}; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-weight: 600;">{{l.title}}</span><span style="font-size: 12px; color: #4A5357;">{{l.desc}}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-for>
+      </section>
+
+      <section aria-label="Details" style="flex: 999 1 520px; min-width: 0; background: #FFFFFF; border: 2px solid #1F2427; display: flex; flex-direction: column;">
+        <div style="padding: 14px 18px; border-bottom: 2px solid #1F2427; display: flex; flex-direction: column; gap: 4px;">
+          <h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 24px;">{{sel.title}}</h2>
+          <p style="margin: 0; color: #4A5357;">{{sel.long}}</p>
+        </div>
+        <form onSubmit="{{noop}}" style="margin: 0; padding: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label for="proj" style="font-weight: 500;">Project</label>
+            <select id="proj" style="min-height: 44px; padding: 0 10px; border: 2px solid #1F2427; font: inherit; background: #FFFFFF;"><option>Lagoon Health · patient app</option><option>Harmattan Bank · mobile onboarding</option><option>Kora Logistics · fleet tracker</option></select>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label for="ms" style="font-weight: 500;">{{sel.field}}</label>
+            <select id="ms" style="min-height: 44px; padding: 0 10px; border: 2px solid #1F2427; font: inherit; background: #FFFFFF;"><option>{{sel.option}}</option></select>
+          </div>
+          <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px;">
+            <label for="note" style="font-weight: 500;">Anything the agent should know <span style="font-weight: 400; color: #4A5357;">(optional)</span></label>
+            <textarea id="note" rows="2" style="border: 2px solid #1F2427; font: inherit; padding: 8px 10px;" placeholder="e.g. client asked for the PO number on the invoice"></textarea>
+          </div>
+        </form>
+        <div style="padding: 0 18px 18px; display: flex; flex-direction: column; gap: 10px;">
+          <h3 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: #4A5357;">WHAT HAPPENS NEXT</h3>
+          <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0; border: 2px solid #1F2427;">
+            <sc-for list="{{sel.stations}}" as="s" hint-placeholder-count="7">
+              <li style="padding: 10px; border-right: 1px solid #D5D9D3; display: flex; flex-direction: column; gap: 4px; background: {{s.bg}};">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4A5357;">{{s.n}}</span>
+                <span style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 14px;">{{s.name}}</span>
+                <span style="font-size: 12px; color: #4A5357;">{{s.who}}</span>
+              </li>
+            </sc-for>
+          </ol>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 6px;">
+            <a href="SCR-02-desktop.dc.html" style="min-height: 48px; display: inline-flex; align-items: center; padding: 0 20px; background: #C8401C; color: #FFFFFF; font-weight: 600; text-decoration: none;">{{sel.cta}}</a>
+            <span style="font-size: 13px; color: #4A5357;">{{sel.after}}</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { pick: 'invoice' }; }
+  renderVals() {
+    const L = {
+      invoice: { title: 'Prepare an invoice', desc: 'From a completed milestone', long: 'Uses the milestone you recorded and the signed SOW terms. Chidi drafts it; a Finance Lead approves it before anything is sent.', field: 'Completed milestone', option: 'Milestone 3 · UAT signed 07 Nov · proof attached', cta: 'Start the invoice', after: 'Chidi starts drafting right away. You will see it in Active work.',
+        stations: [['01','Milestone evidence','You, done'],['02','Contract amount','Finance service'],['03','Draft invoice','Chidi'],['04','Finance review','Finance Lead'],['05','Issue','Finance service'],['06','Deliver','Email, with receipt'],['07','Verify','Factory']] },
+      plan: { title: 'Plan a project', desc: 'Inputs, sign-offs and handoff', long: 'Collects requirements, design, technical and test sign-offs and prepares the planning handoff. Tola chases what is missing.', field: 'Engagement', option: 'Ojo Foods · ordering app', cta: 'Start the plan', after: 'Tola lists the sign-offs still needed.',
+        stations: [['01','Requirements','Tola reads'],['02','Sign-offs','Recorded by PM'],['03','Baselines','Product Owner, Eng Lead'],['04','Plan','Tola drafts'],['05','Planning exit','PMO Lead'],['06','Verify','Factory']] },
+      sow: { title: 'Prepare a commercial submission', desc: 'Costing and SOW to the client', long: 'Takes estimates through costing approval and quality review before the SOW goes to the client.', field: 'Engagement', option: 'Kora Logistics · phase 2', cta: 'Start the submission', after: 'Tola drafts the SOW from the minutes.',
+        stations: [['01','Estimates','Recorded by PM'],['02','Costing','Finance service'],['03','Draft SOW','Tola'],['04','Approvals','PMO → PMO Lead → CEO'],['05','Quality review','PMO Lead'],['06','Submit','PM'],['07','Verify','Factory']] }
+    };
+    const G = [
+      { name: 'PRE-SALE', lines: [['rfp','Prepare an RFP response','Response, reviews, outcome'],['sow','Prepare a commercial submission','Costing and SOW to the client']] },
+      { name: 'PROJECT', lines: [['eng','Log an engagement','Route and PM'],['plan','Plan a project','Inputs, sign-offs and handoff'],['change','Coordinate a controlled change','Through signed closure']] },
+      { name: 'RELEASE AND CLOSE', lines: [['rel','Prepare for release','Gates and approvals'],['golive','Obtain go-live acceptance','PM and client sign'],['close','Close a project','Report and approval']] },
+      { name: 'FINANCE', lines: [['invoice','Prepare an invoice','From a completed milestone'],['accounts','Prepare management accounts','Trial balance to report']] }
+    ];
+    const cur = L[this.state.pick] || L.invoice;
+    return {
+      sel: Object.assign({}, cur, { stations: cur.stations.map((s, i) => ({ n: s[0], name: s[1], who: s[2], bg: i === 0 ? '#EEF0ED' : '#FFFFFF' })) }),
+      noop: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      groups: G.map((g) => ({ name: g.name, lines: g.lines.map((l) => ({ title: l[1], desc: l[2], bg: this.state.pick === l[0] ? '#FBE3D9' : '#FFFFFF', mark: this.state.pick === l[0] ? '#C8401C' : 'transparent', pick: () => { if (L[l[0]]) this.setState({ pick: l[0] }); } })) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

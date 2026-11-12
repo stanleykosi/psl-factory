@@ -41,6 +41,22 @@
     {
       "id": "j02",
       "name": "J-02 · Decision from an alert"
+    },
+    {
+      "id": "j05",
+      "name": "J-05 & J-07 · Problems and stops"
+    },
+    {
+      "id": "j03",
+      "name": "J-03 & J-06 · Responses and payroll"
+    },
+    {
+      "id": "j08",
+      "name": "J-08 & J-09 · Overview and alerts"
+    },
+    {
+      "id": "j10",
+      "name": "J-10 & J-11 · Assistant and documents"
     }
   ],
   "boards": {
@@ -302,6 +318,413 @@
       "page": "j01",
       "title": "Phone · work item",
       "is_interactive": true
+    },
+    "SCR-02-desktop-effect-uncertain.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "j05",
+      "title": "J-05 · 1 · Send uncertain",
+      "expand": "fill"
+    },
+    "SCR-10-desktop.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "j05",
+      "title": "J-05 · 2 · Exceptions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-02-desktop-verified.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "j05",
+      "title": "J-05 · 3 · Reconciled and verified",
+      "expand": "fill"
+    },
+    "SCR-02-desktop-owner-needed.dc.html": {
+      "x": 0,
+      "y": 1100,
+      "w": 1440,
+      "h": 900,
+      "page": "j05",
+      "title": "J-07 · 1 · Owner needed",
+      "expand": "fill"
+    },
+    "SCR-13-desktop.dc.html": {
+      "x": 1520,
+      "y": 1100,
+      "w": 1440,
+      "h": 1000,
+      "page": "j05",
+      "title": "J-07 · 2 · Fix in Setup",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-10-mobile.dc.html": {
+      "x": 3040,
+      "y": 1100,
+      "w": 390,
+      "h": 844,
+      "page": "j05",
+      "title": "Phone · exceptions"
+    },
+    "SCR-16-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "page": "j03",
+      "title": "J-03 · Record a client response",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-16-mobile.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j03",
+      "title": "J-03 · Phone · record a response",
+      "is_interactive": true
+    },
+    "SCR-09-desktop.dc.html": {
+      "x": 0,
+      "y": 1120,
+      "w": 1440,
+      "h": 940,
+      "page": "j03",
+      "title": "J-06 · 1 · Import and check",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-18-desktop.dc.html": {
+      "x": 1520,
+      "y": 1120,
+      "w": 1440,
+      "h": 980,
+      "page": "j03",
+      "title": "J-06 · 2 · Zainab matches staff",
+      "expand": "fill"
+    },
+    "SCR-18-desktop-permission.dc.html": {
+      "x": 3040,
+      "y": 1120,
+      "w": 1440,
+      "h": 900,
+      "page": "j03",
+      "title": "J-06 · State · Finance sees totals only",
+      "expand": "fill"
+    },
+    "SCR-01-mobile-empty.dc.html": {
+      "x": 0,
+      "y": 2364,
+      "w": 390,
+      "h": 844,
+      "page": "j01",
+      "title": "Phone · queue empty",
+      "is_interactive": true
+    },
+    "SCR-14-mobile.dc.html": {
+      "x": 470,
+      "y": 2364,
+      "w": 390,
+      "h": 844,
+      "page": "j01",
+      "title": "Phone · verified outputs"
+    },
+    "SCR-15-desktop-email.dc.html": {
+      "x": 0,
+      "y": 964,
+      "w": 1440,
+      "h": 820,
+      "page": "j02",
+      "title": "Desktop · 1 · email alert",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-17-desktop.dc.html": {
+      "x": 1520,
+      "y": 964,
+      "w": 1440,
+      "h": 760,
+      "page": "j02",
+      "title": "Desktop · 2 · sign in",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-03-desktop.dc.html": {
+      "x": 3040,
+      "y": 964,
+      "w": 1440,
+      "h": 920,
+      "page": "j02",
+      "title": "Desktop · 3 · decision",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-03-desktop-done.dc.html": {
+      "x": 4560,
+      "y": 964,
+      "w": 1440,
+      "h": 760,
+      "page": "j02",
+      "title": "Desktop · 4 · approved",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-03-desktop-stale.dc.html": {
+      "x": 6080,
+      "y": 964,
+      "w": 1440,
+      "h": 820,
+      "page": "j02",
+      "title": "Desktop · state · newer version",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-02-mobile-effect-uncertain.dc.html": {
+      "x": 0,
+      "y": 2220,
+      "w": 390,
+      "h": 844,
+      "page": "j05",
+      "title": "Phone · send uncertain"
+    },
+    "SCR-02-mobile-verified.dc.html": {
+      "x": 470,
+      "y": 2220,
+      "w": 390,
+      "h": 844,
+      "page": "j05",
+      "title": "Phone · verified"
+    },
+    "SCR-02-mobile-owner-needed.dc.html": {
+      "x": 940,
+      "y": 2220,
+      "w": 390,
+      "h": 844,
+      "page": "j05",
+      "title": "Phone · owner needed",
+      "is_interactive": true
+    },
+    "SCR-13-mobile.dc.html": {
+      "x": 1410,
+      "y": 2220,
+      "w": 390,
+      "h": 844,
+      "page": "j05",
+      "title": "Phone · fix in Setup",
+      "is_interactive": true
+    },
+    "SCR-16-desktop-validation.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "page": "j03",
+      "title": "J-03 · Desktop · proof missing",
+      "expand": "fill"
+    },
+    "SCR-09-mobile.dc.html": {
+      "x": 4560,
+      "y": 1120,
+      "w": 390,
+      "h": 844,
+      "page": "j03",
+      "title": "J-06 · Phone · import",
+      "is_interactive": true
+    },
+    "SCR-18-mobile.dc.html": {
+      "x": 5030,
+      "y": 1120,
+      "w": 390,
+      "h": 844,
+      "page": "j03",
+      "title": "J-06 · Phone · matching"
+    },
+    "SCR-18-mobile-permission.dc.html": {
+      "x": 5500,
+      "y": 1120,
+      "w": 390,
+      "h": 844,
+      "page": "j03",
+      "title": "J-06 · Phone · Finance view"
+    },
+    "SCR-16-mobile-validation.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j03",
+      "title": "J-03 · Phone · proof missing",
+      "is_interactive": true
+    },
+    "SCR-06-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1060,
+      "page": "j08",
+      "title": "J-08 · Factory floor",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-06-mobile.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j08",
+      "title": "J-08 · Phone · floor"
+    },
+    "SCR-07-desktop.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 1060,
+      "page": "j08",
+      "title": "J-08 · Project journey",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-07-mobile.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j08",
+      "title": "J-08 · Phone · project journey"
+    },
+    "SCR-11-desktop.dc.html": {
+      "x": 0,
+      "y": 1180,
+      "w": 1440,
+      "h": 820,
+      "page": "j08",
+      "title": "J-08 · Registers",
+      "expand": "fill"
+    },
+    "SCR-11-mobile.dc.html": {
+      "x": 1520,
+      "y": 1180,
+      "w": 390,
+      "h": 844,
+      "page": "j08",
+      "title": "J-08 · Phone · registers"
+    },
+    "SCR-12-desktop.dc.html": {
+      "x": 1990,
+      "y": 1180,
+      "w": 1440,
+      "h": 860,
+      "page": "j08",
+      "title": "J-08/J-11 · Report drill-down",
+      "expand": "fill"
+    },
+    "SCR-12-mobile.dc.html": {
+      "x": 3510,
+      "y": 1180,
+      "w": 390,
+      "h": 844,
+      "page": "j08",
+      "title": "Phone · report"
+    },
+    "SCR-15-desktop.dc.html": {
+      "x": 0,
+      "y": 2160,
+      "w": 1440,
+      "h": 760,
+      "page": "j08",
+      "title": "J-09 · Notifications",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-15-mobile.dc.html": {
+      "x": 1520,
+      "y": 2160,
+      "w": 390,
+      "h": 844,
+      "page": "j08",
+      "title": "J-09 · Phone · notifications",
+      "is_interactive": true
+    },
+    "SCR-15-desktop-settings.dc.html": {
+      "x": 1990,
+      "y": 2160,
+      "w": 1440,
+      "h": 900,
+      "page": "j08",
+      "title": "J-09 · Alert settings",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-15-mobile-settings.dc.html": {
+      "x": 3510,
+      "y": 2160,
+      "w": 390,
+      "h": 844,
+      "page": "j08",
+      "title": "J-09 · Phone · alert settings",
+      "is_interactive": true
+    },
+    "SCR-05-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1040,
+      "page": "j10",
+      "title": "J-10 · Assistant · interactive",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-05-mobile.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j10",
+      "title": "J-10 · Phone · assistant"
+    },
+    "SCR-05-desktop-thread.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 1040,
+      "page": "j10",
+      "title": "J-10/J-11 · Conversation with a draft · interactive",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-05-mobile-thread.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "j10",
+      "title": "Phone · conversation"
+    },
+    "SCR-08-desktop.dc.html": {
+      "x": 0,
+      "y": 1160,
+      "w": 1440,
+      "h": 1000,
+      "page": "j10",
+      "title": "J-01/J-02 · Document review",
+      "expand": "fill"
+    },
+    "SCR-08-mobile.dc.html": {
+      "x": 1520,
+      "y": 1160,
+      "w": 390,
+      "h": 844,
+      "page": "j10",
+      "title": "Phone · document review"
     }
   },
   "order": [
@@ -333,7 +756,52 @@
     "SCR-01-desktop-empty.dc.html",
     "SCR-01-mobile.dc.html",
     "SCR-04-mobile.dc.html",
-    "SCR-02-mobile.dc.html"
+    "SCR-02-mobile.dc.html",
+    "SCR-02-desktop-effect-uncertain.dc.html",
+    "SCR-10-desktop.dc.html",
+    "SCR-02-desktop-verified.dc.html",
+    "SCR-02-desktop-owner-needed.dc.html",
+    "SCR-13-desktop.dc.html",
+    "SCR-10-mobile.dc.html",
+    "SCR-16-desktop.dc.html",
+    "SCR-16-mobile.dc.html",
+    "SCR-09-desktop.dc.html",
+    "SCR-18-desktop.dc.html",
+    "SCR-18-desktop-permission.dc.html",
+    "SCR-01-mobile-empty.dc.html",
+    "SCR-14-mobile.dc.html",
+    "SCR-15-desktop-email.dc.html",
+    "SCR-17-desktop.dc.html",
+    "SCR-03-desktop.dc.html",
+    "SCR-03-desktop-done.dc.html",
+    "SCR-03-desktop-stale.dc.html",
+    "SCR-02-mobile-effect-uncertain.dc.html",
+    "SCR-02-mobile-verified.dc.html",
+    "SCR-02-mobile-owner-needed.dc.html",
+    "SCR-13-mobile.dc.html",
+    "SCR-16-desktop-validation.dc.html",
+    "SCR-09-mobile.dc.html",
+    "SCR-18-mobile.dc.html",
+    "SCR-18-mobile-permission.dc.html",
+    "SCR-16-mobile-validation.dc.html",
+    "SCR-06-desktop.dc.html",
+    "SCR-06-mobile.dc.html",
+    "SCR-07-desktop.dc.html",
+    "SCR-07-mobile.dc.html",
+    "SCR-11-desktop.dc.html",
+    "SCR-11-mobile.dc.html",
+    "SCR-12-desktop.dc.html",
+    "SCR-12-mobile.dc.html",
+    "SCR-15-desktop.dc.html",
+    "SCR-15-mobile.dc.html",
+    "SCR-15-desktop-settings.dc.html",
+    "SCR-15-mobile-settings.dc.html",
+    "SCR-05-desktop.dc.html",
+    "SCR-05-mobile.dc.html",
+    "SCR-05-desktop-thread.dc.html",
+    "SCR-05-mobile-thread.dc.html",
+    "SCR-08-desktop.dc.html",
+    "SCR-08-mobile.dc.html"
   ],
   "notes": {
     "a-title": {
@@ -447,6 +915,38 @@
       "page": "j01",
       "fill": "gray",
       "text": "Top row, desktop in journey order: queue → start work → work item → verified outputs. Bottom row: the empty queue and the phone versions.\n\nSample data, drawn before architecture (early start, 12 Nov)."
+    },
+    "j05-title": {
+      "x": 0,
+      "y": -300,
+      "text": "J-05 · An uncertain send is reconciled · J-07 · A Lead clears a stop",
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "j05"
+    },
+    "j03-title": {
+      "x": 0,
+      "y": -300,
+      "text": "J-03 · Recording outside responses · J-06 · Restricted payroll",
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "j03"
+    },
+    "j08-title": {
+      "x": 0,
+      "y": -300,
+      "text": "J-08 · Seeing where everything stands · J-09 · Alert preferences",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "j08"
+    },
+    "j10-title": {
+      "x": 0,
+      "y": -300,
+      "text": "J-10 · Asking an agent · J-11 · Drafting with an agent · Document review",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "j10"
     }
   },
   "designSystems": [

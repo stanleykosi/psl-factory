@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SCR-10 · Exceptions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>body{margin:0;background:#EEF0ED} a{color:#2459D6}a:hover{color:#16388F}</style>
+</helmet>
+<div style="min-height: 900px; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px;">
+  <nav aria-label="Main" style="background: #1F2427; color: #FFFFFF;">
+    <div style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 0 28px; min-height: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px;">
+      <span style="font-family: Archivo, sans-serif; font-stretch: 125%; font-weight: 800; font-size: 17px; letter-spacing: 0.02em;">PSL FACTORY</span>
+      <div style="display: flex; flex-wrap: wrap;">
+        <a href="SCR-01-desktop.dc.html" style="padding: 18px 14px 16px; color: #FFFFFF; text-decoration: none; border-bottom: 3px solid #C8401C; font-weight: 500;">Queue</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none;">Floor</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none;">Projects</a>
+        <a href="c-assistant.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none;">Assistant</a>
+        <a href="SCR-14-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none;">Outputs</a>
+      </div>
+      <span style="margin-left: auto; font-size: 13px; color: #C8CDD0;">Ada Okafor · Finance Lead</span>
+    </div>
+  </nav>
+  <main style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 28px 28px 56px; display: flex; flex-direction: column; gap: 20px;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 40px; line-height: 1;">Exceptions</h1>
+        <p style="margin: 0; color: #4A5357;">Work that can't move on by itself: an outcome we couldn't confirm, a missing owner or rule, or a check that failed.</p>
+      </div>
+      <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">4 OPEN · <span style="color: #8A5A00;">SAMPLE DATA</span></p>
+    </header>
+    <div style="overflow-x: auto; background: #FFFFFF; border: 2px solid #1F2427;">
+      <table style="width: 100%; min-width: 900px; border-collapse: collapse;">
+        <thead>
+          <tr style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #4A5357;">
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">What happened</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Work</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">What's being done</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Who acts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+            <tr>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 600; background: {{r.bg}}; color: {{r.color}};">{{r.kind}}</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #4A5357;">{{r.since}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><a href="{{r.href}}" style="display: block; color: #1F2427; font-weight: 600; text-decoration: none;">{{r.title}}</a><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">{{r.ref}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3; font-size: 13px; max-width: 380px;">{{r.doing}}</td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3; font-size: 13px;">{{r.who}}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin: 0; font-size: 13px; color: #4A5357;">The factory never resends after an unknown outcome until it has checked for a receipt. Nothing here is lost; each item resumes where it stopped.</p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const amber = ['#FFF1D6', '#6E4700'], red = ['#FBE3D9', '#9A2F10'];
+    return { rows: [
+      { kind: 'SEND UNCERTAIN', bg: amber[0], color: amber[1], since: 'since 11:02', href: 'SCR-02-desktop-effect-uncertain.dc.html', title: 'Lagoon Health · Milestone 2 invoice', ref: 'INV-0412', doing: 'Chidi is checking for a delivery receipt by reference. 2 checks done; next at 11:10. Nothing resent.', who: 'Chidi · then Finance if not found' },
+      { kind: 'SEND UNCERTAIN', bg: amber[0], color: amber[1], since: 'since 10:02', href: 'SCR-02-desktop-effect-uncertain.dc.html', title: 'Harmattan Bank · go-live report', ref: 'GLV-0087', doing: 'Tola is checking whether the client report arrived. Client acceptance waits until it does.', who: 'Tola · then PMO' },
+      { kind: 'OWNER NEEDED', bg: red[0], color: red[1], since: 'since Mon', href: 'SCR-02-desktop-owner-needed.dc.html', title: 'Lagoon Health · Milestone 3 invoice', ref: 'INV-0419', doing: 'Held at Finance review: no Finance Lead is set up for this project.', who: 'Admin or Finance Lead · Setup' },
+      { kind: 'SETUP NEEDED', bg: red[0], color: red[1], since: 'since 3d', href: 'SCR-13-desktop.dc.html', title: 'Ojo Foods · ordering app plan', ref: 'PLN-0151', doing: 'Held at design sign-off: no Design Lead role exists yet.', who: 'Admin · Setup' }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

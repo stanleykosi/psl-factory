@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SCR-04 · Start work on a phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>body{margin:0} a{color:#2459D6}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column;">
+  <div style="background: #1F2427; color: #FFFFFF; padding: 6px 16px; display: flex; align-items: center;">
+    <a href="SCR-01-mobile.dc.html" style="color: #FFFFFF; min-height: 44px; display: inline-flex; align-items: center; text-decoration: none;">← Queue</a>
+  </div>
+  <form style="margin: 0; padding: 16px; display: flex; flex-direction: column; gap: 14px; flex-grow: 1;">
+    <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 26px;">Prepare an invoice</h1>
+    <p style="margin: 0; color: #4A5357;">From a completed milestone. Chidi drafts it; a Finance Lead approves it before anything is sent.</p>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <label for="m-line" style="font-weight: 500;">What are you starting?</label>
+      <select id="m-line" style="min-height: 48px; padding: 0 10px; border: 2px solid #1F2427; font: inherit; background: #FFFFFF;"><option>Prepare an invoice</option><option>Plan a project</option><option>Prepare a commercial submission</option></select>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <label for="m-proj" style="font-weight: 500;">Project</label>
+      <select id="m-proj" style="min-height: 48px; padding: 0 10px; border: 2px solid #1F2427; font: inherit; background: #FFFFFF;"><option>Lagoon Health · patient app</option></select>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <label for="m-ms" style="font-weight: 500;">Completed milestone</label>
+      <select id="m-ms" style="min-height: 48px; padding: 0 10px; border: 2px solid #1F2427; font: inherit; background: #FFFFFF;"><option>Milestone 3 · UAT signed 07 Nov</option></select>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center; padding: 10px 12px; background: #DFE8FB;">
+      <img src="/_blob/ecfb1b0df62c4684b66a6b97230ae2c5" alt="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+      <span style="font-size: 14px; color: #16388F;">Chidi will draft it from the signed SOW terms. 7 stations to verified.</span>
+    </div>
+    <a href="SCR-02-mobile.dc.html" style="margin-top: auto; min-height: 54px; display: flex; align-items: center; justify-content: center; background: #C8401C; color: #FFFFFF; font-size: 17px; font-weight: 600; text-decoration: none;">Start the invoice</a>
+    <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A5A00;">SAMPLE DATA</p>
+  </form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

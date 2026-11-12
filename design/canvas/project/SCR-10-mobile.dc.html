@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SCR-10 · Exceptions on a phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>body{margin:0} a{color:#2459D6}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column;">
+  <div style="background: #1F2427; color: #FFFFFF; padding: 6px 16px; display: flex; align-items: center;"><a href="SCR-01-mobile.dc.html" style="color: #FFFFFF; min-height: 44px; display: inline-flex; align-items: center; text-decoration: none;">← Queue</a></div>
+  <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+    <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 26px;">Exceptions · 4</h1>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+      <a href="SCR-02-desktop-effect-uncertain.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 12px; background: #FFFFFF; border: 2px solid #1F2427; text-decoration: none; color: #1F2427;">
+        <span style="align-self: flex-start; padding: 2px 6px; font-size: 11px; font-weight: 600; background: {{r.bg}}; color: {{r.color}};">{{r.kind}}</span>
+        <span style="font-weight: 600;">{{r.title}}</span>
+        <span style="font-size: 13px; color: #4A5357;">{{r.doing}}</span>
+      </a>
+    </sc-for>
+    <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A5A00;">SAMPLE DATA</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: [
+      { kind: 'SEND UNCERTAIN', bg: '#FFF1D6', color: '#6E4700', title: 'Lagoon Health · M2 invoice', doing: 'Chidi is checking for a receipt. Nothing resent.' },
+      { kind: 'SEND UNCERTAIN', bg: '#FFF1D6', color: '#6E4700', title: 'Harmattan Bank · go-live report', doing: 'Tola is checking whether it arrived.' },
+      { kind: 'OWNER NEEDED', bg: '#FBE3D9', color: '#9A2F10', title: 'Lagoon Health · M3 invoice', doing: 'No Finance Lead set up for this project.' },
+      { kind: 'SETUP NEEDED', bg: '#FBE3D9', color: '#9A2F10', title: 'Ojo Foods · ordering app plan', doing: 'No Design Lead role exists yet.' }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

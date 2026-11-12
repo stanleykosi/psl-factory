@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SCR-14 · Verified outputs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>body{margin:0;background:#EEF0ED} a{color:#2459D6}a:hover{color:#16388F}</style>
+</helmet>
+<div style="min-height: 900px; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px;">
+  <nav aria-label="Main" style="background: #1F2427; color: #FFFFFF;">
+    <div style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 0 28px; min-height: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px;">
+      <span style="font-family: Archivo, sans-serif; font-stretch: 125%; font-weight: 800; font-size: 17px; letter-spacing: 0.02em;">PSL FACTORY</span>
+      <div style="display: flex; flex-wrap: wrap;">
+        <a href="SCR-01-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Queue</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Floor</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Projects</a>
+        <a href="c-assistant.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Assistant</a>
+        <a href="SCR-14-desktop.dc.html" style="padding: 18px 14px 16px; color: #FFFFFF; text-decoration: none; border-bottom: 3px solid #C8401C; font-weight: 500;">Outputs</a>
+      </div>
+      <span style="margin-left: auto; font-size: 13px; color: #C8CDD0;">Tunde Bello · PMO</span>
+    </div>
+  </nav>
+  <main style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 28px 28px 56px; display: flex; flex-direction: column; gap: 22px;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 40px; line-height: 1;">Verified outputs</h1>
+        <p style="margin: 0; color: #4A5357;">Work that has earned every fact on its line and been checked against its decisions and receipts.</p>
+      </div>
+      <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">28 THIS MONTH · <span style="color: #8A5A00;">SAMPLE DATA</span></p>
+    </header>
+    <div role="group" aria-label="Filter" style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <button type="button" style="min-height: 40px; padding: 0 14px; border: 2px solid #1F2427; background: #1F2427; color: #FFFFFF; font: inherit; font-weight: 500;">All lines</button>
+      <button type="button" style="min-height: 40px; padding: 0 14px; border: 2px solid #1F2427; background: #FFFFFF; font: inherit;">Invoices</button>
+      <button type="button" style="min-height: 40px; padding: 0 14px; border: 2px solid #1F2427; background: #FFFFFF; font: inherit;">Project closures</button>
+      <button type="button" style="min-height: 40px; padding: 0 14px; border: 2px solid #1F2427; background: #FFFFFF; font: inherit;">Reports</button>
+      <button type="button" style="min-height: 40px; padding: 0 14px; border: 2px solid #1F2427; background: #FFFFFF; font: inherit;">Month-end</button>
+    </div>
+    <div style="overflow-x: auto; background: #FFFFFF; border: 2px solid #1F2427;">
+      <table style="width: 100%; min-width: 900px; border-collapse: collapse;">
+        <thead>
+          <tr style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #4A5357;">
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Output</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Facts earned</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Proof</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Verified</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <tr>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><a href="SCR-02-desktop.dc.html" style="display: block; color: #1F2427; font-weight: 600; text-decoration: none;">{{r.title}}</a><span style="display: block; font-size: 12px; color: #4A5357;">{{r.line}} · <span style="font-family: 'IBM Plex Mono', monospace;">{{r.ref}}</span></span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: flex; gap: 3px;" aria-label="{{r.factsLabel}}"><sc-for list="{{r.facts}}" as="f" hint-placeholder-count="6"><span style="width: 22px; height: 8px; background: {{f}};"></span></sc-for></span><span style="display: block; margin-top: 4px; font-size: 12px; color: #4A5357;">{{r.factsLabel}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3; font-size: 13px;">{{r.proof}}</td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 600; background: #DDEFE3; color: #16502F;">VERIFIED</span><span style="display: block; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">{{r.when}}</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin: 0; font-size: 13px; color: #4A5357;">Verified means the factory's work is complete and checked. Whether an invoice has been paid is a separate Finance fact, shown in Finance.</p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const all = ['#1F2427','#1F2427','#1F2427','#1F2427','#1F2427','#22764A'];
+    return { rows: [
+      { title: 'Lagoon Health · Milestone 1 invoice', line: 'Prepare an invoice', ref: 'INV-0398', facts: all, factsLabel: 'All 6 · delivered 03 Nov', proof: 'Email delivery receipt · 03 Nov 11:20', when: '03 Nov 11:24' },
+      { title: 'Sabi Market · web store closure', line: 'Close a project', ref: 'CLS-0044', facts: all, factsLabel: 'All 6 · archived', proof: 'Head of PMO approval · archive index', when: '12 Nov 09:12' },
+      { title: 'Harmattan Bank · weekly client report, wk 45', line: 'Prepare a weekly client report', ref: 'WCR-0211', facts: all, factsLabel: 'All 6 · delivered', proof: 'Email delivery receipt · 07 Nov', when: '07 Nov 16:05' },
+      { title: 'October management accounts', line: 'Prepare management accounts', ref: 'MAC-0010', facts: all, factsLabel: 'All 6 · published internally', proof: 'Finance review · publication record', when: '06 Nov 14:30' },
+      { title: 'Kora Logistics · go-live acceptance', line: 'Obtain go-live acceptance', ref: 'GLV-0081', facts: all, factsLabel: 'All 6 · signed', proof: 'PM and client signatures, recorded with proof', when: '04 Nov 10:02' },
+      { title: 'Ojo Foods · kick-off minutes', line: 'Record formal meeting minutes', ref: 'MIN-0132', facts: all, factsLabel: 'All 6 · shared', proof: 'Minutes v1 · actions assigned', when: '31 Oct 17:40' }
+    ] };
+  }
+}
+</script>
+</body>
+</html>
