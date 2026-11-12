@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SCR-01 · Work queue · started by me</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#EEF0ED}
+a{color:#2459D6}a:hover{color:#16388F}
+</style>
+</helmet>
+<div style="min-height: 1060px; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px;">
+
+  <!-- SEC-nav -->
+  <nav aria-label="Main" style="background: #1F2427; color: #FFFFFF;">
+    <div style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 0 28px; min-height: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px;">
+      <span style="font-family: Archivo, sans-serif; font-stretch: 125%; font-weight: 800; font-size: 17px; letter-spacing: 0.02em;">PSL FACTORY</span>
+      <div style="display: flex; flex-wrap: wrap;">
+        <a href="#" style="padding: 18px 14px 16px; color: #FFFFFF; text-decoration: none; border-bottom: 3px solid #C8401C; font-weight: 500;">Queue</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Floor</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Projects</a>
+        <a href="c-assistant.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Assistant</a>
+        <a href="SCR-14-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Outputs</a>
+        <a href="#" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Setup</a>
+      </div>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+        <a href="SCR-04-desktop.dc.html" style="min-height: 40px; display: inline-flex; align-items: center; padding: 0 16px; background: #C8401C; color: #FFFFFF; text-decoration: none; font-weight: 600; border-radius: 2px;">Start work</a>
+        <span style="font-size: 13px; color: #C8CDD0;">Ada Okafor · Finance Lead</span>
+      </div>
+    </div>
+  </nav>
+
+  <main style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 28px 28px 56px; display: flex; flex-direction: column; gap: 24px;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px;">
+      <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 40px; line-height: 1; letter-spacing: -0.01em;">Work queue</h1>
+      <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">46 records you can see · updated 10:42 · <span style="color: #8A5A00;">SAMPLE DATA</span></p>
+    </header>
+
+    <!-- SEC-floor -->
+    <section aria-label="Factory floor" style="background: #FFFFFF; border: 2px solid #1F2427; border-radius: 2px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 2px solid #1F2427;">
+        <h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase;">Floor · lines running now</h2>
+        <a href="#">Open the floor</a>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <sc-for list="{{tracks}}" as="t" hint-placeholder-count="4">
+          <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) 90px; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid #D5D9D3;">
+            <span style="font-weight: 600;">{{t.name}}</span>
+            <div style="position: relative; height: 22px; display: flex; align-items: center;">
+              <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 10px; height: 2px; background: #1F2427;"></div>
+              <div style="position: relative; width: 100%; display: flex; justify-content: space-between;">
+                <sc-for list="{{t.stops}}" as="s" hint-placeholder-count="6">
+                  <span title="{{s.label}}" style="width: 14px; height: 14px; background: {{s.fill}}; border: 2px solid #1F2427; box-sizing: border-box;"></span>
+                </sc-for>
+              </div>
+            </div>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: right; color: {{t.noteColor}};">{{t.note}}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 0; padding: 8px 16px; font-size: 12px; color: #4A5357;">Each square is a station. Filled squares hold work; orange means someone must act.</p>
+    </section>
+
+    <!-- SEC-queues -->
+    <div role="tablist" aria-label="Queues" style="display: flex; flex-wrap: wrap; border: 2px solid #1F2427; align-self: flex-start;">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
+        <button type="button" role="tab" aria-selected="{{t.selected}}" style="min-height: 44px; padding: 0 16px; border: none; border-right: 2px solid #1F2427; background: {{t.bg}}; color: {{t.color}}; font: inherit; font-weight: 500; cursor: pointer;">{{t.label}} <span style="font-family: 'IBM Plex Mono', monospace;">{{t.count}}</span></button>
+      </sc-for>
+    </div>
+
+    <!-- SEC-list -->
+    <div style="overflow-x: auto; background: #FFFFFF; border: 2px solid #1F2427;">
+      <table style="width: 100%; min-width: 820px; border-collapse: collapse;">
+        <thead>
+          <tr style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #4A5357;">
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Work</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Where on its line</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">State</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Age</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <tr>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><a href="SCR-02-desktop.dc.html" style="display: block; color: #1F2427; font-weight: 600; text-decoration: none;">{{r.title}}</a><span style="display: block; font-size: 12px; color: #4A5357;">{{r.line}} · <span style="font-family: 'IBM Plex Mono', monospace;">{{r.ref}}</span></span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: flex; align-items: center; gap: 4px;"><sc-for list="{{r.steps}}" as="s" hint-placeholder-count="6"><span style="width: 18px; height: 6px; background: {{s}};"></span></sc-for></span><span style="display: block; margin-top: 4px; font-size: 12px; color: #4A5357;">{{r.station}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 600; background: {{r.bg}}; color: {{r.color}};">{{r.state}}</span><span style="display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 12px; color: #4A5357;"><sc-if value="{{r.hasAv}}" hint-placeholder-val="{{false}}"><img src="{{r.av}}" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: {{r.avBg}};"></sc-if>{{r.waiting}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3; font-family: 'IBM Plex Mono', monospace; color: #4A5357;">{{r.age}}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ink = '#1F2427', done = '#1F2427', open = '#D5D9D3', act = '#C8401C', white = '#FFFFFF';
+    const stops = (pattern) => pattern.split('').map(c => ({ fill: c === 'x' ? ink : c === 'o' ? act : white, label: c === 'o' ? 'Needs action' : c === 'x' ? 'Work here' : 'Empty' }));
+    const steps = (n, at, hold) => Array.from({ length: n }, (_, i) => i < at ? done : i === at ? (hold ? act : '#2459D6') : open);
+    const tab = (label, count, on) => ({ label, count, selected: on ? 'true' : 'false', bg: on ? ink : white, color: on ? white : ink });
+    return {
+      tracks: [
+        { name: 'Pre-sale and planning', stops: stops('x-xo-x-'), note: '1 stopped', noteColor: act },
+        { name: 'Release to closure', stops: stops('xx-o--x'), note: '1 uncertain', noteColor: act },
+        { name: 'Invoices', stops: stops('x-xo---'), note: '2 waiting', noteColor: act },
+        { name: 'Month-end', stops: stops('-x--x--'), note: 'on track', noteColor: '#22764A' }
+      ],
+      tabs: [tab('Needs me', 4), tab('Started by me', 5, true), tab('Decisions', 3), tab('Exceptions', 2), tab('Active', 12), tab('Verified', 28)],
+      rows: [
+        { title: 'Lagoon Health · Milestone 2 invoice', line: 'Prepare an invoice', ref: 'INV-0412', steps: steps(7, 3, true), station: 'Station 4 of 7 · Finance review', state: 'AWAITING FINANCE DECISION', bg: '#FBE3D9', color: '#9A2F10', waiting: 'You · Finance Lead (Chidi drafted v2)', age: '2h', hasAv: true, av: '/_blob/ecfb1b0df62c4684b66a6b97230ae2c5', avBg: '#DFE8FB' },
+        { title: 'Harmattan Bank · go-live report', line: 'Obtain go-live acceptance', ref: 'GLV-0087', steps: steps(5, 3, true), station: 'Station 4 of 5 · Deliver report', state: 'EFFECT UNCERTAIN', bg: '#FBE3D9', color: '#9A2F10', waiting: 'Checking delivery before any resend', age: '40m' },
+        { title: 'Kora Logistics · fleet tracker SOW v3', line: 'Commercial submission', ref: 'COM-0233', steps: steps(6, 4, false), station: 'Station 5 of 6 · CEO approval', state: 'WAITING', bg: '#FFF1D6', color: '#6E4700', waiting: 'CEO · step 3 of 3', age: '1d' },
+        { title: 'Ojo Foods · ordering app plan', line: 'Plan a project', ref: 'PLN-0151', steps: steps(6, 2, true), station: 'Station 3 of 6 · Design sign-off', state: 'OWNER NEEDED', bg: '#FBE3D9', color: '#9A2F10', waiting: 'No Design Lead role set up', age: '3d' },
+        { title: 'Sabi Market · web store closure', line: 'Close a project', ref: 'CLS-0044', steps: steps(4, 4, false), station: 'All 4 stations done', state: 'VERIFIED', bg: '#DDEFE3', color: '#16502F', waiting: 'Archived 09:12', age: '09:12' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

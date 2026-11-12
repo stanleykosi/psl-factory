@@ -61,6 +61,10 @@
     {
       "id": "states",
       "name": "States · refusals, errors, empty"
+    },
+    {
+      "id": "scope",
+      "name": "Work-item states, My work, CEO and CTO"
     }
   ],
   "boards": {
@@ -952,6 +956,142 @@
       "h": 844,
       "page": "states",
       "title": "Phone · Shared · empty, loading, error"
+    },
+    "SCR-02-desktop-ready.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 860,
+      "page": "scope",
+      "title": "Work item · ready",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-ready.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · ready"
+    },
+    "SCR-02-desktop-waiting.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "scope",
+      "title": "Work item · waiting on client",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-waiting.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · waiting on client"
+    },
+    "SCR-02-desktop-setup-needed.dc.html": {
+      "x": 0,
+      "y": 1020,
+      "w": 1440,
+      "h": 900,
+      "page": "scope",
+      "title": "Work item · setup needed",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-setup-needed.dc.html": {
+      "x": 1520,
+      "y": 1020,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · setup needed"
+    },
+    "SCR-02-desktop-awaiting-reconciliation.dc.html": {
+      "x": 1990,
+      "y": 1020,
+      "w": 1440,
+      "h": 980,
+      "page": "scope",
+      "title": "Work item · awaiting reconciliation",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-awaiting-reconciliation.dc.html": {
+      "x": 3510,
+      "y": 1020,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · awaiting reconciliation"
+    },
+    "SCR-02-desktop-cancelled.dc.html": {
+      "x": 0,
+      "y": 2120,
+      "w": 1440,
+      "h": 900,
+      "page": "scope",
+      "title": "Work item · cancelled",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-cancelled.dc.html": {
+      "x": 1520,
+      "y": 2120,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · cancelled"
+    },
+    "SCR-01-desktop-my-work.dc.html": {
+      "x": 1990,
+      "y": 2120,
+      "w": 1440,
+      "h": 1060,
+      "page": "scope",
+      "title": "Queue · started by me",
+      "expand": "fill"
+    },
+    "SCR-01-mobile-my-work.dc.html": {
+      "x": 3510,
+      "y": 2120,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · my work"
+    },
+    "SCR-03-desktop-ceo-costing.dc.html": {
+      "x": 0,
+      "y": 3300,
+      "w": 1440,
+      "h": 940,
+      "page": "scope",
+      "title": "CEO · final costing",
+      "expand": "fill"
+    },
+    "SCR-03-mobile-ceo-costing.dc.html": {
+      "x": 1520,
+      "y": 3300,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · CEO costing"
+    },
+    "SCR-03-desktop-cto-emergency.dc.html": {
+      "x": 1990,
+      "y": 3300,
+      "w": 1440,
+      "h": 940,
+      "page": "scope",
+      "title": "CTO · emergency change",
+      "expand": "fill"
+    },
+    "SCR-03-mobile-cto-emergency.dc.html": {
+      "x": 3510,
+      "y": 3300,
+      "w": 390,
+      "h": 844,
+      "page": "scope",
+      "title": "Phone · CTO emergency"
     }
   },
   "order": [
@@ -1054,7 +1194,23 @@
     "SCR-17-desktop-error.dc.html",
     "SCR-17-mobile-error.dc.html",
     "STATES-desktop.dc.html",
-    "STATES-mobile.dc.html"
+    "STATES-mobile.dc.html",
+    "SCR-02-desktop-ready.dc.html",
+    "SCR-02-mobile-ready.dc.html",
+    "SCR-02-desktop-waiting.dc.html",
+    "SCR-02-mobile-waiting.dc.html",
+    "SCR-02-desktop-setup-needed.dc.html",
+    "SCR-02-mobile-setup-needed.dc.html",
+    "SCR-02-desktop-awaiting-reconciliation.dc.html",
+    "SCR-02-mobile-awaiting-reconciliation.dc.html",
+    "SCR-02-desktop-cancelled.dc.html",
+    "SCR-02-mobile-cancelled.dc.html",
+    "SCR-01-desktop-my-work.dc.html",
+    "SCR-01-mobile-my-work.dc.html",
+    "SCR-03-desktop-ceo-costing.dc.html",
+    "SCR-03-mobile-ceo-costing.dc.html",
+    "SCR-03-desktop-cto-emergency.dc.html",
+    "SCR-03-mobile-cto-emergency.dc.html"
   ],
   "notes": {
     "a-title": {
@@ -1208,6 +1364,14 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "states"
+    },
+    "scope-title": {
+      "x": 0,
+      "y": -300,
+      "text": "Remaining scope: every work-item state (S-04), My work, and the CEO and CTO decisions",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "scope"
     }
   },
   "designSystems": [
