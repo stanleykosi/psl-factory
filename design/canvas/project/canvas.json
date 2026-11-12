@@ -2283,6 +2283,15 @@
       "w": 1440,
       "x": 0,
       "y": 1020
+    },
+    "SCR-26-team-input-concepts.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "page": "open",
+      "title": "RFP team input · 4 concepts",
+      "w": 1440,
+      "x": 6400,
+      "y": 0
     }
   },
   "createdOnFiles": {
@@ -3094,7 +3103,8 @@
     "SCR-26-desktop-accepted.dc.html",
     "SCR-26-mobile-accepted.dc.html",
     "SCR-26-desktop-reject.dc.html",
-    "SCR-26-mobile-reject.dc.html"
+    "SCR-26-mobile-reject.dc.html",
+    "SCR-26-team-input-concepts.dc.html"
   ],
   "pages": [
     {
