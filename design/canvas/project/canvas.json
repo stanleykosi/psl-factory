@@ -821,6 +821,15 @@
       "x": 0,
       "y": 6000
     },
+    "SCR-03-desktop-payment-exception.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-item",
+      "title": "Short payment decision",
+      "w": 1440,
+      "x": 0,
+      "y": 8640
+    },
     "SCR-03-desktop-stale.dc.html": {
       "expand": "fill",
       "h": 820,
@@ -873,6 +882,14 @@
       "w": 390,
       "x": 1520,
       "y": 6000
+    },
+    "SCR-03-mobile-payment-exception.dc.html": {
+      "h": 844,
+      "page": "p-item",
+      "title": "Phone · short payment decision",
+      "w": 390,
+      "x": 1520,
+      "y": 8640
     },
     "SCR-03-mobile-stale.dc.html": {
       "h": 844,
@@ -1193,6 +1210,15 @@
       "x": 1520,
       "y": 4244
     },
+    "SCR-13-desktop-delegation.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-setup",
+      "title": "Setup · delegation",
+      "w": 1440,
+      "x": 2070,
+      "y": 3804
+    },
     "SCR-13-desktop-fields.dc.html": {
       "expand": "fill",
       "h": 820,
@@ -1210,6 +1236,15 @@
       "w": 1440,
       "x": 3980,
       "y": 140
+    },
+    "SCR-13-desktop-rules.dc.html": {
+      "expand": "fill",
+      "h": 1060,
+      "page": "p-setup",
+      "title": "Setup · rules",
+      "w": 1440,
+      "x": 0,
+      "y": 3804
     },
     "SCR-13-desktop-validation.dc.html": {
       "expand": "fill",
@@ -1230,6 +1265,14 @@
       "x": 0,
       "y": 140
     },
+    "SCR-13-mobile-delegation.dc.html": {
+      "h": 844,
+      "page": "p-setup",
+      "title": "Phone · setup · delegation",
+      "w": 390,
+      "x": 3590,
+      "y": 3804
+    },
     "SCR-13-mobile-fields.dc.html": {
       "h": 844,
       "page": "p-setup",
@@ -1245,6 +1288,14 @@
       "w": 390,
       "x": 5500,
       "y": 140
+    },
+    "SCR-13-mobile-rules.dc.html": {
+      "h": 844,
+      "page": "p-setup",
+      "title": "Phone · setup · rules",
+      "w": 390,
+      "x": 1520,
+      "y": 3804
     },
     "SCR-13-mobile-validation.dc.html": {
       "h": 844,
@@ -1372,6 +1423,15 @@
       "x": 5500,
       "y": 140
     },
+    "SCR-16-desktop-rfp-outcome.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Record the RFP outcome (won / lost)",
+      "w": 1440,
+      "x": 1990,
+      "y": 1660
+    },
     "SCR-16-desktop-success.dc.html": {
       "expand": "fill",
       "h": 720,
@@ -1380,6 +1440,15 @@
       "w": 1440,
       "x": 3980,
       "y": 7340
+    },
+    "SCR-16-desktop-team-input.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-presale",
+      "title": "Record team input (Engineering, QA, Security, Product)",
+      "w": 1440,
+      "x": 1990,
+      "y": 140
     },
     "SCR-16-desktop-validation.dc.html": {
       "expand": "fill",
@@ -1400,6 +1469,14 @@
       "x": 0,
       "y": 7340
     },
+    "SCR-16-mobile-rfp-outcome.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · RFP outcome",
+      "w": 390,
+      "x": 3510,
+      "y": 1660
+    },
     "SCR-16-mobile-success.dc.html": {
       "h": 844,
       "page": "p-item",
@@ -1407,6 +1484,14 @@
       "w": 390,
       "x": 5500,
       "y": 7340
+    },
+    "SCR-16-mobile-team-input.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · team input",
+      "w": 390,
+      "x": 3510,
+      "y": 140
     },
     "SCR-16-mobile-validation.dc.html": {
       "h": 844,
@@ -1700,6 +1785,244 @@
       "x": 1520,
       "y": 8008
     },
+    "SCR-26-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1120,
+      "page": "p-presale",
+      "title": "RFP workspace · requirements",
+      "w": 1440,
+      "x": 0,
+      "y": 140
+    },
+    "SCR-26-mobile.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · RFP requirements",
+      "w": 390,
+      "x": 1520,
+      "y": 140
+    },
+    "SCR-27-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1060,
+      "page": "p-presale",
+      "title": "Costing sheet · total Unknown until all estimates are in",
+      "w": 1440,
+      "x": 0,
+      "y": 1660
+    },
+    "SCR-27-mobile.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · costing",
+      "w": 390,
+      "x": 1520,
+      "y": 1660
+    },
+    "SCR-28-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "page": "p-projects",
+      "title": "Confirm the minutes",
+      "w": 1440,
+      "x": 0,
+      "y": 10788
+    },
+    "SCR-28-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · confirm the minutes",
+      "w": 390,
+      "x": 1520,
+      "y": 10788
+    },
+    "SCR-29-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Actions tab",
+      "w": 1440,
+      "x": 2070,
+      "y": 9488
+    },
+    "SCR-29-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · actions tab",
+      "w": 390,
+      "x": 3590,
+      "y": 9488
+    },
+    "SCR-30-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Issue detail · owner follow-up",
+      "w": 1440,
+      "x": 2070,
+      "y": 10788
+    },
+    "SCR-30-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · issue detail · owner follow-up",
+      "w": 390,
+      "x": 3590,
+      "y": 10788
+    },
+    "SCR-31-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Change request detail",
+      "w": 1440,
+      "x": 0,
+      "y": 12188
+    },
+    "SCR-31-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · change request detail",
+      "w": 390,
+      "x": 1520,
+      "y": 12188
+    },
+    "SCR-32-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-finance",
+      "title": "Payment reminder · draft to send",
+      "w": 1440,
+      "x": 0,
+      "y": 4120
+    },
+    "SCR-32-mobile.dc.html": {
+      "h": 844,
+      "page": "p-finance",
+      "title": "Phone · payment reminder · draft to send",
+      "w": 390,
+      "x": 1520,
+      "y": 4120
+    },
+    "SCR-33-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1060,
+      "page": "p-projects",
+      "title": "Retrospective · before closure",
+      "w": 1440,
+      "x": 2070,
+      "y": 12188
+    },
+    "SCR-33-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · retrospective · before closure",
+      "w": 390,
+      "x": 3590,
+      "y": 12188
+    },
+    "SCR-34-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-setup",
+      "title": "Setup · templates",
+      "w": 1440,
+      "x": 0,
+      "y": 5164
+    },
+    "SCR-34-mobile.dc.html": {
+      "h": 844,
+      "page": "p-setup",
+      "title": "Phone · setup · templates",
+      "w": 390,
+      "x": 1520,
+      "y": 5164
+    },
+    "SCR-35-desktop-detail.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "Client details · billing contact",
+      "w": 1440,
+      "x": 2070,
+      "y": 13548
+    },
+    "SCR-35-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Clients",
+      "w": 1440,
+      "x": 0,
+      "y": 13548
+    },
+    "SCR-35-mobile-detail.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · client details · billing contact",
+      "w": 390,
+      "x": 3590,
+      "y": 13548
+    },
+    "SCR-35-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · clients",
+      "w": 390,
+      "x": 1520,
+      "y": 13548
+    },
+    "SCR-36-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-finance",
+      "title": "Month-end checklist",
+      "w": 1440,
+      "x": 2070,
+      "y": 4120
+    },
+    "SCR-36-mobile.dc.html": {
+      "h": 844,
+      "page": "p-finance",
+      "title": "Phone · month-end checklist",
+      "w": 390,
+      "x": 3590,
+      "y": 4120
+    },
+    "SCR-37-desktop.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-finance",
+      "title": "Payroll corrections",
+      "w": 1440,
+      "x": 0,
+      "y": 5400
+    },
+    "SCR-37-mobile.dc.html": {
+      "h": 844,
+      "page": "p-finance",
+      "title": "Phone · payroll corrections",
+      "w": 390,
+      "x": 1520,
+      "y": 5400
+    },
+    "SCR-38-desktop.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-projects",
+      "title": "Milestones tab",
+      "w": 1440,
+      "x": 0,
+      "y": 9488
+    },
+    "SCR-38-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · milestones tab",
+      "w": 390,
+      "x": 1520,
+      "y": 9488
+    },
     "SITEMAP-desktop.dc.html": {
       "expand": "fill",
       "h": 1500,
@@ -1856,328 +2179,56 @@
       "x": 0,
       "y": 1020
     },
-    "SCR-26-desktop.dc.html": {
+    "SCR-26-desktop-review.dc.html": {
       "x": 0,
-      "y": 140,
-      "w": 1440,
-      "h": 1120,
-      "page": "p-presale",
-      "title": "RFP workspace · requirements",
-      "expand": "fill"
-    },
-    "SCR-26-mobile.dc.html": {
-      "x": 1520,
-      "y": 140,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · RFP requirements"
-    },
-    "SCR-16-desktop-team-input.dc.html": {
-      "x": 1990,
-      "y": 140,
-      "w": 1440,
-      "h": 900,
-      "page": "p-presale",
-      "title": "Record team input (Engineering, QA, Security, Product)",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-team-input.dc.html": {
-      "x": 3510,
-      "y": 140,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · team input"
-    },
-    "SCR-27-desktop.dc.html": {
-      "x": 0,
-      "y": 1660,
+      "y": 3020,
       "w": 1440,
       "h": 1060,
       "page": "p-presale",
-      "title": "Costing sheet · total Unknown until all estimates are in",
+      "title": "Review Tola's suggested answers",
       "expand": "fill"
     },
-    "SCR-27-mobile.dc.html": {
+    "SCR-26-mobile-review.dc.html": {
       "x": 1520,
-      "y": 1660,
+      "y": 3020,
       "w": 390,
       "h": 844,
       "page": "p-presale",
-      "title": "Phone · costing"
+      "title": "Phone · review tola's suggested answers"
     },
-    "SCR-16-desktop-rfp-outcome.dc.html": {
-      "x": 1990,
-      "y": 1660,
+    "SCR-27-desktop-adjust.dc.html": {
+      "x": 2070,
+      "y": 3020,
       "w": 1440,
       "h": 1000,
       "page": "p-presale",
-      "title": "Record the RFP outcome (won / lost)",
+      "title": "Costing · add an adjustment",
       "expand": "fill"
     },
-    "SCR-16-mobile-rfp-outcome.dc.html": {
-      "x": 3510,
-      "y": 1660,
+    "SCR-27-mobile-adjust.dc.html": {
+      "x": 3590,
+      "y": 3020,
       "w": 390,
       "h": 844,
       "page": "p-presale",
-      "title": "Phone · RFP outcome"
+      "title": "Phone · costing · add an adjustment"
     },
-    "SCR-38-desktop.dc.html": {
+    "SCR-39-desktop.dc.html": {
       "x": 0,
-      "y": 9488,
+      "y": 6364,
       "w": 1440,
-      "h": 860,
-      "page": "p-projects",
-      "title": "Milestones tab",
-      "expand": "fill"
-    },
-    "SCR-38-mobile.dc.html": {
-      "x": 1520,
-      "y": 9488,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · milestones tab"
-    },
-    "SCR-29-desktop.dc.html": {
-      "x": 2070,
-      "y": 9488,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-projects",
-      "title": "Actions tab",
-      "expand": "fill"
-    },
-    "SCR-29-mobile.dc.html": {
-      "x": 3590,
-      "y": 9488,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · actions tab"
-    },
-    "SCR-28-desktop.dc.html": {
-      "x": 0,
-      "y": 10788,
-      "w": 1440,
-      "h": 1100,
-      "page": "p-projects",
-      "title": "Confirm the minutes",
-      "expand": "fill"
-    },
-    "SCR-28-mobile.dc.html": {
-      "x": 1520,
-      "y": 10788,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · confirm the minutes"
-    },
-    "SCR-30-desktop.dc.html": {
-      "x": 2070,
-      "y": 10788,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-projects",
-      "title": "Issue detail · owner follow-up",
-      "expand": "fill"
-    },
-    "SCR-30-mobile.dc.html": {
-      "x": 3590,
-      "y": 10788,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · issue detail · owner follow-up"
-    },
-    "SCR-31-desktop.dc.html": {
-      "x": 0,
-      "y": 12188,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Change request detail",
-      "expand": "fill"
-    },
-    "SCR-31-mobile.dc.html": {
-      "x": 1520,
-      "y": 12188,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · change request detail"
-    },
-    "SCR-33-desktop.dc.html": {
-      "x": 2070,
-      "y": 12188,
-      "w": 1440,
-      "h": 1060,
-      "page": "p-projects",
-      "title": "Retrospective · before closure",
-      "expand": "fill"
-    },
-    "SCR-33-mobile.dc.html": {
-      "x": 3590,
-      "y": 12188,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · retrospective · before closure"
-    },
-    "SCR-03-desktop-payment-exception.dc.html": {
-      "x": 0,
-      "y": 8640,
-      "w": 1440,
-      "h": 960,
-      "page": "p-item",
-      "title": "Short payment decision",
-      "expand": "fill"
-    },
-    "SCR-03-mobile-payment-exception.dc.html": {
-      "x": 1520,
-      "y": 8640,
-      "w": 390,
-      "h": 844,
-      "page": "p-item",
-      "title": "Phone · short payment decision"
-    },
-    "SCR-32-desktop.dc.html": {
-      "x": 0,
-      "y": 4120,
-      "w": 1440,
-      "h": 980,
-      "page": "p-finance",
-      "title": "Payment reminder · draft to send",
-      "expand": "fill"
-    },
-    "SCR-32-mobile.dc.html": {
-      "x": 1520,
-      "y": 4120,
-      "w": 390,
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · payment reminder · draft to send"
-    },
-    "SCR-36-desktop.dc.html": {
-      "x": 2070,
-      "y": 4120,
-      "w": 1440,
-      "h": 900,
-      "page": "p-finance",
-      "title": "Month-end checklist",
-      "expand": "fill"
-    },
-    "SCR-36-mobile.dc.html": {
-      "x": 3590,
-      "y": 4120,
-      "w": 390,
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · month-end checklist"
-    },
-    "SCR-37-desktop.dc.html": {
-      "x": 0,
-      "y": 5400,
-      "w": 1440,
-      "h": 860,
-      "page": "p-finance",
-      "title": "Payroll corrections",
-      "expand": "fill"
-    },
-    "SCR-37-mobile.dc.html": {
-      "x": 1520,
-      "y": 5400,
-      "w": 390,
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · payroll corrections"
-    },
-    "SCR-13-desktop-rules.dc.html": {
-      "x": 0,
-      "y": 3804,
-      "w": 1440,
-      "h": 1060,
+      "h": 1500,
       "page": "p-setup",
-      "title": "Setup · rules",
+      "title": "Costing rule · PSL standard pricing",
       "expand": "fill"
     },
-    "SCR-13-mobile-rules.dc.html": {
+    "SCR-39-mobile.dc.html": {
       "x": 1520,
-      "y": 3804,
+      "y": 6364,
       "w": 390,
       "h": 844,
       "page": "p-setup",
-      "title": "Phone · setup · rules"
-    },
-    "SCR-13-desktop-delegation.dc.html": {
-      "x": 2070,
-      "y": 3804,
-      "w": 1440,
-      "h": 900,
-      "page": "p-setup",
-      "title": "Setup · delegation",
-      "expand": "fill"
-    },
-    "SCR-13-mobile-delegation.dc.html": {
-      "x": 3590,
-      "y": 3804,
-      "w": 390,
-      "h": 844,
-      "page": "p-setup",
-      "title": "Phone · setup · delegation"
-    },
-    "SCR-34-desktop.dc.html": {
-      "x": 0,
-      "y": 5164,
-      "w": 1440,
-      "h": 900,
-      "page": "p-setup",
-      "title": "Setup · templates",
-      "expand": "fill"
-    },
-    "SCR-34-mobile.dc.html": {
-      "x": 1520,
-      "y": 5164,
-      "w": 390,
-      "h": 844,
-      "page": "p-setup",
-      "title": "Phone · setup · templates"
-    },
-    "SCR-35-desktop.dc.html": {
-      "x": 0,
-      "y": 13548,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Clients",
-      "expand": "fill"
-    },
-    "SCR-35-mobile.dc.html": {
-      "x": 1520,
-      "y": 13548,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · clients"
-    },
-    "SCR-35-desktop-detail.dc.html": {
-      "x": 2070,
-      "y": 13548,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "Client details · billing contact",
-      "expand": "fill"
-    },
-    "SCR-35-mobile-detail.dc.html": {
-      "x": 3590,
-      "y": 13548,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Phone · client details · billing contact"
+      "title": "Phone · costing rule · psl standard pricing"
     }
   },
   "createdOnFiles": {
@@ -2237,7 +2288,20 @@
     "lines-title",
     "p-projects-25-title",
     "p-mywork-roles",
-    "p-mywork-23-title"
+    "p-mywork-23-title",
+    "p-projects-SCR-38",
+    "p-projects-SCR-28",
+    "p-projects-SCR-31",
+    "p-item-SCR-03-desktop-payment-exception",
+    "p-finance-SCR-32-desktop",
+    "p-finance-SCR-37-desktop",
+    "p-setup-SCR-13-desktop-rules",
+    "p-setup-SCR-34-desktop",
+    "p-projects-SCR-35-desktop",
+    "p-presale-26",
+    "p-presale-27",
+    "p-presale-review",
+    "p-setup-39"
   ],
   "notes": {
     "a-thesis": {
@@ -2424,6 +2488,24 @@
       "x": 0,
       "y": 0
     },
+    "p-finance-SCR-32-desktop": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-finance",
+      "text": "SCR-32 · Payment reminder · SCR-36 · Month-end",
+      "w": 240,
+      "x": 0,
+      "y": 3980
+    },
+    "p-finance-SCR-37-desktop": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-finance",
+      "text": "SCR-37 · Payroll corrections (HR Lead, restricted)",
+      "w": 240,
+      "x": 0,
+      "y": 5260
+    },
     "p-item-02-title": {
       "kind": "title1",
       "maxW": 3800,
@@ -2450,6 +2532,15 @@
       "w": 240,
       "x": 0,
       "y": 7200
+    },
+    "p-item-SCR-03-desktop-payment-exception": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-item",
+      "text": "SCR-03 · Short payment decision (Finance Lead)",
+      "w": 240,
+      "x": 0,
+      "y": 8500
     },
     "p-mywork-01-title": {
       "kind": "title1",
@@ -2514,6 +2605,24 @@
       "x": 0,
       "y": 1460
     },
+    "p-presale-26": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "SCR-26 · RFP response workspace · requirements matrix",
+      "w": 240,
+      "x": 0,
+      "y": -116
+    },
+    "p-presale-27": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "SCR-27 · Costing sheet · SCR-16 · Record the RFP outcome",
+      "w": 240,
+      "x": 0,
+      "y": 1405
+    },
     "p-projects-07-title": {
       "kind": "title1",
       "maxW": 3800,
@@ -2568,6 +2677,51 @@
       "x": 0,
       "y": 0
     },
+    "p-projects-25-title": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects",
+      "text": "SCR-25 · Weekly client report · the PM writes the client update",
+      "w": 240,
+      "x": 0,
+      "y": 7868
+    },
+    "p-projects-SCR-28": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects",
+      "text": "SCR-28 · Confirm the minutes · SCR-30 · Issue detail",
+      "w": 240,
+      "x": 0,
+      "y": 10648
+    },
+    "p-projects-SCR-31": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects",
+      "text": "SCR-31 · Change request detail · SCR-33 · Retrospective",
+      "w": 240,
+      "x": 0,
+      "y": 12048
+    },
+    "p-projects-SCR-35-desktop": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects",
+      "text": "SCR-35 · Clients · client details",
+      "w": 240,
+      "x": 0,
+      "y": 13408
+    },
+    "p-projects-SCR-38": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects",
+      "text": "SCR-38 · Milestones tab · SCR-29 · Actions tab",
+      "w": 240,
+      "x": 0,
+      "y": 9348
+    },
     "p-setup-13-title": {
       "kind": "title1",
       "maxW": 3800,
@@ -2586,102 +2740,39 @@
       "x": 0,
       "y": 2364
     },
-    "p-projects-25-title": {
+    "p-setup-SCR-13-desktop-rules": {
       "kind": "title1",
       "maxW": 3800,
-      "page": "p-projects",
-      "text": "SCR-25 · Weekly client report · the PM writes the client update",
+      "page": "p-setup",
+      "text": "SCR-13 · Rules · Delegation",
       "w": 240,
       "x": 0,
-      "y": 7868
-    },
-    "p-presale-26": {
-      "x": 0,
-      "y": 0,
-      "text": "SCR-26 · RFP response workspace · requirements matrix",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale"
-    },
-    "p-presale-27": {
-      "x": 0,
-      "y": 1520,
-      "text": "SCR-27 · Costing sheet · SCR-16 · Record the RFP outcome",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale"
-    },
-    "p-projects-SCR-38": {
-      "x": 0,
-      "y": 9348,
-      "text": "SCR-38 · Milestones tab · SCR-29 · Actions tab",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-projects"
-    },
-    "p-projects-SCR-28": {
-      "x": 0,
-      "y": 10648,
-      "text": "SCR-28 · Confirm the minutes · SCR-30 · Issue detail",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-projects"
-    },
-    "p-projects-SCR-31": {
-      "x": 0,
-      "y": 12048,
-      "text": "SCR-31 · Change request detail · SCR-33 · Retrospective",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-projects"
-    },
-    "p-item-SCR-03-desktop-payment-exception": {
-      "x": 0,
-      "y": 8500,
-      "text": "SCR-03 · Short payment decision (Finance Lead)",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-item"
-    },
-    "p-finance-SCR-32-desktop": {
-      "x": 0,
-      "y": 3980,
-      "text": "SCR-32 · Payment reminder · SCR-36 · Month-end",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance"
-    },
-    "p-finance-SCR-37-desktop": {
-      "x": 0,
-      "y": 5260,
-      "text": "SCR-37 · Payroll corrections (HR Lead, restricted)",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance"
-    },
-    "p-setup-SCR-13-desktop-rules": {
-      "x": 0,
-      "y": 3664,
-      "text": "SCR-13 · Rules · Delegation",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-setup"
+      "y": 3664
     },
     "p-setup-SCR-34-desktop": {
-      "x": 0,
-      "y": 5024,
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-setup",
       "text": "SCR-34 · Templates",
+      "w": 240,
+      "x": 0,
+      "y": 5024
+    },
+    "p-presale-review": {
+      "x": 0,
+      "y": 2880,
+      "text": "SCR-26 · Review Tola's suggested answers · SCR-27 · Add a project adjustment",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale"
+    },
+    "p-setup-39": {
+      "x": 0,
+      "y": 6224,
+      "text": "SCR-39 · Costing rule (studio-wide)",
       "kind": "title1",
       "maxW": 3800,
       "page": "p-setup"
-    },
-    "p-projects-SCR-35-desktop": {
-      "x": 0,
-      "y": 13408,
-      "text": "SCR-35 · Clients · client details",
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-projects"
     }
   },
   "order": [
@@ -2898,14 +2989,6 @@
     "SCR-23-mobile.dc.html",
     "SCR-24-desktop.dc.html",
     "SCR-24-mobile.dc.html",
-    "SCR-26-desktop.dc.html",
-    "SCR-26-mobile.dc.html",
-    "SCR-16-desktop-team-input.dc.html",
-    "SCR-16-mobile-team-input.dc.html",
-    "SCR-27-desktop.dc.html",
-    "SCR-27-mobile.dc.html",
-    "SCR-16-desktop-rfp-outcome.dc.html",
-    "SCR-16-mobile-rfp-outcome.dc.html",
     "SCR-38-desktop.dc.html",
     "SCR-38-mobile.dc.html",
     "SCR-29-desktop.dc.html",
@@ -2935,7 +3018,21 @@
     "SCR-35-desktop.dc.html",
     "SCR-35-mobile.dc.html",
     "SCR-35-desktop-detail.dc.html",
-    "SCR-35-mobile-detail.dc.html"
+    "SCR-35-mobile-detail.dc.html",
+    "SCR-26-desktop.dc.html",
+    "SCR-26-mobile.dc.html",
+    "SCR-16-desktop-team-input.dc.html",
+    "SCR-16-mobile-team-input.dc.html",
+    "SCR-27-desktop.dc.html",
+    "SCR-27-mobile.dc.html",
+    "SCR-16-desktop-rfp-outcome.dc.html",
+    "SCR-16-mobile-rfp-outcome.dc.html",
+    "SCR-26-desktop-review.dc.html",
+    "SCR-26-mobile-review.dc.html",
+    "SCR-27-desktop-adjust.dc.html",
+    "SCR-27-mobile-adjust.dc.html",
+    "SCR-39-desktop.dc.html",
+    "SCR-39-mobile.dc.html"
   ],
   "pages": [
     {

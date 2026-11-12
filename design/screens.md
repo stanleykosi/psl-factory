@@ -46,14 +46,15 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-23 | J-01 | Log a received RFP | states: default | components: CMP-01, CMP-23, CMP-24 | artboards: SCR-23-desktop, SCR-23-mobile
 - SCR-24 | J-01, J-07 | Assign the accountable PM | states: default | components: CMP-01, CMP-06, CMP-24 | artboards: SCR-24-desktop, SCR-24-mobile
 - SCR-25 | J-03 | Write the weekly client update | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-25-desktop, SCR-25-mobile
-- SCR-26 | J-01 | RFP response workspace (requirements matrix) | states: default | components: CMP-01, CMP-09, CMP-18, CMP-22, CMP-24 | artboards: SCR-26-desktop, SCR-26-mobile
-- SCR-27 | J-01 | Costing sheet | states: default | components: CMP-01, CMP-24 | artboards: SCR-27-desktop, SCR-27-mobile
+- SCR-26 | J-01 | RFP response workspace (requirements matrix) | states: default, review | components: CMP-01, CMP-09, CMP-18, CMP-22, CMP-24 | artboards: SCR-26-desktop, SCR-26-mobile, SCR-26-desktop-review, SCR-26-mobile-review
+- SCR-27 | J-01 | Costing sheet | states: default, adjust | components: CMP-01, CMP-24 | artboards: SCR-27-desktop, SCR-27-mobile, SCR-27-desktop-adjust, SCR-27-mobile-adjust
 - SCR-28 | J-03 | Confirm the minutes | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-28-desktop, SCR-28-mobile
 - SCR-29 | J-08 | Project actions | states: default | components: CMP-01, CMP-22 | artboards: SCR-29-desktop, SCR-29-mobile
 - SCR-30 | J-08 | Issue detail | states: default | components: CMP-01, CMP-04, CMP-09, CMP-18 | artboards: SCR-30-desktop, SCR-30-mobile
 - SCR-31 | J-08 | Change request detail | states: default | components: CMP-01, CMP-09, CMP-18 | artboards: SCR-31-desktop, SCR-31-mobile
 - SCR-33 | J-08 | Project retrospective | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-33-desktop, SCR-33-mobile
 - SCR-38 | J-04, J-08 | Project milestones | states: default | components: CMP-01 | artboards: SCR-38-desktop, SCR-38-mobile
+- SCR-39 | J-07 | Setup · costing rule (studio-wide) | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-39-desktop, SCR-39-mobile
 - SCR-32 | J-04 | Payment reminder | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-32-desktop, SCR-32-mobile
 - SCR-34 | J-07 | Setup · templates | states: default | components: CMP-01, CMP-22, CMP-24 | artboards: SCR-34-desktop, SCR-34-mobile
 - SCR-35 | J-04, J-07 | Clients and client details | states: default, detail | components: CMP-01, CMP-22, CMP-24 | artboards: SCR-35-desktop, SCR-35-mobile, SCR-35-desktop-detail, SCR-35-mobile-detail
@@ -101,6 +102,7 @@ Sample data until the architecture package exists. Sources are the current backe
 - SCR-31 — change stages, impact assessments by team (recorded by PM), decision roles, agent-drafted notice (backend: pmo-change).
 - SCR-33 — retrospective sections citing project records, participants, closure checklist (closure prerequisite).
 - SCR-38 — milestones from the signed SOW: contract amount (or Unknown), completion and proof, invoice state, paid state — each a separate fact.
+- SCR-39 — the studio-wide costing rule: inputs, priced parameters each with its source, calculation steps, worked examples with match results, rule and examples owners (different people), versions.
 - SCR-32 — overdue invoice facts and an agent-drafted reminder that a Finance person edits and sends; delivery checked after sending.
 - SCR-34 — document templates per line and whether each is a test template or PSL's own; versioned uploads.
 - SCR-35 — client register (projects, billing contact, readiness) and client details (billing contact needed before invoices start).
@@ -134,3 +136,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — audit batch 2 (delivery): SCR-28 confirm minutes, SCR-29 actions tab, SCR-30 issue detail, SCR-31 change detail, SCR-33 retrospective, SCR-38 milestones tab; one project tab bar (Journey, Milestones, Documents, Money, Registers, Actions) added to SCR-07, 08, 11, 12.
 - 2026-11-12 — audit batch 3 (finance and setup): SCR-03 short-payment decision, SCR-32 payment reminder, SCR-13 rules and delegation tabs, SCR-34 templates, SCR-35 clients and client details, SCR-36 month-end, SCR-37 payroll corrections. All 15 audit items now drawn.
 - 2026-11-12 — state tags never wrap (521 tags on 112 boards), per design engineer feedback.
+- 2026-11-12 — design engineer decisions: one studio-wide costing rule reused by every project (backend change needed); per-project adjustments on the costing sheet, role-based, visible as their own line, restarting approvals. Added SCR-39 costing rule, SCR-27 adjust state, SCR-26 review-Tola-suggestions state, two Setup rules (who may adjust; adjustment limit).

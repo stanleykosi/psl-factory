@@ -112,3 +112,10 @@ Built today: Log a received RFP (SCR-23), Assign the accountable PM (SCR-24), Wr
 ## Progress
 
 - 2026-11-12 — all 15 missing screens drawn (batches 1–3): SCR-26, SCR-27, SCR-16 team-input and RFP-outcome, SCR-28, SCR-29, SCR-30, SCR-31, SCR-33, SCR-38 and the project tab bar, SCR-03 payment-exception, SCR-32, SCR-13 rules and delegation, SCR-34, SCR-35, SCR-36, SCR-37. Still open: the three backend conflicts (A–C), the two backend questions, Needs me vs Decisions, Exceptions labelling, Overview concepts, Start work for CEO/CTO.
+
+## Costing: backend changes requested (design engineer decision, 12 Nov)
+
+- **One studio-wide costing rule reused across projects.** Today `CostingRule` belongs to one project workspace (`apps/pmo/costing_models.py`), so PSL would re-enter its pricing for every RFP. Requested: a studio-level rule that each project references by version.
+- **Per-project adjustments.** Add a "project adjustment" input to the rule (money, default 0) entered on the costing sheet with area, amount, reason and optional proof. An adjustment creates a new costing version and restarts the approval order (PM → Head of PMO → CEO → PMO Lead). Tola may suggest an adjustment; only a permitted person adds it.
+- **Two new policy settings**: who may add an adjustment (role-based; suggested PM and PMO Lead) and an optional per-role limit. Both "Not set" until PSL decides.
+- **Documents to request from PSL**: current pricing workbook or rate card; 3–5 past quotes or SOWs with their costing (including one discounted or fixed-price) as worked examples; any internal guidance on discounts or premiums.
