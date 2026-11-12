@@ -17,9 +17,11 @@ The design system for PSL's operations factory, from concept C, Assembly line. E
 - **The line is the structure.** Panels and tables sit on `steel` in `surface` boxes bounded by a `rule-strong` (2px) border in `ink`. Corners are `radius-none`; buttons and tags take `radius-sm`.
 - **Colour has one job each.**
   - `signal` (PSL orange) means "a person must act here": the current station, the decision panel's header, Start work and the navigation underline.
-  - `action` (blue) is for buttons and links, and for everything agents do: agent panels use `action-tint` with an `action` border.
+  - `action` (blue) is for buttons and links, and for everything agents do: agent panels use `action-tint` with an `action` border. A blue tag always means agent or processing work.
   - `verified` (green) is for verified outputs.
-  - `waiting` (amber) is for waiting and for sample labels.
+  - `waiting` (amber) is for waiting on someone else (the client, an approver, a team) and for sample or test labels.
+  - `neutral` (grey) is for tags that are closed, not applicable or just information: Cancelled, Out of scope, Not yet, people and role labels. Priority is a neutral tag with a small mono marker (■■■ high, ■■□ medium, ■□□ low), never a status colour.
+  - Tags use only these five families; a state has exactly one colour everywhere.
   - Every state is also written in words, so colour is never the only signal.
 - **Facts strip:** earned facts are `ink` with `on-strong` text; the current one is `signal-tint` with `signal-ink` text; facts not yet earned are `surface` with `ink-muted` text.
 - **Type:**

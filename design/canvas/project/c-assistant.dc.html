@@ -33,7 +33,7 @@ a{color:#2459D6}a:hover{color:#16388F}
   <div style="flex-grow: 1; display: flex; flex-wrap: wrap; align-items: stretch;">
 
     <aside aria-label="Conversations" style="flex: 1 1 240px; max-width: 270px; box-sizing: border-box; border-right: 2px solid #1F2427; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-      <button type="button" onClick="{{goHome}}" style="min-height: 44px; box-shadow: inset 0 0 0 2px #1F2427; background: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap;">+ New request</button>
+      <button type="button" onClick="{{goHome}}" style="border: none; min-height: 44px; box-shadow: inset 0 0 0 2px #1F2427; background: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap;">+ New request</button>
       <p style="margin: 8px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #4A5357;">TODAY</p>
       <sc-for list="{{threadList}}" as="t" hint-placeholder-count="4">
         <button type="button" onClick="{{t.open}}" style="text-align: left; padding: 9px 10px; border: none; background: {{t.bg}}; color: {{t.fg}}; font: inherit; cursor: pointer; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center">
@@ -90,7 +90,7 @@ a{color:#2459D6}a:hover{color:#16388F}
                   </dl>
                   <div style="padding: 0 14px 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
                     <button type="button" onClick="{{start}}" style="min-height: 44px; padding: 0 16px; border: none; background: #C8401C; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap;">{{thread.startLabel}}</button>
-                    <button type="button" style="min-height: 44px; padding: 0 16px; box-shadow: inset 0 0 0 2px #1F2427; background: #FFFFFF; font: inherit; font-weight: 500; cursor: pointer; white-space: nowrap;">Edit draft</button>
+                    <button type="button" style="border: none; min-height: 44px; padding: 0 16px; box-shadow: inset 0 0 0 2px #1F2427; background: #FFFFFF; font: inherit; font-weight: 500; cursor: pointer; white-space: nowrap;">Edit draft</button>
                     <span style="font-size: 12px; color: #4A5357;">{{thread.next}}</span>
                   </div>
                   <sc-if value="{{started}}" hint-placeholder-val="{{false}}">
@@ -122,7 +122,7 @@ a{color:#2459D6}a:hover{color:#16388F}
       </form>
       <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: -12px 28px 28px; max-width: 880px;">
         <sc-for list="{{shortcuts}}" as="g" hint-placeholder-count="4">
-          <button type="button" onClick="{{g.open}}" style="min-height: 36px; padding: 0 12px; box-shadow: inset 0 0 0 1.5px #C9CDC7; background: #FFFFFF; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap;">{{g.label}}</button>
+          <button type="button" onClick="{{g.open}}" style="border: none; min-height: 36px; padding: 0 12px; box-shadow: inset 0 0 0 1.5px #C9CDC7; background: #FFFFFF; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap;">{{g.label}}</button>
         </sc-for>
       </div>
     </main>
