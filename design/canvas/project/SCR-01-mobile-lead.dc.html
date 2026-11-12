@@ -22,7 +22,7 @@
       <li><a href="SCR-02-mobile.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 12px; background: #FFFFFF; border: 2px solid #1F2427; text-decoration: none; color: #1F2427;">
         <span style="display: flex; justify-content: space-between; gap: 8px;"><span style="font-weight: 600;">{{r.title}}</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">{{r.age}}</span></span>
         <span style="display: flex; gap: 3px;"><sc-for list="{{r.steps}}" as="s" hint-placeholder-count="6"><span style="flex: 1; height: 6px; background: {{s}};"></span></sc-for></span>
-        <span style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;"><span style="padding: 2px 6px; font-size: 11px; font-weight: 600; background: {{r.bg}}; color: {{r.color}};">{{r.state}}</span><span style="font-size: 13px; color: #4A5357;">{{r.station}}</span></span>
+        <span style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;"><span style="padding: 2px 6px; font-size: 11px; font-weight: 600; background: {{r.bg}}; color: {{r.color}}; white-space: nowrap;">{{r.state}}</span><span style="font-size: 13px; color: #4A5357;">{{r.station}}</span></span>
       </a></li>
     </sc-for>
   </ul>

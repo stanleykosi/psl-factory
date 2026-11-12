@@ -133,3 +133,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — audit batch 1 (pre-sale): SCR-26 RFP response workspace, SCR-27 costing sheet, SCR-16 team-input and RFP-outcome variants; new canvas page "Pre-sale (RFP, costing)".
 - 2026-11-12 — audit batch 2 (delivery): SCR-28 confirm minutes, SCR-29 actions tab, SCR-30 issue detail, SCR-31 change detail, SCR-33 retrospective, SCR-38 milestones tab; one project tab bar (Journey, Milestones, Documents, Money, Registers, Actions) added to SCR-07, 08, 11, 12.
 - 2026-11-12 — audit batch 3 (finance and setup): SCR-03 short-payment decision, SCR-32 payment reminder, SCR-13 rules and delegation tabs, SCR-34 templates, SCR-35 clients and client details, SCR-36 month-end, SCR-37 payroll corrections. All 15 audit items now drawn.
+- 2026-11-12 — state tags never wrap (521 tags on 112 boards), per design engineer feedback.
