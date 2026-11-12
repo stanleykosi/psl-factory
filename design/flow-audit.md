@@ -108,3 +108,7 @@ Legend: ✅ covered · 🟡 partly covered · ❌ missing screen · ⚠️ confl
 15. One project page with tabs (X.1) and a milestone list (4.1)
 
 Built today: Log a received RFP (SCR-23), Assign the accountable PM (SCR-24), Write the weekly client update (SCR-25), corrected weekly report line flow.
+
+## Progress
+
+- 2026-11-12 — all 15 missing screens drawn (batches 1–3): SCR-26, SCR-27, SCR-16 team-input and RFP-outcome, SCR-28, SCR-29, SCR-30, SCR-31, SCR-33, SCR-38 and the project tab bar, SCR-03 payment-exception, SCR-32, SCR-13 rules and delegation, SCR-34, SCR-35, SCR-36, SCR-37. Still open: the three backend conflicts (A–C), the two backend questions, Needs me vs Decisions, Exceptions labelling, Overview concepts, Start work for CEO/CTO.

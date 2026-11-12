@@ -23,7 +23,7 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 
 - SCR-01 | J-01, J-02, J-05 | Work queue | states: default, my-work, empty, loading, error, filter, lead-view | components: CMP-01, CMP-03, CMP-05, CMP-06, CMP-07, CMP-08, CMP-16, CMP-18, CMP-22, CMP-23 | artboards: SCR-01-desktop, SCR-01-mobile, SCR-01-desktop-empty, SCR-01-mobile-empty, SCR-01-desktop-my-work, SCR-01-mobile-my-work, SCR-01-desktop-filter, SCR-01-mobile-filter, SCR-01-mobile-lead
 - SCR-02 | J-01, J-04, J-05, J-07 | Work item | states: default, ready, processing, waiting, setup-needed, awaiting-reconciliation, cancelled, owner-needed, effect-uncertain, verified, permission, issue | components: CMP-01, CMP-02, CMP-04, CMP-05, CMP-09, CMP-10, CMP-14, CMP-16, CMP-18, CMP-24 | artboards: SCR-02-desktop, SCR-02-mobile, SCR-02-desktop-owner-needed, SCR-02-mobile-owner-needed, SCR-02-desktop-effect-uncertain, SCR-02-mobile-effect-uncertain, SCR-02-desktop-verified, SCR-02-mobile-verified, SCR-02-desktop-processing, SCR-02-mobile-processing, SCR-02-desktop-permission, SCR-02-mobile-permission, SCR-02-desktop-ready, SCR-02-mobile-ready, SCR-02-desktop-waiting, SCR-02-mobile-waiting, SCR-02-desktop-setup-needed, SCR-02-mobile-setup-needed, SCR-02-desktop-awaiting-reconciliation, SCR-02-mobile-awaiting-reconciliation, SCR-02-desktop-cancelled, SCR-02-mobile-cancelled, SCR-02-desktop-issue, SCR-02-mobile-issue
-- SCR-03 | J-02 | Decision on a phone | states: default, submitted, not-yours, stale-version | components: CMP-03, CMP-05, CMP-10, CMP-11, CMP-14, CMP-16, CMP-18, CMP-24 | artboards: SCR-03-desktop, SCR-03-mobile, SCR-03-desktop-done, SCR-03-mobile-done, SCR-03-desktop-stale, SCR-03-mobile-stale, SCR-03-desktop-not-yours, SCR-03-mobile-not-yours, SCR-03-desktop-ceo-costing, SCR-03-mobile-ceo-costing, SCR-03-desktop-cto-emergency, SCR-03-mobile-cto-emergency
+- SCR-03 | J-02 | Decision on a phone | states: default, submitted, not-yours, stale-version, payment-exception | components: CMP-03, CMP-05, CMP-10, CMP-11, CMP-14, CMP-16, CMP-18, CMP-24 | artboards: SCR-03-desktop, SCR-03-mobile, SCR-03-desktop-done, SCR-03-mobile-done, SCR-03-desktop-stale, SCR-03-mobile-stale, SCR-03-desktop-not-yours, SCR-03-mobile-not-yours, SCR-03-desktop-ceo-costing, SCR-03-mobile-ceo-costing, SCR-03-desktop-cto-emergency, SCR-03-mobile-cto-emergency, SCR-03-desktop-payment-exception, SCR-03-mobile-payment-exception
 - SCR-04 | J-01, J-04 | Start work | states: default, validation, lines | components: CMP-01, CMP-16, CMP-23, CMP-24 | artboards: SCR-04-desktop, SCR-04-mobile, SCR-04-desktop-validation, SCR-04-mobile-validation, SCR-04-desktop-lines, SCR-04-mobile-lines
 - SCR-05 | J-10, J-11 | Assistant | states: default, thread, draft-started, cant | components: CMP-01, CMP-09, CMP-12, CMP-13, CMP-14, CMP-15, CMP-17, CMP-18 | artboards: SCR-05-desktop, SCR-05-mobile, SCR-05-desktop-thread, SCR-05-mobile-thread, SCR-05-desktop-draft-started, SCR-05-mobile-draft-started, SCR-05-desktop-cant, SCR-05-mobile-cant
 - SCR-06 | J-08 | Factory floor | states: default, reduced-motion | components: CMP-01, CMP-08 | artboards: SCR-06-desktop, SCR-06-mobile
@@ -33,7 +33,7 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-10 | J-05 | Exceptions | states: default, empty | components: CMP-01, CMP-03, CMP-05, CMP-22 | artboards: SCR-10-desktop, SCR-10-mobile
 - SCR-11 | J-08 | Registers: issues, changes, RFPs | states: default, empty | components: CMP-01, CMP-07, CMP-22 | artboards: SCR-11-desktop, SCR-11-mobile
 - SCR-12 | J-11 | Report with drill-down | states: default, loading | components: CMP-01 | artboards: SCR-12-desktop, SCR-12-mobile
-- SCR-13 | J-07 | Setup: roles, rules and delegation | states: default, validation, permission, fields | components: CMP-01, CMP-24 | artboards: SCR-13-desktop, SCR-13-mobile, SCR-13-desktop-validation, SCR-13-mobile-validation, SCR-13-desktop-permission, SCR-13-mobile-permission, SCR-13-desktop-fields, SCR-13-mobile-fields
+- SCR-13 | J-07 | Setup: roles, rules and delegation | states: default, validation, permission, fields, rules, delegation | components: CMP-01, CMP-24 | artboards: SCR-13-desktop, SCR-13-mobile, SCR-13-desktop-validation, SCR-13-mobile-validation, SCR-13-desktop-permission, SCR-13-mobile-permission, SCR-13-desktop-fields, SCR-13-mobile-fields, SCR-13-desktop-rules, SCR-13-mobile-rules, SCR-13-desktop-delegation, SCR-13-mobile-delegation
 - SCR-14 | J-01, J-04 | Verified outputs | states: default, empty | components: CMP-01, CMP-04, CMP-05, CMP-07, CMP-16, CMP-22 | artboards: SCR-14-desktop, SCR-14-mobile
 - SCR-15 | J-09, J-02 | Alerts and notification settings | states: default, empty, account | components: CMP-01, CMP-18, CMP-19, CMP-22 | artboards: SCR-15-desktop, SCR-15-mobile, SCR-15-desktop-email, SCR-15-mobile-whatsapp, SCR-15-desktop-settings, SCR-15-mobile-settings, SCR-15-desktop-account, SCR-15-mobile-account, SCR-15-desktop-whatsapp, SCR-15-mobile-email
 - SCR-16 | J-03 | Record a response | states: default, validation, success, team-input, rfp-outcome | components: CMP-01, CMP-16, CMP-20, CMP-24 | artboards: SCR-16-desktop, SCR-16-mobile, SCR-16-desktop-validation, SCR-16-mobile-validation, SCR-16-desktop-success, SCR-16-mobile-success, SCR-16-desktop-team-input, SCR-16-mobile-team-input, SCR-16-desktop-rfp-outcome, SCR-16-mobile-rfp-outcome
@@ -54,6 +54,11 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 - SCR-31 | J-08 | Change request detail | states: default | components: CMP-01, CMP-09, CMP-18 | artboards: SCR-31-desktop, SCR-31-mobile
 - SCR-33 | J-08 | Project retrospective | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-33-desktop, SCR-33-mobile
 - SCR-38 | J-04, J-08 | Project milestones | states: default | components: CMP-01 | artboards: SCR-38-desktop, SCR-38-mobile
+- SCR-32 | J-04 | Payment reminder | states: default | components: CMP-01, CMP-09, CMP-18, CMP-24 | artboards: SCR-32-desktop, SCR-32-mobile
+- SCR-34 | J-07 | Setup · templates | states: default | components: CMP-01, CMP-22, CMP-24 | artboards: SCR-34-desktop, SCR-34-mobile
+- SCR-35 | J-04, J-07 | Clients and client details | states: default, detail | components: CMP-01, CMP-22, CMP-24 | artboards: SCR-35-desktop, SCR-35-mobile, SCR-35-desktop-detail, SCR-35-mobile-detail
+- SCR-36 | J-04 | Month-end | states: default | components: CMP-01, CMP-04, CMP-09, CMP-18 | artboards: SCR-36-desktop, SCR-36-mobile
+- SCR-37 | J-06 | Payroll corrections (restricted) | states: default | components: CMP-01, CMP-22, CMP-24 | artboards: SCR-37-desktop, SCR-37-mobile
 
 - Shared states | all lists and reports | Empty, loading and error pattern for SCR-01, 07, 10, 11, 12, 14, 15 | artboards: STATES-desktop, STATES-mobile
 - Journey J-04 | J-04 | Storyboard: Finance prepares an invoice, step by step, each step linking to its screen | artboards: J04-desktop, J04-mobile
@@ -96,6 +101,11 @@ Sample data until the architecture package exists. Sources are the current backe
 - SCR-31 — change stages, impact assessments by team (recorded by PM), decision roles, agent-drafted notice (backend: pmo-change).
 - SCR-33 — retrospective sections citing project records, participants, closure checklist (closure prerequisite).
 - SCR-38 — milestones from the signed SOW: contract amount (or Unknown), completion and proof, invoice state, paid state — each a separate fact.
+- SCR-32 — overdue invoice facts and an agent-drafted reminder that a Finance person edits and sends; delivery checked after sending.
+- SCR-34 — document templates per line and whether each is a test template or PSL's own; versioned uploads.
+- SCR-35 — client register (projects, billing contact, readiness) and client details (billing contact needed before invoices start).
+- SCR-36 — month-end checklist from the finance lines' current records, with Unknown where data is missing.
+- SCR-37 — HR correction requests (restricted; identities masked) and the HR Lead decision (backend: payroll.hr_correction).
 
 ## Revisions
 
@@ -122,3 +132,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — added SCR-23 Log a received RFP, SCR-24 Assign the accountable PM, SCR-25 Write the weekly client update; weekly report line flow now shows the PM writing the client text (backend requires human-written, cited content).
 - 2026-11-12 — audit batch 1 (pre-sale): SCR-26 RFP response workspace, SCR-27 costing sheet, SCR-16 team-input and RFP-outcome variants; new canvas page "Pre-sale (RFP, costing)".
 - 2026-11-12 — audit batch 2 (delivery): SCR-28 confirm minutes, SCR-29 actions tab, SCR-30 issue detail, SCR-31 change detail, SCR-33 retrospective, SCR-38 milestones tab; one project tab bar (Journey, Milestones, Documents, Money, Registers, Actions) added to SCR-07, 08, 11, 12.
+- 2026-11-12 — audit batch 3 (finance and setup): SCR-03 short-payment decision, SCR-32 payment reminder, SCR-13 rules and delegation tabs, SCR-34 templates, SCR-35 clients and client details, SCR-36 month-end, SCR-37 payroll corrections. All 15 audit items now drawn.

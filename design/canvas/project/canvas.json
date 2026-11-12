@@ -2025,6 +2025,159 @@
       "h": 844,
       "page": "p-projects",
       "title": "Phone · retrospective · before closure"
+    },
+    "SCR-03-desktop-payment-exception.dc.html": {
+      "x": 0,
+      "y": 8640,
+      "w": 1440,
+      "h": 960,
+      "page": "p-item",
+      "title": "Short payment decision",
+      "expand": "fill"
+    },
+    "SCR-03-mobile-payment-exception.dc.html": {
+      "x": 1520,
+      "y": 8640,
+      "w": 390,
+      "h": 844,
+      "page": "p-item",
+      "title": "Phone · short payment decision"
+    },
+    "SCR-32-desktop.dc.html": {
+      "x": 0,
+      "y": 4120,
+      "w": 1440,
+      "h": 980,
+      "page": "p-finance",
+      "title": "Payment reminder · draft to send",
+      "expand": "fill"
+    },
+    "SCR-32-mobile.dc.html": {
+      "x": 1520,
+      "y": 4120,
+      "w": 390,
+      "h": 844,
+      "page": "p-finance",
+      "title": "Phone · payment reminder · draft to send"
+    },
+    "SCR-36-desktop.dc.html": {
+      "x": 2070,
+      "y": 4120,
+      "w": 1440,
+      "h": 900,
+      "page": "p-finance",
+      "title": "Month-end checklist",
+      "expand": "fill"
+    },
+    "SCR-36-mobile.dc.html": {
+      "x": 3590,
+      "y": 4120,
+      "w": 390,
+      "h": 844,
+      "page": "p-finance",
+      "title": "Phone · month-end checklist"
+    },
+    "SCR-37-desktop.dc.html": {
+      "x": 0,
+      "y": 5400,
+      "w": 1440,
+      "h": 860,
+      "page": "p-finance",
+      "title": "Payroll corrections",
+      "expand": "fill"
+    },
+    "SCR-37-mobile.dc.html": {
+      "x": 1520,
+      "y": 5400,
+      "w": 390,
+      "h": 844,
+      "page": "p-finance",
+      "title": "Phone · payroll corrections"
+    },
+    "SCR-13-desktop-rules.dc.html": {
+      "x": 0,
+      "y": 3804,
+      "w": 1440,
+      "h": 1060,
+      "page": "p-setup",
+      "title": "Setup · rules",
+      "expand": "fill"
+    },
+    "SCR-13-mobile-rules.dc.html": {
+      "x": 1520,
+      "y": 3804,
+      "w": 390,
+      "h": 844,
+      "page": "p-setup",
+      "title": "Phone · setup · rules"
+    },
+    "SCR-13-desktop-delegation.dc.html": {
+      "x": 2070,
+      "y": 3804,
+      "w": 1440,
+      "h": 900,
+      "page": "p-setup",
+      "title": "Setup · delegation",
+      "expand": "fill"
+    },
+    "SCR-13-mobile-delegation.dc.html": {
+      "x": 3590,
+      "y": 3804,
+      "w": 390,
+      "h": 844,
+      "page": "p-setup",
+      "title": "Phone · setup · delegation"
+    },
+    "SCR-34-desktop.dc.html": {
+      "x": 0,
+      "y": 5164,
+      "w": 1440,
+      "h": 900,
+      "page": "p-setup",
+      "title": "Setup · templates",
+      "expand": "fill"
+    },
+    "SCR-34-mobile.dc.html": {
+      "x": 1520,
+      "y": 5164,
+      "w": 390,
+      "h": 844,
+      "page": "p-setup",
+      "title": "Phone · setup · templates"
+    },
+    "SCR-35-desktop.dc.html": {
+      "x": 0,
+      "y": 13548,
+      "w": 1440,
+      "h": 760,
+      "page": "p-projects",
+      "title": "Clients",
+      "expand": "fill"
+    },
+    "SCR-35-mobile.dc.html": {
+      "x": 1520,
+      "y": 13548,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · clients"
+    },
+    "SCR-35-desktop-detail.dc.html": {
+      "x": 2070,
+      "y": 13548,
+      "w": 1440,
+      "h": 960,
+      "page": "p-projects",
+      "title": "Client details · billing contact",
+      "expand": "fill"
+    },
+    "SCR-35-mobile-detail.dc.html": {
+      "x": 3590,
+      "y": 13548,
+      "w": 390,
+      "h": 844,
+      "page": "p-projects",
+      "title": "Phone · client details · billing contact"
     }
   },
   "createdOnFiles": {
@@ -2481,6 +2634,54 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "p-projects"
+    },
+    "p-item-SCR-03-desktop-payment-exception": {
+      "x": 0,
+      "y": 8500,
+      "text": "SCR-03 · Short payment decision (Finance Lead)",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-item"
+    },
+    "p-finance-SCR-32-desktop": {
+      "x": 0,
+      "y": 3980,
+      "text": "SCR-32 · Payment reminder · SCR-36 · Month-end",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-finance"
+    },
+    "p-finance-SCR-37-desktop": {
+      "x": 0,
+      "y": 5260,
+      "text": "SCR-37 · Payroll corrections (HR Lead, restricted)",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-finance"
+    },
+    "p-setup-SCR-13-desktop-rules": {
+      "x": 0,
+      "y": 3664,
+      "text": "SCR-13 · Rules · Delegation",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-setup"
+    },
+    "p-setup-SCR-34-desktop": {
+      "x": 0,
+      "y": 5024,
+      "text": "SCR-34 · Templates",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-setup"
+    },
+    "p-projects-SCR-35-desktop": {
+      "x": 0,
+      "y": 13408,
+      "text": "SCR-35 · Clients · client details",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-projects"
     }
   },
   "order": [
@@ -2716,7 +2917,25 @@
     "SCR-31-desktop.dc.html",
     "SCR-31-mobile.dc.html",
     "SCR-33-desktop.dc.html",
-    "SCR-33-mobile.dc.html"
+    "SCR-33-mobile.dc.html",
+    "SCR-03-desktop-payment-exception.dc.html",
+    "SCR-03-mobile-payment-exception.dc.html",
+    "SCR-32-desktop.dc.html",
+    "SCR-32-mobile.dc.html",
+    "SCR-36-desktop.dc.html",
+    "SCR-36-mobile.dc.html",
+    "SCR-37-desktop.dc.html",
+    "SCR-37-mobile.dc.html",
+    "SCR-13-desktop-rules.dc.html",
+    "SCR-13-mobile-rules.dc.html",
+    "SCR-13-desktop-delegation.dc.html",
+    "SCR-13-mobile-delegation.dc.html",
+    "SCR-34-desktop.dc.html",
+    "SCR-34-mobile.dc.html",
+    "SCR-35-desktop.dc.html",
+    "SCR-35-mobile.dc.html",
+    "SCR-35-desktop-detail.dc.html",
+    "SCR-35-mobile-detail.dc.html"
   ],
   "pages": [
     {
