@@ -36,9 +36,9 @@ a{color:#2459D6}a:hover{color:#16388F}
       <button type="button" onClick="{{goHome}}" style="min-height: 44px; border: 2px solid #1F2427; background: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer;">+ New request</button>
       <p style="margin: 8px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #4A5357;">TODAY</p>
       <sc-for list="{{threadList}}" as="t" hint-placeholder-count="4">
-        <button type="button" onClick="{{t.open}}" style="text-align: left; padding: 9px 10px; border: none; border-left: 4px solid {{t.mark}}; background: {{t.bg}}; font: inherit; cursor: pointer; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center;">
+        <button type="button" onClick="{{t.open}}" style="text-align: left; padding: 9px 10px; border: none; background: {{t.bg}}; color: {{t.fg}}; font: inherit; cursor: pointer; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center;">
           <img src="{{t.avatar}}" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: {{t.tint}};">
-          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{t.title}}</span><span style="font-size: 12px; color: #4A5357;">{{t.sub}}</span></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{t.title}}</span><span style="font-size: 12px; color: {{t.subc}};">{{t.sub}}</span></span>
         </button>
       </sc-for>
       <p style="margin-top: auto; font-size: 12px; color: #4A5357; line-height: 1.5;">Agents use only records you can see. Everything they create is a draft that goes through the usual review.</p>
@@ -53,7 +53,7 @@ a{color:#2459D6}a:hover{color:#16388F}
             <img src="{{a.avatar}}" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: {{a.tint}};">{{a.name}} <span style="font-weight: 400; color: #4A5357;">· {{a.role}}</span>
           </button>
         </sc-for>
-        <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8A5A00;">SAMPLE CONVERSATIONS</span>
+        
       </div>
 
       <sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
@@ -205,7 +205,7 @@ class Component extends DCLogic {
         pressed: String(s.agent === k && !isThread), bg: s.agent === k && !isThread ? A[k].tint : '#FFFFFF', border: s.agent === k && !isThread ? '#1F2427' : '#C9CDC7',
         pick: () => this.setState({ agent: k, view: 'home', started: false }) })),
       threadList: T.map((t, i) => ({ title: t.title, sub: t.sub, avatar: A[t.agent].avatar, tint: A[t.agent].tint,
-        bg: isThread && s.t === i ? '#EEF0ED' : '#FFFFFF', mark: isThread && s.t === i ? '#C8401C' : 'transparent',
+        bg: isThread && s.t === i ? '#1F2427' : '#FFFFFF', fg: isThread && s.t === i ? '#FFFFFF' : '#1F2427', subc: isThread && s.t === i ? '#C8CDD0' : '#4A5357',
         open: () => this.setState({ view: 'thread', t: i, agent: t.agent, started: false }) })),
       shortcuts: [
         { label: 'Create an invoice', open: () => this.setState({ view: 'thread', t: 0, agent: 'chidi', started: false }) },
