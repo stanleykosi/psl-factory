@@ -22,23 +22,25 @@ Format: `- SCR-n | J-n[, J-n] | Screen title | states: … | components: CMP-n, 
 ## Screens
 
 - SCR-01 | J-01, J-02, J-05 | Work queue | states: default, empty, loading, error | components: CMP-01, CMP-03, CMP-05, CMP-06, CMP-07, CMP-08, CMP-16, CMP-18 | artboards: SCR-01-desktop, SCR-01-mobile, SCR-01-desktop-empty, SCR-01-mobile-empty
-- SCR-02 | J-01, J-04, J-05, J-07 | Work item | states: default, processing, owner-needed, effect-uncertain, verified, permission | components: CMP-01, CMP-02, CMP-04, CMP-05, CMP-09, CMP-10, CMP-14, CMP-16, CMP-18 | artboards: SCR-02-desktop, SCR-02-mobile, SCR-02-desktop-owner-needed, SCR-02-mobile-owner-needed, SCR-02-desktop-effect-uncertain, SCR-02-mobile-effect-uncertain, SCR-02-desktop-verified, SCR-02-mobile-verified
-- SCR-03 | J-02 | Decision on a phone | states: default, submitted, not-yours, stale-version | components: CMP-03, CMP-05, CMP-10, CMP-11, CMP-14, CMP-16, CMP-18 | artboards: SCR-03-desktop, SCR-03-mobile, SCR-03-desktop-done, SCR-03-mobile-done, SCR-03-desktop-stale, SCR-03-mobile-stale
-- SCR-04 | J-01, J-04 | Start work | states: default, validation | components: CMP-01, CMP-16 | artboards: SCR-04-desktop, SCR-04-mobile
-- SCR-05 | J-10, J-11 | Assistant | states: default, thread, draft-started, cant | components: CMP-01, CMP-09, CMP-12, CMP-13, CMP-14, CMP-15, CMP-17, CMP-18 | artboards: SCR-05-desktop, SCR-05-mobile, SCR-05-desktop-thread, SCR-05-mobile-thread
+- SCR-02 | J-01, J-04, J-05, J-07 | Work item | states: default, processing, owner-needed, effect-uncertain, verified, permission | components: CMP-01, CMP-02, CMP-04, CMP-05, CMP-09, CMP-10, CMP-14, CMP-16, CMP-18 | artboards: SCR-02-desktop, SCR-02-mobile, SCR-02-desktop-owner-needed, SCR-02-mobile-owner-needed, SCR-02-desktop-effect-uncertain, SCR-02-mobile-effect-uncertain, SCR-02-desktop-verified, SCR-02-mobile-verified, SCR-02-desktop-processing, SCR-02-mobile-processing, SCR-02-desktop-permission, SCR-02-mobile-permission
+- SCR-03 | J-02 | Decision on a phone | states: default, submitted, not-yours, stale-version | components: CMP-03, CMP-05, CMP-10, CMP-11, CMP-14, CMP-16, CMP-18 | artboards: SCR-03-desktop, SCR-03-mobile, SCR-03-desktop-done, SCR-03-mobile-done, SCR-03-desktop-stale, SCR-03-mobile-stale, SCR-03-desktop-not-yours, SCR-03-mobile-not-yours
+- SCR-04 | J-01, J-04 | Start work | states: default, validation | components: CMP-01, CMP-16 | artboards: SCR-04-desktop, SCR-04-mobile, SCR-04-desktop-validation, SCR-04-mobile-validation
+- SCR-05 | J-10, J-11 | Assistant | states: default, thread, draft-started, cant | components: CMP-01, CMP-09, CMP-12, CMP-13, CMP-14, CMP-15, CMP-17, CMP-18 | artboards: SCR-05-desktop, SCR-05-mobile, SCR-05-desktop-thread, SCR-05-mobile-thread, SCR-05-desktop-draft-started, SCR-05-mobile-draft-started, SCR-05-desktop-cant, SCR-05-mobile-cant
 - SCR-06 | J-08 | Factory floor | states: default, reduced-motion | components: CMP-01, CMP-08 | artboards: SCR-06-desktop, SCR-06-mobile
 - SCR-07 | J-08 | Project journey | states: default, empty | components: CMP-01, CMP-02, CMP-03, CMP-05 | artboards: SCR-07-desktop, SCR-07-mobile
-- SCR-08 | J-01, J-02 | Document review | states: default, returned | components: CMP-01, CMP-10, CMP-16 | artboards: SCR-08-desktop, SCR-08-mobile
-- SCR-09 | J-06 | Import and reconcile | states: default, validation, error | components: CMP-01, CMP-16 | artboards: SCR-09-desktop, SCR-09-mobile
+- SCR-08 | J-01, J-02 | Document review | states: default, returned | components: CMP-01, CMP-10, CMP-16 | artboards: SCR-08-desktop, SCR-08-mobile, SCR-08-desktop-returned, SCR-08-mobile-returned
+- SCR-09 | J-06 | Import and reconcile | states: default, validation, error | components: CMP-01, CMP-16 | artboards: SCR-09-desktop, SCR-09-mobile, SCR-09-desktop-error, SCR-09-mobile-error
 - SCR-10 | J-05 | Exceptions | states: default, empty | components: CMP-01, CMP-03, CMP-05 | artboards: SCR-10-desktop, SCR-10-mobile
 - SCR-11 | J-08 | Registers: issues, changes, RFPs | states: default, empty | components: CMP-01, CMP-07 | artboards: SCR-11-desktop, SCR-11-mobile
 - SCR-12 | J-11 | Report with drill-down | states: default, loading | components: CMP-01 | artboards: SCR-12-desktop, SCR-12-mobile
-- SCR-13 | J-07 | Setup: roles, rules and delegation | states: default, validation, permission | components: CMP-01 | artboards: SCR-13-desktop, SCR-13-mobile
+- SCR-13 | J-07 | Setup: roles, rules and delegation | states: default, validation, permission | components: CMP-01 | artboards: SCR-13-desktop, SCR-13-mobile, SCR-13-desktop-validation, SCR-13-mobile-validation, SCR-13-desktop-permission, SCR-13-mobile-permission
 - SCR-14 | J-01, J-04 | Verified outputs | states: default, empty | components: CMP-01, CMP-04, CMP-05, CMP-07, CMP-16 | artboards: SCR-14-desktop, SCR-14-mobile
 - SCR-15 | J-09, J-02 | Alerts and notification settings | states: default, empty | components: CMP-01, CMP-18, CMP-19 | artboards: SCR-15-desktop, SCR-15-mobile, SCR-15-desktop-email, SCR-15-mobile-whatsapp, SCR-15-desktop-settings, SCR-15-mobile-settings
-- SCR-16 | J-03 | Record a response | states: default, validation, success | components: CMP-01, CMP-16, CMP-20 | artboards: SCR-16-desktop, SCR-16-mobile, SCR-16-desktop-validation, SCR-16-mobile-validation
-- SCR-17 | J-02 | Sign in | states: default, error | components: CMP-21 | artboards: SCR-17-mobile, SCR-17-desktop
+- SCR-16 | J-03 | Record a response | states: default, validation, success | components: CMP-01, CMP-16, CMP-20 | artboards: SCR-16-desktop, SCR-16-mobile, SCR-16-desktop-validation, SCR-16-mobile-validation, SCR-16-desktop-success, SCR-16-mobile-success
+- SCR-17 | J-02 | Sign in | states: default, error | components: CMP-21 | artboards: SCR-17-mobile, SCR-17-desktop, SCR-17-desktop-error, SCR-17-mobile-error
 - SCR-18 | J-06 | Restricted payroll matching | states: default, permission | components: CMP-01, CMP-09, CMP-16, CMP-18 | artboards: SCR-18-desktop, SCR-18-mobile, SCR-18-desktop-permission, SCR-18-mobile-permission
+
+- Shared states | all lists and reports | Empty, loading and error pattern for SCR-01, 07, 10, 11, 12, 14, 15 | artboards: STATES-desktop, STATES-mobile
 
 ## Data each screen shows
 
@@ -72,3 +74,4 @@ Sample data until the architecture package exists. Sources are the current backe
 - 2026-11-12 — journeys J-03 and J-06 drawn: SCR-16-desktop, SCR-16-mobile (validation), SCR-09-desktop, SCR-18-desktop, SCR-18-desktop-permission — canvas version 1794453313-75d1.
 - 2026-11-12 — pairs rule applied: every desktop board got its phone board and vice versa (SCR-01, -02, -03, -04, -09, -10, -13, -14, -15 email, -16, -17, -18 and their states) — canvas version 1794453704-1e94.
 - 2026-11-12 — journeys J-08 to J-11 drawn in pairs: SCR-06 factory floor, SCR-07 project journey, SCR-11 registers, SCR-12 report drill-down, SCR-15 notifications and alert settings, SCR-05 assistant and conversation, SCR-08 document review. Design lint: ready for client approval — canvas version 1794454032-781f.
+- 2026-11-12 — states that carry a rule drawn in pairs on the new "States" page: SCR-02 processing and no access, SCR-03 not yours, SCR-04 and SCR-13 validation, SCR-05 draft started and can't share, SCR-08 returned, SCR-09 file error, SCR-13 view only, SCR-16 recorded, SCR-17 sign-in error; plus one shared empty/loading/error pattern (STATES-desktop, STATES-mobile).

@@ -57,6 +57,10 @@
     {
       "id": "j10",
       "name": "J-10 & J-11 · Assistant and documents"
+    },
+    {
+      "id": "states",
+      "name": "States · refusals, errors, empty"
     }
   ],
   "boards": {
@@ -725,6 +729,229 @@
       "h": 844,
       "page": "j10",
       "title": "Phone · document review"
+    },
+    "SCR-02-desktop-processing.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "states",
+      "title": "Work item · agent working",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-processing.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Work item · agent working"
+    },
+    "SCR-02-desktop-permission.dc.html": {
+      "x": 1990,
+      "y": 0,
+      "w": 1440,
+      "h": 720,
+      "page": "states",
+      "title": "Work item · no access",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-permission.dc.html": {
+      "x": 3510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Work item · no access"
+    },
+    "SCR-03-desktop-not-yours.dc.html": {
+      "x": 0,
+      "y": 1020,
+      "w": 1440,
+      "h": 820,
+      "page": "states",
+      "title": "Decision · not yours",
+      "expand": "fill"
+    },
+    "SCR-03-mobile-not-yours.dc.html": {
+      "x": 1520,
+      "y": 1020,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Decision · not yours"
+    },
+    "SCR-04-desktop-validation.dc.html": {
+      "x": 1990,
+      "y": 1020,
+      "w": 1440,
+      "h": 940,
+      "page": "states",
+      "title": "Start work · needs fixing",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-validation.dc.html": {
+      "x": 3510,
+      "y": 1020,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Start work · needs fixing"
+    },
+    "SCR-05-desktop-draft-started.dc.html": {
+      "x": 0,
+      "y": 2080,
+      "w": 1440,
+      "h": 1040,
+      "page": "states",
+      "title": "Assistant · draft started",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-05-mobile-draft-started.dc.html": {
+      "x": 1520,
+      "y": 2080,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Assistant · draft started"
+    },
+    "SCR-05-desktop-cant.dc.html": {
+      "x": 1990,
+      "y": 2080,
+      "w": 1440,
+      "h": 1040,
+      "page": "states",
+      "title": "Assistant · can't share",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SCR-05-mobile-cant.dc.html": {
+      "x": 3510,
+      "y": 2080,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Assistant · can't share"
+    },
+    "SCR-08-desktop-returned.dc.html": {
+      "x": 0,
+      "y": 3240,
+      "w": 1440,
+      "h": 760,
+      "page": "states",
+      "title": "Document · returned",
+      "expand": "fill"
+    },
+    "SCR-08-mobile-returned.dc.html": {
+      "x": 1520,
+      "y": 3240,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Document · returned"
+    },
+    "SCR-09-desktop-error.dc.html": {
+      "x": 1990,
+      "y": 3240,
+      "w": 1440,
+      "h": 720,
+      "page": "states",
+      "title": "Import · file error",
+      "expand": "fill"
+    },
+    "SCR-09-mobile-error.dc.html": {
+      "x": 3510,
+      "y": 3240,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Import · file error"
+    },
+    "SCR-13-desktop-validation.dc.html": {
+      "x": 0,
+      "y": 4204,
+      "w": 1440,
+      "h": 960,
+      "page": "states",
+      "title": "Setup · needs fixing",
+      "expand": "fill"
+    },
+    "SCR-13-mobile-validation.dc.html": {
+      "x": 1520,
+      "y": 4204,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Setup · needs fixing"
+    },
+    "SCR-13-desktop-permission.dc.html": {
+      "x": 1990,
+      "y": 4204,
+      "w": 1440,
+      "h": 720,
+      "page": "states",
+      "title": "Setup · view only",
+      "expand": "fill"
+    },
+    "SCR-13-mobile-permission.dc.html": {
+      "x": 3510,
+      "y": 4204,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Setup · view only"
+    },
+    "SCR-16-desktop-success.dc.html": {
+      "x": 0,
+      "y": 5284,
+      "w": 1440,
+      "h": 720,
+      "page": "states",
+      "title": "Response · recorded",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-success.dc.html": {
+      "x": 1520,
+      "y": 5284,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Response · recorded"
+    },
+    "SCR-17-desktop-error.dc.html": {
+      "x": 1990,
+      "y": 5284,
+      "w": 1440,
+      "h": 760,
+      "page": "states",
+      "title": "Sign in · error",
+      "expand": "fill"
+    },
+    "SCR-17-mobile-error.dc.html": {
+      "x": 3510,
+      "y": 5284,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Sign in · error"
+    },
+    "STATES-desktop.dc.html": {
+      "x": 0,
+      "y": 6248,
+      "w": 1440,
+      "h": 900,
+      "page": "states",
+      "title": "Shared · empty, loading, error",
+      "expand": "fill"
+    },
+    "STATES-mobile.dc.html": {
+      "x": 1520,
+      "y": 6248,
+      "w": 390,
+      "h": 844,
+      "page": "states",
+      "title": "Phone · Shared · empty, loading, error"
     }
   },
   "order": [
@@ -801,7 +1028,33 @@
     "SCR-05-desktop-thread.dc.html",
     "SCR-05-mobile-thread.dc.html",
     "SCR-08-desktop.dc.html",
-    "SCR-08-mobile.dc.html"
+    "SCR-08-mobile.dc.html",
+    "SCR-02-desktop-processing.dc.html",
+    "SCR-02-mobile-processing.dc.html",
+    "SCR-02-desktop-permission.dc.html",
+    "SCR-02-mobile-permission.dc.html",
+    "SCR-03-desktop-not-yours.dc.html",
+    "SCR-03-mobile-not-yours.dc.html",
+    "SCR-04-desktop-validation.dc.html",
+    "SCR-04-mobile-validation.dc.html",
+    "SCR-05-desktop-draft-started.dc.html",
+    "SCR-05-mobile-draft-started.dc.html",
+    "SCR-05-desktop-cant.dc.html",
+    "SCR-05-mobile-cant.dc.html",
+    "SCR-08-desktop-returned.dc.html",
+    "SCR-08-mobile-returned.dc.html",
+    "SCR-09-desktop-error.dc.html",
+    "SCR-09-mobile-error.dc.html",
+    "SCR-13-desktop-validation.dc.html",
+    "SCR-13-mobile-validation.dc.html",
+    "SCR-13-desktop-permission.dc.html",
+    "SCR-13-mobile-permission.dc.html",
+    "SCR-16-desktop-success.dc.html",
+    "SCR-16-mobile-success.dc.html",
+    "SCR-17-desktop-error.dc.html",
+    "SCR-17-mobile-error.dc.html",
+    "STATES-desktop.dc.html",
+    "STATES-mobile.dc.html"
   ],
   "notes": {
     "a-title": {
@@ -947,6 +1200,14 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "j10"
+    },
+    "states-title": {
+      "x": 0,
+      "y": -300,
+      "text": "States that carry a rule: refusals, permissions, returns, validation, success · plus the shared empty / loading / error pattern",
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "states"
     }
   },
   "designSystems": [
