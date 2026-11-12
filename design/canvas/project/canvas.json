@@ -2229,6 +2229,60 @@
       "h": 844,
       "page": "p-setup",
       "title": "Phone · costing rule · psl standard pricing"
+    },
+    "SCR-26-desktop-edit.dc.html": {
+      "x": 0,
+      "y": 4280,
+      "w": 1440,
+      "h": 1060,
+      "page": "p-presale",
+      "title": "SCR-26 · Edit, then accept",
+      "expand": "fill"
+    },
+    "SCR-26-mobile-edit.dc.html": {
+      "x": 1520,
+      "y": 4280,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "SCR-26 · Edit on a phone",
+      "expand": "fill"
+    },
+    "SCR-26-desktop-accepted.dc.html": {
+      "x": 1990,
+      "y": 4280,
+      "w": 1440,
+      "h": 1060,
+      "page": "p-presale",
+      "title": "SCR-26 · Accepted, next suggestion, Undo",
+      "expand": "fill"
+    },
+    "SCR-26-mobile-accepted.dc.html": {
+      "x": 3510,
+      "y": 4280,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "SCR-26 · Accepted on a phone",
+      "expand": "fill"
+    },
+    "SCR-26-desktop-reject.dc.html": {
+      "x": 0,
+      "y": 5540,
+      "w": 1440,
+      "h": 1180,
+      "page": "p-presale",
+      "title": "SCR-26 · Reject, write my own",
+      "expand": "fill"
+    },
+    "SCR-26-mobile-reject.dc.html": {
+      "x": 1520,
+      "y": 5540,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "SCR-26 · Write my own on a phone",
+      "expand": "fill"
     }
   },
   "createdOnFiles": {
@@ -3032,7 +3086,13 @@
     "SCR-27-desktop-adjust.dc.html",
     "SCR-27-mobile-adjust.dc.html",
     "SCR-39-desktop.dc.html",
-    "SCR-39-mobile.dc.html"
+    "SCR-39-mobile.dc.html",
+    "SCR-26-desktop-edit.dc.html",
+    "SCR-26-mobile-edit.dc.html",
+    "SCR-26-desktop-accepted.dc.html",
+    "SCR-26-mobile-accepted.dc.html",
+    "SCR-26-desktop-reject.dc.html",
+    "SCR-26-mobile-reject.dc.html"
   ],
   "pages": [
     {
