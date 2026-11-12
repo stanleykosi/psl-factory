@@ -1425,9 +1425,9 @@
     },
     "SCR-16-desktop-rfp-outcome.dc.html": {
       "expand": "fill",
-      "h": 1000,
+      "h": 1180,
       "page": "p-presale",
-      "title": "Record the RFP outcome (won / lost)",
+      "title": "Record the outcome · Won",
       "w": 1440,
       "x": 0,
       "y": 10904
@@ -1472,7 +1472,7 @@
     "SCR-16-mobile-rfp-outcome.dc.html": {
       "h": 844,
       "page": "p-presale",
-      "title": "Phone · RFP outcome",
+      "title": "Phone · record · Won",
       "w": 390,
       "x": 1520,
       "y": 10904
@@ -2422,8 +2422,8 @@
       "title": "Phone · submitted"
     },
     "SCR-16-desktop-rfp-won.dc.html": {
-      "x": 1990,
-      "y": 10904,
+      "x": 0,
+      "y": 12360,
       "w": 1440,
       "h": 820,
       "page": "p-presale",
@@ -2431,16 +2431,16 @@
       "expand": "fill"
     },
     "SCR-16-mobile-rfp-won.dc.html": {
-      "x": 3510,
-      "y": 10904,
+      "x": 1520,
+      "y": 12360,
       "w": 390,
       "h": 844,
       "page": "p-presale",
       "title": "Phone · won"
     },
     "SCR-16-desktop-rfp-lost.dc.html": {
-      "x": 3980,
-      "y": 10904,
+      "x": 1990,
+      "y": 12360,
       "w": 1440,
       "h": 820,
       "page": "p-presale",
@@ -2448,8 +2448,8 @@
       "expand": "fill"
     },
     "SCR-16-mobile-rfp-lost.dc.html": {
-      "x": 5500,
-      "y": 10904,
+      "x": 3510,
+      "y": 12360,
       "w": 390,
       "h": 844,
       "page": "p-presale",
@@ -2457,7 +2457,7 @@
     },
     "SCR-41-desktop.dc.html": {
       "x": 0,
-      "y": 12180,
+      "y": 13536,
       "w": 1440,
       "h": 900,
       "page": "p-presale",
@@ -2466,7 +2466,7 @@
     },
     "SCR-41-mobile.dc.html": {
       "x": 1520,
-      "y": 12180,
+      "y": 13536,
       "w": 390,
       "h": 844,
       "page": "p-presale",
@@ -2474,7 +2474,7 @@
     },
     "SCR-41-desktop-register.dc.html": {
       "x": 1990,
-      "y": 12180,
+      "y": 13536,
       "w": 1440,
       "h": 900,
       "page": "p-presale",
@@ -2483,7 +2483,7 @@
     },
     "SCR-41-mobile-register.dc.html": {
       "x": 3510,
-      "y": 12180,
+      "y": 13536,
       "w": 390,
       "h": 844,
       "page": "p-presale",
@@ -2548,6 +2548,91 @@
       "page": "open",
       "title": "Agent at work · 4 concepts",
       "expand": "fill"
+    },
+    "SCR-16-desktop-rfp-outcome-lost.dc.html": {
+      "x": 1990,
+      "y": 10904,
+      "w": 1440,
+      "h": 1180,
+      "page": "p-presale",
+      "title": "Record the outcome · Lost",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-outcome-lost.dc.html": {
+      "x": 3510,
+      "y": 10904,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record · Lost"
+    },
+    "SCR-16-desktop-rfp-outcome-pending.dc.html": {
+      "x": 3980,
+      "y": 10904,
+      "w": 1440,
+      "h": 1180,
+      "page": "p-presale",
+      "title": "Record the outcome · Pending",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-outcome-pending.dc.html": {
+      "x": 5500,
+      "y": 10904,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record · Pending"
+    },
+    "SCR-16-desktop-rfp-outcome-unknown.dc.html": {
+      "x": 5970,
+      "y": 10904,
+      "w": 1440,
+      "h": 1180,
+      "page": "p-presale",
+      "title": "Record the outcome · Unknown",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-outcome-unknown.dc.html": {
+      "x": 7490,
+      "y": 10904,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record · Unknown"
+    },
+    "SCR-16-desktop-rfp-pending.dc.html": {
+      "x": 3980,
+      "y": 12360,
+      "w": 1440,
+      "h": 820,
+      "page": "p-presale",
+      "title": "Decision pending",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-pending.dc.html": {
+      "x": 5500,
+      "y": 12360,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · decision pending"
+    },
+    "SCR-16-desktop-rfp-unknown.dc.html": {
+      "x": 5970,
+      "y": 12360,
+      "w": 1440,
+      "h": 900,
+      "page": "p-presale",
+      "title": "Outcome unknown · follow-up drafted",
+      "expand": "fill"
+    },
+    "SCR-16-mobile-rfp-unknown.dc.html": {
+      "x": 7490,
+      "y": 12360,
+      "w": 390,
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · outcome unknown"
     }
   },
   "createdOnFiles": {
@@ -2627,7 +2712,8 @@
     "p-presale-row6",
     "p-presale-row7",
     "p-presale-row8",
-    "p-presale-row9"
+    "p-presale-row9",
+    "p-presale-row8b"
   ],
   "notes": {
     "a-thesis": {
@@ -3151,7 +3237,7 @@
       "kind": "title1",
       "maxW": 3800,
       "page": "p-presale",
-      "text": "8 · Outcome: record it, then won → engagement or lost → archive (SCR-16)",
+      "text": "8 · Record the outcome: Won, Lost, Pending or Unknown (SCR-16) · same form, only the section for the result changes",
       "w": 240,
       "x": 0,
       "y": 10788
@@ -3163,7 +3249,16 @@
       "text": "9 · Engagement: planning packet, confirm the PM, register (SCR-41)",
       "w": 240,
       "x": 0,
-      "y": 12064
+      "y": 13420
+    },
+    "p-presale-row8b": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "8b · What each outcome leads to: won → engagement, lost → archive, pending and unknown stay open",
+      "w": 240,
+      "x": 0,
+      "y": 12244
     }
   },
   "order": [
@@ -3460,7 +3555,17 @@
     "SCR-39-mobile-review-own.dc.html",
     "SCR-40-desktop-submitted-portal.dc.html",
     "SCR-40-mobile-submitted-portal.dc.html",
-    "AGENT-concepts.dc.html"
+    "AGENT-concepts.dc.html",
+    "SCR-16-desktop-rfp-outcome-lost.dc.html",
+    "SCR-16-mobile-rfp-outcome-lost.dc.html",
+    "SCR-16-desktop-rfp-outcome-pending.dc.html",
+    "SCR-16-mobile-rfp-outcome-pending.dc.html",
+    "SCR-16-desktop-rfp-outcome-unknown.dc.html",
+    "SCR-16-mobile-rfp-outcome-unknown.dc.html",
+    "SCR-16-desktop-rfp-pending.dc.html",
+    "SCR-16-mobile-rfp-pending.dc.html",
+    "SCR-16-desktop-rfp-unknown.dc.html",
+    "SCR-16-mobile-rfp-unknown.dc.html"
   ],
   "pages": [
     {
