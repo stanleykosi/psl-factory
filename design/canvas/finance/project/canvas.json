@@ -1032,6 +1032,62 @@
       "w": 390,
       "h": 844,
       "title": "Cancelled after publishing: follow-up needed on a phone"
+    },
+    "LINE-finance-accounts-desktop.dc.html": {
+      "x": 0,
+      "y": 18544,
+      "w": 1440,
+      "h": 760,
+      "title": "Accounting preparation and reviewed reports",
+      "expand": "fill"
+    },
+    "LINE-finance-schedules-desktop.dc.html": {
+      "x": 1560,
+      "y": 18544,
+      "w": 1440,
+      "h": 760,
+      "title": "Income detail and schedule inventory",
+      "expand": "fill"
+    },
+    "LINE-finance-ppe-desktop.dc.html": {
+      "x": 3120,
+      "y": 18544,
+      "w": 1440,
+      "h": 760,
+      "title": "Asset schedule and reviewed accounting note",
+      "expand": "fill"
+    },
+    "LINE-finance-forecast-desktop.dc.html": {
+      "x": 4680,
+      "y": 18544,
+      "w": 1440,
+      "h": 826,
+      "title": "Reviewed cash forecast and actual follow-up",
+      "expand": "fill"
+    },
+    "LINE-finance-bu-desktop.dc.html": {
+      "x": 0,
+      "y": 19530,
+      "w": 1440,
+      "h": 804,
+      "title": "Reviewed BU exception and event aggregates",
+      "expand": "fill"
+    },
+    "LINE-finance-ledger-desktop.dc.html": {
+      "x": 1560,
+      "y": 19530,
+      "w": 1440,
+      "h": 760,
+      "title": "Supplied incumbent transaction reference",
+      "expand": "fill"
+    },
+    "LINE-finance-payroll-desktop.dc.html": {
+      "x": 3120,
+      "y": 19530,
+      "w": 1440,
+      "h": 980,
+      "title": "Restricted payroll and BU staff-cost receipt",
+      "expand": "fill"
     }
   },
   "order": [
@@ -1170,7 +1226,14 @@
     "SCR-59-desktop-verified.dc.html",
     "SCR-59-mobile-verified.dc.html",
     "SCR-59-desktop-followup.dc.html",
-    "SCR-59-mobile-followup.dc.html"
+    "SCR-59-mobile-followup.dc.html",
+    "LINE-finance-accounts-desktop.dc.html",
+    "LINE-finance-schedules-desktop.dc.html",
+    "LINE-finance-ppe-desktop.dc.html",
+    "LINE-finance-forecast-desktop.dc.html",
+    "LINE-finance-bu-desktop.dc.html",
+    "LINE-finance-ledger-desktop.dc.html",
+    "LINE-finance-payroll-desktop.dc.html"
   ],
   "notes": {
     "p-finance-09-title": {
@@ -1284,6 +1347,14 @@
       "w": 240,
       "x": 0,
       "y": 16988
+    },
+    "fin-lines": {
+      "x": 0,
+      "y": 18404,
+      "text": "Finance lines · reference: how work moves, each step linked to its screen on this canvas",
+      "kind": "title1",
+      "maxW": 3800,
+      "w": 240
     }
   },
   "designSystems": [
