@@ -1,0 +1,64 @@
+/* My work (SCR-01). Token variables only; layout switches at 720px (bp-phone). No bundle or shell class
+   is restyled: the my-work__ classes sit beside them. */
+
+.my-work__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* header: title, then the mono updated time */
+.my-work__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
+.my-work__updated { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+
+/* queue tabs: buttons drawn as .psl-tab; on phones the strip scrolls sideways */
+.my-work__tabs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); min-width: 0; }
+.my-work__tab { border-top: none; border-left: none; border-bottom: none; font: inherit; font-weight: 500; }
+.my-work__nocount { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+
+/* toolbar: search, Filter, result count; chips beneath */
+.my-work__toolbar { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.my-work__search { flex: 1 1 320px; max-width: 460px; }
+.my-work__filter { position: relative; flex: none; }
+.my-work__iconbtn { position: relative; }
+.my-work__chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+/* desktop filter popover under the button (SCR-01-desktop-filter) */
+.my-work__pop { position: absolute; top: calc(100% + var(--space-2)); left: 0; z-index: 5; width: 380px; }
+.my-work__pophead { padding: var(--space-3) var(--space-4); border-bottom: 2px solid var(--ink); font-family: var(--font-display); font-weight: 800; font-size: 14px; text-transform: uppercase; }
+.my-work__popbody { padding: var(--space-4); display: flex; flex-direction: column; gap: 14px; }
+.my-work__popfoot { display: flex; gap: 10px; padding: var(--space-3) var(--space-4); border-top: 2px solid var(--ink); }
+.my-work__fieldset { margin: 0; padding: 0; border: none; display: flex; flex-direction: column; min-width: 0; }
+
+/* phone bottom sheet over the scrim (SCR-01-mobile-filter) */
+.my-work__scrim { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; justify-content: flex-end; }
+.my-work__sheet { max-height: 85vh; overflow-y: auto; }
+
+/* list */
+.my-work__panel { display: flex; flex-direction: column; min-width: 0; }
+.my-work__table { min-width: 820px; }
+.my-work__work { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.my-work__title { font-weight: 600; }
+.my-work__meta { margin-top: var(--space-1); display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; font-size: 12px; color: var(--ink-muted); }
+.my-work__waiting { margin-top: var(--space-1); font-size: 12px; color: var(--ink-muted); }
+.my-work__age { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
+.my-work__linkbutton { align-self: flex-start; padding: 0; border: none; background: none; font: inherit; }
+
+/* phone cards: one link each; title and age, a full-width bar, state and station, who it waits on */
+.my-work__cards > li + li { border-top: 1px solid var(--rule-soft); }
+.my-work__cards .my-work__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-3) 14px; color: var(--ink); text-decoration: none; }
+.my-work__cardtop { align-self: stretch; display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); }
+.my-work__cardstate { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.my-work__card .my-work__mini { align-self: stretch; display: flex; }
+.my-work__card .my-work__minibar { flex: 1; }
+.my-work__card .my-work__minibar > i { flex: 1; }
+
+/* footer: shown text, rows per page, Show more (D-PAGING; product acceptance) */
+.my-work__foot { margin-top: -2px; border: 2px solid var(--ink); border-top: none; display: flex; flex-direction: column; }
+.my-work__morefail { align-items: center; flex-wrap: wrap; }
+.my-work__rows { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; margin-right: var(--space-3); }
+.my-work__rowslabel { letter-spacing: .06em; }
+
+@media (max-width: 719.98px) {
+  .my-work__search { flex: 1 1 0; min-width: 0; max-width: none; }
+  .my-work__showmore { flex-wrap: wrap; gap: var(--space-3); }
+  .my-work__showmore > * { flex: 1 1 100%; }
+  .my-work__rows { margin: 0; justify-content: space-between; }
+  .my-work__more { min-height: var(--control-md); width: 100%; }
+}
