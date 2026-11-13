@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import type { Destination } from '@/api/types';
 
 import { useMe } from './AppShell';
@@ -21,5 +23,18 @@ export function DestinationPage({ destination }: { destination: Destination }) {
         <p>This page is not built yet. It arrives in a later release.</p>
       </div>
     </>
+  );
+}
+
+/** An address that is not a destination: the shared empty pattern with a way back. */
+export function UnknownPage() {
+  const first = visibleDestinations(useMe().destinations)[0];
+  return (
+    <div className="psl-empty">
+      <h3>This page doesn&rsquo;t exist.</h3>
+      <p>
+        <Link href={first.href}>Go to {first.label}</Link>
+      </p>
+    </div>
   );
 }
