@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -68,7 +68,19 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:36:15Z",
+      "evidence_ref": "delivery/features/F-02/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -139,7 +151,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "37aa53ea379d155892bb84ab665d4ae310fdbf9c",
     "task_branch": "fe-mywork-my-work-shows-a-person-s-queues-with-sea",
-    "head_sha": "37aa53ea379d155892bb84ab665d4ae310fdbf9c",
+    "head_sha": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
     "pr_url": null,
     "pr_number": null,
@@ -150,7 +162,23 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/src/app/my-work/page.tsx",
+      "frontend/src/features/my-work/FilterPanel.tsx",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/MyWorkPage.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/icons.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/tests/mock-work-list.test.ts",
+      "frontend/tests/my-work-model.test.ts",
+      "frontend/tests/my-work.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -201,6 +229,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:36:16Z",
+      "round": 1,
+      "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "reason": null
     }
   ],
   "routing": {
@@ -217,9 +253,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
   },
   "blocked": null
 }
