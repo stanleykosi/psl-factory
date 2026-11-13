@@ -24,7 +24,7 @@ export function NoAccessState() {
   return (
     <section className="psl-panel work-noaccess" aria-labelledby="work-noaccess-title">
       <div className="psl-panel__body">
-        <span className="shell-eyebrow">NO ACCESS</span>
+        <span className="psl-tag psl-tag--neutral work-noaccess__tag">NO ACCESS</span>
         <h1 id="work-noaccess-title" className="shell-title">
           You can&rsquo;t open this work item
         </h1>
@@ -37,7 +37,7 @@ export function NoAccessState() {
           what they need from you.
         </p>
         <p>
-          <Link className="psl-btn psl-btn--secondary" href="/my-work">
+          <Link className="psl-btn psl-btn--dark psl-btn--lg" href="/my-work">
             Back to my queue
           </Link>
         </p>
