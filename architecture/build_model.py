@@ -368,10 +368,10 @@ tasks = [
     T('T-BACKEND-ROLES', 'Backend: PMO Lead for Head of PMO, three-step approvals, leaders may start every line', [], ['R-ROLES'], [], [], ['A-START'], BE),
     # frontend work: built against openapi.json with a mock server; no backend decision gates
     T('FE-MYWORK', 'Frontend: My work, three queues, Decide/Do/Fix, search, filter, 10/20/50 rows', [], ['R-MYWORK', 'R-VOLUME', 'R-SAMPLE'], ['D-PAGING', 'D-UPDATES'], ['T-FRONTEND-SHELL'], ['A-MYWORK'], FE),
-    T('FE-WORKITEM', 'Frontend: work item, stations, facts, agent checklist, history', [], ['R-WORKITEM'], ['D-UPDATES'], ['FE-MYWORK'], ['A-WORKITEM', 'A-HISTORY'], FE),
-    T('FE-DECIDE', 'Frontend: decision panel and phone action bar, stale-version reload', [], ['R-DECIDE'], [], ['FE-WORKITEM'], ['A-DECIDE', 'A-STALE'], FE),
-    T('FE-CONNECT-1', 'Connect the first feature to the real API', [], ['R-SESSION', 'R-MYWORK', 'R-WORKITEM', 'R-DECIDE'], [], ['FE-DECIDE', 'T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], ['A-ME', 'A-MYWORK', 'A-WORKITEM', 'A-DECIDE', 'A-STALE'], FE),
-    T('FE-M2', 'Frontend: start work drawers, record a response, exceptions', [], ['R-START', 'R-RESPONSE', 'R-EXCEPTION'], [], ['FE-DECIDE'], ['A-START', 'A-RESPONSE', 'A-RECONCILE'], FE),
+    T('FE-WORKITEM', 'Frontend: work item, stations, facts, agent checklist, history', [], ['R-WORKITEM'], ['D-UPDATES'], ['T-FRONTEND-SHELL'], ['A-WORKITEM', 'A-HISTORY'], FE),
+    T('FE-DECIDE', 'Frontend: decision panel and phone action bar, stale-version reload', [], ['R-DECIDE'], [], ['T-FRONTEND-SHELL'], ['A-DECIDE', 'A-STALE'], FE),
+    T('FE-CONNECT-1', 'Connect the first feature to the real API', [], ['R-SESSION', 'R-MYWORK', 'R-WORKITEM', 'R-DECIDE'], [], ['FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE', 'T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], ['A-ME', 'A-MYWORK', 'A-WORKITEM', 'A-DECIDE', 'A-STALE'], FE),
+    T('FE-M2', 'Frontend: start work drawers, record a response, exceptions', [], ['R-START', 'R-RESPONSE', 'R-EXCEPTION'], [], ['FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE'], ['A-START', 'A-RESPONSE', 'A-RECONCILE'], FE),
     T('FE-M3', 'Frontend: projects, overview and factory floor, Finance, payroll, setup', [], ['R-PROJECT', 'R-REPORTS', 'R-OVERVIEW', 'R-MOTION', 'R-FINANCE', 'R-SETUP'], [], ['FE-M2'], ['A-PROJECT', 'A-OVERVIEW', 'A-MONTHEND', 'A-PAYROLL', 'A-SETUP'], FE),
     T('FE-M4', 'Frontend: notification centre, alert settings, assistant', [], ['R-ALERTS', 'R-ASSISTANT'], [], ['FE-M3'], ['A-ALERTS', 'A-ASSISTANT'], FE),
 ]

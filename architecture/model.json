@@ -8883,7 +8883,7 @@
       "owner_role": "frontend developer",
       "status": "planned",
       "depends_on": [
-        "FE-MYWORK"
+        "T-FRONTEND-SHELL"
       ],
       "gate_ids": [
         "D-UPDATES"
@@ -8909,7 +8909,7 @@
       "owner_role": "frontend developer",
       "status": "planned",
       "depends_on": [
-        "FE-WORKITEM"
+        "T-FRONTEND-SHELL"
       ],
       "gate_ids": [],
       "acceptance": [
@@ -8936,6 +8936,8 @@
       "owner_role": "frontend developer",
       "status": "planned",
       "depends_on": [
+        "FE-MYWORK",
+        "FE-WORKITEM",
         "FE-DECIDE",
         "T-FOUNDATION",
         "T-MYWORK",
@@ -8969,6 +8971,8 @@
       "owner_role": "frontend developer",
       "status": "planned",
       "depends_on": [
+        "FE-MYWORK",
+        "FE-WORKITEM",
         "FE-DECIDE"
       ],
       "gate_ids": [],
