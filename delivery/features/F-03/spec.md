@@ -119,7 +119,7 @@
      - not_started: "Not started"
      - verified: "Verified"
 
-     Classes map to `psl-station--done|person|agent|waiting|stopped|todo|verified`. The current station has `aria-current="step"`. Below 720px the track scrolls sideways inside its own container; the page itself does not scroll sideways.
+     Classes map to `psl-station--done|person|agent|waiting|stopped|todo|verified`. The current station has `aria-current="step"`. Below 720px the stations show as a vertical list with the status on the right, as on the approved mobile boards (design engineer, 14 Nov 2026); the page does not scroll sideways.
   6. **Agent at work** (CMP-09/18), shown when `agent.status` is not `none`:
      - Avatar: `psl-avatar--chidi|tola|zainab` by lower-cased name, otherwise a neutral initial avatar. Name (or "Agent" if absent) and the line "Cannot approve, send or pay."
      - Status tag: WORKING (agent class), DONE (done class), WAITING (waiting class) or STOPPED (person class).
@@ -199,7 +199,7 @@
 1. **W-1004 (A-WORKITEM)** shows the six facts as separate boxes: Drafted, Reviewed and Approved Earned with times; Sent "Not yet"; Receipt recorded "Unknown"; Verified "Not yet". No box is empty or reads 0, and the Paid note is present. — verify: unit test renders the W-1004 fixture and asserts six list items, the exact texts, and no fact text matching `^$|^0$`. Also open http://localhost:3201/work/W-1004 with the mock on 3202 and look.
 2. **Unknown or missing facts** always read "Unknown". — verify: unit test with every fact `unknown`, and with a facts array missing `sent`, asserts "Unknown" for each and never "0", "No" or blank.
 3. **The state tag** shows the CMP-05 wording and colour class for all 11 states. — verify: a table-driven unit test over the 11 enum values asserts the text and the `psl-tag--*` class from the Contract table.
-4. **The station track** shows every station from `stations[]` in order, with number, name and mapped status. The current one has `aria-current="step"`. At 390px only the track scrolls sideways. — verify: unit test for the 7 status mappings. The e2e at 390px asserts `document.documentElement.scrollWidth <= 390` on /work/W-1001.
+4. **The station track** shows every station from `stations[]` in order, with number, name and mapped status. The current one has `aria-current="step"`. At 390px the stations are a vertical list with the status on the right and nothing scrolls sideways (design engineer, 14 Nov 2026). — verify: unit test for the 7 status mappings. The e2e at 390px asserts `document.documentElement.scrollWidth <= 390` on /work/W-1001.
 5. **The agent card never offers a decision.**
    - W-1003 shows WORKING, "step 3 of 4", sources in mono, and "Cannot approve, send or pay.", with no element whose accessible name matches /approve|send|pay/i other than that sentence.
    - W-1002 shows "No agent work on this item."

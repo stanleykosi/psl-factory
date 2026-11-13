@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -79,6 +79,17 @@
       "protected_paths_changed": [],
       "at": "2026-11-13T23:36:15Z",
       "evidence_ref": "delivery/features/F-02/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:47:29Z",
+      "evidence_ref": "delivery/features/F-02/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -164,14 +175,28 @@
         "delivery/features/F-02/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-13T23:40:57Z",
           "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:47:29Z",
+          "refs": [
+            "55e8194"
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "55e8194"
       ]
     },
     {
@@ -210,14 +235,28 @@
         "delivery/features/F-02/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-13T23:40:57Z",
           "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:47:29Z",
+          "refs": [
+            "a3ecdcd"
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a3ecdcd"
       ]
     }
   ],
@@ -300,7 +339,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "37aa53ea379d155892bb84ab665d4ae310fdbf9c",
     "task_branch": "fe-mywork-my-work-shows-a-person-s-queues-with-sea",
-    "head_sha": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+    "head_sha": "55e81940bdf715f222ebd7f15f26a9150d981915",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
     "pr_url": null,
     "pr_number": null,
@@ -402,6 +441,14 @@
       "round": 2,
       "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:47:29Z",
+      "round": 2,
+      "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
     }
   ],
   "routing": {
@@ -418,9 +465,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "55e81940bdf715f222ebd7f15f26a9150d981915"
   },
   "blocked": null
 }

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-03",
   "outcome": "Open one work item and read its history",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -79,6 +79,17 @@
       "protected_paths_changed": [],
       "at": "2026-11-13T23:33:26Z",
       "evidence_ref": "delivery/features/F-03/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:48:27Z",
+      "evidence_ref": "delivery/features/F-03/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -141,14 +152,28 @@
         "delivery/features/F-03/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-13T23:39:52Z",
           "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "99b181f"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "99b181f"
       ]
     },
     {
@@ -164,14 +189,28 @@
         "delivery/features/F-03/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-13T23:39:52Z",
           "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "99b181f"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "99b181f"
       ]
     },
     {
@@ -187,14 +226,28 @@
         "delivery/features/F-03/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-13T23:39:52Z",
           "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "4f3831d"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "4f3831d"
       ]
     },
     {
@@ -210,14 +263,28 @@
         "delivery/features/F-03/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-13T23:39:52Z",
           "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "none (decision)"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "none (decision)"
       ]
     },
     {
@@ -233,14 +300,28 @@
         "delivery/features/F-03/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-13T23:39:52Z",
           "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "7d2a270"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7d2a270"
       ]
     }
   ],
@@ -323,7 +404,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "c4f35ab089fe4dbd969648cf142bafcfe85ec0c4",
     "task_branch": "fe-workitem-open-one-work-item-and-read-its-history",
-    "head_sha": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+    "head_sha": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-03",
     "pr_url": null,
     "pr_number": null,
@@ -431,6 +512,14 @@
       "round": 2,
       "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:48:28Z",
+      "round": 2,
+      "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "reason": null
     }
   ],
   "routing": {
@@ -447,9 +536,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4"
   },
   "blocked": null
 }
