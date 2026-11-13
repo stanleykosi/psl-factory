@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-03",
   "outcome": "Open one work item and read its history",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -68,7 +68,19 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:33:26Z",
+      "evidence_ref": "delivery/features/F-03/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -139,7 +151,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "c4f35ab089fe4dbd969648cf142bafcfe85ec0c4",
     "task_branch": "fe-workitem-open-one-work-item-and-read-its-history",
-    "head_sha": "c4f35ab089fe4dbd969648cf142bafcfe85ec0c4",
+    "head_sha": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-03",
     "pr_url": null,
     "pr_number": null,
@@ -150,7 +162,29 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/work-item.spec.ts",
+      "frontend/mock/fixtures/work/W-1001.history.json",
+      "frontend/mock/fixtures/work/W-1002.json",
+      "frontend/mock/fixtures/work/W-1003.json",
+      "frontend/mock/fixtures/work/W-1004.history.json",
+      "frontend/mock/fixtures/work/W-1004.json",
+      "frontend/mock/fixtures/work/W-1005.json",
+      "frontend/mock/fixtures/work/W-1006.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/work/[id]/history/page.tsx",
+      "frontend/src/app/work/[id]/page.tsx",
+      "frontend/src/features/work-item/WorkItemHistory.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemStates.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/labels.ts",
+      "frontend/src/features/work-item/useWorkHistory.ts",
+      "frontend/src/features/work-item/useWorkItem.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/work-item.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -201,6 +235,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:33:26Z",
+      "round": 1,
+      "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "reason": null
     }
   ],
   "routing": {
@@ -217,9 +259,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
   },
   "blocked": null
 }
