@@ -44,12 +44,13 @@ body { margin: 0; background: var(--steel); }
   .shell-errorcard__action { max-width: none; }
 }
 
-/* (f) narrow desktops (720px up to bp-desktop 1080px): the bar compacts so it fits at 720px, and the
-   who-line shows the name only (design owner, 13 Nov 2026); the role stays for screen readers */
+/* (f) narrow desktops (720px up to bp-desktop 1080px): the bar keeps the page's 28px gutter so the
+   wordmark and the page title share a left edge; it fits at 720px by tightening the gaps between items and
+   links, and the who-line shows the name only (design owner, 13 Nov 2026); the role stays for screen readers */
 .shell-navend { margin-left: auto; flex: none; }
 @media (min-width: 720px) and (max-width: 1079.98px) {
-  .shell-topbar .psl-nav__in { padding: 0 var(--space-4); gap: var(--space-2); }
-  .shell-topbar .psl-navlink { padding-left: var(--space-2); padding-right: var(--space-2); }
+  .shell-topbar .psl-nav__in { gap: var(--space-2); }
+  .shell-topbar .psl-navlink { padding-left: var(--space-1); padding-right: var(--space-1); }
   .psl-nav__who { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .shell-who-role { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }

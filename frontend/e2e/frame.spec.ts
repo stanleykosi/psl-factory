@@ -319,6 +319,21 @@ for (const width of [720, 740, 768, 820, 900, 1079, 1080, 1440]) {
   });
 }
 
+// Design owner, 13 Nov 2026: the bar keeps the page's 28px gutter at 720 to 1079px, so the wordmark and the
+// page title share a left edge; only the gaps between the links tighten.
+for (const width of [720, 900, 1079]) {
+  test(`wordmark and page title share a left edge at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/my-work');
+    await loaded(page);
+    const brand = await page.locator('.shell-topbar .psl-brand').evaluate((el) => el.getBoundingClientRect().left);
+    const title = await page.locator('.shell-title').evaluate((el) => el.getBoundingClientRect().left);
+    expect(brand).toBe(28);
+    expect(brand).toBe(title);
+    expect(await noHorizontalScroll(page)).toBe(true);
+  });
+}
+
 test('an unknown address shows a plain not-found page with a way back', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   await page.goto('/nonexistent');
