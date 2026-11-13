@@ -63,7 +63,8 @@ function historyPage(history, query) {
 function workResponse(operationId, url, fixtures, work) {
   const workId = decodeCookie(url.pathname.split('/')[4] ?? '');
   if (workId === NO_ACCESS_WORK_ID) return [404, SCENARIO_BODIES[404]];
-  const own = (name) => (Object.hasOwn(work, name) ? work[name] : undefined);
+  // Only plain ids ("W-1003") pick a per-id file, so "W-1004.history" or other sidecar names never answer as an item.
+  const own = (name) => (/^W-\d+$/.test(workId) && Object.hasOwn(work, name) ? work[name] : undefined);
   if (operationId === 'E-WORK-ITEM') return [200, own(workId) ?? fixtures['E-WORK-ITEM']];
   return [200, historyPage(own(`${workId}.history`) ?? fixtures['E-WORK-HISTORY'], url.searchParams)];
 }

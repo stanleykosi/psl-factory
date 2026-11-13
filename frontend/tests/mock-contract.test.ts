@@ -174,6 +174,12 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
     expect(otherHistory.body).toEqual(readJson(join(__dirname, '../mock/fixtures/E-WORK-HISTORY.json')));
   });
 
+  it('never serves a sidecar file such as W-1004.history as an item', async () => {
+    const sidecar = await get('/api/v1/work/W-1004.history');
+    expect(sidecar.status).toBe(200);
+    expect(sidecar.body).toEqual(readJson(join(__dirname, '../mock/fixtures/E-WORK-ITEM.json')));
+  });
+
   it('filters by kind, pages by limit and cursor, and treats other limits as 20', async () => {
     const decisions = await get('/api/v1/work/W-1004/history?kind=decisions');
     const expected = w1004.items.filter((row) => row._kind === 'decision').map((row) => row.at);
@@ -211,7 +217,8 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
   });
 
   it('every fixture in fixtures/work is schema-valid with _kind removed', () => {
-    const files = readdirSync(workDir).filter((name) => name.endsWith('.json'));
+    // Item bodies are W-<digits>.json and histories W-<digits>.history.json; other sidecars (F-04's) are not checked here.
+    const files = readdirSync(workDir).filter((name) => /^W-\d+(\.history)?\.json$/.test(name));
     expect(files.length).toBeGreaterThanOrEqual(7);
     for (const name of files) {
       const body = readJson(join(workDir, name));
