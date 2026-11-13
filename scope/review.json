@@ -1,0 +1,19 @@
+{
+  "schema_version": "scope-review-0.1.0",
+  "record_kind": "project_record",
+  "approvals": [],
+  "exceptions": [
+    {
+      "scope_sha256": "85706e3d7f833edb578e672d83e2087e7ca0dc13e17dfe88aaa361cc21b8a1c4",
+      "authorized_by": "hunchoweb (PSL factory design engineer)",
+      "reason": "Design engineer authorised starting the design stage before PSL names an approver (Q-01 open); PSL approval of scope version 1 still required",
+      "recorded_at": "2026-11-11T23:54:59Z"
+    },
+    {
+      "scope_sha256": "d3152ccdbfd302680d07d6e2a9d49097c9875df984296e97e16f1ebec8a4b727",
+      "authorized_by": "hunchoweb (PSL factory design engineer)",
+      "reason": "Design engineer authorised continuing design on scope version 2 (assistant page added) before PSL names an approver (Q-01 open); PSL approval still required",
+      "recorded_at": "2026-11-12T00:41:08Z"
+    }
+  ]
+}

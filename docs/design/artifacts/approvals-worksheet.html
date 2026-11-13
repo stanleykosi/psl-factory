@@ -1,0 +1,573 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>PSL Approvals Worksheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: same system as the PSL Factory Map and Architecture pages. A meeting worksheet: sticky toolbar, groups of collapsible items, each with "what PSL's documents say" beside the answer form. Present mode shows one item at a time. */
+:root{
+  --bg:#f6f7f4; --paper:#ffffff; --ink:#1f2b29; --muted:#5d6965; --faint:#8b958f; --line:#dfe3dc; --band:#eef1ec;
+  --accent:#cc5726; --accent-wash:#fcebe2;
+  --pmo:#21746a; --pmo-wash:#e2f0ec;
+  --fin:#2d61ad; --fin-wash:#e5edfa;
+  --ok:#2e7b44; --ok-wash:#e4f2e7;
+  --hold:#9c6809; --hold-wash:#faf0da;
+  --font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121716; --paper:#1a201f; --ink:#e3e9e6; --muted:#a1aca8; --faint:#79847f; --line:#2d3634; --band:#212927;
+    --accent:#f0875a; --accent-wash:#3a2219;
+    --pmo:#52b9a9; --pmo-wash:#16302b;
+    --fin:#7aa7f2; --fin-wash:#1a2740;
+    --ok:#6cc488; --ok-wash:#163020;
+    --hold:#e3ad4e; --hold-wash:#35290f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121716; --paper:#1a201f; --ink:#e3e9e6; --muted:#a1aca8; --faint:#79847f; --line:#2d3634; --band:#212927;
+  --accent:#f0875a; --accent-wash:#3a2219;
+  --pmo:#52b9a9; --pmo-wash:#16302b;
+  --fin:#7aa7f2; --fin-wash:#1a2740;
+  --ok:#6cc488; --ok-wash:#163020;
+  --hold:#e3ad4e; --hold-wash:#35290f;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--font-body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto;padding-block:40px 120px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+p{margin:0}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+.eyebrow{font:500 12px/1.4 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--font-display);font-stretch:118%;font-weight:800;font-size:clamp(36px,6vw,62px);line-height:1;letter-spacing:-.025em;margin:0;text-wrap:balance}
+h2{font-family:var(--font-display);font-stretch:112%;font-weight:760;font-size:clamp(22px,2.8vw,28px);line-height:1.15;margin:0;text-wrap:balance}
+.lede{font-size:16.5px;color:var(--muted);max-width:70ch}
+.top{display:flex;flex-direction:column;gap:16px}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.how div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--muted);min-width:0}
+.how b{display:block;color:var(--ink);font-family:var(--font-display);font-stretch:106%;font-size:15px;margin-bottom:2px}
+.banner{padding:12px 16px;border-radius:10px;background:var(--hold-wash);color:var(--ink);font-size:14px}
+
+/* toolbar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.bar-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.progress{flex:1 1 260px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.meter{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--band)}
+.meter i{display:block;height:100%}
+.meter .m-ok{background:var(--ok)} .meter .m-fu{background:var(--hold)}
+.ptext{font:12.5px var(--font-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper)}
+.seg button{border:none;background:none;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.search{flex:1 1 200px;min-width:0;padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:8px;padding:7px 14px;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:var(--paper);color:var(--ink);border-color:var(--line)}
+.groups{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.groups a{flex:none;text-decoration:none;font-size:12.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+.groups a span{font-family:var(--font-mono);color:var(--muted);margin-left:4px}
+.groups a.done{border-color:var(--ok);color:var(--ok)}
+
+/* groups and items */
+.group{display:flex;flex-direction:column;gap:10px;scroll-margin-top:150px}
+.group-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:18px}
+.group-head p{color:var(--muted);font-size:14.5px;max-width:72ch}
+.gcount{font:12.5px var(--font-mono);color:var(--muted)}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:12px;min-width:0}
+.item[open]{border-color:var(--faint)}
+.item>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:12px;align-items:start;padding:14px 16px}
+.item>summary::-webkit-details-marker{display:none}
+.sdot{width:12px;height:12px;border-radius:50%;border:2px solid var(--faint);margin-top:5px}
+.item[data-status="answered"] .sdot{background:var(--ok);border-color:var(--ok)}
+.item[data-status="followup"] .sdot{background:var(--hold);border-color:var(--hold)}
+.stitle{font-weight:600;font-size:15.5px;line-height:1.35}
+.srefs{font:12px var(--font-mono);color:var(--faint);margin-left:6px;font-weight:400}
+.ssum{display:block;font-size:13.5px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.ssum b{color:var(--ink);font-weight:500}
+.sright{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.chip{font:500 11.5px/1.2 var(--font-mono);padding:3px 8px;border-radius:999px;background:var(--band);color:var(--muted);white-space:nowrap}
+.chip.approve{background:var(--accent-wash);color:var(--accent)}
+.chip.deadline{background:var(--fin-wash);color:var(--fin)}
+.chip.do{background:var(--pmo-wash);color:var(--pmo)}
+.chip.known{background:var(--ok-wash);color:var(--ok)}
+.chip.ask{background:var(--hold-wash);color:var(--hold)}
+.rp{display:flex;flex-direction:column;gap:6px}
+.rp-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rp-chips:empty{display:none}
+.rp-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 3px 2px 10px;border-radius:999px;background:var(--pmo-wash);color:var(--ink);font-size:13px}
+.rp-chip .n{font:600 11px var(--font-mono);color:var(--pmo)}
+.rp-chip button{border:none;background:none;cursor:pointer;width:22px;height:22px;border-radius:50%;color:var(--muted);font-size:15px;line-height:1;padding:0}
+.rp-chip button:hover{background:var(--paper);color:var(--ink)}
+.rp-other{display:flex;gap:6px}
+.rp-other input{flex:1;min-width:0}
+.fill{align-self:flex-start;border:1px dashed var(--ok);background:var(--ok-wash);color:var(--ok);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:500;cursor:pointer}
+.fill:disabled{opacity:.5;cursor:default}
+.body{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;padding:4px 16px 16px 42px}
+.said{display:flex;flex-direction:column;gap:10px}
+.said h4,.fields h4{font:600 11px/1.3 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.said .src{background:var(--band);border-radius:10px;padding:12px 14px;font-size:14px}
+.said .note{border-left:3px solid var(--accent);padding:4px 0 4px 12px;font-size:13.5px;color:var(--muted)}
+.fields{display:flex;flex-direction:column;gap:12px;min-width:0}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f.wide{grid-column:1/-1}
+.f label{font-size:12.5px;font-weight:500;color:var(--muted)}
+.f input,.f select,.f textarea{width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font-size:14px}
+.f textarea{min-height:64px;resize:vertical}
+.f input:disabled,.f select:disabled,.f textarea:disabled{background:var(--band);color:var(--muted)}
+.foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.status button[data-s="answered"][aria-pressed="true"]{background:var(--ok);color:var(--paper)}
+.status button[data-s="followup"][aria-pressed="true"]{background:var(--hold);color:var(--paper)}
+.saved{font:12px var(--font-mono);color:var(--faint)}
+.empty{padding:24px;text-align:center;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:12px}
+
+/* present mode */
+.presenter{display:none}
+body.present .presenter{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--paper);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));gap:10px;align-items:center;justify-content:space-between}
+.presenter .where{font:13px var(--font-mono);color:var(--muted);text-align:center;flex:1;min-width:0}
+body.present .group-head,body.present .groups,body.present .top{display:none}
+body.present .item{display:none}
+body.present .item.current{display:block}
+body.present .item.current .stitle{font-size:clamp(20px,2.6vw,26px);font-family:var(--font-display);font-stretch:108%}
+body.present .item.current .said .src{font-size:16px}
+
+@media (max-width:820px){.body{grid-template-columns:1fr;padding-left:16px}.how{grid-template-columns:1fr}}
+@media (max-width:520px){.fgrid{grid-template-columns:1fr}.item>summary{grid-template-columns:14px minmax(0,1fr)}.sright{grid-column:2;justify-content:flex-start}}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">PSL operations factory · for meetings with PSL</p>
+    <h1>Who approves what</h1>
+    <p class="lede">Every action in the factory that needs a person's decision, a delegation rule or a deadline, plus the open questions about logins and alerts. Each item shows what PSL's own documents already say, so the meeting confirms roles and rules instead of starting from nothing. The factory is role-based: it needs the role that acts, such as PMO Lead, the PM of this project, HR Lead or CEO, never a person's name.</p>
+    <div class="how">
+      <div><b>Go one by one</b>Use Present to show one item at a time. Arrow keys move between items. “Role stated” means PSL's documents already name the role, so you only confirm it; “Role to name” needs an answer.</div>
+      <div><b>Write down what PSL says</b>Pick roles from the lists, in order for chains, or use “Fill in these roles” to start from PSL's documents. Answers save as you go, and everyone with access sees them.</div>
+      <div><b>Mark each item</b>Answered, or Follow up when PSL needs to check. These are meeting notes; nothing goes live until it's set up and checked in the app.</div>
+    </div>
+    <p class="banner" id="banner" hidden></p>
+  </header>
+
+  <div class="bar" id="bar">
+    <div class="bar-row">
+      <div class="progress"><div class="meter" aria-hidden="true"><i class="m-ok" id="m-ok" style="width:0"></i><i class="m-fu" id="m-fu" style="width:0"></i></div><span class="ptext" id="ptext">Loading answers…</span></div>
+      <div class="seg" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="open" aria-pressed="false">Not discussed</button>
+        <button type="button" data-f="followup" aria-pressed="false">Follow up</button>
+        <button type="button" data-f="answered" aria-pressed="false">Answered</button>
+      </div>
+      <label for="q" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search items</label>
+      <input id="q" class="search" type="search" placeholder="Search actions, roles, process IDs">
+      <button type="button" class="btn" id="present">Present</button>
+    </div>
+    <nav class="groups" id="groups" aria-label="Groups"></nav>
+  </div>
+
+  <main id="list"></main>
+</div>
+
+<div class="presenter" role="toolbar" aria-label="Present">
+  <button type="button" class="btn ghost" id="prev">← Previous</button>
+  <span class="where" id="where"></span>
+  <button type="button" class="btn ghost" id="exit">Exit</button>
+  <button type="button" class="btn" id="next">Next →</button>
+</div>
+
+<script>
+const GROUPS = [
+  ['people','People and logins','Who uses the app, and who stands behind each role.'],
+  ['presale','Pre-sale, costing and SOW','From a new RFP to the client signing the SOW.'],
+  ['planning','Planning and phase gates','Sign-offs that happen before and during planning.'],
+  ['release','Release, go-live and closure','From QA exit to closing the project.'],
+  ['change','Changes, emergencies and escalations','Change requests, emergency changes, issues and client escalation.'],
+  ['reports','Reports and documents','Regular reports, templates and records.'],
+  ['billing','Invoicing and payments','From a completed milestone to money received.'],
+  ['monthend','Month-end, BU, payroll and cash','Management accounts, BU reporting, payroll and the cash forecast.'],
+  ['delegation','Delegation, absence and returns','General rules that apply to every approval above.'],
+  ['deadlines','Deadlines and reminders','Time limits the app can track and remind people about.'],
+  ['alerts','Alerts on WhatsApp and email','Who gets told what, when and how.'],
+  ['client','Client responses','Staff record client responses with proof. These settle how.']
+];
+const KIND = {approve:'Approval', do:'Action', question:'Question', deadline:'Deadline'};
+const FIELDS = {
+  approve:[['who','Roles that decide','roles',''],['whose','Which holder of the role','select',['','The one on this project','Anyone with the role','Not sure yet']],['order','If more than one role','select',['','One role','All, in this order','All, any order','Any one of them']],['where','How it reaches the app','select',['','The role decides in the app','Staff record it with proof','Not sure yet']],['recorder','Role that records it','roles',''],['deleg','Can it be delegated?','select',['','Yes','No','Only when they are away','Not sure yet']],['delegTo','Delegate to','roles',''],['delegBy','Roles that can set up the delegation','roles',''],['time','Time to respond','text','e.g. 2 working days'],['escalate','If there is no response, alert','roles',''],['notes','Notes','area','']],
+  do:[['who','Role that does it','roles',''],['whose','Which holder of the role','select',['','The one on this project','Anyone with the role','Not sure yet']],['deleg','Can another role do it?','select',['','Yes','No','Only when they are away','Not sure yet']],['delegTo','Which other role','roles',''],['time','Time allowed','text','e.g. same day'],['notes','Notes','area','']],
+  question:[['answer','Answer','area',''],['notes','Notes','area','']],
+  deadline:[['rule','Rule','text','e.g. within 2 working days'],['start','The clock starts when','text',''],['remind','Reminder','text','e.g. 1 day before'],['escalate','If missed, alert','roles',''],['notes','Notes','area','']]
+};
+const ITEMS = [
+ ['ppl-01','people','question','Who logs in to the app?','','',''],
+ ['ppl-02','people','question','Does the CEO log in to approve, or does someone record the CEO’s decisions?','P09 P32 P48 P58','The CEO gives final costing approval and approves production deployments in GLPI.',''],
+ ['ppl-03','people','question','Do the PMO Lead and Head of PMO log in?','P26 P39 P44 P53','The PMO Lead reviews every external document and approves project plans. The Head of PMO is the second costing approver and approves project closure.',''],
+ ['ppl-04','people','question','When Engineering, QA, Security, Product, the CTO or the client sign off outside the app, which role records it?','P22–P33 P58 P61','Many sign-offs belong to roles that won’t log in.','Working assumption for design: the PM of that project records it and attaches the proof.'],
+ ['ppl-05','people','question','What does HR do in the app, and which HR roles are there?','F16 F17 F35','HR approves which staff fields Finance may see and corrects HR records. Finance never edits HR records.',''],
+ ['ppl-06','people','question','Which role adds people to the app and assigns their roles?','','Not stated in PSL’s documents.',''],
+ ['ppl-07','people','question','Which devices will people use?','','',''],
+ ['ppl-08','people','question','Roughly how much work: active projects, invoices a month, people using the app?','','',''],
+ ['ppl-09','people','question','Is there a PSL brand guide the app and documents should follow?','','',''],
+ ['ppl-10','people','question','Which roles exist inside Finance and HR, and what does each one do?','','PSL’s documents only say “Finance” and “HR”.','Confirmed 11 Nov: the logged-in roles are PMO, PMO Lead, Finance, Finance Lead, HR and HR Lead.'],
+ ['ppl-11','people','question','Is any role missing from the role list?','','','Any role field has “Other role…” at the bottom for a role that isn’t listed.'],
+
+ ['pre-01','presale','do','Assign a PM to a new RFP','P45','PMO logs every RFP and the CEO typically assigns the PM. Every RFP is answered; there is no bid/no-bid approval.',''],
+ ['pre-02','presale','approve','Internal review of an RFP response','P47','PMO Lead and Engineering Lead review, in either order.','The Engineering Lead won’t log in, so their review is recorded.'],
+ ['pre-03','presale','approve','Commercial costing sign-off before an RFP is submitted','P48','Project Manager → Head of PMO → CEO, in that order. The CEO is final.',''],
+ ['pre-04','presale','do','Record whether an RFP was won or lost','P49','PMO or the PM confirms the outcome and records lessons. There is no win approval.',''],
+ ['pre-05','presale','approve','Approve SOW costing','P09','Exactly Project Manager → Head of PMO → CEO. The CEO is final.',''],
+ ['pre-06','presale','approve','Re-approve costing after a cost-changing revision','P08','The same chain runs again: Project Manager → Head of PMO → CEO.',''],
+ ['pre-07','presale','approve','Approve changes to rates or the pricing calculator','P08 P14','Not specified. The CEO approving one project’s costing does not approve the pricing model.',''],
+ ['pre-08','presale','approve','Quality review before any document goes to the client','P53','The PMO Lead reviews every external document.',''],
+ ['pre-09','presale','do','Send approved documents to the client','P19 P41','An authorised PM sends. Exactly who may send isn’t specified.',''],
+ ['pre-10','presale','approve','Client signs the SOW and PRD','P20','The client signs both. What counts as acceptable evidence is unresolved.','Decided 7 Nov: staff record the client’s signature and upload the proof.'],
+
+ ['pln-01','planning','do','Confirm the route (A, B or C) and assign the PM for a new engagement','P16','PMO confirms the route and assigns the PM. There is no separate intake approval.',''],
+ ['pln-02','planning','do','Provide Engineering and Security estimates','P18','Engineering and Security estimate; the PM collects and checks them.','Neither team logs in, so estimates reach the app through the PM.'],
+ ['pln-03','planning','approve','UI design sign-off','P22','The Design Lead, and the client where applicable.',''],
+ ['pln-04','planning','approve','Technical design sign-off','P23','The Engineering Lead, under Engineering’s own process.',''],
+ ['pln-05','planning','approve','Test strategy and UAT approach sign-offs','P24','The QA Lead signs the test strategy; the Product Owner signs the UAT approach. No order between them.',''],
+ ['pln-06','planning','approve','Scope and estimate baselines','P25','The Product Owner approves scope; the Engineering Lead approves estimates. No order between them.',''],
+ ['pln-07','planning','approve','Approve the project plan (Planning exit)','P26','The PMO Lead approves the project plan.',''],
+ ['pln-08','planning','approve','Phase entry and exit gates','P63','A PMO gate approval is required, but the exact approver isn’t specified.',''],
+
+ ['rel-01','release','approve','QA exit','P29','The QA Lead signs QA exit, with no critical defects open.',''],
+ ['rel-02','release','approve','UAT approvals','P30','Product Manager, Product Owner and the client contact. All are needed, in no set order.',''],
+ ['rel-03','release','approve','Engineering Go / No-Go before production','P31','Engineering decides under its own process. The exact role isn’t specified.',''],
+ ['rel-04','release','approve','Production deployment approval in GLPI','P32','Security, CTO and CEO approve in GLPI, in any order. The PM raises the request; Infra/DevOps deploys.','These approvals happen in GLPI. The app records the GLPI reference.'],
+ ['rel-05','release','approve','Go-live and business acceptance','P33','The Project Manager and the Client both sign. There is no separate acceptance approval.',''],
+ ['rel-06','release','approve','Hypercare stability confirmation','P35','Engineering or Infrastructure confirms stability. No numeric threshold is prescribed.',''],
+ ['rel-07','release','do','Receive the handover in Support and Operations','P37','Explicitly no approval. Support and Operations receive it and raise gaps.',''],
+ ['rel-08','release','approve','Approve project closure','P39','The Head of PMO approves the PM’s closure report. Finance confirms milestone notifications; that is not a financial approval.',''],
+
+ ['chg-01','change','do','Classify a change request as Standard, Normal or Emergency','P56','The PM classifies. There is no classification approval.',''],
+ ['chg-02','change','question','Which changes count as Standard (pre-approved)?','P56 D01','The Standard change catalogue isn’t defined.',''],
+ ['chg-03','change','approve','Approve a change','P58','Product and Engineering approve, and the client too if it’s client-facing.',''],
+ ['chg-04','change','approve','Approve the cost impact of a change','P58','Project Manager → Head of PMO → CEO, in that order.',''],
+ ['chg-05','change','approve','Agree the timeline of a change','P58','The Engineering Lead and the Security Manager agree timelines.',''],
+ ['chg-06','change','approve','Change go-live sign-off','P60','The Project Manager and the Client sign the change go-live document.',''],
+ ['chg-07','change','approve','Authorise an emergency change','P61','Incident Lead and Engineering Lead, plus the CTO for P1 incidents. The Incident Lead can be the Security Lead or the Engineering Lead.',''],
+ ['chg-08','change','question','Can an emergency change go to production before the GLPI approvals?','P32 P61 D01','PSL’s documents don’t settle how emergency authorisation relates to GLPI. No waiver is assumed.',''],
+ ['chg-09','change','approve','Retrospective approval of an emergency change','P62','Product and the Engineering Lead approve, in any order.',''],
+ ['chg-10','change','approve','Escalate to, or de-escalate with, the client','P44','The PMO Lead or Head of PMO approves.',''],
+ ['chg-11','change','do','Set issue severity and close issues','P50','The PM sets severity; QA and the PM close the issue. There is no closure approval.',''],
+
+ ['rep-01','reports','approve','Weekly client status report','P41','The PM prepares it, the PMO Lead reviews it and an authorised sender sends it. Weekday and recipients aren’t confirmed.',''],
+ ['rep-02','reports','approve','Monthly executive delivery report','P42','PMO leadership reviews it. Date, metrics and audience aren’t specified.',''],
+ ['rep-03','reports','approve','Approve document templates and the template library','P10 P11 D11','Owners approve templates, but nobody is named.','Until PSL’s templates arrive, the app uses labelled test templates.'],
+ ['rep-04','reports','approve','Approve changes to the PMO SOP','P13','The Head of PMO owns the SOP. A revision approval process isn’t provided.',''],
+ ['rep-05','reports','question','How long are documents and records kept?','D11','Retention rules aren’t specified.',''],
+
+ ['bil-01','billing','do','Mark a milestone complete and notify Finance','P34','The PM confirms completion and notifies Finance. What proves completion, and who may send it, still need agreement.',''],
+ ['bil-02','billing','question','For each contract: stage amounts or percentages, currency, tax basis, payment terms and rounding','D12','Not supplied. These come from each signed contract.','The app leaves these empty until they are set. It never fills in amounts itself.'],
+ ['bil-03','billing','question','Which event makes a stage invoiceable: signed SOW, UAT or completion?','D12','The exact trigger isn’t specified.',''],
+ ['bil-04','billing','approve','Approve an invoice’s amount, version and recipient','F29 F30','No approval matrix is established. Finance must say who approves pricing and release.',''],
+ ['bil-05','billing','approve','Approve client rates and price changes','F29 D08','The rate owner isn’t identified.',''],
+ ['bil-06','billing','approve','Approve invoice corrections and credit notes','D08','Correction behaviour isn’t specified.',''],
+ ['bil-07','billing','do','Record and verify incoming payments','F32 D14','Not established. Who records receipts, and which source verifies them, must be confirmed.',''],
+ ['bil-08','billing','approve','Approve how a payment is allocated, and any refund, credit or write-off','D14','Not specified.',''],
+ ['bil-09','billing','approve','Approve a payment exception','D13','Only a person with configured authority. An exception never erases the debt or replaces release controls.',''],
+ ['bil-10','billing','question','How is payment progress measured: what is the denominator and which funds count?','D13','Not agreed yet.',''],
+ ['bil-11','billing','approve','Decide collection follow-up with a client','F32 F40','Finance decides. The app never contacts clients on its own.',''],
+
+ ['mon-01','monthend','approve','Accept the trial balance import','F02','Finance must name who accepts the source.',''],
+ ['mon-02','monthend','approve','Approve account and BU mappings and formula changes','F03 D06','Finance must name who reviews mappings and rules.',''],
+ ['mon-03','monthend','approve','Review trial balance adjustments','F04','Not established.',''],
+ ['mon-04','monthend','approve','Approve and publish the management accounts','F09 F10','Finance must name who approves publication.',''],
+ ['mon-05','monthend','approve','Approve BU classifications and allocation methods','F14–F22','Accountable approvers must be confirmed.',''],
+ ['mon-06','monthend','approve','Approve exceptional executive or shared-service allocations','F21','A restricted approval; the approver isn’t named.',''],
+ ['mon-07','monthend','question','Who may see payroll workings?','F16–F18 F35','Restricted. HR approves which fields Finance may see.',''],
+ ['mon-08','monthend','approve','Correct staff or BU records in HR','F17 F35','HR approves its own corrections. Finance only requests them.',''],
+ ['mon-09','monthend','approve','Approve restating past BU reports','F27 D10','Not specified. Originals are kept and revised reports are labelled.',''],
+ ['mon-10','monthend','approve','Decide cash priorities','F40','Management decides. Who counts as management isn’t named.',''],
+ ['mon-11','monthend','approve','Approve the internal and group cash-flow reports','F43 D10','Publication approval and audiences aren’t specified.',''],
+
+ ['del-01','delegation','question','Which role can set up a delegation: the approver, their manager or an admin?','D05','Not specified.',''],
+ ['del-02','delegation','question','Are there approvals that can never be delegated?','D05','Not specified.','Ask especially about CEO final costing, payment exceptions and project closure.'],
+ ['del-03','delegation','question','Can a delegate pass it on again, and do delegations expire?','D05','Not specified.',''],
+ ['del-04','delegation','question','If an approver is away with no delegate, which role steps in?','D05','Not specified.',''],
+ ['del-05','delegation','question','Can one person hold two roles in the same approval chain?','D05 P61','Unresolved. For example, a PM who is also Head of PMO, or an Incident Lead who is also the Engineering Lead.',''],
+ ['del-06','delegation','question','Who can return, reject or withdraw at each step, and where does a returned item go?','D05','Not specified.',''],
+ ['del-07','delegation','question','Which edits after approval need a fresh approval?','D05','Cost changes rerun the costing chain. Other changes aren’t specified.',''],
+
+ ['ddl-01','deadlines','deadline','Time zone, working days and public holidays','D04','Not supplied.','The app is already set to Africa/Lagos time. That was an engineering choice, so confirm it, then ask for the working days and holidays.'],
+ ['ddl-02','deadlines','deadline','Internal PMO status meeting','P40','Every Tuesday. The time isn’t stated.',''],
+ ['ddl-03','deadlines','deadline','Weekly client status report','P41','Weekly. Day and time aren’t stated.',''],
+ ['ddl-04','deadlines','deadline','Monthly executive report','P42','Monthly. The date isn’t stated.',''],
+ ['ddl-05','deadlines','deadline','Escalations','P44','Internal escalations follow 24-hour and 48-hour rules. Client-dependent escalation within 24 hours. Blockers that affect the delivery timeline are escalated immediately.',''],
+ ['ddl-06','deadlines','deadline','Emergency change log and review','P62','Log within 24 hours. Retrospective approval within 1–2 working days.',''],
+ ['ddl-07','deadlines','deadline','Time to respond to approvals','D04','Not stated for any approval.','You can also note a time on each approval above.'],
+ ['ddl-08','deadlines','deadline','Does the clock pause while waiting on the client?','D04','Not stated.',''],
+ ['ddl-09','deadlines','deadline','Issue resolution targets by severity','P50 P54','Not stated.',''],
+ ['ddl-10','deadlines','deadline','Hypercare length and stability criteria','P35 D11','Not prescribed. They must be set.',''],
+ ['ddl-11','deadlines','deadline','Internal review time before an RFP deadline','P45–P48','The RFP sets the submission deadline. Internal review time isn’t stated.',''],
+ ['ddl-12','deadlines','deadline','Month-end calendar','F02–F26','A monthly cycle. Trial balance, management accounts and BU report dates aren’t stated.',''],
+ ['ddl-13','deadlines','deadline','Cash forecast updates','F39 F41 F42','A monthly projection that rolls forward. Update day and horizon aren’t stated.',''],
+ ['ddl-14','deadlines','deadline','Invoice payment terms','D12','Set per contract; not supplied.',''],
+
+ ['alt-01','alerts','question','Alert channels','','',''],
+ ['alt-02','alerts','question','Which events send an alert, and to which roles?','','','Suggested: a decision waiting, information requested, work stuck (Owner or Setup needed), overdue, work verified.'],
+ ['alt-03','alerts','question','Instant alerts or a daily digest? Quiet hours and weekends?','','',''],
+ ['alt-04','alerts','question','What may a message show: project name, client name, amounts?','','','Suggested: no amounts or client details on WhatsApp. Link into the app instead.'],
+ ['alt-05','alerts','question','If an alert is ignored, which role gets the next one, and when?','','',''],
+ ['alt-06','alerts','question','Which WhatsApp Business number and sender email address, and how do staff opt in?','','','WhatsApp needs a Business account and Meta-approved message templates.'],
+
+ ['cli-01','client','question','What counts as proof of a client response: signed PDF, e-signature, email from the client’s domain?','P20','Acceptable signatory and evidence method is unresolved.',''],
+ ['cli-02','client','question','Which client role may sign (for example the project sponsor), and is it set per project?','P20 P30 P33 P60','The client signs the SOW, PRD, go-live and change go-live documents; the client contact approves UAT.',''],
+ ['cli-03','client','question','Which roles may record a client response: only the PM of the project, or others too?','','','Decided 7 Nov: staff record client responses and upload the proof.']
+];
+
+const ROLE_GROUPS = [
+  ['PMO · logs in', ['PMO','PMO Lead']],
+  ['Leadership · login to confirm', ['CEO','CTO','Management team']],
+  ['Finance · logs in', ['Finance','Finance Lead']],
+  ['HR · logs in', ['HR','HR Lead']],
+  ['Product and design · don’t log in', ['Product Manager','Product Owner','Product team','Design Lead']],
+  ['Engineering, QA and security · don’t log in', ['Engineering Lead','Engineering team','QA Lead','QA team','Security Lead','Security Manager','Security team','Incident Lead']],
+  ['Operations and other teams · don’t log in', ['Infrastructure / DevOps','Support and Operations','Data team','Legal']],
+  ['Client · outside the app', ['Client signatory','Client contact']],
+  ['Relative to the item', ['The approver themselves','The person who raised it']]
+];
+let ROLE_OPTS = null;
+function roleOptions(){
+  if (ROLE_OPTS) return ROLE_OPTS;
+  const e = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  ROLE_OPTS = '<option value="">Add a role…</option>' + ROLE_GROUPS.map(([g, rs]) => '<optgroup label="' + e(g) + '">' + rs.map(r => '<option value="' + e(r) + '">' + e(r) + '</option>').join('') + '</optgroup>').join('') + '<option value="__other">Other role…</option>';
+  return ROLE_OPTS;
+}
+const PHC = ['PMO','PMO Lead','CEO'];
+const SOURCE_ROLES = {
+ 'pre-01':{r:['CEO'],o:'One role'}, 'pre-02':{r:['PMO Lead','Engineering Lead'],o:'All, any order'}, 'pre-03':{r:PHC,o:'All, in this order'},
+ 'pre-04':{r:['PMO'],o:'One role'}, 'pre-05':{r:PHC,o:'All, in this order'}, 'pre-06':{r:PHC,o:'All, in this order'},
+ 'pre-08':{r:['PMO Lead'],o:'One role'}, 'pre-09':{r:['PMO'],o:'One role'}, 'pre-10':{r:['Client signatory'],o:'One role'},
+ 'pln-01':{r:['PMO'],o:'One role'}, 'pln-02':{r:['Engineering team','Security team'],o:'All, any order'}, 'pln-03':{r:['Design Lead','Client signatory'],o:'All, any order'},
+ 'pln-04':{r:['Engineering Lead'],o:'One role'}, 'pln-05':{r:['QA Lead','Product Owner'],o:'All, any order'}, 'pln-06':{r:['Product Owner','Engineering Lead'],o:'All, any order'},
+ 'pln-07':{r:['PMO Lead'],o:'One role'}, 'rel-01':{r:['QA Lead'],o:'One role'}, 'rel-02':{r:['Product Manager','Product Owner','Client contact'],o:'All, any order'},
+ 'rel-04':{r:['Security team','CTO','CEO'],o:'All, any order'}, 'rel-05':{r:['PMO','Client signatory'],o:'All, any order'}, 'rel-06':{r:['Engineering team','Infrastructure / DevOps'],o:'Any one of them'},
+ 'rel-07':{r:['Support and Operations'],o:'One role'}, 'rel-08':{r:['PMO Lead'],o:'One role'}, 'chg-01':{r:['PMO'],o:'One role'},
+ 'chg-03':{r:['Product team','Engineering team','Client signatory'],o:'All, any order'}, 'chg-04':{r:PHC,o:'All, in this order'}, 'chg-05':{r:['Engineering Lead','Security Manager'],o:'All, any order'},
+ 'chg-06':{r:['PMO','Client signatory'],o:'All, any order'}, 'chg-07':{r:['Incident Lead','Engineering Lead','CTO'],o:'All, any order'}, 'chg-09':{r:['Product team','Engineering Lead'],o:'All, any order'},
+ 'chg-10':{r:['PMO Lead'],o:'One role'}, 'chg-11':{r:['PMO','QA team'],o:'All, any order'}, 'rep-01':{r:['PMO Lead'],o:'One role'},
+ 'bil-01':{r:['PMO'],o:'One role'}, 'mon-08':{r:['HR'],o:'One role'}
+};
+const KNOWN = new Set(Object.keys(SOURCE_ROLES));
+const S = {answers:{}, filter:'all', q:'', present:false, idx:0, db:null, canWrite:true, pending:{}};
+const list = document.getElementById('list');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const byId = {}; ITEMS.forEach(it => byId[it[0]] = it);
+
+function fieldHTML(id, f){
+  const [k, label, type, extra] = f; const fid = id + '-' + k;
+  if (type === 'roles') return '<div class="f"><label for="' + fid + '">' + esc(label) + '</label><div class="rp"><div class="rp-chips" id="' + fid + '-chips"></div>' +
+    '<select id="' + fid + '" class="rp-add" data-item="' + id + '" data-rk="' + k + '">' + roleOptions() + '</select>' +
+    '<div class="rp-other" id="' + fid + '-other" hidden><input type="text" id="' + fid + '-otext" data-item="' + id + '" data-ok="' + k + '" placeholder="Type the role name" aria-label="Other role name"><button type="button" class="btn ghost rp-oadd" data-item="' + id + '" data-rk="' + k + '">Add</button></div></div></div>';
+  let input;
+  if (type === 'select') input = '<select id="' + fid + '" data-item="' + id + '" data-k="' + k + '">' + extra.map(o => '<option value="' + esc(o) + '">' + (o ? esc(o) : 'Choose…') + '</option>').join('') + '</select>';
+  else if (type === 'area') input = '<textarea id="' + fid + '" data-item="' + id + '" data-k="' + k + '" rows="2"></textarea>';
+  else input = '<input id="' + fid + '" type="text" data-item="' + id + '" data-k="' + k + '" placeholder="' + esc(extra || '') + '">';
+  return '<div class="f' + (type === 'area' ? ' wide' : '') + '"><label for="' + fid + '">' + esc(label) + '</label>' + input + '</div>';
+}
+function itemHTML(it){
+  const [id, g, kind, title, refs, src, note] = it;
+  return '<details class="item" id="it-' + id + '" data-id="' + id + '" data-status="open">' +
+    '<summary><span class="sdot" aria-hidden="true"></span><span><span class="stitle">' + esc(title) + (refs ? '<span class="srefs">' + esc(refs) + '</span>' : '') + '</span><span class="ssum" id="sum-' + id + '"></span></span>' +
+    '<span class="sright">' + ((kind === 'approve' || kind === 'do') ? (KNOWN.has(id) ? '<span class="chip known">Role stated · confirm</span>' : '<span class="chip ask">Role to name</span>') : '') + '<span class="chip ' + kind + '">' + KIND[kind] + '</span></span></summary>' +
+    '<div class="body"><div class="said"><div><h4>PSL’s documents say</h4><p class="src">' + esc(src || 'Nothing on this in PSL’s documents.') + '</p></div>' +
+    (SOURCE_ROLES[id] ? '<button type="button" class="fill" data-item="' + id + '">Fill in these roles: ' + esc(SOURCE_ROLES[id].r.join(', ')) + '</button>' : '') +
+    (note ? '<p class="note">' + esc(note) + '</p>' : '') + '</div>' +
+    '<div class="fields"><h4>PSL’s answer</h4><div class="fgrid">' + FIELDS[kind].map(f => fieldHTML(id, f)).join('') + '</div>' +
+    '<div class="foot"><div class="seg status" role="group" aria-label="Status">' +
+    '<button type="button" data-item="' + id + '" data-s="open" aria-pressed="true">Not discussed</button>' +
+    '<button type="button" data-item="' + id + '" data-s="followup" aria-pressed="false">Follow up</button>' +
+    '<button type="button" data-item="' + id + '" data-s="answered" aria-pressed="false">Answered</button></div>' +
+    '<span class="saved" id="sv-' + id + '"></span></div></div></div></details>';
+}
+list.innerHTML = GROUPS.map(([g, t, d]) => {
+  const items = ITEMS.filter(it => it[1] === g);
+  return '<section class="group" id="g-' + g + '"><div class="group-head"><div><h2>' + esc(t) + '</h2><p>' + esc(d) + '</p></div><span class="gcount" id="gc-' + g + '"></span></div>' + items.map(itemHTML).join('') + '</section>';
+}).join('') + '<p class="empty" id="none" hidden>No items match. Clear the search or choose All.</p>';
+document.getElementById('groups').innerHTML = GROUPS.map(([g, t]) => '<a href="#g-' + g + '" id="gn-' + g + '">' + esc(t) + '<span></span></a>').join('');
+
+function ans(id){ return S.answers[id] || {status:'open', f:{}}; }
+function summary(id){
+  const a = ans(id), kind = byId[id][2], out = [], f = a.f || {};
+  FIELDS[kind].forEach(([k, label]) => {
+    const v = f[k], has = Array.isArray(v) ? v.length : v;
+    if (!has || k === 'notes' || out.length >= 3) return;
+    const text = Array.isArray(v) ? v.join(f.order === 'All, in this order' ? ' → ' : ', ') : String(v);
+    out.push('<b>' + esc(label) + ':</b> ' + esc(text.slice(0, 90)));
+  });
+  return out.join(' · ');
+}
+function rolesOf(id, k){ const v = (ans(id).f || {})[k]; return Array.isArray(v) ? v : (v ? [String(v)] : []); }
+function renderRoles(id, k){
+  const box = document.getElementById(id + '-' + k + '-chips'); if (!box) return;
+  const rs = rolesOf(id, k);
+  box.innerHTML = rs.map((r, i) => '<span class="rp-chip">' + (rs.length > 1 ? '<span class="n">' + (i + 1) + '</span>' : '') + esc(r) +
+    '<button type="button" class="rp-del" data-item="' + id + '" data-rk="' + k + '" data-i="' + i + '" aria-label="Remove ' + esc(r) + '"' + (S.canWrite ? '' : ' disabled') + '>×</button></span>').join('');
+}
+function setRoles(id, k, arr){ const a = local(id); a.f[k] = arr; renderRoles(id, k); document.getElementById('sum-' + id).innerHTML = summary(id); schedule(id, 0); }
+function addOther(id, k){
+  const inp = document.getElementById(id + '-' + k + '-otext'), v = inp.value.trim();
+  if (v && !rolesOf(id, k).includes(v)) setRoles(id, k, [...rolesOf(id, k), v]);
+  inp.value = ''; document.getElementById(id + '-' + k + '-other').hidden = true;
+}
+function fillFromSource(id){
+  const src = SOURCE_ROLES[id]; if (!src) return;
+  const a = local(id); a.f.who = src.r.slice();
+  if (FIELDS[byId[id][2]].some(f => f[0] === 'order')) a.f.order = src.o;
+  applyItem(id); schedule(id, 0);
+}
+function applyItem(id){
+  const a = ans(id), el = document.getElementById('it-' + id);
+  el.dataset.status = a.status || 'open';
+  FIELDS[byId[id][2]].forEach(([k, , type]) => { if (type === 'roles') { renderRoles(id, k); return; } const inp = document.getElementById(id + '-' + k); if (inp && inp !== document.activeElement) inp.value = (a.f || {})[k] || ''; });
+  el.querySelectorAll('.status button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === (a.status || 'open') ? 'true' : 'false'));
+  document.getElementById('sum-' + id).innerHTML = summary(id);
+}
+function counts(){
+  let ok = 0, fu = 0;
+  ITEMS.forEach(it => { const s = ans(it[0]).status; if (s === 'answered') ok++; else if (s === 'followup') fu++; });
+  const n = ITEMS.length;
+  document.getElementById('m-ok').style.width = (ok / n * 100) + '%';
+  document.getElementById('m-fu').style.width = (fu / n * 100) + '%';
+  document.getElementById('ptext').textContent = ok + ' answered · ' + fu + ' to follow up · ' + (n - ok - fu) + ' not discussed · ' + n + ' items';
+  GROUPS.forEach(([g]) => {
+    const its = ITEMS.filter(it => it[1] === g), done = its.filter(it => ans(it[0]).status === 'answered').length;
+    document.getElementById('gc-' + g).textContent = done + ' of ' + its.length + ' answered';
+    const nav = document.getElementById('gn-' + g); nav.querySelector('span').textContent = done + '/' + its.length; nav.classList.toggle('done', done === its.length);
+  });
+}
+function visibleIds(){
+  const q = S.q.toLowerCase();
+  return ITEMS.filter(it => {
+    const a = ans(it[0]), st = a.status || 'open';
+    if (S.filter !== 'all' && st !== S.filter) return false;
+    if (!q) return true;
+    return (it[3] + ' ' + it[4] + ' ' + it[5] + ' ' + it[6] + ' ' + Object.values(a.f || {}).join(' ')).toLowerCase().includes(q);
+  }).map(it => it[0]);
+}
+function applyFilter(){
+  const vis = new Set(visibleIds());
+  ITEMS.forEach(it => { document.getElementById('it-' + it[0]).hidden = !vis.has(it[0]); });
+  GROUPS.forEach(([g]) => { document.getElementById('g-' + g).hidden = !ITEMS.some(it => it[1] === g && vis.has(it[0])); });
+  document.getElementById('none').hidden = vis.size > 0;
+  if (S.present) showCurrent();
+}
+function showCurrent(){
+  const ids = visibleIds();
+  document.querySelectorAll('.item.current').forEach(e => e.classList.remove('current'));
+  if (!ids.length) { document.getElementById('where').textContent = 'No items match'; return; }
+  S.idx = Math.max(0, Math.min(S.idx, ids.length - 1));
+  const id = ids[S.idx], el = document.getElementById('it-' + id);
+  el.classList.add('current'); el.open = true;
+  const g = GROUPS.find(x => x[0] === byId[id][1]);
+  document.getElementById('where').textContent = (S.idx + 1) + ' of ' + ids.length + ' · ' + g[1];
+  window.scrollTo({top: 0});
+}
+function setPresent(on){
+  S.present = on; document.body.classList.toggle('present', on);
+  document.getElementById('present').textContent = on ? 'Show list' : 'Present';
+  if (on) { S.idx = 0; showCurrent(); } else { document.querySelectorAll('.item.current').forEach(e => e.classList.remove('current')); }
+}
+function move(d){ S.idx += d; showCurrent(); }
+
+function setSaved(id, text){ const e = document.getElementById('sv-' + id); if (e) e.textContent = text; }
+function setReadOnly(msg){
+  S.canWrite = false;
+  document.querySelectorAll('[data-item]').forEach(e => e.disabled = true);
+  const b = document.getElementById('banner'); b.textContent = msg; b.hidden = false;
+}
+function local(id){ if (!S.answers[id]) S.answers[id] = {status:'open', f:{}}; else S.answers[id] = {status:S.answers[id].status || 'open', f:Object.assign({}, S.answers[id].f || {})}; return S.answers[id]; }
+function schedule(id, delay){
+  if (!S.db || !S.canWrite) return;
+  const p = S.pending[id] || (S.pending[id] = {});
+  p.dirty = true; clearTimeout(p.timer); setSaved(id, 'Unsaved');
+  p.timer = setTimeout(() => flush(id), delay);
+}
+async function flush(id, retried){
+  const p = S.pending[id]; if (!p || p.saving || !p.dirty) return;
+  p.saving = true; p.dirty = false; setSaved(id, 'Saving…');
+  const a = ans(id);
+  try {
+    await S.db.collection('answers').doc(id).set({status:a.status || 'open', f:a.f || {}, at:new Date().toISOString()});
+    setSaved(id, 'Saved ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}));
+  } catch (e) {
+    const code = e && e.code;
+    if (code === 'invalid_argument') setReadOnly('You can read this worksheet, but your answers can’t be saved. Ask the owner for edit access.');
+    else if (code === 'unavailable' && !retried) { p.saving = false; p.dirty = true; setTimeout(() => flush(id, true), 800 + Math.random() * 800); return; }
+    else if (code === 'quota_exceeded') setSaved(id, 'Not saved: this worksheet’s storage is full.');
+    else setSaved(id, 'Not saved. Edit again to retry.');
+  } finally { p.saving = false; if (p.dirty) flush(id); }
+}
+
+document.addEventListener('input', e => {
+  const t = e.target; if (!t.dataset || !t.dataset.k) return;
+  const id = t.dataset.item, a = local(id); a.f[t.dataset.k] = t.value;
+  document.getElementById('sum-' + id).innerHTML = summary(id);
+  schedule(id, t.tagName === 'SELECT' ? 0 : 700);
+});
+document.addEventListener('click', e => {
+  const del = e.target.closest('.rp-del'); if (del) { if (!del.disabled) { const rs = rolesOf(del.dataset.item, del.dataset.rk).slice(); rs.splice(+del.dataset.i, 1); setRoles(del.dataset.item, del.dataset.rk, rs); } return; }
+  const oadd = e.target.closest('.rp-oadd'); if (oadd) { if (!oadd.disabled) addOther(oadd.dataset.item, oadd.dataset.rk); return; }
+  const fill = e.target.closest('.fill'); if (fill) { if (!fill.disabled) fillFromSource(fill.dataset.item); return; }
+  const b = e.target.closest('.status button'); if (!b || b.disabled) return;
+  const id = b.dataset.item, a = local(id); a.status = b.dataset.s; applyItem(id); counts(); schedule(id, 0);
+  if (S.filter !== 'all' && !S.present) applyFilter();
+});
+document.addEventListener('change', e => {
+  const t = e.target; if (!t.classList || !t.classList.contains('rp-add')) return;
+  const id = t.dataset.item, k = t.dataset.rk, v = t.value; t.value = '';
+  if (!v) return;
+  if (v === '__other') { document.getElementById(id + '-' + k + '-other').hidden = false; document.getElementById(id + '-' + k + '-otext').focus(); return; }
+  if (!rolesOf(id, k).includes(v)) setRoles(id, k, [...rolesOf(id, k), v]);
+});
+document.addEventListener('keydown', e => { const t = e.target; if (t.dataset && t.dataset.ok && e.key === 'Enter') { e.preventDefault(); addOther(t.dataset.item, t.dataset.ok); } });
+document.querySelectorAll('.bar .seg button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.bar .seg button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  S.filter = b.dataset.f; S.idx = 0; applyFilter();
+}));
+document.getElementById('q').addEventListener('input', e => { S.q = e.target.value.trim(); S.idx = 0; applyFilter(); });
+document.getElementById('present').addEventListener('click', () => setPresent(!S.present));
+document.getElementById('exit').addEventListener('click', () => setPresent(false));
+document.getElementById('prev').addEventListener('click', () => move(-1));
+document.getElementById('next').addEventListener('click', () => move(1));
+document.addEventListener('keydown', e => {
+  if (!S.present) return;
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); move(1); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); move(-1); }
+  else if (e.key === 'Escape') setPresent(false);
+});
+
+ITEMS.forEach(it => applyItem(it[0])); counts(); applyFilter();
+
+(async () => {
+  const c = window.claude;
+  const db = c && c.use ? await c.use('db') : null;
+  if (!db) { setReadOnly('Answers can’t be loaded or saved in this view. Open the worksheet on claude.ai while signed in.'); document.getElementById('ptext').textContent = ITEMS.length + ' items'; return; }
+  S.db = db;
+  const user = c.use ? await c.use('user') : null;
+  const can = user ? await user.can('data.write') : null;
+  if (can === false) setReadOnly('You can read this worksheet. Ask the owner for edit access to record answers.');
+  let settled = false;
+  const timer = setTimeout(() => { if (!settled) { const b = document.getElementById('banner'); b.textContent = 'Saved answers can’t be reached yet. What you see may be out of date.'; b.hidden = false; } }, 10000);
+  db.collection('answers').onSnapshot(snap => {
+    if (!snap.metadata.fromCache) { settled = true; clearTimeout(timer); const b = document.getElementById('banner'); if (S.canWrite && b.textContent.startsWith('Saved answers')) b.hidden = true; }
+    snap.docChanges().forEach(ch => {
+      const id = ch.doc.id; if (!byId[id]) return;
+      const p = S.pending[id]; if (p && (p.dirty || p.saving)) return;
+      if (ch.type === 'removed') delete S.answers[id];
+      else { const d = ch.doc.data() || {}; S.answers[id] = {status:d.status || 'open', f:Object.assign({}, d.f || {})}; }
+      applyItem(id);
+    });
+    counts(); if (S.filter !== 'all' || S.q) applyFilter();
+  }, err => { settled = true; clearTimeout(timer); const b = document.getElementById('banner'); b.textContent = 'Saved answers stopped updating. Reload the page to reconnect.'; b.hidden = false; });
+})();
+</script>
+</body></html>

@@ -1,0 +1,1034 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>PSL Factory Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column (max 1180px); full-width diagram figures on paper panels; station, agent and state cards in 3-column grids that collapse to 1 on phones. */
+:root{
+  --bg:#f6f7f4; --paper:#ffffff; --ink:#1f2b29; --muted:#5d6965; --faint:#8b958f; --line:#dfe3dc; --band:#eef1ec;
+  --accent:#cc5726; --accent-wash:#fcebe2;
+  --pmo:#21746a; --pmo-wash:#e2f0ec;
+  --fin:#2d61ad; --fin-wash:#e5edfa;
+  --agent:#6450c6; --agent-wash:#eeeafb;
+  --ok:#2e7b44; --ok-wash:#e4f2e7;
+  --hold:#9c6809; --hold-wash:#faf0da;
+  --on-strong:#ffffff;
+  --font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121716; --paper:#1a201f; --ink:#e3e9e6; --muted:#a1aca8; --faint:#79847f; --line:#2d3634; --band:#212927;
+    --accent:#f0875a; --accent-wash:#3a2219;
+    --pmo:#52b9a9; --pmo-wash:#16302b;
+    --fin:#7aa7f2; --fin-wash:#1a2740;
+    --agent:#a998ff; --agent-wash:#261f42;
+    --ok:#6cc488; --ok-wash:#163020;
+    --hold:#e3ad4e; --hold-wash:#35290f;
+    --on-strong:#0f1413;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121716; --paper:#1a201f; --ink:#e3e9e6; --muted:#a1aca8; --faint:#79847f; --line:#2d3634; --band:#212927;
+  --accent:#f0875a; --accent-wash:#3a2219;
+  --pmo:#52b9a9; --pmo-wash:#16302b;
+  --fin:#7aa7f2; --fin-wash:#1a2740;
+  --agent:#a998ff; --agent-wash:#261f42;
+  --ok:#6cc488; --ok-wash:#163020;
+  --hold:#e3ad4e; --hold-wash:#35290f;
+  --on-strong:#0f1413;
+  color-scheme:dark;
+}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--font-body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-block:44px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:76px}
+a{color:inherit}
+a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+p{margin:0}
+.eyebrow{font:500 12px/1.4 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+h1{font-family:var(--font-display);font-stretch:118%;font-weight:800;font-size:clamp(38px,6.4vw,68px);line-height:1;letter-spacing:-.025em;margin:0;text-wrap:balance}
+h2{font-family:var(--font-display);font-stretch:112%;font-weight:760;font-size:clamp(25px,3.2vw,33px);line-height:1.12;letter-spacing:-.012em;margin:0;text-wrap:balance}
+h3{font-family:var(--font-display);font-stretch:106%;font-weight:700;font-size:18px;line-height:1.25;margin:0;text-wrap:balance}
+h4{font:600 11.5px/1.4 var(--font-mono);letter-spacing:.09em;text-transform:uppercase;margin:0}
+code{font:500 12px/1.5 var(--font-mono);background:var(--band);color:var(--ink);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.lede{font-size:17px;line-height:1.6;color:var(--muted);max-width:66ch}
+.muted{color:var(--muted)}
+section{display:flex;flex-direction:column;gap:24px;scroll-margin-top:16px;min-width:0}
+.section-head{display:flex;flex-direction:column;gap:10px;max-width:74ch}
+.section-head p{color:var(--muted);font-size:16px}
+
+/* header */
+.top{display:flex;flex-direction:column;gap:22px}
+.meta{font:13px/1.5 var(--font-mono);color:var(--muted)}
+.key{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.key-item{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--paper);border:1px solid var(--line);border-radius:12px;min-width:0}
+.key-item strong{display:block;font-family:var(--font-display);font-stretch:106%;font-size:16px}
+.key-item span{color:var(--muted);font-size:14px}
+.shape{width:14px;height:14px;flex:none;margin-top:5px}
+.shape.agent{border-radius:50%;background:var(--agent)}
+.shape.person{background:var(--accent);transform:rotate(45deg) scale(.9);border-radius:2px}
+.shape.service{background:var(--muted);border-radius:3px}
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.toc a{font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;text-decoration:none;background:var(--paper)}
+.toc a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* figures */
+figure{margin:0}
+.diagram{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.diagram .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.diagram svg{display:block;width:100%;height:auto}
+.diagram.wide svg{min-width:1000px}
+.diagram.mid svg{min-width:760px}
+figcaption{font-size:14px;color:var(--muted);max-width:82ch}
+.scroll-hint{display:none;font:12px var(--font-mono);color:var(--muted)}
+@media (max-width:820px){.scroll-hint{display:block}}
+
+/* svg vocabulary */
+.d-node{font:600 12.5px var(--font-body);fill:var(--ink)}
+.d-sub{font:400 10.5px var(--font-body);fill:var(--muted)}
+.d-edge{font:500 11px var(--font-body);fill:var(--muted)}
+.d-lane{font:700 13.5px var(--font-display);fill:var(--ink)}
+.d-small{font:400 11px var(--font-body);fill:var(--muted)}
+.d-st{font:600 13px var(--font-body);fill:var(--ink)}
+.d-id{font:500 11px var(--font-mono);fill:var(--muted)}
+.d-track{font:600 11px var(--font-mono);letter-spacing:.1em}
+.d-track.pmo{fill:var(--pmo)} .d-track.fin{fill:var(--fin)}
+.d-band{font:500 11.5px var(--font-body);fill:var(--muted)}
+.tx-person{fill:var(--accent)} .tx-hold{fill:var(--hold)} .tx-fin{fill:var(--fin)}
+.lane-agent{fill:var(--agent-wash)} .lane-person{fill:var(--accent-wash)} .lane-service{fill:var(--band)}
+.node{stroke-width:1.5}
+.n-agent{fill:var(--paper);stroke:var(--agent)}
+.n-person{fill:var(--paper);stroke:var(--accent)}
+.n-service{fill:var(--paper);stroke:var(--faint)}
+.n-ok{fill:var(--ok-wash);stroke:var(--ok)}
+.n-hold{fill:var(--hold-wash);stroke:var(--hold)}
+.edge{fill:none;stroke:var(--muted);stroke-width:1.5}
+.edge.rework{stroke:var(--accent);stroke-dasharray:5 4}
+.edge.holdline{stroke:var(--hold);stroke-dasharray:5 4}
+.ah-ink{fill:var(--muted)} .ah-person{fill:var(--accent)} .ah-hold{fill:var(--hold)} .ah-fin{fill:var(--fin)}
+.track{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.track.pmo{stroke:var(--pmo);stroke-width:6} .track.fin{stroke:var(--fin);stroke-width:6} .track.thin{stroke-width:3}
+.handoff{fill:none;stroke:var(--fin);stroke-width:1.6;stroke-dasharray:4 4}
+.st{stroke-width:3}
+.st.gate{fill:var(--paper);stroke:var(--accent)} .st.gate.built{fill:var(--accent)}
+.st.plain{fill:var(--paper);stroke:var(--pmo)} .st.plain.built{fill:var(--pmo)}
+.st.finst{fill:var(--paper);stroke:var(--fin)} .st.finst.built{fill:var(--fin)}
+.st-end{fill:var(--paper);stroke:var(--pmo);stroke-width:2.5}
+.band-rect{fill:var(--band);stroke:var(--line)}
+.st-link{cursor:pointer}
+.st-link .hit{fill:transparent;stroke:none}
+.st-link:hover .d-st{fill:var(--accent)}
+.st-link:focus{outline:none}
+.st-link:focus-visible .hit{stroke:var(--accent);stroke-width:2;stroke-dasharray:3 3}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend svg{width:18px;height:18px;display:block;flex:none}
+
+/* done ladder */
+.callout{display:flex;flex-direction:column;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px}
+.ladder{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.chip{padding:6px 12px;border-radius:8px;background:var(--band);font-weight:600;font-size:14px;white-space:nowrap}
+.chip.final{background:var(--ok-wash);color:var(--ok)}
+.chip.paid{background:transparent;border:1.5px dashed var(--faint);color:var(--muted)}
+.arrow{color:var(--faint);font-size:15px}
+.ladder .sep{width:1px;align-self:stretch;background:var(--line);margin:0 6px}
+
+/* scope */
+.bar{display:flex;gap:2px;height:46px;border-radius:8px;overflow:hidden}
+.seg{flex:var(--n) 1 0;min-width:0;display:flex;align-items:center;justify-content:center;font:500 11px var(--font-mono);color:var(--on-strong);overflow:hidden;white-space:nowrap}
+.seg.pmo{background:var(--pmo)} .seg.fin{background:var(--fin)}
+.seg.baas{background:repeating-linear-gradient(135deg,var(--band) 0 5px,var(--line) 5px 10px);color:var(--muted)}
+@media (max-width:820px){.seg span{display:none}}
+.bar-labels{display:flex;gap:2px;font-size:13px;font-variant-numeric:tabular-nums}
+.bar-labels>div{flex:var(--n) 1 0;min-width:0;padding-top:6px;border-top:3px solid var(--line);white-space:nowrap}
+.bar-labels>div:last-child{display:flex;justify-content:flex-end}
+.bar-labels .pmo{border-color:var(--pmo)} .bar-labels .fin{border-color:var(--fin)} .bar-labels .rel{border-color:var(--ink)}
+.bar-labels b{font-weight:600}
+.table-wrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:740px;font-size:14px}
+th{font:600 11px/1.4 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.fam b{display:block;font-weight:600}
+td.fam code{margin-right:6px}
+tr.deferred td{color:var(--muted)}
+.minibar{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.minibar i{display:block;height:8px;border-radius:4px;width:calc(var(--n) * 4px)}
+.minibar i.pmo{background:var(--pmo)} .minibar i.fin{background:var(--fin)} .minibar i.baas{background:var(--faint)}
+.minibar span{margin-left:4px;font-size:13px}
+
+/* stations */
+.stations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:1000px){.stations{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.stations{grid-template-columns:1fr}}
+.station{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px;min-width:0}
+.station:target{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.st-head{display:flex;flex-direction:column;gap:6px}
+.st-head .num{font:500 12px var(--font-mono);color:var(--muted)}
+.badge{align-self:flex-start;font:500 12px/1.35 var(--font-mono);padding:4px 8px;border-radius:6px}
+.badge.built{background:var(--pmo-wash);color:var(--pmo)}
+.badge.none{background:var(--band);color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:14px}
+.steps li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;align-items:baseline}
+.steps li code{justify-self:start}
+.decide{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.decide h4{color:var(--accent);display:flex;align-items:center;gap:8px}
+.decide h4::before{content:"";width:8px;height:8px;background:var(--accent);transform:rotate(45deg);border-radius:1px;flex:none}
+.decide.none h4{color:var(--muted)}
+.decide.none h4::before{background:transparent;box-shadow:inset 0 0 0 1.5px var(--muted)}
+.decide ul{margin:0;padding:0 0 0 18px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.agents-line{font-size:13.5px;color:var(--muted)}
+.agents-line b{color:var(--agent);font-weight:600}
+.note{font-size:13.5px;background:var(--band);border-radius:8px;padding:8px 10px}
+
+/* alongside */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel p{font-size:14px;color:var(--muted)}
+.flowline{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px}
+.flowline .chip{font-size:13px;padding:4px 10px}
+.flowline .chip.gate{background:var(--accent-wash);color:var(--accent)}
+
+/* finance */
+.pipeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px}
+.stage{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.stage:not(:last-child)::after{content:"";position:absolute;right:-21px;top:26px;width:11px;height:11px;border-top:2px solid var(--fin);border-right:2px solid var(--fin);transform:rotate(45deg)}
+.stage .steps li{grid-template-columns:58px minmax(0,1fr)}
+.stage .eyebrow{color:var(--fin)}
+@media (max-width:1000px){
+  .pipeline{grid-template-columns:1fr;gap:30px}
+  .stage:not(:last-child)::after{right:auto;left:30px;top:auto;bottom:-21px;transform:rotate(135deg)}
+}
+.billing{display:flex;flex-direction:column;gap:10px;background:var(--fin-wash);border-radius:14px;padding:16px}
+.billing .flowline .chip{background:var(--paper)}
+.billing h4{color:var(--fin)}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.rules{grid-template-columns:1fr}}
+.rule{padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font-size:14px}
+.rule b{display:block;font-weight:600;margin-bottom:2px}
+
+/* states */
+.state-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:1000px){.state-groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.state-groups{grid-template-columns:1fr}}
+.state-group{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.state-group h4{color:var(--muted)}
+.state-row{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.state-row p{color:var(--muted)}
+.pill{align-self:flex-start;display:inline-flex;align-items:center;font-weight:600;font-size:13px;padding:3px 10px;border-radius:999px;border:1px solid currentColor}
+.pill.move{color:var(--fin);background:var(--fin-wash)}
+.pill.person{color:var(--accent);background:var(--accent-wash)}
+.pill.hold{color:var(--hold);background:var(--hold-wash)}
+.pill.unsure{color:var(--hold);background:var(--hold-wash);border-style:dashed}
+.pill.check{color:var(--ink);background:var(--band)}
+.pill.done{color:var(--ok);background:var(--ok-wash)}
+.pill.stop{color:var(--muted);background:transparent}
+.ui-states{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px 18px;font-size:14px}
+.ui-states div b{display:block}
+.ui-states div span{color:var(--muted)}
+
+/* agents */
+.crew{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:1000px){.crew{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.crew{grid-template-columns:1fr}}
+.agent-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.agent-card .aid{font:600 12px var(--font-mono);color:var(--agent)}
+.agent-card p{font-size:14px}
+.agent-card .eg{color:var(--muted);font-size:13.5px}
+.agent-card.lead{background:var(--agent-wash);border-color:transparent}
+.never{font-size:15px;padding:14px 16px;border-radius:12px;border:1.5px dashed var(--agent);color:var(--ink)}
+.never b{color:var(--agent)}
+
+/* built */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.fact{padding:14px 16px;border-radius:12px;background:var(--paper);border:1px solid var(--line);font-size:14px}
+.fact b{display:block;font-family:var(--font-display);font-stretch:106%;font-size:16px;margin-bottom:4px}
+.screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+.screen{padding:14px 16px;border-radius:12px;background:var(--band);font-size:14px}
+.screen b{display:block;font-weight:600}
+.screen code{background:var(--paper)}
+
+/* questions */
+.questions{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.questions{grid-template-columns:1fr}}
+.questions li{padding:16px;border-radius:12px;background:var(--paper);border:1px solid var(--line);font-size:14.5px}
+.questions li b{display:block;font-family:var(--font-display);font-stretch:106%;font-size:16px;margin-bottom:4px}
+footer.sources{border-top:1px solid var(--line);padding-top:20px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+footer.sources ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px 14px}
+footer.sources code{font-size:11.5px}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">PSL Product Studio · operations factory</p>
+  <h1>PSL Factory Map</h1>
+  <p class="lede">How work moves through the factory in the psl-factory repo: who does what at each station, where work waits, and what has to be true before anything counts as done.</p>
+  <p class="meta">Snapshot of commit 05590af · 6 November 2026 · drawn from the process map, product blueprint, component design and console code</p>
+  <div class="key" aria-label="The three kinds of actor">
+    <div class="key-item"><span class="shape agent" aria-hidden="true"></span><div><strong>Agents</strong><span>Investigate, draft, chase missing information, reconcile. They never approve.</span></div></div>
+    <div class="key-item"><span class="shape person" aria-hidden="true"></span><div><strong>People</strong><span>Approve, sign, record real outcomes, supply what's missing.</span></div></div>
+    <div class="key-item"><span class="shape service" aria-hidden="true"></span><div><strong>Services</strong><span>Check permissions, calculate money, send, record receipts, verify.</span></div></div>
+  </div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#model">The model</a><a href="#scope">Scope</a><a href="#project-line">Project line</a><a href="#alongside">Running alongside</a><a href="#finance">Finance cycle</a><a href="#invoice">Invoice line</a><a href="#states">Work states</a><a href="#agents">Agent crew</a><a href="#built">Built today</a><a href="#questions">Open questions</a>
+  </nav>
+</header>
+
+<!-- MODEL -->
+<section id="model">
+  <div class="section-head">
+    <p class="eyebrow">The model</p>
+    <h2>One work item, three kinds of actor</h2>
+    <p>Every piece of work follows the same pattern. Agents carry it forward on their own and stop only for what the rules reserve to a person. Services do the arithmetic and the sending, and only the verification service can call the work done.</p>
+  </div>
+  <figure class="diagram mid">
+    <div class="scroll">
+      <svg viewBox="0 0 1060 320" role="img" aria-label="Swimlane: agents triage and draft, people supply missing information and approve or return, services calculate, send, record receipts and verify. Only verification marks work done.">
+        <defs>
+          <marker id="a1-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-ink"/></marker>
+          <marker id="a1-person" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-person"/></marker>
+        </defs>
+        <rect class="lane-agent" x="0" y="20" width="1060" height="90" rx="10"/>
+        <rect class="lane-person" x="0" y="120" width="1060" height="90" rx="10"/>
+        <rect class="lane-service" x="0" y="220" width="1060" height="90" rx="10"/>
+        <text class="d-lane" x="18" y="61">Agents</text><text class="d-small" x="18" y="78">O01 + A01–A08</text>
+        <text class="d-lane" x="18" y="161">People</text><text class="d-small" x="18" y="178">PM, Finance, CEO…</text>
+        <text class="d-lane" x="18" y="261">Services</text><text class="d-small" x="18" y="278">rules, money, receipts</text>
+
+        <rect class="node n-agent" x="140" y="43" width="140" height="44" rx="8"/><text class="d-node" x="210" y="69" text-anchor="middle">Triage &amp; investigate</text>
+        <rect class="node n-person" x="140" y="143" width="140" height="44" rx="8"/><text class="d-node" x="210" y="169" text-anchor="middle">Supply missing info</text>
+        <rect class="node n-agent" x="350" y="43" width="140" height="44" rx="8"/><text class="d-node" x="420" y="69" text-anchor="middle">Draft the output</text>
+        <rect class="node n-service" x="350" y="243" width="140" height="44" rx="8"/><text class="d-node" x="420" y="269" text-anchor="middle">Calculate &amp; validate</text>
+        <rect class="node n-person" x="560" y="143" width="140" height="44" rx="8"/><text class="d-node" x="630" y="169" text-anchor="middle">Approve or return</text>
+        <rect class="node n-service" x="750" y="243" width="140" height="44" rx="8"/><text class="d-node" x="820" y="269" text-anchor="middle">Send &amp; get receipt</text>
+        <rect class="node n-ok" x="920" y="243" width="130" height="44" rx="8"/><text class="d-node" x="985" y="269" text-anchor="middle">Verify outcome</text>
+
+        <path class="edge" d="M190 87 V141" marker-end="url(#a1-ink)"/><text class="d-edge" x="184" y="118" text-anchor="end">asks</text>
+        <path class="edge" d="M230 143 V89" marker-end="url(#a1-ink)"/><text class="d-edge" x="236" y="118">answers</text>
+        <path class="edge" d="M280 65 H348" marker-end="url(#a1-ink)"/><text class="d-edge" x="315" y="58" text-anchor="middle">evidence</text>
+        <path class="edge" d="M400 87 V241" marker-end="url(#a1-ink)"/><text class="d-edge" x="394" y="200" text-anchor="end">requests</text>
+        <path class="edge" d="M440 243 V89" marker-end="url(#a1-ink)"/><text class="d-edge" x="446" y="200">totals</text>
+        <path class="edge" d="M490 65 H630 V141" marker-end="url(#a1-ink)"/><text class="d-edge" x="560" y="58" text-anchor="middle">decision packet</text>
+        <path class="edge rework" d="M560 165 H470 V89" marker-end="url(#a1-person)"/><text class="d-edge tx-person" x="515" y="158" text-anchor="middle">returns</text>
+        <path class="edge" d="M630 187 V265 H748" marker-end="url(#a1-ink)"/><text class="d-edge" x="690" y="258" text-anchor="middle">approves</text>
+        <path class="edge" d="M890 265 H918" marker-end="url(#a1-ink)"/>
+        <text class="d-small" x="820" y="302" text-anchor="middle">unsure? reconcile first</text>
+        <text class="d-small" x="985" y="302" text-anchor="middle">only this marks it done</text>
+      </svg>
+    </div>
+    <p class="scroll-hint">Scroll sideways to see the whole diagram →</p>
+    <figcaption>The dashed line is rework: a returned draft goes back to the agent with the reviewer's reason, and the earlier version stays in history. If a send times out, the service checks for the original before anything is sent again.</figcaption>
+  </figure>
+
+  <div class="callout">
+    <h3>The rule behind every screen: each of these is a separate fact</h3>
+    <div class="ladder" aria-label="Separate facts, in order">
+      <span class="chip">Drafted</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">Reviewed</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">Approved</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">Sent</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">Receipt recorded</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip final">Verified</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="chip paid">Paid</span>
+    </div>
+    <p class="muted">The UI can never show one of these as another. A successful agent run is not an approval, and an API acknowledgement is not a customer receipt. Payment is its own Finance fact: a verified invoice says nothing about whether it was paid.</p>
+  </div>
+</section>
+
+<!-- SCOPE -->
+<section id="scope">
+  <div class="section-head">
+    <p class="eyebrow">Scope</p>
+    <h2>122 processes in 13 families, 108 in this release</h2>
+    <p>Every original business process keeps its ID (P for PMO, F for Finance, B for BaaS). This release covers PMO and Finance. The 14 BaaS (Banking-as-a-Service) processes already have code, which is kept, but they're deferred. The bar is drawn to scale, one unit per process.</p>
+  </div>
+  <figure class="diagram">
+    <div class="bar" role="img" aria-label="122 processes: 63 PMO, 45 Finance, 14 BaaS deferred">
+      <div class="seg pmo" style="--n:22" title="AF09 Project delivery · 22 PMO"><span>AF09</span></div>
+      <div class="seg pmo" style="--n:12" title="AF10 Commercial · 12 PMO"><span>AF10</span></div>
+      <div class="seg pmo" style="--n:12" title="AF12 Issues and changes · 12 PMO"><span>AF12</span></div>
+      <div class="seg pmo" style="--n:11" title="AF11 Documents and reporting · 11 PMO"><span>AF11</span></div>
+      <div class="seg pmo" style="--n:3" title="AF08 Handoffs · 3 PMO"></div>
+      <div class="seg pmo" style="--n:3" title="AF13 Evidence and validation · 3 PMO"></div>
+      <div class="seg fin" style="--n:15" title="AF05 BU performance · 15 Finance"><span>AF05</span></div>
+      <div class="seg fin" style="--n:13" title="AF04 Management accounts · 13 Finance"><span>AF04</span></div>
+      <div class="seg fin" style="--n:8" title="AF07 Cash forecast · 8 Finance"><span>AF07</span></div>
+      <div class="seg fin" style="--n:6" title="AF06 Billing · 6 Finance"><span>AF06</span></div>
+      <div class="seg fin" style="--n:3" title="AF08 Handoffs · 3 Finance"></div>
+      <div class="seg baas" style="--n:4" title="AF01 Support · 4 BaaS"></div>
+      <div class="seg baas" style="--n:4" title="AF02 Reconciliation · 4 BaaS"></div>
+      <div class="seg baas" style="--n:4" title="AF03 Partner operations · 4 BaaS"></div>
+      <div class="seg baas" style="--n:1" title="AF06 Billing · 1 BaaS"></div>
+      <div class="seg baas" style="--n:1" title="AF13 Evidence · 1 BaaS"></div>
+    </div>
+    <div class="bar-labels">
+      <div class="pmo" style="--n:63"><b>PMO</b>&nbsp;63</div>
+      <div class="fin" style="--n:45"><b>Finance</b>&nbsp;45</div>
+      <div style="--n:14"><span><b>BaaS</b>&nbsp;14</span></div>
+    </div>
+    <div class="bar-labels">
+      <div class="rel" style="--n:108"><b>In this release</b>&nbsp;108</div>
+      <div style="--n:14"><span class="muted">deferred</span></div>
+    </div>
+  </figure>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Family</th><th>What it covers</th><th>Processes</th><th>Built production line</th></tr></thead>
+      <tbody>
+        <tr><td class="fam"><code>AF09</code><b>Project delivery</b></td><td>Engagement, planning, kick-off, release gates, go-live, hypercare, handover, closure</td><td><div class="minibar"><i class="pmo" style="--n:22"></i><span>22 PMO</span></div></td><td>Plan · Release · Go-live · Hypercare · Handover · Closure</td></tr>
+        <tr><td class="fam"><code>AF10</code><b>Commercial</b></td><td>Estimates, costing, SOW, the PM → Head of PMO → CEO chain, RFPs</td><td><div class="minibar"><i class="pmo" style="--n:12"></i><span>12 PMO</span></div></td><td>RFP response · Commercial submission</td></tr>
+        <tr><td class="fam"><code>AF12</code><b>Issues &amp; changes</b></td><td>Issues, risks, incidents, change requests, emergency changes, escalations</td><td><div class="minibar"><i class="pmo" style="--n:12"></i><span>12 PMO</span></div></td><td class="muted">None yet</td></tr>
+        <tr><td class="fam"><code>AF11</code><b>Documents &amp; reporting</b></td><td>Templates, quality review, shared views, status reports, minutes, archive</td><td><div class="minibar"><i class="pmo" style="--n:11"></i><span>11 PMO</span></div></td><td>Archive</td></tr>
+        <tr><td class="fam"><code>AF08</code><b>Handoffs</b></td><td>PMO to Finance (baseline, milestones, closure) and HR to Finance</td><td><div class="minibar"><i class="pmo" style="--n:3"></i><i class="fin" style="--n:3"></i><span>3 PMO · 3 Fin</span></div></td><td>Invoice</td></tr>
+        <tr><td class="fam"><code>AF13</code><b>Evidence &amp; validation</b></td><td>The PMO SOP, the pricing calculator walk-through, validating rules with their owners</td><td><div class="minibar"><i class="pmo" style="--n:3"></i><i class="baas" style="--n:1"></i><span>3 PMO · 1 BaaS</span></div></td><td class="muted">None yet</td></tr>
+        <tr><td class="fam"><code>AF05</code><b>BU performance</b></td><td>Revenue and cost by business unit, payroll matching, allocations, YTD and budgets</td><td><div class="minibar"><i class="fin" style="--n:15"></i><span>15 Fin</span></div></td><td>Management accounts (in part)</td></tr>
+        <tr><td class="fam"><code>AF04</code><b>Management accounts</b></td><td>QuickBooks trial balance to notes, balance sheet, income statement, schedules</td><td><div class="minibar"><i class="fin" style="--n:13"></i><span>13 Fin</span></div></td><td>Management accounts</td></tr>
+        <tr><td class="fam"><code>AF07</code><b>Cash forecast</b></td><td>Inflows, outflows, opening balance, monthly projection, roll-forward</td><td><div class="minibar"><i class="fin" style="--n:8"></i><span>8 Fin</span></div></td><td class="muted">None yet</td></tr>
+        <tr><td class="fam"><code>AF06</code><b>Billing</b></td><td>Client register, usage, pricing, invoices, receivables</td><td><div class="minibar"><i class="fin" style="--n:6"></i><i class="baas" style="--n:1"></i><span>6 Fin · 1 BaaS</span></div></td><td>Invoice</td></tr>
+        <tr class="deferred"><td class="fam"><code>AF01</code><b>Support</b></td><td>Complaints across channels, summaries, response and resolution timing</td><td><div class="minibar"><i class="baas" style="--n:4"></i><span>4 BaaS</span></div></td><td>Deferred</td></tr>
+        <tr class="deferred"><td class="fam"><code>AF02</code><b>Reconciliation</b></td><td>Settlements, Engineering-mediated corrective credits, fund movements</td><td><div class="minibar"><i class="baas" style="--n:4"></i><span>4 BaaS</span></div></td><td>Deferred</td></tr>
+        <tr class="deferred"><td class="fam"><code>AF03</code><b>Partner operations</b></td><td>Partner agreements, onboarding, ageing follow-up, usage reports</td><td><div class="minibar"><i class="baas" style="--n:4"></i><span>4 BaaS</span></div></td><td>Deferred</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PROJECT LINE -->
+<section id="project-line">
+  <div class="section-head">
+    <p class="eyebrow">The main line</p>
+    <h2>One client project, from opportunity to closure</h2>
+    <p>The PMO line runs across the top. Finance runs underneath and receives handoffs at fixed points: PMO completes milestones, Finance invoices. Costing and detailed planning run in parallel, and both finish before the client signs. Select a station to jump to its details.</p>
+  </div>
+  <figure class="diagram wide">
+    <div class="scroll">
+      <svg viewBox="0 0 1320 410" aria-labelledby="pl-title">
+        <title id="pl-title">Project lifecycle: RFP opportunity, engagement, costing in parallel with detailed planning, signed baseline, kick-off, delivery, release gates, go-live, hypercare, archive and handover, closure. Finance receives plan milestones, the signed baseline, each completed milestone and the closure check.</title>
+        <defs>
+          <marker id="pl-fin" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-fin"/></marker>
+        </defs>
+        <rect class="band-rect" x="185" y="372" width="1111" height="28" rx="14"/>
+        <text class="d-band" x="740" y="390" text-anchor="middle">Running alongside: issues &amp; changes P50–P62 · status reporting P40–P43 · PMO Lead review before anything external P53 · stage gates P63</text>
+
+        <path class="track pmo" d="M24 120 H1296"/>
+        <path class="track pmo" d="M185 120 C235 120 240 56 290 56 H350 C400 56 405 120 455 120"/>
+        <path class="track pmo thin" d="M60 120 V76"/>
+        <circle class="st-end" cx="60" cy="70" r="6"/>
+        <text class="d-small" x="60" y="40" text-anchor="middle">Lost:</text>
+        <text class="d-small" x="60" y="54" text-anchor="middle">lessons archived</text>
+        <path class="track pmo thin" d="M185 68 V110"/>
+        <text class="d-small" x="185" y="46" text-anchor="middle">Route B &amp; C</text>
+        <text class="d-small" x="185" y="60" text-anchor="middle">start here</text>
+        <text class="d-track pmo" x="22" y="102">PMO</text>
+        <text class="d-small" x="320" y="92" text-anchor="middle">in parallel, before signing</text>
+
+        <path class="track fin" d="M320 280 H1290"/>
+        <text class="d-track fin" x="306" y="284" text-anchor="end">FINANCE</text>
+
+        <path class="handoff" d="M320 198 V266" marker-end="url(#pl-fin)"/><text class="d-edge tx-fin" x="328" y="236">plan milestones</text>
+        <path class="handoff" d="M455 198 V266" marker-end="url(#pl-fin)"/><text class="d-edge tx-fin" x="463" y="236">signed SOW + PRD</text>
+        <path class="handoff" d="M742 130 V266" marker-end="url(#pl-fin)"/><text class="d-edge tx-fin" x="750" y="228">each milestone</text><text class="d-edge tx-fin" x="750" y="242">reached · P34</text>
+        <path class="handoff" d="M1260 200 V266" marker-start="url(#pl-fin)" marker-end="url(#pl-fin)"/><text class="d-edge tx-fin" x="1252" y="236" text-anchor="end">closure check</text>
+
+        <a class="st-link" href="#st-rfp" aria-label="RFP opportunity">
+          <rect class="hit" x="8" y="100" width="104" height="96" rx="8"/>
+          <polygon class="st gate built" points="60,108 72,120 60,132 48,120"/>
+          <text class="d-st" x="60" y="154" text-anchor="middle">RFP</text><text class="d-st" x="60" y="170" text-anchor="middle">opportunity</text><text class="d-id" x="60" y="188" text-anchor="middle">P45–P49</text>
+        </a>
+        <a class="st-link" href="#st-engagement" aria-label="Engagement and requirements">
+          <rect class="hit" x="130" y="100" width="110" height="96" rx="8"/>
+          <circle class="st plain" cx="185" cy="120" r="9"/>
+          <text class="d-st" x="185" y="154" text-anchor="middle">Engagement</text><text class="d-st" x="185" y="170" text-anchor="middle">&amp; requirements</text><text class="d-id" x="185" y="188" text-anchor="middle">P16 P03 P17</text>
+        </a>
+        <a class="st-link" href="#st-costing" aria-label="Costing and SOW">
+          <rect class="hit" x="262" y="6" width="116" height="70" rx="8"/>
+          <polygon class="st gate built" points="320,44 332,56 320,68 308,56"/>
+          <text class="d-st" x="320" y="20" text-anchor="middle">Costing &amp; SOW</text><text class="d-id" x="320" y="34" text-anchor="middle">P06–P09 P18 P19</text>
+        </a>
+        <a class="st-link" href="#st-planning" aria-label="Detailed planning">
+          <rect class="hit" x="268" y="100" width="104" height="96" rx="8"/>
+          <polygon class="st gate built" points="320,108 332,120 320,132 308,120"/>
+          <text class="d-st" x="320" y="154" text-anchor="middle">Detailed</text><text class="d-st" x="320" y="170" text-anchor="middle">planning</text><text class="d-id" x="320" y="188" text-anchor="middle">P21–P26</text>
+        </a>
+        <a class="st-link" href="#st-baseline" aria-label="Signed baseline">
+          <rect class="hit" x="403" y="100" width="104" height="96" rx="8"/>
+          <polygon class="st gate" points="455,108 467,120 455,132 443,120"/>
+          <text class="d-st" x="455" y="154" text-anchor="middle">Signed</text><text class="d-st" x="455" y="170" text-anchor="middle">baseline</text><text class="d-id" x="455" y="188" text-anchor="middle">P20 P12</text>
+        </a>
+        <a class="st-link" href="#st-delivery" aria-label="Kick-off">
+          <rect class="hit" x="520" y="100" width="100" height="96" rx="8"/>
+          <circle class="st plain" cx="570" cy="120" r="9"/>
+          <text class="d-st" x="570" y="154" text-anchor="middle">Kick-off</text><text class="d-id" x="570" y="188" text-anchor="middle">P27</text>
+        </a>
+        <a class="st-link" href="#st-delivery" aria-label="Delivery">
+          <rect class="hit" x="635" y="100" width="100" height="96" rx="8"/>
+          <circle class="st plain" cx="685" cy="120" r="9"/>
+          <text class="d-st" x="685" y="154" text-anchor="middle">Delivery</text><text class="d-id" x="685" y="188" text-anchor="middle">P28 P02 P05</text>
+        </a>
+        <a class="st-link" href="#st-release" aria-label="Release gates">
+          <rect class="hit" x="752" y="100" width="96" height="96" rx="8"/>
+          <polygon class="st gate built" points="800,108 812,120 800,132 788,120"/>
+          <text class="d-st" x="800" y="154" text-anchor="middle">Release</text><text class="d-st" x="800" y="170" text-anchor="middle">gates</text><text class="d-id" x="800" y="188" text-anchor="middle">P29–P32</text>
+        </a>
+        <a class="st-link" href="#st-golive" aria-label="Go-live">
+          <rect class="hit" x="867" y="100" width="96" height="96" rx="8"/>
+          <polygon class="st gate built" points="915,108 927,120 915,132 903,120"/>
+          <text class="d-st" x="915" y="154" text-anchor="middle">Go-live</text><text class="d-id" x="915" y="188" text-anchor="middle">P33</text>
+        </a>
+        <a class="st-link" href="#st-hypercare" aria-label="Hypercare">
+          <rect class="hit" x="980" y="100" width="100" height="96" rx="8"/>
+          <polygon class="st gate built" points="1030,108 1042,120 1030,132 1018,120"/>
+          <text class="d-st" x="1030" y="154" text-anchor="middle">Hypercare</text><text class="d-id" x="1030" y="188" text-anchor="middle">P35</text>
+        </a>
+        <a class="st-link" href="#st-archive" aria-label="Archive and handover">
+          <rect class="hit" x="1093" y="100" width="104" height="96" rx="8"/>
+          <circle class="st plain built" cx="1145" cy="120" r="9"/>
+          <text class="d-st" x="1145" y="154" text-anchor="middle">Archive &amp;</text><text class="d-st" x="1145" y="170" text-anchor="middle">handover</text><text class="d-id" x="1145" y="188" text-anchor="middle">P36 P37</text>
+        </a>
+        <a class="st-link" href="#st-closure" aria-label="Closure">
+          <rect class="hit" x="1210" y="100" width="100" height="96" rx="8"/>
+          <polygon class="st gate built" points="1260,108 1272,120 1260,132 1248,120"/>
+          <text class="d-st" x="1260" y="154" text-anchor="middle">Closure</text><text class="d-id" x="1260" y="188" text-anchor="middle">P38 P39</text>
+        </a>
+
+        <a class="st-link" href="#st-planning" aria-label="Finance receives plan milestones">
+          <rect class="hit" x="276" y="292" width="88" height="62" rx="8"/>
+          <circle class="st finst" cx="320" cy="280" r="9"/>
+          <text class="d-st" x="320" y="314" text-anchor="middle">Milestone</text><text class="d-st" x="320" y="330" text-anchor="middle">plan</text><text class="d-id" x="320" y="348" text-anchor="middle">P26 F34</text>
+        </a>
+        <a class="st-link" href="#st-baseline" aria-label="Finance receives the signed baseline">
+          <rect class="hit" x="411" y="292" width="88" height="62" rx="8"/>
+          <circle class="st finst" cx="455" cy="280" r="9"/>
+          <text class="d-st" x="455" y="314" text-anchor="middle">Baseline</text><text class="d-st" x="455" y="330" text-anchor="middle">received</text><text class="d-id" x="455" y="348" text-anchor="middle">P20 P12</text>
+        </a>
+        <a class="st-link" href="#st-invoice" aria-label="Invoice approved and sent">
+          <rect class="hit" x="688" y="292" width="108" height="62" rx="8"/>
+          <polygon class="st gate built" points="742,268 754,280 742,292 730,280"/>
+          <text class="d-st" x="742" y="314" text-anchor="middle">Invoice</text><text class="d-st" x="742" y="330" text-anchor="middle">approved &amp; sent</text><text class="d-id" x="742" y="348" text-anchor="middle">F29 F30</text>
+        </a>
+        <a class="st-link" href="#st-invoice" aria-label="Receipts and receivables">
+          <rect class="hit" x="867" y="292" width="96" height="62" rx="8"/>
+          <circle class="st finst" cx="915" cy="280" r="9"/>
+          <text class="d-st" x="915" y="314" text-anchor="middle">Receipts &amp;</text><text class="d-st" x="915" y="330" text-anchor="middle">receivables</text><text class="d-id" x="915" y="348" text-anchor="middle">F32</text>
+        </a>
+        <a class="st-link" href="#st-closure" aria-label="Finance confirms notifications">
+          <rect class="hit" x="1212" y="292" width="98" height="62" rx="8"/>
+          <circle class="st finst" cx="1260" cy="280" r="9"/>
+          <text class="d-st" x="1260" y="314" text-anchor="middle">Notifications</text><text class="d-st" x="1260" y="330" text-anchor="middle">confirmed</text><text class="d-id" x="1260" y="348" text-anchor="middle">P39</text>
+        </a>
+      </svg>
+    </div>
+    <p class="scroll-hint">Scroll sideways to see the whole line →</p>
+    <div class="legend">
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><polygon points="9,2 16,9 9,16 2,9" class="st gate built" style="stroke-width:2"/></svg>A person must decide here</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6" class="st plain" style="stroke-width:2.5"/></svg>No new approval</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6" class="st plain built" style="stroke-width:2.5"/></svg>Solid: a built production line covers it</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><polygon points="9,2 16,9 9,16 2,9" class="st gate" style="stroke-width:2"/></svg>Hollow: no dedicated line yet</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><line x1="9" y1="1" x2="9" y2="17" class="handoff"/></svg>Handoff to Finance</span>
+    </div>
+    <figcaption>Route A projects come from a won RFP. Route B (direct client) and Route C (product paper) start at engagement. Milestones can complete at any point in delivery, and each one triggers its own invoice.</figcaption>
+  </figure>
+
+  <div class="stations">
+    <article class="station" id="st-rfp">
+      <div class="st-head"><span class="num">01 · Route A only</span><h3>RFP opportunity</h3><span class="badge built">Built line · Prepare an RFP response</span></div>
+      <ol class="steps">
+        <li><code>P45</code><span>Log every RFP and assign a PM.</span></li>
+        <li><code>P46</code><span>Analyse requirements, shape the solution, estimate effort and cost.</span></li>
+        <li><code>P47</code><span>Coordinate the technical and commercial response.</span></li>
+        <li><code>P48</code><span>Get costing sign-off, then submit the response.</span></li>
+        <li><code>P49</code><span>Won: becomes a Route A project. Lost: archived with lessons.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>PMO Lead and Engineering Lead review the response, in either order.</li><li>PM → Head of PMO → CEO sign off the costing, in that order.</li><li>A person records the real customer outcome.</li></ul></div>
+      <p class="agents-line"><b>Agents</b> triage the RFP, investigate requirements, draft the response and line up reviews. They can't infer a win or a loss.</p>
+    </article>
+
+    <article class="station" id="st-engagement">
+      <div class="st-head"><span class="num">02</span><h3>Engagement &amp; requirements</h3><span class="badge none">No dedicated line yet</span></div>
+      <ol class="steps">
+        <li><code>P16</code><span>Log the engagement with its route: A (won RFP), B (direct client) or C (product paper). Assign the PM.</span></li>
+        <li><code>P03</code><span>Register the project and link its identifiers.</span></li>
+        <li><code>P17</code><span>Define requirements and map which teams must take part.</span></li>
+      </ol>
+      <div class="decide none"><h4>No approval here</h4><ul><li>Phase gates and client signatures come later.</li></ul></div>
+      <p class="agents-line"><b>Agents</b> spot duplicate engagements and identity conflicts, extract requirements and list the gaps.</p>
+    </article>
+
+    <article class="station" id="st-costing">
+      <div class="st-head"><span class="num">03 · parallel with 04</span><h3>Costing &amp; SOW</h3><span class="badge built">Built line · Prepare a commercial submission</span></div>
+      <ol class="steps">
+        <li><code>P18</code><span>Collect Engineering and Security estimates.</span></li>
+        <li><code>P06</code><span>Build resource-driven costing.</span></li>
+        <li><code>P07</code><span>Prepare SOW costing and milestones.</span></li>
+        <li><code>P09</code><span>Route the costing for approval.</span></li>
+        <li><code>P19</code><span>Submit to the client; handle feedback and revisions.</span></li>
+        <li><code>P08</code><span>A cost-changing revision runs the approval chain again.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>PM → Head of PMO → CEO, strictly in that order.</li><li>PMO Lead quality-reviews the document before it leaves (P53).</li></ul></div>
+      <p class="agents-line"><b>Agents</b> interpret estimates, draft the costing and SOW and chase missing estimates. Amounts come from configured rules, never from agent arithmetic.</p>
+    </article>
+
+    <article class="station" id="st-planning">
+      <div class="st-head"><span class="num">04 · parallel with 03</span><h3>Detailed planning</h3><span class="badge built">Built line · Plan a project</span></div>
+      <ol class="steps">
+        <li><code>P21</code><span>Two PRD alignment sessions to close scope and dependency gaps.</span></li>
+        <li><code>P22–24</code><span>Sign-offs: UI design, technical design, test strategy and UAT approach.</span></li>
+        <li><code>P25</code><span>Scope and estimate baselines.</span></li>
+        <li><code>P26</code><span>Detailed plan and Planning exit; milestones go to Finance.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>Design Lead (and Client where applicable), Engineering Lead, QA Lead, Product Owner.</li><li>PMO Lead approves the plan.</li></ul></div>
+      <p class="note">Planning happens before the client signs. A signed SOW is not a prerequisite.</p>
+      <p class="agents-line"><b>Agents</b> collect each sign-off reference, track what's missing and prepare the handoff.</p>
+    </article>
+
+    <article class="station" id="st-baseline">
+      <div class="st-head"><span class="num">05</span><h3>Signed baseline</h3><span class="badge none">No dedicated line yet</span></div>
+      <ol class="steps">
+        <li><code>P20</code><span>The client signs both the SOW and the PRD.</span></li>
+        <li><code>P12</code><span>The PM shares the signed costs and milestones with Finance.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>The client signs both documents.</li></ul></div>
+      <p class="note">Finance's opening billing handoff needs this signature. No deposit or payment gate is implied.</p>
+      <p class="agents-line"><b>Agents</b> extract the signed references and flag missing or conflicting milestones.</p>
+    </article>
+
+    <article class="station" id="st-delivery">
+      <div class="st-head"><span class="num">06</span><h3>Kick-off &amp; delivery</h3><span class="badge none">No dedicated line yet</span></div>
+      <ol class="steps">
+        <li><code>P27</code><span>Kick-off with Product, Engineering, QA, Infra and Security; minutes and actions.</span></li>
+        <li><code>P28</code><span>Track delivery, dependencies, blockers and scope changes.</span></li>
+        <li><code>P02</code><span>Route work and show other teams' approvals without taking them over.</span></li>
+        <li><code>P05</code><span>A permissioned shared project view for PMO, management and Engineering.</span></li>
+      </ol>
+      <div class="decide none"><h4>No new approval</h4><ul><li>Engineering and QA work under their own processes.</li></ul></div>
+      <p class="agents-line"><b>Agents</b> track blockers, chase overdue inputs and open issues or change requests in their own flows.</p>
+    </article>
+
+    <article class="station" id="st-release">
+      <div class="st-head"><span class="num">07</span><h3>Release gates</h3><span class="badge built">Built line · Prepare for release</span></div>
+      <ol class="steps">
+        <li><code>P29</code><span>QA exit with no critical defects.</span></li>
+        <li><code>P30</code><span>UAT validated and approvals collected.</span></li>
+        <li><code>P31</code><span>Engineering pre-production Go / No-Go.</span></li>
+        <li><code>P32</code><span>GLPI deployment request approved; Infra/DevOps deploys.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>QA Lead signs QA exit.</li><li>Product Manager, Product Owner and client contact sign UAT, in any order.</li><li>Security, CTO and CEO approve GLPI, in any order.</li></ul></div>
+      <p class="agents-line"><b>Agents</b> assemble QA, UAT, Engineering and GLPI evidence for the exact build and flag version mismatches.</p>
+    </article>
+
+    <article class="station" id="st-golive">
+      <div class="st-head"><span class="num">08</span><h3>Go-live</h3><span class="badge built">Built line · Obtain go-live acceptance</span></div>
+      <ol class="steps">
+        <li><code>P33</code><span>Post-release go-live and business-acceptance sign-off.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>The PM and the Client both sign.</li><li>A PM attests that the signatures are real.</li></ul></div>
+      <p class="agents-line"><b>Agents</b> investigate the go-live inputs, prepare the client report, request review and deliver it. After the PM's attestation, the agent verifies the acceptance.</p>
+    </article>
+
+    <article class="station" id="st-hypercare">
+      <div class="st-head"><span class="num">09</span><h3>Hypercare</h3><span class="badge built">Built line · Follow up a release</span></div>
+      <ol class="steps">
+        <li><code>P35</code><span>Confirm stability after release, before closure.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>Engineering or Infrastructure confirms stability.</li></ul></div>
+      <p class="note">No numeric threshold is prescribed. The criteria have to be configured.</p>
+      <p class="agents-line"><b>Agents</b> check current observations against the reviewed period and metrics. Unknown or negative results stay held.</p>
+    </article>
+
+    <article class="station" id="st-archive">
+      <div class="st-head"><span class="num">10</span><h3>Archive &amp; handover</h3><span class="badge built">Built lines · Archive records · Hand over to Support</span></div>
+      <ol class="steps">
+        <li><code>P36</code><span>Engineering finalizes the technical docs; PMO archives the project artifacts.</span></li>
+        <li><code>P37</code><span>Hand over to Support and Operations with escalation documentation.</span></li>
+      </ol>
+      <div class="decide none"><h4>No approval</h4><ul><li>The SOP explicitly says handover needs no approval.</li></ul></div>
+      <p class="agents-line"><b>Agents</b> check the declared inventory, prepare the operating instructions and track the recipient's receipt or the gaps.</p>
+    </article>
+
+    <article class="station" id="st-closure">
+      <div class="st-head"><span class="num">11</span><h3>Closure</h3><span class="badge built">Built line · Close a project</span></div>
+      <ol class="steps">
+        <li><code>P38</code><span>Retrospective and improvement actions.</span></li>
+        <li><code>P39</code><span>The PM prepares the closure report, Finance confirms the milestone notifications, then closure is approved and archived.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>The Head of PMO approves closure.</li><li>Finance confirms notification coverage. This is not a financial approval.</li></ul></div>
+      <p class="note">Closure has no "invoice paid" gate.</p>
+      <p class="agents-line"><b>Agents</b> prepare the PM report, wait for the reviews, then verify the recorded closure.</p>
+    </article>
+
+    <article class="station" id="st-invoice">
+      <div class="st-head"><span class="num">Recurring · Finance</span><h3>Milestones &amp; invoicing</h3><span class="badge built">Built line · Prepare an invoice</span></div>
+      <ol class="steps">
+        <li><code>P34</code><span>The PM records a milestone as complete and notifies Finance.</span></li>
+        <li><code>F29</code><span>The Finance service calculates the amount from the contract stage.</span></li>
+        <li><code>F30</code><span>The invoice is generated, reviewed, issued and delivered (mock today).</span></li>
+        <li><code>F32</code><span>Paid and unpaid tracking, plus collection follow-up.</span></li>
+      </ol>
+      <div class="decide"><h4>People decide</h4><ul><li>A Finance reviewer approves the exact amount, version and recipient.</li></ul></div>
+      <p class="note">Stages, invoices, receipts and allocations stay separate records. Verified delivery records no payment.</p>
+      <p class="agents-line"><b>Agents</b> gather evidence, investigate holds, draft the invoice and reconcile uncertain sends.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ALONGSIDE -->
+<section id="alongside">
+  <div class="section-head">
+    <p class="eyebrow">Running alongside every project</p>
+    <h2>Changes, reporting and document control</h2>
+    <p>These run in parallel with the main line rather than as stations on it. Change requests are the most important for design, because emergencies flip the usual order.</p>
+  </div>
+  <figure class="diagram mid">
+    <div class="scroll">
+      <svg viewBox="0 0 950 220" role="img" aria-label="Normal change: log, assess, approve, implement, validate and close. Emergency change: log, authorise, implement, log within 24 hours, then retrospective approval. Full approval moves to after the work, but authorisation still comes first.">
+        <defs>
+          <marker id="cc-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-ink"/></marker>
+          <marker id="cc-person" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-person"/></marker>
+        </defs>
+        <text class="d-lane" x="0" y="66">Normal</text><text class="d-small" x="0" y="82">change</text>
+        <text class="d-lane" x="0" y="166">Emergency</text><text class="d-small" x="0" y="182">change</text>
+
+        <rect class="node n-service" x="115" y="45" width="140" height="50" rx="8"/><text class="d-node" x="185" y="67" text-anchor="middle">Log &amp; classify</text><text class="d-sub" x="185" y="83" text-anchor="middle">P56 · PM</text>
+        <rect class="node n-service" x="285" y="45" width="140" height="50" rx="8"/><text class="d-node" x="355" y="67" text-anchor="middle">Assess impact</text><text class="d-sub" x="355" y="83" text-anchor="middle">P57 · all teams</text>
+        <rect class="node n-person" x="455" y="45" width="140" height="50" rx="8"/><text class="d-node" x="525" y="67" text-anchor="middle">Approve</text><text class="d-sub" x="525" y="83" text-anchor="middle">P58 · before work</text>
+        <rect class="node n-service" x="625" y="45" width="140" height="50" rx="8"/><text class="d-node" x="695" y="67" text-anchor="middle">Implement</text><text class="d-sub" x="695" y="83" text-anchor="middle">P59</text>
+        <rect class="node n-person" x="795" y="45" width="140" height="50" rx="8"/><text class="d-node" x="865" y="67" text-anchor="middle">Validate &amp; close</text><text class="d-sub" x="865" y="83" text-anchor="middle">P60 · signed go-live</text>
+        <path class="edge" d="M255 70 H283" marker-end="url(#cc-ink)"/>
+        <path class="edge" d="M425 70 H453" marker-end="url(#cc-ink)"/>
+        <path class="edge" d="M595 70 H623" marker-end="url(#cc-ink)"/>
+        <path class="edge" d="M765 70 H793" marker-end="url(#cc-ink)"/>
+
+        <rect class="node n-service" x="115" y="145" width="140" height="50" rx="8"/><text class="d-node" x="185" y="167" text-anchor="middle">Log as Emergency</text><text class="d-sub" x="185" y="183" text-anchor="middle">P56</text>
+        <rect class="node n-person" x="285" y="145" width="140" height="50" rx="8"/><text class="d-node" x="355" y="167" text-anchor="middle">Authorise</text><text class="d-sub" x="355" y="183" text-anchor="middle">P61 · before work</text>
+        <rect class="node n-service" x="455" y="145" width="140" height="50" rx="8"/><text class="d-node" x="525" y="167" text-anchor="middle">Implement</text><text class="d-sub" x="525" y="183" text-anchor="middle">P59</text>
+        <rect class="node n-service" x="625" y="145" width="140" height="50" rx="8"/><text class="d-node" x="695" y="167" text-anchor="middle">Log within 24h</text><text class="d-sub" x="695" y="183" text-anchor="middle">P62 · review</text>
+        <rect class="node n-person" x="795" y="145" width="140" height="50" rx="8"/><text class="d-node" x="865" y="167" text-anchor="middle">Retro approval</text><text class="d-sub" x="865" y="183" text-anchor="middle">P62 · after work</text>
+        <path class="edge" d="M255 170 H283" marker-end="url(#cc-ink)"/>
+        <path class="edge" d="M425 170 H453" marker-end="url(#cc-ink)"/>
+        <path class="edge" d="M595 170 H623" marker-end="url(#cc-ink)"/>
+        <path class="edge" d="M765 170 H793" marker-end="url(#cc-ink)"/>
+
+        <path class="edge rework" d="M525 95 C525 125 865 115 865 143" marker-end="url(#cc-person)"/>
+        <text class="d-edge tx-person" x="695" y="139" text-anchor="middle">approval moves after</text>
+      </svg>
+    </div>
+    <p class="scroll-hint">Scroll sideways to see the whole diagram →</p>
+    <figcaption>In an emergency, the Incident Lead and Engineering Lead authorise the work up front (plus the CTO for P1 incidents). Product and the Engineering Lead give the full approval afterwards. Urgency or an agent's classification can never waive a control.</figcaption>
+  </figure>
+
+  <div class="two">
+    <div class="panel">
+      <h3>Issues, risks and escalation</h3>
+      <div class="flowline"><span class="chip">P50 issue lifecycle</span><span class="arrow" aria-hidden="true">·</span><span class="chip">P51 Security risk register</span><span class="arrow" aria-hidden="true">·</span><span class="chip">P54–55 production incidents</span><span class="arrow" aria-hidden="true">·</span><span class="chip gate">P44 client escalation</span></div>
+      <p>Issues have owners, next actions and timestamps. Risks and incidents are referenced from Security and Engineering, never copied into a PMO master. PMO Lead or Head of PMO approves escalating to a client, and approves de-escalating too.</p>
+    </div>
+    <div class="panel">
+      <h3>Reporting rhythm</h3>
+      <div class="flowline"><span class="chip">P40 Tuesday PMO meeting</span><span class="chip gate">P41 weekly client report</span><span class="chip">P42 monthly exec report</span><span class="chip">P43 formal minutes</span></div>
+      <p>Agents draft the summaries and reports. Anything going to a client passes PMO Lead review first. Minutes record decisions, actions, owners and deadlines.</p>
+    </div>
+    <div class="panel">
+      <h3>Document control</h3>
+      <div class="flowline"><span class="chip">P10 template</span><span class="arrow" aria-hidden="true">→</span><span class="chip">P52 versioned draft</span><span class="arrow" aria-hidden="true">→</span><span class="chip gate">P53 quality review</span><span class="arrow" aria-hidden="true">→</span><span class="chip">audience version</span><span class="arrow" aria-hidden="true">→</span><span class="chip">publication receipt</span></div>
+      <p>Every external document passes P53. The approval is tied to the exact reviewed version and its audience. A recurring report never gets automatic permission to go to a new audience.</p>
+    </div>
+    <div class="panel">
+      <h3>Evidence and validation</h3>
+      <div class="flowline"><span class="chip">P13 PMO SOP</span><span class="chip">P14 pricing calculator</span><span class="chip">P15 validate with process users</span></div>
+      <p>This family collects missing SOPs and calculator examples and gets rule owners to validate them. Discovery is real workflow here, and nothing gets automated away.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCE -->
+<section id="finance">
+  <div class="section-head">
+    <p class="eyebrow">Finance's own cycle</p>
+    <h2>Month-end: trial balance to cash forecast</h2>
+    <p>This line isn't driven by a project. It starts from QuickBooks every month. Services do every calculation from owner-approved rules; agents investigate the differences and explain the results.</p>
+  </div>
+  <div class="pipeline">
+    <div class="stage">
+      <p class="eyebrow">Step 1</p><h3>Sources</h3>
+      <ol class="steps">
+        <li><code>F01</code><span>QuickBooks transaction postings</span></li>
+        <li><code>F02</code><span>Trial-balance extract</span></li>
+        <li><code>F11</code><span>Budget import</span></li>
+        <li><code>F16–17</code><span>Payroll and HR staff data (restricted)</span></li>
+        <li><code>F35</code><span>HR-to-Finance interface</span></li>
+      </ol>
+    </div>
+    <div class="stage">
+      <p class="eyebrow">Step 2</p><h3>Management accounts</h3>
+      <ol class="steps">
+        <li><code>F03</code><span>Map the trial balance to the workbook</span></li>
+        <li><code>F04</code><span>Adjustments and total checks</span></li>
+        <li><code>F05–08</code><span>Notes: income, costs, cash, assets, liabilities</span></li>
+        <li><code>F07</code><span>Assets and depreciation</span></li>
+        <li><code>F09–10</code><span>Balance sheet, income statement vs budget</span></li>
+        <li><code>F12–13</code><span>Income breakdown, other schedules</span></li>
+      </ol>
+    </div>
+    <div class="stage">
+      <p class="eyebrow">Step 3</p><h3>Business-unit performance</h3>
+      <ol class="steps">
+        <li><code>F14–15</code><span>Revenue and direct cost by BU</span></li>
+        <li><code>F18</code><span>Staff costs by BU</span></li>
+        <li><code>F19–22</code><span>Allocations: headcount, shared services, executives, opex</span></li>
+        <li><code>F23</code><span>Tie BU totals back to the accounts</span></li>
+        <li><code>F24–26</code><span>YTD, budget, metrics and charts</span></li>
+        <li><code>F27</code><span>Reporting scope change and rework</span></li>
+      </ol>
+    </div>
+    <div class="stage">
+      <p class="eyebrow">Step 4</p><h3>Cash forecast</h3>
+      <ol class="steps">
+        <li><code>F36–37</code><span>Expected inflows and outflows</span></li>
+        <li><code>F38</code><span>Opening balance</span></li>
+        <li><code>F39</code><span>Projected monthly balance</span></li>
+        <li><code>F40</code><span>Management sets priorities and client follow-up</span></li>
+        <li><code>F41–42</code><span>Update from actuals, roll forward</span></li>
+        <li><code>F43</code><span>Internal vs group reports</span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="billing">
+    <h4>Billing feeds the forecast</h4>
+    <div class="flowline">
+      <span class="chip">F45 client &amp; service register</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">F31 IT clients &amp; billing cadence</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">F29 pricing</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">F30 invoice</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">F32 receivables</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="chip">F36 expected inflows</span>
+    </div>
+  </div>
+  <div class="rules">
+    <div class="rule"><b>Services calculate</b>Agents never invent a formula, rate, tax or allocation ratio.</div>
+    <div class="rule"><b>Unknown is not zero</b>A missing value shows as missing. It never quietly becomes 0 in a total.</div>
+    <div class="rule"><b>Missing rules hold only what depends on them</b>Most Finance approvers and rules aren't configured yet. That holds the affected calculation, not the whole module.</div>
+    <div class="rule"><b>Coverage is shown</b>A forecast built from partial sources can't be labelled a complete cash forecast.</div>
+  </div>
+</section>
+
+<!-- INVOICE LINE -->
+<section id="invoice">
+  <div class="section-head">
+    <p class="eyebrow">The reference line</p>
+    <h2>The invoice line, step by step</h2>
+    <p>This is the line the backend uses to prove the whole architecture, and it's the best one to design first. The happy path runs left to right. Every loop above and below it is a state the console has to name and show.</p>
+  </div>
+  <figure class="diagram wide">
+    <div class="scroll">
+      <svg viewBox="0 0 1110 330" role="img" aria-label="Invoice line: milestone complete, evidence check, draft prepared, Finance decision, issue and deliver, receipts matched, verified. Loops: waiting for information, returned for a new draft, owner needed, effect uncertain then reconciled by the same key.">
+        <defs>
+          <marker id="iv-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-ink"/></marker>
+          <marker id="iv-person" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-person"/></marker>
+          <marker id="iv-hold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-hold"/></marker>
+        </defs>
+        <rect class="node n-person" x="10" y="140" width="130" height="50" rx="8"/><text class="d-node" x="75" y="162" text-anchor="middle">Milestone complete</text><text class="d-sub" x="75" y="178" text-anchor="middle">PMO records it</text>
+        <rect class="node n-agent" x="170" y="140" width="130" height="50" rx="8"/><text class="d-node" x="235" y="162" text-anchor="middle">Evidence check</text><text class="d-sub" x="235" y="178" text-anchor="middle">agent</text>
+        <rect class="node n-service" x="330" y="140" width="130" height="50" rx="8"/><text class="d-node" x="395" y="162" text-anchor="middle">Draft prepared</text><text class="d-sub" x="395" y="178" text-anchor="middle">service calculates</text>
+        <rect class="node n-person" x="490" y="140" width="130" height="50" rx="8"/><text class="d-node" x="555" y="162" text-anchor="middle">Finance decision</text><text class="d-sub" x="555" y="178" text-anchor="middle">exact packet</text>
+        <rect class="node n-service" x="650" y="140" width="130" height="50" rx="8"/><text class="d-node" x="715" y="162" text-anchor="middle">Issue &amp; deliver</text><text class="d-sub" x="715" y="178" text-anchor="middle">mock adapter</text>
+        <rect class="node n-service" x="810" y="140" width="130" height="50" rx="8"/><text class="d-node" x="875" y="162" text-anchor="middle">Receipts matched</text><text class="d-sub" x="875" y="178" text-anchor="middle">service checks</text>
+        <rect class="node n-ok" x="970" y="140" width="130" height="50" rx="8"/><text class="d-node" x="1035" y="162" text-anchor="middle">Verified</text><text class="d-sub" x="1035" y="178" text-anchor="middle">no payment implied</text>
+        <path class="edge" d="M140 165 H168" marker-end="url(#iv-ink)"/>
+        <path class="edge" d="M300 165 H328" marker-end="url(#iv-ink)"/>
+        <path class="edge" d="M460 165 H488" marker-end="url(#iv-ink)"/>
+        <path class="edge" d="M620 165 H648" marker-end="url(#iv-ink)"/>
+        <path class="edge" d="M780 165 H808" marker-end="url(#iv-ink)"/>
+        <path class="edge" d="M940 165 H968" marker-end="url(#iv-ink)"/>
+
+        <rect class="node n-person" x="160" y="30" width="150" height="50" rx="8"/><text class="d-node" x="235" y="52" text-anchor="middle">Waiting for information</text><text class="d-sub" x="235" y="68" text-anchor="middle">PMO task created</text>
+        <path class="edge" d="M215 140 V82" marker-end="url(#iv-ink)"/><text class="d-edge" x="209" y="114" text-anchor="end">missing PO</text>
+        <path class="edge" d="M255 80 V138" marker-end="url(#iv-ink)"/><text class="d-edge" x="261" y="114">supplied</text>
+
+        <path class="edge rework" d="M555 140 V100 H395 V138" marker-end="url(#iv-person)"/><text class="d-edge tx-person" x="475" y="93" text-anchor="middle">returned → draft v2</text>
+
+        <rect class="node n-hold" x="490" y="250" width="130" height="50" rx="8"/><text class="d-node" x="555" y="272" text-anchor="middle">Owner needed</text><text class="d-sub" x="555" y="288" text-anchor="middle">action held</text>
+        <path class="edge holdline" d="M535 190 V248" marker-end="url(#iv-hold)"/><text class="d-edge tx-hold" x="529" y="226" text-anchor="end">no eligible reviewer</text>
+        <path class="edge holdline" d="M575 250 V192" marker-end="url(#iv-hold)"/><text class="d-edge tx-hold" x="581" y="226">owner set</text>
+
+        <rect class="node n-hold" x="730" y="250" width="130" height="50" rx="8"/><text class="d-node" x="795" y="272" text-anchor="middle">Effect uncertain</text><text class="d-sub" x="795" y="288" text-anchor="middle">reconcile first</text>
+        <path class="edge holdline" d="M705 190 L752 248" marker-end="url(#iv-hold)"/><text class="d-edge tx-hold" x="722" y="232" text-anchor="end">reply lost</text>
+        <path class="edge holdline" d="M842 250 L882 192" marker-end="url(#iv-hold)"/><text class="d-edge tx-hold" x="868" y="232">same key found</text>
+        <text class="d-small tx-hold" x="795" y="318" text-anchor="middle">never a blind resend</text>
+      </svg>
+    </div>
+    <p class="scroll-hint">Scroll sideways to see the whole line →</p>
+    <div class="legend">
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="4" width="14" height="10" rx="2" class="node n-agent"/></svg>Agent</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="4" width="14" height="10" rx="2" class="node n-person"/></svg>Person</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="4" width="14" height="10" rx="2" class="node n-service"/></svg>Service</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="4" width="14" height="10" rx="2" class="node n-hold"/></svg>Held or uncertain</span>
+      <span><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="4" width="14" height="10" rx="2" class="node n-ok"/></svg>Verified</span>
+    </div>
+    <figcaption>Approval binds the exact amount, version and recipient. If any of them changes afterwards, the approval goes stale and a fresh decision is needed. When a send's reply is lost, the service looks up the original by its business key; it never sends a second invoice to find out.</figcaption>
+  </figure>
+</section>
+
+<!-- STATES -->
+<section id="states">
+  <div class="section-head">
+    <p class="eyebrow">Work states</p>
+    <h2>What the console says about a work item today</h2>
+    <p>These are the state labels the queue and work item page currently render, grouped by who has to act next. "Running" is deliberately absent: an item waiting on a person must say so.</p>
+  </div>
+  <div class="state-groups">
+    <div class="state-group">
+      <h4>Moving</h4>
+      <div class="state-row"><span class="pill move">Ready to continue</span><p>Eligible work can run now.</p></div>
+      <div class="state-row"><span class="pill move">Processing</span><p>A worker holds this item right now.</p></div>
+    </div>
+    <div class="state-group">
+      <h4>Waiting on a person</h4>
+      <div class="state-row"><span class="pill person">Waiting for information</span><p>A task asks someone for one specific missing fact.</p></div>
+      <div class="state-row"><span class="pill person">Awaiting Finance decision</span><p>A reviewer has an exact packet to approve, return or reject.</p></div>
+    </div>
+    <div class="state-group">
+      <h4>Held</h4>
+      <div class="state-row"><span class="pill hold">Action needed</span><p>A required source, rule or permission needs review.</p></div>
+      <div class="state-row"><span class="pill hold">Owner needed</span><p>No eligible owner is configured. Only the dependent action waits.</p></div>
+      <div class="state-row"><span class="pill hold">Setup needed</span><p>A valid execution profile is missing, so agent work can't start.</p></div>
+    </div>
+    <div class="state-group">
+      <h4>Uncertain</h4>
+      <div class="state-row"><span class="pill unsure">Effect uncertain</span><p>A send may have happened. Reconcile before any resend.</p></div>
+      <div class="state-row"><span class="pill unsure">Awaiting reconciliation</span><p>The service is checking for the original by the same key.</p></div>
+    </div>
+    <div class="state-group">
+      <h4>Checking</h4>
+      <div class="state-row"><span class="pill check">Awaiting verification</span><p>Effects are recorded; receipts are being checked against the approved version.</p></div>
+    </div>
+    <div class="state-group">
+      <h4>Ended</h4>
+      <div class="state-row"><span class="pill done">Verified</span><p>Every required receipt matched.</p></div>
+      <div class="state-row"><span class="pill stop">Cancellation requested · Cancelled</span><p>New work stops. A sent invoice can't be undone.</p></div>
+      <div class="state-row"><span class="pill stop">Stopped; invoice follow-up needed</span><p>Work stopped after an invoice went out; Finance owns the follow-up.</p></div>
+    </div>
+  </div>
+  <div class="callout">
+    <h3>Interaction states the spec also requires</h3>
+    <div class="ui-states">
+      <div><b>Loading</b><span>Keeps useful context on screen while it loads.</span></div>
+      <div><b>Empty</b><span>Says whether there's no work or the filters hide it.</span></div>
+      <div><b>Source unavailable</b><span>Never shown as zero work.</span></div>
+      <div><b>Stale</b><span>The record changed while you reviewed it. Shows what changed.</span></div>
+      <div><b>Denied</b><span>Explains the permitted next step without leaking restricted detail.</span></div>
+      <div><b>Conflict</b><span>Someone else acted first. Unsent notes are kept.</span></div>
+      <div><b>Retry requested</b><span>A request, not proof of a fix.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENTS -->
+<section id="agents">
+  <div class="section-head">
+    <p class="eyebrow">Agent crew</p>
+    <h2>One coordinator, eight specialists</h2>
+    <p>Roles are reused across all 108 processes, so there isn't one agent per process. Each role works through a narrow set of typed tools. The console shows what an agent read, did and produced, never its private reasoning.</p>
+  </div>
+  <div class="crew">
+    <div class="agent-card lead"><span class="aid">O01</span><h3>Coordinator</h3><p>Picks the next allowed task, delegates to specialists, waits for people and replans when the evidence changes.</p><p class="eg">Resumes the invoice line after PMO supplies a missing reference.</p></div>
+    <div class="agent-card"><span class="aid">A01</span><h3>Intake &amp; triage</h3><p>Turns messy intake into a case and flags duplicates and unclear matches.</p><p class="eg">Logs a new RFP; spots a duplicate engagement.</p></div>
+    <div class="agent-card"><span class="aid">A02</span><h3>Evidence &amp; documents</h3><p>Extracts facts with citations, compares versions and finds contradictions.</p><p class="eg">Pulls the signed milestone references out of the SOW.</p></div>
+    <div class="agent-card"><span class="aid">A03</span><h3>Exception investigation</h3><p>Traces a discrepancy to missing data, stale state, a conflict or an unknown effect.</p><p class="eg">Works out why a receivable doesn't match.</p></div>
+    <div class="agent-card"><span class="aid">A04</span><h3>Planning &amp; coordination</h3><p>Tracks dependencies and opens the right internal tasks.</p><p class="eg">Finds the next reviewer in the PM → Head of PMO → CEO chain.</p></div>
+    <div class="agent-card"><span class="aid">A05</span><h3>Finance analysis</h3><p>Explains the service's calculations and investigates mapping, sign, unit and allocation problems.</p><p class="eg">Explains a company-to-BU difference.</p></div>
+    <div class="agent-card"><span class="aid">A06</span><h3>Insight &amp; drafting</h3><p>Writes grounded summaries, reports and decision briefs, with uncertainty stated.</p><p class="eg">Drafts the weekly client status report.</p></div>
+    <div class="agent-card"><span class="aid">A07</span><h3>Control evidence</h3><p>Checks that the required sign-off evidence is complete and matches the exact version.</p><p class="eg">Assembles QA, UAT and GLPI proof for one build.</p></div>
+    <div class="agent-card"><span class="aid">A08</span><h3>Quality review</h3><p>Critiques outputs against independent test cases and the source evidence.</p><p class="eg">Reviews a draft before a person sees it.</p></div>
+  </div>
+  <p class="never"><b>None of them can</b> approve, set a price or rule, decide a win or loss, send anything outside the company without authority, or mark work verified. Text inside a document can't grant them authority either.</p>
+</section>
+
+<!-- BUILT -->
+<section id="built">
+  <div class="section-head">
+    <p class="eyebrow">Built today</p>
+    <h2>Eleven production lines, all running against mocks</h2>
+    <p>Each line can be started from the console and runs end to end in tests. None has been formally accepted yet.</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Line</th><th>Station</th><th>Ends with</th></tr></thead>
+      <tbody>
+        <tr><td><b>Prepare an RFP response</b></td><td>RFP opportunity</td><td>A recorded customer outcome: won becomes a project, lost is archived</td></tr>
+        <tr><td><b>Prepare a commercial submission</b></td><td>Costing &amp; SOW</td><td>A reviewed submission with recipient receipts</td></tr>
+        <tr><td><b>Plan a project</b></td><td>Detailed planning</td><td>A delivery handoff built from the departments' sign-offs</td></tr>
+        <tr><td><b>Prepare for release</b></td><td>Release gates</td><td>Release readiness tied to the exact build</td></tr>
+        <tr><td><b>Obtain go-live acceptance</b></td><td>Go-live</td><td>PM and Client signatures, attested and verified</td></tr>
+        <tr><td><b>Follow up a release</b></td><td>Hypercare</td><td>Stability assessed against configured criteria</td></tr>
+        <tr><td><b>Archive project records</b></td><td>Archive &amp; handover</td><td>A controlled archive index</td></tr>
+        <tr><td><b>Hand over to Support</b></td><td>Archive &amp; handover</td><td>The recipient's receipt, or the recorded gaps</td></tr>
+        <tr><td><b>Close a project</b></td><td>Closure</td><td>The Head of PMO's decision and a verified closure record</td></tr>
+        <tr><td><b>Prepare an invoice</b></td><td>Milestones &amp; invoicing</td><td>An issued, delivered invoice verified against its receipts</td></tr>
+        <tr><td><b>Prepare management accounts</b></td><td>Finance cycle</td><td>A reviewed aggregate report from a trial balance</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="facts">
+    <div class="fact"><b>Mocked outside world</b>Tested on PostgreSQL with mocks for QuickBooks, GLPI, email and signatures.</div>
+    <div class="fact"><b>No live AI yet</b>The model provider interface exists, but no live model is connected.</div>
+    <div class="fact"><b>No real approvers</b>No real owners or rules are configured. Real data would mostly show Owner needed and Setup needed.</div>
+    <div class="fact"><b>0 of 108 accepted</b>All 122 processes are marked partial. Bounded paths work, but whole-process acceptance hasn't been checked.</div>
+    <div class="fact"><b>About 35 department tools</b>Billing, forecast, payroll, issues, meetings and more live outside the console, linked from each workspace page.</div>
+  </div>
+  <div class="callout">
+    <h3>The console as it exists</h3>
+    <div class="screens">
+      <div class="screen"><b>Work queue <code>/</code></b>Six views: Needs my attention, Active, Decisions, Exceptions, Unassigned, Verified. Each row shows next action, state, owner, blocker and time.</div>
+      <div class="screen"><b>Start work <code>/factory/start/</code></b>One card per production line, filtered by what you're allowed to start.</div>
+      <div class="screen"><b>Work item <code>/work/&lt;id&gt;/</code></b>Left: outcome, agent activity, receipts. Right: the next permitted action and decision cards.</div>
+      <div class="screen"><b>Workspace <code>/cases/&lt;id&gt;/</code></b>A project or customer: links to its department tools, plus documents and the project agreement.</div>
+    </div>
+  </div>
+</section>
+
+<!-- QUESTIONS -->
+<section id="questions">
+  <div class="section-head">
+    <p class="eyebrow">Open questions</p>
+    <h2>Decisions to settle before designing</h2>
+    <p>The spec leaves these open, and each one changes the layout or navigation.</p>
+  </div>
+  <ul class="questions">
+    <li><b>Workspaces or work items?</b>A project (workspace) spans many work items across several lines. The nav carries both today. Which one is the main object people navigate by?</li>
+    <li><b>Who sees shared queues?</b>What can a supervisor see across teams without widening their access to client evidence?</li>
+    <li><b>Where do deadlines come from?</b>None are configured, and the spec forbids inventing them. Which clocks pause while work waits on an outside party?</li>
+    <li><b>The stage trail</b>How do we show retries, parallel branches, rework and failures as one readable history, without erasing any attempt?</li>
+    <li><b>The 35 department tools</b>Which fold into the work item view, and which stay as reference pages?</li>
+    <li><b>Confirmation weight</b>Which actions need consequence wording before you confirm, and which can be a single click?</li>
+  </ul>
+</section>
+
+<footer class="sources">
+  <span>Sources in the repo, at commit 05590af:</span>
+  <ul>
+    <li><code>guide/11-FULL-PRODUCT.md</code></li>
+    <li><code>guide/PROCESS-INDEX.md</code></li>
+    <li><code>contracts/process-map.json</code></li>
+    <li><code>contracts/implementation-coverage.json</code></li>
+    <li><code>reference/08-agent-architecture/process-agent-assignments.json</code></li>
+    <li><code>docs/design/2026-11-01/PSL Operations Factory Component Design.md</code></li>
+    <li><code>apps/workflows/factory_views.py</code></li>
+    <li><code>apps/workflows/factory_definitions.py</code></li>
+  </ul>
+  <span>Station groupings and line-to-station mapping are a reading of these sources for design purposes. Per-process status lives in the coverage file.</span>
+</footer>
+
+</div>
+
+</body></html>

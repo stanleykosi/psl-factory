@@ -1,0 +1,48 @@
+<!-- @dsCard height=300 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800&family=IBM+Plex+Sans:wght@400&display=swap">
+<style>
+html,body{margin:0;background:var(--steel)}
+.wrap{position:relative;width:960px;height:300px;overflow:hidden;background:var(--steel)}
+.ink{fill:var(--ink)}.signal{fill:var(--signal)}.action{fill:var(--action)}.surface{fill:var(--surface)}.tint{fill:var(--signal-tint)}
+.line{stroke:var(--ink);stroke-width:var(--rule-strong)}
+.lineon{stroke:var(--on-strong);stroke-width:var(--rule-strong)}
+.name{position:absolute;left:40px;bottom:58px;margin:0;font-family:Archivo,"Helvetica Neue",Arial,sans-serif;font-stretch:125%;font-weight:800;font-size:96px;line-height:.92;letter-spacing:-.02em;color:var(--ink);max-width:440px}
+.tag{position:absolute;left:40px;bottom:30px;margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;color:var(--ink-muted);max-width:440px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<!--
+blocks: ink slab 168x300, signal 140x152, action 96x100, signal-tint 236x100, surface 212x148 (all radius-none: the line is square)
+arrangement: unequal bands from x=480 to the right edge, ink slab bleeding off top and bottom
+pattern: literal motif, an assembly line: one rule-strong line with 8px station squares crossing every block; chosen because stations on a line are the system's thesis
+scales: space-1/space-2 for squares and gaps, rule-strong 2px line, radius-none corners
+-->
+<svg width="960" height="300" viewBox="0 0 960 300" aria-hidden="true" style="position:absolute;left:0;top:0">
+  <rect class="tint" x="480" y="0" width="236" height="100"/>
+  <rect class="ink" x="716" y="0" width="168" height="300"/>
+  <rect class="signal" x="884" y="0" width="76" height="152"/>
+  <rect class="action" x="884" y="152" width="76" height="100"/>
+  <rect class="surface" x="480" y="152" width="236" height="148"/>
+  <rect class="signal" x="580" y="100" width="136" height="52"/>
+  <line class="line" x1="480" y1="126" x2="716" y2="126"/>
+  <line class="lineon" x1="716" y1="126" x2="884" y2="126"/>
+  <line class="line" x1="884" y1="126" x2="960" y2="126"/>
+  <rect class="ink" x="512" y="120" width="12" height="12"/>
+  <rect class="ink" x="548" y="120" width="12" height="12"/>
+  <rect class="surface" x="620" y="120" width="12" height="12"/>
+  <rect class="surface" x="664" y="120" width="12" height="12"/>
+  <rect class="signal" x="760" y="120" width="12" height="12"/>
+  <rect class="surface" x="808" y="120" width="12" height="12"/>
+  <rect class="surface" x="852" y="120" width="12" height="12"/>
+  <rect class="ink" x="916" y="120" width="12" height="12"/>
+</svg>
+<p class="name">PSL Factory</p>
+<p class="tag">Work you can see moving, from first draft to verified.</p>
+</div>
+</body>
+</html>

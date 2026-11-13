@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SCR-01 · Work queue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#EEF0ED}
+a{color:#2459D6}a:hover{color:#16388F}
+</style>
+<style id="psl-states">/* PSL design system interaction states (design/system components/bundle.css), keyed to the boards' inline colours */a,button,[role=radio],[role=tab],input,select,textarea{transition:background-color 120ms ease-out,color 120ms ease-out}a[style*="min-height"],button,[role=radio],[role=tab],summary,label{cursor:pointer}:focus{outline:none}:focus-visible{outline:2px solid #2459D6!important;outline-offset:2px}nav[aria-label="Main"] :focus-visible,[aria-selected="true"]:focus-visible,[aria-checked="true"]:focus-visible,a[style*="background: #C8401C"]:focus-visible,a[style*="background: #2459D6"]:focus-visible{outline-color:#FFFFFF!important}[role=tab]:focus-visible,[role=radio]:focus-visible{outline-offset:-4px}a[style*="background: #2459D6"]:not([aria-selected="true"]):not([disabled]):hover, button[style*="background: #2459D6"]:not([aria-selected="true"]):not([disabled]):hover{background:#1C47B0!important}a[style*="background: #2459D6"]:not([aria-selected="true"]):not([disabled]):active, button[style*="background: #2459D6"]:not([aria-selected="true"]):not([disabled]):active{background:#16388F!important}a[style*="background: #C8401C"]:not([aria-selected="true"]):not([disabled]):hover, button[style*="background: #C8401C"]:not([aria-selected="true"]):not([disabled]):hover{background:#A93514!important}a[style*="background: #C8401C"]:not([aria-selected="true"]):not([disabled]):active, button[style*="background: #C8401C"]:not([aria-selected="true"]):not([disabled]):active{background:#9A2F10!important}a[style*="background: #22764A"]:not([aria-selected="true"]):not([disabled]):hover, button[style*="background: #22764A"]:not([aria-selected="true"]):not([disabled]):hover{background:#1B5F3B!important}a[style*="background: #22764A"]:not([aria-selected="true"]):not([disabled]):active, button[style*="background: #22764A"]:not([aria-selected="true"]):not([disabled]):active{background:#16502F!important}a[style*="background: #1F2427"]:not([aria-selected="true"]):not([disabled]):hover, button[style*="background: #1F2427"]:not([aria-selected="true"]):not([disabled]):hover{background:#353D41!important}a[style*="background: #1F2427"]:not([aria-selected="true"]):not([disabled]):active, button[style*="background: #1F2427"]:not([aria-selected="true"]):not([disabled]):active{background:#0E1113!important}a[style*="inset 0 0 0 2px #1F2427"]:hover,button[style*="inset 0 0 0 2px #1F2427"]:not([disabled]):hover{background:#EEF0ED!important}a[style*="inset 0 0 0 2px #1F2427"]:active,button[style*="inset 0 0 0 2px #1F2427"]:not([disabled]):active{background:#E2E5E0!important}a[style*="inset 0 0 0 2px #9A2F10"]:hover,button[style*="inset 0 0 0 2px #9A2F10"]:not([disabled]):hover{background:#FBE3D9!important}[role=tab][aria-selected="false"]:hover,[role=radio][aria-checked="false"]:hover{background:#EEF0ED!important}[role=menu] a:hover,[role=menuitem]:hover{background:#EEF0ED!important}nav[aria-label="Main"] a[style*="color: #C8CDD0"]:hover{color:#FFFFFF!important;border-bottom-color:#C8CDD0!important}button[disabled],a[style*="background: #C9CDC7"],[aria-disabled="true"]{cursor:not-allowed}input:not([type=checkbox]):not([type=radio]):not([disabled]):hover,textarea:not([disabled]):hover,select:not([disabled]):hover{background-color:#F7F8F6}input:focus-visible,textarea:focus-visible,select:focus-visible,input:focus,textarea:focus,select:focus{outline:2px solid #2459D6!important;outline-offset:2px;background-color:#FFFFFF}::placeholder{color:#626B6F;opacity:1}input[type=checkbox],input[type=radio]{accent-color:#1F2427}[style*="background: #1F2427"] > input[type=radio],[style*="background: #1F2427"] > input[type=checkbox]{accent-color:#FFFFFF}@media (prefers-reduced-motion: reduce){a,button,[role=radio],[role=tab],input,select,textarea{transition:none}}</style></helmet>
+<div style="min-height: 1060px; background: #EEF0ED; color: #1F2427; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px;">
+
+  <!-- SEC-nav -->
+  <nav aria-label="Main" style="background: #1F2427; color: #FFFFFF;">
+    <div style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 0 28px; min-height: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px;">
+      <span style="font-family: Archivo, sans-serif; font-stretch: 125%; font-weight: 800; font-size: 17px; letter-spacing: 0.02em;">PSL FACTORY</span>
+      <div style="display: flex; flex-wrap: wrap;"><a href="SCR-01-desktop.dc.html" style="padding: 18px 14px 16px; color: #FFFFFF; text-decoration: none; border-bottom: 3px solid #C8401C; font-weight: 500;">My work</a><a href="SCR-22-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Projects</a><a href="SCR-06-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Overview</a><a href="SCR-05-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Assistant</a><a href="SCR-13-desktop.dc.html" style="padding: 18px 14px 16px; color: #C8CDD0; text-decoration: none; border-bottom: 3px solid transparent;">Setup</a></div>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;"><span data-cmp="CMP-23" style="display: inline-flex; flex: none;"><a href="SCR-04-desktop.dc.html" style="min-height: 40px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; background: #C8401C; color: #FFFFFF; font-weight: 600; text-decoration: none; white-space: nowrap;"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2.2"/></svg>Start work</a><a href="SCR-04-desktop-lines.dc.html" aria-label="More ways to start" style="min-height: 40px; width: 40px; border-left: 2px solid #9A2F10; background: #C8401C; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center;"><svg aria-hidden="true" width="12" height="8" viewBox="0 0 12 8"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></a></span>
+        
+        <span style="font-size: 13px; color: #C8CDD0;">Ada Okafor · Finance Lead</span>
+      </div>
+    </div>
+  </nav>
+
+  <main style="max-width: 1320px; margin: 0 auto; box-sizing: border-box; padding: 28px 28px 56px; display: flex; flex-direction: column; gap: 24px;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px;">
+      <h1 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 112%; font-weight: 800; font-size: 40px; line-height: 1; letter-spacing: -0.01em;">My work</h1>
+      <p style="margin: 0 0 0 auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">46 records you can see · updated 10:42</p>
+    </header>
+
+    <!-- SEC-floor -->
+    
+
+    <!-- SEC-queues -->
+    <div role="tablist" aria-label="Queues" style="display: flex; flex-wrap: wrap; border: 2px solid #1F2427; align-self: flex-start;">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
+        <button type="button" role="tab" aria-selected="{{t.selected}}" style="min-height: 44px; padding: 0 16px; border: none; border-right: 2px solid #1F2427; background: {{t.bg}}; color: {{t.color}}; font: inherit; font-weight: 500; cursor: pointer; white-space: nowrap;">{{t.label}}<span style="margin-left: 6px; display: inline-block; min-width: 20px; padding: 1px 6px; box-sizing: border-box; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; line-height: 1.5; vertical-align: 1px; background: {{t.cbg}}; color: {{t.cfg}};">{{t.count}}</span></button>
+      </sc-for>
+    </div>
+
+    <!-- SEC-list -->
+    <div data-cmp="CMP-22" style="display: flex; flex-direction: column; gap: 10px;"><div role="search" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;"><div style="position: relative; flex: 1 1 320px; max-width: 460px;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="#1F2427" stroke-width="2"/><path d="M11.5 11.5L16 16" stroke="#1F2427" stroke-width="2"/></svg><label for="q" style="position: absolute; left: -9999px;">Search</label><input id="q" type="search" placeholder="Search work, client or reference" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px 0 40px; border: 2px solid #1F2427; font: inherit; background: #FFFFFF;"></div><button type="button" aria-haspopup="dialog" aria-expanded="false" style="border: none; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; box-shadow: inset 0 0 0 2px #1F2427; background: #FFFFFF; color: #1F2427; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M2 3h14l-5.5 6.5V15l-3 1.5V9.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Filter</button><span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4A5357;">4 ITEMS</span></div></div><div style="overflow-x: auto; background: #FFFFFF; border: 2px solid #1F2427;">
+      <table style="width: 100%; min-width: 820px; border-collapse: collapse;">
+        <thead>
+          <tr style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #4A5357;">
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Work</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Where on its line</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">State</th>
+            <th style="padding: 10px 16px; font-weight: 500; border-bottom: 2px solid #1F2427;">Age</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <tr>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><a href="SCR-02-desktop.dc.html" style="display: block; color: #1F2427; font-weight: 600; text-decoration: none;">{{r.title}}</a><span style="display: block; font-size: 12px; color: #4A5357;">{{r.line}} · <span style="font-family: 'IBM Plex Mono', monospace;">{{r.ref}}</span></span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: flex; align-items: center; gap: 4px;"><sc-for list="{{r.steps}}" as="s" hint-placeholder-count="6"><span style="width: 18px; height: 6px; background: {{s}};"></span></sc-for></span><span style="display: block; margin-top: 4px; font-size: 12px; color: #4A5357;">{{r.station}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3;"><span style="display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 600; background: {{r.bg}}; color: {{r.color}}; white-space: nowrap;">{{r.state}}</span><span style="display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 12px; color: #4A5357;"><sc-if value="{{r.hasAv}}" hint-placeholder-val="{{false}}"><img src="{{r.av}}" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: {{r.avBg}};"></sc-if>{{r.waiting}}</span></td>
+              <td style="padding: 12px 16px; border-bottom: 1px solid #D5D9D3; font-family: 'IBM Plex Mono', monospace; color: #4A5357;">{{r.age}}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ink = '#1F2427', done = '#1F2427', open = '#D5D9D3', act = '#C8401C', white = '#FFFFFF';
+    const stops = (pattern) => pattern.split('').map(c => ({ fill: c === 'x' ? ink : c === 'o' ? act : white, label: c === 'o' ? 'Needs action' : c === 'x' ? 'Work here' : 'Empty' }));
+    const steps = (n, at, hold) => Array.from({ length: n }, (_, i) => i < at ? done : i === at ? (hold ? act : '#2459D6') : open);
+    const tab = (label, count, on) => ({ label, count, selected: on ? 'true' : 'false', bg: on ? ink : white, color: on ? white : ink, cbg: on ? 'rgba(255,255,255,0.18)' : '#E2E5E0', cfg: on ? '#FFFFFF' : '#4A5357' });
+    return {
+      tracks: [
+        { name: 'Pre-sale and planning', stops: stops('x-xo-x-'), note: '1 stopped', noteColor: act },
+        { name: 'Release to closure', stops: stops('xx-o--x'), note: '1 uncertain', noteColor: act },
+        { name: 'Invoices', stops: stops('x-xo---'), note: '2 waiting', noteColor: act },
+        { name: 'Month-end', stops: stops('-x--x--'), note: 'on track', noteColor: '#22764A' }
+      ],
+      tabs: [tab('Needs me', 4, true), tab('Started by me', 5), tab('Decisions', 3), tab('Exceptions', 2), tab('Active', 12), tab('Unassigned', 1), tab('Verified', 28)],
+      rows: [
+        { title: 'Lagoon Health · Milestone 2 invoice', line: 'Prepare an invoice', ref: 'INV-0412', steps: steps(7, 3, true), station: 'Station 4 of 7 · Finance review', state: 'AWAITING FINANCE DECISION', bg: '#FBE3D9', color: '#9A2F10', waiting: 'You · Finance Lead (Chidi drafted v2)', age: '2h', hasAv: true, av: '/_blob/ecfb1b0df62c4684b66a6b97230ae2c5', avBg: '#DFE8FB' },
+        { title: 'Harmattan Bank · go-live report', line: 'Obtain go-live acceptance', ref: 'GLV-0087', steps: steps(5, 3, true), station: 'Station 4 of 5 · Deliver report', state: 'EFFECT UNCERTAIN', bg: '#FBE3D9', color: '#9A2F10', waiting: 'Checking delivery before any resend', age: '40m' },
+        { title: 'Kora Logistics · fleet tracker SOW v3', line: 'Commercial submission', ref: 'COM-0233', steps: steps(6, 4, false), station: 'Station 5 of 6 · CEO approval', state: 'WAITING', bg: '#FFF1D6', color: '#6E4700', waiting: 'CEO · step 3 of 3', age: '1d' },
+        { title: 'Ojo Foods · ordering app plan', line: 'Plan a project', ref: 'PLN-0151', steps: steps(6, 2, true), station: 'Station 3 of 6 · Design sign-off', state: 'OWNER NEEDED', bg: '#FBE3D9', color: '#9A2F10', waiting: 'No Design Lead role set up', age: '3d' },
+        { title: 'October payroll · staff matching', line: 'Restricted payroll', ref: 'PAY-0010', steps: steps(5, 1, false), station: 'Station 2 of 5 · Match staff', state: 'PROCESSING', bg: '#E9EEFB', color: '#16388F', waiting: 'Zainab · HR agent, matching records', age: '5m', hasAv: true, av: '/_blob/0a29514f8f0d959d4d8f09bcda0ac32d', avBg: '#DFF0E3' },
+        { title: 'Sabi Market · web store closure', line: 'Close a project', ref: 'CLS-0044', steps: steps(4, 4, false), station: 'All 4 stations done', state: 'VERIFIED', bg: '#DDEFE3', color: '#16502F', waiting: 'Archived 09:12', age: '09:12' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
