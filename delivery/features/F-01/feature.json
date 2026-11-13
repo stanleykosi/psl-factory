@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-01",
   "outcome": "The app frame loads who is signed in and shows only their sections, on phone and desktop, against a contract mock",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "T-FRONTEND-SHELL"
   ],
@@ -107,11 +107,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (UI-only against the contract mock; no backend exists yet)",
+      "snapshot_ref": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -694,6 +696,52 @@
       "verification_refs": [
         "Measured the production build of `frontend/` at e20d2ce (scratchpad copy, app on port 3121, mock on port 3122). At 720, 740, 768, 820, 900, 1079 and 1080px the `.psl-brand` left edge and the `.shell-title` left edge are both 28px (1440px: both 88px, which matches the 1320px centred column). Screenshot at 720 and 1079 shows the wordmark and title on one left edge. Nav links at 720px run from x=192 to x=491 and the SAMPLE DATA label and name sit to the right without overlap."
       ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A 200 response from `/api/v1/me` whose body is not the E-ME shape (tested with `{\"bad\":1}` through a Playwright route) is accepted as success. Expected: the \"We couldn't load your account\" error card, or at least no crash. Actual: pageerror `Cannot read properties of undefined (reading 'includes')`, and Next's full-page \"This page couldn't load\" screen with no bar and no SAMPLE DATA label. The spec's C3 only maps error bodies (`unexpected_response`), so this is outside the written contract; it matters when FE-CONNECT-1 meets a real server that drifts. Not reachable from the mock.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-13T22:20:55Z",
+          "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Mock write endpoints do not validate request bodies: `POST /api/v1/tasks/T-1/decision` with `{}` returns 200 (verdict approve). The mock's 422 comes only from the scenario header. Not exercised by the frame (no writes yet); noted so later tasks do not trust the mock for input-validation paths.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-13T22:20:55Z",
+          "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1007,6 +1055,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-13T22:15:28Z",
+      "round": 3,
+      "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-13T22:21:00Z",
       "round": 3,
       "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
       "reason": null
