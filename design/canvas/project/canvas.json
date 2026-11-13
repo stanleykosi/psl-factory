@@ -3798,6 +3798,23 @@
       "title": "Project closure",
       "expand": "fill",
       "page": "lines"
+    },
+    "SCR-02-desktop-history.dc.html": {
+      "x": 0,
+      "y": 9876,
+      "w": 1440,
+      "h": 1040,
+      "page": "p-item",
+      "title": "Work item · history",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-history.dc.html": {
+      "x": 1520,
+      "y": 9876,
+      "w": 390,
+      "h": 844,
+      "page": "p-item",
+      "title": "Phone · history"
     }
   },
   "createdOnFiles": {
@@ -3895,7 +3912,8 @@
     "p-mywork-pmo0",
     "p-mywork-fin0",
     "p-setup-fin0",
-    "open-x2-x4"
+    "open-x2-x4",
+    "p-item-history"
   ],
   "notes": {
     "a-thesis": {
@@ -4594,6 +4612,15 @@
       "w": 240,
       "x": 0,
       "y": 8024
+    },
+    "p-item-history": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-item",
+      "text": "Work item history (SCR-02): every decision, agent step, evidence and send, read-only",
+      "w": 240,
+      "x": 0,
+      "y": 9760
     }
   },
   "order": [
@@ -5036,7 +5063,9 @@
     "LINE-delivery-hypercare-desktop.dc.html",
     "LINE-delivery-handover-desktop.dc.html",
     "LINE-delivery-archive-desktop.dc.html",
-    "LINE-delivery-closure-desktop.dc.html"
+    "LINE-delivery-closure-desktop.dc.html",
+    "SCR-02-desktop-history.dc.html",
+    "SCR-02-mobile-history.dc.html"
   ],
   "pages": [
     {
