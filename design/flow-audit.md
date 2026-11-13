@@ -119,3 +119,13 @@ Built today: Log a received RFP (SCR-23), Assign the accountable PM (SCR-24), Wr
 - **Per-project adjustments.** Add a "project adjustment" input to the rule (money, default 0) entered on the costing sheet with area, amount, reason and optional proof. An adjustment creates a new costing version and restarts the approval order (PM → Head of PMO → CEO → PMO Lead). Tola may suggest an adjustment; only a permitted person adds it.
 - **Two new policy settings**: who may add an adjustment (role-based; suggested PM and PMO Lead) and an optional per-role limit. Both "Not set" until PSL decides.
 - **Documents to request from PSL**: current pricing workbook or rate card; 3–5 past quotes or SOWs with their costing (including one discounted or fixed-price) as worked examples; any internal guidance on discounts or premiums.
+
+## Decisions, 13 Nov (design engineer)
+
+- **A. Engineering Lead and C. Support stay without a login.** Their reviews and acknowledgements are recorded by the PM with proof, as drawn. Closed.
+- **B. Head of PMO vs PMO Lead:** PSL confirms in the meeting on Monday 16 Nov. Open until then.
+- **X.8 Start work for the CEO and CTO:** they may start every line, but their main work is reviewing and approving and they rarely start work. Start work stays in their top bar; its main part opens the menu of all lines. Backend: their roles need start permission on every line. Closed.
+- **X.2 and X.3:** My work has three queues (Needs me, Waiting on others, Done; Unassigned for Leads); every Needs me row says Decide, Do or Fix. Overview owns everyone's exceptions. Closed.
+- **X.4:** Overview is the factory floor with all exceptions beneath it. Closed.
+- **X.5:** Payroll corrections drawn (SCR-37). Closed.
+
