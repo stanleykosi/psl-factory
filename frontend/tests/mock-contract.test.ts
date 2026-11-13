@@ -90,6 +90,13 @@ describe('mock server matches openapi.json', () => {
     expect(result.status).toBe(200);
   });
 
+  it('a malformed cookie value falls back to the default persona and the mock keeps serving', async () => {
+    const malformed = await fetch(`${base}/api/v1/me`, { headers: { Cookie: 'psl_mock_persona=%' } });
+    expect(malformed.status).toBe(200);
+    expect(((await malformed.json()) as { name: string }).name).toBe('Ada Okafor');
+    expect((await request('E-ME', { persona: 'pm' })).body.name).toBe('Tunde Bello');
+  });
+
   it('E-ME carries each persona fixture', async () => {
     const names = await Promise.all((PERSONAS as string[]).map(async (persona) => (await request('E-ME', { persona })).body));
     expect(names.map((me) => [me.name, me.destinations, me.csrf_token])).toEqual([

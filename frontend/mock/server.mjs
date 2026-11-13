@@ -50,9 +50,18 @@ function parseCookies(header = '') {
   const cookies = {};
   for (const part of header.split(';')) {
     const eq = part.indexOf('=');
-    if (eq > 0) cookies[part.slice(0, eq).trim()] = decodeURIComponent(part.slice(eq + 1).trim());
+    if (eq > 0) cookies[part.slice(0, eq).trim()] = decodeCookie(part.slice(eq + 1).trim());
   }
   return cookies;
+}
+
+// A malformed value such as `%` keeps its raw text instead of crashing the mock.
+function decodeCookie(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 function send(res, status, body) {
