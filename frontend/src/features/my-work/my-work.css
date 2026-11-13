@@ -40,10 +40,11 @@
 .my-work__age { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
 .my-work__linkbutton { align-self: flex-start; padding: 0; border: none; background: none; font: inherit; }
 
-/* phone cards: one link each; title and age, a full-width bar, state and station, who it waits on */
+/* phone cards: one link each; kind tag above the title (SCR-01-mobile), age, a full-width bar, state and station, who it waits on */
 .my-work__cards > li + li { border-top: 1px solid var(--rule-soft); }
 .my-work__cards .my-work__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-3) 14px; color: var(--ink); text-decoration: none; }
 .my-work__cardtop { align-self: stretch; display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); }
+.my-work__card .my-work__work { flex-direction: column; align-items: flex-start; gap: var(--space-1); }
 .my-work__cardstate { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .my-work__card .my-work__mini { align-self: stretch; display: flex; }
 .my-work__card .my-work__minibar { flex: 1; }

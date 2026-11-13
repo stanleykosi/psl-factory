@@ -216,3 +216,33 @@ test.describe('desktop 1440 details', () => {
     expect(await keyboardRing(page, page.getByRole('button', { name: 'Show 4 more' }))).toEqual(ring);
   });
 });
+
+test.describe('phone 390 card headers', () => {
+  test.use({ viewport: PHONE, hasTouch: true, isMobile: true });
+
+  test('kind tag sits on its own line above the title on every card (SCR-01-mobile)', async ({ page }) => {
+    await page.goto('/my-work');
+    await loaded(page);
+    const headers = await panel(page)
+      .locator('.my-work__card')
+      .evaluateAll((cards) =>
+        cards.map((card) => {
+          const box = card.getBoundingClientRect();
+          const tag = card.querySelector('.my-work__work > .psl-tag')!.getBoundingClientRect();
+          const title = card.querySelector('.my-work__work > .my-work__title')!.getBoundingClientRect();
+          return {
+            stacked: tag.bottom <= title.top,
+            tagLeft: tag.left - box.left,
+            titleLeft: title.left - box.left,
+            tagTop: tag.top - box.top,
+            titleTop: title.top - box.top,
+          };
+        }),
+      );
+    expect(headers).toHaveLength(20);
+    const first = headers[0];
+    expect(first.stacked).toBe(true);
+    expect(first.titleLeft).toBe(first.tagLeft);
+    for (const h of headers) expect(h).toEqual(first);
+  });
+});
