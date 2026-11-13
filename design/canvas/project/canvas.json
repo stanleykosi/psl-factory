@@ -21,448 +21,6 @@
       "x": 1520,
       "y": 0
     },
-    "LINE-commercial-desktop.dc.html": {
-      "expand": "fill",
-      "h": 800,
-      "page": "lines",
-      "title": "Costing and commercial submission",
-      "w": 1440,
-      "x": 4140,
-      "y": 5190
-    },
-    "LINE-commercial-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Cost a project and send the SOW",
-      "w": 390,
-      "x": 5660,
-      "y": 5190
-    },
-    "LINE-delivery-archive-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Project artifact archive",
-      "w": 1440,
-      "x": 4140,
-      "y": 7518
-    },
-    "LINE-delivery-archive-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Archive project artifacts",
-      "w": 390,
-      "x": 5660,
-      "y": 7518
-    },
-    "LINE-delivery-closure-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Project closure",
-      "w": 1440,
-      "x": 0,
-      "y": 8522
-    },
-    "LINE-delivery-closure-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Close the project",
-      "w": 390,
-      "x": 1520,
-      "y": 8522
-    },
-    "LINE-delivery-go-live-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Go-live acceptance",
-      "w": 1440,
-      "x": 4140,
-      "y": 6514
-    },
-    "LINE-delivery-go-live-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Client go-live sign-off",
-      "w": 390,
-      "x": 5660,
-      "y": 6514
-    },
-    "LINE-delivery-handover-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Support and Operations handover",
-      "w": 1440,
-      "x": 2070,
-      "y": 7518
-    },
-    "LINE-delivery-handover-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Hand over to Support",
-      "w": 390,
-      "x": 3590,
-      "y": 7518
-    },
-    "LINE-delivery-hypercare-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Release observations and hypercare",
-      "w": 1440,
-      "x": 0,
-      "y": 7518
-    },
-    "LINE-delivery-hypercare-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Watch the release",
-      "w": 390,
-      "x": 1520,
-      "y": 7518
-    },
-    "LINE-delivery-release-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Delivery gates and release evidence",
-      "w": 1440,
-      "x": 2070,
-      "y": 6514
-    },
-    "LINE-delivery-release-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Release gates",
-      "w": 390,
-      "x": 3590,
-      "y": 6514
-    },
-    "LINE-engagement-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Engagement identity and planning handoff",
-      "w": 1440,
-      "x": 2070,
-      "y": 5190
-    },
-    "LINE-engagement-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Log a new engagement",
-      "w": 390,
-      "x": 3590,
-      "y": 5190
-    },
-    "LINE-finance-accounts-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Accounting preparation and reviewed reports",
-      "w": 1440,
-      "x": 0,
-      "y": 9766
-    },
-    "LINE-finance-accounts-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Management accounts",
-      "w": 390,
-      "x": 1520,
-      "y": 9766
-    },
-    "LINE-finance-bu-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Reviewed BU exception and event aggregates",
-      "w": 1440,
-      "x": 2070,
-      "y": 10770
-    },
-    "LINE-finance-bu-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Business-unit totals",
-      "w": 390,
-      "x": 3590,
-      "y": 10770
-    },
-    "LINE-finance-forecast-desktop.dc.html": {
-      "expand": "fill",
-      "h": 778,
-      "page": "lines",
-      "title": "Reviewed cash forecast and actual follow-up",
-      "w": 1440,
-      "x": 0,
-      "y": 10770
-    },
-    "LINE-finance-forecast-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Cash forecast",
-      "w": 390,
-      "x": 1520,
-      "y": 10770
-    },
-    "LINE-finance-ledger-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Supplied incumbent transaction reference",
-      "w": 1440,
-      "x": 4140,
-      "y": 10770
-    },
-    "LINE-finance-ledger-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Record a ledger source",
-      "w": 390,
-      "x": 5660,
-      "y": 10770
-    },
-    "LINE-finance-payroll-desktop.dc.html": {
-      "expand": "fill",
-      "h": 924,
-      "page": "lines",
-      "title": "Restricted payroll and BU staff-cost receipt",
-      "w": 1440,
-      "x": 0,
-      "y": 11774
-    },
-    "LINE-finance-payroll-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Payroll matching (restricted)",
-      "w": 390,
-      "x": 1520,
-      "y": 11774
-    },
-    "LINE-finance-ppe-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Asset schedule and reviewed accounting note",
-      "w": 1440,
-      "x": 4140,
-      "y": 9766
-    },
-    "LINE-finance-ppe-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Fixed asset schedule",
-      "w": 390,
-      "x": 5660,
-      "y": 9766
-    },
-    "LINE-finance-schedules-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Income detail and schedule inventory",
-      "w": 1440,
-      "x": 2070,
-      "y": 9766
-    },
-    "LINE-finance-schedules-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Income or schedule inventory",
-      "w": 390,
-      "x": 3590,
-      "y": 9766
-    },
-    "LINE-planning-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Planning and delivery handoff",
-      "w": 1440,
-      "x": 0,
-      "y": 6514
-    },
-    "LINE-planning-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Plan the project",
-      "w": 390,
-      "x": 1520,
-      "y": 6514
-    },
-    "LINE-pmo-change-desktop.dc.html": {
-      "expand": "fill",
-      "h": 818,
-      "page": "lines",
-      "title": "Controlled change and signed closure",
-      "w": 1440,
-      "x": 2070,
-      "y": 3946
-    },
-    "LINE-pmo-change-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Scope or timeline change",
-      "w": 390,
-      "x": 3590,
-      "y": 3946
-    },
-    "LINE-pmo-emergency-desktop.dc.html": {
-      "expand": "fill",
-      "h": 778,
-      "page": "lines",
-      "title": "Emergency preauthorization and retrospective evidence",
-      "w": 1440,
-      "x": 0,
-      "y": 3946
-    },
-    "LINE-pmo-emergency-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Emergency change for an incident",
-      "w": 390,
-      "x": 1520,
-      "y": 3946
-    },
-    "LINE-pmo-escalation-desktop.dc.html": {
-      "expand": "fill",
-      "h": 778,
-      "page": "lines",
-      "title": "Escalation decisions and verified communication",
-      "w": 1440,
-      "x": 2070,
-      "y": 2942
-    },
-    "LINE-pmo-escalation-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Escalate and communicate",
-      "w": 390,
-      "x": 3590,
-      "y": 2942
-    },
-    "LINE-pmo-finance-desktop.dc.html": {
-      "expand": "fill",
-      "h": 942,
-      "page": "lines",
-      "title": "Invoice preparation and delivery",
-      "w": 1440,
-      "x": 0,
-      "y": 1840
-    },
-    "LINE-pmo-finance-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Bill a completed milestone",
-      "w": 390,
-      "x": 1520,
-      "y": 1840
-    },
-    "LINE-pmo-issues-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Issue investigation and owner follow-up",
-      "w": 1440,
-      "x": 2070,
-      "y": 1840
-    },
-    "LINE-pmo-issues-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Chase an open issue",
-      "w": 390,
-      "x": 3590,
-      "y": 1840
-    },
-    "LINE-pmo-leadership-report-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Internal Tuesday and monthly leadership report",
-      "w": 1440,
-      "x": 4140,
-      "y": 1840
-    },
-    "LINE-pmo-leadership-report-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Tuesday or monthly report",
-      "w": 390,
-      "x": 5660,
-      "y": 1840
-    },
-    "LINE-pmo-minutes-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Formal minutes and action handoff",
-      "w": 1440,
-      "x": 0,
-      "y": 2942
-    },
-    "LINE-pmo-minutes-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Minutes after a meeting",
-      "w": 390,
-      "x": 1520,
-      "y": 2942
-    },
-    "LINE-pmo-weekly-report-desktop.dc.html": {
-      "expand": "fill",
-      "h": 760,
-      "page": "lines",
-      "title": "Reviewed weekly client report",
-      "w": 1440,
-      "x": 4140,
-      "y": 2942
-    },
-    "LINE-pmo-weekly-report-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Friday report for a client",
-      "w": 390,
-      "x": 5660,
-      "y": 2942
-    },
-    "LINE-rfp-response-desktop.dc.html": {
-      "expand": "fill",
-      "h": 924,
-      "page": "lines",
-      "title": "RFP response and project handoff",
-      "w": 1440,
-      "x": 0,
-      "y": 5190
-    },
-    "LINE-rfp-response-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Respond to an RFP",
-      "w": 390,
-      "x": 1520,
-      "y": 5190
-    },
-    "LINES-desktop.dc.html": {
-      "expand": "fill",
-      "h": 1500,
-      "page": "lines",
-      "title": "Lines · catalogue of all 25",
-      "w": 1440,
-      "x": 0,
-      "y": 0
-    },
-    "LINES-mobile.dc.html": {
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · lines",
-      "w": 390,
-      "x": 1520,
-      "y": 0
-    },
     "Main.dc.html": {
       "h": 720,
       "page": "overview",
@@ -4069,6 +3627,448 @@
       "h": 1180,
       "page": "open",
       "title": "Overview · three concepts"
+    },
+    "LINES-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1500,
+      "page": "lines",
+      "title": "Lines · catalogue of all 25",
+      "expand": "fill"
+    },
+    "LINES-mobile.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · lines"
+    },
+    "LINE-pmo-finance-desktop.dc.html": {
+      "x": 0,
+      "y": 1840,
+      "w": 1440,
+      "h": 1002,
+      "page": "lines",
+      "title": "Invoice preparation and delivery",
+      "expand": "fill"
+    },
+    "LINE-pmo-finance-mobile.dc.html": {
+      "x": 1520,
+      "y": 1840,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Bill a completed milestone"
+    },
+    "LINE-pmo-issues-desktop.dc.html": {
+      "x": 2070,
+      "y": 1840,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Issue investigation and owner follow-up",
+      "expand": "fill"
+    },
+    "LINE-pmo-issues-mobile.dc.html": {
+      "x": 3590,
+      "y": 1840,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Chase an open issue"
+    },
+    "LINE-pmo-leadership-report-desktop.dc.html": {
+      "x": 4140,
+      "y": 1840,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Internal Tuesday and monthly leadership report",
+      "expand": "fill"
+    },
+    "LINE-pmo-leadership-report-mobile.dc.html": {
+      "x": 5660,
+      "y": 1840,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Tuesday or monthly report"
+    },
+    "LINE-pmo-minutes-desktop.dc.html": {
+      "x": 0,
+      "y": 3002,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Formal minutes and action handoff",
+      "expand": "fill"
+    },
+    "LINE-pmo-minutes-mobile.dc.html": {
+      "x": 1520,
+      "y": 3002,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Minutes after a meeting"
+    },
+    "LINE-pmo-escalation-desktop.dc.html": {
+      "x": 2070,
+      "y": 3002,
+      "w": 1440,
+      "h": 826,
+      "page": "lines",
+      "title": "Escalation decisions and verified communication",
+      "expand": "fill"
+    },
+    "LINE-pmo-escalation-mobile.dc.html": {
+      "x": 3590,
+      "y": 3002,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Escalate and communicate"
+    },
+    "LINE-pmo-weekly-report-desktop.dc.html": {
+      "x": 4140,
+      "y": 3002,
+      "w": 1440,
+      "h": 804,
+      "page": "lines",
+      "title": "Reviewed weekly client report",
+      "expand": "fill"
+    },
+    "LINE-pmo-weekly-report-mobile.dc.html": {
+      "x": 5660,
+      "y": 3002,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Friday report for a client"
+    },
+    "LINE-pmo-emergency-desktop.dc.html": {
+      "x": 0,
+      "y": 4006,
+      "w": 1440,
+      "h": 826,
+      "page": "lines",
+      "title": "Emergency preauthorization and retrospective evidence",
+      "expand": "fill"
+    },
+    "LINE-pmo-emergency-mobile.dc.html": {
+      "x": 1520,
+      "y": 4006,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Emergency change for an incident"
+    },
+    "LINE-pmo-change-desktop.dc.html": {
+      "x": 2070,
+      "y": 4006,
+      "w": 1440,
+      "h": 870,
+      "page": "lines",
+      "title": "Controlled change and signed closure",
+      "expand": "fill"
+    },
+    "LINE-pmo-change-mobile.dc.html": {
+      "x": 3590,
+      "y": 4006,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Scope or timeline change"
+    },
+    "LINE-rfp-response-desktop.dc.html": {
+      "x": 0,
+      "y": 5276,
+      "w": 1440,
+      "h": 980,
+      "page": "lines",
+      "title": "RFP response and project handoff",
+      "expand": "fill"
+    },
+    "LINE-rfp-response-mobile.dc.html": {
+      "x": 1520,
+      "y": 5276,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Respond to an RFP"
+    },
+    "LINE-engagement-desktop.dc.html": {
+      "x": 2070,
+      "y": 5276,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Engagement identity and planning handoff",
+      "expand": "fill"
+    },
+    "LINE-engagement-mobile.dc.html": {
+      "x": 3590,
+      "y": 5276,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Log a new engagement"
+    },
+    "LINE-commercial-desktop.dc.html": {
+      "x": 4140,
+      "y": 5276,
+      "w": 1440,
+      "h": 848,
+      "page": "lines",
+      "title": "Costing and commercial submission",
+      "expand": "fill"
+    },
+    "LINE-commercial-mobile.dc.html": {
+      "x": 5660,
+      "y": 5276,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Cost a project and send the SOW"
+    },
+    "LINE-planning-desktop.dc.html": {
+      "x": 0,
+      "y": 6656,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Planning and delivery handoff",
+      "expand": "fill"
+    },
+    "LINE-planning-mobile.dc.html": {
+      "x": 1520,
+      "y": 6656,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Plan the project"
+    },
+    "LINE-delivery-release-desktop.dc.html": {
+      "x": 2070,
+      "y": 6656,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Delivery gates and release evidence",
+      "expand": "fill"
+    },
+    "LINE-delivery-release-mobile.dc.html": {
+      "x": 3590,
+      "y": 6656,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Release gates"
+    },
+    "LINE-delivery-go-live-desktop.dc.html": {
+      "x": 4140,
+      "y": 6656,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Go-live acceptance",
+      "expand": "fill"
+    },
+    "LINE-delivery-go-live-mobile.dc.html": {
+      "x": 5660,
+      "y": 6656,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Client go-live sign-off"
+    },
+    "LINE-delivery-hypercare-desktop.dc.html": {
+      "x": 0,
+      "y": 7660,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Release observations and hypercare",
+      "expand": "fill"
+    },
+    "LINE-delivery-hypercare-mobile.dc.html": {
+      "x": 1520,
+      "y": 7660,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Watch the release"
+    },
+    "LINE-delivery-handover-desktop.dc.html": {
+      "x": 2070,
+      "y": 7660,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Support and Operations handover",
+      "expand": "fill"
+    },
+    "LINE-delivery-handover-mobile.dc.html": {
+      "x": 3590,
+      "y": 7660,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Hand over to Support"
+    },
+    "LINE-delivery-archive-desktop.dc.html": {
+      "x": 4140,
+      "y": 7660,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Project artifact archive",
+      "expand": "fill"
+    },
+    "LINE-delivery-archive-mobile.dc.html": {
+      "x": 5660,
+      "y": 7660,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Archive project artifacts"
+    },
+    "LINE-delivery-closure-desktop.dc.html": {
+      "x": 0,
+      "y": 8664,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Project closure",
+      "expand": "fill"
+    },
+    "LINE-delivery-closure-mobile.dc.html": {
+      "x": 1520,
+      "y": 8664,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Close the project"
+    },
+    "LINE-finance-accounts-desktop.dc.html": {
+      "x": 0,
+      "y": 9908,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Accounting preparation and reviewed reports",
+      "expand": "fill"
+    },
+    "LINE-finance-accounts-mobile.dc.html": {
+      "x": 1520,
+      "y": 9908,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Management accounts"
+    },
+    "LINE-finance-schedules-desktop.dc.html": {
+      "x": 2070,
+      "y": 9908,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Income detail and schedule inventory",
+      "expand": "fill"
+    },
+    "LINE-finance-schedules-mobile.dc.html": {
+      "x": 3590,
+      "y": 9908,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Income or schedule inventory"
+    },
+    "LINE-finance-ppe-desktop.dc.html": {
+      "x": 4140,
+      "y": 9908,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Asset schedule and reviewed accounting note",
+      "expand": "fill"
+    },
+    "LINE-finance-ppe-mobile.dc.html": {
+      "x": 5660,
+      "y": 9908,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Fixed asset schedule"
+    },
+    "LINE-finance-forecast-desktop.dc.html": {
+      "x": 0,
+      "y": 10912,
+      "w": 1440,
+      "h": 826,
+      "page": "lines",
+      "title": "Reviewed cash forecast and actual follow-up",
+      "expand": "fill"
+    },
+    "LINE-finance-forecast-mobile.dc.html": {
+      "x": 1520,
+      "y": 10912,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Cash forecast"
+    },
+    "LINE-finance-bu-desktop.dc.html": {
+      "x": 2070,
+      "y": 10912,
+      "w": 1440,
+      "h": 804,
+      "page": "lines",
+      "title": "Reviewed BU exception and event aggregates",
+      "expand": "fill"
+    },
+    "LINE-finance-bu-mobile.dc.html": {
+      "x": 3590,
+      "y": 10912,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Business-unit totals"
+    },
+    "LINE-finance-ledger-desktop.dc.html": {
+      "x": 4140,
+      "y": 10912,
+      "w": 1440,
+      "h": 760,
+      "page": "lines",
+      "title": "Supplied incumbent transaction reference",
+      "expand": "fill"
+    },
+    "LINE-finance-ledger-mobile.dc.html": {
+      "x": 5660,
+      "y": 10912,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Record a ledger source"
+    },
+    "LINE-finance-payroll-desktop.dc.html": {
+      "x": 0,
+      "y": 11916,
+      "w": 1440,
+      "h": 980,
+      "page": "lines",
+      "title": "Restricted payroll and BU staff-cost receipt",
+      "expand": "fill"
+    },
+    "LINE-finance-payroll-mobile.dc.html": {
+      "x": 1520,
+      "y": 11916,
+      "w": 390,
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Payroll matching (restricted)"
     }
   },
   "createdOnFiles": {
@@ -4239,49 +4239,44 @@
       "y": -420
     },
     "lines-Delivery": {
+      "x": 0,
+      "y": 6516,
+      "text": "Delivery lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines",
-      "text": "Delivery lines",
-      "w": 240,
-      "x": 0,
-      "y": 6374
+      "page": "lines"
     },
     "lines-Finance": {
+      "x": 0,
+      "y": 9768,
+      "text": "Finance lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines",
-      "text": "Finance lines",
-      "w": 240,
-      "x": 0,
-      "y": 9626
+      "page": "lines"
     },
     "lines-PMO": {
+      "x": 0,
+      "y": 1700,
+      "text": "PMO lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines",
-      "text": "PMO lines",
-      "w": 240,
-      "x": 0,
-      "y": 1700
+      "page": "lines"
     },
     "lines-Pre-sale": {
+      "x": 0,
+      "y": 5136,
+      "text": "Pre-sale lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines",
-      "text": "Pre-sale lines",
-      "w": 240,
-      "x": 0,
-      "y": 5050
+      "page": "lines"
     },
     "lines-title": {
+      "x": 0,
+      "y": -300,
+      "text": "Lines · what each of the 25 lines needs to start, its steps, who acts and what it produces",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines",
-      "text": "Lines · what each of the 25 lines needs to start, its steps, who acts and what it produces",
-      "w": 240,
-      "x": 0,
-      "y": -300
+      "page": "lines"
     },
     "m-note": {
       "fill": "orange",

@@ -123,7 +123,7 @@ Built today: Log a received RFP (SCR-23), Assign the accountable PM (SCR-24), Wr
 ## Decisions, 13 Nov (design engineer)
 
 - **A. Engineering Lead and C. Support stay without a login.** Their reviews and acknowledgements are recorded by the PM with proof, as drawn. Closed.
-- **B. Head of PMO vs PMO Lead:** PSL confirms in the meeting on Monday 16 Nov. Open until then.
+- **B. Head of PMO and PMO Lead are one role** (PSL, 13 Nov). Every screen now says PMO Lead. Backend: closure decisions and the commercial approval order still look up a separate "Head of PMO" role (`apps/workflows/factory_closure.py`, commercial approvals); map it to PMO Lead. Open: the commercial approval order becomes PM → PMO Lead → CEO → PMO Lead, so the PMO Lead approves twice; PSL to say whether once is enough.
 - **X.8 Start work for the CEO and CTO:** they may start every line, but their main work is reviewing and approving and they rarely start work. Start work stays in their top bar; its main part opens the menu of all lines. Backend: the CEO's and CTO's own accounts must be allowed to start every line (today the app checks a start permission per line). This adds no approval step for anyone else; PMs, Finance and HR start work exactly as before. Closed.
 - **X.2 and X.3:** My work has three queues (Needs me, Waiting on others, Done; Unassigned for Leads); every Needs me row says Decide, Do or Fix. Overview owns everyone's exceptions. Closed.
 - **X.4:** Overview is the factory floor with all exceptions beneath it. Closed.
