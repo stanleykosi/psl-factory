@@ -254,10 +254,11 @@ describe('item states', () => {
     serve(() => json(status, { code: status === 403 ? 'forbidden' : 'not_found', message: 'x' }));
     await open('W-1099');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this work item');
-    expect(screen.getByText('NO ACCESS')).toBeTruthy();
+    expect(screen.getByText('NO ACCESS').className).toContain('psl-tag psl-tag--neutral');
     expect(screen.getByText(/Nothing about it is shown here, not even its name or amount\./)).toBeTruthy();
     expect(screen.getByText(/ask the PMO Lead for access to the project\. If someone sent you this link/)).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Back to my queue' }).getAttribute('href')).toBe('/my-work');
+    expect(screen.getByRole('link', { name: 'Back to my queue' }).className).toBe('psl-btn psl-btn--dark psl-btn--lg');
     expect(document.body.textContent).not.toContain('W-1099');
     expect(document.body.innerHTML).not.toContain('W-1099');
     expect(screen.queryByRole('navigation', { name: 'Work item' })).toBeNull();
@@ -506,6 +507,27 @@ describe('updates (D-UPDATES r2)', () => {
     await advance(5000);
     expect(itemUrls()).toHaveLength(3);
     expect(screen.queryByText(/We couldn’t refresh this item/)).toBeNull();
+  });
+
+  it('a poll that loses access replaces the item with the no-access or signed-out state and stops', async () => {
+    for (const [status, text] of [
+      [403, 'You can’t open this work item'],
+      [404, 'You can’t open this work item'],
+      [401, 'Sign in'],
+    ] as const) {
+      fetchStub.mockReset();
+      let calls = 0;
+      serve(() => (++calls === 2 ? json(status, { code: 'denied', message: 'No' }) : json(200, item('W-1003'))));
+      const view = render(<WorkItemView id="W-1003" tab="overview" />);
+      await settle();
+      await settle();
+      await advance(5000);
+      expect(screen.queryByText('Delta Foods · Weekly client update'), String(status)).toBeNull();
+      expect(screen.getAllByText(new RegExp(text)).length, String(status)).toBeGreaterThan(0);
+      await advance(30000);
+      expect(itemUrls(), String(status)).toHaveLength(2);
+      view.unmount();
+    }
   });
 
   it('a new revision on the history view reloads history once from the first page', async () => {

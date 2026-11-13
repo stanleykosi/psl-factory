@@ -9,6 +9,7 @@ import type { WorkItem } from './labels';
 
 /** D-UPDATES r2: the open item is re-read every 5 s while its agent works and the page is visible. */
 export const POLL_MS = 5000;
+const ACCESS_LOST = new Set<ApiError['kind']>(['unauthenticated', 'forbidden', 'not_found']);
 
 export type WorkItemState =
   | { status: 'loading' }
@@ -46,12 +47,17 @@ export function useWorkItem(id: string) {
       clearTimeout(timer);
       timer = document.visibilityState === 'visible' ? setTimeout(() => void poll(), POLL_MS) : undefined;
     };
-    // A failed poll keeps the last good item on screen; the next poll tries again.
+    // A failed poll keeps the last good item on screen and the next poll tries again, unless access was lost:
+    // then the signed-out or no-access state replaces the item and polling stops.
     const poll = async () => {
       try {
         const item = await fetchItem();
         if (active) setState({ status: 'ready', item, loadedAt: new Date(), refreshFailed: false });
-      } catch {
+      } catch (error) {
+        if (error instanceof ApiError && ACCESS_LOST.has(error.kind)) {
+          if (active) setState({ status: 'error', error });
+          return;
+        }
         if (active) setState((s) => (s.status === 'ready' ? { ...s, refreshFailed: true } : s));
       }
       if (active) schedule();
