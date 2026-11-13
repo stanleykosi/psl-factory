@@ -115,8 +115,9 @@ describe('E-WORK-LIST mock honours the query', () => {
     }
   });
 
-  it('pm asking for unassigned gets 403 queue_not_open', async () => {
+  it('pm asking for unassigned gets 403 queue_not_open; persona none gets it empty', async () => {
     expect(await list('queue=unassigned', 'pm')).toEqual({ status: 403, body: { code: 'queue_not_open', message: 'Only Leads can see unassigned work.' } });
+    expect(await list('queue=unassigned', 'none')).toEqual({ status: 200, body: { items: [], as_of: '2026-11-10T09:42:00Z', counts: { needs_me: 0, waiting_on_others: 0, done: 0 } } });
   });
 
   it('the X-Mock-Scenario header still wins', async () => {

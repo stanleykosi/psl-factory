@@ -27,7 +27,8 @@ export function workList({ url, persona }) {
   if (!QUEUES.includes(queue) || !LIMITS.includes(limit) || offset === null) return { status: 404, body: INVALID_QUERY };
 
   const lead = LEAD_PERSONAS.includes(persona);
-  if (queue === 'unassigned' && !lead) return { status: 403, body: QUEUE_NOT_OPEN };
+  // C8: persona none sees every queue empty; other non-leads are refused unassigned.
+  if (queue === 'unassigned' && !lead && persona !== 'none') return { status: 403, body: QUEUE_NOT_OPEN };
 
   const mine = fixture.rows.filter((row) => row.personas.includes(persona));
   const counts = { needs_me: 0, waiting_on_others: 0, done: 0 };
