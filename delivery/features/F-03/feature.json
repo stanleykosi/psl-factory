@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-03",
   "outcome": "Open one work item and read its history",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -78,7 +78,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -94,7 +94,7 @@
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-03/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -134,13 +134,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-WORKITEM",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "c4f35ab089fe4dbd969648cf142bafcfe85ec0c4",
+    "task_branch": "fe-workitem-open-one-work-item-and-read-its-history",
+    "head_sha": "c4f35ab089fe4dbd969648cf142bafcfe85ec0c4",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-03",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -150,7 +150,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -183,14 +183,22 @@
     }
   },
   "created_at": "2026-11-13T22:44:58Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 3,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-13T23:07:47Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T23:08:06Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -208,7 +216,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
