@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-01",
   "outcome": "The app frame loads who is signed in and shows only their sections, on phone and desktop, against a contract mock",
-  "state": "IMPLEMENTING",
+  "state": "CHANGES_REQUESTED",
   "task_ids": [
     "T-FRONTEND-SHELL"
   ],
@@ -61,14 +61,28 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T20:53:00Z",
+      "evidence_ref": "delivery/features/F-01/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -94,21 +108,279 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (visual consistency with the approved SCR-01 and STATES boards, layout at phone and desktop widths, contrast)",
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ui.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/server.mjs` `parseCookies`: `decodeURIComponent` on a malformed cookie value such as `%` throws inside the `end` handler. That is an uncaught exception, and it kills the local mock process. Wrap it in a try/catch and keep the raw value.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/next.config.ts`: `API_ORIGIN` defaults to the mock (127.0.0.1:4010) in every build, including production. A forgotten variable silently points a deployed build at nothing, or at sample data. This is the spec's chosen seam, so it is acceptable. FE-CONNECT-1 should make a production build fail when `API_ORIGIN` is unset.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 720-900px with five destinations, rule (f) squeezes the who-text to nothing. The name is invisible on the bar, though it stays in the phone menu and the DOM. The builder flagged this. It follows the spec letter, so the design owner needs to decide on wrap or a shorter line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Declared deviations are minor and reasoned: the `Archivo` `@font-face` alias, the extra shell.css rules and the inline `marginLeft/flex` style on the TopNav wrapper (the inline style could move into shell.css). The same-name font alias is a drift risk if the fontsource files are renamed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/package.json` `engines` says `>=24`, but jsdom 31.0.1 needs Node >=24.15. Local Node 24.12 produces EBADENGINE warnings. Raise `engines` or pin jsdom to a version that fits.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 768 to about 900 px, finance_lead's name and role are not visible in the top bar. The who-line is squeezed to nothing by the spec's rule (f), so the person can't see who they are signed in as on a tablet. The builder reported this too. Ask the design owner for a wrap or a shorter who-line. Where: `frontend/src/styles/shell.css`, `.psl-nav__who`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "An unknown URL such as `/nonexistent` shows Next's default \"404 This page could not be found.\" inside the full bar, with no link back to a destination. Add a short, plain not-found page with a link to the first destination. `frontend/src/app/` has no `not-found.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A placeholder page shows the same word twice: the h1 \"My work\" and the card's h3 \"My work\". The spec's C5 table asks for both, so the builder is not at fault. The design owner could drop the h3 once real pages arrive.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "At 720px the top bar is wider than the viewport. The SAMPLE DATA label (`frontend/src/shell/TopNav.tsx:27`, `.psl-sample`) ends at x=725 on a 720px viewport, so `document.documentElement.scrollWidth` is 725 and the page scrolls sideways. Expected: no horizontal overflow at any width where the top bar is shown (720px and wider). Actual: overflow of 5px at 720px only; 740px and 760px are clean. Fix so the bar fits at 720px (for example, let the links compact or let the who-line and label give way earlier), then re-check 720 to 760px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend (design-owner decision on the approach)",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The signed-in name is not visible on the desktop bar from 720px to about 820px. `frontend/src/styles/shell.css:44-45` applies `overflow: hidden; text-overflow: ellipsis` to `.psl-nav__who`, but the element's measured width is 0px at 720 and 768px, 43px at 820px and 123px at 900px (finance_lead persona, five links). Expected: per CMP-01 and the spec's rule (f), the name shrinks first and remains visible as a truncated name. Actual: at 720 to about 815px no part of the name is shown, so the person cannot tell who they are signed in as on tablet-width desktops. The builder's note says this is the design owner's call (wrap, or a shorter who-line as the boards' `flex-wrap` allows). Frontend should not pick the approach alone; the design owner should choose it, then the frontend applies it and re-measures at 720, 768, 820 and 900px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The error frame does not follow the approved STATES error pattern. `frontend/src/shell/FrameStates.tsx:55-66` renders a `psl-callout--problem` strip (pink fill, message in one line), then a plain-text \"Reference not_found for support.\" line and a secondary button. The approved STATES-desktop and STATES-mobile boards show an error card: white surface, 2px ink border with a signal-red border, a mono eyebrow \"ERROR \u00b7 COULDN'T LOAD\", the message, a \"Last loaded \u2026 Reference \u2026 for support.\" line, and a bordered \"Try again\" button. Spec C5 names this as \"STATES error pattern\" and does not record a deviation as approved. Expected: the card layout and eyebrow from STATES. Actual: the callout strip, with the reference line not aligned to any board element. Also use the existing `.psl-error` or STATES card markup rather than a new one-off layout. Re-check the 404 and server error frames at 1440 and 390 against the board. (The loading frame was not captured; the mock responds too quickly to see it, so the loading pattern is unverified. See Notes.)",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T21:05:47Z",
+          "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -132,7 +404,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "4549a580be2707279b0a6af6e0b2c1f0924f1ead",
     "task_branch": "t-frontend-shell-nextjs-app",
-    "head_sha": "4549a580be2707279b0a6af6e0b2c1f0924f1ead",
+    "head_sha": "f6e9a9ecdc299700381927a13d66386138d83e5c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-01",
     "pr_url": null,
     "pr_number": null,
@@ -143,7 +415,60 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/.gitignore",
+      "frontend/e2e/frame.spec.ts",
+      "frontend/eslint.config.mjs",
+      "frontend/mock/fixtures/E-TASK-CLAIM.json",
+      "frontend/mock/fixtures/E-TASK-DECIDE.json",
+      "frontend/mock/fixtures/E-WORK-HISTORY.json",
+      "frontend/mock/fixtures/E-WORK-ITEM.json",
+      "frontend/mock/fixtures/E-WORK-LIST.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/me.none.json",
+      "frontend/mock/fixtures/me.pm.json",
+      "frontend/mock/server.mjs",
+      "frontend/next.config.ts",
+      "frontend/package-lock.json",
+      "frontend/package.json",
+      "frontend/playwright.config.ts",
+      "frontend/scripts/dev.mjs",
+      "frontend/scripts/gen-styles.mjs",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/errors.ts",
+      "frontend/src/api/schema.d.ts",
+      "frontend/src/api/types.ts",
+      "frontend/src/app/assistant/page.tsx",
+      "frontend/src/app/layout.tsx",
+      "frontend/src/app/my-work/page.tsx",
+      "frontend/src/app/overview/page.tsx",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/projects/page.tsx",
+      "frontend/src/app/setup/page.tsx",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/DestinationPage.tsx",
+      "frontend/src/shell/FrameStates.tsx",
+      "frontend/src/shell/HomeRedirect.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/SampleLabel.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/src/shell/destinations.ts",
+      "frontend/src/shell/icons.tsx",
+      "frontend/src/shell/sample.ts",
+      "frontend/src/styles/fonts.css",
+      "frontend/src/styles/psl-bundle.css",
+      "frontend/src/styles/shell.css",
+      "frontend/src/styles/tokens.css",
+      "frontend/tests/api-schema-drift.test.ts",
+      "frontend/tests/client-types.test.ts",
+      "frontend/tests/client.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/setup.ts",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/styles-drift.test.ts",
+      "frontend/tsconfig.json",
+      "frontend/vitest.config.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -194,6 +519,22 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T20:58:14Z",
+      "round": 1,
+      "head": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-13T21:05:55Z",
+      "round": 1,
+      "head": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "reason": null
     }
   ],
   "routing": {
@@ -210,9 +551,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "f6e9a9ecdc299700381927a13d66386138d83e5c"
   },
   "blocked": null
 }
