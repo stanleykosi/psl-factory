@@ -28,6 +28,18 @@ The design system for PSL's operations factory, from concept C, Assembly line. E
   - `display` (Archivo, expanded) is for screen titles and station names.
   - `sans` (IBM Plex Sans) is for all reading text.
   - `mono` (IBM Plex Mono) is for references, times, amounts and uppercase labels at 0.06em tracking.
+- **Interaction states** are the same on every control:
+  - **Hover:** filled buttons go one step darker (`action-strong`, `signal-strong`, `verified-strong`, `ink-strong`); outline controls, rows and options take `steel` or `surface-subtle`.
+  - **Pressed:** filled buttons take their `-ink` colour (`action-ink`, `signal-ink`, `verified-ink`, `ink-pressed`); outline buttons take `neutral-tint`.
+  - **Focus:** a 2px solid `focus` ring with a 2px gap on light grounds; `focus-on-strong` (white) on ink, orange and blue fills. Inside joined controls (tabs, segmented options) the ring sits inset. Never remove it.
+  - **Disabled:** `disabled` fill or border, `ink-muted` text, and the reason written next to it. Prefer an enabled control that explains what is missing.
+  - **Busy:** three small squares fill in turn and the label says what is happening ("Recording…"); the control keeps its width and cannot be pressed twice.
+  - **Error:** `signal` border on the field and a `signal-ink` message with a warning icon under it; a validation summary at the top of the form links to each field.
+- **Sizes:** `control-md` (44px) is the default height of buttons, inputs and tabs; `control-sm` (40px) only in the top bar and dense toolbars; `control-phone` (48px) for phone inputs; `control-lg` (50px) for drawer and decision footers; `control-xl` (54px) for the full-width phone action.
+- **Elevation:** panels on the page never cast a shadow. Floating surfaces (menus, select lists, filter panels, date pickers, dialogs) use `shadow-pop`, a hard 6px offset in `ink`; toasts use `shadow-float`. Drawers, sheets and dialogs dim the page with `scrim`.
+- **Layout:** below `bp-phone` (720px) the top bar becomes the phone bar, rows stack, filters move to a bottom sheet and the main action goes full width in a footer; page content is at most 1320px wide.
+- **Text styles:** `page-title` for page titles, `drawer-title` for drawers and dialogs, `panel-head` (uppercase) for panel headers, `body` for reading text (`body-phone` on phones), `hint` for hints, errors and what-it-does-not-do lines, `tag` for state tags, `eyebrow` and `label` in mono caps, `amount` and `reference` in mono.
+- **Dates and amounts:** dates read "17 Nov 2026", times "14:30 WAT" in mono; amounts are mono with ₦ and two decimals, right-aligned in tables; Unknown is the amber Unknown tag.
 - **Spacing:** a 4px base. Panels use `space-4`, sections `space-5`, desktop page gutters `space-6`. Every touch target is at least `space-7` (44px).
 - **Contrast:** the signal orange is #C8401C, deepened from concept C's #D8461F, which was 4.4:1 with white text. Every text pair in this system meets 4.5:1.
 
@@ -67,12 +79,15 @@ The department agents have faces. People keep their own photo or initials, so ag
 
 ## Iconography
 
-- Stroke icons, 2px with square caps, drawn on a 20px grid in `ink`.
+- Stroke icons, 2px with square caps, drawn at 18px on a 20px grid in `ink` or the surrounding text colour. The set is in the Icon component: plus, chevrons, back, search, filter, close, check, warning, info, success, calendar, paperclip, upload, more, menu, send, document, lock, external, sort, down, bell.
+- Icons support words and never replace them, except on icon buttons, which always carry an `aria-label`.
+- No emoji anywhere in the product: the paperclip icon replaces 📎.
 - Stations are squares and agents are marked with a square badge; people get round avatars.
 - No emoji, no illustrations inside working screens.
 
 ## Using it
 
 - Load the three Google Fonts families (Archivo with width axis, IBM Plex Sans, IBM Plex Mono).
-- Build screens from these tokens only.
+- Build screens from these tokens only, and from the component classes in `components/bundle.css` (`psl-btn`, `psl-input`, `psl-tag`, …) inside an element with the `psl` class. Each component's page shows every state and says what the consumer provides.
+- The `is-hover`, `is-pressed`, `is-focus`, `is-open` and `is-disabled` classes exist to show a state in a specification; product screens rely on the real `:hover`, `:active`, `:focus-visible` and `disabled`.
 - The Next.js frontend in `frontend/` reads `tokens.json` to generate its CSS variables.
