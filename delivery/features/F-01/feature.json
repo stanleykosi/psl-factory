@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-01",
   "outcome": "The app frame loads who is signed in and shows only their sections, on phone and desktop, against a contract mock",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "T-FRONTEND-SHELL"
   ],
@@ -98,11 +98,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -128,18 +130,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (visual consistency with the approved SCR-01 and STATES boards, layout at phone and desktop widths, contrast)",
+      "snapshot_ref": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -651,7 +657,7 @@
         "delivery/features/F-01/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -668,11 +674,25 @@
           ],
           "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T22:14:35Z",
+          "refs": [
+            "Measured the production build of `frontend/` at e20d2ce (scratchpad copy, app on port 3121, mock on port 3122). At 720, 740, 768, 820, 900, 1079 and 1080px the `.psl-brand` left edge and the `.shell-title` left edge are both 28px (1440px: both 88px, which matches the 1320px centred column). Screenshot at 720 and 1079 shows the wordmark and title on one left edge. Nav links at 720px run from x=192 to x=491 and the SAMPLE DATA label and name sit to the right without overlap."
+          ],
+          "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "e20d2ce"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Measured the production build of `frontend/` at e20d2ce (scratchpad copy, app on port 3121, mock on port 3122). At 720, 740, 768, 820, 900, 1079 and 1080px the `.psl-brand` left edge and the `.shell-title` left edge are both 28px (1440px: both 88px, which matches the 1320px centred column). Screenshot at 720 and 1079 shows the wordmark and title on one left edge. Nav links at 720px run from x=192 to x=491 and the SAMPLE DATA label and name sit to the right without overlap."
       ]
     }
   ],
@@ -979,6 +999,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-13T22:01:50Z",
+      "round": 3,
+      "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-13T22:15:28Z",
       "round": 3,
       "head": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
       "reason": null
