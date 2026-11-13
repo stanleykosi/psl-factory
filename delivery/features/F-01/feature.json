@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-01",
   "outcome": "The app frame loads who is signed in and shows only their sections, on phone and desktop, against a contract mock",
-  "state": "CHANGES_REQUESTED",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "T-FRONTEND-SHELL"
   ],
@@ -76,13 +76,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "reviewer-technical",
-      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
-      "evidence_refs": [
-        "delivery/features/F-01/round-1/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -108,22 +106,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
-      "evidence_refs": [
-        "delivery/features/F-01/round-1/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "changes_requested",
-      "reviewer": "reviewer-ui",
-      "authority": "UI reviewer (visual consistency with the approved SCR-01 and STATES boards, layout at phone and desktop widths, contrast)",
-      "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
-      "evidence_refs": [
-        "delivery/features/F-01/round-1/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -381,7 +375,63 @@
       ]
     }
   ],
-  "prior_review_records": [],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+          "evidence_refs": [
+            "delivery/features/F-01/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-01/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+          "evidence_refs": [
+            "delivery/features/F-01/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (visual consistency with the approved SCR-01 and STATES boards, layout at phone and desktop widths, contrast)",
+          "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+          "evidence_refs": [
+            "delivery/features/F-01/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -501,7 +551,7 @@
     }
   },
   "created_at": "2026-11-13T16:16:25Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 3,
   "history": [
     {
@@ -535,6 +585,14 @@
       "round": 1,
       "head": "f6e9a9ecdc299700381927a13d66386138d83e5c",
       "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T21:22:31Z",
+      "round": 2,
+      "head": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+      "reason": null
     }
   ],
   "routing": {
@@ -550,10 +608,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
