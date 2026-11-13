@@ -2,6 +2,33 @@
   "v": 3,
   "attachments": {},
   "boards": {
+    "AGENT-concepts.dc.html": {
+      "expand": "fill",
+      "h": 1520,
+      "page": "open",
+      "title": "Agent at work · 4 concepts",
+      "w": 1440,
+      "x": 8000,
+      "y": 0
+    },
+    "DELIVERY-flow-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "page": "p-projects",
+      "title": "end to end",
+      "w": 1440,
+      "x": 0,
+      "y": 14924
+    },
+    "FINANCE-moved-desktop.dc.html": {
+      "expand": "fill",
+      "h": 720,
+      "page": "p-finance",
+      "title": "Finance and Payroll moved to its own canvas",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
     "J04-desktop.dc.html": {
       "expand": "fill",
       "h": 820,
@@ -21,6 +48,456 @@
       "x": 1520,
       "y": 0
     },
+    "LINE-commercial-desktop.dc.html": {
+      "expand": "fill",
+      "h": 848,
+      "page": "lines",
+      "title": "Costing and commercial submission",
+      "w": 1440,
+      "x": 4140,
+      "y": 5276
+    },
+    "LINE-commercial-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Cost a project and send the SOW",
+      "w": 390,
+      "x": 5660,
+      "y": 5276
+    },
+    "LINE-delivery-archive-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Project artifact archive",
+      "w": 1440,
+      "x": 4140,
+      "y": 7660
+    },
+    "LINE-delivery-archive-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Archive project artifacts",
+      "w": 390,
+      "x": 5660,
+      "y": 7660
+    },
+    "LINE-delivery-closure-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Project closure",
+      "w": 1440,
+      "x": 0,
+      "y": 8664
+    },
+    "LINE-delivery-closure-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Close the project",
+      "w": 390,
+      "x": 1520,
+      "y": 8664
+    },
+    "LINE-delivery-go-live-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Go-live acceptance",
+      "w": 1440,
+      "x": 4140,
+      "y": 6656
+    },
+    "LINE-delivery-go-live-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Client go-live sign-off",
+      "w": 390,
+      "x": 5660,
+      "y": 6656
+    },
+    "LINE-delivery-handover-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Support and Operations handover",
+      "w": 1440,
+      "x": 2070,
+      "y": 7660
+    },
+    "LINE-delivery-handover-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Hand over to Support",
+      "w": 390,
+      "x": 3590,
+      "y": 7660
+    },
+    "LINE-delivery-hypercare-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Release observations and hypercare",
+      "w": 1440,
+      "x": 0,
+      "y": 7660
+    },
+    "LINE-delivery-hypercare-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Watch the release",
+      "w": 390,
+      "x": 1520,
+      "y": 7660
+    },
+    "LINE-delivery-release-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Delivery gates and release evidence",
+      "w": 1440,
+      "x": 2070,
+      "y": 6656
+    },
+    "LINE-delivery-release-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Release gates",
+      "w": 390,
+      "x": 3590,
+      "y": 6656
+    },
+    "LINE-engagement-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Engagement identity and planning handoff",
+      "w": 1440,
+      "x": 2070,
+      "y": 5276
+    },
+    "LINE-engagement-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Log a new engagement",
+      "w": 390,
+      "x": 3590,
+      "y": 5276
+    },
+    "LINE-finance-accounts-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Accounting preparation and reviewed reports",
+      "w": 1440,
+      "x": 0,
+      "y": 9908
+    },
+    "LINE-finance-accounts-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Management accounts",
+      "w": 390,
+      "x": 1520,
+      "y": 9908
+    },
+    "LINE-finance-bu-desktop.dc.html": {
+      "expand": "fill",
+      "h": 804,
+      "page": "lines",
+      "title": "Reviewed BU exception and event aggregates",
+      "w": 1440,
+      "x": 2070,
+      "y": 10912
+    },
+    "LINE-finance-bu-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Business-unit totals",
+      "w": 390,
+      "x": 3590,
+      "y": 10912
+    },
+    "LINE-finance-forecast-desktop.dc.html": {
+      "expand": "fill",
+      "h": 826,
+      "page": "lines",
+      "title": "Reviewed cash forecast and actual follow-up",
+      "w": 1440,
+      "x": 0,
+      "y": 10912
+    },
+    "LINE-finance-forecast-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Cash forecast",
+      "w": 390,
+      "x": 1520,
+      "y": 10912
+    },
+    "LINE-finance-ledger-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Supplied incumbent transaction reference",
+      "w": 1440,
+      "x": 4140,
+      "y": 10912
+    },
+    "LINE-finance-ledger-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Record a ledger source",
+      "w": 390,
+      "x": 5660,
+      "y": 10912
+    },
+    "LINE-finance-payroll-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "lines",
+      "title": "Restricted payroll and BU staff-cost receipt",
+      "w": 1440,
+      "x": 0,
+      "y": 11916
+    },
+    "LINE-finance-payroll-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Payroll matching (restricted)",
+      "w": 390,
+      "x": 1520,
+      "y": 11916
+    },
+    "LINE-finance-ppe-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Asset schedule and reviewed accounting note",
+      "w": 1440,
+      "x": 4140,
+      "y": 9908
+    },
+    "LINE-finance-ppe-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Fixed asset schedule",
+      "w": 390,
+      "x": 5660,
+      "y": 9908
+    },
+    "LINE-finance-schedules-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Income detail and schedule inventory",
+      "w": 1440,
+      "x": 2070,
+      "y": 9908
+    },
+    "LINE-finance-schedules-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Income or schedule inventory",
+      "w": 390,
+      "x": 3590,
+      "y": 9908
+    },
+    "LINE-planning-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Planning and delivery handoff",
+      "w": 1440,
+      "x": 0,
+      "y": 6656
+    },
+    "LINE-planning-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Plan the project",
+      "w": 390,
+      "x": 1520,
+      "y": 6656
+    },
+    "LINE-pmo-change-desktop.dc.html": {
+      "expand": "fill",
+      "h": 870,
+      "page": "lines",
+      "title": "Controlled change and signed closure",
+      "w": 1440,
+      "x": 2070,
+      "y": 4006
+    },
+    "LINE-pmo-change-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Scope or timeline change",
+      "w": 390,
+      "x": 3590,
+      "y": 4006
+    },
+    "LINE-pmo-emergency-desktop.dc.html": {
+      "expand": "fill",
+      "h": 826,
+      "page": "lines",
+      "title": "Emergency preauthorization and retrospective evidence",
+      "w": 1440,
+      "x": 0,
+      "y": 4006
+    },
+    "LINE-pmo-emergency-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Emergency change for an incident",
+      "w": 390,
+      "x": 1520,
+      "y": 4006
+    },
+    "LINE-pmo-escalation-desktop.dc.html": {
+      "expand": "fill",
+      "h": 826,
+      "page": "lines",
+      "title": "Escalation decisions and verified communication",
+      "w": 1440,
+      "x": 2070,
+      "y": 3002
+    },
+    "LINE-pmo-escalation-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Escalate and communicate",
+      "w": 390,
+      "x": 3590,
+      "y": 3002
+    },
+    "LINE-pmo-finance-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1002,
+      "page": "lines",
+      "title": "Invoice preparation and delivery",
+      "w": 1440,
+      "x": 0,
+      "y": 1840
+    },
+    "LINE-pmo-finance-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Bill a completed milestone",
+      "w": 390,
+      "x": 1520,
+      "y": 1840
+    },
+    "LINE-pmo-issues-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Issue investigation and owner follow-up",
+      "w": 1440,
+      "x": 2070,
+      "y": 1840
+    },
+    "LINE-pmo-issues-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Chase an open issue",
+      "w": 390,
+      "x": 3590,
+      "y": 1840
+    },
+    "LINE-pmo-leadership-report-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Internal Tuesday and monthly leadership report",
+      "w": 1440,
+      "x": 4140,
+      "y": 1840
+    },
+    "LINE-pmo-leadership-report-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Tuesday or monthly report",
+      "w": 390,
+      "x": 5660,
+      "y": 1840
+    },
+    "LINE-pmo-minutes-desktop.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "lines",
+      "title": "Formal minutes and action handoff",
+      "w": 1440,
+      "x": 0,
+      "y": 3002
+    },
+    "LINE-pmo-minutes-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Minutes after a meeting",
+      "w": 390,
+      "x": 1520,
+      "y": 3002
+    },
+    "LINE-pmo-weekly-report-desktop.dc.html": {
+      "expand": "fill",
+      "h": 804,
+      "page": "lines",
+      "title": "Reviewed weekly client report",
+      "w": 1440,
+      "x": 4140,
+      "y": 3002
+    },
+    "LINE-pmo-weekly-report-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Friday report for a client",
+      "w": 390,
+      "x": 5660,
+      "y": 3002
+    },
+    "LINE-rfp-response-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "lines",
+      "title": "RFP response and project handoff",
+      "w": 1440,
+      "x": 0,
+      "y": 5276
+    },
+    "LINE-rfp-response-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · Respond to an RFP",
+      "w": 390,
+      "x": 1520,
+      "y": 5276
+    },
+    "LINES-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "page": "lines",
+      "title": "Lines · catalogue of all 25",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "LINES-mobile.dc.html": {
+      "h": 844,
+      "page": "lines",
+      "title": "Phone · lines",
+      "w": 390,
+      "x": 1520,
+      "y": 0
+    },
+    "MYWORK-queue-concepts.dc.html": {
+      "h": 1180,
+      "page": "open",
+      "title": "My work · three queue concepts",
+      "w": 1440,
+      "x": 0,
+      "y": 4676
+    },
     "Main.dc.html": {
       "h": 720,
       "page": "overview",
@@ -37,6 +514,24 @@
       "w": 1440,
       "x": 1520,
       "y": 0
+    },
+    "PMO-flow-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1080,
+      "page": "p-projects",
+      "title": "end to end",
+      "w": 1440,
+      "x": 0,
+      "y": 26688
+    },
+    "PRESALE-flow-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "page": "p-presale",
+      "title": "Pre-sale · end to end",
+      "w": 1440,
+      "x": 0,
+      "y": 116
     },
     "SCR-01-desktop-empty.dc.html": {
       "expand": "fill",
@@ -467,6 +962,87 @@
       "x": 1520,
       "y": 4960
     },
+    "SCR-04-desktop-accounts.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Management accounts",
+      "w": 1440,
+      "x": 0,
+      "y": 6632
+    },
+    "SCR-04-desktop-bu.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Business-unit totals",
+      "w": 1440,
+      "x": 7960,
+      "y": 6632
+    },
+    "SCR-04-desktop-change.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Scope or timeline change",
+      "w": 1440,
+      "x": 5970,
+      "y": 5456
+    },
+    "SCR-04-desktop-escalation.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Escalate and communicate",
+      "w": 1440,
+      "x": 9950,
+      "y": 5456
+    },
+    "SCR-04-desktop-forecast.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Cash forecast",
+      "w": 1440,
+      "x": 5970,
+      "y": 6632
+    },
+    "SCR-04-desktop-incident.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Emergency change for an incident",
+      "w": 1440,
+      "x": 7960,
+      "y": 5456
+    },
+    "SCR-04-desktop-issue.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Chase an open issue",
+      "w": 1440,
+      "x": 3980,
+      "y": 5456
+    },
+    "SCR-04-desktop-leadership.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Leadership report",
+      "w": 1440,
+      "x": 11940,
+      "y": 5456
+    },
+    "SCR-04-desktop-ledger.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Record a ledger source",
+      "w": 1440,
+      "x": 9950,
+      "y": 6632
+    },
     "SCR-04-desktop-lines.dc.html": {
       "expand": "fill",
       "h": 900,
@@ -476,6 +1052,42 @@
       "x": 3980,
       "y": 2900
     },
+    "SCR-04-desktop-minutes.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Minutes after a meeting",
+      "w": 1440,
+      "x": 1990,
+      "y": 5456
+    },
+    "SCR-04-desktop-payroll.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Payroll (restricted)",
+      "w": 1440,
+      "x": 11940,
+      "y": 6632
+    },
+    "SCR-04-desktop-ppe.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Fixed asset schedule",
+      "w": 1440,
+      "x": 3980,
+      "y": 6632
+    },
+    "SCR-04-desktop-schedules.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Income detail or schedule inventory",
+      "w": 1440,
+      "x": 1990,
+      "y": 6632
+    },
     "SCR-04-desktop-validation.dc.html": {
       "expand": "fill",
       "h": 900,
@@ -484,6 +1096,15 @@
       "w": 1440,
       "x": 1990,
       "y": 2900
+    },
+    "SCR-04-desktop-weekly.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Weekly client report",
+      "w": 1440,
+      "x": 0,
+      "y": 5456
     },
     "SCR-04-desktop.dc.html": {
       "expand": "fill",
@@ -495,6 +1116,78 @@
       "x": 0,
       "y": 2900
     },
+    "SCR-04-mobile-accounts.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Management accounts on a phone",
+      "w": 390,
+      "x": 1520,
+      "y": 6632
+    },
+    "SCR-04-mobile-bu.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Business-unit totals on a phone",
+      "w": 390,
+      "x": 9480,
+      "y": 6632
+    },
+    "SCR-04-mobile-change.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Scope or timeline change · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 5456
+    },
+    "SCR-04-mobile-escalation.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Escalate and communicate · phone",
+      "w": 390,
+      "x": 11470,
+      "y": 5456
+    },
+    "SCR-04-mobile-forecast.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Cash forecast on a phone",
+      "w": 390,
+      "x": 7490,
+      "y": 6632
+    },
+    "SCR-04-mobile-incident.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Emergency change for an incident · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 5456
+    },
+    "SCR-04-mobile-issue.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Chase an open issue · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 5456
+    },
+    "SCR-04-mobile-leadership.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Leadership report · phone",
+      "w": 390,
+      "x": 13460,
+      "y": 5456
+    },
+    "SCR-04-mobile-ledger.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Record a ledger source on a phone",
+      "w": 390,
+      "x": 11470,
+      "y": 6632
+    },
     "SCR-04-mobile-lines.dc.html": {
       "h": 844,
       "page": "p-mywork",
@@ -503,6 +1196,38 @@
       "x": 5500,
       "y": 2900
     },
+    "SCR-04-mobile-minutes.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Minutes after a meeting · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 5456
+    },
+    "SCR-04-mobile-payroll.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Payroll (restricted) on a phone",
+      "w": 390,
+      "x": 13460,
+      "y": 6632
+    },
+    "SCR-04-mobile-ppe.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Fixed asset schedule on a phone",
+      "w": 390,
+      "x": 5500,
+      "y": 6632
+    },
+    "SCR-04-mobile-schedules.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Income detail or schedule inventory on a phone",
+      "w": 390,
+      "x": 3510,
+      "y": 6632
+    },
     "SCR-04-mobile-validation.dc.html": {
       "h": 844,
       "page": "p-mywork",
@@ -510,6 +1235,14 @@
       "w": 390,
       "x": 3510,
       "y": 2900
+    },
+    "SCR-04-mobile-weekly.dc.html": {
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Weekly client report · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 5456
     },
     "SCR-04-mobile.dc.html": {
       "h": 844,
@@ -568,6 +1301,16 @@
       "x": 1990,
       "y": 140
     },
+    "SCR-05-desktop-working.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "is_interactive": true,
+      "page": "p-assistant",
+      "title": "Assistant · agent working, steps live",
+      "w": 1440,
+      "x": 5970,
+      "y": 140
+    },
     "SCR-05-desktop.dc.html": {
       "expand": "fill",
       "h": 1040,
@@ -602,6 +1345,14 @@
       "x": 3510,
       "y": 140
     },
+    "SCR-05-mobile-working.dc.html": {
+      "h": 844,
+      "page": "p-assistant",
+      "title": "Phone · agent working in the chat",
+      "w": 390,
+      "x": 7490,
+      "y": 140
+    },
     "SCR-05-mobile.dc.html": {
       "h": 844,
       "page": "p-assistant",
@@ -627,6 +1378,14 @@
       "w": 390,
       "x": 1520,
       "y": 140
+    },
+    "SCR-06-overview-concepts.dc.html": {
+      "h": 1180,
+      "page": "open",
+      "title": "Overview · three concepts",
+      "w": 1440,
+      "x": 1520,
+      "y": 4676
     },
     "SCR-07-desktop.dc.html": {
       "expand": "fill",
@@ -741,6 +1500,15 @@
       "x": 2070,
       "y": 3804
     },
+    "SCR-13-desktop-delivery-rules.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-projects",
+      "title": "Setup · delivery rules",
+      "w": 1440,
+      "x": 0,
+      "y": 25412
+    },
     "SCR-13-desktop-fields.dc.html": {
       "expand": "fill",
       "h": 820,
@@ -749,6 +1517,15 @@
       "w": 1440,
       "x": 0,
       "y": 1260
+    },
+    "SCR-13-desktop-finance-rules.dc.html": {
+      "expand": "fill",
+      "h": 1400,
+      "page": "p-setup",
+      "title": "Setup · Finance rules",
+      "w": 1440,
+      "x": 0,
+      "y": 8140
     },
     "SCR-13-desktop-permission.dc.html": {
       "expand": "fill",
@@ -795,6 +1572,14 @@
       "x": 3590,
       "y": 3804
     },
+    "SCR-13-mobile-delivery-rules.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Delivery rules · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 25412
+    },
     "SCR-13-mobile-fields.dc.html": {
       "h": 844,
       "page": "p-setup",
@@ -802,6 +1587,14 @@
       "w": 390,
       "x": 1520,
       "y": 1260
+    },
+    "SCR-13-mobile-finance-rules.dc.html": {
+      "h": 844,
+      "page": "p-setup",
+      "title": "Finance rules on a phone",
+      "w": 390,
+      "x": 1520,
+      "y": 8140
     },
     "SCR-13-mobile-permission.dc.html": {
       "h": 844,
@@ -945,6 +1738,42 @@
       "x": 5500,
       "y": 140
     },
+    "SCR-16-desktop-rfp-lost.dc.html": {
+      "expand": "fill",
+      "h": 820,
+      "page": "p-presale",
+      "title": "Lost · archived with lessons",
+      "w": 1440,
+      "x": 1990,
+      "y": 12360
+    },
+    "SCR-16-desktop-rfp-outcome-lost.dc.html": {
+      "expand": "fill",
+      "h": 1180,
+      "page": "p-presale",
+      "title": "Record the outcome · Lost",
+      "w": 1440,
+      "x": 1990,
+      "y": 10904
+    },
+    "SCR-16-desktop-rfp-outcome-pending.dc.html": {
+      "expand": "fill",
+      "h": 1180,
+      "page": "p-presale",
+      "title": "Record the outcome · Pending",
+      "w": 1440,
+      "x": 3980,
+      "y": 10904
+    },
+    "SCR-16-desktop-rfp-outcome-unknown.dc.html": {
+      "expand": "fill",
+      "h": 1180,
+      "page": "p-presale",
+      "title": "Record the outcome · Unknown",
+      "w": 1440,
+      "x": 5970,
+      "y": 10904
+    },
     "SCR-16-desktop-rfp-outcome.dc.html": {
       "expand": "fill",
       "h": 1180,
@@ -953,6 +1782,42 @@
       "w": 1440,
       "x": 0,
       "y": 10904
+    },
+    "SCR-16-desktop-rfp-pending.dc.html": {
+      "expand": "fill",
+      "h": 820,
+      "page": "p-presale",
+      "title": "Decision pending",
+      "w": 1440,
+      "x": 3980,
+      "y": 12360
+    },
+    "SCR-16-desktop-rfp-unknown.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-presale",
+      "title": "Outcome unknown · follow-up drafted",
+      "w": 1440,
+      "x": 5970,
+      "y": 12360
+    },
+    "SCR-16-desktop-rfp-won.dc.html": {
+      "expand": "fill",
+      "h": 820,
+      "page": "p-presale",
+      "title": "Won · handed off to engagement",
+      "w": 1440,
+      "x": 0,
+      "y": 12360
+    },
+    "SCR-16-desktop-sow-signed.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-presale",
+      "title": "Record the client's SOW signature",
+      "w": 1440,
+      "x": 0,
+      "y": 15988
     },
     "SCR-16-desktop-success.dc.html": {
       "expand": "fill",
@@ -991,6 +1856,38 @@
       "x": 0,
       "y": 7340
     },
+    "SCR-16-mobile-rfp-lost.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · lost",
+      "w": 390,
+      "x": 3510,
+      "y": 12360
+    },
+    "SCR-16-mobile-rfp-outcome-lost.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record · Lost",
+      "w": 390,
+      "x": 3510,
+      "y": 10904
+    },
+    "SCR-16-mobile-rfp-outcome-pending.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record · Pending",
+      "w": 390,
+      "x": 5500,
+      "y": 10904
+    },
+    "SCR-16-mobile-rfp-outcome-unknown.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record · Unknown",
+      "w": 390,
+      "x": 7490,
+      "y": 10904
+    },
     "SCR-16-mobile-rfp-outcome.dc.html": {
       "h": 844,
       "page": "p-presale",
@@ -998,6 +1895,38 @@
       "w": 390,
       "x": 1520,
       "y": 10904
+    },
+    "SCR-16-mobile-rfp-pending.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · decision pending",
+      "w": 390,
+      "x": 5500,
+      "y": 12360
+    },
+    "SCR-16-mobile-rfp-unknown.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · outcome unknown",
+      "w": 390,
+      "x": 7490,
+      "y": 12360
+    },
+    "SCR-16-mobile-rfp-won.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · won",
+      "w": 390,
+      "x": 1520,
+      "y": 12360
+    },
+    "SCR-16-mobile-sow-signed.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · SOW signature",
+      "w": 390,
+      "x": 1520,
+      "y": 15988
     },
     "SCR-16-mobile-success.dc.html": {
       "h": 844,
@@ -1222,6 +2151,51 @@
       "x": 3510,
       "y": 4100
     },
+    "SCR-25-desktop-assembling.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Tola assembling the weekly report",
+      "w": 1440,
+      "x": 1990,
+      "y": 28044
+    },
+    "SCR-25-desktop-invalid.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Weekly report · can't send yet",
+      "w": 1440,
+      "x": 0,
+      "y": 28044
+    },
+    "SCR-25-desktop-received.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-projects",
+      "title": "Weekly report received",
+      "w": 1440,
+      "x": 7960,
+      "y": 28044
+    },
+    "SCR-25-desktop-returned.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Weekly report returned",
+      "w": 1440,
+      "x": 5970,
+      "y": 28044
+    },
+    "SCR-25-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "PMO Lead reviews the weekly report",
+      "w": 1440,
+      "x": 3980,
+      "y": 28044
+    },
     "SCR-25-desktop.dc.html": {
       "expand": "fill",
       "h": 1180,
@@ -1230,6 +2204,46 @@
       "w": 1440,
       "x": 0,
       "y": 8008
+    },
+    "SCR-25-mobile-assembling.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Assembling · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 28044
+    },
+    "SCR-25-mobile-invalid.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Weekly report needs fixing · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 28044
+    },
+    "SCR-25-mobile-received.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Received · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 28044
+    },
+    "SCR-25-mobile-returned.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Returned · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 28044
+    },
+    "SCR-25-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Review · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 28044
     },
     "SCR-25-mobile.dc.html": {
       "h": 844,
@@ -1265,6 +2279,15 @@
       "w": 1440,
       "x": 7960,
       "y": 1892
+    },
+    "SCR-26-desktop-response-review.dc.html": {
+      "expand": "fill",
+      "h": 1080,
+      "page": "p-presale",
+      "title": "Review the response · PMO Lead",
+      "w": 1440,
+      "x": 0,
+      "y": 4464
     },
     "SCR-26-desktop-review.dc.html": {
       "expand": "fill",
@@ -1311,6 +2334,14 @@
       "x": 9480,
       "y": 1892
     },
+    "SCR-26-mobile-response-review.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · review the response",
+      "w": 390,
+      "x": 1520,
+      "y": 4464
+    },
     "SCR-26-mobile-review.dc.html": {
       "h": 844,
       "page": "p-presale",
@@ -1327,6 +2358,15 @@
       "x": 1520,
       "y": 1892
     },
+    "SCR-26-team-input-concepts.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "page": "open",
+      "title": "RFP team input · 4 concepts",
+      "w": 1440,
+      "x": 6400,
+      "y": 0
+    },
     "SCR-27-desktop-adjust.dc.html": {
       "expand": "fill",
       "h": 1000,
@@ -1334,6 +2374,24 @@
       "title": "Costing · add an adjustment",
       "w": 1440,
       "x": 3980,
+      "y": 7096
+    },
+    "SCR-27-desktop-approvals.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-presale",
+      "title": "Costing · approvals in order",
+      "w": 1440,
+      "x": 0,
+      "y": 8432
+    },
+    "SCR-27-desktop-ask.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing · ask Security for an estimate",
+      "w": 1440,
+      "x": 1990,
       "y": 7096
     },
     "SCR-27-desktop.dc.html": {
@@ -1353,6 +2411,22 @@
       "x": 5500,
       "y": 7096
     },
+    "SCR-27-mobile-approvals.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · approvals",
+      "w": 390,
+      "x": 1520,
+      "y": 8432
+    },
+    "SCR-27-mobile-ask.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · ask Security",
+      "w": 390,
+      "x": 3510,
+      "y": 7096
+    },
     "SCR-27-mobile.dc.html": {
       "h": 844,
       "page": "p-presale",
@@ -1360,6 +2434,51 @@
       "w": 390,
       "x": 1520,
       "y": 7096
+    },
+    "SCR-28-desktop-drafted.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-projects",
+      "title": "Minutes drafted",
+      "w": 1440,
+      "x": 1990,
+      "y": 29280
+    },
+    "SCR-28-desktop-internal.dc.html": {
+      "expand": "fill",
+      "h": 820,
+      "page": "p-projects",
+      "title": "Internal minutes filed",
+      "w": 1440,
+      "x": 5970,
+      "y": 29280
+    },
+    "SCR-28-desktop-published.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-projects",
+      "title": "Client minutes published",
+      "w": 1440,
+      "x": 7960,
+      "y": 29280
+    },
+    "SCR-28-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "PMO Lead reviews client minutes",
+      "w": 1440,
+      "x": 3980,
+      "y": 29280
+    },
+    "SCR-28-desktop-suggesting.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Tola suggesting decisions and actions",
+      "w": 1440,
+      "x": 0,
+      "y": 29280
     },
     "SCR-28-desktop.dc.html": {
       "expand": "fill",
@@ -1369,6 +2488,46 @@
       "w": 1440,
       "x": 0,
       "y": 10788
+    },
+    "SCR-28-mobile-drafted.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Minutes drafted · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 29280
+    },
+    "SCR-28-mobile-internal.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Internal minutes · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 29280
+    },
+    "SCR-28-mobile-published.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Minutes published · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 29280
+    },
+    "SCR-28-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Review minutes · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 29280
+    },
+    "SCR-28-mobile-suggesting.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Suggesting · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 29280
     },
     "SCR-28-mobile.dc.html": {
       "h": 844,
@@ -1395,6 +2554,33 @@
       "x": 3590,
       "y": 9488
     },
+    "SCR-30-desktop-no-owner.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Issue has no owner",
+      "w": 1440,
+      "x": 1990,
+      "y": 30456
+    },
+    "SCR-30-desktop-overdue.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-projects",
+      "title": "Issue owner hasn't responded",
+      "w": 1440,
+      "x": 0,
+      "y": 30456
+    },
+    "SCR-30-desktop-verified.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Issue follow-up verified",
+      "w": 1440,
+      "x": 3980,
+      "y": 30456
+    },
     "SCR-30-desktop.dc.html": {
       "expand": "fill",
       "h": 1000,
@@ -1404,6 +2590,30 @@
       "x": 2070,
       "y": 10788
     },
+    "SCR-30-mobile-no-owner.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "No owner · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 30456
+    },
+    "SCR-30-mobile-overdue.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "No response · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 30456
+    },
+    "SCR-30-mobile-verified.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Follow-up verified · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 30456
+    },
     "SCR-30-mobile.dc.html": {
       "h": 844,
       "page": "p-projects",
@@ -1411,6 +2621,78 @@
       "w": 390,
       "x": 3590,
       "y": 10788
+    },
+    "SCR-31-desktop-authorise.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "Authorise the change",
+      "w": 1440,
+      "x": 5970,
+      "y": 31592
+    },
+    "SCR-31-desktop-closed.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Change closed",
+      "w": 1440,
+      "x": 13930,
+      "y": 31592
+    },
+    "SCR-31-desktop-decision.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "Change decision · several deciders",
+      "w": 1440,
+      "x": 1990,
+      "y": 31592
+    },
+    "SCR-31-desktop-execution.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "Record execution evidence",
+      "w": 1440,
+      "x": 9950,
+      "y": 31592
+    },
+    "SCR-31-desktop-go-live-note.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Change go-live note published",
+      "w": 1440,
+      "x": 11940,
+      "y": 31592
+    },
+    "SCR-31-desktop-impact.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "Record an impact assessment",
+      "w": 1440,
+      "x": 0,
+      "y": 31592
+    },
+    "SCR-31-desktop-notice.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Change notice published",
+      "w": 1440,
+      "x": 7960,
+      "y": 31592
+    },
+    "SCR-31-desktop-rejected.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Change rejected",
+      "w": 1440,
+      "x": 3980,
+      "y": 31592
     },
     "SCR-31-desktop.dc.html": {
       "expand": "fill",
@@ -1420,6 +2702,70 @@
       "w": 1440,
       "x": 0,
       "y": 12188
+    },
+    "SCR-31-mobile-authorise.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Authorise · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 31592
+    },
+    "SCR-31-mobile-closed.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Change closed · phone",
+      "w": 390,
+      "x": 15450,
+      "y": 31592
+    },
+    "SCR-31-mobile-decision.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Deciding · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 31592
+    },
+    "SCR-31-mobile-execution.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Execution · phone",
+      "w": 390,
+      "x": 11470,
+      "y": 31592
+    },
+    "SCR-31-mobile-go-live-note.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Go-live note · phone",
+      "w": 390,
+      "x": 13460,
+      "y": 31592
+    },
+    "SCR-31-mobile-impact.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Impact assessment · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 31592
+    },
+    "SCR-31-mobile-notice.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Notice · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 31592
+    },
+    "SCR-31-mobile-rejected.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Rejected · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 31592
     },
     "SCR-31-mobile.dc.html": {
       "h": 844,
@@ -1497,6 +2843,15 @@
       "x": 1520,
       "y": 13548
     },
+    "SCR-38-desktop-changed.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-projects",
+      "title": "Milestones after a change",
+      "w": 1440,
+      "x": 15920,
+      "y": 31592
+    },
     "SCR-38-desktop.dc.html": {
       "expand": "fill",
       "h": 860,
@@ -1506,6 +2861,14 @@
       "x": 0,
       "y": 9488
     },
+    "SCR-38-mobile-changed.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Milestones after a change · phone",
+      "w": 390,
+      "x": 17440,
+      "y": 31592
+    },
     "SCR-38-mobile.dc.html": {
       "h": 844,
       "page": "p-projects",
@@ -1513,6 +2876,33 @@
       "w": 390,
       "x": 1520,
       "y": 9488
+    },
+    "SCR-39-desktop-example.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing rule review · worked example opened",
+      "w": 1440,
+      "x": 1990,
+      "y": 5820
+    },
+    "SCR-39-desktop-review-own.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing rule review · seen by the person who proposed it",
+      "w": 1440,
+      "x": 3980,
+      "y": 5820
+    },
+    "SCR-39-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Costing rule v5 · review",
+      "w": 1440,
+      "x": 0,
+      "y": 5820
     },
     "SCR-39-desktop.dc.html": {
       "expand": "fill",
@@ -1523,6 +2913,30 @@
       "x": 0,
       "y": 6364
     },
+    "SCR-39-mobile-example.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · worked example",
+      "w": 390,
+      "x": 3510,
+      "y": 5820
+    },
+    "SCR-39-mobile-review-own.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · proposer waiting for review",
+      "w": 390,
+      "x": 5500,
+      "y": 5820
+    },
+    "SCR-39-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · costing rule review",
+      "w": 390,
+      "x": 1520,
+      "y": 5820
+    },
     "SCR-39-mobile.dc.html": {
       "h": 844,
       "page": "p-setup",
@@ -1530,6 +2944,975 @@
       "w": 390,
       "x": 1520,
       "y": 6364
+    },
+    "SCR-40-desktop-draft.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-presale",
+      "title": "Submission pack · drafted by Tola",
+      "w": 1440,
+      "x": 0,
+      "y": 9668
+    },
+    "SCR-40-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-presale",
+      "title": "Review the submission · document reviewer",
+      "w": 1440,
+      "x": 1990,
+      "y": 9668
+    },
+    "SCR-40-desktop-submitted-portal.dc.html": {
+      "expand": "fill",
+      "h": 880,
+      "page": "p-presale",
+      "title": "Submitted · client portal variant",
+      "w": 1440,
+      "x": 5970,
+      "y": 9668
+    },
+    "SCR-40-desktop-submitted.dc.html": {
+      "expand": "fill",
+      "h": 880,
+      "page": "p-presale",
+      "title": "Submitted · email delivery confirmed",
+      "w": 1440,
+      "x": 3980,
+      "y": 9668
+    },
+    "SCR-40-mobile-draft.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · submission pack",
+      "w": 390,
+      "x": 1520,
+      "y": 9668
+    },
+    "SCR-40-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · review the submission",
+      "w": 390,
+      "x": 3510,
+      "y": 9668
+    },
+    "SCR-40-mobile-submitted-portal.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · portal variant",
+      "w": 390,
+      "x": 7490,
+      "y": 9668
+    },
+    "SCR-40-mobile-submitted.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · submitted",
+      "w": 390,
+      "x": 5500,
+      "y": 9668
+    },
+    "SCR-41-desktop-register.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-presale",
+      "title": "Engagement · register",
+      "w": 1440,
+      "x": 1990,
+      "y": 13536
+    },
+    "SCR-41-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-presale",
+      "title": "Engagement · planning packet and PM",
+      "w": 1440,
+      "x": 0,
+      "y": 13536
+    },
+    "SCR-41-mobile-register.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · register",
+      "w": 390,
+      "x": 3510,
+      "y": 13536
+    },
+    "SCR-41-mobile.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · engagement",
+      "w": 390,
+      "x": 1520,
+      "y": 13536
+    },
+    "SCR-42-desktop-held.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "page": "p-presale",
+      "title": "Planning held · owner needed",
+      "w": 1440,
+      "x": 3980,
+      "y": 14712
+    },
+    "SCR-42-desktop-readiness.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-presale",
+      "title": "Planning · Tola preparing readiness",
+      "w": 1440,
+      "x": 5970,
+      "y": 14712
+    },
+    "SCR-42-desktop-ready.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-presale",
+      "title": "Planning ready · handed to delivery",
+      "w": 1440,
+      "x": 7960,
+      "y": 14712
+    },
+    "SCR-42-desktop-record.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Planning · record department input",
+      "w": 1440,
+      "x": 1990,
+      "y": 14712
+    },
+    "SCR-42-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-presale",
+      "title": "Planning · departments asked",
+      "w": 1440,
+      "x": 0,
+      "y": 14712
+    },
+    "SCR-42-mobile-held.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · planning held",
+      "w": 390,
+      "x": 5500,
+      "y": 14712
+    },
+    "SCR-42-mobile-readiness.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · readiness",
+      "w": 390,
+      "x": 7490,
+      "y": 14712
+    },
+    "SCR-42-mobile-ready.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · planning ready",
+      "w": 390,
+      "x": 9480,
+      "y": 14712
+    },
+    "SCR-42-mobile-record.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · record department input",
+      "w": 390,
+      "x": 3510,
+      "y": 14712
+    },
+    "SCR-42-mobile.dc.html": {
+      "h": 844,
+      "page": "p-presale",
+      "title": "Phone · planning",
+      "w": 390,
+      "x": 1520,
+      "y": 14712
+    },
+    "SCR-43-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Delivery overview",
+      "w": 1440,
+      "x": 0,
+      "y": 16500
+    },
+    "SCR-43-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Delivery · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 16500
+    },
+    "SCR-44-desktop-decision.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Planning decision · PMO Lead",
+      "w": 1440,
+      "x": 1990,
+      "y": 17776
+    },
+    "SCR-44-desktop-owner-needed.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Release held · no PMO Lead",
+      "w": 1440,
+      "x": 5970,
+      "y": 17776
+    },
+    "SCR-44-desktop-readiness.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Tola preparing release readiness",
+      "w": 1440,
+      "x": 7960,
+      "y": 17776
+    },
+    "SCR-44-desktop-ready.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Release ready",
+      "w": 1440,
+      "x": 9950,
+      "y": 17776
+    },
+    "SCR-44-desktop-returned.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Release returned",
+      "w": 1440,
+      "x": 3980,
+      "y": 17776
+    },
+    "SCR-44-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Release gates",
+      "w": 1440,
+      "x": 0,
+      "y": 17776
+    },
+    "SCR-44-mobile-decision.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Planning decision · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 17776
+    },
+    "SCR-44-mobile-owner-needed.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Release held · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 17776
+    },
+    "SCR-44-mobile-readiness.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Release readiness · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 17776
+    },
+    "SCR-44-mobile-ready.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Release ready · phone",
+      "w": 390,
+      "x": 11470,
+      "y": 17776
+    },
+    "SCR-44-mobile-returned.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Release returned · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 17776
+    },
+    "SCR-44-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Release gates · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 17776
+    },
+    "SCR-45-desktop-accepted.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Go-live accepted",
+      "w": 1440,
+      "x": 3980,
+      "y": 19032
+    },
+    "SCR-45-desktop-changes.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Client asked for changes",
+      "w": 1440,
+      "x": 5970,
+      "y": 19032
+    },
+    "SCR-45-desktop-declined.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Client declined go-live",
+      "w": 1440,
+      "x": 7960,
+      "y": 19032
+    },
+    "SCR-45-desktop-signatures.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "page": "p-projects",
+      "title": "Record go-live signatures",
+      "w": 1440,
+      "x": 1990,
+      "y": 19032
+    },
+    "SCR-45-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Go-live document in review",
+      "w": 1440,
+      "x": 0,
+      "y": 19032
+    },
+    "SCR-45-mobile-accepted.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Go-live accepted · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 19032
+    },
+    "SCR-45-mobile-changes.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Changes requested · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 19032
+    },
+    "SCR-45-mobile-declined.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Go-live declined · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 19032
+    },
+    "SCR-45-mobile-signatures.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Go-live signatures · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 19032
+    },
+    "SCR-45-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Go-live · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 19032
+    },
+    "SCR-46-desktop-evaluating.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Tola evaluating hypercare",
+      "w": 1440,
+      "x": 3980,
+      "y": 20408
+    },
+    "SCR-46-desktop-not-met.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Hypercare not qualified",
+      "w": 1440,
+      "x": 7960,
+      "y": 20408
+    },
+    "SCR-46-desktop-qualified.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Hypercare qualified",
+      "w": 1440,
+      "x": 5970,
+      "y": 20408
+    },
+    "SCR-46-desktop-record.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Record the release",
+      "w": 1440,
+      "x": 0,
+      "y": 20408
+    },
+    "SCR-46-desktop-setup-needed.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Hypercare criteria not set",
+      "w": 1440,
+      "x": 9950,
+      "y": 20408
+    },
+    "SCR-46-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Hypercare running",
+      "w": 1440,
+      "x": 1990,
+      "y": 20408
+    },
+    "SCR-46-mobile-evaluating.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Evaluating · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 20408
+    },
+    "SCR-46-mobile-not-met.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Not met · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 20408
+    },
+    "SCR-46-mobile-qualified.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Qualified · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 20408
+    },
+    "SCR-46-mobile-record.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Record the release · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 20408
+    },
+    "SCR-46-mobile-setup-needed.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Setup needed · phone",
+      "w": 390,
+      "x": 11470,
+      "y": 20408
+    },
+    "SCR-46-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Hypercare · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 20408
+    },
+    "SCR-47-desktop-uncertain.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Archive not confirmed",
+      "w": 1440,
+      "x": 3980,
+      "y": 21684
+    },
+    "SCR-47-desktop-working.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Archiving in progress",
+      "w": 1440,
+      "x": 0,
+      "y": 21684
+    },
+    "SCR-47-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Archive index",
+      "w": 1440,
+      "x": 1990,
+      "y": 21684
+    },
+    "SCR-47-mobile-uncertain.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Archive uncertain · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 21684
+    },
+    "SCR-47-mobile-working.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Archiving · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 21684
+    },
+    "SCR-47-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Archive · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 21684
+    },
+    "SCR-48-desktop-gaps.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Support found gaps",
+      "w": 1440,
+      "x": 3980,
+      "y": 22860
+    },
+    "SCR-48-desktop-received.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Handover acknowledged",
+      "w": 1440,
+      "x": 5970,
+      "y": 22860
+    },
+    "SCR-48-desktop-record.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Record Support's reply",
+      "w": 1440,
+      "x": 1990,
+      "y": 22860
+    },
+    "SCR-48-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "page": "p-projects",
+      "title": "Handover drafted",
+      "w": 1440,
+      "x": 0,
+      "y": 22860
+    },
+    "SCR-48-mobile-gaps.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Gaps · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 22860
+    },
+    "SCR-48-mobile-received.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Acknowledged · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 22860
+    },
+    "SCR-48-mobile-record.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Record Support's reply · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 22860
+    },
+    "SCR-48-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Handover · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 22860
+    },
+    "SCR-49-desktop-blocked.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Closure can't start yet",
+      "w": 1440,
+      "x": 0,
+      "y": 24136
+    },
+    "SCR-49-desktop-closed.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Project closed",
+      "w": 1440,
+      "x": 7960,
+      "y": 24136
+    },
+    "SCR-49-desktop-decision.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Closure decision · Head of PMO",
+      "w": 1440,
+      "x": 3980,
+      "y": 24136
+    },
+    "SCR-49-desktop-returned.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Closure returned",
+      "w": 1440,
+      "x": 5970,
+      "y": 24136
+    },
+    "SCR-49-desktop.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-projects",
+      "title": "Closure report drafted",
+      "w": 1440,
+      "x": 1990,
+      "y": 24136
+    },
+    "SCR-49-mobile-blocked.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Closure not yet · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 24136
+    },
+    "SCR-49-mobile-closed.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Closed · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 24136
+    },
+    "SCR-49-mobile-decision.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Closure decision · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 24136
+    },
+    "SCR-49-mobile-returned.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Closure returned · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 24136
+    },
+    "SCR-49-mobile.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Closure report · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 24136
+    },
+    "SCR-50-desktop-record.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "Record the emergency outcome",
+      "w": 1440,
+      "x": 1990,
+      "y": 32828
+    },
+    "SCR-50-desktop-refused.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Emergency change refused",
+      "w": 1440,
+      "x": 0,
+      "y": 32828
+    },
+    "SCR-50-desktop-report.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Emergency report published",
+      "w": 1440,
+      "x": 7960,
+      "y": 32828
+    },
+    "SCR-50-desktop-retro.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "page": "p-projects",
+      "title": "Retrospective decision",
+      "w": 1440,
+      "x": 5970,
+      "y": 32828
+    },
+    "SCR-50-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Review the emergency outcome",
+      "w": 1440,
+      "x": 3980,
+      "y": 32828
+    },
+    "SCR-50-mobile-record.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Record outcome · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 32828
+    },
+    "SCR-50-mobile-refused.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Refused · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 32828
+    },
+    "SCR-50-mobile-report.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Report · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 32828
+    },
+    "SCR-50-mobile-retro.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Retrospective · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 32828
+    },
+    "SCR-50-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Review outcome · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 32828
+    },
+    "SCR-51-desktop-decide.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Decide whether to escalate to the client",
+      "w": 1440,
+      "x": 1990,
+      "y": 34064
+    },
+    "SCR-51-desktop-draft.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Escalation message drafted",
+      "w": 1440,
+      "x": 5970,
+      "y": 34064
+    },
+    "SCR-51-desktop-investigating.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-projects",
+      "title": "Tola investigating an escalation",
+      "w": 1440,
+      "x": 0,
+      "y": 34064
+    },
+    "SCR-51-desktop-not-escalated.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Not escalated",
+      "w": 1440,
+      "x": 3980,
+      "y": 34064
+    },
+    "SCR-51-desktop-received.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-projects",
+      "title": "Escalation received",
+      "w": 1440,
+      "x": 9950,
+      "y": 34064
+    },
+    "SCR-51-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-projects",
+      "title": "Review the escalation message",
+      "w": 1440,
+      "x": 7960,
+      "y": 34064
+    },
+    "SCR-51-mobile-decide.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Decide · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 34064
+    },
+    "SCR-51-mobile-draft.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Message drafted · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 34064
+    },
+    "SCR-51-mobile-investigating.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Investigating · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 34064
+    },
+    "SCR-51-mobile-not-escalated.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Not escalated · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 34064
+    },
+    "SCR-51-mobile-received.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Received · phone",
+      "w": 390,
+      "x": 11470,
+      "y": 34064
+    },
+    "SCR-51-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-projects",
+      "title": "Review message · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 34064
+    },
+    "SCR-52-desktop-drafting.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "page": "p-overview",
+      "title": "Tola drafting the leadership report",
+      "w": 1440,
+      "x": 1990,
+      "y": 2916
+    },
+    "SCR-52-desktop-received.dc.html": {
+      "expand": "fill",
+      "h": 760,
+      "page": "p-overview",
+      "title": "Monthly report received by everyone",
+      "w": 1440,
+      "x": 7960,
+      "y": 2916
+    },
+    "SCR-52-desktop-review.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "page": "p-overview",
+      "title": "Leadership review of the monthly report",
+      "w": 1440,
+      "x": 3980,
+      "y": 2916
+    },
+    "SCR-52-desktop-setup.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "page": "p-overview",
+      "title": "Set up a leadership report",
+      "w": 1440,
+      "x": 0,
+      "y": 2916
+    },
+    "SCR-52-desktop-tuesday.dc.html": {
+      "expand": "fill",
+      "h": 820,
+      "page": "p-overview",
+      "title": "Tuesday report published (no review)",
+      "w": 1440,
+      "x": 5970,
+      "y": 2916
+    },
+    "SCR-52-mobile-drafting.dc.html": {
+      "h": 844,
+      "page": "p-overview",
+      "title": "Drafting · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 2916
+    },
+    "SCR-52-mobile-received.dc.html": {
+      "h": 844,
+      "page": "p-overview",
+      "title": "Received · phone",
+      "w": 390,
+      "x": 9480,
+      "y": 2916
+    },
+    "SCR-52-mobile-review.dc.html": {
+      "h": 844,
+      "page": "p-overview",
+      "title": "Review · phone",
+      "w": 390,
+      "x": 5500,
+      "y": 2916
+    },
+    "SCR-52-mobile-setup.dc.html": {
+      "h": 844,
+      "page": "p-overview",
+      "title": "Set up a report · phone",
+      "w": 390,
+      "x": 1520,
+      "y": 2916
+    },
+    "SCR-52-mobile-tuesday.dc.html": {
+      "h": 844,
+      "page": "p-overview",
+      "title": "Tuesday report · phone",
+      "w": 390,
+      "x": 7490,
+      "y": 2916
     },
     "SITEMAP-desktop.dc.html": {
       "expand": "fill",
@@ -1686,2389 +4069,6 @@
       "w": 1440,
       "x": 0,
       "y": 1020
-    },
-    "SCR-26-team-input-concepts.dc.html": {
-      "expand": "fill",
-      "h": 1500,
-      "page": "open",
-      "title": "RFP team input · 4 concepts",
-      "w": 1440,
-      "x": 6400,
-      "y": 0
-    },
-    "PRESALE-flow-desktop.dc.html": {
-      "x": 0,
-      "y": 116,
-      "w": 1440,
-      "h": 1500,
-      "page": "p-presale",
-      "title": "Pre-sale · end to end",
-      "expand": "fill"
-    },
-    "SCR-26-desktop-response-review.dc.html": {
-      "x": 0,
-      "y": 4464,
-      "w": 1440,
-      "h": 1080,
-      "page": "p-presale",
-      "title": "Review the response · PMO Lead",
-      "expand": "fill"
-    },
-    "SCR-26-mobile-response-review.dc.html": {
-      "x": 1520,
-      "y": 4464,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · review the response"
-    },
-    "SCR-39-desktop-review.dc.html": {
-      "x": 0,
-      "y": 5820,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-presale",
-      "title": "Costing rule v5 · review",
-      "expand": "fill"
-    },
-    "SCR-39-mobile-review.dc.html": {
-      "x": 1520,
-      "y": 5820,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · costing rule review"
-    },
-    "SCR-27-desktop-ask.dc.html": {
-      "x": 1990,
-      "y": 7096,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-presale",
-      "title": "Costing · ask Security for an estimate",
-      "expand": "fill"
-    },
-    "SCR-27-mobile-ask.dc.html": {
-      "x": 3510,
-      "y": 7096,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · ask Security"
-    },
-    "SCR-27-desktop-approvals.dc.html": {
-      "x": 0,
-      "y": 8432,
-      "w": 1440,
-      "h": 960,
-      "page": "p-presale",
-      "title": "Costing · approvals in order",
-      "expand": "fill"
-    },
-    "SCR-27-mobile-approvals.dc.html": {
-      "x": 1520,
-      "y": 8432,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · approvals"
-    },
-    "SCR-40-desktop-draft.dc.html": {
-      "x": 0,
-      "y": 9668,
-      "w": 1440,
-      "h": 960,
-      "page": "p-presale",
-      "title": "Submission pack · drafted by Tola",
-      "expand": "fill"
-    },
-    "SCR-40-mobile-draft.dc.html": {
-      "x": 1520,
-      "y": 9668,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · submission pack"
-    },
-    "SCR-40-desktop-review.dc.html": {
-      "x": 1990,
-      "y": 9668,
-      "w": 1440,
-      "h": 960,
-      "page": "p-presale",
-      "title": "Review the submission · document reviewer",
-      "expand": "fill"
-    },
-    "SCR-40-mobile-review.dc.html": {
-      "x": 3510,
-      "y": 9668,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · review the submission"
-    },
-    "SCR-40-desktop-submitted.dc.html": {
-      "x": 3980,
-      "y": 9668,
-      "w": 1440,
-      "h": 880,
-      "page": "p-presale",
-      "title": "Submitted · email delivery confirmed",
-      "expand": "fill"
-    },
-    "SCR-40-mobile-submitted.dc.html": {
-      "x": 5500,
-      "y": 9668,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · submitted"
-    },
-    "SCR-16-desktop-rfp-won.dc.html": {
-      "x": 0,
-      "y": 12360,
-      "w": 1440,
-      "h": 820,
-      "page": "p-presale",
-      "title": "Won · handed off to engagement",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-rfp-won.dc.html": {
-      "x": 1520,
-      "y": 12360,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · won"
-    },
-    "SCR-16-desktop-rfp-lost.dc.html": {
-      "x": 1990,
-      "y": 12360,
-      "w": 1440,
-      "h": 820,
-      "page": "p-presale",
-      "title": "Lost · archived with lessons",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-rfp-lost.dc.html": {
-      "x": 3510,
-      "y": 12360,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · lost"
-    },
-    "SCR-41-desktop.dc.html": {
-      "x": 0,
-      "y": 13536,
-      "w": 1440,
-      "h": 900,
-      "page": "p-presale",
-      "title": "Engagement · planning packet and PM",
-      "expand": "fill"
-    },
-    "SCR-41-mobile.dc.html": {
-      "x": 1520,
-      "y": 13536,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · engagement"
-    },
-    "SCR-41-desktop-register.dc.html": {
-      "x": 1990,
-      "y": 13536,
-      "w": 1440,
-      "h": 900,
-      "page": "p-presale",
-      "title": "Engagement · register",
-      "expand": "fill"
-    },
-    "SCR-41-mobile-register.dc.html": {
-      "x": 3510,
-      "y": 13536,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · register"
-    },
-    "SCR-39-desktop-example.dc.html": {
-      "x": 1990,
-      "y": 5820,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-presale",
-      "title": "Costing rule review · worked example opened",
-      "expand": "fill"
-    },
-    "SCR-39-mobile-example.dc.html": {
-      "x": 3510,
-      "y": 5820,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · worked example"
-    },
-    "SCR-39-desktop-review-own.dc.html": {
-      "x": 3980,
-      "y": 5820,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-presale",
-      "title": "Costing rule review · seen by the person who proposed it",
-      "expand": "fill"
-    },
-    "SCR-39-mobile-review-own.dc.html": {
-      "x": 5500,
-      "y": 5820,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · proposer waiting for review"
-    },
-    "SCR-40-desktop-submitted-portal.dc.html": {
-      "x": 5970,
-      "y": 9668,
-      "w": 1440,
-      "h": 880,
-      "page": "p-presale",
-      "title": "Submitted · client portal variant",
-      "expand": "fill"
-    },
-    "SCR-40-mobile-submitted-portal.dc.html": {
-      "x": 7490,
-      "y": 9668,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · portal variant"
-    },
-    "AGENT-concepts.dc.html": {
-      "x": 8000,
-      "y": 0,
-      "w": 1440,
-      "h": 1520,
-      "page": "open",
-      "title": "Agent at work · 4 concepts",
-      "expand": "fill"
-    },
-    "SCR-16-desktop-rfp-outcome-lost.dc.html": {
-      "x": 1990,
-      "y": 10904,
-      "w": 1440,
-      "h": 1180,
-      "page": "p-presale",
-      "title": "Record the outcome · Lost",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-rfp-outcome-lost.dc.html": {
-      "x": 3510,
-      "y": 10904,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · record · Lost"
-    },
-    "SCR-16-desktop-rfp-outcome-pending.dc.html": {
-      "x": 3980,
-      "y": 10904,
-      "w": 1440,
-      "h": 1180,
-      "page": "p-presale",
-      "title": "Record the outcome · Pending",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-rfp-outcome-pending.dc.html": {
-      "x": 5500,
-      "y": 10904,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · record · Pending"
-    },
-    "SCR-16-desktop-rfp-outcome-unknown.dc.html": {
-      "x": 5970,
-      "y": 10904,
-      "w": 1440,
-      "h": 1180,
-      "page": "p-presale",
-      "title": "Record the outcome · Unknown",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-rfp-outcome-unknown.dc.html": {
-      "x": 7490,
-      "y": 10904,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · record · Unknown"
-    },
-    "SCR-16-desktop-rfp-pending.dc.html": {
-      "x": 3980,
-      "y": 12360,
-      "w": 1440,
-      "h": 820,
-      "page": "p-presale",
-      "title": "Decision pending",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-rfp-pending.dc.html": {
-      "x": 5500,
-      "y": 12360,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · decision pending"
-    },
-    "SCR-16-desktop-rfp-unknown.dc.html": {
-      "x": 5970,
-      "y": 12360,
-      "w": 1440,
-      "h": 900,
-      "page": "p-presale",
-      "title": "Outcome unknown · follow-up drafted",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-rfp-unknown.dc.html": {
-      "x": 7490,
-      "y": 12360,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · outcome unknown"
-    },
-    "SCR-05-desktop-working.dc.html": {
-      "expand": "fill",
-      "h": 1040,
-      "is_interactive": true,
-      "page": "p-assistant",
-      "title": "Assistant · agent working, steps live",
-      "w": 1440,
-      "x": 5970,
-      "y": 140
-    },
-    "SCR-05-mobile-working.dc.html": {
-      "x": 7490,
-      "y": 140,
-      "w": 390,
-      "h": 844,
-      "page": "p-assistant",
-      "title": "Phone · agent working in the chat"
-    },
-    "SCR-42-desktop.dc.html": {
-      "x": 0,
-      "y": 14712,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-presale",
-      "title": "Planning · departments asked",
-      "expand": "fill"
-    },
-    "SCR-42-mobile.dc.html": {
-      "x": 1520,
-      "y": 14712,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · planning"
-    },
-    "SCR-42-desktop-record.dc.html": {
-      "x": 1990,
-      "y": 14712,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-presale",
-      "title": "Planning · record department input",
-      "expand": "fill"
-    },
-    "SCR-42-mobile-record.dc.html": {
-      "x": 3510,
-      "y": 14712,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · record department input"
-    },
-    "SCR-42-desktop-held.dc.html": {
-      "x": 3980,
-      "y": 14712,
-      "w": 1440,
-      "h": 860,
-      "page": "p-presale",
-      "title": "Planning held · owner needed",
-      "expand": "fill"
-    },
-    "SCR-42-mobile-held.dc.html": {
-      "x": 5500,
-      "y": 14712,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · planning held"
-    },
-    "SCR-42-desktop-readiness.dc.html": {
-      "x": 5970,
-      "y": 14712,
-      "w": 1440,
-      "h": 960,
-      "page": "p-presale",
-      "title": "Planning · Tola preparing readiness",
-      "expand": "fill"
-    },
-    "SCR-42-mobile-readiness.dc.html": {
-      "x": 7490,
-      "y": 14712,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · readiness"
-    },
-    "SCR-42-desktop-ready.dc.html": {
-      "x": 7960,
-      "y": 14712,
-      "w": 1440,
-      "h": 980,
-      "page": "p-presale",
-      "title": "Planning ready · handed to delivery",
-      "expand": "fill"
-    },
-    "SCR-42-mobile-ready.dc.html": {
-      "x": 9480,
-      "y": 14712,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · planning ready"
-    },
-    "SCR-16-desktop-sow-signed.dc.html": {
-      "x": 0,
-      "y": 15988,
-      "w": 1440,
-      "h": 960,
-      "page": "p-presale",
-      "title": "Record the client's SOW signature",
-      "expand": "fill"
-    },
-    "SCR-16-mobile-sow-signed.dc.html": {
-      "x": 1520,
-      "y": 15988,
-      "w": 390,
-      "h": 844,
-      "page": "p-presale",
-      "title": "Phone · SOW signature"
-    },
-    "DELIVERY-flow-desktop.dc.html": {
-      "x": 0,
-      "y": 14924,
-      "w": 1440,
-      "h": 1300,
-      "page": "p-projects",
-      "title": "end to end",
-      "expand": "fill"
-    },
-    "SCR-43-desktop.dc.html": {
-      "x": 0,
-      "y": 16500,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-projects",
-      "title": "Delivery overview",
-      "expand": "fill"
-    },
-    "SCR-43-mobile.dc.html": {
-      "x": 1520,
-      "y": 16500,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Delivery · phone"
-    },
-    "SCR-44-desktop.dc.html": {
-      "x": 0,
-      "y": 17776,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Release gates",
-      "expand": "fill"
-    },
-    "SCR-44-mobile.dc.html": {
-      "x": 1520,
-      "y": 17776,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Release gates · phone"
-    },
-    "SCR-44-desktop-decision.dc.html": {
-      "x": 1990,
-      "y": 17776,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Planning decision · PMO Lead",
-      "expand": "fill"
-    },
-    "SCR-44-mobile-decision.dc.html": {
-      "x": 3510,
-      "y": 17776,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Planning decision · phone"
-    },
-    "SCR-44-desktop-returned.dc.html": {
-      "x": 3980,
-      "y": 17776,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Release returned",
-      "expand": "fill"
-    },
-    "SCR-44-mobile-returned.dc.html": {
-      "x": 5500,
-      "y": 17776,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Release returned · phone"
-    },
-    "SCR-44-desktop-owner-needed.dc.html": {
-      "x": 5970,
-      "y": 17776,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Release held · no PMO Lead",
-      "expand": "fill"
-    },
-    "SCR-44-mobile-owner-needed.dc.html": {
-      "x": 7490,
-      "y": 17776,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Release held · phone"
-    },
-    "SCR-44-desktop-readiness.dc.html": {
-      "x": 7960,
-      "y": 17776,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Tola preparing release readiness",
-      "expand": "fill"
-    },
-    "SCR-44-mobile-readiness.dc.html": {
-      "x": 9480,
-      "y": 17776,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Release readiness · phone"
-    },
-    "SCR-44-desktop-ready.dc.html": {
-      "x": 9950,
-      "y": 17776,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Release ready",
-      "expand": "fill"
-    },
-    "SCR-44-mobile-ready.dc.html": {
-      "x": 11470,
-      "y": 17776,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Release ready · phone"
-    },
-    "SCR-45-desktop.dc.html": {
-      "x": 0,
-      "y": 19032,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Go-live document in review",
-      "expand": "fill"
-    },
-    "SCR-45-mobile.dc.html": {
-      "x": 1520,
-      "y": 19032,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Go-live · phone"
-    },
-    "SCR-45-desktop-signatures.dc.html": {
-      "x": 1990,
-      "y": 19032,
-      "w": 1440,
-      "h": 1100,
-      "page": "p-projects",
-      "title": "Record go-live signatures",
-      "expand": "fill"
-    },
-    "SCR-45-mobile-signatures.dc.html": {
-      "x": 3510,
-      "y": 19032,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Go-live signatures · phone"
-    },
-    "SCR-45-desktop-accepted.dc.html": {
-      "x": 3980,
-      "y": 19032,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Go-live accepted",
-      "expand": "fill"
-    },
-    "SCR-45-mobile-accepted.dc.html": {
-      "x": 5500,
-      "y": 19032,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Go-live accepted · phone"
-    },
-    "SCR-45-desktop-changes.dc.html": {
-      "x": 5970,
-      "y": 19032,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Client asked for changes",
-      "expand": "fill"
-    },
-    "SCR-45-mobile-changes.dc.html": {
-      "x": 7490,
-      "y": 19032,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Changes requested · phone"
-    },
-    "SCR-45-desktop-declined.dc.html": {
-      "x": 7960,
-      "y": 19032,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Client declined go-live",
-      "expand": "fill"
-    },
-    "SCR-45-mobile-declined.dc.html": {
-      "x": 9480,
-      "y": 19032,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Go-live declined · phone"
-    },
-    "SCR-46-desktop-record.dc.html": {
-      "x": 0,
-      "y": 20408,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-projects",
-      "title": "Record the release",
-      "expand": "fill"
-    },
-    "SCR-46-mobile-record.dc.html": {
-      "x": 1520,
-      "y": 20408,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Record the release · phone"
-    },
-    "SCR-46-desktop.dc.html": {
-      "x": 1990,
-      "y": 20408,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Hypercare running",
-      "expand": "fill"
-    },
-    "SCR-46-mobile.dc.html": {
-      "x": 3510,
-      "y": 20408,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Hypercare · phone"
-    },
-    "SCR-46-desktop-evaluating.dc.html": {
-      "x": 3980,
-      "y": 20408,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Tola evaluating hypercare",
-      "expand": "fill"
-    },
-    "SCR-46-mobile-evaluating.dc.html": {
-      "x": 5500,
-      "y": 20408,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Evaluating · phone"
-    },
-    "SCR-46-desktop-qualified.dc.html": {
-      "x": 5970,
-      "y": 20408,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Hypercare qualified",
-      "expand": "fill"
-    },
-    "SCR-46-mobile-qualified.dc.html": {
-      "x": 7490,
-      "y": 20408,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Qualified · phone"
-    },
-    "SCR-46-desktop-not-met.dc.html": {
-      "x": 7960,
-      "y": 20408,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Hypercare not qualified",
-      "expand": "fill"
-    },
-    "SCR-46-mobile-not-met.dc.html": {
-      "x": 9480,
-      "y": 20408,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Not met · phone"
-    },
-    "SCR-46-desktop-setup-needed.dc.html": {
-      "x": 9950,
-      "y": 20408,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Hypercare criteria not set",
-      "expand": "fill"
-    },
-    "SCR-46-mobile-setup-needed.dc.html": {
-      "x": 11470,
-      "y": 20408,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Setup needed · phone"
-    },
-    "SCR-47-desktop-working.dc.html": {
-      "x": 0,
-      "y": 21684,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Archiving in progress",
-      "expand": "fill"
-    },
-    "SCR-47-mobile-working.dc.html": {
-      "x": 1520,
-      "y": 21684,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Archiving · phone"
-    },
-    "SCR-47-desktop.dc.html": {
-      "x": 1990,
-      "y": 21684,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Archive index",
-      "expand": "fill"
-    },
-    "SCR-47-mobile.dc.html": {
-      "x": 3510,
-      "y": 21684,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Archive · phone"
-    },
-    "SCR-47-desktop-uncertain.dc.html": {
-      "x": 3980,
-      "y": 21684,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Archive not confirmed",
-      "expand": "fill"
-    },
-    "SCR-47-mobile-uncertain.dc.html": {
-      "x": 5500,
-      "y": 21684,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Archive uncertain · phone"
-    },
-    "SCR-48-desktop.dc.html": {
-      "x": 0,
-      "y": 22860,
-      "w": 1440,
-      "h": 980,
-      "page": "p-projects",
-      "title": "Handover drafted",
-      "expand": "fill"
-    },
-    "SCR-48-mobile.dc.html": {
-      "x": 1520,
-      "y": 22860,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Handover · phone"
-    },
-    "SCR-48-desktop-record.dc.html": {
-      "x": 1990,
-      "y": 22860,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-projects",
-      "title": "Record Support's reply",
-      "expand": "fill"
-    },
-    "SCR-48-mobile-record.dc.html": {
-      "x": 3510,
-      "y": 22860,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Record Support's reply · phone"
-    },
-    "SCR-48-desktop-gaps.dc.html": {
-      "x": 3980,
-      "y": 22860,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Support found gaps",
-      "expand": "fill"
-    },
-    "SCR-48-mobile-gaps.dc.html": {
-      "x": 5500,
-      "y": 22860,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Gaps · phone"
-    },
-    "SCR-48-desktop-received.dc.html": {
-      "x": 5970,
-      "y": 22860,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Handover acknowledged",
-      "expand": "fill"
-    },
-    "SCR-48-mobile-received.dc.html": {
-      "x": 7490,
-      "y": 22860,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Acknowledged · phone"
-    },
-    "SCR-49-desktop-blocked.dc.html": {
-      "x": 0,
-      "y": 24136,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Closure can't start yet",
-      "expand": "fill"
-    },
-    "SCR-49-mobile-blocked.dc.html": {
-      "x": 1520,
-      "y": 24136,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Closure not yet · phone"
-    },
-    "SCR-49-desktop.dc.html": {
-      "x": 1990,
-      "y": 24136,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-projects",
-      "title": "Closure report drafted",
-      "expand": "fill"
-    },
-    "SCR-49-mobile.dc.html": {
-      "x": 3510,
-      "y": 24136,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Closure report · phone"
-    },
-    "SCR-49-desktop-decision.dc.html": {
-      "x": 3980,
-      "y": 24136,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-projects",
-      "title": "Closure decision · Head of PMO",
-      "expand": "fill"
-    },
-    "SCR-49-mobile-decision.dc.html": {
-      "x": 5500,
-      "y": 24136,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Closure decision · phone"
-    },
-    "SCR-49-desktop-returned.dc.html": {
-      "x": 5970,
-      "y": 24136,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Closure returned",
-      "expand": "fill"
-    },
-    "SCR-49-mobile-returned.dc.html": {
-      "x": 7490,
-      "y": 24136,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Closure returned · phone"
-    },
-    "SCR-49-desktop-closed.dc.html": {
-      "x": 7960,
-      "y": 24136,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Project closed",
-      "expand": "fill"
-    },
-    "SCR-49-mobile-closed.dc.html": {
-      "x": 9480,
-      "y": 24136,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Closed · phone"
-    },
-    "SCR-13-desktop-delivery-rules.dc.html": {
-      "x": 0,
-      "y": 25412,
-      "w": 1440,
-      "h": 860,
-      "page": "p-projects",
-      "title": "Setup · delivery rules",
-      "expand": "fill"
-    },
-    "SCR-13-mobile-delivery-rules.dc.html": {
-      "x": 1520,
-      "y": 25412,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Delivery rules · phone"
-    },
-    "PMO-flow-desktop.dc.html": {
-      "x": 0,
-      "y": 26688,
-      "w": 1440,
-      "h": 1080,
-      "page": "p-projects",
-      "title": "end to end",
-      "expand": "fill"
-    },
-    "SCR-25-desktop-invalid.dc.html": {
-      "x": 0,
-      "y": 28044,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Weekly report · can't send yet",
-      "expand": "fill"
-    },
-    "SCR-25-mobile-invalid.dc.html": {
-      "x": 1520,
-      "y": 28044,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Weekly report needs fixing · phone"
-    },
-    "SCR-25-desktop-assembling.dc.html": {
-      "x": 1990,
-      "y": 28044,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Tola assembling the weekly report",
-      "expand": "fill"
-    },
-    "SCR-25-mobile-assembling.dc.html": {
-      "x": 3510,
-      "y": 28044,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Assembling · phone"
-    },
-    "SCR-25-desktop-review.dc.html": {
-      "x": 3980,
-      "y": 28044,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "PMO Lead reviews the weekly report",
-      "expand": "fill"
-    },
-    "SCR-25-mobile-review.dc.html": {
-      "x": 5500,
-      "y": 28044,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Review · phone"
-    },
-    "SCR-25-desktop-returned.dc.html": {
-      "x": 5970,
-      "y": 28044,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Weekly report returned",
-      "expand": "fill"
-    },
-    "SCR-25-mobile-returned.dc.html": {
-      "x": 7490,
-      "y": 28044,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Returned · phone"
-    },
-    "SCR-25-desktop-received.dc.html": {
-      "x": 7960,
-      "y": 28044,
-      "w": 1440,
-      "h": 860,
-      "page": "p-projects",
-      "title": "Weekly report received",
-      "expand": "fill"
-    },
-    "SCR-25-mobile-received.dc.html": {
-      "x": 9480,
-      "y": 28044,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Received · phone"
-    },
-    "SCR-28-desktop-suggesting.dc.html": {
-      "x": 0,
-      "y": 29280,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Tola suggesting decisions and actions",
-      "expand": "fill"
-    },
-    "SCR-28-mobile-suggesting.dc.html": {
-      "x": 1520,
-      "y": 29280,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Suggesting · phone"
-    },
-    "SCR-28-desktop-drafted.dc.html": {
-      "x": 1990,
-      "y": 29280,
-      "w": 1440,
-      "h": 860,
-      "page": "p-projects",
-      "title": "Minutes drafted",
-      "expand": "fill"
-    },
-    "SCR-28-mobile-drafted.dc.html": {
-      "x": 3510,
-      "y": 29280,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Minutes drafted · phone"
-    },
-    "SCR-28-desktop-review.dc.html": {
-      "x": 3980,
-      "y": 29280,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "PMO Lead reviews client minutes",
-      "expand": "fill"
-    },
-    "SCR-28-mobile-review.dc.html": {
-      "x": 5500,
-      "y": 29280,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Review minutes · phone"
-    },
-    "SCR-28-desktop-internal.dc.html": {
-      "x": 5970,
-      "y": 29280,
-      "w": 1440,
-      "h": 820,
-      "page": "p-projects",
-      "title": "Internal minutes filed",
-      "expand": "fill"
-    },
-    "SCR-28-mobile-internal.dc.html": {
-      "x": 7490,
-      "y": 29280,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Internal minutes · phone"
-    },
-    "SCR-28-desktop-published.dc.html": {
-      "x": 7960,
-      "y": 29280,
-      "w": 1440,
-      "h": 860,
-      "page": "p-projects",
-      "title": "Client minutes published",
-      "expand": "fill"
-    },
-    "SCR-28-mobile-published.dc.html": {
-      "x": 9480,
-      "y": 29280,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Minutes published · phone"
-    },
-    "SCR-30-desktop-overdue.dc.html": {
-      "x": 0,
-      "y": 30456,
-      "w": 1440,
-      "h": 860,
-      "page": "p-projects",
-      "title": "Issue owner hasn't responded",
-      "expand": "fill"
-    },
-    "SCR-30-mobile-overdue.dc.html": {
-      "x": 1520,
-      "y": 30456,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "No response · phone"
-    },
-    "SCR-30-desktop-no-owner.dc.html": {
-      "x": 1990,
-      "y": 30456,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Issue has no owner",
-      "expand": "fill"
-    },
-    "SCR-30-mobile-no-owner.dc.html": {
-      "x": 3510,
-      "y": 30456,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "No owner · phone"
-    },
-    "SCR-30-desktop-verified.dc.html": {
-      "x": 3980,
-      "y": 30456,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Issue follow-up verified",
-      "expand": "fill"
-    },
-    "SCR-30-mobile-verified.dc.html": {
-      "x": 5500,
-      "y": 30456,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Follow-up verified · phone"
-    },
-    "SCR-31-desktop-impact.dc.html": {
-      "x": 0,
-      "y": 31592,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "Record an impact assessment",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-impact.dc.html": {
-      "x": 1520,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Impact assessment · phone"
-    },
-    "SCR-31-desktop-decision.dc.html": {
-      "x": 1990,
-      "y": 31592,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "Change decision · several deciders",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-decision.dc.html": {
-      "x": 3510,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Deciding · phone"
-    },
-    "SCR-31-desktop-rejected.dc.html": {
-      "x": 3980,
-      "y": 31592,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Change rejected",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-rejected.dc.html": {
-      "x": 5500,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Rejected · phone"
-    },
-    "SCR-31-desktop-authorise.dc.html": {
-      "x": 5970,
-      "y": 31592,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "Authorise the change",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-authorise.dc.html": {
-      "x": 7490,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Authorise · phone"
-    },
-    "SCR-31-desktop-notice.dc.html": {
-      "x": 7960,
-      "y": 31592,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Change notice published",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-notice.dc.html": {
-      "x": 9480,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Notice · phone"
-    },
-    "SCR-31-desktop-execution.dc.html": {
-      "x": 9950,
-      "y": 31592,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "Record execution evidence",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-execution.dc.html": {
-      "x": 11470,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Execution · phone"
-    },
-    "SCR-31-desktop-go-live-note.dc.html": {
-      "x": 11940,
-      "y": 31592,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Change go-live note published",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-go-live-note.dc.html": {
-      "x": 13460,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Go-live note · phone"
-    },
-    "SCR-31-desktop-closed.dc.html": {
-      "x": 13930,
-      "y": 31592,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Change closed",
-      "expand": "fill"
-    },
-    "SCR-31-mobile-closed.dc.html": {
-      "x": 15450,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Change closed · phone"
-    },
-    "SCR-38-desktop-changed.dc.html": {
-      "x": 15920,
-      "y": 31592,
-      "w": 1440,
-      "h": 860,
-      "page": "p-projects",
-      "title": "Milestones after a change",
-      "expand": "fill"
-    },
-    "SCR-38-mobile-changed.dc.html": {
-      "x": 17440,
-      "y": 31592,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Milestones after a change · phone"
-    },
-    "SCR-50-desktop-refused.dc.html": {
-      "x": 0,
-      "y": 32828,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Emergency change refused",
-      "expand": "fill"
-    },
-    "SCR-50-mobile-refused.dc.html": {
-      "x": 1520,
-      "y": 32828,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Refused · phone"
-    },
-    "SCR-50-desktop-record.dc.html": {
-      "x": 1990,
-      "y": 32828,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "Record the emergency outcome",
-      "expand": "fill"
-    },
-    "SCR-50-mobile-record.dc.html": {
-      "x": 3510,
-      "y": 32828,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Record outcome · phone"
-    },
-    "SCR-50-desktop-review.dc.html": {
-      "x": 3980,
-      "y": 32828,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Review the emergency outcome",
-      "expand": "fill"
-    },
-    "SCR-50-mobile-review.dc.html": {
-      "x": 5500,
-      "y": 32828,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Review outcome · phone"
-    },
-    "SCR-50-desktop-retro.dc.html": {
-      "x": 5970,
-      "y": 32828,
-      "w": 1440,
-      "h": 960,
-      "page": "p-projects",
-      "title": "Retrospective decision",
-      "expand": "fill"
-    },
-    "SCR-50-mobile-retro.dc.html": {
-      "x": 7490,
-      "y": 32828,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Retrospective · phone"
-    },
-    "SCR-50-desktop-report.dc.html": {
-      "x": 7960,
-      "y": 32828,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Emergency report published",
-      "expand": "fill"
-    },
-    "SCR-50-mobile-report.dc.html": {
-      "x": 9480,
-      "y": 32828,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Report · phone"
-    },
-    "SCR-51-desktop-investigating.dc.html": {
-      "x": 0,
-      "y": 34064,
-      "w": 1440,
-      "h": 800,
-      "page": "p-projects",
-      "title": "Tola investigating an escalation",
-      "expand": "fill"
-    },
-    "SCR-51-mobile-investigating.dc.html": {
-      "x": 1520,
-      "y": 34064,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Investigating · phone"
-    },
-    "SCR-51-desktop-decide.dc.html": {
-      "x": 1990,
-      "y": 34064,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Decide whether to escalate to the client",
-      "expand": "fill"
-    },
-    "SCR-51-mobile-decide.dc.html": {
-      "x": 3510,
-      "y": 34064,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Decide · phone"
-    },
-    "SCR-51-desktop-not-escalated.dc.html": {
-      "x": 3980,
-      "y": 34064,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Not escalated",
-      "expand": "fill"
-    },
-    "SCR-51-mobile-not-escalated.dc.html": {
-      "x": 5500,
-      "y": 34064,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Not escalated · phone"
-    },
-    "SCR-51-desktop-draft.dc.html": {
-      "x": 5970,
-      "y": 34064,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Escalation message drafted",
-      "expand": "fill"
-    },
-    "SCR-51-mobile-draft.dc.html": {
-      "x": 7490,
-      "y": 34064,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Message drafted · phone"
-    },
-    "SCR-51-desktop-review.dc.html": {
-      "x": 7960,
-      "y": 34064,
-      "w": 1440,
-      "h": 900,
-      "page": "p-projects",
-      "title": "Review the escalation message",
-      "expand": "fill"
-    },
-    "SCR-51-mobile-review.dc.html": {
-      "x": 9480,
-      "y": 34064,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Review message · phone"
-    },
-    "SCR-51-desktop-received.dc.html": {
-      "x": 9950,
-      "y": 34064,
-      "w": 1440,
-      "h": 760,
-      "page": "p-projects",
-      "title": "Escalation received",
-      "expand": "fill"
-    },
-    "SCR-51-mobile-received.dc.html": {
-      "x": 11470,
-      "y": 34064,
-      "w": 390,
-      "h": 844,
-      "page": "p-projects",
-      "title": "Received · phone"
-    },
-    "SCR-52-desktop-setup.dc.html": {
-      "x": 0,
-      "y": 2916,
-      "w": 1440,
-      "h": 1000,
-      "page": "p-overview",
-      "title": "Set up a leadership report",
-      "expand": "fill"
-    },
-    "SCR-52-mobile-setup.dc.html": {
-      "x": 1520,
-      "y": 2916,
-      "w": 390,
-      "h": 844,
-      "page": "p-overview",
-      "title": "Set up a report · phone"
-    },
-    "SCR-52-desktop-drafting.dc.html": {
-      "x": 1990,
-      "y": 2916,
-      "w": 1440,
-      "h": 800,
-      "page": "p-overview",
-      "title": "Tola drafting the leadership report",
-      "expand": "fill"
-    },
-    "SCR-52-mobile-drafting.dc.html": {
-      "x": 3510,
-      "y": 2916,
-      "w": 390,
-      "h": 844,
-      "page": "p-overview",
-      "title": "Drafting · phone"
-    },
-    "SCR-52-desktop-review.dc.html": {
-      "x": 3980,
-      "y": 2916,
-      "w": 1440,
-      "h": 900,
-      "page": "p-overview",
-      "title": "Leadership review of the monthly report",
-      "expand": "fill"
-    },
-    "SCR-52-mobile-review.dc.html": {
-      "x": 5500,
-      "y": 2916,
-      "w": 390,
-      "h": 844,
-      "page": "p-overview",
-      "title": "Review · phone"
-    },
-    "SCR-52-desktop-tuesday.dc.html": {
-      "x": 5970,
-      "y": 2916,
-      "w": 1440,
-      "h": 820,
-      "page": "p-overview",
-      "title": "Tuesday report published (no review)",
-      "expand": "fill"
-    },
-    "SCR-52-mobile-tuesday.dc.html": {
-      "x": 7490,
-      "y": 2916,
-      "w": 390,
-      "h": 844,
-      "page": "p-overview",
-      "title": "Tuesday report · phone"
-    },
-    "SCR-52-desktop-received.dc.html": {
-      "x": 7960,
-      "y": 2916,
-      "w": 1440,
-      "h": 760,
-      "page": "p-overview",
-      "title": "Monthly report received by everyone",
-      "expand": "fill"
-    },
-    "SCR-52-mobile-received.dc.html": {
-      "x": 9480,
-      "y": 2916,
-      "w": 390,
-      "h": 844,
-      "page": "p-overview",
-      "title": "Received · phone"
-    },
-    "SCR-04-desktop-weekly.dc.html": {
-      "x": 0,
-      "y": 5456,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Weekly client report",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-weekly.dc.html": {
-      "x": 1520,
-      "y": 5456,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Weekly client report · phone"
-    },
-    "SCR-04-desktop-minutes.dc.html": {
-      "x": 1990,
-      "y": 5456,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Minutes after a meeting",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-minutes.dc.html": {
-      "x": 3510,
-      "y": 5456,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Minutes after a meeting · phone"
-    },
-    "SCR-04-desktop-issue.dc.html": {
-      "x": 3980,
-      "y": 5456,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Chase an open issue",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-issue.dc.html": {
-      "x": 5500,
-      "y": 5456,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Chase an open issue · phone"
-    },
-    "SCR-04-desktop-change.dc.html": {
-      "x": 5970,
-      "y": 5456,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Scope or timeline change",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-change.dc.html": {
-      "x": 7490,
-      "y": 5456,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Scope or timeline change · phone"
-    },
-    "SCR-04-desktop-incident.dc.html": {
-      "x": 7960,
-      "y": 5456,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Emergency change for an incident",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-incident.dc.html": {
-      "x": 9480,
-      "y": 5456,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Emergency change for an incident · phone"
-    },
-    "SCR-04-desktop-escalation.dc.html": {
-      "x": 9950,
-      "y": 5456,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Escalate and communicate",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-escalation.dc.html": {
-      "x": 11470,
-      "y": 5456,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Escalate and communicate · phone"
-    },
-    "SCR-04-desktop-leadership.dc.html": {
-      "x": 11940,
-      "y": 5456,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Leadership report",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-leadership.dc.html": {
-      "x": 13460,
-      "y": 5456,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Leadership report · phone"
-    },
-    "SCR-04-desktop-accounts.dc.html": {
-      "x": 0,
-      "y": 6632,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Management accounts",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-accounts.dc.html": {
-      "x": 1520,
-      "y": 6632,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Management accounts on a phone"
-    },
-    "SCR-04-desktop-schedules.dc.html": {
-      "x": 1990,
-      "y": 6632,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Income detail or schedule inventory",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-schedules.dc.html": {
-      "x": 3510,
-      "y": 6632,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Income detail or schedule inventory on a phone"
-    },
-    "SCR-04-desktop-ppe.dc.html": {
-      "x": 3980,
-      "y": 6632,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Fixed asset schedule",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-ppe.dc.html": {
-      "x": 5500,
-      "y": 6632,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Fixed asset schedule on a phone"
-    },
-    "SCR-04-desktop-forecast.dc.html": {
-      "x": 5970,
-      "y": 6632,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Cash forecast",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-forecast.dc.html": {
-      "x": 7490,
-      "y": 6632,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Cash forecast on a phone"
-    },
-    "SCR-04-desktop-bu.dc.html": {
-      "x": 7960,
-      "y": 6632,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Business-unit totals",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-bu.dc.html": {
-      "x": 9480,
-      "y": 6632,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Business-unit totals on a phone"
-    },
-    "SCR-04-desktop-ledger.dc.html": {
-      "x": 9950,
-      "y": 6632,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Record a ledger source",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-ledger.dc.html": {
-      "x": 11470,
-      "y": 6632,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Record a ledger source on a phone"
-    },
-    "SCR-04-desktop-payroll.dc.html": {
-      "x": 11940,
-      "y": 6632,
-      "w": 1440,
-      "h": 900,
-      "page": "p-mywork",
-      "title": "Start work · Payroll (restricted)",
-      "expand": "fill"
-    },
-    "SCR-04-mobile-payroll.dc.html": {
-      "x": 13460,
-      "y": 6632,
-      "w": 390,
-      "h": 844,
-      "page": "p-mywork",
-      "title": "Start · Payroll (restricted) on a phone"
-    },
-    "SCR-13-desktop-finance-rules.dc.html": {
-      "x": 0,
-      "y": 8140,
-      "w": 1440,
-      "h": 1400,
-      "page": "p-setup",
-      "title": "Setup · Finance rules",
-      "expand": "fill"
-    },
-    "SCR-13-mobile-finance-rules.dc.html": {
-      "x": 1520,
-      "y": 8140,
-      "w": 390,
-      "h": 844,
-      "page": "p-setup",
-      "title": "Finance rules on a phone"
-    },
-    "FINANCE-moved-desktop.dc.html": {
-      "x": 0,
-      "y": 0,
-      "w": 1440,
-      "h": 720,
-      "page": "p-finance",
-      "title": "Finance and Payroll moved to its own canvas",
-      "expand": "fill"
-    },
-    "MYWORK-queue-concepts.dc.html": {
-      "x": 0,
-      "y": 4676,
-      "w": 1440,
-      "h": 1180,
-      "page": "open",
-      "title": "My work · three queue concepts"
-    },
-    "SCR-06-overview-concepts.dc.html": {
-      "x": 1520,
-      "y": 4676,
-      "w": 1440,
-      "h": 1180,
-      "page": "open",
-      "title": "Overview · three concepts"
-    },
-    "LINES-desktop.dc.html": {
-      "x": 0,
-      "y": 0,
-      "w": 1440,
-      "h": 1500,
-      "page": "lines",
-      "title": "Lines · catalogue of all 25",
-      "expand": "fill"
-    },
-    "LINES-mobile.dc.html": {
-      "x": 1520,
-      "y": 0,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · lines"
-    },
-    "LINE-pmo-finance-desktop.dc.html": {
-      "x": 0,
-      "y": 1840,
-      "w": 1440,
-      "h": 1002,
-      "page": "lines",
-      "title": "Invoice preparation and delivery",
-      "expand": "fill"
-    },
-    "LINE-pmo-finance-mobile.dc.html": {
-      "x": 1520,
-      "y": 1840,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Bill a completed milestone"
-    },
-    "LINE-pmo-issues-desktop.dc.html": {
-      "x": 2070,
-      "y": 1840,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Issue investigation and owner follow-up",
-      "expand": "fill"
-    },
-    "LINE-pmo-issues-mobile.dc.html": {
-      "x": 3590,
-      "y": 1840,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Chase an open issue"
-    },
-    "LINE-pmo-leadership-report-desktop.dc.html": {
-      "x": 4140,
-      "y": 1840,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Internal Tuesday and monthly leadership report",
-      "expand": "fill"
-    },
-    "LINE-pmo-leadership-report-mobile.dc.html": {
-      "x": 5660,
-      "y": 1840,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Tuesday or monthly report"
-    },
-    "LINE-pmo-minutes-desktop.dc.html": {
-      "x": 0,
-      "y": 3002,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Formal minutes and action handoff",
-      "expand": "fill"
-    },
-    "LINE-pmo-minutes-mobile.dc.html": {
-      "x": 1520,
-      "y": 3002,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Minutes after a meeting"
-    },
-    "LINE-pmo-escalation-desktop.dc.html": {
-      "x": 2070,
-      "y": 3002,
-      "w": 1440,
-      "h": 826,
-      "page": "lines",
-      "title": "Escalation decisions and verified communication",
-      "expand": "fill"
-    },
-    "LINE-pmo-escalation-mobile.dc.html": {
-      "x": 3590,
-      "y": 3002,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Escalate and communicate"
-    },
-    "LINE-pmo-weekly-report-desktop.dc.html": {
-      "x": 4140,
-      "y": 3002,
-      "w": 1440,
-      "h": 804,
-      "page": "lines",
-      "title": "Reviewed weekly client report",
-      "expand": "fill"
-    },
-    "LINE-pmo-weekly-report-mobile.dc.html": {
-      "x": 5660,
-      "y": 3002,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Friday report for a client"
-    },
-    "LINE-pmo-emergency-desktop.dc.html": {
-      "x": 0,
-      "y": 4006,
-      "w": 1440,
-      "h": 826,
-      "page": "lines",
-      "title": "Emergency preauthorization and retrospective evidence",
-      "expand": "fill"
-    },
-    "LINE-pmo-emergency-mobile.dc.html": {
-      "x": 1520,
-      "y": 4006,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Emergency change for an incident"
-    },
-    "LINE-pmo-change-desktop.dc.html": {
-      "x": 2070,
-      "y": 4006,
-      "w": 1440,
-      "h": 870,
-      "page": "lines",
-      "title": "Controlled change and signed closure",
-      "expand": "fill"
-    },
-    "LINE-pmo-change-mobile.dc.html": {
-      "x": 3590,
-      "y": 4006,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Scope or timeline change"
-    },
-    "LINE-rfp-response-desktop.dc.html": {
-      "x": 0,
-      "y": 5276,
-      "w": 1440,
-      "h": 980,
-      "page": "lines",
-      "title": "RFP response and project handoff",
-      "expand": "fill"
-    },
-    "LINE-rfp-response-mobile.dc.html": {
-      "x": 1520,
-      "y": 5276,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Respond to an RFP"
-    },
-    "LINE-engagement-desktop.dc.html": {
-      "x": 2070,
-      "y": 5276,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Engagement identity and planning handoff",
-      "expand": "fill"
-    },
-    "LINE-engagement-mobile.dc.html": {
-      "x": 3590,
-      "y": 5276,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Log a new engagement"
-    },
-    "LINE-commercial-desktop.dc.html": {
-      "x": 4140,
-      "y": 5276,
-      "w": 1440,
-      "h": 848,
-      "page": "lines",
-      "title": "Costing and commercial submission",
-      "expand": "fill"
-    },
-    "LINE-commercial-mobile.dc.html": {
-      "x": 5660,
-      "y": 5276,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Cost a project and send the SOW"
-    },
-    "LINE-planning-desktop.dc.html": {
-      "x": 0,
-      "y": 6656,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Planning and delivery handoff",
-      "expand": "fill"
-    },
-    "LINE-planning-mobile.dc.html": {
-      "x": 1520,
-      "y": 6656,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Plan the project"
-    },
-    "LINE-delivery-release-desktop.dc.html": {
-      "x": 2070,
-      "y": 6656,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Delivery gates and release evidence",
-      "expand": "fill"
-    },
-    "LINE-delivery-release-mobile.dc.html": {
-      "x": 3590,
-      "y": 6656,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Release gates"
-    },
-    "LINE-delivery-go-live-desktop.dc.html": {
-      "x": 4140,
-      "y": 6656,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Go-live acceptance",
-      "expand": "fill"
-    },
-    "LINE-delivery-go-live-mobile.dc.html": {
-      "x": 5660,
-      "y": 6656,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Client go-live sign-off"
-    },
-    "LINE-delivery-hypercare-desktop.dc.html": {
-      "x": 0,
-      "y": 7660,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Release observations and hypercare",
-      "expand": "fill"
-    },
-    "LINE-delivery-hypercare-mobile.dc.html": {
-      "x": 1520,
-      "y": 7660,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Watch the release"
-    },
-    "LINE-delivery-handover-desktop.dc.html": {
-      "x": 2070,
-      "y": 7660,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Support and Operations handover",
-      "expand": "fill"
-    },
-    "LINE-delivery-handover-mobile.dc.html": {
-      "x": 3590,
-      "y": 7660,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Hand over to Support"
-    },
-    "LINE-delivery-archive-desktop.dc.html": {
-      "x": 4140,
-      "y": 7660,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Project artifact archive",
-      "expand": "fill"
-    },
-    "LINE-delivery-archive-mobile.dc.html": {
-      "x": 5660,
-      "y": 7660,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Archive project artifacts"
-    },
-    "LINE-delivery-closure-desktop.dc.html": {
-      "x": 0,
-      "y": 8664,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Project closure",
-      "expand": "fill"
-    },
-    "LINE-delivery-closure-mobile.dc.html": {
-      "x": 1520,
-      "y": 8664,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Close the project"
-    },
-    "LINE-finance-accounts-desktop.dc.html": {
-      "x": 0,
-      "y": 9908,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Accounting preparation and reviewed reports",
-      "expand": "fill"
-    },
-    "LINE-finance-accounts-mobile.dc.html": {
-      "x": 1520,
-      "y": 9908,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Management accounts"
-    },
-    "LINE-finance-schedules-desktop.dc.html": {
-      "x": 2070,
-      "y": 9908,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Income detail and schedule inventory",
-      "expand": "fill"
-    },
-    "LINE-finance-schedules-mobile.dc.html": {
-      "x": 3590,
-      "y": 9908,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Income or schedule inventory"
-    },
-    "LINE-finance-ppe-desktop.dc.html": {
-      "x": 4140,
-      "y": 9908,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Asset schedule and reviewed accounting note",
-      "expand": "fill"
-    },
-    "LINE-finance-ppe-mobile.dc.html": {
-      "x": 5660,
-      "y": 9908,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Fixed asset schedule"
-    },
-    "LINE-finance-forecast-desktop.dc.html": {
-      "x": 0,
-      "y": 10912,
-      "w": 1440,
-      "h": 826,
-      "page": "lines",
-      "title": "Reviewed cash forecast and actual follow-up",
-      "expand": "fill"
-    },
-    "LINE-finance-forecast-mobile.dc.html": {
-      "x": 1520,
-      "y": 10912,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Cash forecast"
-    },
-    "LINE-finance-bu-desktop.dc.html": {
-      "x": 2070,
-      "y": 10912,
-      "w": 1440,
-      "h": 804,
-      "page": "lines",
-      "title": "Reviewed BU exception and event aggregates",
-      "expand": "fill"
-    },
-    "LINE-finance-bu-mobile.dc.html": {
-      "x": 3590,
-      "y": 10912,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Business-unit totals"
-    },
-    "LINE-finance-ledger-desktop.dc.html": {
-      "x": 4140,
-      "y": 10912,
-      "w": 1440,
-      "h": 760,
-      "page": "lines",
-      "title": "Supplied incumbent transaction reference",
-      "expand": "fill"
-    },
-    "LINE-finance-ledger-mobile.dc.html": {
-      "x": 5660,
-      "y": 10912,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Record a ledger source"
-    },
-    "LINE-finance-payroll-desktop.dc.html": {
-      "x": 0,
-      "y": 11916,
-      "w": 1440,
-      "h": 980,
-      "page": "lines",
-      "title": "Restricted payroll and BU staff-cost receipt",
-      "expand": "fill"
-    },
-    "LINE-finance-payroll-mobile.dc.html": {
-      "x": 1520,
-      "y": 11916,
-      "w": 390,
-      "h": 844,
-      "page": "lines",
-      "title": "Phone · Payroll matching (restricted)"
     }
   },
   "createdOnFiles": {
@@ -4239,44 +4239,49 @@
       "y": -420
     },
     "lines-Delivery": {
-      "x": 0,
-      "y": 6516,
-      "text": "Delivery lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines"
+      "page": "lines",
+      "text": "Delivery lines",
+      "w": 240,
+      "x": 0,
+      "y": 6516
     },
     "lines-Finance": {
-      "x": 0,
-      "y": 9768,
-      "text": "Finance lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines"
+      "page": "lines",
+      "text": "Finance lines",
+      "w": 240,
+      "x": 0,
+      "y": 9768
     },
     "lines-PMO": {
-      "x": 0,
-      "y": 1700,
-      "text": "PMO lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines"
+      "page": "lines",
+      "text": "PMO lines",
+      "w": 240,
+      "x": 0,
+      "y": 1700
     },
     "lines-Pre-sale": {
-      "x": 0,
-      "y": 5136,
-      "text": "Pre-sale lines",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines"
+      "page": "lines",
+      "text": "Pre-sale lines",
+      "w": 240,
+      "x": 0,
+      "y": 5136
     },
     "lines-title": {
-      "x": 0,
-      "y": -300,
-      "text": "Lines · what each of the 25 lines needs to start, its steps, who acts and what it produces",
       "kind": "title1",
       "maxW": 3800,
-      "page": "lines"
+      "page": "lines",
+      "text": "Lines · what each of the 25 lines needs to start, its steps, who acts and what it produces",
+      "w": 240,
+      "x": 0,
+      "y": -300
     },
     "m-note": {
       "fill": "orange",
@@ -4294,6 +4299,15 @@
       "w": 240,
       "x": 0,
       "y": -300
+    },
+    "open-x2-x4": {
+      "kind": "title1",
+      "maxW": 3200,
+      "page": "open",
+      "text": "To decide: My work queues (X.2, X.3) and Overview (X.4)",
+      "w": 240,
+      "x": 0,
+      "y": 4560
     },
     "p-alerts-15-title": {
       "kind": "title1",
@@ -4394,6 +4408,24 @@
       "x": 0,
       "y": 3895
     },
+    "p-mywork-fin0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-mywork",
+      "text": "Start work · how each Finance back-office line and payroll starts: accounts, schedules, assets, forecast, BU totals, ledger source, payroll (SCR-04)",
+      "w": 240,
+      "x": 0,
+      "y": 6516
+    },
+    "p-mywork-pmo0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-mywork",
+      "text": "Start work · how each running-the-project line starts: weekly report, minutes, issue chase, change, emergency, escalation, leadership report (SCR-04)",
+      "w": 240,
+      "x": 0,
+      "y": 5304
+    },
     "p-mywork-roles": {
       "kind": "title1",
       "maxW": 3800,
@@ -4420,6 +4452,132 @@
       "w": 240,
       "x": 0,
       "y": 1460
+    },
+    "p-overview-pmo0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-overview",
+      "text": "Leadership report: set up, Tola drafting, monthly review, Tuesday published without review, received (SCR-52) · reading it is SCR-12",
+      "w": 240,
+      "x": 0,
+      "y": 2800
+    },
+    "p-presale-row0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "Pre-sale, end to end",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "p-presale-row1": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "1 · Tola suggests answers, the PM reviews each one (SCR-26)",
+      "w": 240,
+      "x": 0,
+      "y": 1776
+    },
+    "p-presale-row10": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "10 · Planning: departments give scope and estimates, Tola prepares readiness (SCR-42)",
+      "w": 240,
+      "x": 0,
+      "y": 14596
+    },
+    "p-presale-row11": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "11 · Client signs the SOW, recorded by the PM (SCR-16) · the SOW draft and review are on the project's Documents (SCR-08)",
+      "w": 240,
+      "x": 0,
+      "y": 15872
+    },
+    "p-presale-row2": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "2 · Teams give input, recorded by the PM (SCR-16)",
+      "w": 240,
+      "x": 0,
+      "y": 3172
+    },
+    "p-presale-row3": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "3 · Review the response · PMO Lead and Engineering Lead (SCR-26)",
+      "w": 240,
+      "x": 0,
+      "y": 4348
+    },
+    "p-presale-row4": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "4 · Costing rule review, only when the rule changes (SCR-39)",
+      "w": 240,
+      "x": 0,
+      "y": 5704
+    },
+    "p-presale-row5": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "5 · Costing sheet: calculate, ask for estimates, adjust (SCR-27)",
+      "w": 240,
+      "x": 0,
+      "y": 6980
+    },
+    "p-presale-row6": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "6 · Commercial approvals in order (SCR-27; the CEO decides on SCR-03)",
+      "w": 240,
+      "x": 0,
+      "y": 8316
+    },
+    "p-presale-row7": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "7 · Submission: draft, review, submitted (SCR-40)",
+      "w": 240,
+      "x": 0,
+      "y": 9552
+    },
+    "p-presale-row8": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "8 · Record the outcome: Won, Lost, Pending or Unknown (SCR-16) · same form, only the section for the result changes",
+      "w": 240,
+      "x": 0,
+      "y": 10788
+    },
+    "p-presale-row8b": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "8b · What each outcome leads to: won → engagement, lost → archive, pending and unknown stay open",
+      "w": 240,
+      "x": 0,
+      "y": 12244
+    },
+    "p-presale-row9": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-presale",
+      "text": "9 · Engagement: planning packet, confirm the PM, register (SCR-41)",
+      "w": 240,
+      "x": 0,
+      "y": 13420
     },
     "p-projects-07-title": {
       "kind": "title1",
@@ -4519,168 +4677,6 @@
       "w": 240,
       "x": 0,
       "y": 9348
-    },
-    "p-setup-13-title": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-setup",
-      "text": "SCR-13 · Setup · roles, rules, visibility",
-      "w": 240,
-      "x": 0,
-      "y": 0
-    },
-    "p-setup-21-title": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-setup",
-      "text": "SCR-21 · Setup · staff accounts",
-      "w": 240,
-      "x": 0,
-      "y": 2364
-    },
-    "p-setup-39": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-setup",
-      "text": "SCR-39 · Costing rule (studio-wide)",
-      "w": 240,
-      "x": 0,
-      "y": 6224
-    },
-    "p-setup-SCR-13-desktop-rules": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-setup",
-      "text": "SCR-13 · Rules · Delegation",
-      "w": 240,
-      "x": 0,
-      "y": 3664
-    },
-    "p-setup-SCR-34-desktop": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-setup",
-      "text": "SCR-34 · Templates",
-      "w": 240,
-      "x": 0,
-      "y": 5024
-    },
-    "p-presale-row0": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "Pre-sale, end to end",
-      "w": 240,
-      "x": 0,
-      "y": 0
-    },
-    "p-presale-row1": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "1 · Tola suggests answers, the PM reviews each one (SCR-26)",
-      "w": 240,
-      "x": 0,
-      "y": 1776
-    },
-    "p-presale-row2": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "2 · Teams give input, recorded by the PM (SCR-16)",
-      "w": 240,
-      "x": 0,
-      "y": 3172
-    },
-    "p-presale-row3": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "3 · Review the response · PMO Lead and Engineering Lead (SCR-26)",
-      "w": 240,
-      "x": 0,
-      "y": 4348
-    },
-    "p-presale-row4": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "4 · Costing rule review, only when the rule changes (SCR-39)",
-      "w": 240,
-      "x": 0,
-      "y": 5704
-    },
-    "p-presale-row5": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "5 · Costing sheet: calculate, ask for estimates, adjust (SCR-27)",
-      "w": 240,
-      "x": 0,
-      "y": 6980
-    },
-    "p-presale-row6": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "6 · Commercial approvals in order (SCR-27; the CEO decides on SCR-03)",
-      "w": 240,
-      "x": 0,
-      "y": 8316
-    },
-    "p-presale-row7": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "7 · Submission: draft, review, submitted (SCR-40)",
-      "w": 240,
-      "x": 0,
-      "y": 9552
-    },
-    "p-presale-row8": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "8 · Record the outcome: Won, Lost, Pending or Unknown (SCR-16) · same form, only the section for the result changes",
-      "w": 240,
-      "x": 0,
-      "y": 10788
-    },
-    "p-presale-row9": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "9 · Engagement: planning packet, confirm the PM, register (SCR-41)",
-      "w": 240,
-      "x": 0,
-      "y": 13420
-    },
-    "p-presale-row8b": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "8b · What each outcome leads to: won → engagement, lost → archive, pending and unknown stay open",
-      "w": 240,
-      "x": 0,
-      "y": 12244
-    },
-    "p-presale-row10": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "10 · Planning: departments give scope and estimates, Tola prepares readiness (SCR-42)",
-      "w": 240,
-      "x": 0,
-      "y": 14596
-    },
-    "p-presale-row11": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-presale",
-      "text": "11 · Client signs the SOW, recorded by the PM (SCR-16) · the SOW draft and review are on the project's Documents (SCR-08)",
-      "w": 240,
-      "x": 0,
-      "y": 15872
     },
     "p-projects-dlv0": {
       "kind": "title1",
@@ -4826,32 +4822,50 @@
       "x": 0,
       "y": 33948
     },
-    "p-overview-pmo0": {
+    "p-setup-13-title": {
       "kind": "title1",
       "maxW": 3800,
-      "page": "p-overview",
-      "text": "Leadership report: set up, Tola drafting, monthly review, Tuesday published without review, received (SCR-52) · reading it is SCR-12",
+      "page": "p-setup",
+      "text": "SCR-13 · Setup · roles, rules, visibility",
       "w": 240,
       "x": 0,
-      "y": 2800
+      "y": 0
     },
-    "p-mywork-pmo0": {
+    "p-setup-21-title": {
       "kind": "title1",
       "maxW": 3800,
-      "page": "p-mywork",
-      "text": "Start work · how each running-the-project line starts: weekly report, minutes, issue chase, change, emergency, escalation, leadership report (SCR-04)",
+      "page": "p-setup",
+      "text": "SCR-21 · Setup · staff accounts",
       "w": 240,
       "x": 0,
-      "y": 5340
+      "y": 2364
     },
-    "p-mywork-fin0": {
+    "p-setup-39": {
       "kind": "title1",
       "maxW": 3800,
-      "page": "p-mywork",
-      "text": "Start work · how each Finance back-office line and payroll starts: accounts, schedules, assets, forecast, BU totals, ledger source, payroll (SCR-04)",
+      "page": "p-setup",
+      "text": "SCR-39 · Costing rule (studio-wide)",
       "w": 240,
       "x": 0,
-      "y": 6516
+      "y": 6224
+    },
+    "p-setup-SCR-13-desktop-rules": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-setup",
+      "text": "SCR-13 · Rules · Delegation",
+      "w": 240,
+      "x": 0,
+      "y": 3664
+    },
+    "p-setup-SCR-34-desktop": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-setup",
+      "text": "SCR-34 · Templates",
+      "w": 240,
+      "x": 0,
+      "y": 5024
     },
     "p-setup-fin0": {
       "kind": "title1",
@@ -4861,15 +4875,6 @@
       "w": 240,
       "x": 0,
       "y": 8024
-    },
-    "open-x2-x4": {
-      "kind": "title1",
-      "maxW": 3200,
-      "page": "open",
-      "text": "To decide: My work queues (X.2, X.3) and Overview (X.4)",
-      "w": 240,
-      "x": 0,
-      "y": 4560
     }
   },
   "order": [
@@ -5053,27 +5058,6 @@
     "LINE-finance-payroll-mobile.dc.html",
     "SCR-25-desktop.dc.html",
     "SCR-25-mobile.dc.html",
-    "SCR-01-desktop.dc.html",
-    "SCR-04-desktop.dc.html",
-    "SCR-14-desktop.dc.html",
-    "SCR-01-desktop-empty.dc.html",
-    "SCR-01-mobile.dc.html",
-    "SCR-04-mobile.dc.html",
-    "SCR-01-mobile-empty.dc.html",
-    "SCR-14-mobile.dc.html",
-    "SCR-04-desktop-validation.dc.html",
-    "SCR-04-mobile-validation.dc.html",
-    "SCR-01-desktop-my-work.dc.html",
-    "SCR-01-mobile-my-work.dc.html",
-    "SCR-01-desktop-filter.dc.html",
-    "SCR-01-mobile-filter.dc.html",
-    "SCR-04-desktop-lines.dc.html",
-    "SCR-04-mobile-lines.dc.html",
-    "SCR-01-mobile-lead.dc.html",
-    "SCR-23-desktop.dc.html",
-    "SCR-23-mobile.dc.html",
-    "SCR-24-desktop.dc.html",
-    "SCR-24-mobile.dc.html",
     "SCR-38-desktop.dc.html",
     "SCR-38-mobile.dc.html",
     "SCR-29-desktop.dc.html",
@@ -5313,6 +5297,32 @@
     "SCR-52-mobile-tuesday.dc.html",
     "SCR-52-desktop-received.dc.html",
     "SCR-52-mobile-received.dc.html",
+    "SCR-13-desktop-finance-rules.dc.html",
+    "SCR-13-mobile-finance-rules.dc.html",
+    "FINANCE-moved-desktop.dc.html",
+    "MYWORK-queue-concepts.dc.html",
+    "SCR-06-overview-concepts.dc.html",
+    "SCR-01-desktop.dc.html",
+    "SCR-04-desktop.dc.html",
+    "SCR-14-desktop.dc.html",
+    "SCR-01-desktop-empty.dc.html",
+    "SCR-01-mobile.dc.html",
+    "SCR-04-mobile.dc.html",
+    "SCR-01-mobile-empty.dc.html",
+    "SCR-14-mobile.dc.html",
+    "SCR-04-desktop-validation.dc.html",
+    "SCR-04-mobile-validation.dc.html",
+    "SCR-01-desktop-my-work.dc.html",
+    "SCR-01-mobile-my-work.dc.html",
+    "SCR-01-desktop-filter.dc.html",
+    "SCR-01-mobile-filter.dc.html",
+    "SCR-04-desktop-lines.dc.html",
+    "SCR-04-mobile-lines.dc.html",
+    "SCR-01-mobile-lead.dc.html",
+    "SCR-23-desktop.dc.html",
+    "SCR-23-mobile.dc.html",
+    "SCR-24-desktop.dc.html",
+    "SCR-24-mobile.dc.html",
     "SCR-04-desktop-weekly.dc.html",
     "SCR-04-mobile-weekly.dc.html",
     "SCR-04-desktop-minutes.dc.html",
@@ -5340,12 +5350,7 @@
     "SCR-04-desktop-ledger.dc.html",
     "SCR-04-mobile-ledger.dc.html",
     "SCR-04-desktop-payroll.dc.html",
-    "SCR-04-mobile-payroll.dc.html",
-    "SCR-13-desktop-finance-rules.dc.html",
-    "SCR-13-mobile-finance-rules.dc.html",
-    "FINANCE-moved-desktop.dc.html",
-    "MYWORK-queue-concepts.dc.html",
-    "SCR-06-overview-concepts.dc.html"
+    "SCR-04-mobile-payroll.dc.html"
   ],
   "pages": [
     {
