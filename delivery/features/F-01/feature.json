@@ -965,9 +965,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-01/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
