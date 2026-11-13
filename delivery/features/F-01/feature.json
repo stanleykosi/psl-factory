@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-01",
   "outcome": "The app frame loads who is signed in and shows only their sections, on phone and desktop, against a contract mock",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "T-FRONTEND-SHELL"
   ],
@@ -145,7 +145,7 @@
         "delivery/features/F-01/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -162,11 +162,25 @@
           ],
           "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:52:17Z",
+          "refs": [
+            "`decodeCookie` in `frontend/mock/server.mjs` catches the throw and keeps the raw value. The test in `frontend/tests/mock-contract.test.ts` covers it."
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "077ad81"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`decodeCookie` in `frontend/mock/server.mjs` catches the throw and keeps the raw value. The test in `frontend/tests/mock-contract.test.ts` covers it."
       ]
     },
     {
@@ -228,7 +242,7 @@
         "delivery/features/F-01/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -245,11 +259,25 @@
           ],
           "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:52:17Z",
+          "refs": [
+            "The inline style is now the `.shell-navend` class in `shell.css`."
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "5a1289f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The inline style is now the `.shell-navend` class in `shell.css`."
       ]
     },
     {
@@ -288,7 +316,7 @@
         "delivery/features/F-01/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -305,11 +333,25 @@
           ],
           "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-13T21:52:17Z",
+          "refs": [
+            "At 720, 900 and 1079 px the name shows in full for all three personas (65, 69 and 88 px wide). At 1080 and 1440 px the full \"name \u00b7 role\" shows. scrollWidth equals the viewport width."
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "5a1289f"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 720, 900 and 1079 px the name shows in full for all three personas (65, 69 and 88 px wide). At 1080 and 1440 px the full \"name \u00b7 role\" shows. scrollWidth equals the viewport width."
       ]
     },
     {
@@ -325,7 +367,7 @@
         "delivery/features/F-01/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -342,11 +384,25 @@
           ],
           "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-13T21:52:17Z",
+          "refs": [
+            "`/nonexistent` shows \"This page doesn't exist.\" with \"Go to My work\", inside the bar at 1440 and with the menu at 390 px. The tab title is \"Page not found \u00b7 PSL Factory\"."
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "473d833"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "`/nonexistent` shows \"This page doesn't exist.\" with \"Go to My work\", inside the bar at 1440 and with the menu at 390 px. The tab title is \"Page not found \u00b7 PSL Factory\"."
       ]
     },
     {
@@ -385,7 +441,7 @@
         "delivery/features/F-01/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -402,11 +458,25 @@
           ],
           "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T21:52:17Z",
+          "refs": [
+            "Measured on the production build of `frontend/` at 96aa11e (port 3121, mock on 3122). `document.documentElement.scrollWidth` equals innerWidth at 720, 740, 768, 820, 900, 1079, 1080, 1440 and 390 for the finance_lead persona, and at 900, 1080 and 1440 for the pm persona. The bar's height is 57px and the SAMPLE DATA label is fully visible at 720px (screenshot `ui-r2-shots/fin-my-work-720.png`)."
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "5a1289f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Measured on the production build of `frontend/` at 96aa11e (port 3121, mock on 3122). `document.documentElement.scrollWidth` equals innerWidth at 720, 740, 768, 820, 900, 1079, 1080, 1440 and 390 for the finance_lead persona, and at 900, 1080 and 1440 for the pm persona. The bar's height is 57px and the SAMPLE DATA label is fully visible at 720px (screenshot `ui-r2-shots/fin-my-work-720.png`)."
       ]
     },
     {
@@ -422,7 +492,7 @@
         "delivery/features/F-01/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -439,11 +509,25 @@
           ],
           "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T21:52:17Z",
+          "refs": [
+            "The design-owner decision is implemented as recorded. At 720, 740, 768, 820, 900 and 1079px the who-line shows the name only: \"Ada Okafor\" (65px, fully visible, no ellipsis) and \"Tunde Bello\" (69px). The role span is 1px, clipped, and kept in the text, so \"Ada Okafor \u00b7 Finance Lead\" is still the accessible text. At 1080 and 1440 the role is visible: \"Ada Okafor \u00b7 Finance Lead\" (152px) and \"Tunde Bello \u00b7 PM\" (98px), with no overflow. Screenshots: `ui-r2-shots/fin-my-work-720.png`, `ui-r2-shots/fin-my-work-1080.png`, `ui-r2-shots/fin-my-work-1440.png`."
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "5a1289f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The design-owner decision is implemented as recorded. At 720, 740, 768, 820, 900 and 1079px the who-line shows the name only: \"Ada Okafor\" (65px, fully visible, no ellipsis) and \"Tunde Bello\" (69px). The role span is 1px, clipped, and kept in the text, so \"Ada Okafor \u00b7 Finance Lead\" is still the accessible text. At 1080 and 1440 the role is visible: \"Ada Okafor \u00b7 Finance Lead\" (152px) and \"Tunde Bello \u00b7 PM\" (98px), with no overflow. Screenshots: `ui-r2-shots/fin-my-work-720.png`, `ui-r2-shots/fin-my-work-1080.png`, `ui-r2-shots/fin-my-work-1440.png`."
       ]
     },
     {
@@ -459,7 +543,7 @@
         "delivery/features/F-01/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -476,11 +560,94 @@
           ],
           "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T21:52:17Z",
+          "refs": [
+            "With the 404 scenario, the frame shows a white card with a 2px signal-red border, the mono eyebrow \"ERROR \u00b7 COULDN'T LOAD\" in signal-ink (about 7.5:1 on white), the message, \"Reference not_found for support.\", and a bordered \"Try again\" button (200px on desktop, full width on phone). This matches the STATES-desktop error card. The card has 14px padding inside its 2px border, which matches the board's measured spacing (text starts 16px from the outer edge). The \"Last loaded \u2026\" part of the board line is left out, which the builder explains and which C5 allows. The 401 and 403 frames keep the callout strip, as the round-1 review already accepted."
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "5a1289f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "With the 404 scenario, the frame shows a white card with a 2px signal-red border, the mono eyebrow \"ERROR \u00b7 COULDN'T LOAD\" in signal-ink (about 7.5:1 on white), the message, \"Reference not_found for support.\", and a bordered \"Try again\" button (200px on desktop, full width on phone). This matches the STATES-desktop error card. The card has 14px padding inside its 2px border, which matches the board's measured spacing (text starts 16px from the outer edge). The \"Last loaded \u2026\" part of the board line is left out, which the builder explains and which C5 allows. The 401 and 403 frames keep the callout strip, as the round-1 review already accepted."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/shell/DestinationPage.tsx` `UnknownPage`: `visibleDestinations(...)[0]` assumes at least one visible destination. A persona with none would throw on `first.href`. The current mock personas all have destinations, so this is only a guard for FE-CONNECT-1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:52:17Z",
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/next.config.ts`: `allowedDevOrigins: ['127.0.0.1']` is dev only and harmless. Carry TECH-1-2 (fail closed on a missing `API_ORIGIN` in production) and TECH-1-5 (jsdom needs Node >=24.15 while `engines` says `>=24`) into FE-CONNECT-1 or the Node upgrade.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T21:52:17Z",
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Between 720px and 1079px the top bar uses `padding: 0 var(--space-4)` (16px), while the page below uses `--space-6` (28px). The wordmark \"PSL FACTORY\" starts at x=16 and the \"My work\" title starts at x=28, so the two left edges do not line up. At 1080px both are 28px again. Expected: per spec C5 rule (e) and SCR-01, the desktop gutter is 28px, and the bar and page share one edge. The builder's Notes call the 16px gutter \"the cost of fitting five links\", but the design-owner decision of 13 Nov covered only the name and role, not the gutter. Actual: a visible 12px step at 720 to 1079px (frontend/src/styles/shell.css:51). The design owner decides which fix applies. Fix one of two ways: (a) the design owner records the 16px gutter in spec.md as an approved deviation for 720 to 1079px, then this finding closes; or (b) frontend keeps 28px and tightens only the link gaps and padding to fit at 720px, then re-measures scrollWidth at 720 to 760px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-01/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T21:52:17Z",
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40"
+        }
       ]
     }
   ],
@@ -536,6 +703,61 @@
           "snapshot_ref": "f6e9a9ecdc299700381927a13d66386138d83e5c",
           "evidence_refs": [
             "delivery/features/F-01/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "evidence_refs": [
+            "delivery/features/F-01/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-01/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "evidence_refs": [
+            "delivery/features/F-01/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (visual consistency with the approved SCR-01 and STATES boards, layout at phone and desktop widths, contrast)",
+          "snapshot_ref": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "evidence_refs": [
+            "delivery/features/F-01/round-2/review-ui.md"
           ]
         }
       }
@@ -661,7 +883,7 @@
     }
   },
   "created_at": "2026-11-13T16:16:25Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 3,
   "history": [
     {
@@ -711,6 +933,22 @@
       "round": 2,
       "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-13T21:52:17Z",
+      "round": 2,
+      "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T21:52:17Z",
+      "round": 3,
+      "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+      "reason": null
     }
   ],
   "routing": {
@@ -726,10 +964,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
