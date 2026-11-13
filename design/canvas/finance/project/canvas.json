@@ -1,0 +1,1298 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-13T12:00:00Z"
+  },
+  "title": "PSL Factory · Finance and Payroll design",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": -1240,
+      "w": 1440,
+      "h": 900,
+      "title": "Start here",
+      "expand": "fill"
+    },
+    "SCR-09-desktop-error.dc.html": {
+      "expand": "fill",
+      "h": 720,
+      "title": "Import · file error",
+      "w": 1440,
+      "x": 1990,
+      "y": 1500
+    },
+    "SCR-09-desktop.dc.html": {
+      "expand": "fill",
+      "h": 940,
+      "is_interactive": true,
+      "title": "J-06 · 1 · Import and check",
+      "w": 1440,
+      "x": 0,
+      "y": 1500
+    },
+    "SCR-09-mobile-error.dc.html": {
+      "h": 844,
+      "title": "Phone · Import · file error",
+      "w": 390,
+      "x": 3510,
+      "y": 1500
+    },
+    "SCR-09-mobile.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "J-06 · Phone · import",
+      "w": 390,
+      "x": 1520,
+      "y": 1500
+    },
+    "SCR-18-desktop-permission.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "title": "J-06 · State · Finance sees totals only",
+      "w": 1440,
+      "x": 1990,
+      "y": 2840
+    },
+    "SCR-18-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "title": "J-06 · 2 · Zainab matches staff",
+      "w": 1440,
+      "x": 0,
+      "y": 2840
+    },
+    "SCR-18-mobile-permission.dc.html": {
+      "h": 844,
+      "title": "J-06 · Phone · Finance view",
+      "w": 390,
+      "x": 3510,
+      "y": 2840
+    },
+    "SCR-18-mobile.dc.html": {
+      "h": 844,
+      "title": "J-06 · Phone · matching",
+      "w": 390,
+      "x": 1520,
+      "y": 2840
+    },
+    "SCR-20-desktop-record.dc.html": {
+      "expand": "fill",
+      "h": 960,
+      "title": "Record a payment received",
+      "w": 1440,
+      "x": 1990,
+      "y": 140
+    },
+    "SCR-20-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "title": "Payments and follow-up",
+      "w": 1440,
+      "x": 0,
+      "y": 140
+    },
+    "SCR-20-mobile-record.dc.html": {
+      "h": 844,
+      "title": "Phone · Record a payment received",
+      "w": 390,
+      "x": 3510,
+      "y": 140
+    },
+    "SCR-20-mobile.dc.html": {
+      "h": 844,
+      "title": "Phone · Payments and follow-up",
+      "w": 390,
+      "x": 1520,
+      "y": 140
+    },
+    "SCR-32-desktop.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "title": "Payment reminder · draft to send",
+      "w": 1440,
+      "x": 0,
+      "y": 4120
+    },
+    "SCR-32-mobile.dc.html": {
+      "h": 844,
+      "title": "Phone · payment reminder · draft to send",
+      "w": 390,
+      "x": 1520,
+      "y": 4120
+    },
+    "SCR-36-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "title": "Month-end checklist",
+      "w": 1440,
+      "x": 2070,
+      "y": 4120
+    },
+    "SCR-36-mobile.dc.html": {
+      "h": 844,
+      "title": "Phone · month-end checklist",
+      "w": 390,
+      "x": 3590,
+      "y": 4120
+    },
+    "SCR-37-desktop.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "title": "Payroll corrections",
+      "w": 1440,
+      "x": 0,
+      "y": 5400
+    },
+    "SCR-37-mobile.dc.html": {
+      "h": 844,
+      "title": "Phone · payroll corrections",
+      "w": 390,
+      "x": 1520,
+      "y": 5400
+    },
+    "SCR-02-desktop-evidence-asked.dc.html": {
+      "x": 0,
+      "y": 6676,
+      "w": 1440,
+      "h": 900,
+      "title": "Invoice waiting for missing evidence",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-evidence-asked.dc.html": {
+      "x": 1520,
+      "y": 6676,
+      "w": 390,
+      "h": 844,
+      "title": "Waiting for evidence · phone"
+    },
+    "SCR-02-desktop-evidence-supplied.dc.html": {
+      "x": 1990,
+      "y": 6676,
+      "w": 1440,
+      "h": 900,
+      "title": "Supply missing evidence",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-evidence-supplied.dc.html": {
+      "x": 3510,
+      "y": 6676,
+      "w": 390,
+      "h": 844,
+      "title": "Supply evidence · phone"
+    },
+    "SCR-02-desktop-returned.dc.html": {
+      "x": 3980,
+      "y": 6676,
+      "w": 1440,
+      "h": 900,
+      "title": "Invoice returned by the reviewer",
+      "expand": "fill"
+    },
+    "SCR-02-mobile-returned.dc.html": {
+      "x": 5500,
+      "y": 6676,
+      "w": 390,
+      "h": 844,
+      "title": "Invoice returned · phone"
+    },
+    "SCR-03-desktop-own.dc.html": {
+      "x": 5970,
+      "y": 6676,
+      "w": 1440,
+      "h": 860,
+      "title": "You can't review an invoice you prepared",
+      "expand": "fill"
+    },
+    "SCR-03-mobile-own.dc.html": {
+      "x": 7490,
+      "y": 6676,
+      "w": 390,
+      "h": 844,
+      "title": "Can't review own invoice · phone"
+    },
+    "FINANCE-flow-desktop.dc.html": {
+      "x": 0,
+      "y": 7852,
+      "w": 1440,
+      "h": 1240,
+      "title": "Finance back office and payroll · end to end",
+      "expand": "fill"
+    },
+    "SCR-53-desktop-quarantined.dc.html": {
+      "x": 0,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Accounting file held at intake",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-quarantined.dc.html": {
+      "x": 1520,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Accounting file held at intake on a phone"
+    },
+    "SCR-53-desktop-units.dc.html": {
+      "x": 1990,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Accounting file needs its units",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-units.dc.html": {
+      "x": 3510,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Accounting file needs its units on a phone"
+    },
+    "SCR-53-desktop-investigating.dc.html": {
+      "x": 3980,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Chidi investigating the accounts",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-investigating.dc.html": {
+      "x": 5500,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Chidi investigating the accounts on a phone"
+    },
+    "SCR-53-desktop-reviews.dc.html": {
+      "x": 5970,
+      "y": 9368,
+      "w": 1440,
+      "h": 1000,
+      "title": "Six reviews for the accounts",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-reviews.dc.html": {
+      "x": 7490,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Six reviews for the accounts on a phone"
+    },
+    "SCR-53-desktop-owner-needed.dc.html": {
+      "x": 7960,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "No eligible reviewer",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-owner-needed.dc.html": {
+      "x": 9480,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "No eligible reviewer on a phone"
+    },
+    "SCR-53-desktop-setup-needed.dc.html": {
+      "x": 9950,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Accounts rules not set",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-setup-needed.dc.html": {
+      "x": 11470,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Accounts rules not set on a phone"
+    },
+    "SCR-53-desktop-returned.dc.html": {
+      "x": 11940,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Accounts source returned for rework",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-returned.dc.html": {
+      "x": 13460,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Accounts source returned for rework on a phone"
+    },
+    "SCR-53-desktop-drafting.dc.html": {
+      "x": 13930,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Calculating and drafting the report",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-drafting.dc.html": {
+      "x": 15450,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Calculating and drafting the report on a phone"
+    },
+    "SCR-53-desktop-publishing.dc.html": {
+      "x": 15920,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Report published, receipts coming in",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-publishing.dc.html": {
+      "x": 17440,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Report published, receipts coming in on a phone"
+    },
+    "SCR-53-desktop-uncertain.dc.html": {
+      "x": 17910,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Report delivery uncertain",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-uncertain.dc.html": {
+      "x": 19430,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Report delivery uncertain on a phone"
+    },
+    "SCR-53-desktop-verified.dc.html": {
+      "x": 19900,
+      "y": 9368,
+      "w": 1440,
+      "h": 960,
+      "title": "Management accounts verified",
+      "expand": "fill"
+    },
+    "SCR-53-mobile-verified.dc.html": {
+      "x": 21420,
+      "y": 9368,
+      "w": 390,
+      "h": 844,
+      "title": "Management accounts verified on a phone"
+    },
+    "SCR-54-desktop-investigating.dc.html": {
+      "x": 0,
+      "y": 10644,
+      "w": 1440,
+      "h": 960,
+      "title": "Chidi investigating income detail",
+      "expand": "fill"
+    },
+    "SCR-54-mobile-investigating.dc.html": {
+      "x": 1520,
+      "y": 10644,
+      "w": 390,
+      "h": 844,
+      "title": "Chidi investigating income detail on a phone"
+    },
+    "SCR-54-desktop-held.dc.html": {
+      "x": 1990,
+      "y": 10644,
+      "w": 1440,
+      "h": 960,
+      "title": "Schedule held",
+      "expand": "fill"
+    },
+    "SCR-54-mobile-held.dc.html": {
+      "x": 3510,
+      "y": 10644,
+      "w": 390,
+      "h": 844,
+      "title": "Schedule held on a phone"
+    },
+    "SCR-54-desktop-review.dc.html": {
+      "x": 3980,
+      "y": 10644,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review the income schedule",
+      "expand": "fill"
+    },
+    "SCR-54-mobile-review.dc.html": {
+      "x": 5500,
+      "y": 10644,
+      "w": 390,
+      "h": 844,
+      "title": "Review the income schedule on a phone"
+    },
+    "SCR-54-desktop-returned.dc.html": {
+      "x": 5970,
+      "y": 10644,
+      "w": 1440,
+      "h": 960,
+      "title": "Schedule returned",
+      "expand": "fill"
+    },
+    "SCR-54-mobile-returned.dc.html": {
+      "x": 7490,
+      "y": 10644,
+      "w": 390,
+      "h": 844,
+      "title": "Schedule returned on a phone"
+    },
+    "SCR-54-desktop-verified.dc.html": {
+      "x": 7960,
+      "y": 10644,
+      "w": 1440,
+      "h": 960,
+      "title": "Income schedule verified",
+      "expand": "fill"
+    },
+    "SCR-54-mobile-verified.dc.html": {
+      "x": 9480,
+      "y": 10644,
+      "w": 390,
+      "h": 844,
+      "title": "Income schedule verified on a phone"
+    },
+    "SCR-54-desktop-export.dc.html": {
+      "x": 9950,
+      "y": 10644,
+      "w": 1440,
+      "h": 1000,
+      "title": "Export as an accounting adjustment",
+      "expand": "fill"
+    },
+    "SCR-54-mobile-export.dc.html": {
+      "x": 11470,
+      "y": 10644,
+      "w": 390,
+      "h": 844,
+      "title": "Export as an accounting adjustment on a phone"
+    },
+    "SCR-54-desktop-withdrawn.dc.html": {
+      "x": 11940,
+      "y": 10644,
+      "w": 1440,
+      "h": 960,
+      "title": "Approval withdrawn",
+      "expand": "fill"
+    },
+    "SCR-54-mobile-withdrawn.dc.html": {
+      "x": 13460,
+      "y": 10644,
+      "w": 390,
+      "h": 844,
+      "title": "Approval withdrawn on a phone"
+    },
+    "SCR-55-desktop-investigating.dc.html": {
+      "x": 0,
+      "y": 11920,
+      "w": 1440,
+      "h": 960,
+      "title": "Chidi investigating the asset register",
+      "expand": "fill"
+    },
+    "SCR-55-mobile-investigating.dc.html": {
+      "x": 1520,
+      "y": 11920,
+      "w": 390,
+      "h": 844,
+      "title": "Chidi investigating the asset register on a phone"
+    },
+    "SCR-55-desktop-register-review.dc.html": {
+      "x": 1990,
+      "y": 11920,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review the asset register",
+      "expand": "fill"
+    },
+    "SCR-55-mobile-register-review.dc.html": {
+      "x": 3510,
+      "y": 11920,
+      "w": 390,
+      "h": 844,
+      "title": "Review the asset register on a phone"
+    },
+    "SCR-55-desktop-date-review.dc.html": {
+      "x": 3980,
+      "y": 11920,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review unclear in-service dates",
+      "expand": "fill"
+    },
+    "SCR-55-mobile-date-review.dc.html": {
+      "x": 5500,
+      "y": 11920,
+      "w": 390,
+      "h": 844,
+      "title": "Review unclear in-service dates on a phone"
+    },
+    "SCR-55-desktop-calculating.dc.html": {
+      "x": 5970,
+      "y": 11920,
+      "w": 1440,
+      "h": 960,
+      "title": "Calculating the schedule",
+      "expand": "fill"
+    },
+    "SCR-55-mobile-calculating.dc.html": {
+      "x": 7490,
+      "y": 11920,
+      "w": 390,
+      "h": 844,
+      "title": "Calculating the schedule on a phone"
+    },
+    "SCR-55-desktop-schedule-review.dc.html": {
+      "x": 7960,
+      "y": 11920,
+      "w": 1440,
+      "h": 1040,
+      "title": "Review the asset schedule",
+      "expand": "fill"
+    },
+    "SCR-55-mobile-schedule-review.dc.html": {
+      "x": 9480,
+      "y": 11920,
+      "w": 390,
+      "h": 844,
+      "title": "Review the asset schedule on a phone"
+    },
+    "SCR-55-desktop-returned.dc.html": {
+      "x": 9950,
+      "y": 11920,
+      "w": 1440,
+      "h": 960,
+      "title": "Asset schedule returned",
+      "expand": "fill"
+    },
+    "SCR-55-mobile-returned.dc.html": {
+      "x": 11470,
+      "y": 11920,
+      "w": 390,
+      "h": 844,
+      "title": "Asset schedule returned on a phone"
+    },
+    "SCR-55-desktop-verified.dc.html": {
+      "x": 11940,
+      "y": 11920,
+      "w": 1440,
+      "h": 960,
+      "title": "Asset schedule verified",
+      "expand": "fill"
+    },
+    "SCR-55-mobile-verified.dc.html": {
+      "x": 13460,
+      "y": 11920,
+      "w": 390,
+      "h": 844,
+      "title": "Asset schedule verified on a phone"
+    },
+    "SCR-56-desktop-investigating.dc.html": {
+      "x": 0,
+      "y": 13236,
+      "w": 1440,
+      "h": 960,
+      "title": "Chidi investigating the forecast",
+      "expand": "fill"
+    },
+    "SCR-56-mobile-investigating.dc.html": {
+      "x": 1520,
+      "y": 13236,
+      "w": 390,
+      "h": 844,
+      "title": "Chidi investigating the forecast on a phone"
+    },
+    "SCR-56-desktop-review.dc.html": {
+      "x": 1990,
+      "y": 13236,
+      "w": 1440,
+      "h": 1040,
+      "title": "Review the cash forecast",
+      "expand": "fill"
+    },
+    "SCR-56-mobile-review.dc.html": {
+      "x": 3510,
+      "y": 13236,
+      "w": 390,
+      "h": 844,
+      "title": "Review the cash forecast on a phone"
+    },
+    "SCR-56-desktop-group-rows.dc.html": {
+      "x": 3980,
+      "y": 13236,
+      "w": 1440,
+      "h": 960,
+      "title": "Choose what the group may see",
+      "expand": "fill"
+    },
+    "SCR-56-mobile-group-rows.dc.html": {
+      "x": 5500,
+      "y": 13236,
+      "w": 390,
+      "h": 844,
+      "title": "Choose what the group may see on a phone"
+    },
+    "SCR-56-desktop-group-review.dc.html": {
+      "x": 5970,
+      "y": 13236,
+      "w": 1440,
+      "h": 1000,
+      "title": "Group review",
+      "expand": "fill"
+    },
+    "SCR-56-mobile-group-review.dc.html": {
+      "x": 7490,
+      "y": 13236,
+      "w": 390,
+      "h": 844,
+      "title": "Group review on a phone"
+    },
+    "SCR-56-desktop-uncertain.dc.html": {
+      "x": 7960,
+      "y": 13236,
+      "w": 1440,
+      "h": 960,
+      "title": "Forecast delivery uncertain",
+      "expand": "fill"
+    },
+    "SCR-56-mobile-uncertain.dc.html": {
+      "x": 9480,
+      "y": 13236,
+      "w": 390,
+      "h": 844,
+      "title": "Forecast delivery uncertain on a phone"
+    },
+    "SCR-56-desktop-verified.dc.html": {
+      "x": 9950,
+      "y": 13236,
+      "w": 1440,
+      "h": 960,
+      "title": "Forecast received",
+      "expand": "fill"
+    },
+    "SCR-56-mobile-verified.dc.html": {
+      "x": 11470,
+      "y": 13236,
+      "w": 390,
+      "h": 844,
+      "title": "Forecast received on a phone"
+    },
+    "SCR-56-desktop-actuals.dc.html": {
+      "x": 11940,
+      "y": 13236,
+      "w": 1440,
+      "h": 960,
+      "title": "Record and match actuals",
+      "expand": "fill"
+    },
+    "SCR-56-mobile-actuals.dc.html": {
+      "x": 13460,
+      "y": 13236,
+      "w": 390,
+      "h": 844,
+      "title": "Record and match actuals on a phone"
+    },
+    "SCR-57-desktop-source-review.dc.html": {
+      "x": 0,
+      "y": 14552,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review BU source and exception rules",
+      "expand": "fill"
+    },
+    "SCR-57-mobile-source-review.dc.html": {
+      "x": 1520,
+      "y": 14552,
+      "w": 390,
+      "h": 844,
+      "title": "Review BU source and exception rules on a phone"
+    },
+    "SCR-57-desktop-investigating.dc.html": {
+      "x": 1990,
+      "y": 14552,
+      "w": 1440,
+      "h": 960,
+      "title": "Chidi investigating BU totals",
+      "expand": "fill"
+    },
+    "SCR-57-mobile-investigating.dc.html": {
+      "x": 3510,
+      "y": 14552,
+      "w": 390,
+      "h": 844,
+      "title": "Chidi investigating BU totals on a phone"
+    },
+    "SCR-57-desktop-held.dc.html": {
+      "x": 3980,
+      "y": 14552,
+      "w": 1440,
+      "h": 960,
+      "title": "BU totals held",
+      "expand": "fill"
+    },
+    "SCR-57-mobile-held.dc.html": {
+      "x": 5500,
+      "y": 14552,
+      "w": 390,
+      "h": 844,
+      "title": "BU totals held on a phone"
+    },
+    "SCR-57-desktop-result-review.dc.html": {
+      "x": 5970,
+      "y": 14552,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review BU totals",
+      "expand": "fill"
+    },
+    "SCR-57-mobile-result-review.dc.html": {
+      "x": 7490,
+      "y": 14552,
+      "w": 390,
+      "h": 844,
+      "title": "Review BU totals on a phone"
+    },
+    "SCR-57-desktop-publish.dc.html": {
+      "x": 7960,
+      "y": 14552,
+      "w": 1440,
+      "h": 960,
+      "title": "Publish BU totals",
+      "expand": "fill"
+    },
+    "SCR-57-mobile-publish.dc.html": {
+      "x": 9480,
+      "y": 14552,
+      "w": 390,
+      "h": 844,
+      "title": "Publish BU totals on a phone"
+    },
+    "SCR-57-desktop-receipts.dc.html": {
+      "x": 9950,
+      "y": 14552,
+      "w": 1440,
+      "h": 960,
+      "title": "Recipients confirm receipt",
+      "expand": "fill"
+    },
+    "SCR-57-mobile-receipts.dc.html": {
+      "x": 11470,
+      "y": 14552,
+      "w": 390,
+      "h": 844,
+      "title": "Recipients confirm receipt on a phone"
+    },
+    "SCR-57-desktop-verified.dc.html": {
+      "x": 11940,
+      "y": 14552,
+      "w": 1440,
+      "h": 960,
+      "title": "BU totals verified",
+      "expand": "fill"
+    },
+    "SCR-57-mobile-verified.dc.html": {
+      "x": 13460,
+      "y": 14552,
+      "w": 390,
+      "h": 844,
+      "title": "BU totals verified on a phone"
+    },
+    "SCR-58-desktop-investigating.dc.html": {
+      "x": 0,
+      "y": 15828,
+      "w": 1440,
+      "h": 960,
+      "title": "Chidi investigating a ledger source",
+      "expand": "fill"
+    },
+    "SCR-58-mobile-investigating.dc.html": {
+      "x": 1520,
+      "y": 15828,
+      "w": 390,
+      "h": 844,
+      "title": "Chidi investigating a ledger source on a phone"
+    },
+    "SCR-58-desktop-duplicate.dc.html": {
+      "x": 1990,
+      "y": 15828,
+      "w": 1440,
+      "h": 960,
+      "title": "Ledger source refused as a duplicate",
+      "expand": "fill"
+    },
+    "SCR-58-mobile-duplicate.dc.html": {
+      "x": 3510,
+      "y": 15828,
+      "w": 390,
+      "h": 844,
+      "title": "Ledger source refused as a duplicate on a phone"
+    },
+    "SCR-58-desktop-observe.dc.html": {
+      "x": 3980,
+      "y": 15828,
+      "w": 1440,
+      "h": 960,
+      "title": "Record what you found in QuickBooks",
+      "expand": "fill"
+    },
+    "SCR-58-mobile-observe.dc.html": {
+      "x": 5500,
+      "y": 15828,
+      "w": 390,
+      "h": 844,
+      "title": "Record what you found in QuickBooks on a phone"
+    },
+    "SCR-58-desktop-review.dc.html": {
+      "x": 5970,
+      "y": 15828,
+      "w": 1440,
+      "h": 1000,
+      "title": "Independent review of a ledger source",
+      "expand": "fill"
+    },
+    "SCR-58-mobile-review.dc.html": {
+      "x": 7490,
+      "y": 15828,
+      "w": 390,
+      "h": 844,
+      "title": "Independent review of a ledger source on a phone"
+    },
+    "SCR-58-desktop-rejected.dc.html": {
+      "x": 7960,
+      "y": 15828,
+      "w": 1440,
+      "h": 960,
+      "title": "Ledger source rejected",
+      "expand": "fill"
+    },
+    "SCR-58-mobile-rejected.dc.html": {
+      "x": 9480,
+      "y": 15828,
+      "w": 390,
+      "h": 844,
+      "title": "Ledger source rejected on a phone"
+    },
+    "SCR-58-desktop-verified.dc.html": {
+      "x": 9950,
+      "y": 15828,
+      "w": 1440,
+      "h": 960,
+      "title": "Ledger reference verified",
+      "expand": "fill"
+    },
+    "SCR-58-mobile-verified.dc.html": {
+      "x": 11470,
+      "y": 15828,
+      "w": 390,
+      "h": 844,
+      "title": "Ledger reference verified on a phone"
+    },
+    "SCR-59-desktop-input-review.dc.html": {
+      "x": 0,
+      "y": 17104,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review each payroll input",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-input-review.dc.html": {
+      "x": 1520,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Review each payroll input on a phone"
+    },
+    "SCR-59-desktop-combine-review.dc.html": {
+      "x": 1990,
+      "y": 17104,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review the combined payroll",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-combine-review.dc.html": {
+      "x": 3510,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Review the combined payroll on a phone"
+    },
+    "SCR-59-desktop-match-held.dc.html": {
+      "x": 3980,
+      "y": 17104,
+      "w": 1440,
+      "h": 960,
+      "title": "Matching held: no HR snapshot receipt",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-match-held.dc.html": {
+      "x": 5500,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Matching held: no HR snapshot receipt on a phone"
+    },
+    "SCR-59-desktop-match-review.dc.html": {
+      "x": 5970,
+      "y": 17104,
+      "w": 1440,
+      "h": 1000,
+      "title": "Review the staff match",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-match-review.dc.html": {
+      "x": 7490,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Review the staff match on a phone"
+    },
+    "SCR-59-desktop-totals-review.dc.html": {
+      "x": 7960,
+      "y": 17104,
+      "w": 1440,
+      "h": 1040,
+      "title": "Review payroll totals",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-totals-review.dc.html": {
+      "x": 9480,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Review payroll totals on a phone"
+    },
+    "SCR-59-desktop-publish.dc.html": {
+      "x": 9950,
+      "y": 17104,
+      "w": 1440,
+      "h": 960,
+      "title": "Publish payroll totals",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-publish.dc.html": {
+      "x": 11470,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Publish payroll totals on a phone"
+    },
+    "SCR-59-desktop-receipts.dc.html": {
+      "x": 11940,
+      "y": 17104,
+      "w": 1440,
+      "h": 960,
+      "title": "Waiting for payroll receipts",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-receipts.dc.html": {
+      "x": 13460,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Waiting for payroll receipts on a phone"
+    },
+    "SCR-59-desktop-verified.dc.html": {
+      "x": 13930,
+      "y": 17104,
+      "w": 1440,
+      "h": 960,
+      "title": "Payroll totals verified",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-verified.dc.html": {
+      "x": 15450,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Payroll totals verified on a phone"
+    },
+    "SCR-59-desktop-followup.dc.html": {
+      "x": 15920,
+      "y": 17104,
+      "w": 1440,
+      "h": 960,
+      "title": "Cancelled after publishing: follow-up needed",
+      "expand": "fill"
+    },
+    "SCR-59-mobile-followup.dc.html": {
+      "x": 17440,
+      "y": 17104,
+      "w": 390,
+      "h": 844,
+      "title": "Cancelled after publishing: follow-up needed on a phone"
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "SCR-09-desktop.dc.html",
+    "SCR-18-desktop.dc.html",
+    "SCR-18-desktop-permission.dc.html",
+    "SCR-09-mobile.dc.html",
+    "SCR-18-mobile.dc.html",
+    "SCR-18-mobile-permission.dc.html",
+    "SCR-09-desktop-error.dc.html",
+    "SCR-09-mobile-error.dc.html",
+    "SCR-20-desktop.dc.html",
+    "SCR-20-mobile.dc.html",
+    "SCR-20-desktop-record.dc.html",
+    "SCR-20-mobile-record.dc.html",
+    "SCR-32-desktop.dc.html",
+    "SCR-32-mobile.dc.html",
+    "SCR-36-desktop.dc.html",
+    "SCR-36-mobile.dc.html",
+    "SCR-37-desktop.dc.html",
+    "SCR-37-mobile.dc.html",
+    "SCR-02-desktop-evidence-asked.dc.html",
+    "SCR-02-mobile-evidence-asked.dc.html",
+    "SCR-02-desktop-evidence-supplied.dc.html",
+    "SCR-02-mobile-evidence-supplied.dc.html",
+    "SCR-02-desktop-returned.dc.html",
+    "SCR-02-mobile-returned.dc.html",
+    "SCR-03-desktop-own.dc.html",
+    "SCR-03-mobile-own.dc.html",
+    "FINANCE-flow-desktop.dc.html",
+    "SCR-53-desktop-quarantined.dc.html",
+    "SCR-53-mobile-quarantined.dc.html",
+    "SCR-53-desktop-units.dc.html",
+    "SCR-53-mobile-units.dc.html",
+    "SCR-53-desktop-investigating.dc.html",
+    "SCR-53-mobile-investigating.dc.html",
+    "SCR-53-desktop-reviews.dc.html",
+    "SCR-53-mobile-reviews.dc.html",
+    "SCR-53-desktop-owner-needed.dc.html",
+    "SCR-53-mobile-owner-needed.dc.html",
+    "SCR-53-desktop-setup-needed.dc.html",
+    "SCR-53-mobile-setup-needed.dc.html",
+    "SCR-53-desktop-returned.dc.html",
+    "SCR-53-mobile-returned.dc.html",
+    "SCR-53-desktop-drafting.dc.html",
+    "SCR-53-mobile-drafting.dc.html",
+    "SCR-53-desktop-publishing.dc.html",
+    "SCR-53-mobile-publishing.dc.html",
+    "SCR-53-desktop-uncertain.dc.html",
+    "SCR-53-mobile-uncertain.dc.html",
+    "SCR-53-desktop-verified.dc.html",
+    "SCR-53-mobile-verified.dc.html",
+    "SCR-54-desktop-investigating.dc.html",
+    "SCR-54-mobile-investigating.dc.html",
+    "SCR-54-desktop-held.dc.html",
+    "SCR-54-mobile-held.dc.html",
+    "SCR-54-desktop-review.dc.html",
+    "SCR-54-mobile-review.dc.html",
+    "SCR-54-desktop-returned.dc.html",
+    "SCR-54-mobile-returned.dc.html",
+    "SCR-54-desktop-verified.dc.html",
+    "SCR-54-mobile-verified.dc.html",
+    "SCR-54-desktop-export.dc.html",
+    "SCR-54-mobile-export.dc.html",
+    "SCR-54-desktop-withdrawn.dc.html",
+    "SCR-54-mobile-withdrawn.dc.html",
+    "SCR-55-desktop-investigating.dc.html",
+    "SCR-55-mobile-investigating.dc.html",
+    "SCR-55-desktop-register-review.dc.html",
+    "SCR-55-mobile-register-review.dc.html",
+    "SCR-55-desktop-date-review.dc.html",
+    "SCR-55-mobile-date-review.dc.html",
+    "SCR-55-desktop-calculating.dc.html",
+    "SCR-55-mobile-calculating.dc.html",
+    "SCR-55-desktop-schedule-review.dc.html",
+    "SCR-55-mobile-schedule-review.dc.html",
+    "SCR-55-desktop-returned.dc.html",
+    "SCR-55-mobile-returned.dc.html",
+    "SCR-55-desktop-verified.dc.html",
+    "SCR-55-mobile-verified.dc.html",
+    "SCR-56-desktop-investigating.dc.html",
+    "SCR-56-mobile-investigating.dc.html",
+    "SCR-56-desktop-review.dc.html",
+    "SCR-56-mobile-review.dc.html",
+    "SCR-56-desktop-group-rows.dc.html",
+    "SCR-56-mobile-group-rows.dc.html",
+    "SCR-56-desktop-group-review.dc.html",
+    "SCR-56-mobile-group-review.dc.html",
+    "SCR-56-desktop-uncertain.dc.html",
+    "SCR-56-mobile-uncertain.dc.html",
+    "SCR-56-desktop-verified.dc.html",
+    "SCR-56-mobile-verified.dc.html",
+    "SCR-56-desktop-actuals.dc.html",
+    "SCR-56-mobile-actuals.dc.html",
+    "SCR-57-desktop-source-review.dc.html",
+    "SCR-57-mobile-source-review.dc.html",
+    "SCR-57-desktop-investigating.dc.html",
+    "SCR-57-mobile-investigating.dc.html",
+    "SCR-57-desktop-held.dc.html",
+    "SCR-57-mobile-held.dc.html",
+    "SCR-57-desktop-result-review.dc.html",
+    "SCR-57-mobile-result-review.dc.html",
+    "SCR-57-desktop-publish.dc.html",
+    "SCR-57-mobile-publish.dc.html",
+    "SCR-57-desktop-receipts.dc.html",
+    "SCR-57-mobile-receipts.dc.html",
+    "SCR-57-desktop-verified.dc.html",
+    "SCR-57-mobile-verified.dc.html",
+    "SCR-58-desktop-investigating.dc.html",
+    "SCR-58-mobile-investigating.dc.html",
+    "SCR-58-desktop-duplicate.dc.html",
+    "SCR-58-mobile-duplicate.dc.html",
+    "SCR-58-desktop-observe.dc.html",
+    "SCR-58-mobile-observe.dc.html",
+    "SCR-58-desktop-review.dc.html",
+    "SCR-58-mobile-review.dc.html",
+    "SCR-58-desktop-rejected.dc.html",
+    "SCR-58-mobile-rejected.dc.html",
+    "SCR-58-desktop-verified.dc.html",
+    "SCR-58-mobile-verified.dc.html",
+    "SCR-59-desktop-input-review.dc.html",
+    "SCR-59-mobile-input-review.dc.html",
+    "SCR-59-desktop-combine-review.dc.html",
+    "SCR-59-mobile-combine-review.dc.html",
+    "SCR-59-desktop-match-held.dc.html",
+    "SCR-59-mobile-match-held.dc.html",
+    "SCR-59-desktop-match-review.dc.html",
+    "SCR-59-mobile-match-review.dc.html",
+    "SCR-59-desktop-totals-review.dc.html",
+    "SCR-59-mobile-totals-review.dc.html",
+    "SCR-59-desktop-publish.dc.html",
+    "SCR-59-mobile-publish.dc.html",
+    "SCR-59-desktop-receipts.dc.html",
+    "SCR-59-mobile-receipts.dc.html",
+    "SCR-59-desktop-verified.dc.html",
+    "SCR-59-mobile-verified.dc.html",
+    "SCR-59-desktop-followup.dc.html",
+    "SCR-59-mobile-followup.dc.html"
+  ],
+  "notes": {
+    "p-finance-09-title": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "SCR-09 · Import and reconcile",
+      "w": 240,
+      "x": 0,
+      "y": 1360
+    },
+    "p-finance-18-title": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "SCR-18 · Payroll matching",
+      "w": 240,
+      "x": 0,
+      "y": 2700
+    },
+    "p-finance-20-title": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "SCR-20 · Payments",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "p-finance-SCR-32-desktop": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "SCR-32 · Payment reminder · SCR-36 · Month-end",
+      "w": 240,
+      "x": 0,
+      "y": 3980
+    },
+    "p-finance-SCR-37-desktop": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "SCR-37 · Payroll corrections (HR Lead, restricted)",
+      "w": 240,
+      "x": 0,
+      "y": 5260
+    },
+    "p-finance-pmo0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Invoice a milestone · added states: evidence asked, evidence supplied, returned, preparer can't review (SCR-02, SCR-03) · the other invoice states are on the Work item page",
+      "w": 240,
+      "x": 0,
+      "y": 6560
+    },
+    "p-finance-fin0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Finance back office and payroll, end to end: 7 lines",
+      "w": 240,
+      "x": 0,
+      "y": 7736
+    },
+    "p-finance-fin1": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Management accounts (SCR-53) · file held, units needed, Chidi investigating, six reviews, owner needed, setup needed, source returned, drafting, receipts, delivery uncertain, verified",
+      "w": 240,
+      "x": 0,
+      "y": 9252
+    },
+    "p-finance-fin2": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Income schedules (SCR-54) · Chidi investigating, held, review, returned, verified, export as adjustment, approval withdrawn",
+      "w": 240,
+      "x": 0,
+      "y": 10528
+    },
+    "p-finance-fin3": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Asset (PPE) schedule (SCR-55) · Chidi investigating, register review, date review, calculating, schedule review, returned, verified",
+      "w": 240,
+      "x": 0,
+      "y": 11804
+    },
+    "p-finance-fin4": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Cash forecast (SCR-56) · Chidi investigating, review, group rows, group review, delivery uncertain, received, actuals",
+      "w": 240,
+      "x": 0,
+      "y": 13120
+    },
+    "p-finance-fin5": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Business-unit totals (SCR-57) · source and rule review, Chidi investigating, held (small group), result review, publish, recipients confirm, verified",
+      "w": 240,
+      "x": 0,
+      "y": 14436
+    },
+    "p-finance-fin6": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Ledger source (SCR-58) · Chidi investigating, duplicate refused, record what was found, independent review, rejected, verified",
+      "w": 240,
+      "x": 0,
+      "y": 15712
+    },
+    "p-finance-fin7": {
+      "kind": "title1",
+      "maxW": 3800,
+      "text": "Payroll (SCR-59, restricted) · input review, combine review, matching held, match review, totals review, publish, receipts, verified, follow-up after cancelling · import (SCR-09), match rows (SCR-18) and HR corrections (SCR-37) above",
+      "w": 240,
+      "x": 0,
+      "y": 16988
+    }
+  },
+  "designSystems": [
+    {
+      "title": "PSL Factory",
+      "namespace": "pslfactory",
+      "artifact": "https://claude.ai/artifact/ALgwhfGiFdPVHCgfUQWNP6",
+      "version": "1794567797-ad8d",
+      "copiedAt": "2026-11-13T12:00:00Z"
+    }
+  ]
+}

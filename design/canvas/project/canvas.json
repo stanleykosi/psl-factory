@@ -1122,42 +1122,6 @@
       "x": 1520,
       "y": 2844
     },
-    "SCR-09-desktop-error.dc.html": {
-      "expand": "fill",
-      "h": 720,
-      "page": "p-finance",
-      "title": "Import · file error",
-      "w": 1440,
-      "x": 1990,
-      "y": 1500
-    },
-    "SCR-09-desktop.dc.html": {
-      "expand": "fill",
-      "h": 940,
-      "is_interactive": true,
-      "page": "p-finance",
-      "title": "J-06 · 1 · Import and check",
-      "w": 1440,
-      "x": 0,
-      "y": 1500
-    },
-    "SCR-09-mobile-error.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · Import · file error",
-      "w": 390,
-      "x": 3510,
-      "y": 1500
-    },
-    "SCR-09-mobile.dc.html": {
-      "h": 844,
-      "is_interactive": true,
-      "page": "p-finance",
-      "title": "J-06 · Phone · import",
-      "w": 390,
-      "x": 1520,
-      "y": 1500
-    },
     "SCR-10-desktop.dc.html": {
       "expand": "fill",
       "h": 900,
@@ -1581,40 +1545,6 @@
       "x": 1520,
       "y": 2404
     },
-    "SCR-18-desktop-permission.dc.html": {
-      "expand": "fill",
-      "h": 900,
-      "page": "p-finance",
-      "title": "J-06 · State · Finance sees totals only",
-      "w": 1440,
-      "x": 1990,
-      "y": 2840
-    },
-    "SCR-18-desktop.dc.html": {
-      "expand": "fill",
-      "h": 980,
-      "page": "p-finance",
-      "title": "J-06 · 2 · Zainab matches staff",
-      "w": 1440,
-      "x": 0,
-      "y": 2840
-    },
-    "SCR-18-mobile-permission.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "J-06 · Phone · Finance view",
-      "w": 390,
-      "x": 3510,
-      "y": 2840
-    },
-    "SCR-18-mobile.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "J-06 · Phone · matching",
-      "w": 390,
-      "x": 1520,
-      "y": 2840
-    },
     "SCR-19-desktop.dc.html": {
       "expand": "fill",
       "h": 960,
@@ -1631,40 +1561,6 @@
       "w": 390,
       "x": 1520,
       "y": 6748
-    },
-    "SCR-20-desktop-record.dc.html": {
-      "expand": "fill",
-      "h": 960,
-      "page": "p-finance",
-      "title": "Record a payment received",
-      "w": 1440,
-      "x": 1990,
-      "y": 140
-    },
-    "SCR-20-desktop.dc.html": {
-      "expand": "fill",
-      "h": 900,
-      "page": "p-finance",
-      "title": "Payments and follow-up",
-      "w": 1440,
-      "x": 0,
-      "y": 140
-    },
-    "SCR-20-mobile-record.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · Record a payment received",
-      "w": 390,
-      "x": 3510,
-      "y": 140
-    },
-    "SCR-20-mobile.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · Payments and follow-up",
-      "w": 390,
-      "x": 1520,
-      "y": 140
     },
     "SCR-21-desktop-deactivate.dc.html": {
       "expand": "fill",
@@ -1975,23 +1871,6 @@
       "x": 1520,
       "y": 12188
     },
-    "SCR-32-desktop.dc.html": {
-      "expand": "fill",
-      "h": 980,
-      "page": "p-finance",
-      "title": "Payment reminder · draft to send",
-      "w": 1440,
-      "x": 0,
-      "y": 4120
-    },
-    "SCR-32-mobile.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · payment reminder · draft to send",
-      "w": 390,
-      "x": 1520,
-      "y": 4120
-    },
     "SCR-33-desktop.dc.html": {
       "expand": "fill",
       "h": 1060,
@@ -2059,40 +1938,6 @@
       "w": 390,
       "x": 1520,
       "y": 13548
-    },
-    "SCR-36-desktop.dc.html": {
-      "expand": "fill",
-      "h": 900,
-      "page": "p-finance",
-      "title": "Month-end checklist",
-      "w": 1440,
-      "x": 2070,
-      "y": 4120
-    },
-    "SCR-36-mobile.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · month-end checklist",
-      "w": 390,
-      "x": 3590,
-      "y": 4120
-    },
-    "SCR-37-desktop.dc.html": {
-      "expand": "fill",
-      "h": 860,
-      "page": "p-finance",
-      "title": "Payroll corrections",
-      "w": 1440,
-      "x": 0,
-      "y": 5400
-    },
-    "SCR-37-mobile.dc.html": {
-      "h": 844,
-      "page": "p-finance",
-      "title": "Phone · payroll corrections",
-      "w": 390,
-      "x": 1520,
-      "y": 5400
     },
     "SCR-38-desktop.dc.html": {
       "expand": "fill",
@@ -3860,74 +3705,6 @@
       "page": "p-projects",
       "title": "Received · phone"
     },
-    "SCR-02-desktop-evidence-asked.dc.html": {
-      "x": 0,
-      "y": 6676,
-      "w": 1440,
-      "h": 900,
-      "page": "p-finance",
-      "title": "Invoice waiting for missing evidence",
-      "expand": "fill"
-    },
-    "SCR-02-mobile-evidence-asked.dc.html": {
-      "x": 1520,
-      "y": 6676,
-      "w": 390,
-      "h": 844,
-      "page": "p-finance",
-      "title": "Waiting for evidence · phone"
-    },
-    "SCR-02-desktop-evidence-supplied.dc.html": {
-      "x": 1990,
-      "y": 6676,
-      "w": 1440,
-      "h": 900,
-      "page": "p-finance",
-      "title": "Supply missing evidence",
-      "expand": "fill"
-    },
-    "SCR-02-mobile-evidence-supplied.dc.html": {
-      "x": 3510,
-      "y": 6676,
-      "w": 390,
-      "h": 844,
-      "page": "p-finance",
-      "title": "Supply evidence · phone"
-    },
-    "SCR-02-desktop-returned.dc.html": {
-      "x": 3980,
-      "y": 6676,
-      "w": 1440,
-      "h": 900,
-      "page": "p-finance",
-      "title": "Invoice returned by the reviewer",
-      "expand": "fill"
-    },
-    "SCR-02-mobile-returned.dc.html": {
-      "x": 5500,
-      "y": 6676,
-      "w": 390,
-      "h": 844,
-      "page": "p-finance",
-      "title": "Invoice returned · phone"
-    },
-    "SCR-03-desktop-own.dc.html": {
-      "x": 5970,
-      "y": 6676,
-      "w": 1440,
-      "h": 860,
-      "page": "p-finance",
-      "title": "You can't review an invoice you prepared",
-      "expand": "fill"
-    },
-    "SCR-03-mobile-own.dc.html": {
-      "x": 7490,
-      "y": 6676,
-      "w": 390,
-      "h": 844,
-      "page": "p-finance",
-      "title": "Can't review own invoice · phone"
-    },
     "SCR-52-desktop-setup.dc.html": {
       "x": 0,
       "y": 2916,
@@ -4131,6 +3908,151 @@
       "h": 844,
       "page": "p-mywork",
       "title": "Start · Leadership report · phone"
+    },
+    "SCR-04-desktop-accounts.dc.html": {
+      "x": 0,
+      "y": 6632,
+      "w": 1440,
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Management accounts",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-accounts.dc.html": {
+      "x": 1520,
+      "y": 6632,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Management accounts on a phone"
+    },
+    "SCR-04-desktop-schedules.dc.html": {
+      "x": 1990,
+      "y": 6632,
+      "w": 1440,
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Income detail or schedule inventory",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-schedules.dc.html": {
+      "x": 3510,
+      "y": 6632,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Income detail or schedule inventory on a phone"
+    },
+    "SCR-04-desktop-ppe.dc.html": {
+      "x": 3980,
+      "y": 6632,
+      "w": 1440,
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Fixed asset schedule",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-ppe.dc.html": {
+      "x": 5500,
+      "y": 6632,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Fixed asset schedule on a phone"
+    },
+    "SCR-04-desktop-forecast.dc.html": {
+      "x": 5970,
+      "y": 6632,
+      "w": 1440,
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Cash forecast",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-forecast.dc.html": {
+      "x": 7490,
+      "y": 6632,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Cash forecast on a phone"
+    },
+    "SCR-04-desktop-bu.dc.html": {
+      "x": 7960,
+      "y": 6632,
+      "w": 1440,
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Business-unit totals",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-bu.dc.html": {
+      "x": 9480,
+      "y": 6632,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Business-unit totals on a phone"
+    },
+    "SCR-04-desktop-ledger.dc.html": {
+      "x": 9950,
+      "y": 6632,
+      "w": 1440,
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Record a ledger source",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-ledger.dc.html": {
+      "x": 11470,
+      "y": 6632,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Record a ledger source on a phone"
+    },
+    "SCR-04-desktop-payroll.dc.html": {
+      "x": 11940,
+      "y": 6632,
+      "w": 1440,
+      "h": 900,
+      "page": "p-mywork",
+      "title": "Start work · Payroll (restricted)",
+      "expand": "fill"
+    },
+    "SCR-04-mobile-payroll.dc.html": {
+      "x": 13460,
+      "y": 6632,
+      "w": 390,
+      "h": 844,
+      "page": "p-mywork",
+      "title": "Start · Payroll (restricted) on a phone"
+    },
+    "SCR-13-desktop-finance-rules.dc.html": {
+      "x": 0,
+      "y": 8140,
+      "w": 1440,
+      "h": 1400,
+      "page": "p-setup",
+      "title": "Setup · Finance rules",
+      "expand": "fill"
+    },
+    "SCR-13-mobile-finance-rules.dc.html": {
+      "x": 1520,
+      "y": 8140,
+      "w": 390,
+      "h": 844,
+      "page": "p-setup",
+      "title": "Finance rules on a phone"
+    },
+    "FINANCE-moved-desktop.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 720,
+      "page": "p-finance",
+      "title": "Finance and Payroll moved to its own canvas",
+      "expand": "fill"
     }
   },
   "createdOnFiles": {
@@ -4175,9 +4097,6 @@
     "p-projects-19-title",
     "p-overview-06-title",
     "p-overview-10-title",
-    "p-finance-20-title",
-    "p-finance-09-title",
-    "p-finance-18-title",
     "p-assistant-05-title",
     "p-setup-13-title",
     "p-setup-21-title",
@@ -4195,8 +4114,6 @@
     "p-projects-SCR-28",
     "p-projects-SCR-31",
     "p-item-SCR-03-desktop-payment-exception",
-    "p-finance-SCR-32-desktop",
-    "p-finance-SCR-37-desktop",
     "p-setup-SCR-13-desktop-rules",
     "p-setup-SCR-34-desktop",
     "p-projects-SCR-35-desktop",
@@ -4230,9 +4147,10 @@
     "p-projects-pmo4",
     "p-projects-pmo5",
     "p-projects-pmo6",
-    "p-finance-pmo0",
     "p-overview-pmo0",
-    "p-mywork-pmo0"
+    "p-mywork-pmo0",
+    "p-mywork-fin0",
+    "p-setup-fin0"
   ],
   "notes": {
     "a-thesis": {
@@ -4391,51 +4309,6 @@
       "w": 240,
       "x": 0,
       "y": 0
-    },
-    "p-finance-09-title": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance",
-      "text": "SCR-09 · Import and reconcile",
-      "w": 240,
-      "x": 0,
-      "y": 1360
-    },
-    "p-finance-18-title": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance",
-      "text": "SCR-18 · Payroll matching",
-      "w": 240,
-      "x": 0,
-      "y": 2700
-    },
-    "p-finance-20-title": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance",
-      "text": "SCR-20 · Payments",
-      "w": 240,
-      "x": 0,
-      "y": 0
-    },
-    "p-finance-SCR-32-desktop": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance",
-      "text": "SCR-32 · Payment reminder · SCR-36 · Month-end",
-      "w": 240,
-      "x": 0,
-      "y": 3980
-    },
-    "p-finance-SCR-37-desktop": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance",
-      "text": "SCR-37 · Payroll corrections (HR Lead, restricted)",
-      "w": 240,
-      "x": 0,
-      "y": 5260
     },
     "p-item-02-title": {
       "kind": "title1",
@@ -4941,15 +4814,6 @@
       "x": 0,
       "y": 33948
     },
-    "p-finance-pmo0": {
-      "kind": "title1",
-      "maxW": 3800,
-      "page": "p-finance",
-      "text": "Invoice a milestone · added states: evidence asked, evidence supplied, returned, preparer can't review (SCR-02, SCR-03) · the other invoice states are on the Work item page",
-      "w": 240,
-      "x": 0,
-      "y": 6560
-    },
     "p-overview-pmo0": {
       "kind": "title1",
       "maxW": 3800,
@@ -4967,6 +4831,24 @@
       "w": 240,
       "x": 0,
       "y": 5340
+    },
+    "p-mywork-fin0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-mywork",
+      "text": "Start work · how each Finance back-office line and payroll starts: accounts, schedules, assets, forecast, BU totals, ledger source, payroll (SCR-04)",
+      "w": 240,
+      "x": 0,
+      "y": 6516
+    },
+    "p-setup-fin0": {
+      "kind": "title1",
+      "maxW": 3800,
+      "page": "p-setup",
+      "text": "Setup · Finance rules: every Not set value the Finance lines and payroll need (SCR-13)",
+      "w": 240,
+      "x": 0,
+      "y": 8024
     }
   },
   "order": [
@@ -5001,9 +4883,6 @@
     "SCR-10-mobile.dc.html",
     "SCR-16-desktop.dc.html",
     "SCR-16-mobile.dc.html",
-    "SCR-09-desktop.dc.html",
-    "SCR-18-desktop.dc.html",
-    "SCR-18-desktop-permission.dc.html",
     "SCR-15-desktop-email.dc.html",
     "SCR-17-desktop.dc.html",
     "SCR-03-desktop.dc.html",
@@ -5014,9 +4893,6 @@
     "SCR-02-mobile-owner-needed.dc.html",
     "SCR-13-mobile.dc.html",
     "SCR-16-desktop-validation.dc.html",
-    "SCR-09-mobile.dc.html",
-    "SCR-18-mobile.dc.html",
-    "SCR-18-mobile-permission.dc.html",
     "SCR-16-mobile-validation.dc.html",
     "SCR-06-desktop.dc.html",
     "SCR-06-mobile.dc.html",
@@ -5048,8 +4924,6 @@
     "SCR-05-mobile-cant.dc.html",
     "SCR-08-desktop-returned.dc.html",
     "SCR-08-mobile-returned.dc.html",
-    "SCR-09-desktop-error.dc.html",
-    "SCR-09-mobile-error.dc.html",
     "SCR-13-desktop-validation.dc.html",
     "SCR-13-mobile-validation.dc.html",
     "SCR-13-desktop-permission.dc.html",
@@ -5076,10 +4950,6 @@
     "SCR-03-mobile-cto-emergency.dc.html",
     "SCR-19-desktop.dc.html",
     "SCR-19-mobile.dc.html",
-    "SCR-20-desktop.dc.html",
-    "SCR-20-mobile.dc.html",
-    "SCR-20-desktop-record.dc.html",
-    "SCR-20-mobile-record.dc.html",
     "SCR-13-desktop-fields.dc.html",
     "SCR-13-mobile-fields.dc.html",
     "SCR-17-desktop-reset.dc.html",
@@ -5197,12 +5067,6 @@
     "SCR-33-mobile.dc.html",
     "SCR-03-desktop-payment-exception.dc.html",
     "SCR-03-mobile-payment-exception.dc.html",
-    "SCR-32-desktop.dc.html",
-    "SCR-32-mobile.dc.html",
-    "SCR-36-desktop.dc.html",
-    "SCR-36-mobile.dc.html",
-    "SCR-37-desktop.dc.html",
-    "SCR-37-mobile.dc.html",
     "SCR-13-desktop-rules.dc.html",
     "SCR-13-mobile-rules.dc.html",
     "SCR-13-desktop-delegation.dc.html",
@@ -5418,14 +5282,6 @@
     "SCR-51-mobile-review.dc.html",
     "SCR-51-desktop-received.dc.html",
     "SCR-51-mobile-received.dc.html",
-    "SCR-02-desktop-evidence-asked.dc.html",
-    "SCR-02-mobile-evidence-asked.dc.html",
-    "SCR-02-desktop-evidence-supplied.dc.html",
-    "SCR-02-mobile-evidence-supplied.dc.html",
-    "SCR-02-desktop-returned.dc.html",
-    "SCR-02-mobile-returned.dc.html",
-    "SCR-03-desktop-own.dc.html",
-    "SCR-03-mobile-own.dc.html",
     "SCR-52-desktop-setup.dc.html",
     "SCR-52-mobile-setup.dc.html",
     "SCR-52-desktop-drafting.dc.html",
@@ -5449,7 +5305,24 @@
     "SCR-04-desktop-escalation.dc.html",
     "SCR-04-mobile-escalation.dc.html",
     "SCR-04-desktop-leadership.dc.html",
-    "SCR-04-mobile-leadership.dc.html"
+    "SCR-04-mobile-leadership.dc.html",
+    "SCR-04-desktop-accounts.dc.html",
+    "SCR-04-mobile-accounts.dc.html",
+    "SCR-04-desktop-schedules.dc.html",
+    "SCR-04-mobile-schedules.dc.html",
+    "SCR-04-desktop-ppe.dc.html",
+    "SCR-04-mobile-ppe.dc.html",
+    "SCR-04-desktop-forecast.dc.html",
+    "SCR-04-mobile-forecast.dc.html",
+    "SCR-04-desktop-bu.dc.html",
+    "SCR-04-mobile-bu.dc.html",
+    "SCR-04-desktop-ledger.dc.html",
+    "SCR-04-mobile-ledger.dc.html",
+    "SCR-04-desktop-payroll.dc.html",
+    "SCR-04-mobile-payroll.dc.html",
+    "SCR-13-desktop-finance-rules.dc.html",
+    "SCR-13-mobile-finance-rules.dc.html",
+    "FINANCE-moved-desktop.dc.html"
   ],
   "pages": [
     {
