@@ -4053,6 +4053,22 @@
       "page": "p-finance",
       "title": "Finance and Payroll moved to its own canvas",
       "expand": "fill"
+    },
+    "MYWORK-queue-concepts.dc.html": {
+      "x": 0,
+      "y": 4676,
+      "w": 1440,
+      "h": 1180,
+      "page": "open",
+      "title": "My work · three queue concepts"
+    },
+    "SCR-06-overview-concepts.dc.html": {
+      "x": 1520,
+      "y": 4676,
+      "w": 1440,
+      "h": 1180,
+      "page": "open",
+      "title": "Overview · three concepts"
     }
   },
   "createdOnFiles": {
@@ -4150,7 +4166,8 @@
     "p-overview-pmo0",
     "p-mywork-pmo0",
     "p-mywork-fin0",
-    "p-setup-fin0"
+    "p-setup-fin0",
+    "open-x2-x4"
   ],
   "notes": {
     "a-thesis": {
@@ -4849,6 +4866,15 @@
       "w": 240,
       "x": 0,
       "y": 8024
+    },
+    "open-x2-x4": {
+      "kind": "title1",
+      "maxW": 3200,
+      "page": "open",
+      "text": "To decide: My work queues (X.2, X.3) and Overview (X.4)",
+      "w": 240,
+      "x": 0,
+      "y": 4560
     }
   },
   "order": [
@@ -5322,7 +5348,9 @@
     "SCR-04-mobile-payroll.dc.html",
     "SCR-13-desktop-finance-rules.dc.html",
     "SCR-13-mobile-finance-rules.dc.html",
-    "FINANCE-moved-desktop.dc.html"
+    "FINANCE-moved-desktop.dc.html",
+    "MYWORK-queue-concepts.dc.html",
+    "SCR-06-overview-concepts.dc.html"
   ],
   "pages": [
     {
