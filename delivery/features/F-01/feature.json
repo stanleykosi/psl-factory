@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-01",
   "outcome": "The app frame loads who is signed in and shows only their sections, on phone and desktop, against a contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "T-FRONTEND-SHELL"
   ],
@@ -72,6 +72,17 @@
       "protected_paths_changed": [],
       "at": "2026-11-13T20:53:00Z",
       "evidence_ref": "delivery/features/F-01/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T21:42:09Z",
+      "evidence_ref": "delivery/features/F-01/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -134,14 +145,28 @@
         "delivery/features/F-01/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-13T21:05:47Z",
           "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T21:42:09Z",
+          "refs": [
+            "077ad81"
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "077ad81"
       ]
     },
     {
@@ -203,14 +228,28 @@
         "delivery/features/F-01/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-13T21:05:47Z",
           "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T21:42:09Z",
+          "refs": [
+            "5a1289f"
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5a1289f"
       ]
     },
     {
@@ -249,14 +288,28 @@
         "delivery/features/F-01/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-13T21:05:47Z",
           "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T21:42:09Z",
+          "refs": [
+            "5a1289f"
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5a1289f"
       ]
     },
     {
@@ -272,14 +325,28 @@
         "delivery/features/F-01/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-13T21:05:47Z",
           "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T21:42:09Z",
+          "refs": [
+            "473d833"
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "473d833"
       ]
     },
     {
@@ -318,14 +385,28 @@
         "delivery/features/F-01/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-13T21:05:47Z",
           "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T21:42:09Z",
+          "refs": [
+            "5a1289f"
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5a1289f"
       ]
     },
     {
@@ -341,14 +422,28 @@
         "delivery/features/F-01/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-13T21:05:47Z",
           "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T21:42:09Z",
+          "refs": [
+            "5a1289f"
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5a1289f"
       ]
     },
     {
@@ -364,14 +459,28 @@
         "delivery/features/F-01/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-13T21:05:47Z",
           "head": "f6e9a9ecdc299700381927a13d66386138d83e5c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T21:42:09Z",
+          "refs": [
+            "5a1289f"
+          ],
+          "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5a1289f"
       ]
     }
   ],
@@ -454,7 +563,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "4549a580be2707279b0a6af6e0b2c1f0924f1ead",
     "task_branch": "t-frontend-shell-nextjs-app",
-    "head_sha": "f6e9a9ecdc299700381927a13d66386138d83e5c",
+    "head_sha": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-01",
     "pr_url": null,
     "pr_number": null,
@@ -491,6 +600,7 @@
       "frontend/src/app/assistant/page.tsx",
       "frontend/src/app/layout.tsx",
       "frontend/src/app/my-work/page.tsx",
+      "frontend/src/app/not-found.tsx",
       "frontend/src/app/overview/page.tsx",
       "frontend/src/app/page.tsx",
       "frontend/src/app/projects/page.tsx",
@@ -593,6 +703,14 @@
       "round": 2,
       "head": "f6e9a9ecdc299700381927a13d66386138d83e5c",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T21:42:13Z",
+      "round": 2,
+      "head": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40",
+      "reason": null
     }
   ],
   "routing": {
@@ -609,9 +727,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "96aa11efcea1cc7c596159d1b1e72aa79f2fca40"
   },
   "blocked": null
 }
