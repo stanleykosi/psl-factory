@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-01",
   "outcome": "The app frame loads who is signed in and shows only their sections, on phone and desktop, against a contract mock",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "T-FRONTEND-SHELL"
   ],
@@ -71,7 +71,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -87,7 +87,7 @@
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-01/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -129,11 +129,11 @@
   "git": {
     "repository": null,
     "task_id": "T-FRONTEND-SHELL",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "4549a580be2707279b0a6af6e0b2c1f0924f1ead",
+    "task_branch": "t-frontend-shell-nextjs-app",
+    "head_sha": "4549a580be2707279b0a6af6e0b2c1f0924f1ead",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-01",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -143,7 +143,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -176,14 +176,22 @@
     }
   },
   "created_at": "2026-11-13T16:16:25Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 3,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-13T16:23:06Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T16:23:28Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -201,7 +209,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
