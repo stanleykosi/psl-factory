@@ -44,3 +44,6 @@ Files to look at:
 - `delivery/features/F-01/round-3/acceptance-pmo.md` (the non-blocking items carried forward)
 
 If you approve, merge PR #3 yourself. GitHub cannot record a formal approval from the account that opened it.
+
+## Human decision (13 Nov 2026)
+The design engineer (hunchoweb, designated approver) gave a standing delegation: the coordinator decides whether a PR needs them; if not, it merges. For F-01 the coordinator judged the escalation reasons (first pinned dependency set, medium risk, 53 files) reviewed and acceptable with no product, security, money or business-rule decision involved, recorded approval under that delegation, and squash-merged PR #3 as a41d4724a9754a5183ae78fa49c8c3c3e555ed35. No formal GitHub review exists because the PR came from the approver's own account (one-off exception).
