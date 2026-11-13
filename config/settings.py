@@ -6,10 +6,23 @@ from .build_identity import identity as source_identity
 PROCESS_BUILD_IDENTITY = source_identity(BASE_DIR)
 ENVIRONMENT = os.getenv('PSL_ENV', 'development')
 DEBUG = ENVIRONMENT == 'development'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'loggers': {'django.request': {'handlers': ['console'], 'level': 'ERROR', 'propagate': False}},
+}
 SECRET_KEY = os.getenv('PSL_SECRET_KEY', 'local-development-only-do-not-deploy')
 if not DEBUG and SECRET_KEY == 'local-development-only-do-not-deploy':
     raise RuntimeError('PSL_SECRET_KEY is required outside development')
 ALLOWED_HOSTS = os.getenv('PSL_ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')
+RAILWAY_DOMAIN = os.getenv('RAILWAY_PUBLIC_DOMAIN')
+if RAILWAY_DOMAIN:
+    ALLOWED_HOSTS.extend([RAILWAY_DOMAIN, 'healthcheck.railway.app'])
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = not DEBUG
+    SECURE_REDIRECT_EXEMPT = [r'^health/$']
+    SECURE_HSTS_SECONDS = 3600 if not DEBUG else 0
 INSTALLED_APPS = ['django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions',
                   'django.contrib.messages', 'django.contrib.staticfiles'] + [
     f'apps.{name}' for name in ['core', 'identity', 'policy', 'workflows', 'pmo', 'finance', 'baas', 'documents', 'agents']]
@@ -29,6 +42,9 @@ USE_TZ = True
 TIME_ZONE = 'Africa/Lagos'
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+if RAILWAY_DOMAIN:
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'

@@ -1,42 +1,45 @@
 # Operations Factory meeting questions
 
-Write the answer beside each question. Where the answer varies by project or customer, say which rule applies where. If a decision is still open, name who will answer it and by when.
+## Questions to ask
 
-## Work and people
+### Finance lead
 
-| Question | Answer |
-| --- | --- |
-| 1. Which jobs should we try first? | |
-| 2. What starts each job, how do we know it is done, and who takes it next? | |
-| 3. Who does the work, who approves it, and who covers when they are away? | |
-| 4. Which changes need a fresh approval? | |
-| 5. When does the clock start or stop, and when is the work due? | |
+- Does anyone sign the usage report before billing? Who confirms the prices are right?
+- What proves a payment arrived? If several bills are open, which gets paid first?
+- What project progress evidence lets Finance record revenue for the month?
+- Which two business units are being added? Should past months be redone?
+- What should Finance do when the business-unit totals differ from the company accounts?
+- Which unpaid bills go into the cash forecast? What should the version sent to Group leave out?
 
-## Projects and releases
+### Project Management and Engineering leads
 
-| Question | Answer |
-| --- | --- |
-| 6. Which routine changes are already approved? What checks still apply? | |
-| 7. Can an urgent change go live before its release ticket is approved? Who decides, and what gets checked afterward? | |
-| 8. How do we price project work and changes? Can you share an approved example? | |
-| 9. What must happen at each project stage before Finance can send the bill? | |
+- Which testing and completion records tell Finance to send the next two project bills?
+- Which routine changes are already approved, and what checks still apply?
+- Can an emergency change go live before its release ticket is approved?
+- Which changes need fresh approval even if the price stays the same?
+- What starts or pauses the deadlines you already use? Do weekends and holidays count?
 
-## Money and reporting
+### Human Resources and Finance leads
 
-| Question | Answer |
-| --- | --- |
-| 10. How much must a customer pay before release, and which payments count? Who can make an exception, for how long? | |
-| 11. Who confirms payments, and what should Finance do with part payments, overpayments, payments it cannot match, or refunds? | |
-| 12. Which files and calculations should Finance use for its accounts, forecasts and reports? | |
-| 13. Which staff records may Finance use, and how do we split staff costs between teams? | |
+- Which field should Finance use to match staff across the two payroll files?
+- When someone changes teams, which month should their costs move? Who approves exceptions to the usual cost split?
 
-## Using the system
+### Leadership, with Finance
 
-| Question | Answer |
-| --- | --- |
-| 14. Who may see each record or report? What can the system do on its own? | |
-| 15. Which forms and old records do we need to bring over or keep? | |
-| 16. If something fails or we cannot tell whether it went through, who checks what happened before anyone tries again? | |
-| 17. Who signs off that the trial is ready for real work? | |
+- The release target is 80% paid. Eighty percent of what, and which payments count?
+- Who can approve or withdraw a payment exception? When does it expire?
+- Which jobs should we try first? Who owns each one and signs off on the trial?
 
-Bring one everyday example and one tricky example for each job we try. For Finance, an approved bill, payment or report with the expected figures is especially helpful. Remove customer and staff details before sharing.
+### Each owner of a trial workflow
+
+- Who covers approvals when you’re away?
+- What may the system do on its own? What needs your approval?
+- If we can’t tell whether something went through, who checks before anyone tries again?
+
+## Files to request separately
+
+- **Finance and Data** — One usage report with its approved prices and final bill, the current invoicing steps, and one duplicate or correction example.
+- **Finance** — One approved month’s QuickBooks export and Excel workbooks with formulas and expected totals. Include a difference Finance resolved, both versions of the cash forecast, and a payment that was partial, unmatched or too large.
+- **Project Management and Engineering** — One signed billing schedule with its testing and completion records, one worked project-cost example, the approved routine-change list, and one emergency release record.
+- **Human Resources and Finance** — Sample files for both payroll inputs, a staff-to-team list, and one worked shared-cost example. Use made-up staff details and amounts.
+- **Each trial owner** — The forms and reports they use, who may see them, and which old records must be kept or brought over.

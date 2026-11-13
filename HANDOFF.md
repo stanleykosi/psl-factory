@@ -1,5 +1,17 @@
 # PSL operations factory cloud handoff — 6 November 2026
 
+## Railway checkpoint · 13 November 2026
+
+The post-handoff synthetic trial verified project registration and export, evidence currentness, issue acknowledgement, planning request creation, completed meeting follow-up and synthetic gate verification. Finance attestation and quality owner review held on missing scoped policy. See [owner decisions beyond the meeting sheet](docs/acceptance/RAILWAY-OWNER-DECISIONS.md). Railway now uses DeepSeek V4.1 Flash 1017 through OpenRouter for fresh drafts. The temporary post-handoff startup switch was removed after the checks.
+
+All eight reviewed synthetic agent drafts now feed native workflow records through explicit human confirmation. Railway verified Route B intake, evidence registration, issue creation, planning questions, Finance recognition preparation, meeting summary, unverified release evidence and a quality validation package. Repeating each handoff preserved its original receipt. Later approvals and operational access remain subject to the native workflow.
+
+The scoped Railway account `psl-agent-trial` verified private upload, download, all eight OpenRouter drafts, and Word, Excel and text-based PDF extraction. The Word draft was saved through native human evidence review. Reviewed drafts link to role-specific workspaces. Native workflow-specific draft consumption remains to be implemented and verified. The one-time Railway account provisioning variable was removed after setup.
+
+The private `psl-uploads` bucket and the eight OpenRouter document review roles are configured. Railway applied `agents.0004_case_upload_jobs`. The case workspace links to the file and agent page. The shared worker processes synthetic document drafts. Verify the authenticated browser journey and bucket round-trip with a named synthetic operator before treating this as accepted. Native workflow delegation, document extraction beyond text and CSV, and operational provider access need separate work.
+
+The PSL Factory production project hosts `psl-web`, `psl-worker` and private PostgreSQL. The previous OpenTab service was removed at the user's request. Django migrated the empty Railway database and the deployed health, login and stylesheet endpoints returned HTTP 200. The worker observed empty handoff, publication, invoice and approval-route queues. See [the Railway runbook](docs/runbooks/railway.md) for provisioning, the limited worker set and integration configuration. Independent acceptance and business owner configuration remain pending.
+
 ## Local development checkpoint · 9 November 2026
 
 Resume on `build/local-milestone-20261109`, branched from the verified reviewed main `501b76f8304d971c3786223dcc91a863eec58cef`. Local main fast-forwarded from `05590af` with a clean index and working tree. Use the separate local PostgreSQL 16 cluster under `.runtime/psl-local-20261109-pg16`, loopback port 55443, role `psl_local` and database `psl_local_20261109` for this machine's synthetic checks. Its lifecycle is independent of old development databases. Python 3.13.1 and the exact lock are installed.

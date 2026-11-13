@@ -21,6 +21,8 @@ from apps.finance import ppe_views
 from apps.finance import schedule_views
 from apps.finance import bu_views
 from django.urls import path, include
+from .health import health
+from apps.agents import upload_views
 finance_intake_patterns=[path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',finance_followup_inbox,name='finance_followup_inbox')]
 from apps.documents import validation_views
 from apps.finance import payroll_views
@@ -47,6 +49,9 @@ pilot_patterns=[path('cases/<uuid:case_id>/pilot/',pilot_views.workbench,name='p
     path('cases/<uuid:case_id>/pilot/contracts/<int:pk>/',pilot_views.contract,name='pilot_contract'),
     path('cases/<uuid:case_id>/pilot/observations/<int:pk>/',pilot_views.report,name='pilot_observation')]
 urlpatterns = [
+    path('health/', health, name='health'),
+    path('cases/<uuid:case_id>/files/', upload_views.workbench, name='case_uploads'),
+    path('cases/<uuid:case_id>/files/<int:upload_id>/', upload_views.download, name='case_upload_download'),
     path('cases/<uuid:case_id>/documents/templates/current/', template_views.workbench, name='template_current'),
     path('cases/<uuid:case_id>/documents/templates/current/sources/<int:source_id>/', template_views.source_detail, name='template_source_detail'),
     path('cases/<uuid:case_id>/documents/templates/current/authority/<str:kind>/<int:pk>/', template_views.owner_pin_detail, name='template_owner_pin_detail'),

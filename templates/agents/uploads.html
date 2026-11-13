@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Files and agent work</h1>
+<p><a href="{% url 'case' case.pk %}">{{ case.title }}</a></p>
+<p>Agents can read text, CSV, Word, Excel, and PDFs with selectable text.</p>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="upload">
+  <label>File <input type="file" name="file" required></label>
+  <button>Upload privately</button>
+</form>
+{% for upload in uploads %}
+  <p><a href="{% url 'case_upload_download' case.pk upload.pk %}">{{ upload.name }}</a></p>
+  {% if case.synthetic %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="queue">
+    <input type="hidden" name="upload" value="{{ upload.pk }}">
+    <label>Agent <select name="role">{% for id, role in roles.items %}<option value="{{ id }}">{{ role.0 }}</option>{% endfor %}</select></label>
+    <button>Queue a draft</button>
+  </form>
+  {% endif %}
+{% endfor %}
+<h2>Agent drafts</h2>
+{% for job in jobs %}
+<article>
+  <h3>{{ job.upload.name }} · {{ job.role }}</h3>
+  <p>{{ job.status }}</p>
+  {% if job.result %}<p>{{ job.result.summary }}</p>
+  <ul>{% for quote in job.result.quotes %}<li>{{ quote }}</li>{% endfor %}</ul>
+  <ul>{% for gap in job.result.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% endif %}
+  {% if job.status == 'draft' %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="review">
+    <input type="hidden" name="job" value="{{ job.pk }}">
+    <label>Review note <input name="note" required maxlength="1000"></label>
+    <button>Save as reviewed case evidence</button>
+  </form>
+  {% endif %}
+  {% if job.result.reviewed_evidence and job.follow_up %}
+  <p>Reviewed evidence #{{ job.result.reviewed_evidence }} · <a href="{% url job.follow_up.0 case.pk %}">{{ job.follow_up.1 }}</a></p>
+  {% endif %}
+  {% if job.result.workflow_record %}
+  <p class="workflow-receipt">Workflow record #{{ job.result.workflow_record }}</p>
+  {% elif job.handoff_form %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="handoff">
+    <input type="hidden" name="job" value="{{ job.pk }}">
+    {{ job.handoff_form.as_p }}
+    <button>{{ job.handoff_label }}</button>
+  </form>
+  {% endif %}
+</article>
+{% empty %}<p>No agent work has been queued.</p>{% endfor %}
+{% endblock %}
