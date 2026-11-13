@@ -116,11 +116,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; client/product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "e20d2cebc4a77cd226513fbde4a3f29b9678a72c",
+      "evidence_refs": [
+        "delivery/features/F-01/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
