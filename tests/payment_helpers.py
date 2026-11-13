@@ -36,11 +36,15 @@ def configure(a,c,cov,p,components=None,**overrides):
 def fixture():
     from .test_delivery import DeliveryFixture
     from .billing_helpers import coverage,prices,usage,prepare
-    from .settlement_helpers import configured,draft,issue,receipt,assign,allocate
+    from .settlement_helpers import configured,draft,receipt,assign,allocate
+    from .obligation_helpers import issue_identified
+    from .signature_helpers import reaffirm_for
     f=DeliveryFixture();f.setup_delivery();a,c=f.actor,f.case
     f.cov=coverage(a,c,completeness='complete');prices(a,c,f.cov);u=usage(a,c,f.cov);p=prepare(a,c,f.cov,u=u)
     original=active_component('D05.role_principal_assignments',c).envelope['value'];configured(a,c)
     finance=active_component('D05.role_principal_assignments',c).envelope['value'];activate(a,c,'D05.role_principal_assignments',original+finance,f.e['policy_decision'])
     f.cash_e={k:evidence(a,c,k,'Synthetic exact Finance evidence') for k in ['invoice_review','cash_correction','cash_allocation']}
-    f.iss=issue(a,c,draft(a,c,p),f.cash_e);f.r,f.lot=receipt(a,c,'50.00');assign(a,c,f.r,f.cov,f.cash_e);allocate(a,c,f.lot,f.iss,'10',f.cash_e)
-    f.approver=human(a,c,f.e['policy_decision']);f.ready();return f
+    f.iss=issue_identified(a,c,draft(a,c,p),f.cash_e);f.r,f.lot=receipt(a,c,'50.00');assign(a,c,f.r,f.cov,f.cash_e);allocate(a,c,f.lot,f.iss,'10',f.cash_e)
+    f.approver=human(a,c,f.e['policy_decision'])
+    reaffirm_for(a,c)
+    f.ready();return f

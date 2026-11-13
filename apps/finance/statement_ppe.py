@@ -1,5 +1,6 @@
 """Native PPE source selection and immutable inventory for selected statement lines."""
 from django.core.exceptions import ValidationError
+from apps.identity.services import active_case_grants
 from apps.policy.statement_ppe import validate_binding
 from . import ppe
 
@@ -40,7 +41,19 @@ def is_ppe_statement(run):
     return run.kind=='statement' and any(i['declaration'].get('source_type')=='ppe_schedule' for i in run.snapshot['inputs'])
 
 
-def recipient_access(run,recipients):
+def recipient_access(run,recipients,*,budget=None):
+    if budget is not None and run.kind == 'statement':
+        budget.load(run, 'snapshot')
     if not is_ppe_statement(run):return
     from django.contrib.auth import get_user_model
     for user in get_user_model().objects.filter(pk__in=recipients):ppe.readable(user,run.case)
+
+
+def denied_statement_runs(actor, runs, budget):
+    """Batch bound run snapshots and exact owning-case PPE grants."""
+    budget.load_many(runs, 'snapshot')
+    protected = [run for run in runs if is_ppe_statement(run)]
+    cases = {run.case_id for run in protected}
+    grants = active_case_grants(actor, cases, actions=ppe.READ_ACTIONS)
+    denied_cases = {case_id for case_id in cases if any((case_id, action) not in grants for action in ppe.READ_ACTIONS)}
+    return [run.pk for run in protected if run.case_id in denied_cases]

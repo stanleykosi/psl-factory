@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Template source · PSL Product Studio{% endblock %}
+{% block content %}
+{% if source %}
+<p><a href="{% url 'template_current' case.pk %}">Back to owner template claims</a></p>
+<h1>Template source</h1>
+<section>
+  <h2>Source #{{ source.id }} · version {{ source.version }}</h2>
+  <p>{{ source.source }}</p>
+  <pre>{{ source.body }}</pre>
+  <details><summary>Verification details</summary><p>{{ source.sha256 }}</p></details>
+</section>
+{% else %}
+<h1>Template source unavailable</h1>
+<p>The source could not be opened within the read limits. Return to the template claims page to continue other work.</p>
+{% endif %}
+{% endblock %}

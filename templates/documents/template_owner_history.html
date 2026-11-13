@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Selected template history · PSL Product Studio{% endblock %}
+{% block content %}
+{% if case %}<p><a href="{% url 'template_current' case.pk %}">Back to owner template claims</a></p>{% endif %}
+<h1>Selected template history</h1>
+{% if records %}
+<p>These records show what was recorded. Use the authority check to see whether an attestation is still current.</p>
+<table>
+  <thead><tr><th scope="col">Record</th><th scope="col">Scope</th><th scope="col">Recorded policy</th></tr></thead>
+  <tbody>
+    {% for record in records %}
+    <tr>
+      <th scope="row">{{ record.kind|title }} #{{ record.id }}</th>
+      <td>#{{ record.scope_id }}</td>
+      <td>
+        {% if record.policy_id %}
+          #{{ record.policy_id }}
+          {% if record.kind != 'retraction' %}<a href="{% url 'template_owner_pin_detail' case.pk record.kind record.id %}">Check authority</a>{% endif %}
+        {% else %}
+          No recorded owner policy
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% elif selection_limit %}
+<p>Select between 1 and {{ selection_limit }} distinct records on the template claims page.</p>
+{% else %}
+<p>The selected history could not be opened within the read limits.</p>
+{% endif %}
+{% endblock %}

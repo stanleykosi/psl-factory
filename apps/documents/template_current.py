@@ -25,7 +25,7 @@ def source(case, pk, actor=None):
         raise ValidationError('Select exact same-case template owner source evidence')
     if actor is not None:
         from .template_access import visible_sources
-        if not visible_sources(actor,case).filter(pk=pk).exists():
+        if not visible_sources(actor,case,source_id=pk).exists():
             raise PermissionDenied('Template source needs its owning document-domain access')
     return evidence
 
@@ -37,24 +37,24 @@ def scope_for(case, pk):
     return scope
 
 
-def owner_policy(actor, scope):
+def owner_policy(actor, scope, *, budget=None):
     require(actor, scope.case, 'case.read')
     require(actor, scope.case, 'document.read')
     require(actor, scope.case, 'document.template')
     if scope.document_type in ['finance_report','finance_group_report']:
         require(actor,scope.case,'finance.read')
-    policy = active_component(COMPONENT, scope.case)
-    rules = reference_values(policy)[0].get('template_owners', [])
+    policy = active_component(COMPONENT, scope.case, budget=budget)
+    rules = reference_values(policy, budget=budget)[0].get('template_owners', [])
     if not any(r['scope_id'] == scope.pk and r['user_id'] == actor.pk for r in rules):
         raise PermissionDenied('Document owner is unconfigured for this exact scope or is a different principal')
     return policy
 
 
-def owner_current(record):
+def owner_current(record, *, budget=None):
     if record.owner_policy_id is None:
         return False
     try:
-        return owner_policy(record.actor, record.scope).pk == record.owner_policy_id
+        return owner_policy(record.actor, record.scope, budget=budget).pk == record.owner_policy_id
     except (ValidationError, PermissionDenied):
         return False
 
@@ -99,7 +99,7 @@ def claim_current(actor, case_id, scope_id, template_id, evidence_id, note, expe
     scope = scope_for(case, scope_id)
     from .template_access import require_scope, visible_templates
     require_scope(actor,scope)
-    if not visible_templates(actor,case).filter(pk=template_id).exists():
+    if not visible_templates(actor,case,candidate_ids=[template_id]).exists():
         raise PermissionDenied('Template requires its owning document-domain access')
     template = Template.objects.filter(case=case, pk=template_id, definition__document_type=scope.document_type).first()
     if not template or scope.audience not in template.definition['audience_fields']:
@@ -117,7 +117,7 @@ def claim_current(actor, case_id, scope_id, template_id, evidence_id, note, expe
 
 
 def active_claims(scope):
-    return list(scope.claims.filter(retraction__isnull=True).select_related('template', 'evidence', 'actor', 'scope__case').order_by('pk'))
+    return list(scope.claims.filter(retraction__isnull=True).select_related('template', 'actor', 'scope__case').order_by('pk'))
 
 
 @transaction.atomic
@@ -157,16 +157,23 @@ def resolve_claims(actor, case_id, scope_id, selected_claim_id, claim_ids, evide
     return result
 
 
-def status(scope):
-    claims = active_claims(scope)
+def status(scope, *, claims=None, budget=None):
+    if claims is None:
+        claims = active_claims(scope)
     ids = [c.pk for c in claims]
     result = {'status': 'MISSING', 'claims': claims, 'claim_ids': ids, 'manifest': {},
         'question': 'Which owner-approved template applies to this purpose, context and audience? Capture the exact source; do not infer a current template.'}
     if not claims:
         return result
-    resolution = scope.resolutions.select_related('actor', 'scope__case', 'selected_claim').order_by('-pk').first()
+    resolutions = scope.resolutions.select_related('actor', 'scope__case').order_by('-pk')
+    if budget is not None:
+        resolutions = resolutions.only('id', 'actor__id', 'actor__is_active', 'scope__case', 'scope__document_type',
+                                       'owner_policy_id', 'selected_claim_id')
+    resolution = resolutions.first()
+    if budget is not None and resolution:
+        budget.load(resolution, 'claim_ids')
     chosen = None
-    if resolution and resolution.claim_ids == ids and owner_current(resolution):
+    if resolution and resolution.claim_ids == ids and owner_current(resolution, budget=budget):
         chosen = next((c for c in claims if c.pk == resolution.selected_claim_id), None)
     if not chosen:
         resolution = None
@@ -175,10 +182,10 @@ def status(scope):
             return result
         # This order selects only equivalent attestations of the SAME immutable
         # template, never a newer competing template or a registration timestamp.
-        chosen = next((c for c in claims if owner_current(c)), None)
+        chosen = next((c for c in claims if owner_current(c, budget=budget)), None)
     if chosen:
-        policy = owner_policy(resolution.actor if resolution else chosen.actor, scope)
-        if chosen.template_id in reference_values(policy)[0]['template_ids']:
+        policy = owner_policy(resolution.actor if resolution else chosen.actor, scope, budget=budget)
+        if chosen.template_id in reference_values(policy, budget=budget)[0]['template_ids']:
             result.update(status='CURRENT', question='Exact owner-approved current template is pinned; registration of a newer draft alone does not change it.',
                 manifest={'scope_id': scope.pk, 'template_id': chosen.template_id, 'claim_ids': ids,
                     'configuration_id': policy.pk, 'resolution_id': resolution.pk if resolution else None,

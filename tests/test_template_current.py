@@ -135,7 +135,10 @@ class TemplateCurrentTests(TestCase):
         self.assertEqual(Version.objects.get().template_current_manifest['scope_id'],self.scope.pk)
         url=f'/cases/{c.pk}/documents/templates/current/'
         before=rev(c)
-        self.assertContains(self.client.get(url),'P10 PRIVATE OWNER CONTENT')
+        source_url = f'{url}sources/{secret.pk}/'
+        page = self.client.get(url)
+        self.assertContains(page, source_url)
+        self.assertNotContains(page, 'P10 PRIVATE OWNER CONTENT')
         self.assertEqual(rev(c),before)
         reader=get_user_model().objects.create_user(username='case-only')
         for action in ['case.read','agent.extract']:

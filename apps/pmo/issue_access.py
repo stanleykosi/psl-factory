@@ -5,8 +5,8 @@ from apps.core.models import Evidence
 from .services import subject
 
 
-def issue_subject(case, pk, kind=None):
-    evidence = subject(case, pk, kind)
+def issue_subject(case, pk, kind=None, *, metadata_only=False):
+    evidence = subject(case, pk, kind, metadata_only=metadata_only)
     if not public_evidence(Evidence.objects.filter(pk=evidence.pk)).exists():
         raise ValidationError('Private source evidence requires its native scoped interface')
     return evidence

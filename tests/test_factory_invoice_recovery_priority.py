@@ -2,7 +2,7 @@
 import tempfile
 import os,sys,subprocess,time,json
 from pathlib import Path
-from django.test import TestCase,TransactionTestCase
+from django.test import TransactionTestCase
 from django.db import connection
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -14,12 +14,12 @@ from apps.workflows import factory
 from apps.finance import billing,invoices,invoice_delivery
 from apps.finance.models import Invoice,InvoiceJob,InvoiceIssue,InvoiceDelivery
 from adapters.factory_invoices import MockFactoryInvoiceAdapter
-from tests.factory_helpers import fixture,approve
+from tests.factory_helpers import fixture
 from tests.billing_helpers import policy
 from tests.helpers import rev,activate
 from adapters.invoices import InternalInvoiceAdapter
 
-class InvoiceRecoveryPriorityTests(TestCase):
+class InvoiceRecoveryPriorityTests(TransactionTestCase):
 
 
 
@@ -27,7 +27,8 @@ class InvoiceRecoveryPriorityTests(TestCase):
 
 
     def test_recorded_original_job_remains_recoverable_from_a_legacy_replaced_head(self):
-        f=fixture();w=f['work'];factory.run_until_wait(w.pk);approve(f);w.refresh_from_db();original=w.invoice
+        from tests.obligation_helpers import factory_approve_identified
+        f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_approve_identified(f);w.refresh_from_db();original=w.invoice
         with tempfile.TemporaryDirectory() as directory:
             adapter=MockFactoryInvoiceAdapter(directory,lose_response=True)
             factory.run_once(w.pk,adapter=adapter);factory.run_once(w.pk,adapter=adapter)

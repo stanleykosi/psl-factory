@@ -1,0 +1,5 @@
+gunicorn==23.0.0
+packaging==25.0
+whitenoise==6.9.0
+boto3==1.40.45
+pypdf==6.10.2

@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.finance import ledger
 from apps.finance.models import LedgerLineage
 from . import factory,factory_ledger as domain
+from .quickbooks_mcp import factory_read_status
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,**kwargs):
@@ -74,4 +75,4 @@ def detail(request,work):
         except (ValidationError,PermissionDenied):pass
         else:can_review=True
     active=not work.cancel_requested and work.status not in ['cancelled','followup_needed']
-    return render(request,'factory/ledger_detail.html',{'row':row,'case':work.case,'inputs_form':form,'check':x,'can_review':active and can_review,'can_observe':active and w is not None and permitted(request.user,work,'ledger.verify'),'observations':Evidence.objects.filter(case=work.case,kind='quickbooks_verification').order_by('-pk'),'review_evidence':Evidence.objects.filter(case=work.case,kind__in=['finance_review','policy_decision']).order_by('-pk'),'decisions':x.decisions.order_by('-pk') if x else [],'activities':work.activities.order_by('pk'),'can_restart':work.status=='cancelled' and permitted(request.user,work,'factory.manage'),'can_correct':active and permitted(request.user,work,'factory.manage'),'can_configure':permitted(request.user,work,'policy.configure')})
+    return render(request,'factory/ledger_detail.html',{'row':row,'case':work.case,'inputs_form':form,'check':x,'can_review':active and can_review,'can_observe':active and w is not None and permitted(request.user,work,'ledger.verify'),'observations':Evidence.objects.filter(case=work.case,kind='quickbooks_verification').order_by('-pk'),'review_evidence':Evidence.objects.filter(case=work.case,kind__in=['finance_review','policy_decision']).order_by('-pk'),'decisions':x.decisions.order_by('-pk') if x else [],'activities':work.activities.order_by('pk'),'can_restart':work.status=='cancelled' and permitted(request.user,work,'factory.manage'),'can_correct':active and permitted(request.user,work,'factory.manage'),'can_configure':permitted(request.user,work,'policy.configure'),'mcp_read':factory_read_status(request.user,work)})

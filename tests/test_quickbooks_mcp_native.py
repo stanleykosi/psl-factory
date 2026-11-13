@@ -3,7 +3,8 @@ import copy
 import json
 from pathlib import Path
 from unittest.mock import patch
-from django.test import TransactionTestCase, override_settings
+from django.test import Client as WebClient, TransactionTestCase, override_settings
+from django.urls import reverse
 from django.core.exceptions import ValidationError, PermissionDenied
 from apps.workflows import readiness, readiness_delivery, quickbooks_mcp as broker
 from apps.core.models import Audit
@@ -144,6 +145,36 @@ class NativeMCPTests(TransactionTestCase):
         self.assertFalse(self.lineage.checks.exists())
         factory.run_until_wait(work.pk)
         self.assertEqual(Audit.objects.filter(case=self.f['case'],action=broker.PREFIX+'reserved',data__factory_work=work.pk).count(),1)
+
+    def test_console_read_status_survives_connection_hold_and_checks_reader(self):
+        from django.db import transaction
+        from apps.workflows import factory, factory_ledger as flow
+
+        actor, case = self.f['actor'], self.f['case']
+        work = self.factory_work()
+        self.entry['enabled'] = False
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.entry['enabled'] = True
+        with transaction.atomic():
+            intent = flow.act(work, {'activity': 'ACT11'}, None, None, None, None, None)['mcp_intent']
+
+        browser = WebClient()
+        browser.force_login(actor)
+        url = reverse('factory_detail', args=[work.pk])
+        self.assertContains(browser.get(url), 'The read is reserved and has yet to start.')
+        self.client.call.assert_not_called()
+
+        broker.execute(actor, case.pk, intent)
+        self.entry['enabled'] = False
+        page = browser.get(url)
+        self.assertContains(page, 'A read outcome was recorded.')
+        self.assertNotContains(page, 'SYNTHETIC-NOT-A-CREDENTIAL')
+        self.assertFalse(self.lineage.checks.exists())
+
+        Grant.objects.filter(case=case, user=actor, action='integration.source.read').update(active=False)
+        self.assertNotContains(browser.get(url), 'QuickBooks read status')
+        self.assertEqual(self.client.call.call_count, 1)
 
 
     def test_factory_interrupted_reservation_dispatch_rechecks_agent(self):

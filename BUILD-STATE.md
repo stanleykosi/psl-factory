@@ -1,5 +1,39 @@
 # PSL operations factory build state — 6 November 2026
 
+## Local development checkpoint · 9 November 2026
+
+GitHub main and local main matched `501b76f8304d971c3786223dcc91a863eec58cef` after a clean fast-forward. Development continues on `build/local-milestone-20261109`. All five nonapplied snapshots were reconstructed and hash verified in isolation. The build branch integrates selected D11 isolation, scalar policy loading and the exact template source reader.
+
+The owner template workbench opens private evidence one source at a time and provides a separate authority check for a selected claim or decision. Case and document grants, historical links and native domain visibility are evaluated inside one PostgreSQL read-only repeatable-read transaction. Selected PMO report and incident dependencies, Finance statement snapshots and D11 scoped policy cells are admitted before transfer. The original-recorder check compares the stored policy pin and separates resource holds from authority outcomes. D11 legacy string/list references can be decoded, and their stored forms remain invalid for active storage policy.
+
+The owner workbench now opens a selected history of up to 100 claims, decisions and retractions in one authorized snapshot. It displays record, scope and recorded policy identifiers, with current authority checked separately. Forecast privacy now uses indexed citation rows populated from historical scenarios and maintained on insert. Generic reads preserve the cross-case boundary and avoid scenario JSON expansion.
+
+Workbench list reads now page scopes, sources, templates and focused history, with bounded metadata previews and form choices. Owner decisions retain an explicit complete scope review and exact submission checks. The 0077 synthetic rehearsal passed with 2,050 scenarios and 26,627 citations, including preservation of privacy results, concurrent writer inclusion and rollback on malformed history.
+
+The corrected nine-test workbench and migration cohort passed. Small and large workbench pages each used 29 SQL statements. The larger test case had 81 scopes, 161 sources and 121 templates. Django system and migration drift checks passed.
+
+Protected workbench visibility now batches PMO manifests and Finance statement snapshots. Multiple Finance bindings to one run share its classification and native PPE grant check. Identical PMO authorization inputs share their check within one pass, including the timestamp for legacy incident history. A denied binding continues to hide the entire template and its dependent scopes and sources.
+
+On isolated PostgreSQL, the previous checkpoint used 253 statements for the small protected fixture and returned HTTP 503 for the large fixture. The optimized page returned HTTP 200 in 100 statements for both, including 48 PMO and 120 Finance bindings in the large fixture. Fifteen composed tests passed, including permission withdrawal, distinct-input denial, payload admission and native publication checks.
+
+The distinct-input follow-up batches case grants, bounded legacy narratives and current citation facts. Both the small and the 48-PMO/48-Finance distinct fixtures moved from HTTP 503 at 255 SQL statements to HTTP 200 at 49. The native provenance and existing admission limits remain part of the read. The 12-test composed PostgreSQL run passed.
+
+Incident-heavy PMO selections now batch exact issue revision, source observation, evidence and role grant lookups. Retained reports still reconstruct membership at each report version's recorded cutoff. The native provenance checks reject mismatched membership, observations and sources, and withdrawn grants continue to hide affected templates. On isolated PostgreSQL, one incident improved from 96 to 54 statements. The large fixture moved from HTTP 503 at 255 statements to HTTP 200 at 72 with 12 distinct incidents and six legacy versions. The 17-test composed run and Django and migration drift checks passed.
+
+A new committed PostgreSQL acceptance case links signed project evidence and PMO completion to the native Finance handoff, agent preparation, exact Finance decision, invoice issuance and delivery, and partial cash allocation. It exercises both lost responses and lookup of the original effect. A synthetic PMO operator completes the milestone but cannot claim the Finance task. The synthetic Finance operator cannot complete the milestone. The older legacy invoice-head test now sets the obligation identity and uses the same committed worker boundary.
+
+PostgreSQL also verified real worker exits in invoice issuance and PMO closure, current authority before closure verification, native credit/debit/void receipts, independent Finance review with planning held, and a separately reviewed metadata restore. Reviewed forecast and accounting reports reached native recipient receipts, including forecast lookup after a lost response. This checkpoint has synthetic service, HTTP and operator-drill evidence. Whole-process acceptance, independent user acceptance and live provider evidence remain open.
+
+The D13 fixture now binds the obligation identity and reaffirms signed project evidence after adding its synthetic reviewer. All 25 payment-control tests passed, including debt preservation and independent release authority.
+
+Use the HOD meeting sheet to capture source examples, authorities and policy decisions without activating them. The release register still records all 108 in-scope processes as partial with connected acceptance unevaluated. Independent operator UAT, a representative approved copy for migration 0077 and authorized external environments are separate live-pilot inputs.
+
+On isolated PostgreSQL 16.15, the first run passed 16 cases and found a fixture error. The nine-case follow-up passed after correcting the fixture, including the mixed selection, concurrent grant revocation, selective index plan, populated migration and publication regressions. Django and migration drift checks passed.
+
+The integration and QuickBooks MCP profile loaders now read bounded Windows regular files while retaining final-link rejection. Both interpreter modes recorded 25 passes and one unavailable symlink fixture. Fresh PostgreSQL migration and Django checks passed. The D11 checkpoint passed 43 native tests covering templates, operator HTTP, the receipt race and synthetic QuickBooks execution. The later policy and console cohort reached 19 passes, one SQL assertion failure and one fixture error. Its focused follow-up passed all four tests after correcting the checks. The console now exposes restricted reservation status independently of current connection availability. Full milestone acceptance remains pending.
+
+Engineering next is broader workflow and milestone acceptance. A representative operational copy is needed to size the 0077 deployment write window and verify retained-data quality. Native action-time checks remain separate from the prepared reads. Deployment review found HTTPS redirect and HSTS warnings plus the need for a production process, assets and a migration/recovery rehearsal. HOD inputs include actual authority and delegates, controlled templates and retention, and applicable Finance mappings and source oracles. QuickBooks live acceptance separately requires Intuit eligibility, an authorized company/principal, a reviewed tool schema and approved credential references.
+
 ## Current development handoff: 9 November 2026
 
 This section supersedes older continuation/status paragraphs below. The user requested a reviewed main-branch handoff to resume local development, not a production release or completion declaration.

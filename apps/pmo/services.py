@@ -8,8 +8,11 @@ from apps.workflows.models import Outbox
 from .models import Baseline, Decision, Milestone
 
 
-def subject(case, pk, kind=None):
-    evidence = Evidence.objects.filter(case=case, pk=pk).first()
+def subject(case, pk, kind=None, *, metadata_only=False):
+    candidates = Evidence.objects.filter(case=case, pk=pk)
+    if metadata_only:
+        candidates = candidates.defer('body')
+    evidence = candidates.first()
     if not evidence or kind and evidence.kind != kind:
         raise ValidationError('Evidence must match this case and required kind')
     if evidence.kind.startswith('agent_private_'):

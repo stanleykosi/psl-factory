@@ -192,19 +192,21 @@ def client_content(case,snapshot,content_id):
     return content,data['sections']
 
 
-def report_source_access(actor,case,manifest):
+def report_source_access(actor,case,manifest,*,budget=None,require_action=None,incident_reader=None):
     """Historical read permission is independent of whether the source is still current."""
     from apps.identity.services import require
-    require(actor,case,'report.read')
+    require_action = require_action or require
+    require_action(actor,case,'report.read')
     from .incident_reporting import selected_access
-    for pin in manifest.get('incident_claims', []): selected_access(actor,case,pin)
+    for pin in manifest.get('incident_claims', []):
+        selected_access(actor,case,pin,budget=budget,reader=incident_reader)
     checks=[(manifest.get('meetings') or manifest.get('actions') or manifest.get('milestones'),'meeting.read'),
         (manifest.get('issues') or any(manifest.get('escalation_history',{}).values()),'issue.read'),
         (manifest.get('changes') or any(manifest.get('change_history',{}).values()) or manifest.get('normal_change_timeline',{}).get('rows'),'change.read'),
         (manifest.get('gates') or any(manifest.get('delivery_history',{}).values()),'delivery.read'),
         (bool(manifest.get('rfp_history')),'rfp.read')]
     for present,action in checks:
-        if present:require(actor,case,action)
+        if present:require_action(actor,case,action)
 
 
 def client_manifest(snapshot,content):
