@@ -1,0 +1,9 @@
+{
+  "items": [
+    {"id":"W-1001","title":"Lagoon Health · Milestone 2 invoice","line":"Prepare an invoice","reference":"INV-0412","kind":"decide","state":"waiting","station":{"index":4,"count":7,"name":"Finance review"},"waiting_on":"Finance Lead","age_seconds":7200,"sample":true},
+    {"id":"W-1002","title":"Harbour Bank · Receipt for INV-0398","line":"Record a receipt","reference":"RCP-0117","kind":"do","state":"action_needed","station":{"index":2,"count":5,"name":"Match receipt"},"waiting_on":"Finance Officer","age_seconds":86400,"sample":true},
+    {"id":"W-1003","title":"Delta Foods · Weekly client update","line":"Weekly client update","reference":"WCU-0031","kind":"started","state":"processing","station":{"index":3,"count":5,"name":"Draft update"},"waiting_on":"Agent","age_seconds":600,"sample":true}
+  ],
+  "as_of": "2026-11-10T10:42:00Z",
+  "counts": {"needs_me": 2, "waiting_on_others": 1, "done": 0, "unassigned": 0}
+}

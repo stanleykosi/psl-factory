@@ -1,0 +1,8 @@
+node_modules/
+.next/
+playwright-report/
+test-results/
+*.tsbuildinfo
+next-env.d.ts
+# written by next dev (node_modules/next/dist/server/lib/generate-agent-files.js)
+AGENTS.md
