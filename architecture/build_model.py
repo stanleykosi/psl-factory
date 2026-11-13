@@ -13,6 +13,7 @@ SRC = {
     'S-AUDIT': ('End-to-end flow audit and decisions', 'sources/flow-audit.md', '2026-11-13', 'private'),
     'S-BACKEND': ('Observed backend inventory', 'sources/backend-inventory.md', '2026-11-13', 'private'),
     'S-DECISIONS': ('Decisions relayed 13 Nov 2026', 'sources/decisions-2026-11-13.md', '2026-11-13', 'private'),
+    'S-DECISIONS-V2': ('Frontend decisions and role boundary, 13 Nov 2026', 'sources/decisions-2026-11-13-v2.md', '2026-11-13b', 'private'),
 }
 def sha(p): return hashlib.sha256(open(os.path.join(HERE, p), 'rb').read()).hexdigest()
 sources = [{'id': k, 'title': t, 'path': p, 'version': v, 'classification': c, 'sha256': sha(p)} for k, (t, p, v, c) in SRC.items()]
@@ -117,6 +118,24 @@ decisions = [
         ['Start work first', 'Factory floor first'], ['R-MYWORK', 'R-DECIDE'], ('S-SCREENS', 'S-SCOPE')),
 ]
 
+# ---- v2 (13 Nov 2026): the design engineer works on the frontend only; backend and agent choices belong to the backend developer
+def add_rev(i, status, choice, rationale, alts, ev):
+    d = next(x for x in decisions if x['id'] == i)
+    d['revisions'].append({'revision': len(d['revisions']) + 1, 'status': status, 'choice': choice, 'rationale': rationale, 'alternatives': alts, 'evidence': ev})
+    d['evidence'] = sorted(set(d['evidence']) | set(ev))
+add_rev('D-PAGING', 'approved', 'Cursor paging with a rows-per-page choice of 10, 20 or 50 on every list (default 20); newest activity first; counts per queue returned separately.',
+        'Design engineer, 13 Nov 2026: users choose 10, 20 or 50 rows per page. Default 20 is a proposal within that choice.', ['Fixed 50 rows'], ['S-DECISIONS-V2'])
+add_rev('D-UPDATES', 'approved', 'Polling: lists every 15 seconds while visible, an open work item every 5 seconds while an agent is working; no push channel in v1.',
+        'Accepted as proposed by the design engineer, 13 Nov 2026 (frontend behaviour).', ['Server-sent events', 'WebSockets'], ['S-DECISIONS-V2'])
+add_rev('D-FIRST-FEATURE', 'approved', 'My work and one decision end to end (J-01 view, J-02): identity, the three queues, the work item with history, claim and decide with stale-version handling; desktop and phone. The frontend is built against the API contract with a mock server and connected to each real endpoint as the backend delivers it.',
+        'Accepted by the design engineer, 13 Nov 2026, who builds the frontend only.', ['Start work first', 'Factory floor first'], ['S-DECISIONS-V2'])
+for d in decisions:
+    new_owner = 'backend developer' if d['id'] in ('D-API-STYLE', 'D-AUTH', 'D-NOTIFY-MODEL', 'D-CONVERSATION-MODEL') else ('business owner with the backend developer' if d['id'] in ('D-AGENT-PROVIDER', 'D-ALERT-PROVIDERS', 'D-RETURN') else None)
+    if new_owner:
+        last = d['revisions'][-1]
+        d['owner'] = new_owner
+        add_rev(d['id'], last['status'], last['choice'], 'Unchanged choice; the decision now belongs to the ' + new_owner + '. The frontend builds against it as a working assumption (design engineer, 13 Nov 2026).', last['alternatives'], ['S-DECISIONS-V2'])
+
 # ---------------------------------------------------------------- components
 def comp(i, t, kind, tb, resp, owner, ev=('S-BACKEND',)):
     return {'id': i, 'title': t, 'refs': [], 'evidence': list(ev), 'kind': kind, 'trust_boundary': tb, 'responsibilities': resp, 'owner': owner}
@@ -172,13 +191,13 @@ EP = [
  ('E-ME', 'GET', '/api/v1/me', 'Who I am and what I may use', 'App load', 'Signed in.', 'api.me.read', 'identity.services', 'R-SESSION', ['REC-GRANT'], ['INV-ACCESS'], ['D-AUTH', 'D-API-STYLE'], 'T-FOUNDATION', 'A-ME', [], None,
   O({'name': S(), 'roles': A(S()), 'destinations': A(S(enum=['my_work', 'projects', 'overview', 'assistant', 'setup'])), 'startable_lines': A(S()), 'csrf_token': S()})),
  ('E-WORK-LIST', 'GET', '/api/v1/work', 'My work queue', 'My work page, queue tab, search, filter', 'Signed in; rows filtered by grants.', 'api.work.list', 'workflows.factory.snapshot', 'R-MYWORK', ['REC-WORK', 'REC-TASK'], ['INV-ACCESS', 'INV-SAMPLE'], ['D-PAGING', 'D-UPDATES'], 'T-MYWORK', 'A-MYWORK',
-  [P('queue', 'query', True, S(enum=['needs_me', 'waiting_on_others', 'done', 'unassigned'])), P('q', 'query', False), P('line', 'query', False), P('state', 'query', False), P('cursor', 'query', False)], None,
+  [P('queue', 'query', True, S(enum=['needs_me', 'waiting_on_others', 'done', 'unassigned'])), P('q', 'query', False), P('line', 'query', False), P('state', 'query', False), P('cursor', 'query', False), P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})], None,
   LIST(WORK_ROW, {'counts': QUEUE_COUNTS})),
  ('E-WORK-ITEM', 'GET', '/api/v1/work/{work_id}', 'One work item', 'Open a row or an alert link', 'case.read plus the line\'s read permission.', 'api.work.read', 'workflows.factory.snapshot', 'R-WORKITEM', ['REC-WORK', 'REC-TASK', 'REC-AGENTRUN', 'REC-DOCUMENT'], ['INV-ACCESS', 'INV-FACTS', 'INV-UNKNOWN', 'INV-AGENT', 'INV-SAMPLE'], ['D-UPDATES'], 'T-WORKITEM', 'A-WORKITEM', [P('work_id')], None,
   O({'id': S(), 'title': S(), 'line': S(), 'reference': S(), 'state': STATE, 'revision': I(minimum=1), 'stations': A(O({'name': S(), 'status': S(enum=['done', 'current_person', 'current_agent', 'waiting', 'stopped', 'not_started', 'verified'])})),
      'facts': A(FACT), 'tasks': A(O({'id': S(), 'kind': S(), 'title': S(), 'required_role': S(), 'you_can_act': B, 'revision': I(minimum=1)})), 'agent': O({'name': S(), 'status': S(enum=['working', 'done', 'waiting', 'stopped', 'none']), 'steps': A(O({'text': S(), 'status': S(), 'source': {'type': 'string'}}, ['text', 'status']))}, ['status']),
      'next_step': S(), 'sample': B}, ['id', 'title', 'line', 'reference', 'state', 'revision', 'stations', 'facts', 'tasks', 'agent', 'next_step', 'sample'])),
- ('E-WORK-HISTORY', 'GET', '/api/v1/work/{work_id}/history', 'Work item history', 'History tab', 'Same as reading the work item; restricted entries returned as Restricted.', 'api.work.history', 'core.Audit query', 'R-WORKITEM', ['REC-AUDIT', 'REC-TASK'], ['INV-ACCESS', 'INV-AUDIT', 'INV-RESTRICTED'], [], 'T-WORKITEM', 'A-HISTORY', [P('work_id'), P('kind', 'query', False, S(enum=['all', 'decisions', 'agent_work', 'evidence'])), P('cursor', 'query', False)], None,
+ ('E-WORK-HISTORY', 'GET', '/api/v1/work/{work_id}/history', 'Work item history', 'History tab', 'Same as reading the work item; restricted entries returned as Restricted.', 'api.work.history', 'core.Audit query', 'R-WORKITEM', ['REC-AUDIT', 'REC-TASK'], ['INV-ACCESS', 'INV-AUDIT', 'INV-RESTRICTED'], [], 'T-WORKITEM', 'A-HISTORY', [P('work_id'), P('kind', 'query', False, S(enum=['all', 'decisions', 'agent_work', 'evidence'])), P('cursor', 'query', False), P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})], None,
   LIST(O({'at': S(format='date-time'), 'actor_kind': S(enum=['person', 'agent', 'factory']), 'actor': S(), 'event': S(), 'version': {'type': 'string'}, 'detail': {'type': 'string'}, 'restricted': B}, ['at', 'actor_kind', 'actor', 'event', 'restricted']))),
  ('E-TASK-CLAIM', 'POST', '/api/v1/tasks/{task_id}/claim', 'Claim a task', 'Open a decision you are eligible for', 'Eligible role for the task; not the preparer where separation applies.', 'api.tasks.claim', 'workflows.factory.claim_task', 'R-DECIDE', ['REC-TASK'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT'], [], 'T-DECIDE', 'A-DECIDE', [P('task_id')], O(EXPECTED),
   O({'task_id': S(), 'revision': I(minimum=1), 'claimed_by': S()})),
@@ -199,14 +218,14 @@ EP = [
  ('E-WORK-ACTION', 'POST', '/api/v1/work/{work_id}/actions', 'Resume, cancel or reconcile', 'Exception actions', 'Operator authority on the line; reconcile needs the line\'s recovery authority.', 'api.work.action', 'workflows.factory.manage / reconcile', 'R-EXCEPTION', ['REC-WORK', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-RESEND', 'INV-AUDIT'], [], 'T-EXCEPTIONS', 'A-RECONCILE', [P('work_id')],
   O(dict(EXPECTED, action=S(enum=['resume', 'cancel', 'reconcile']), outcome={'type': 'string', 'enum': ['delivered', 'not_delivered', 'unknown']}, evidence_id={'type': 'string'}), ['expected_revision', 'action']),
   O({'work_id': S(), 'state': STATE, 'revision': I(minimum=1)})),
- ('E-EXCEPTIONS', 'GET', '/api/v1/exceptions', 'All exceptions', 'Overview and All exceptions page', 'Leads; filtered by grants.', 'api.exceptions.list', 'workflows.factory.snapshot', 'R-EXCEPTION', ['REC-WORK'], ['INV-ACCESS'], ['D-PAGING'], 'T-EXCEPTIONS', 'A-RESUME', [P('cursor', 'query', False)], None,
+ ('E-EXCEPTIONS', 'GET', '/api/v1/exceptions', 'All exceptions', 'Overview and All exceptions page', 'Leads; filtered by grants.', 'api.exceptions.list', 'workflows.factory.snapshot', 'R-EXCEPTION', ['REC-WORK'], ['INV-ACCESS'], ['D-PAGING'], 'T-EXCEPTIONS', 'A-RESUME', [P('cursor', 'query', False), P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})], None,
   LIST(O({'work_id': S(), 'what': S(enum=['effect_uncertain', 'owner_needed', 'setup_needed', 'blocked', 'followup_needed']), 'title': S(), 'doing': S(), 'who_acts': S(), 'since': S(format='date-time')}))),
- ('E-PROJECTS', 'GET', '/api/v1/projects', 'Projects list', 'Projects page', 'case.read.', 'api.projects.list', 'identity.services.visible_cases', 'R-PROJECT', ['REC-CASE'], ['INV-ACCESS', 'INV-SAMPLE'], ['D-PAGING'], 'T-PROJECTS', 'A-PROJECT', [P('q', 'query', False), P('cursor', 'query', False)], None,
+ ('E-PROJECTS', 'GET', '/api/v1/projects', 'Projects list', 'Projects page', 'case.read.', 'api.projects.list', 'identity.services.visible_cases', 'R-PROJECT', ['REC-CASE'], ['INV-ACCESS', 'INV-SAMPLE'], ['D-PAGING'], 'T-PROJECTS', 'A-PROJECT', [P('q', 'query', False), P('cursor', 'query', False), P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})], None,
   LIST(O({'case_id': S(), 'title': S(), 'pm': S(), 'stage': S(), 'sample': B}))),
  ('E-PROJECT', 'GET', '/api/v1/projects/{case_id}', 'Project journey', 'Open a project', 'case.read.', 'api.projects.read', 'pmo services', 'R-PROJECT', ['REC-CASE', 'REC-WORK'], ['INV-ACCESS', 'INV-FACTS'], [], 'T-PROJECTS', 'A-PROJECT', [P('case_id')], None,
   O({'case_id': S(), 'title': S(), 'lines': A(O({'line': S(), 'state': STATE, 'work_id': S()})), 'next': S()})),
  ('E-PROJECT-TAB', 'GET', '/api/v1/projects/{case_id}/{tab}', 'Project tab', 'Milestones, Documents, Money, Registers, Actions tabs', 'case.read plus the tab\'s read permission (finance.read for Money).', 'api.projects.tab', 'pmo / finance / documents services', 'R-PROJECT', ['REC-CASE', 'REC-MONEY', 'REC-DOCUMENT'], ['INV-ACCESS', 'INV-UNKNOWN', 'INV-FACTS'], ['D-PAGING'], 'T-PROJECTS', 'A-PROJECT',
-  [P('case_id'), P('tab', 'path', True, S(enum=['milestones', 'documents', 'money', 'registers', 'actions']))], None,
+  [P('case_id'), P('tab', 'path', True, S(enum=['milestones', 'documents', 'money', 'registers', 'actions'])), P('cursor', 'query', False), P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})], None,
   LIST({'type': 'object', 'additionalProperties': True, 'description': 'Row shape per tab, documented in handoff'})),
  ('E-DOCUMENT', 'GET', '/api/v1/documents/{document_id}/versions/{version}', 'Read a document version', 'Document review', 'case.read and document read.', 'api.documents.read', 'documents services', 'R-PROJECT', ['REC-DOCUMENT'], ['INV-ACCESS', 'INV-SAMPLE'], [], 'T-PROJECTS', 'A-PROJECT', [P('document_id'), P('version')], None,
   O({'document_id': S(), 'version': S(), 'title': S(), 'status': S(), 'template': S(), 'body_url': S(), 'test_template': B})),
@@ -223,13 +242,13 @@ EP = [
   LIST(O({'component': S(), 'name': S(), 'value': {'type': 'object', 'additionalProperties': True}, 'set': B, 'revision': I()}, ['component', 'name', 'set', 'revision']))),
  ('E-SETUP-RULE-SAVE', 'PUT', '/api/v1/setup/rules/{component}', 'Save a rule as a new version', 'Setup rule form', 'policy.activate for the area.', 'api.setup.rule_save', 'policy.services.transition', 'R-SETUP', ['REC-CONFIG', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT'], [], 'T-SETUP', 'A-SETUP', [P('component')],
   O(dict(EXPECTED, value={'type': 'object', 'additionalProperties': True})), O({'component': S(), 'revision': I(minimum=1)})),
- ('E-PEOPLE', 'GET', '/api/v1/setup/people', 'People and roles', 'Setup people', 'Admin.', 'api.setup.people', 'identity services', 'R-SETUP', ['REC-GRANT'], ['INV-ACCESS'], ['D-PAGING'], 'T-SETUP', 'A-SETUP', [], None,
+ ('E-PEOPLE', 'GET', '/api/v1/setup/people', 'People and roles', 'Setup people', 'Admin.', 'api.setup.people', 'identity services', 'R-SETUP', ['REC-GRANT'], ['INV-ACCESS'], ['D-PAGING'], 'T-SETUP', 'A-SETUP', [P('cursor', 'query', False), P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})], None,
   LIST(O({'person': S(), 'roles': A(S()), 'active': B}))),
  ('E-DELEGATION', 'PUT', '/api/v1/setup/delegation', 'Set a delegate', 'Delegation form', 'Leads for their own authority.', 'api.setup.delegation', 'policy.role_assignments', 'R-SETUP', ['REC-CONFIG', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT'], [], 'T-SETUP', 'A-SETUP', [],
   O(dict(EXPECTED, delegate=S(), starts=S(format='date'), ends=S(format='date'))), O({'revision': I(minimum=1)})),
  ('E-TEMPLATES', 'GET', '/api/v1/setup/templates', 'Document templates', 'Setup templates', 'documents read.', 'api.setup.templates', 'documents services', 'R-SETUP', ['REC-DOCUMENT'], ['INV-ACCESS', 'INV-SAMPLE'], [], 'T-SETUP', 'A-SETUP', [], None,
   LIST(O({'line': S(), 'name': S(), 'version': S(), 'test_template': B}))),
- ('E-NOTIFICATIONS', 'GET', '/api/v1/notifications', 'Notification centre', 'Bell and notifications page', 'Own notifications only.', 'api.notifications.list', 'api notifications (new)', 'R-ALERTS', ['REC-NOTIFICATION'], ['INV-ACCESS'], ['D-NOTIFY-MODEL', 'D-PAGING'], 'T-ALERTS', 'A-ALERTS', [P('cursor', 'query', False)], None,
+ ('E-NOTIFICATIONS', 'GET', '/api/v1/notifications', 'Notification centre', 'Bell and notifications page', 'Own notifications only.', 'api.notifications.list', 'api notifications (new)', 'R-ALERTS', ['REC-NOTIFICATION'], ['INV-ACCESS'], ['D-NOTIFY-MODEL', 'D-PAGING'], 'T-ALERTS', 'A-ALERTS', [P('cursor', 'query', False), P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})], None,
   LIST(O({'id': S(), 'work_id': S(), 'agent': S(), 'text': S(), 'at': S(format='date-time'), 'read': B}))),
  ('E-ALERT-PREFS', 'PUT', '/api/v1/me/alert-preferences', 'My alert preferences', 'Notification settings', 'Own preferences only.', 'api.me.alert_prefs', 'api notifications (new)', 'R-ALERTS', ['REC-ALERT-PREF', 'REC-AUDIT'], ['INV-ACCESS', 'INV-AUDIT'], ['D-NOTIFY-MODEL', 'D-ALERT-PROVIDERS'], 'T-ALERTS', 'A-ALERTS', [],
   O({'channel': S(enum=['whatsapp', 'email', 'both', 'none']), 'frequency': S(enum=['immediate', 'daily'])}), O({'channel': S(), 'frequency': S()})),
@@ -329,42 +348,55 @@ def T(i, t, eps, reqs, gates, deps, acc, role='developer'):
 by_task = {}
 for e in endpoints:
     by_task.setdefault([r for r in e['refs'] if r.startswith('T-')][0], []).append(e['id'])
+BE = 'backend developer'; FE = 'frontend developer'
 tasks = [
-    T('T-FOUNDATION', 'API foundation: apps/api, session and CSRF, error shape, /me', by_task['T-FOUNDATION'], ['R-SESSION'], [], [], ['A-ME']),
-    T('T-FRONTEND-SHELL', 'Frontend shell: Next.js app, design system tokens and components, top bar, phone bar', [], ['R-FRONTEND', 'R-DEVICES', 'R-SAMPLE'], ['D-AUTH'], ['T-FOUNDATION'], ['A-ACCESSIBILITY']),
-    T('T-MYWORK', 'My work: three queues, Decide/Do/Fix, search and filter', by_task['T-MYWORK'], ['R-MYWORK', 'R-VOLUME'], [], ['T-FRONTEND-SHELL'], ['A-MYWORK']),
-    T('T-WORKITEM', 'Work item: stations, facts, agent checklist, history', by_task['T-WORKITEM'], ['R-WORKITEM'], [], ['T-MYWORK'], ['A-WORKITEM', 'A-HISTORY']),
-    T('T-DECIDE', 'Decisions: claim and decide one exact version, desktop and phone', by_task['T-DECIDE'], ['R-DECIDE'], [], ['T-WORKITEM'], ['A-DECIDE', 'A-STALE']),
-    T('T-START', 'Start work: lines menu and every line\'s intake drawer', by_task['T-START'], ['R-START'], ['D-LEADERS-START'], ['T-WORKITEM'], ['A-START']),
-    T('T-RESPONSE', 'Record a response with proof', by_task['T-RESPONSE'], ['R-RESPONSE'], [], ['T-WORKITEM'], ['A-RESPONSE']),
-    T('T-EXCEPTIONS', 'Exceptions: reconcile, resume, cancel; All exceptions', by_task['T-EXCEPTIONS'], ['R-EXCEPTION'], ['D-RETURN'], ['T-DECIDE'], ['A-RECONCILE', 'A-RESUME']),
-    T('T-PROJECTS', 'Projects, project tabs, documents and reports', by_task['T-PROJECTS'], ['R-PROJECT', 'R-REPORTS'], [], ['T-WORKITEM'], ['A-PROJECT', 'A-REPORT']),
-    T('T-FLOOR', 'Overview: factory floor (flat and 3D) with exceptions', by_task['T-FLOOR'], ['R-OVERVIEW', 'R-MOTION'], [], ['T-EXCEPTIONS'], ['A-OVERVIEW']),
-    T('T-FINANCE', 'Finance: month-end, imports and back-office lines', by_task['T-FINANCE'], ['R-FINANCE'], [], ['T-START'], ['A-MONTHEND']),
-    T('T-PAYROLL', 'Payroll (restricted) and HR corrections', by_task['T-PAYROLL'], ['R-FINANCE'], [], ['T-FINANCE'], ['A-PAYROLL']),
-    T('T-SETUP', 'Setup: rules, people, delegation, templates', by_task['T-SETUP'], ['R-SETUP'], [], ['T-FOUNDATION', 'T-FRONTEND-SHELL'], ['A-SETUP']),
-    T('T-ALERTS', 'Notifications and alert preferences (mock adapter)', by_task['T-ALERTS'], ['R-ALERTS'], ['D-ALERT-PROVIDERS'], ['T-DECIDE'], ['A-ALERTS']),
-    T('T-ASSISTANT', 'Assistant conversations with sources and drafts', by_task['T-ASSISTANT'], ['R-ASSISTANT'], ['D-AGENT-PROVIDER'], ['T-START'], ['A-ASSISTANT']),
-    T('T-BACKEND-ROLES', 'Backend: PMO Lead for Head of PMO, three-step approvals, leaders may start every line', [], ['R-ROLES'], [], [], ['A-START']),
+    T('T-FOUNDATION', 'API: apps/api, session and CSRF, error shape, /me', by_task['T-FOUNDATION'], ['R-SESSION'], [], [], ['A-ME'], BE),
+    T('T-FRONTEND-SHELL', 'Frontend: Next.js app, design system tokens and components, top bar, phone bar, API client with mock server from openapi.json', [], ['R-FRONTEND', 'R-DEVICES', 'R-SAMPLE'], [], [], ['A-ACCESSIBILITY'], FE),
+    T('T-MYWORK', 'API: My work queues', by_task['T-MYWORK'], ['R-MYWORK', 'R-VOLUME'], [], ['T-FOUNDATION'], ['A-MYWORK'], BE),
+    T('T-WORKITEM', 'API: work item and history', by_task['T-WORKITEM'], ['R-WORKITEM'], [], ['T-FOUNDATION'], ['A-WORKITEM', 'A-HISTORY'], BE),
+    T('T-DECIDE', 'API: claim and decide one exact version', by_task['T-DECIDE'], ['R-DECIDE'], [], ['T-WORKITEM'], ['A-DECIDE', 'A-STALE'], BE),
+    T('T-START', 'API: lines and start work', by_task['T-START'], ['R-START'], ['D-LEADERS-START'], ['T-FOUNDATION'], ['A-START'], BE),
+    T('T-RESPONSE', 'API: evidence upload and recorded responses', by_task['T-RESPONSE'], ['R-RESPONSE'], [], ['T-FOUNDATION'], ['A-RESPONSE'], BE),
+    T('T-EXCEPTIONS', 'API: exceptions and work actions', by_task['T-EXCEPTIONS'], ['R-EXCEPTION'], ['D-RETURN'], ['T-DECIDE'], ['A-RECONCILE', 'A-RESUME'], BE),
+    T('T-PROJECTS', 'API: projects, tabs, documents, reports', by_task['T-PROJECTS'], ['R-PROJECT', 'R-REPORTS'], [], ['T-FOUNDATION'], ['A-PROJECT', 'A-REPORT'], BE),
+    T('T-FLOOR', 'API: overview counts', by_task['T-FLOOR'], ['R-OVERVIEW'], [], ['T-FOUNDATION'], ['A-OVERVIEW'], BE),
+    T('T-FINANCE', 'API: month-end and imports', by_task['T-FINANCE'], ['R-FINANCE'], [], ['T-FOUNDATION'], ['A-MONTHEND'], BE),
+    T('T-PAYROLL', 'API: payroll match (restricted)', by_task['T-PAYROLL'], ['R-FINANCE'], [], ['T-FOUNDATION'], ['A-PAYROLL'], BE),
+    T('T-SETUP', 'API: rules, people, delegation, templates', by_task['T-SETUP'], ['R-SETUP'], [], ['T-FOUNDATION'], ['A-SETUP'], BE),
+    T('T-ALERTS', 'API: notifications and alert preferences (mock adapter)', by_task['T-ALERTS'], ['R-ALERTS'], ['D-ALERT-PROVIDERS'], ['T-DECIDE'], ['A-ALERTS'], BE),
+    T('T-ASSISTANT', 'API: assistant conversations', by_task['T-ASSISTANT'], ['R-ASSISTANT'], ['D-AGENT-PROVIDER'], ['T-START'], ['A-ASSISTANT'], BE),
+    T('T-BACKEND-ROLES', 'Backend: PMO Lead for Head of PMO, three-step approvals, leaders may start every line', [], ['R-ROLES'], [], [], ['A-START'], BE),
+    # frontend work: built against openapi.json with a mock server; no backend decision gates
+    T('FE-MYWORK', 'Frontend: My work, three queues, Decide/Do/Fix, search, filter, 10/20/50 rows', [], ['R-MYWORK', 'R-VOLUME', 'R-SAMPLE'], ['D-PAGING', 'D-UPDATES'], ['T-FRONTEND-SHELL'], ['A-MYWORK'], FE),
+    T('FE-WORKITEM', 'Frontend: work item, stations, facts, agent checklist, history', [], ['R-WORKITEM'], ['D-UPDATES'], ['FE-MYWORK'], ['A-WORKITEM', 'A-HISTORY'], FE),
+    T('FE-DECIDE', 'Frontend: decision panel and phone action bar, stale-version reload', [], ['R-DECIDE'], [], ['FE-WORKITEM'], ['A-DECIDE', 'A-STALE'], FE),
+    T('FE-CONNECT-1', 'Connect the first feature to the real API', [], ['R-SESSION', 'R-MYWORK', 'R-WORKITEM', 'R-DECIDE'], [], ['FE-DECIDE', 'T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], ['A-ME', 'A-MYWORK', 'A-WORKITEM', 'A-DECIDE', 'A-STALE'], FE),
+    T('FE-M2', 'Frontend: start work drawers, record a response, exceptions', [], ['R-START', 'R-RESPONSE', 'R-EXCEPTION'], [], ['FE-DECIDE'], ['A-START', 'A-RESPONSE', 'A-RECONCILE'], FE),
+    T('FE-M3', 'Frontend: projects, overview and factory floor, Finance, payroll, setup', [], ['R-PROJECT', 'R-REPORTS', 'R-OVERVIEW', 'R-MOTION', 'R-FINANCE', 'R-SETUP'], [], ['FE-M2'], ['A-PROJECT', 'A-OVERVIEW', 'A-MONTHEND', 'A-PAYROLL', 'A-SETUP'], FE),
+    T('FE-M4', 'Frontend: notification centre, alert settings, assistant', [], ['R-ALERTS', 'R-ASSISTANT'], [], ['FE-M3'], ['A-ALERTS', 'A-ASSISTANT'], FE),
 ]
 for t in tasks:
     if t['id'] == 'T-ALERTS': t['refs'] += ['I-ALERTS', 'JOB-ALERTS']
     if t['id'] == 'T-ASSISTANT': t['refs'] += ['I-AGENT', 'JOB-ASSISTANT']
 milestones = [
-    {'id': 'M-1', 'title': 'First feature: My work and one decision, end to end', 'refs': ['T-FOUNDATION', 'T-FRONTEND-SHELL', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE', 'D-FIRST-FEATURE'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
-     'exit_criteria': ['A-ME, A-MYWORK, A-WORKITEM, A-HISTORY, A-DECIDE and A-STALE pass on PostgreSQL with sample data', 'A-ACCESSIBILITY passes for these screens on phone and desktop', 'Design review against the approved canvas'], 'gate_ids': ['D-API-STYLE', 'D-AUTH', 'D-FIRST-FEATURE']},
-    {'id': 'M-2', 'title': 'Start, respond and recover', 'refs': ['T-START', 'T-RESPONSE', 'T-EXCEPTIONS', 'T-BACKEND-ROLES'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
+    {'id': 'M-1', 'title': 'First feature, frontend: My work and one decision against the API contract', 'refs': ['T-FRONTEND-SHELL', 'FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE', 'D-FIRST-FEATURE'], 'evidence': ['S-SCREENS', 'S-DECISIONS-V2'], 'owner_role': 'delivery owner',
+     'exit_criteria': ['Screens match the approved canvas on desktop and phone', 'A-ACCESSIBILITY passes', 'Runs on the mock server built from openapi.json with sample data'], 'gate_ids': ['D-FIRST-FEATURE', 'D-PAGING', 'D-UPDATES']},
+    {'id': 'M-1B', 'title': 'First feature, backend: the API for My work and decisions', 'refs': ['T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], 'evidence': ['S-BACKEND'], 'owner_role': 'delivery owner',
+     'exit_criteria': ['A-ME, A-MYWORK, A-WORKITEM, A-HISTORY, A-DECIDE, A-STALE pass on PostgreSQL'], 'gate_ids': ['D-API-STYLE', 'D-AUTH']},
+    {'id': 'M-1C', 'title': 'First feature connected end to end', 'refs': ['FE-CONNECT-1'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
+     'exit_criteria': ['The frontend runs on the real API with sample data; the same scenarios pass'], 'gate_ids': []},
+    {'id': 'M-2', 'title': 'Start, respond and recover', 'refs': ['T-START', 'T-RESPONSE', 'T-EXCEPTIONS', 'T-BACKEND-ROLES', 'FE-M2'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-START, A-RESPONSE, A-RECONCILE, A-RESUME pass'], 'gate_ids': ['D-RETURN']},
-    {'id': 'M-3', 'title': 'Projects, overview, Finance, payroll and setup', 'refs': ['T-PROJECTS', 'T-FLOOR', 'T-FINANCE', 'T-PAYROLL', 'T-SETUP'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
+    {'id': 'M-3', 'title': 'Projects, overview, Finance, payroll and setup', 'refs': ['T-PROJECTS', 'T-FLOOR', 'T-FINANCE', 'T-PAYROLL', 'T-SETUP', 'FE-M3'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-PROJECT, A-REPORT, A-OVERVIEW, A-MONTHEND, A-PAYROLL, A-SETUP pass'], 'gate_ids': []},
-    {'id': 'M-4', 'title': 'Alerts and assistant', 'refs': ['T-ALERTS', 'T-ASSISTANT'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
+    {'id': 'M-4', 'title': 'Alerts and assistant', 'refs': ['T-ALERTS', 'T-ASSISTANT', 'FE-M4'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-ALERTS and A-ASSISTANT pass on mock and synthetic providers'], 'gate_ids': ['D-ALERT-PROVIDERS', 'D-AGENT-PROVIDER', 'D-NOTIFY-MODEL', 'D-CONVERSATION-MODEL']},
 ]
 
 model = {
     'schema_version': '1.0', 'pins': {'skill': '0.1.0', 'generator': '0.1.0'},
     'project': {'id': 'psl-factory-frontend', 'title': 'PSL operations factory — frontend and data API', 'scope': 'Scope v2: new Next.js frontend in frontend/ on a data API added to the existing Django backend (S-08, I-02).',
-                'stage': 'existing', 'roles': ['operator', 'developer', 'technical reviewer', 'business owner', 'delivery owner', 'release authority'],
+                'stage': 'existing', 'roles': ['operator', 'developer', 'frontend developer', 'backend developer', 'technical reviewer', 'business owner', 'delivery owner', 'release authority'],
                 'constraints': ['Django keeps login, permissions and every business rule (C-05).', 'No deployment, live AI or external connections authorised in this phase.', 'Never invent financial rules or real approvers.']},
     'security_schemes': {
         'Session': {'type': 'apiKey', 'name': 'sessionid', 'in': 'cookie', 'description': 'Django session cookie from the existing sign-in (D-AUTH, proposed).'},
