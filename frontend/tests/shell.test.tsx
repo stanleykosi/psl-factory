@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Destination } from '@/api/types';
 import { AppShell } from '@/shell/AppShell';
-import { DestinationPage } from '@/shell/DestinationPage';
+import { DestinationPage, UnknownPage } from '@/shell/DestinationPage';
 import { HomeRedirect } from '@/shell/HomeRedirect';
 
 const nav = vi.hoisted(() => ({ pathname: '/my-work', replace: vi.fn() }));
@@ -47,6 +47,11 @@ function renderAt(pathname: string) {
 const topNav = () => document.querySelector('nav.psl-nav') as HTMLElement;
 const phoneBar = () => document.querySelector('header.psl-phonebar') as HTMLElement;
 const menuButton = () => within(phoneBar()).getByRole('button', { name: 'Menu' });
+/** The top bar's who-line: full text, the name part and the role part (visually hidden below 1080px). */
+const who = () => {
+  const el = topNav().querySelector('.psl-nav__who')!;
+  return { text: el.textContent, name: el.querySelector('.shell-who-name')!.textContent, role: el.querySelector('.shell-who-role')!.textContent };
+};
 
 async function loaded() {
   await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
@@ -64,7 +69,7 @@ describe('navigation follows /me', () => {
     expect(links[0].getAttribute('aria-current')).toBe('page');
     expect(links.slice(1).every((a) => !a.hasAttribute('aria-current'))).toBe(true);
     expect(within(topNav()).getByText('PSL FACTORY')).toBeTruthy();
-    expect(within(topNav()).getByText('Ada Okafor · Finance Lead').className).toBe('psl-nav__who');
+    expect(who()).toEqual({ text: 'Ada Okafor · Finance Lead', name: 'Ada Okafor', role: ' · Finance Lead' });
     expect(screen.getByRole('heading', { level: 1, name: 'My work' })).toBeTruthy();
     expect(screen.getByText('This page is not built yet. It arrives in a later release.')).toBeTruthy();
     expect(fetchStub).toHaveBeenCalledTimes(1);
@@ -77,7 +82,7 @@ describe('navigation follows /me', () => {
     await loaded();
     expect(within(topNav()).getAllByRole('link').map((a) => a.textContent)).toEqual(['My work', 'Projects', 'Assistant']);
     expect(topNav().querySelector('[aria-current]')).toBeNull();
-    expect(within(topNav()).getByText('Tunde Bello · PM')).toBeTruthy();
+    expect(who()).toEqual({ text: 'Tunde Bello · PM', name: 'Tunde Bello', role: ' · PM' });
     const main = screen.getByRole('main');
     expect(within(main).getByText('This section isn’t open to your role.')).toBeTruthy();
     expect(within(main).getByRole('link').getAttribute('href')).toBe('/my-work');
@@ -90,9 +95,24 @@ describe('navigation follows /me', () => {
     renderAt('/my-work');
     await loaded();
     expect(within(topNav()).queryAllByRole('link')).toEqual([]);
-    expect(within(topNav()).getByText('Sample Person · Staff')).toBeTruthy();
+    expect(who()).toEqual({ text: 'Sample Person · Staff', name: 'Sample Person', role: ' · Staff' });
     expect(screen.getByText('No sections are open to your role yet.')).toBeTruthy();
     expect(screen.getByText('Ask a Lead or Admin to check your roles.')).toBeTruthy();
+  });
+
+  it('an unknown address shows a plain not-found message with a link to the first destination', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('pm')));
+    nav.pathname = '/nonexistent';
+    render(
+      <AppShell>
+        <UnknownPage />
+      </AppShell>,
+    );
+    await loaded();
+    const main = screen.getByRole('main');
+    expect(within(main).getByRole('heading', { level: 3 }).textContent).toBe('This page doesn’t exist.');
+    expect(within(main).getByRole('link', { name: 'Go to My work' }).getAttribute('href')).toBe('/my-work');
+    expect(topNav().querySelector('[aria-current]')).toBeNull();
   });
 
   it('/ sends the person to their first destination', async () => {
@@ -148,9 +168,20 @@ describe('frame states', () => {
   ] as const)('%s shows the error pattern and Try again reloads /me', async (_, respond, code) => {
     fetchStub.mockImplementationOnce(respond as () => Promise<Response>);
     renderAt('/my-work');
-    await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('We couldn’t load your account.'));
-    expect(screen.getByRole('alert').textContent).toContain('Your work is safe; nothing was changed.');
-    expect(screen.getByText(`Reference ${code} for support.`)).toBeTruthy();
+    await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
+    // STATES error card: eyebrow, message, reference line, then a full-size secondary Try again button.
+    const card = screen.getByRole('alert');
+    expect(card.className).toBe('shell-errorcard');
+    expect([...card.children].map((el) => el.textContent)).toEqual([
+      'ERROR · COULDN’T LOAD',
+      'We couldn’t load your account. Your work is safe; nothing was changed.',
+      `Reference ${code} for support.`,
+      'Try again',
+    ]);
+    expect(card.children[0].className).toBe('shell-eyebrow');
+    expect(card.children[2].className).toBe('shell-reference');
+    expect(within(card).getByRole('button', { name: 'Try again' }).className).toBe('psl-btn psl-btn--secondary psl-btn--lg psl-btn--block');
+    expect(document.querySelector('.psl-callout--problem')).toBeNull();
     fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     await waitFor(() => expect(within(topNav()).getAllByRole('link')).toHaveLength(5));

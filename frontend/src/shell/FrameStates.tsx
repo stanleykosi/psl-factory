@@ -52,16 +52,12 @@ export function ForbiddenState({ error }: { error: ApiError }) {
 
 export function LoadErrorState({ error, onRetry }: { error: ApiError; onRetry: () => void }) {
   return (
-    <div className="shell-stack">
-      <div className="psl-callout psl-callout--problem" role="alert">
-        <WarningIcon />
-        <span>
-          <strong>We couldn&rsquo;t load your account.</strong> Your work is safe; nothing was changed.
-        </span>
-      </div>
-      <p className="shell-reference">Reference {error.code} for support.</p>
-      <div>
-        <button type="button" className="psl-btn psl-btn--secondary" onClick={onRetry}>
+    <div className="shell-errorcard" role="alert">
+      <span className="shell-eyebrow">ERROR · COULDN&rsquo;T LOAD</span>
+      <span>We couldn&rsquo;t load your account. Your work is safe; nothing was changed.</span>
+      <span className="shell-reference">Reference {error.code} for support.</span>
+      <div className="shell-errorcard__action">
+        <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" onClick={onRetry}>
           Try again
         </button>
       </div>

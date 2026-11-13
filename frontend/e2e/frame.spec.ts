@@ -38,6 +38,36 @@ async function outline(page: Page) {
   });
 }
 
+/** STATES error card: white surface, 2px signal border, red mono eyebrow, message, reference, 50px Try again. */
+async function expectErrorCard(page: Page) {
+  const card = page.getByRole('main').getByRole('alert');
+  await expect(card).toHaveClass('shell-errorcard');
+  await expect(card.locator(':scope > *')).toHaveText([
+    'ERROR · COULDN’T LOAD',
+    'We couldn’t load your account. Your work is safe; nothing was changed.',
+    'Reference not_found for support.',
+    'Try again',
+  ]);
+  const look = await card.evaluate((el) => {
+    const s = getComputedStyle(el);
+    const eyebrow = getComputedStyle(el.firstElementChild!);
+    const button = el.querySelector('button')!.getBoundingClientRect();
+    return {
+      background: s.backgroundColor,
+      border: `${s.borderTopWidth} ${s.borderTopStyle} ${s.borderTopColor}`,
+      eyebrow: { color: eyebrow.color, size: eyebrow.fontSize, mono: eyebrow.fontFamily.includes('Plex Mono') },
+      buttonHeight: button.height,
+    };
+  });
+  expect(look).toEqual({
+    background: 'rgb(255, 255, 255)',
+    border: '2px solid rgb(200, 64, 28)',
+    eyebrow: { color: 'rgb(154, 47, 16)', size: '11px', mono: true },
+    buttonHeight: 50,
+  });
+  await expect(page.locator('.psl-callout--problem')).toHaveCount(0);
+}
+
 async function noHorizontalScroll(page: Page) {
   return page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 }
@@ -134,8 +164,7 @@ test.describe('desktop 1440', () => {
   test('404 shows the error pattern; Try again after clearing the cookie loads the bar', async ({ page, context }) => {
     await setCookies(context, { psl_mock_scenario: '404' });
     await page.goto('/my-work');
-    await expect(page.locator('.psl-callout--problem')).toContainText('We couldn’t load your account.');
-    await expect(page.getByText('Reference not_found for support.')).toBeVisible();
+    await expectErrorCard(page);
     await expect(page.locator('.psl-sample').first()).toBeVisible();
     await expectNoAxeViolations(page);
     await context.clearCookies();
@@ -228,6 +257,19 @@ test.describe('phone 390', () => {
     expect(ring.color).not.toBe('rgb(255, 255, 255)');
   });
 
+  test('404 error card at phone width; Try again is full width', async ({ page, context }) => {
+    await setCookies(context, { psl_mock_scenario: '404' });
+    await page.goto('/my-work');
+    await expectErrorCard(page);
+    const widths = await page.getByRole('main').getByRole('alert').evaluate((el) => ({
+      card: el.clientWidth - 28,
+      button: el.querySelector('button')!.getBoundingClientRect().width,
+    }));
+    expect(widths.button).toBe(widths.card);
+    expect(await noHorizontalScroll(page)).toBe(true);
+    await expectNoAxeViolations(page);
+  });
+
   test('401 state at phone width', async ({ page, context }) => {
     await setCookies(context, { psl_mock_scenario: '401' });
     await page.goto('/my-work');
@@ -247,4 +289,43 @@ test('no horizontal scroll at 768px', async ({ page }) => {
   expect(bar.scroll).toBeLessThanOrEqual(bar.client);
   await expect(page.locator('.psl-nav .psl-sample')).toHaveText('SAMPLE DATA');
   expect(await page.locator('.psl-nav .psl-sample').evaluate((el) => el.getBoundingClientRect().height)).toBeLessThan(24);
+});
+
+// Design owner, 13 Nov 2026: from 720px up to bp-desktop (1080px) the bar shows the name only, on one line;
+// from 1080px the full "name · role". The role stays in the accessible text at every width.
+for (const width of [720, 740, 768, 820, 900, 1079, 1080, 1440]) {
+  test(`top bar at ${width}px fits and shows who is signed in`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/my-work');
+    await loaded(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    const bar = page.getByRole('navigation', { name: 'Main' });
+    await expect(bar.getByRole('link')).toHaveCount(5);
+    const who = await bar.locator('.psl-nav__who').evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const role = el.querySelector('.shell-who-role')!.getBoundingClientRect();
+      return {
+        text: el.textContent,
+        fits: el.scrollWidth <= el.clientWidth && r.right <= window.innerWidth,
+        oneLine: r.height < 24,
+        roleShown: role.width > 1,
+      };
+    });
+    expect(who).toEqual({ text: 'Ada Okafor · Finance Lead', fits: true, oneLine: true, roleShown: width >= 1080 });
+    await expect(bar.locator('.shell-who-name')).toHaveText('Ada Okafor');
+    await expect(bar.locator('.shell-who-name')).toBeVisible();
+    await expect(bar).toContainText('Ada Okafor · Finance Lead');
+    if (width === 720 || width === 1080) await expectNoAxeViolations(page);
+  });
+}
+
+test('an unknown address shows a plain not-found page with a way back', async ({ page }) => {
+  await page.setViewportSize(DESKTOP);
+  await page.goto('/nonexistent');
+  await loaded(page);
+  await expect(page).toHaveTitle('Page not found · PSL Factory');
+  await expect(page.getByRole('heading', { name: 'This page doesn’t exist.' })).toBeVisible();
+  await page.getByRole('main').getByRole('link', { name: 'Go to My work' }).click();
+  await expect(page).toHaveURL(/\/my-work$/);
+  await expectNoAxeViolations(page);
 });

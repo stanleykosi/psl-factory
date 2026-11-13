@@ -31,16 +31,25 @@ body { margin: 0; background: var(--steel); }
 .shell-topbar .psl-nav__in { max-width: 1320px; margin: 0 auto; }
 .shell-main { max-width: 1320px; margin: 0 auto; padding: var(--space-6) var(--space-6) calc(var(--space-6) * 2); display: flex; flex-direction: column; gap: var(--space-5); }
 .shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 36px; line-height: 1.08; }
-.shell-stack { display: flex; flex-direction: column; gap: var(--space-3); }
 .shell-reference { margin: 0; font-size: 13px; color: var(--ink-muted); }
+/* STATES error card: white surface, 2px signal border, mono eyebrow, message, reference, Try again */
+.shell-errorcard { background: var(--surface); border: 2px solid var(--signal); padding: 14px; display: flex; flex-direction: column; gap: var(--space-2); }
+.shell-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--signal-ink); }
+.shell-errorcard__action { max-width: 200px; }
 .shell-loading { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
 .shell-skel { display: grid; gap: 10px; }
 @media (max-width: 719.98px) {
   .shell-main { padding: var(--space-4); gap: var(--space-3); }
   .shell-title { font-size: 26px; }
+  .shell-errorcard__action { max-width: none; }
 }
 
-/* (f) the name gives way first on narrow desktops */
+/* (f) narrow desktops (720px up to bp-desktop 1080px): the bar compacts so it fits at 720px, and the
+   who-line shows the name only (design owner, 13 Nov 2026); the role stays for screen readers */
+.shell-navend { margin-left: auto; flex: none; }
 @media (min-width: 720px) and (max-width: 1079.98px) {
-  .psl-nav__who { overflow: hidden; text-overflow: ellipsis; }
+  .shell-topbar .psl-nav__in { padding: 0 var(--space-4); gap: var(--space-2); }
+  .shell-topbar .psl-navlink { padding-left: var(--space-2); padding-right: var(--space-2); }
+  .psl-nav__who { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .shell-who-role { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }

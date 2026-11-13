@@ -9,7 +9,10 @@ import { SampleLabel } from './SampleLabel';
 
 type Props = { me: Me | null; destinations: DestinationInfo[]; current: DestinationInfo | undefined };
 
-/** CMP-01 top bar (desktop, 720px and wider). No Start work, bell or account menu in this release. */
+/**
+ * CMP-01 top bar (desktop, 720px and wider). No Start work, bell or account menu in this release.
+ * Below 1080px the role is visually hidden (name only) but stays in the accessible name.
+ */
 export function TopNav({ me, destinations, current }: Props) {
   return (
     <nav className="psl-nav psl-on-dark" aria-label="Main">
@@ -24,12 +27,13 @@ export function TopNav({ me, destinations, current }: Props) {
             ))}
           </div>
         )}
-        <span style={{ marginLeft: 'auto', flex: 'none' }}>
+        <span className="shell-navend">
           <SampleLabel />
         </span>
         {me && (
           <span className="psl-nav__who">
-            {me.name} · {me.roles.join(', ')}
+            <span className="shell-who-name">{me.name}</span>
+            <span className="shell-who-role"> · {me.roles.join(', ')}</span>
           </span>
         )}
       </div>
