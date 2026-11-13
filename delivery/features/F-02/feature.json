@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -127,8 +127,157 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/server.mjs:~97-100` conflicts textually with F-03's branch (9bb054b) at the generic return. Resolution is to keep both: the `E-WORK-ITEM`/`E-WORK-HISTORY` branch and the `E-WORK-LIST` branch, in either order. F-03 also changes the `node:fs` import to `{ readdirSync, readFileSync }`, while F-02 adds `import { workList } from './work-list.mjs'` after the `node:url` import, so there is no clash there. After merging, rerun `tests/mock-work-list.test.ts` and `tests/mock-contract.test.ts`. Also confirm that the W-1001 to W-1006 ids in `E-WORK-LIST.rows.json` resolve to F-03's `fixtures/work/` files, which the spec leaves to the integration owner.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/work-list.mjs:30` returns 403 for `queue=unassigned` whenever the persona is not a lead, which includes persona `none`. C8 says `none` gets 200 with empty items and zero counts. The page never reaches this case, so it has no user impact. Optional tidy: apply the 403 only to personas other than `none`, or note the choice in the file.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/my-work/MyWork.tsx:86-89,174-176`. `navigate` merges into `viewRef.current`, which is only updated in an effect after the URL change renders. Two navigations in the same tick (before React re-renders) would drop the first change. Today each user action issues a single `navigate`, so nothing breaks. Remember this if combined actions are added later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone cards (390px, `.my-work__card` header, `WorkRows.tsx` card markup and `my-work.css`): the kind tag and the title share a flex row, so the tag is inline with short titles (\"DECIDE Zuma Cement \u00b7 Payment exception\") and stacked above longer ones (\"DECIDE\" on its own line over \"Coastal Freight \u00b7 Milestone 2 invoice\"). Expected: the kind tag always sits on one line above the title, or always inline, with the same vertical rhythm on every card. Actual: card headers differ in height and alignment within the same list. Evidence: screenshot `f02-shots/phone-390-lead.png` (finance_lead, default view, 20 cards).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+          "evidence_refs": [
+            "delivery/features/F-02/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-02/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+          "evidence_refs": [
+            "delivery/features/F-02/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (visual consistency against the approved SCR-01 and STATES boards, tokens and layout at desktop and phone width)",
+          "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+          "evidence_refs": [
+            "delivery/features/F-02/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -211,7 +360,7 @@
     }
   },
   "created_at": "2026-11-13T22:44:58Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 3,
   "history": [
     {
@@ -237,6 +386,22 @@
       "round": 1,
       "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-13T23:40:57Z",
+      "round": 1,
+      "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T23:40:57Z",
+      "round": 2,
+      "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "reason": null
     }
   ],
   "routing": {
@@ -252,10 +417,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
