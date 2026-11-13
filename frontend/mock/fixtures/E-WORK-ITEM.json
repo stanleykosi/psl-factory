@@ -1,0 +1,38 @@
+{
+  "id": "W-1001",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "waiting",
+  "revision": 2,
+  "stations": [
+    {"name":"Milestone evidence","status":"done"},
+    {"name":"Contract amount","status":"done"},
+    {"name":"Draft invoice","status":"done"},
+    {"name":"Finance review","status":"current_person"},
+    {"name":"Issue","status":"not_started"},
+    {"name":"Deliver","status":"not_started"},
+    {"name":"Verify","status":"not_started"}
+  ],
+  "facts": [
+    {"name":"drafted","status":"earned","at":"2026-11-10T10:38:00Z"},
+    {"name":"reviewed","status":"current"},
+    {"name":"approved","status":"not_yet"},
+    {"name":"sent","status":"not_yet"},
+    {"name":"receipt_recorded","status":"unknown"},
+    {"name":"verified","status":"not_yet"}
+  ],
+  "tasks": [
+    {"id":"T-2001","kind":"decide","title":"Decide invoice v2","required_role":"Finance Lead","you_can_act":true,"revision":2}
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {"text":"Read milestone 2 evidence","status":"done","source":"Milestone evidence"},
+      {"text":"Drafted invoice v2","status":"done"}
+    ]
+  },
+  "next_step": "A Finance Lead decides invoice v2.",
+  "sample": true
+}
