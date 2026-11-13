@@ -20,7 +20,7 @@
 .psl .work-tabs .psl-tab[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
 .work-tabs .psl-tab[aria-current="page"]:focus-visible { outline-color: var(--focus-on-strong); }
 
-/* facts strip (a list) and station track (an ordered list inside a scrolling region) */
+/* facts strip (a list) and station track (an ordered list; a row of boxes from 720px, a vertical list below) */
 .work-facts ul.psl-facts { margin: 0; padding: 0; list-style: none; }
 .work-track { overflow-x: auto; }
 .work-track ol.psl-track { margin: 0; padding: 0; list-style: none; overflow: visible; }
@@ -53,6 +53,7 @@
 .work-noaccess { max-width: 720px; }
 .work-noaccess .psl-panel__body p:last-child { margin: var(--space-2) 0 0; }
 .work-noaccess .shell-title { margin: 0; }
+.work-noaccess__tag { align-self: flex-start; }
 
 @media (max-width: 719.98px) {
   /* six facts in two rows of three */
@@ -68,4 +69,18 @@
   .work-history .work-what { margin-top: 4px; }
   .work-history .work-version { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
   .work-filter { width: 100%; }
+  /* stations as a vertical list with the status on the right (approved SCR-02 mobile boards); the
+     current station keeps its status tint, the agent one stays blue (design owner, 14 Nov 2026) */
+  .work-track { overflow-x: visible; background: var(--surface); border: 2px solid var(--ink); }
+  .work-track ol.psl-track { display: block; }
+  .work-track .psl-station { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: var(--space-2);
+    min-height: 0; padding: 7px 12px; background: var(--surface); color: var(--ink); border: none; border-bottom: 1px solid var(--rule-soft); }
+  .work-track .psl-station:last-child { border-bottom: none; }
+  .work-track .psl-station strong { font-family: inherit; font-weight: 600; font-size: 14px; line-height: 1.3; }
+  .work-track .psl-station--person { background: var(--signal-tint); color: var(--signal-ink); }
+  .work-track .psl-station--agent { background: var(--action-tint); color: var(--action-ink); }
+  .work-track .psl-station--waiting { background: var(--waiting-tint); color: var(--waiting-ink); }
+  .work-track .psl-station--stopped { color: var(--signal-ink); }
+  .work-track .psl-station--todo { color: var(--ink-muted); }
+  .work-track .psl-station--verified { background: var(--verified-tint); color: var(--verified-ink); }
 }

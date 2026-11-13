@@ -74,13 +74,29 @@ test('W-1099 shows the no-access board and nothing about the item', async ({ pag
   expect(await page.locator('main').textContent()).not.toContain('W-1099');
 });
 
-test('at 390px only the station track scrolls sideways', async ({ page }) => {
+test('at 390px the stations are a vertical list with the status on the right', async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto('/work/W-1001');
   await loaded(page);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
-  const track = await page.getByRole('region', { name: 'Stations' }).evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
-  expect(track.scroll).toBeGreaterThan(track.client);
+  const region = page.getByRole('region', { name: 'Stations' });
+  const track = await region.evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
+  expect(track.scroll).toBeLessThanOrEqual(track.client);
+  const rows = await region.getByRole('listitem').evaluateAll((items) =>
+    items.map((li) => {
+      const box = li.getBoundingClientRect();
+      const [number, name, status] = Array.from(li.children).map((child) => child.getBoundingClientRect());
+      return { top: box.top, left: box.left, width: box.width, number, name, status };
+    }),
+  );
+  expect(rows.length).toBeGreaterThan(1);
+  for (const [i, row] of rows.entries()) {
+    if (i > 0) expect(row.top).toBeGreaterThan(rows[i - 1].top);
+    expect(row.left).toBe(rows[0].left);
+    expect(row.width).toBe(rows[0].width);
+    expect(row.status.left).toBeGreaterThan(row.name.left);
+    expect(Math.abs(row.status.top - row.name.top)).toBeLessThan(row.name.height);
+  }
 });
 
 test.describe('agent step motion', () => {

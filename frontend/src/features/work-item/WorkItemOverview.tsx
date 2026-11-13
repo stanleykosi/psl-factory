@@ -69,7 +69,7 @@ export function FactsStrip({ facts }: { facts: WorkItem['facts'] }) {
 export function StationTrack({ stations }: { stations: WorkItem['stations'] }) {
   const current = currentStationIndex(stations);
   return (
-    // Below 720px the track scrolls sideways inside this region, which is focusable for keyboard scrolling.
+    // From 720px a narrow column can scroll the row sideways inside this focusable region; below 720px it is a list.
     // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <section className="work-track" aria-label="Stations" tabIndex={0}>
       <ol className="psl-track">
