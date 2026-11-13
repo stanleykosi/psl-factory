@@ -87,6 +87,14 @@
       "version": "2026-11-13b",
       "classification": "private",
       "sha256": "c79af9fa17970f2ac3844c405e0a36ee3dace813c30aa68c2b7c410bd6c82f35"
+    },
+    {
+      "id": "S-DECISIONS-V3",
+      "title": "Contract fields for the approved boards; decision variants parked, 13 Nov 2026",
+      "path": "sources/decisions-2026-11-13-v3.md",
+      "version": "2026-11-13c",
+      "classification": "private",
+      "sha256": "41c744d742c105653eeb9b15f9d798ff1534e4ff4f3c5fecbcc024d0c217b5d0"
     }
   ],
   "requirements": [
@@ -849,6 +857,122 @@
           ]
         }
       ]
+    },
+    {
+      "id": "D-TASK-DECISION-VIEW",
+      "title": "Where a human task's decision content is read",
+      "refs": [
+        "R-DECIDE",
+        "D-APPROVAL-ORDER"
+      ],
+      "evidence": [
+        "S-DECISIONS-V3",
+        "S-SCREENS"
+      ],
+      "owner": "backend developer",
+      "scope": "E-WORK-ITEM tasks[]; SCR-03 standard decision",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: each E-WORK-ITEM tasks[] entry gains optional fields: decision (exact version label and number, amount as money that may be unknown, basis, recipient, changes since the previous version, preparer, approval chain with \"your step n of m\"), cannot_act_reason (not_your_role, prepared_by_you, already_decided, not_your_turn) and asked (who was asked instead, when alerted, by which channel). No new endpoint; the backend composes every value from its records and the line's configured approval order; the frontend shows only what is returned.",
+          "rationale": "Smallest change: the decision screen already loads the work item, reuses its read permission and revision, and existing v3 fields and fixtures stay valid because every new field is optional. Unknown amounts use unknown=true with no value, never 0 (INV-UNKNOWN). Approvers and their order come from the backend (D-APPROVAL-ORDER), never from the frontend.",
+          "alternatives": [
+            "New GET /api/v1/tasks/{task_id} returning the decision view (separate read permission and handler; a second request per screen)",
+            "Extend the E-TASK-CLAIM response (only available after a claim, so not-yours and own-work views would have nothing)"
+          ],
+          "evidence": [
+            "S-DECISIONS-V3",
+            "S-SCREENS"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D-WORKITEM-DETAIL",
+      "title": "Work item detail the SCR-02 boards show",
+      "refs": [
+        "R-WORKITEM"
+      ],
+      "evidence": [
+        "S-DECISIONS-V3",
+        "S-SCREENS"
+      ],
+      "owner": "backend developer",
+      "scope": "E-WORK-ITEM",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: E-WORK-ITEM gains optional amount (money, unknown form), started_by and started_at; each station gains optional started_at, finished_at and held_by (who or what holds it, and whether that is you); the agent gains optional started_at and each agent step an optional at.",
+          "rationale": "The approved SCR-02 boards show \"Started by <person> (<role>) · <date>\", station times (\"Done · Mon 14:05\", \"Waiting 2h · you\"), agent step times and the agent start time; A-WORKITEM needs an unknown amount. All additions are optional so v3 payloads stay valid.",
+          "alternatives": [
+            "Leave the values off the screen (the readiness fallback)"
+          ],
+          "evidence": [
+            "S-DECISIONS-V3",
+            "S-SCREENS"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D-WORKLIST-FILTERS",
+      "title": "My work filters and agent marker",
+      "refs": [
+        "R-MYWORK"
+      ],
+      "evidence": [
+        "S-DECISIONS-V3",
+        "S-SCREENS"
+      ],
+      "owner": "backend developer",
+      "scope": "E-WORK-LIST",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: E-WORK-LIST accepts project (a case_id) and waiting_on (me, someone_else, agent, outside_party, no_owner) as optional filters; line takes the line key, never the display title; the response gains optional filters.lines[{key, title}] (lines the person can see work on); rows gain optional line_key and agent (the agent whose avatar the row shows).",
+          "rationale": "The approved filter panel (SCR-01-*-filter) offers Line, Project, State and Waiting on, and rows show an agent avatar (CMP-18) when an agent drafted or is working on the item. The waiting_on categories are an engineering proposal read from the board rows, not a business rule. Project options come from E-PROJECTS.",
+          "alternatives": [
+            "Drop the Project and Waiting-on filters from the screen",
+            "A separate /api/v1/work/filters endpoint"
+          ],
+          "evidence": [
+            "S-DECISIONS-V3",
+            "S-SCREENS"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D-DECISION-VARIANTS",
+      "title": "Payment exception, CEO final costing and CTO emergency decisions",
+      "refs": [
+        "R-DECIDE"
+      ],
+      "evidence": [
+        "S-DECISIONS-V3",
+        "S-SCREENS"
+      ],
+      "owner": "business owner with the backend developer",
+      "scope": "SCR-03 variants: payment exception, CEO costing, CTO emergency",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "open",
+          "choice": "Not designed. Parked until PSL and the backend developer settle the payment-exception rule: what \"Keep owed\", \"Exception\" and \"Reject\" record, which fields and figures (invoiced, received, owed, rule) each variant returns and sends, who holds the authority, and whether the short payment is decided through E-TASK-DECIDE or an exception action. No verdict, rule or approver is assumed here.",
+          "rationale": "A payment exception needs configured human authority and never erases debt (AGENTS.md product invariants); inventing its verdicts would invent a financial rule. The design engineer parked the variants on 13 Nov 2026.",
+          "alternatives": [
+            "New verdicts on E-TASK-DECIDE",
+            "Move the short payment to E-WORK-ACTION or E-EXCEPTIONS (FE-M2)"
+          ],
+          "evidence": [
+            "S-DECISIONS-V3",
+            "S-SCREENS"
+          ]
+        }
+      ]
     }
   ],
   "components": [
@@ -1547,11 +1671,13 @@
         "D-PAGING",
         "D-UPDATES",
         "T-MYWORK",
-        "A-MYWORK"
+        "A-MYWORK",
+        "D-WORKLIST-FILTERS"
       ],
       "evidence": [
         "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V3"
       ],
       "method": "GET",
       "path": "/api/v1/work",
@@ -1591,7 +1717,35 @@
           "required": false,
           "schema": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "Line key (filters.lines[].key or a row's line_key), never the display title"
+          }
+        },
+        {
+          "name": "project",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project case_id, from E-PROJECTS"
+          }
+        },
+        {
+          "name": "waiting_on",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "me",
+              "someone_else",
+              "agent",
+              "outside_party",
+              "no_owner"
+            ],
+            "description": "PROPOSAL (D-WORKLIST-FILTERS)"
           }
         },
         {
@@ -1716,6 +1870,19 @@
                     },
                     "sample": {
                       "type": "boolean"
+                    },
+                    "line_key": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "agent": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "tola",
+                        "chidi",
+                        "zainab"
+                      ]
                     }
                   },
                   "required": [
@@ -1765,6 +1932,36 @@
                   "needs_me",
                   "waiting_on_others",
                   "done"
+                ],
+                "additionalProperties": false
+              },
+              "filters": {
+                "type": "object",
+                "properties": {
+                  "lines": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "title": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "lines"
                 ],
                 "additionalProperties": false
               }
@@ -1866,11 +2063,15 @@
         "INV-SAMPLE",
         "D-UPDATES",
         "T-WORKITEM",
-        "A-WORKITEM"
+        "A-WORKITEM",
+        "D-WORKITEM-DETAIL",
+        "D-TASK-DECISION-VIEW",
+        "A-NOT-YOURS"
       ],
       "evidence": [
         "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V3"
       ],
       "method": "GET",
       "path": "/api/v1/work/{work_id}",
@@ -1956,6 +2157,46 @@
                         "not_started",
                         "verified"
                       ]
+                    },
+                    "started_at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "format": "date-time"
+                    },
+                    "finished_at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "format": "date-time"
+                    },
+                    "held_by": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "person",
+                            "role",
+                            "agent",
+                            "outside_party",
+                            "factory"
+                          ]
+                        },
+                        "name": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Person, role, agent or outside party name as recorded"
+                        },
+                        "is_you": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "name",
+                        "is_you"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
@@ -2032,6 +2273,246 @@
                     "revision": {
                       "type": "integer",
                       "minimum": 1
+                    },
+                    "decision": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "As shown on the board, e.g. \"Invoice v2\""
+                            },
+                            "number": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "document_id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "drafted_at": {
+                              "type": "string",
+                              "minLength": 1,
+                              "format": "date-time"
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "number"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "amount": {
+                          "type": "object",
+                          "properties": {
+                            "amount": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                              "description": "Decimal string; absent when unknown"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^[A-Z]{3}$"
+                            },
+                            "unknown": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "currency",
+                            "unknown"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Amount of the exact version being decided; absent when the decision carries no amount. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+                        },
+                        "basis": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Plain-language basis composed by the backend from contract terms, e.g. \"Contract stage 2 of 4 · terms v1\""
+                        },
+                        "recipient": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Who the output goes to when sent, e.g. a billing email; absent when nothing is sent"
+                        },
+                        "changes": {
+                          "type": "object",
+                          "properties": {
+                            "previous_label": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            }
+                          },
+                          "required": [
+                            "previous_label",
+                            "items"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "prepared_by": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "role": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "is_you": {
+                              "type": "boolean"
+                            },
+                            "with_agent": {
+                              "type": "string",
+                              "minLength": 1,
+                              "enum": [
+                                "tola",
+                                "chidi",
+                                "zainab"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "is_you"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "chain": {
+                          "type": "object",
+                          "properties": {
+                            "steps": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "position": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                  },
+                                  "role": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "person": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "Absent until a person is assigned"
+                                  },
+                                  "status": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "enum": [
+                                      "approved",
+                                      "returned",
+                                      "rejected",
+                                      "withdrawn",
+                                      "current",
+                                      "not_yet"
+                                    ]
+                                  },
+                                  "decided_at": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "format": "date-time"
+                                  },
+                                  "is_you": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "position",
+                                  "role",
+                                  "status",
+                                  "is_you"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "your_step": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "step_count": {
+                              "type": "integer",
+                              "minimum": 1
+                            }
+                          },
+                          "required": [
+                            "steps",
+                            "step_count"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "version",
+                        "chain"
+                      ],
+                      "additionalProperties": false,
+                      "description": "PROPOSAL (D-TASK-DECISION-VIEW). Present on decision tasks. Every value comes from backend records and the line's configured approval order; the frontend shows only what is returned. your_step is absent when the person has no step."
+                    },
+                    "cannot_act_reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "not_your_role",
+                        "prepared_by_you",
+                        "already_decided",
+                        "not_your_turn"
+                      ],
+                      "description": "Present only when you_can_act is false"
+                    },
+                    "asked": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "role": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "alerted_at": {
+                            "type": "string",
+                            "minLength": 1,
+                            "format": "date-time"
+                          },
+                          "channels": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "enum": [
+                                "whatsapp",
+                                "email"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "role"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Who was asked to act on this task (shown when you cannot act); empty when nobody is assigned yet."
                     }
                   },
                   "required": [
@@ -2078,6 +2559,11 @@
                         },
                         "source": {
                           "type": "string"
+                        },
+                        "at": {
+                          "type": "string",
+                          "minLength": 1,
+                          "format": "date-time"
                         }
                       },
                       "required": [
@@ -2086,6 +2572,11 @@
                       ],
                       "additionalProperties": false
                     }
+                  },
+                  "started_at": {
+                    "type": "string",
+                    "minLength": 1,
+                    "format": "date-time"
                   }
                 },
                 "required": [
@@ -2099,6 +2590,57 @@
               },
               "sample": {
                 "type": "boolean"
+              },
+              "amount": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                    "description": "Decimal string; absent when unknown"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[A-Z]{3}$"
+                  },
+                  "unknown": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "currency",
+                  "unknown"
+                ],
+                "additionalProperties": false,
+                "description": "Amount of the work item (e.g. the invoice); absent when the line carries no amount. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+              },
+              "started_by": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "role": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "is_you": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "is_you"
+                ],
+                "additionalProperties": false
+              },
+              "started_at": {
+                "type": "string",
+                "minLength": 1,
+                "format": "date-time"
               }
             },
             "required": [
@@ -8366,6 +8908,36 @@
       "result_evidence": null
     },
     {
+      "id": "A-NOT-YOURS",
+      "title": "Why a person cannot act, and who was asked instead",
+      "refs": [
+        "R-DECIDE"
+      ],
+      "evidence": [
+        "S-SCREENS"
+      ],
+      "given": "Invoice v2 waiting for a Finance Lead: a Finance user, its preparer, the Finance Lead after approving, and a CEO before the PMO Lead has approved a costing",
+      "when": "Each reads the work item",
+      "then": "Each gets you_can_act=false with cannot_act_reason not_your_role, prepared_by_you, already_decided or not_your_turn and the people asked; the eligible Finance Lead gets the decision view with version, amount (unknown=true and no value when unknown, never 0), basis, recipient, changes and chain with your_step; values come from records, none from the frontend",
+      "status": "not_run",
+      "result_evidence": null
+    },
+    {
+      "id": "A-DECIDE-VARIANTS",
+      "title": "Payment exception, CEO final costing and CTO emergency decisions",
+      "refs": [
+        "R-DECIDE"
+      ],
+      "evidence": [
+        "S-SCREENS"
+      ],
+      "given": "D-DECISION-VARIANTS settled by PSL and the backend developer",
+      "when": "Each variant is decided",
+      "then": "Defined when D-DECISION-VARIANTS is decided; no verdict, rule or approver is assumed before then",
+      "status": "not_run",
+      "result_evidence": null
+    },
+    {
       "id": "A-ACCESSIBILITY",
       "title": "Frontend meets devices and WCAG 2.2 AA",
       "refs": [
@@ -8512,7 +9084,8 @@
       "gate_ids": [],
       "acceptance": [
         "A-WORKITEM",
-        "A-HISTORY"
+        "A-HISTORY",
+        "A-NOT-YOURS"
       ],
       "estimate": null,
       "assignee": null,
@@ -8898,7 +9471,7 @@
     },
     {
       "id": "FE-DECIDE",
-      "title": "Frontend: decision panel and phone action bar, stale-version reload",
+      "title": "Frontend: standard decision panel and phone action bar (approve, return, reject; stale-version reload; not yours; own work)",
       "refs": [
         "R-DECIDE"
       ],
@@ -8914,7 +9487,34 @@
       "gate_ids": [],
       "acceptance": [
         "A-DECIDE",
-        "A-STALE"
+        "A-STALE",
+        "A-NOT-YOURS"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-DECIDE-VARIANTS",
+      "title": "Frontend: payment-exception, CEO final costing and CTO emergency decision variants (parked)",
+      "refs": [
+        "R-DECIDE",
+        "D-DECISION-VARIANTS"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "FE-DECIDE"
+      ],
+      "gate_ids": [
+        "D-DECISION-VARIANTS"
+      ],
+      "acceptance": [
+        "A-DECIDE-VARIANTS"
       ],
       "estimate": null,
       "assignee": null,
@@ -8950,7 +9550,8 @@
         "A-MYWORK",
         "A-WORKITEM",
         "A-DECIDE",
-        "A-STALE"
+        "A-STALE",
+        "A-NOT-YOURS"
       ],
       "estimate": null,
       "assignee": null,
@@ -9084,7 +9685,7 @@
       ],
       "owner_role": "delivery owner",
       "exit_criteria": [
-        "A-ME, A-MYWORK, A-WORKITEM, A-HISTORY, A-DECIDE, A-STALE pass on PostgreSQL"
+        "A-ME, A-MYWORK, A-WORKITEM, A-HISTORY, A-DECIDE, A-STALE, A-NOT-YOURS pass on PostgreSQL"
       ],
       "gate_ids": [
         "D-API-STYLE",
@@ -9114,17 +9715,20 @@
         "T-RESPONSE",
         "T-EXCEPTIONS",
         "T-BACKEND-ROLES",
-        "FE-M2"
+        "FE-M2",
+        "FE-DECIDE-VARIANTS"
       ],
       "evidence": [
         "S-SCREENS"
       ],
       "owner_role": "delivery owner",
       "exit_criteria": [
-        "A-START, A-RESPONSE, A-RECONCILE, A-RESUME pass"
+        "A-START, A-RESPONSE, A-RECONCILE, A-RESUME pass",
+        "A-DECIDE-VARIANTS passes once D-DECISION-VARIANTS is decided"
       ],
       "gate_ids": [
-        "D-RETURN"
+        "D-RETURN",
+        "D-DECISION-VARIANTS"
       ]
     },
     {

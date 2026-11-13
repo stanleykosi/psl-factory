@@ -14,6 +14,7 @@ SRC = {
     'S-BACKEND': ('Observed backend inventory', 'sources/backend-inventory.md', '2026-11-13', 'private'),
     'S-DECISIONS': ('Decisions relayed 13 Nov 2026', 'sources/decisions-2026-11-13.md', '2026-11-13', 'private'),
     'S-DECISIONS-V2': ('Frontend decisions and role boundary, 13 Nov 2026', 'sources/decisions-2026-11-13-v2.md', '2026-11-13b', 'private'),
+    'S-DECISIONS-V3': ('Contract fields for the approved boards; decision variants parked, 13 Nov 2026', 'sources/decisions-2026-11-13-v3.md', '2026-11-13c', 'private'),
 }
 def sha(p): return hashlib.sha256(open(os.path.join(HERE, p), 'rb').read()).hexdigest()
 sources = [{'id': k, 'title': t, 'path': p, 'version': v, 'classification': c, 'sha256': sha(p)} for k, (t, p, v, c) in SRC.items()]
@@ -116,6 +117,24 @@ decisions = [
         'My work and one decision end to end (J-01 view, J-02): session and identity, the three queues, the work item with history, claim and decide with stale-version handling; desktop and phone.',
         'Smallest slice that exercises the API seam, permissions, revisions and the design system on real records.',
         ['Start work first', 'Factory floor first'], ['R-MYWORK', 'R-DECIDE'], ('S-SCREENS', 'S-SCOPE')),
+    # ---- v4 (13 Nov 2026): fields the approved SCR-01/02/03 boards show; drafted by the frontend, confirmed by the backend developer (S-DECISIONS-V3)
+    dec('D-TASK-DECISION-VIEW', 'Where a human task\'s decision content is read', 'backend developer', 'E-WORK-ITEM tasks[]; SCR-03 standard decision', 'proposed',
+        'PROPOSAL for the backend developer to confirm: each E-WORK-ITEM tasks[] entry gains optional fields: decision (exact version label and number, amount as money that may be unknown, basis, recipient, changes since the previous version, preparer, approval chain with "your step n of m"), cannot_act_reason (not_your_role, prepared_by_you, already_decided, not_your_turn) and asked (who was asked instead, when alerted, by which channel). No new endpoint; the backend composes every value from its records and the line\'s configured approval order; the frontend shows only what is returned.',
+        'Smallest change: the decision screen already loads the work item, reuses its read permission and revision, and existing v3 fields and fixtures stay valid because every new field is optional. Unknown amounts use unknown=true with no value, never 0 (INV-UNKNOWN). Approvers and their order come from the backend (D-APPROVAL-ORDER), never from the frontend.',
+        ['New GET /api/v1/tasks/{task_id} returning the decision view (separate read permission and handler; a second request per screen)', 'Extend the E-TASK-CLAIM response (only available after a claim, so not-yours and own-work views would have nothing)'],
+        ['R-DECIDE', 'D-APPROVAL-ORDER'], ('S-DECISIONS-V3', 'S-SCREENS')),
+    dec('D-WORKITEM-DETAIL', 'Work item detail the SCR-02 boards show', 'backend developer', 'E-WORK-ITEM', 'proposed',
+        'PROPOSAL for the backend developer to confirm: E-WORK-ITEM gains optional amount (money, unknown form), started_by and started_at; each station gains optional started_at, finished_at and held_by (who or what holds it, and whether that is you); the agent gains optional started_at and each agent step an optional at.',
+        'The approved SCR-02 boards show "Started by <person> (<role>) · <date>", station times ("Done · Mon 14:05", "Waiting 2h · you"), agent step times and the agent start time; A-WORKITEM needs an unknown amount. All additions are optional so v3 payloads stay valid.',
+        ['Leave the values off the screen (the readiness fallback)'], ['R-WORKITEM'], ('S-DECISIONS-V3', 'S-SCREENS')),
+    dec('D-WORKLIST-FILTERS', 'My work filters and agent marker', 'backend developer', 'E-WORK-LIST', 'proposed',
+        'PROPOSAL for the backend developer to confirm: E-WORK-LIST accepts project (a case_id) and waiting_on (me, someone_else, agent, outside_party, no_owner) as optional filters; line takes the line key, never the display title; the response gains optional filters.lines[{key, title}] (lines the person can see work on); rows gain optional line_key and agent (the agent whose avatar the row shows).',
+        'The approved filter panel (SCR-01-*-filter) offers Line, Project, State and Waiting on, and rows show an agent avatar (CMP-18) when an agent drafted or is working on the item. The waiting_on categories are an engineering proposal read from the board rows, not a business rule. Project options come from E-PROJECTS.',
+        ['Drop the Project and Waiting-on filters from the screen', 'A separate /api/v1/work/filters endpoint'], ['R-MYWORK'], ('S-DECISIONS-V3', 'S-SCREENS')),
+    dec('D-DECISION-VARIANTS', 'Payment exception, CEO final costing and CTO emergency decisions', 'business owner with the backend developer', 'SCR-03 variants: payment exception, CEO costing, CTO emergency', 'open',
+        'Not designed. Parked until PSL and the backend developer settle the payment-exception rule: what "Keep owed", "Exception" and "Reject" record, which fields and figures (invoiced, received, owed, rule) each variant returns and sends, who holds the authority, and whether the short payment is decided through E-TASK-DECIDE or an exception action. No verdict, rule or approver is assumed here.',
+        'A payment exception needs configured human authority and never erases debt (AGENTS.md product invariants); inventing its verdicts would invent a financial rule. The design engineer parked the variants on 13 Nov 2026.',
+        ['New verdicts on E-TASK-DECIDE', 'Move the short payment to E-WORK-ACTION or E-EXCEPTIONS (FE-M2)'], ['R-DECIDE'], ('S-DECISIONS-V3', 'S-SCREENS')),
 ]
 
 # ---- v2 (13 Nov 2026): the design engineer works on the frontend only; backend and agent choices belong to the backend developer
@@ -276,6 +295,54 @@ for e in endpoints:
     if e['id'] == 'E-NOTIFICATIONS': e['integration_calls'] = [{'integration': 'I-ALERTS', 'operation': 'queue_alert'}]
     if e['id'] == 'E-MESSAGE': e['integration_calls'] = [{'integration': 'I-AGENT', 'operation': 'run_assistant'}]
 
+# ---- v4 PROPOSAL (backend developer to confirm; S-DECISIONS-V3): fields the approved boards show.
+# Every addition is optional, so every v3 field, payload and fixture stays valid.
+EP_BY_ID = {e['id']: e for e in endpoints}
+DT = S(format='date-time')
+AGENT_KEY = S(enum=['tola', 'chidi', 'zainab'])
+def MONEY_OR_UNKNOWN(what): return dict(MONEY, description=what + ' When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN).')
+def add_props(schema, props):
+    for k, v in props.items():
+        assert k not in schema['properties'], k
+        schema['properties'][k] = v
+HOLDER = O({'kind': S(enum=['person', 'role', 'agent', 'outside_party', 'factory']), 'name': S(description='Person, role, agent or outside party name as recorded'), 'is_you': B}, ['kind', 'name', 'is_you'])
+CHAIN_STEP = O({'position': I(minimum=1), 'role': S(), 'person': S(description='Absent until a person is assigned'), 'status': S(enum=['approved', 'returned', 'rejected', 'withdrawn', 'current', 'not_yet']),
+                'decided_at': DT, 'is_you': B}, ['position', 'role', 'status', 'is_you'])
+DECISION_VIEW = O({
+    'version': O({'label': S(description='As shown on the board, e.g. "Invoice v2"'), 'number': I(minimum=1), 'document_id': S(), 'drafted_at': DT}, ['label', 'number']),
+    'amount': MONEY_OR_UNKNOWN('Amount of the exact version being decided; absent when the decision carries no amount.'),
+    'basis': S(description='Plain-language basis composed by the backend from contract terms, e.g. "Contract stage 2 of 4 · terms v1"'),
+    'recipient': S(description='Who the output goes to when sent, e.g. a billing email; absent when nothing is sent'),
+    'changes': O({'previous_label': S(), 'items': A(S())}, ['previous_label', 'items']),
+    'prepared_by': O({'name': S(), 'role': S(), 'is_you': B, 'with_agent': AGENT_KEY}, ['name', 'is_you']),
+    'chain': O({'steps': A(CHAIN_STEP), 'your_step': I(minimum=1), 'step_count': I(minimum=1)}, ['steps', 'step_count']),
+}, ['version', 'chain'])
+DECISION_VIEW['description'] = 'PROPOSAL (D-TASK-DECISION-VIEW). Present on decision tasks. Every value comes from backend records and the line\'s configured approval order; the frontend shows only what is returned. your_step is absent when the person has no step.'
+# E-WORK-ITEM: SCR-02 detail and SCR-03 decision content (F-03 PMO-0-1/0-2, F-04 PMO-0-1/0-2)
+wi = EP_BY_ID['E-WORK-ITEM']['responses'][0]['schema']
+add_props(wi, {'amount': MONEY_OR_UNKNOWN('Amount of the work item (e.g. the invoice); absent when the line carries no amount.'),
+               'started_by': O({'name': S(), 'role': S(), 'is_you': B}, ['name', 'is_you']), 'started_at': DT})
+add_props(wi['properties']['stations']['items'], {'started_at': DT, 'finished_at': DT, 'held_by': HOLDER})
+add_props(wi['properties']['agent'], {'started_at': DT})
+add_props(wi['properties']['agent']['properties']['steps']['items'], {'at': DT})
+add_props(wi['properties']['tasks']['items'], {
+    'decision': DECISION_VIEW,
+    'cannot_act_reason': S(enum=['not_your_role', 'prepared_by_you', 'already_decided', 'not_your_turn'], description='Present only when you_can_act is false'),
+    'asked': A(O({'name': S(), 'role': S(), 'alerted_at': DT, 'channels': A(S(enum=['whatsapp', 'email']))}, ['name', 'role']))})
+wi['properties']['tasks']['items']['properties']['asked']['description'] = 'Who was asked to act on this task (shown when you cannot act); empty when nobody is assigned yet.'
+# E-WORK-LIST: Project and Waiting-on filters, line options by key, agent avatar (F-02 PMO-0-1..0-3)
+wl = EP_BY_ID['E-WORK-LIST']
+for p in wl['parameters']:
+    if p['name'] == 'line': p['schema'] = S(description='Line key (filters.lines[].key or a row\'s line_key), never the display title')
+wl['parameters'][3:3] = [P('project', 'query', False, S(description='Project case_id, from E-PROJECTS')),
+                         P('waiting_on', 'query', False, S(enum=['me', 'someone_else', 'agent', 'outside_party', 'no_owner'], description='PROPOSAL (D-WORKLIST-FILTERS)'))]
+wl_resp = wl['responses'][0]['schema']
+add_props(wl_resp, {'filters': O({'lines': A(O({'key': S(), 'title': S()}))})})
+add_props(wl_resp['properties']['items']['items'], {'line_key': S(), 'agent': AGENT_KEY})
+for eid, decs in (('E-WORK-ITEM', ['D-WORKITEM-DETAIL', 'D-TASK-DECISION-VIEW']), ('E-WORK-LIST', ['D-WORKLIST-FILTERS'])):
+    e = EP_BY_ID[eid]; e['refs'] = e['refs'] + decs; e['evidence'] = e['evidence'] + ['S-DECISIONS-V3']
+EP_BY_ID['E-WORK-ITEM']['refs'].append('A-NOT-YOURS')
+
 # ---------------------------------------------------------------- integrations and jobs
 integrations = [
     {'id': 'I-ALERTS', 'title': 'WhatsApp and email alerts', 'refs': ['D-NOTIFY-MODEL', 'D-ALERT-PROVIDERS', 'T-ALERTS', 'JOB-ALERTS'], 'evidence': ['S-SCOPE', 'S-BACKEND'], 'provider': 'Not chosen (mock adapter)', 'selection': 'unresolved',
@@ -333,6 +400,10 @@ scenarios = [
     SC('A-ALERTS', 'Preferences and notification centre', 'R-ALERTS', 'A person with immediate WhatsApp', 'Change to daily email; trigger a decision', 'Preference saved; notification listed; mock adapter records the send'),
     SC('A-ASSISTANT', 'Assistant answers with sources and drafts', 'R-ASSISTANT', 'A Finance user and a restricted payroll record', 'Ask about a project; ask for payroll figures; ask for an invoice draft', 'Answer cites records; payroll: cannot answer, says why; draft links to a started line, not approved'),
     SC('A-REPORT', 'Report figures link to records', 'R-REPORTS', 'Monthly report with an unknown figure', 'Read the report', 'Each figure lists its sources; unknown is unknown'),
+    SC('A-NOT-YOURS', 'Why a person cannot act, and who was asked instead', 'R-DECIDE', 'Invoice v2 waiting for a Finance Lead: a Finance user, its preparer, the Finance Lead after approving, and a CEO before the PMO Lead has approved a costing', 'Each reads the work item',
+       'Each gets you_can_act=false with cannot_act_reason not_your_role, prepared_by_you, already_decided or not_your_turn and the people asked; the eligible Finance Lead gets the decision view with version, amount (unknown=true and no value when unknown, never 0), basis, recipient, changes and chain with your_step; values come from records, none from the frontend'),
+    SC('A-DECIDE-VARIANTS', 'Payment exception, CEO final costing and CTO emergency decisions', 'R-DECIDE', 'D-DECISION-VARIANTS settled by PSL and the backend developer', 'Each variant is decided',
+       'Defined when D-DECISION-VARIANTS is decided; no verdict, rule or approver is assumed before then'),
     SC('A-ACCESSIBILITY', 'Frontend meets devices and WCAG 2.2 AA', 'R-FRONTEND', 'The first feature built', 'Run automated accessibility checks and test on phone and desktop', 'No AA violations; focus ring and reduced motion work; layouts at 390px and 1440px'),
 ]
 runbooks = [
@@ -353,7 +424,7 @@ tasks = [
     T('T-FOUNDATION', 'API: apps/api, session and CSRF, error shape, /me', by_task['T-FOUNDATION'], ['R-SESSION'], [], [], ['A-ME'], BE),
     T('T-FRONTEND-SHELL', 'Frontend: Next.js app, design system tokens and components, top bar, phone bar, API client with mock server from openapi.json', [], ['R-FRONTEND', 'R-DEVICES', 'R-SAMPLE'], [], [], ['A-ACCESSIBILITY'], FE),
     T('T-MYWORK', 'API: My work queues', by_task['T-MYWORK'], ['R-MYWORK', 'R-VOLUME'], [], ['T-FOUNDATION'], ['A-MYWORK'], BE),
-    T('T-WORKITEM', 'API: work item and history', by_task['T-WORKITEM'], ['R-WORKITEM'], [], ['T-FOUNDATION'], ['A-WORKITEM', 'A-HISTORY'], BE),
+    T('T-WORKITEM', 'API: work item and history', by_task['T-WORKITEM'], ['R-WORKITEM'], [], ['T-FOUNDATION'], ['A-WORKITEM', 'A-HISTORY', 'A-NOT-YOURS'], BE),
     T('T-DECIDE', 'API: claim and decide one exact version', by_task['T-DECIDE'], ['R-DECIDE'], [], ['T-WORKITEM'], ['A-DECIDE', 'A-STALE'], BE),
     T('T-START', 'API: lines and start work', by_task['T-START'], ['R-START'], ['D-LEADERS-START'], ['T-FOUNDATION'], ['A-START'], BE),
     T('T-RESPONSE', 'API: evidence upload and recorded responses', by_task['T-RESPONSE'], ['R-RESPONSE'], [], ['T-FOUNDATION'], ['A-RESPONSE'], BE),
@@ -369,8 +440,9 @@ tasks = [
     # frontend work: built against openapi.json with a mock server; no backend decision gates
     T('FE-MYWORK', 'Frontend: My work, three queues, Decide/Do/Fix, search, filter, 10/20/50 rows', [], ['R-MYWORK', 'R-VOLUME', 'R-SAMPLE'], ['D-PAGING', 'D-UPDATES'], ['T-FRONTEND-SHELL'], ['A-MYWORK'], FE),
     T('FE-WORKITEM', 'Frontend: work item, stations, facts, agent checklist, history', [], ['R-WORKITEM'], ['D-UPDATES'], ['T-FRONTEND-SHELL'], ['A-WORKITEM', 'A-HISTORY'], FE),
-    T('FE-DECIDE', 'Frontend: decision panel and phone action bar, stale-version reload', [], ['R-DECIDE'], [], ['T-FRONTEND-SHELL'], ['A-DECIDE', 'A-STALE'], FE),
-    T('FE-CONNECT-1', 'Connect the first feature to the real API', [], ['R-SESSION', 'R-MYWORK', 'R-WORKITEM', 'R-DECIDE'], [], ['FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE', 'T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], ['A-ME', 'A-MYWORK', 'A-WORKITEM', 'A-DECIDE', 'A-STALE'], FE),
+    T('FE-DECIDE', 'Frontend: standard decision panel and phone action bar (approve, return, reject; stale-version reload; not yours; own work)', [], ['R-DECIDE'], [], ['T-FRONTEND-SHELL'], ['A-DECIDE', 'A-STALE', 'A-NOT-YOURS'], FE),
+    T('FE-DECIDE-VARIANTS', 'Frontend: payment-exception, CEO final costing and CTO emergency decision variants (parked)', [], ['R-DECIDE'], ['D-DECISION-VARIANTS'], ['FE-DECIDE'], ['A-DECIDE-VARIANTS'], FE),
+    T('FE-CONNECT-1', 'Connect the first feature to the real API', [], ['R-SESSION', 'R-MYWORK', 'R-WORKITEM', 'R-DECIDE'], [], ['FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE', 'T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], ['A-ME', 'A-MYWORK', 'A-WORKITEM', 'A-DECIDE', 'A-STALE', 'A-NOT-YOURS'], FE),
     T('FE-M2', 'Frontend: start work drawers, record a response, exceptions', [], ['R-START', 'R-RESPONSE', 'R-EXCEPTION'], [], ['FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE'], ['A-START', 'A-RESPONSE', 'A-RECONCILE'], FE),
     T('FE-M3', 'Frontend: projects, overview and factory floor, Finance, payroll, setup', [], ['R-PROJECT', 'R-REPORTS', 'R-OVERVIEW', 'R-MOTION', 'R-FINANCE', 'R-SETUP'], [], ['FE-M2'], ['A-PROJECT', 'A-OVERVIEW', 'A-MONTHEND', 'A-PAYROLL', 'A-SETUP'], FE),
     T('FE-M4', 'Frontend: notification centre, alert settings, assistant', [], ['R-ALERTS', 'R-ASSISTANT'], [], ['FE-M3'], ['A-ALERTS', 'A-ASSISTANT'], FE),
@@ -382,11 +454,11 @@ milestones = [
     {'id': 'M-1', 'title': 'First feature, frontend: My work and one decision against the API contract', 'refs': ['T-FRONTEND-SHELL', 'FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE', 'D-FIRST-FEATURE'], 'evidence': ['S-SCREENS', 'S-DECISIONS-V2'], 'owner_role': 'delivery owner',
      'exit_criteria': ['Screens match the approved canvas on desktop and phone', 'A-ACCESSIBILITY passes', 'Runs on the mock server built from openapi.json with sample data'], 'gate_ids': ['D-FIRST-FEATURE', 'D-PAGING', 'D-UPDATES']},
     {'id': 'M-1B', 'title': 'First feature, backend: the API for My work and decisions', 'refs': ['T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], 'evidence': ['S-BACKEND'], 'owner_role': 'delivery owner',
-     'exit_criteria': ['A-ME, A-MYWORK, A-WORKITEM, A-HISTORY, A-DECIDE, A-STALE pass on PostgreSQL'], 'gate_ids': ['D-API-STYLE', 'D-AUTH']},
+     'exit_criteria': ['A-ME, A-MYWORK, A-WORKITEM, A-HISTORY, A-DECIDE, A-STALE, A-NOT-YOURS pass on PostgreSQL'], 'gate_ids': ['D-API-STYLE', 'D-AUTH']},
     {'id': 'M-1C', 'title': 'First feature connected end to end', 'refs': ['FE-CONNECT-1'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['The frontend runs on the real API with sample data; the same scenarios pass'], 'gate_ids': []},
-    {'id': 'M-2', 'title': 'Start, respond and recover', 'refs': ['T-START', 'T-RESPONSE', 'T-EXCEPTIONS', 'T-BACKEND-ROLES', 'FE-M2'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
-     'exit_criteria': ['A-START, A-RESPONSE, A-RECONCILE, A-RESUME pass'], 'gate_ids': ['D-RETURN']},
+    {'id': 'M-2', 'title': 'Start, respond and recover', 'refs': ['T-START', 'T-RESPONSE', 'T-EXCEPTIONS', 'T-BACKEND-ROLES', 'FE-M2', 'FE-DECIDE-VARIANTS'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
+     'exit_criteria': ['A-START, A-RESPONSE, A-RECONCILE, A-RESUME pass', 'A-DECIDE-VARIANTS passes once D-DECISION-VARIANTS is decided'], 'gate_ids': ['D-RETURN', 'D-DECISION-VARIANTS']},
     {'id': 'M-3', 'title': 'Projects, overview, Finance, payroll and setup', 'refs': ['T-PROJECTS', 'T-FLOOR', 'T-FINANCE', 'T-PAYROLL', 'T-SETUP', 'FE-M3'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-PROJECT, A-REPORT, A-OVERVIEW, A-MONTHEND, A-PAYROLL, A-SETUP pass'], 'gate_ids': []},
     {'id': 'M-4', 'title': 'Alerts and assistant', 'refs': ['T-ALERTS', 'T-ASSISTANT', 'FE-M4'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
