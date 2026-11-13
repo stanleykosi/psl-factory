@@ -3,26 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-02",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
+  "state": "READY",
   "task_ids": [
     "FE-MYWORK"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Queue tabs and counts (A-MYWORK).** As finance_lead, `/my-work` shows the tabs Needs me 24, Waiting on others 12, Done 6 and Unassigned 2, in that order, each count in a `.psl-badge`. \u2014 verify: open http://localhost:3301/my-work with the mock on 3302 and look. Add a component test with stubbed `fetch` asserting tab names, order and badge text equal to the response `counts`.",
+    "**Unassigned only when present (lead-view).** With the `pm` persona (cookie `psl_mock_persona=pm`) there is no Unassigned tab. A response whose `counts` omits `unassigned` renders three tabs, and a zero count shows \"0\". \u2014 verify: component test with two stubbed responses; e2e at 390px for finance_lead shows four tabs and the tablist scrolls sideways (`scrollWidth > clientWidth` on the tablist, `document.documentElement.scrollWidth <= 390`).",
+    "**Each tab requests its queue.** Clicking each tab sends `queue=needs_me|waiting_on_others|done|unassigned` with `limit=20`, and the URL gains `?queue=\u2026`. Arrow keys move the selection. \u2014 verify: component test inspecting stubbed `fetch` request URLs and `window.location.search`; a keyboard test with ArrowRight, Home and End.",
+    "**Kinds come from the API (A-MYWORK).** Needs me shows only DECIDE, DO and FIX tags. Every one of the four kinds renders with its mapped tag and class. A row with `kind: \"started\"` and state `action_needed` shows STARTED, which proves kind is not derived from state. \u2014 verify: mock test that every finance_lead needs_me item has kind in {decide, do, fix}; component test on a crafted response.",
+    "**State words and colours.** Each of the 11 states renders the CMP-05 words and family class from the C2 table. \u2014 verify: table-driven unit test over the state map, plus a component test that the rendered `.psl-tag` text and class match.",
+    "**Station bar and age.** `{index:4,count:7,name:\"Finance review\"}` with state `waiting` renders 7 segments (3 `d`, the 4th `w`), the text \"Station 4 of 7 \u00b7 Finance review\" and the bar `aria-hidden`. Verified renders \"All N stations done\". `age_seconds` 30 \u2192 `1m`, 7200 \u2192 `2h`, 86400 \u2192 `1d`. \u2014 verify: unit tests.",
+    "**Sample labels (R-SAMPLE).** Every row with `sample: true` shows SAMPLE DATA, and a row with `sample: false` shows none. \u2014 verify: component test counting `.psl-sample` inside the list against the number of sample rows.",
+    "**Row links.** Each title (desktop) or card (phone) links to `/work/{id}`. \u2014 verify: component test asserting `href=\"/work/W-1001\"`.",
+    "**Search.** Typing \"lagoon\" sends one request with `q=lagoon` 300 ms after the last keystroke. Clearing the box sends a request with no `q` parameter, and no request ever contains `q=` with an empty value. A search with no match shows \"No work matches\" and Clear filters. \u2014 verify: fake-timer component test inspecting request URLs; e2e typing \"zzz\" at 1440px shows the no-results state.",
+    "**Filters.** Choosing Line \"Prepare an invoice\" and State \"Action needed\" in the panel, then Show results, sends `line=Prepare%20an%20invoice&state=action_needed`. The Filter badge shows 2, chips show both values, and the URL holds both. Removing a chip or using Clear all reloads without it. Esc closes the panel without applying and returns focus to Filter. There is no Project or Waiting-on control. \u2014 verify: component test, and the SCR-01 filter state at 390px (bottom sheet) and 1440px (popover) in e2e.",
+    "**Paging (D-PAGING r2).** At the default, the first request has `limit=20`. finance_lead Needs me shows 20 rows, \"20 of 24 showing\" and \"Show 4 more\". Clicking it sends `cursor=<next_cursor>`, shows 24 rows, then \"All 24 showing\" with no button. Choosing 10 in Rows per page sends `limit=10` without a cursor, shows 10 rows and sets `?limit=10` in the URL. A reload keeps 10. \u2014 verify: component test with request inspection; e2e on http://localhost:3301/my-work?limit=10.",
+    "**URL restore.** Opening `/my-work?queue=done&q=lagoon&state=verified&limit=50` sends exactly those values. Invalid values (`queue=bogus`, `limit=7`, `state=nope`) fall back to needs_me, 20 and no state. Nothing is written to localStorage, sessionStorage or document.cookie. \u2014 verify: component test, plus an assertion that the storage lengths are unchanged and the cookie string is unchanged.",
+    "**Polling (D-UPDATES r2).** With fake timers, a new page-1 request goes out at 15 000 ms while visible. None goes out while `document.visibilityState` is `hidden`. One goes out on return to visible after more than 15 s. \u2014 verify: component test stubbing `visibilityState` and dispatching `visibilitychange`.",
+    "**A refresh keeps loaded rows.** After Show more (24 rows) and focus on row 22's link, a poll whose page 1 changes row 1's state updates row 1 and keeps 24 rows. `document.activeElement` stays the same link, and no `role=\"status\"` loading text appears. The counts and the updated time take the new values. \u2014 verify: component test.",
+    "**A failed refresh keeps the screen.** A poll that rejects (network) or returns 500 keeps the rows and shows \"Couldn't refresh \u00b7 updated 10:42\". A poll that returns 401 shows the signed-out callout with `next=%2Fmy-work`. \u2014 verify: component tests.",
+    "**Empty (SCR-01-*-empty).** As `pm`, Needs me shows \"Nothing needs you right now\" and a \"See what's waiting on others\" button, which selects Waiting on others. \u2014 verify: e2e at 390px and 1440px with the pm cookie.",
+    "**Wrong role.** As `pm`, `/my-work?queue=unassigned` shows \"This queue isn't open to your role.\" with the mock's message and a \"Go to Needs me\" link, and no rows. \u2014 verify: e2e, plus a mock test that the pm unassigned request returns 403 with a schema-valid error body.",
+    "**Load failures.** A 404, 500 or network failure on E-WORK-LIST shows the STATES error card (\"We couldn't load your queue. Your work is safe; nothing was changed.\", `Reference {code} for support.`, Try again). Try again repeats the request and recovers. A 401 shows the shell's signed-out callout. \u2014 verify: component tests with stubbed `fetch`; e2e uses `page.route('**/api/v1/work*')` to return 500 (not the scenario cookie, which would also fail `/me`).",
+    "**Loading.** While E-WORK-LIST is pending, skeleton bars and `role=\"status\"` \"Loading your queue\u2026\" show, with no rows from the previous view. A late response from an earlier view does not replace the current one. \u2014 verify: component test resolving two stubbed responses out of order; e2e holding the route open.",
+    "**Mock honours the query and stays on contract.** For each persona \u00d7 queue \u00d7 limit (10, 20, 50), following `next_cursor` to the end returns every row of that queue exactly once, and each page has at most `limit` items. `counts` equal the row totals. `q`, `line` and `state` narrow the results. Every 200 and error body validates against the v3 E-WORK-LIST schemas with the existing Ajv setup. The existing `tests/mock-contract.test.ts` still passes unchanged. \u2014 verify: new `frontend/tests/mock-work-list.test.ts`; `npm test`.",
+    "**Accessibility (A-ACCESSIBILITY).** Axe (WCAG 2.2 AA tags, as in `e2e/frame.spec.ts`) reports no violations at 390\u00d7844 and 1440\u00d7900 for default, filter open, empty (pm), no results, loading, error and lead-view. Focus-visible outlines show on tabs, Filter, chips, the rows-per-page options, Show more and row links. With `reducedMotion: 'reduce'` nothing animates. \u2014 verify: `cd frontend && E2E_PORT=3301 MOCK_PORT=3302 npx playwright test e2e/my-work.spec.ts`, with the browser context `timezoneId: 'Africa/Lagos'`. If this cannot run inside checks.sh, record the command and its output in build.md.",
+    "**Product acceptance items are visible.** build.md lists, with screenshots at 390px and 1440px: the rows-per-page control in the list footer, and the filter panel with Line and State only. \u2014 verify: build.md content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it medium, not low: - It combines several behaviours that interact: queues, search, two filters, cursor paging with a page-size choice, and visibility-aware polling that must not disturb rows the person loaded. - It is the first feature to use E-WORK-LIST's query contract, which FE-CONNECT-1 inherits. - It changes `frontend/mock/server.mjs`, a file shared with F-03 and F-04 while the lanes run in parallel (PMO-0-4). It is not high: it is read-only, it sends no writes or CSRF-bound actions, and it involves no money, identity, migrations or deployment. Visibility rules (INV-ACCESS, INV-RESTRICTED) stay in the backend. Surfaces: - `ui`: SCR-01 and the shared STATES boards, components CMP-03/05/06/07/16/22. The surfaces exclude `api` and `contract-change`, because openapi.json is consumed, not changed. They exclude `dependency`, because no packages are added. They exclude `auth`, because the page reads only `/me` through the existing shell. Product acceptance is required. The rows-per-page control and its placement are not on the approved boards, and the filter panel ships without Project and Waiting on. The design engineer should confirm both on the built page."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-02/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +92,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-02/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +185,28 @@
   "created_at": "2026-11-13T22:44:58Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-13T23:13:37Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-02/readiness.md",
+      "delivery/features/F-02/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
