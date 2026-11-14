@@ -22,6 +22,7 @@ import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
 import { overview } from './overview.mjs';
+import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { workList } from './work-list.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
@@ -57,7 +58,13 @@ const HISTORY_LIMITS = [10, 20, 50];
 function readWorkFixtures() {
   const dir = join(here, 'fixtures', 'work');
   const files = readdirSync(dir).filter((name) => name.endsWith('.json'));
-  return Object.fromEntries(files.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(dir, name), 'utf8'))]));
+  // F-09: the v7 response items (fixtures/response/work/) are served from the same map; v4 checks read only fixtures/work/.
+  const responseDir = join(here, 'fixtures', 'response', 'work');
+  const responseFiles = readdirSync(responseDir).filter((name) => name.endsWith('.json'));
+  return Object.fromEntries([
+    ...files.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(dir, name), 'utf8'))]),
+    ...responseFiles.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(responseDir, name), 'utf8'))]),
+  ]);
 }
 
 /** One history page: filter by the mock-only `_kind`, page by an "o:<offset>" cursor, strip `_kind`. */
@@ -216,6 +223,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       const method = (req.method ?? 'GET').toLowerCase();
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
+        resetResponses();
         resetSetup();
         alerts.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
@@ -223,6 +231,11 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
+      // E-EVIDENCE-UPLOAD has two mock owners: Setup proof cases (C-SETUP-*, F-11, evidence.mjs) and work-item cases (F-09, response.mjs).
+      const setupProof = route.operationId === 'E-EVIDENCE-UPLOAD' && decodeURIComponent(url.pathname.split('/')[4] ?? '').startsWith('C-SETUP-');
+      if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
+        return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
+      }
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
 
       const cookies = parseCookies(req.headers.cookie);

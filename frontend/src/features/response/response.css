@@ -1,0 +1,153 @@
+/* SCR-16 record a response and the SCR-02 reconcile panel. Token variables only; bundle classes are composed,
+   and only the board's own layouts are added (pills, proof chips, the phone back bar and action bar). */
+
+.resp-page { display: flex; flex-direction: column; gap: 20px; min-width: 0; line-height: normal; }
+.resp-page .resp-title { line-height: normal; }
+/* the SOW and success boards set the display line height on their headings */
+.resp-page .resp-title--tight { line-height: 1.08; }
+.resp-plain { margin: 0; line-height: 1.5; }
+.resp-footnote { margin: 0; font-size: 13px; color: var(--ink-muted); }
+.resp-retry { align-items: center; flex-wrap: wrap; }
+
+/* header */
+.resp-header { display: flex; flex-direction: column; gap: 6px; }
+.resp-crumb a { text-decoration: underline; text-underline-offset: 2px; }
+.resp-title { font-size: 34px; overflow-wrap: anywhere; }
+.resp-page:has(.resp-form--sow) .resp-title { font-size: 32px; }
+.resp-page:has(.resp-form--sow) .resp-header { gap: 20px; } /* the SOW board spaces crumb and heading like the page */
+.resp-intro { margin: 0; max-width: 760px; color: var(--ink-muted); }
+.resp-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-muted); }
+
+/* the form on the left, the agent or the info aside on the right */
+.resp-board { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.resp-main { flex: 999 1 560px; min-width: 0; }
+.resp-agent { flex: 1 1 300px; max-width: 380px; background: var(--action-tint); border: 2px solid var(--action); }
+.resp-aside { flex: 1 1 340px; max-width: 440px; display: flex; flex-direction: column; gap: 14px; }
+.resp-aside .psl-callout { margin: 0; }
+.resp-agent__head { padding: 12px 16px; border-bottom: 2px solid var(--action); display: flex; align-items: center; gap: 10px; }
+.resp-agent__img { width: 36px; height: 36px; border-radius: var(--radius-round); object-fit: cover; background: var(--mascot-tola-tint); }
+.resp-agent__name { font-weight: 600; }
+.resp-agent__role { font-weight: 500; font-size: 13px; color: var(--action-ink); }
+.resp-agent__body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; color: var(--action-ink); line-height: 1.55; }
+.resp-agent__body p { margin: 0; }
+
+/* form */
+.resp-form { margin: 0; background: var(--surface); border: 2px solid var(--ink); padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+.resp-form--sow { background: none; border: none; padding: 0; }
+.resp-signature .psl-panel__head { margin: 0; }
+.resp-signature .psl-panel__body { gap: 12px; }
+.resp-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.resp-row--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.resp-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.resp-label { font-weight: 500; }
+.resp-form--sow .resp-label { font-weight: 600; }
+/* the SOW board's boxes are 44px inside a 2px border */
+.resp-form--sow .psl-input:not(textarea) { min-height: calc(var(--control-md) + 4px); }
+.resp-select { padding-right: 12px; }
+.resp-static { min-height: calc(var(--control-md) + 4px); display: flex; align-items: center; padding: 0 12px; border: 2px solid var(--ink); background: var(--surface); overflow-wrap: anywhere; }
+.resp-notehead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.psl-input--area.resp-note { min-height: var(--control-md); }
+
+.resp-summary { margin: 0; color: var(--ink-muted); font-size: 14px; }
+
+/* "What they did": radio pills (client response) or a segmented group (SOW), native radios either way */
+.resp-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.resp-pill { display: inline-flex; align-items: center; gap: 8px; min-height: var(--control-md); padding: 0 14px; border: 2px solid var(--ink); background: var(--surface); color: var(--ink); cursor: pointer; }
+.resp-pill input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); }
+.resp-pill:has(input:checked) { background: var(--ink); color: var(--on-strong); }
+.resp-pill:has(input:checked) input { accent-color: var(--on-strong); }
+.resp-pill input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.resp-pill:has(input:checked) input:focus-visible { outline-color: var(--focus-on-strong); }
+.resp-seg { display: flex; }
+.resp-segopt { position: relative; }
+.resp-segopt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.resp-segopt:has(input:checked) { background: var(--ink); color: var(--on-strong); }
+.resp-segopt:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: -4px; }
+.resp-segopt:has(input:checked:focus-visible) { outline-color: var(--focus-on-strong); }
+
+/* proof */
+.resp-drop { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px; border: 2px dashed var(--ink); background: var(--steel); }
+.resp-drop.is-disabled { border-color: var(--disabled); }
+.resp-drop__empty { color: var(--signal-ink); font-weight: 600; }
+.resp-chip { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 10px; background: var(--surface); border: 1.5px solid var(--ink); font-family: var(--font-mono); font-size: 13px; max-width: 100%; }
+.resp-chip__name { overflow-wrap: anywhere; min-width: 0; }
+.resp-chip__state { color: var(--ink-muted); }
+.resp-chip--problem, .resp-card--problem { border-color: var(--signal-ink); }
+.resp-chip__problem { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--signal-ink); font-family: var(--font-sans); }
+.resp-chip__remove { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; min-height: 24px; padding: 0; border: none; background: none; color: inherit; font: inherit; font-size: 16px; cursor: pointer; }
+.resp-filebtn { border: none; min-height: var(--control-sm); padding: 0 12px; box-shadow: inset 0 0 0 1.5px var(--ink); background: var(--surface); color: var(--ink); font: inherit; white-space: nowrap; cursor: pointer; }
+.resp-filebtn--phone { width: 100%; min-height: 52px; box-shadow: none; border: 2px dashed var(--ink); font-weight: 500; }
+.resp-filebtn[disabled] { color: var(--ink-muted); box-shadow: inset 0 0 0 1.5px var(--disabled); cursor: not-allowed; }
+.resp-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 2px dashed var(--ink); background: var(--surface); font-size: 14px; }
+.resp-card__text { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.resp-card__meta { font-size: 12px; line-height: 18px; color: var(--ink-muted); } /* the second line of a 14px block, as the boards draw it */
+.resp-clip { flex: none; }
+
+.resp-attest { align-items: flex-start; }
+.resp-row--proof { align-items: end; }
+.resp-row--proof .resp-attest { padding-bottom: 12px; }
+.resp-nextline { margin: 0; padding: 10px 12px; background: var(--surface-subtle); font-size: 14px; line-height: 1.5; }
+
+/* Record, its alert line and the audit line */
+.resp-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.resp-alert { padding: 10px 12px; background: var(--signal-tint); color: var(--signal-ink); }
+.resp-alert--hint { background: var(--surface-subtle); color: var(--ink-muted); }
+.resp-record { min-height: 48px; padding: 0 20px; white-space: nowrap; }
+.resp-form--sow .resp-record { width: 100%; max-width: 320px; min-height: var(--control-lg); }
+
+/* success */
+.resp-success { max-width: 760px; display: flex; flex-direction: column; gap: 14px; }
+.resp-next { background: var(--surface); border: 2px solid var(--ink); padding: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.resp-back { margin: 0; max-width: 260px; }
+.resp-notopen { max-width: 720px; }
+.resp-notopen h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 18px; font-stretch: 112%; }
+
+/* SCR-02 reconcile panel */
+.resp-reconcile { background: var(--surface); border: 2px solid var(--waiting); }
+.resp-reconcile__head { margin: 0; padding: 12px 16px; background: var(--waiting); color: var(--on-strong); font-family: var(--font-display); font-weight: 800; font-size: 15px; text-transform: uppercase; }
+.resp-reconcile__body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.resp-reconcile .psl-callout { margin: 0; }
+.resp-options { display: flex; flex-direction: column; gap: 10px; }
+.resp-option { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border: 2px solid var(--ink); line-height: 1.5; cursor: pointer; }
+.resp-option input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+.resp-option input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.resp-reconcile .resp-footnote { font-size: 12px; }
+@media (min-width: 720px) {
+  .resp-actionbar { padding: 0; border-top: none; background: none; }
+}
+
+/* the success board's h1 (the phone size below still applies) */
+.resp-title--done { font-size: 36px; }
+
+@media (max-width: 719.98px) {
+  /* the phone boards start the content 14px under the bar; the frame pads 16px */
+  .resp-page { gap: 12px; font-size: 15px; margin-top: -2px; }
+  /* room for the action bar pinned to the bottom */
+  .resp-page--phone, .resp-page:has(.resp-phonebar) { padding-bottom: 96px; }
+  .resp-title { font-size: 24px; }
+  .resp-page:has(.resp-form--sow) .resp-title { font-size: 20px; }
+  .resp-form { padding: 0; border: none; background: none; gap: 14px; }
+  .resp-row, .resp-row--3 { grid-template-columns: minmax(0, 1fr); }
+  .resp-pills { flex-direction: column; gap: 6px; }
+  /* the phone boards: 48px of content inside a 2px border, the radio inset as the browser draws it, a taller chip */
+  .resp-pill { display: flex; gap: 10px; min-height: 52px; padding: 0 12px; }
+  .resp-pill input { margin: 0 3px 0 5px; }
+  .resp-chip { padding: 8px 10px; }
+  .resp-attest { font-size: 14px; }
+  .resp-alert { font-size: 14px; }
+  .resp-signature { background: none; border: none; }
+  .resp-signature .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .resp-signature .psl-panel__body { padding: 0; }
+  /* the SOW phone board: "What they did" sits 12px above the segments, each 40px plus its border */
+  .resp-form--sow .resp-field:has(> [role="radiogroup"]) { gap: 12px; }
+  .resp-form--sow .resp-segopt { min-height: 42px; }
+  .resp-form--sow .psl-hint { line-height: normal; }
+  .resp-success { gap: 12px; }
+  .resp-phonebar, .resp-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; }
+  .resp-phonebar .psl-btn, .resp-actionbar .psl-btn { width: 100%; min-height: var(--control-lg); }
+  .resp-form--sow .resp-record { max-width: none; }
+  /* the reconcile panel leaves room for its pinned button */
+  .resp-reconcile { border: none; background: none; }
+  .resp-reconcile__body { padding: 0 0 96px; gap: 8px; }
+  .resp-option { padding: 8px; font-size: 14px; }
+}

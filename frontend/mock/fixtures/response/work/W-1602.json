@@ -1,0 +1,151 @@
+{
+  "id": "W-1602",
+  "title": "Tamarind Loans · SOW",
+  "line": "Prepare a SOW",
+  "reference": "SOW-0207",
+  "state": "waiting",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Draft SOW",
+      "status": "done"
+    },
+    {
+      "name": "Internal review",
+      "status": "done"
+    },
+    {
+      "name": "Send to client",
+      "status": "done"
+    },
+    {
+      "name": "SOW signature",
+      "status": "current_person"
+    },
+    {
+      "name": "Hand over to delivery",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-12-15T10:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-12-16T12:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-12-17T16:00:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-12-18T09:30:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-12-18T09:32:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-1602",
+      "kind": "record_response",
+      "title": "Record the client's SOW signature",
+      "required_role": "PM",
+      "you_can_act": true,
+      "revision": 2,
+      "response": {
+        "variant": "sow_signature",
+        "responders": [
+          {
+            "id": "P-NB",
+            "name": "Ngozi Bello",
+            "role": "Head of Lending Operations",
+            "organisation": "Tamarind Loans"
+          }
+        ],
+        "actions": [
+          {
+            "value": "signed",
+            "label": "Signed"
+          },
+          {
+            "value": "changes_requested",
+            "label": "Asked for changes"
+          },
+          {
+            "value": "rejected",
+            "label": "Declined"
+          }
+        ],
+        "versions": [
+          {
+            "id": "SOW-0207-v1",
+            "label": "SOW-0207 v1 · Tamarind Loans",
+            "note": "The version the client received",
+            "sent_at": "2026-12-18T09:30:00Z"
+          }
+        ],
+        "evidence_kind": "sow_signed_copy",
+        "claim_required": false,
+        "intro": "The client doesn't log in. You record their signature with the signed copy as proof. If they asked for changes, the SOW goes back to Tola for a new version and review starts again.",
+        "channels": [
+          {
+            "value": "email",
+            "label": "Email"
+          }
+        ],
+        "context": {
+          "project": {
+            "case_id": "C-0207",
+            "title": "Tamarind Loans"
+          },
+          "document": {
+            "reference": "SOW-0207",
+            "label": "SOW"
+          }
+        },
+        "next": [
+          "the SOW's 4 stages become the project's milestones, each billable once it's complete.",
+          "Delivery starts with release gates."
+        ]
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting",
+    "steps": [
+      {
+        "text": "Drafted SOW-0207 v1",
+        "status": "done",
+        "source": "Costing CST-0207"
+      },
+      {
+        "text": "Sent SOW-0207 v1 to Tamarind Loans",
+        "status": "done",
+        "source": "Delivery receipt · 18 Dec"
+      },
+      {
+        "text": "Waiting for the client's signature",
+        "status": "waiting"
+      }
+    ]
+  },
+  "next_step": "A PM records the client's SOW signature with the signed copy.",
+  "case_id": "C-0207",
+  "case_revision": 3,
+  "sample": true
+}

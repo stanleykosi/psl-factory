@@ -1,0 +1,161 @@
+{
+  "id": "W-1601",
+  "title": "Lagoon Health · release to UAT",
+  "line": "Prepare for release",
+  "reference": "REL-0077",
+  "state": "ready",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Prepare UAT pack",
+      "status": "done"
+    },
+    {
+      "name": "Send to client",
+      "status": "done"
+    },
+    {
+      "name": "Client UAT response",
+      "status": "done"
+    },
+    {
+      "name": "Go-live readiness",
+      "status": "current_person"
+    },
+    {
+      "name": "Go-live",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-04T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-05T11:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-05T15:00:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-06T09:10:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-06T09:12:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-1601",
+      "kind": "record_response",
+      "title": "Record the client's UAT response",
+      "required_role": "PM",
+      "you_can_act": false,
+      "revision": 3,
+      "response": {
+        "variant": "client_response",
+        "responders": [
+          {
+            "id": "P-AO",
+            "name": "Dr Amaka Obi",
+            "role": "Client contact",
+            "organisation": "Lagoon Health"
+          }
+        ],
+        "actions": [
+          {
+            "value": "approved",
+            "label": "Approved"
+          },
+          {
+            "value": "changes_requested",
+            "label": "Asked for changes"
+          },
+          {
+            "value": "rejected",
+            "label": "Rejected"
+          }
+        ],
+        "versions": [
+          {
+            "id": "V-240",
+            "label": "Patient app · build 2.4.0",
+            "note": "the version sent for UAT"
+          }
+        ],
+        "evidence_kind": "client_response_proof",
+        "claim_required": false,
+        "intro": "Lagoon Health's client contact doesn't log in to PSL Factory, so you record what they said and attach the proof. The release waits for this.",
+        "proof_hint": "Signed PDF, e-signature record, or the client's email saved as PDF",
+        "agent_note": {
+          "agent": "tola",
+          "lines": [
+            "After you record it, I'll check the PDF names build 2.4.0 and is signed by Dr Obi, and tell you if anything doesn't match.",
+            "I can't record responses for you; a person has to vouch for them."
+          ]
+        },
+        "channels": [
+          {
+            "value": "email",
+            "label": "Email"
+          }
+        ],
+        "next": [
+          "The release line moves on to go-live readiness.",
+          "Milestone 2 can now be marked complete, which lets Chidi draft its invoice."
+        ],
+        "recorded": {
+          "by": {
+            "name": "Tunde Bello",
+            "role": "PM",
+            "is_you": true
+          },
+          "at": "2026-11-11T14:04:00Z",
+          "responded_at": "2026-11-11T15:20:00Z",
+          "received_via": "email",
+          "proof_count": 1,
+          "summary": "Client UAT sign-off for Lagoon Health"
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Prepared the UAT pack",
+        "status": "done",
+        "source": "Release plan REL-0077"
+      },
+      {
+        "text": "Sent the UAT pack to Lagoon Health",
+        "status": "done",
+        "source": "Delivery receipt · 06 Nov"
+      },
+      {
+        "text": "Client UAT response recorded",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A PM checks go-live readiness.",
+  "sample": true,
+  "case_id": "C-1601",
+  "case_revision": 4
+}

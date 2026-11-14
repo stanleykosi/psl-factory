@@ -1,6 +1,9 @@
 // SCR-02 Overview: the six facts, the station track, the agent at work, the current human task and the
-// next step. Read-only; the only link that leads to an action is "Open the decision" when you_can_act.
+// next step. When you_can_act, a task links to its action ("Open the decision", or the response page through
+// ResponseEntryLink); the only write here is ReconcilePanel's E-WORK-ACTION, shown with the reconcile grant.
 import Link from 'next/link';
+
+import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 
 import {
   AGENT_TAGS,
@@ -144,18 +147,21 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
   );
 }
 
-export function TaskPanels({ id, tasks }: { id: string; tasks: WorkItem['tasks'] }) {
+export function TaskPanels({ id, tasks }: { id: string; tasks: ResponseWorkItem['tasks'] }) {
   return tasks.map((task) => (
     <section key={task.id} className={task.you_can_act ? 'psl-panel psl-panel--decide' : 'psl-panel'} aria-label="Current human task">
       <h2 className={task.you_can_act ? 'psl-panel__head psl-panel__head--decide' : 'psl-panel__head'}>{task.title}</h2>
       <div className="psl-panel__body">
         <p className="work-plain">Only a {task.required_role} can decide.</p>
         {task.you_can_act && <p className="work-plain">You are {task.required_role}.</p>}
-        {task.you_can_act && (
-          <Link className="psl-btn" href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
-            Open the decision
-          </Link>
-        )}
+        {task.you_can_act &&
+          (responseOf(task) ? (
+            <ResponseEntryLink id={id} task={task} />
+          ) : (
+            <Link className="psl-btn" href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
+              Open the decision
+            </Link>
+          ))}
       </div>
     </section>
   ));
@@ -195,9 +201,10 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
           <AgentCard agent={item.agent} />
           <NextStep item={item} />
         </div>
+        <ReconcilePanel id={id} item={asResponseItem(item)} />
         {item.tasks.length > 0 && (
           <div className="work-column">
-            <TaskPanels id={id} tasks={item.tasks} />
+            <TaskPanels id={id} tasks={asResponseItem(item).tasks} />
           </div>
         )}
       </div>

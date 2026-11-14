@@ -1,0 +1,98 @@
+{
+  "id": "W-1607",
+  "title": "Harmattan Bank · Milestone 1 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0415",
+  "state": "awaiting_reconciliation",
+  "revision": 6,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "done"
+    },
+    {
+      "name": "Deliver",
+      "status": "current_person"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-12T09:40:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-12T09:47:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "unknown"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "waiting",
+    "steps": [
+      {
+        "text": "Issued invoice INV-0415 v1",
+        "status": "done"
+      },
+      {
+        "text": "Checked 3 times for a delivery receipt; none found",
+        "status": "waiting"
+      }
+    ]
+  },
+  "next_step": "A Finance Lead confirms whether invoice INV-0415 v1 arrived.",
+  "sample": true,
+  "case_id": "C-1607",
+  "case_revision": 5,
+  "allowed_actions": [
+    "reconcile"
+  ],
+  "reconcile": {
+    "checks": {
+      "count": 3
+    },
+    "outcomes": [
+      "not_delivered",
+      "unknown"
+    ]
+  }
+}
