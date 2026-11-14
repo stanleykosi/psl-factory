@@ -721,3 +721,9 @@
 {"at":"2026-11-14T08:42:27Z","feature":"F-09","round":2,"kind":"finding","action":"verify","finding":"UI-1-1","by":"reviewer-ui"}
 {"at":"2026-11-14T08:42:28Z","feature":"F-09","round":2,"kind":"transition","head":"14d6953dd4a3","from":"IN_REVIEW","to":"INTEGRATED_QA"}
 {"at":"2026-11-14T08:55:27Z","feature":"F-02","round":3,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"d245fef1f9e38ae3e707cdcb02ea7b9b14994488"}}
+{"at":"2026-11-14T08:56:37Z","feature":"F-02","round":3,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-14T08:56:48Z","feature":"F-02","round":3,"kind":"decision","decision":"HUMAN_APPROVAL","head":"02d59d8bb221","reasons":["risk 'medium' is not auto-mergeable","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-14T08:56:56Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T08:57:04Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T08:57:13Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T08:57:13Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"MERGED","to":"DONE"}

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T08:22:13.758Z",
+  "generatedAt": "2026-11-14T08:57:11.656Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-ready.dc.html",
   "boardName": "SCR-02-mobile-ready.dc.html",
   "pageUrl": "http://localhost:4501/work/W-1702",
@@ -15,33 +15,33 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": null,
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "15 board item(s) are missing from the page and are not approved exceptions (coverage 16.7% with exceptions, needs 100%).",
-    "Visual match 72.5 is below 90.",
-    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 73 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 16.7,
-    "coverageWithExceptions": 16.7,
-    "visual": 72.5
+    "coverage": 88.9,
+    "coverageWithExceptions": 100,
+    "visual": 73
   },
   "visual": {
-    "score": 72.5,
-    "allCellsScore": 80.8,
+    "score": 73,
+    "allCellsScore": 83.4,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1638,
-    "mismatchedCells": 450
+    "contentCells": 1444,
+    "mismatchedCells": 390
   },
   "coverage": {
     "total": 18,
-    "found": 3,
-    "coverage": 16.7,
+    "found": 16,
+    "coverage": 88.9,
     "matched": [
       {
         "kind": "Text",
@@ -60,10 +60,10 @@
           "h": 15
         },
         "pageBox": {
-          "x": 316,
-          "y": 109,
+          "x": 255,
+          "y": 105,
           "w": 58,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -90,6 +90,258 @@
       {
         "kind": "Text",
         "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 147,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 210,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 147,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 210,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 173,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 147,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 210,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 196,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 161,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 196,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 161,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 223,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 196,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 161,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
         "name": "Tola · PMO agent Starting in a few minutes. Nothing needed from you yet.",
         "pageName": "Tola · PMO agent Starting in a few minutes. Nothing needed from you yet. Cannot approve, send or pay.",
         "pageRole": "text",
@@ -103,9 +355,30 @@
         },
         "pageBox": {
           "x": 76,
-          "y": 622,
+          "y": 475,
           "w": 284,
           "h": 61
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "pageName": "Tola",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 76,
+          "y": 438,
+          "w": 27,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 76,
+          "y": 476,
+          "w": 27,
+          "h": 18
         }
       }
     ],
@@ -123,7 +396,10 @@
           "w": 61,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -137,189 +413,10 @@
           "w": 55,
           "h": 21
         },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DRAFTED",
-        "key": "text: DRAFTED",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 173,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 186,
-          "w": 12,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "REVIEWED",
-        "key": "text: REVIEWED",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 173,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 186,
-          "w": 12,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "APPROVED",
-        "key": "text: APPROVED",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 173,
-          "w": 102,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 186,
-          "w": 12,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "SENT",
-        "key": "text: SENT",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 223,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 236,
-          "w": 12,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "RECEIPT",
-        "key": "text: RECEIPT",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 223,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 236,
-          "w": 12,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "VERIFIED",
-        "key": "text: VERIFIED",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 223,
-          "w": 102,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 236,
-          "w": 12,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola",
-        "key": "text: Tola",
-        "container": "page",
-        "boardBox": {
-          "x": 76,
-          "y": 438,
-          "w": 27,
-          "h": 18
-        },
-        "exception": null
+        "exception": {
+          "reason": "The tag shows STATE_TAGS.ready (\"Ready to continue\").",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -334,13 +431,134 @@
           "h": 15
         },
         "pageBox": {
-          "x": 316,
-          "y": 109,
+          "x": 255,
+          "y": 105,
           "w": 58,
-          "h": 18
+          "h": 15
         },
         "reasons": [
-          "order: on the board it comes first; on the page it comes after Heading \"Kora Logistics · phase 2 plan\""
+          "order: on the board it comes first; on the page it comes after Heading \"Kora Logistics · phase 2 plan\"",
+          "across the page: right on the board (88% across), right on the page (73% across)"
+        ]
+      },
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 26,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 210,
+          "w": 100,
+          "h": 17
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"APPROVED\"; on the page it comes after Text \"VERIFIED\""
+        ]
+      },
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 144,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 210,
+          "w": 100,
+          "h": 17
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"—\"; on the page it comes after Text \"—\""
+        ]
+      },
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 262,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 210,
+          "w": 102,
+          "h": 17
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"—\"; on the page it comes after Text \"—\""
+        ]
+      },
+      {
+        "label": "Text \"SENT\"",
+        "kind": "Text",
+        "name": "SENT",
+        "boardBox": {
+          "x": 26,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 196,
+          "w": 100,
+          "h": 14
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"—\"; on the page it comes after Text \"—\""
+        ]
+      },
+      {
+        "label": "Text \"RECEIPT\"",
+        "kind": "Text",
+        "name": "RECEIPT",
+        "boardBox": {
+          "x": 144,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 196,
+          "w": 100,
+          "h": 14
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"SENT\"; on the page it comes after Text \"SENT\""
+        ]
+      },
+      {
+        "label": "Text \"VERIFIED\"",
+        "kind": "Text",
+        "name": "VERIFIED",
+        "boardBox": {
+          "x": 262,
+          "y": 223,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 196,
+          "w": 102,
+          "h": 14
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"RECEIPT\"; on the page it comes after Text \"RECEIPT\""
         ]
       }
     ],
@@ -364,9 +582,33 @@
         "container": "main",
         "pageBox": {
           "x": 16,
-          "y": 104,
+          "y": 102,
           "w": 140,
           "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLN-0160 · revision 1",
+        "container": "main",
+        "pageBox": {
+          "x": 255,
+          "y": 104,
+          "w": 119,
+          "h": 18
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 137,
+          "w": 358,
+          "h": 100
         }
       },
       {
@@ -376,7 +618,7 @@
         "container": "main",
         "pageBox": {
           "x": 16,
-          "y": 170,
+          "y": 634,
           "w": 176,
           "h": 48
         }
@@ -388,7 +630,7 @@
         "container": "navigation",
         "pageBox": {
           "x": 18,
-          "y": 172,
+          "y": 636,
           "w": 94,
           "h": 44
         }
@@ -400,25 +642,13 @@
         "container": "navigation",
         "pageBox": {
           "x": 112,
-          "y": 172,
+          "y": 636,
           "w": 80,
           "h": 44
         }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Paid is a separate Finance fact and is not part of this line.",
-        "container": "main",
-        "pageBox": {
-          "x": 16,
-          "y": 366,
-          "w": 358,
-          "h": 18
-        }
       }
     ],
-    "unexcepted": 15
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T08:22:40.455Z",
+  "generatedAt": "2026-11-14T08:57:42.408Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-verified.dc.html",
   "boardName": "SCR-02-mobile-verified.dc.html",
   "pageUrl": "http://localhost:4501/work/W-1705",
@@ -15,33 +15,33 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": null,
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "13 board item(s) are missing from the page and are not approved exceptions (coverage 23.5% with exceptions, needs 100%).",
-    "Visual match 44.1 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 78.1 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 23.5,
-    "coverageWithExceptions": 23.5,
-    "visual": 44.1
+    "coverage": 94.1,
+    "coverageWithExceptions": 100,
+    "visual": 78.1
   },
   "visual": {
-    "score": 44.1,
-    "allCellsScore": 55.4,
+    "score": 78.1,
+    "allCellsScore": 84,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
-    "pageHeight": 947,
+    "pageHeight": 860,
     "cell": 12,
-    "contentCells": 1869,
-    "mismatchedCells": 1045
+    "contentCells": 1708,
+    "mismatchedCells": 374
   },
   "coverage": {
     "total": 17,
-    "found": 4,
-    "coverage": 23.5,
+    "found": 16,
+    "coverage": 94.1,
     "matched": [
       {
         "kind": "Text",
@@ -60,10 +60,10 @@
           "h": 15
         },
         "pageBox": {
-          "x": 316,
-          "y": 130,
+          "x": 255,
+          "y": 129,
           "w": 58,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -104,9 +104,261 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 128,
+          "y": 126,
           "w": 73,
           "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 170,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "pageName": "v2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 186,
+          "w": 17,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 184,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 170,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada",
+        "pageName": "Ada",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 186,
+          "w": 27,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 184,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 173,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 170,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10:47",
+        "pageName": "10:47",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 186,
+          "w": 41,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 184,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 219,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11:02",
+        "pageName": "11:02",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 236,
+          "w": 41,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 233,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 219,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11:09",
+        "pageName": "11:09",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 236,
+          "w": 41,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 233,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 223,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 219,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11:12",
+        "pageName": "11:12",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 236,
+          "w": 41,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 233,
+          "w": 102,
+          "h": 17
         }
       },
       {
@@ -125,7 +377,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 667,
+          "y": 520,
           "w": 358,
           "h": 20
         }
@@ -145,175 +397,10 @@
           "w": 61,
           "h": 44
         },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DRAFTED",
-        "key": "text: DRAFTED",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 173,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "v2",
-        "key": "text: v2",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 186,
-          "w": 17,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "REVIEWED",
-        "key": "text: REVIEWED",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 173,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Ada",
-        "key": "text: Ada",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 186,
-          "w": 27,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "APPROVED",
-        "key": "text: APPROVED",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 173,
-          "w": 102,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "10:47",
-        "key": "text: 10:47",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 186,
-          "w": 41,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "SENT",
-        "key": "text: SENT",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 223,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "11:02",
-        "key": "text: 11:02",
-        "container": "page",
-        "boardBox": {
-          "x": 26,
-          "y": 236,
-          "w": 41,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "RECEIPT",
-        "key": "text: RECEIPT",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 223,
-          "w": 100,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "11:09",
-        "key": "text: 11:09",
-        "container": "page",
-        "boardBox": {
-          "x": 144,
-          "y": 236,
-          "w": 41,
-          "h": 19
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "VERIFIED",
-        "key": "text: VERIFIED",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 223,
-          "w": 102,
-          "h": 13
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "11:12",
-        "key": "text: 11:12",
-        "container": "page",
-        "boardBox": {
-          "x": 262,
-          "y": 236,
-          "w": 41,
-          "h": 19
-        },
-        "exception": null
+        "exception": {
+          "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -328,13 +415,14 @@
           "h": 15
         },
         "pageBox": {
-          "x": 316,
-          "y": 130,
+          "x": 255,
+          "y": 129,
           "w": 58,
-          "h": 18
+          "h": 15
         },
         "reasons": [
-          "order: on the board it comes first; on the page it comes after Text \"VERIFIED\""
+          "order: on the board it comes first; on the page it comes after Text \"VERIFIED\"",
+          "across the page: right on the board (88% across), right on the page (73% across)"
         ]
       }
     ],
@@ -352,13 +440,49 @@
         }
       },
       {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412 · revision 5",
+        "container": "main",
+        "pageBox": {
+          "x": 255,
+          "y": 128,
+          "w": 119,
+          "h": 18
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 160,
+          "w": 358,
+          "h": 100
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See in Verified outputs",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 642,
+          "w": 358,
+          "h": 50
+        }
+      },
+      {
         "kind": "Navigation area",
         "role": "navigation",
         "name": "Work item",
         "container": "main",
         "pageBox": {
           "x": 16,
-          "y": 193,
+          "y": 796,
           "w": 202,
           "h": 48
         }
@@ -370,7 +494,7 @@
         "container": "navigation",
         "pageBox": {
           "x": 18,
-          "y": 195,
+          "y": 798,
           "w": 94,
           "h": 44
         }
@@ -382,37 +506,13 @@
         "container": "navigation",
         "pageBox": {
           "x": 112,
-          "y": 195,
+          "y": 798,
           "w": 106,
           "h": 44
         }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Paid is a separate Finance fact and is not part of this line.",
-        "container": "main",
-        "pageBox": {
-          "x": 16,
-          "y": 389,
-          "w": 358,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "See in Verified outputs",
-        "container": "main",
-        "pageBox": {
-          "x": 16,
-          "y": 789,
-          "w": 358,
-          "h": 50
-        }
       }
     ],
-    "unexcepted": 13
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."

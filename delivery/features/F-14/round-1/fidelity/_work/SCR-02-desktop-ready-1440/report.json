@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T08:22:08.009Z",
+  "generatedAt": "2026-11-14T08:57:07.202Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-desktop-ready.dc.html",
   "boardName": "SCR-02-desktop-ready.dc.html",
   "pageUrl": "http://localhost:4501/work/W-1702",
@@ -15,33 +15,33 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": null,
-  "pass": false,
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
   "passReasons": [
-    "18 board item(s) are missing from the page and are not approved exceptions (coverage 40% with exceptions, needs 100%).",
-    "Visual match 79.1 is below 90.",
-    "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 90.6 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 40,
-    "coverageWithExceptions": 40,
-    "visual": 79.1
+    "coverage": 86.7,
+    "coverageWithExceptions": 100,
+    "visual": 90.6
   },
   "visual": {
-    "score": 79.1,
-    "allCellsScore": 87.8,
+    "score": 90.6,
+    "allCellsScore": 95.6,
     "width": 1440,
     "height": 860,
     "boardHeight": 860,
     "pageHeight": 860,
     "cell": 12,
-    "contentCells": 5053,
-    "mismatchedCells": 1057
+    "contentCells": 3991,
+    "mismatchedCells": 376
   },
   "coverage": {
     "total": 30,
-    "found": 12,
-    "coverage": 40,
+    "found": 26,
+    "coverage": 86.7,
     "matched": [
       {
         "kind": "Navigation area",
@@ -190,7 +190,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 735
+          "h": 615
         }
       },
       {
@@ -211,9 +211,282 @@
         },
         "pageBox": {
           "x": 88,
-          "y": 113,
+          "y": 120,
           "w": 633,
-          "h": 43
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 192,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 194,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 210,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 212,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 314,
+          "y": 192,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 314,
+          "y": 194,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 314,
+          "y": 210,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 314,
+          "y": 212,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 524,
+          "y": 192,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 524,
+          "y": 194,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 524,
+          "y": 210,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 524,
+          "y": 212,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 192,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 734,
+          "y": 194,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 210,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 734,
+          "y": 212,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 944,
+          "y": 192,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 944,
+          "y": 194,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 944,
+          "y": 210,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 944,
+          "y": 212,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1154,
+          "y": 192,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 1154,
+          "y": 194,
+          "w": 182,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1154,
+          "y": 210,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1154,
+          "y": 212,
+          "w": 182,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Ready to begin",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 261,
+          "w": 324,
+          "h": 265
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 263,
+          "w": 324,
+          "h": 292
         }
       },
       {
@@ -232,9 +505,9 @@
           "h": 40
         },
         "pageBox": {
-          "x": 934,
-          "y": 404,
-          "w": 416,
+          "x": 1030,
+          "y": 265,
+          "w": 320,
           "h": 47
         }
       },
@@ -253,9 +526,9 @@
           "h": 63
         },
         "pageBox": {
-          "x": 950,
-          "y": 466,
-          "w": 384,
+          "x": 1046,
+          "y": 328,
+          "w": 288,
           "h": 63
         }
       },
@@ -274,9 +547,9 @@
           "h": 21
         },
         "pageBox": {
-          "x": 950,
-          "y": 539,
-          "w": 384,
+          "x": 1046,
+          "y": 401,
+          "w": 288,
           "h": 21
         }
       },
@@ -295,10 +568,31 @@
           "h": 61
         },
         "pageBox": {
-          "x": 1010,
-          "y": 582,
-          "w": 310,
-          "h": 63
+          "x": 1106,
+          "y": 444,
+          "w": 214,
+          "h": 82
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "pageName": "Tola",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1106,
+          "y": 436,
+          "w": 27,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1106,
+          "y": 445,
+          "w": 27,
+          "h": 18
         }
       }
     ],
@@ -316,7 +610,10 @@
           "w": 118,
           "h": 40
         },
-        "exception": null
+        "exception": {
+          "reason": "Top-bar Start work belongs to F-05 (src/shell); not merged on the base. As D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Link",
@@ -330,7 +627,10 @@
           "w": 42,
           "h": 40
         },
-        "exception": null
+        "exception": {
+          "reason": "Split part of the F-05 Start work button in the top bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -344,7 +644,10 @@
           "w": 1264,
           "h": 15
         },
-        "exception": null
+        "exception": {
+          "reason": "The state boards draw a REF · CLIENT eyebrow where the default board draws the crumb; the page keeps one crumb (D-17). The reference is in the crumb.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -358,285 +661,31 @@
           "w": 55,
           "h": 21
         },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DRAFTED",
-        "key": "text: DRAFTED",
-        "container": "main",
-        "boardBox": {
-          "x": 104,
-          "y": 192,
-          "w": 180,
-          "h": 14
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "main",
-        "boardBox": {
-          "x": 104,
-          "y": 210,
-          "w": 180,
-          "h": 17
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "REVIEWED",
-        "key": "text: REVIEWED",
-        "container": "main",
-        "boardBox": {
-          "x": 314,
-          "y": 192,
-          "w": 180,
-          "h": 14
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "main",
-        "boardBox": {
-          "x": 314,
-          "y": 210,
-          "w": 180,
-          "h": 17
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "APPROVED",
-        "key": "text: APPROVED",
-        "container": "main",
-        "boardBox": {
-          "x": 524,
-          "y": 192,
-          "w": 180,
-          "h": 14
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "main",
-        "boardBox": {
-          "x": 524,
-          "y": 210,
-          "w": 180,
-          "h": 17
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "SENT",
-        "key": "text: SENT",
-        "container": "main",
-        "boardBox": {
-          "x": 734,
-          "y": 192,
-          "w": 180,
-          "h": 14
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "main",
-        "boardBox": {
-          "x": 734,
-          "y": 210,
-          "w": 180,
-          "h": 17
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "RECEIPT",
-        "key": "text: RECEIPT",
-        "container": "main",
-        "boardBox": {
-          "x": 944,
-          "y": 192,
-          "w": 180,
-          "h": 14
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "main",
-        "boardBox": {
-          "x": 944,
-          "y": 210,
-          "w": 180,
-          "h": 17
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "VERIFIED",
-        "key": "text: VERIFIED",
-        "container": "main",
-        "boardBox": {
-          "x": 1154,
-          "y": 192,
-          "w": 180,
-          "h": 14
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "—",
-        "key": "text: —",
-        "container": "main",
-        "boardBox": {
-          "x": 1154,
-          "y": 210,
-          "w": 180,
-          "h": 17
-        },
-        "exception": null
-      },
-      {
-        "kind": "Side panel",
-        "role": "complementary",
-        "name": "(side panel)",
-        "key": "complementary:",
-        "container": "main",
-        "boardBox": {
-          "x": 1028,
-          "y": 261,
-          "w": 324,
-          "h": 265
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola",
-        "key": "text: Tola",
-        "container": "complementary",
-        "boardBox": {
-          "x": 1106,
-          "y": 436,
-          "w": 27,
-          "h": 18
-        },
-        "exception": null
+        "exception": {
+          "reason": "The tag shows STATE_TAGS.ready (\"Ready to continue\").",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
       {
-        "label": "Text \"READY TO BEGIN\"",
-        "kind": "Text",
-        "name": "READY TO BEGIN",
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
         "boardBox": {
-          "x": 1030,
-          "y": 263,
-          "w": 320,
-          "h": 40
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 526
         },
         "pageBox": {
-          "x": 934,
-          "y": 404,
-          "w": 416,
-          "h": 47
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 615
         },
         "reasons": [
-          "order: on the board it comes after Heading \"Kora Logistics · phase 2 plan\"; on the page it comes after Main area \"\"",
-          "inside a side panel on the board, inside the main area on the page"
-        ]
-      },
-      {
-        "label": "Text \"Started by Tunde Bello at 09:14. Tola picks it up within a few minutes and starts gathering requirements from the engagement record.\"",
-        "kind": "Text",
-        "name": "Started by Tunde Bello at 09:14. Tola picks it up within a few minutes and starts gathering requirements from the engagement record.",
-        "boardBox": {
-          "x": 1046,
-          "y": 319,
-          "w": 288,
-          "h": 63
-        },
-        "pageBox": {
-          "x": 950,
-          "y": 466,
-          "w": 384,
-          "h": 63
-        },
-        "reasons": [
-          "inside a side panel on the board, inside the main area on the page"
-        ]
-      },
-      {
-        "label": "Text \"Nothing is needed from you yet.\"",
-        "kind": "Text",
-        "name": "Nothing is needed from you yet.",
-        "boardBox": {
-          "x": 1046,
-          "y": 392,
-          "w": 288,
-          "h": 21
-        },
-        "pageBox": {
-          "x": 950,
-          "y": 539,
-          "w": 384,
-          "h": 21
-        },
-        "reasons": [
-          "inside a side panel on the board, inside the main area on the page"
-        ]
-      },
-      {
-        "label": "Text \"Tola · PMO agent I'll start with the minutes from 06 Nov and the signed SOW.\"",
-        "kind": "Text",
-        "name": "Tola · PMO agent I'll start with the minutes from 06 Nov and the signed SOW.",
-        "boardBox": {
-          "x": 1106,
-          "y": 435,
-          "w": 214,
-          "h": 61
-        },
-        "pageBox": {
-          "x": 1010,
-          "y": 582,
-          "w": 310,
-          "h": 63
-        },
-        "reasons": [
-          "inside a side panel on the board, inside the main area on the page"
+          "order: on the board it comes after Text \"READY TO BEGIN\"; on the page it comes after Text \"Started by Tunde Bello at 09:14. Tola picks it up within a few minutes and starts gathering requirements from the engagement record.\""
         ]
       }
     ],
@@ -649,8 +698,8 @@
         "pageBox": {
           "x": 88,
           "y": 85,
-          "w": 1264,
-          "h": 18
+          "w": 269,
+          "h": 15
         }
       },
       {
@@ -661,8 +710,8 @@
         "pageBox": {
           "x": 88,
           "y": 85,
-          "w": 1264,
-          "h": 18
+          "w": 269,
+          "h": 15
         }
       },
       {
@@ -672,8 +721,20 @@
         "container": "navigation",
         "pageBox": {
           "x": 88,
-          "y": 86,
+          "y": 85,
           "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "revision 1",
+        "container": "main",
+        "pageBox": {
+          "x": 1296,
+          "y": 85,
+          "w": 57,
           "h": 15
         }
       },
@@ -683,8 +744,8 @@
         "name": "READY TO CONTINUE",
         "container": "main",
         "pageBox": {
-          "x": 1212,
-          "y": 113,
+          "x": 1021,
+          "y": 120,
           "w": 140,
           "h": 23
         }
@@ -695,10 +756,10 @@
         "name": "Work item",
         "container": "main",
         "pageBox": {
-          "x": 88,
-          "y": 211,
+          "x": 1176,
+          "y": 122,
           "w": 176,
-          "h": 48
+          "h": 36
         }
       },
       {
@@ -707,10 +768,10 @@
         "name": "Overview",
         "container": "navigation",
         "pageBox": {
-          "x": 90,
-          "y": 213,
+          "x": 1178,
+          "y": 124,
           "w": 94,
-          "h": 44
+          "h": 32
         }
       },
       {
@@ -719,26 +780,50 @@
         "name": "History",
         "container": "navigation",
         "pageBox": {
-          "x": 184,
-          "y": 213,
+          "x": 1272,
+          "y": 124,
           "w": 80,
-          "h": 44
+          "h": 32
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 180,
+          "w": 1264,
+          "h": 63
         }
       },
       {
         "kind": "Text",
         "role": "text",
-        "name": "Paid is a separate Finance fact and is not part of this line.",
-        "container": "main",
+        "name": "· PMO agent",
+        "container": "complementary",
         "pageBox": {
-          "x": 88,
-          "y": 364,
-          "w": 1264,
-          "h": 18
+          "x": 1133,
+          "y": 446,
+          "w": 75,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cannot approve, send or pay.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1106,
+          "y": 488,
+          "w": 199,
+          "h": 35
         }
       }
     ],
-    "unexcepted": 18
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."

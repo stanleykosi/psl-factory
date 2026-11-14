@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T08:21:59.913Z",
+  "generatedAt": "2026-11-14T08:56:57.264Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-desktop.dc.html",
   "boardName": "SCR-02-desktop.dc.html",
   "pageUrl": "http://localhost:4501/work/W-1701",
@@ -15,33 +15,33 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": null,
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "13 board item(s) are missing from the page and are not approved exceptions (coverage 68.3% with exceptions, needs 100%).",
-    "Visual match 61.1 is below 90.",
-    "13 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 85.8 is below 90.",
+    "11 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 68.3,
-    "coverageWithExceptions": 68.3,
-    "visual": 61.1
+    "coverage": 70.7,
+    "coverageWithExceptions": 100,
+    "visual": 85.8
   },
   "visual": {
-    "score": 61.1,
-    "allCellsScore": 81.9,
+    "score": 85.8,
+    "allCellsScore": 94.4,
     "width": 1440,
     "height": 1260,
     "boardHeight": 1260,
     "pageHeight": 1200,
     "cell": 12,
-    "contentCells": 5863,
-    "mismatchedCells": 2281
+    "contentCells": 4932,
+    "mismatchedCells": 701
   },
   "coverage": {
     "total": 41,
-    "found": 28,
-    "coverage": 68.3,
+    "found": 29,
+    "coverage": 70.7,
     "matched": [
       {
         "kind": "Navigation area",
@@ -232,7 +232,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 946
+          "h": 903
         }
       },
       {
@@ -252,8 +252,8 @@
         "pageBox": {
           "x": 88,
           "y": 85,
-          "w": 1264,
-          "h": 18
+          "w": 300,
+          "h": 15
         }
       },
       {
@@ -274,9 +274,30 @@
         },
         "pageBox": {
           "x": 88,
-          "y": 113,
+          "y": 110,
           "w": 787,
-          "h": 43
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2",
+        "pageName": "Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 155,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 157,
+          "w": 384,
+          "h": 18
         }
       },
       {
@@ -295,7 +316,7 @@
         },
         "pageBox": {
           "x": 88,
-          "y": 364,
+          "y": 268,
           "w": 1264,
           "h": 18
         }
@@ -316,7 +337,7 @@
         },
         "pageBox": {
           "x": 106,
-          "y": 528,
+          "y": 430,
           "w": 185,
           "h": 36
         }
@@ -336,8 +357,8 @@
           "h": 40
         },
         "pageBox": {
-          "x": 736,
-          "y": 537,
+          "x": 832,
+          "y": 439,
           "w": 156,
           "h": 18
         }
@@ -358,9 +379,9 @@
         },
         "pageBox": {
           "x": 106,
-          "y": 848,
-          "w": 786,
-          "h": 22
+          "y": 736,
+          "w": 882,
+          "h": 17
         }
       },
       {
@@ -382,9 +403,9 @@
           "h": 34
         },
         "pageBox": {
-          "x": 934,
-          "y": 516,
-          "w": 416,
+          "x": 1030,
+          "y": 418,
+          "w": 320,
           "h": 50
         }
       },
@@ -405,9 +426,9 @@
           "h": 36
         },
         "pageBox": {
-          "x": 950,
-          "y": 582,
-          "w": 384,
+          "x": 1046,
+          "y": 484,
+          "w": 288,
           "h": 21
         }
       },
@@ -426,8 +447,8 @@
           "h": 20
         },
         "pageBox": {
-          "x": 950,
-          "y": 651,
+          "x": 1046,
+          "y": 553,
           "w": 80,
           "h": 21
         }
@@ -447,8 +468,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 950,
-          "y": 680,
+          "x": 1046,
+          "y": 582,
           "w": 80,
           "h": 21
         }
@@ -468,10 +489,10 @@
           "h": 18
         },
         "pageBox": {
-          "x": 1044,
-          "y": 680,
-          "w": 290,
-          "h": 21
+          "x": 1140,
+          "y": 582,
+          "w": 194,
+          "h": 42
         }
       },
       {
@@ -489,8 +510,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 950,
-          "y": 709,
+          "x": 1046,
+          "y": 632,
           "w": 80,
           "h": 21
         }
@@ -510,10 +531,10 @@
           "h": 18
         },
         "pageBox": {
-          "x": 1044,
-          "y": 709,
-          "w": 290,
-          "h": 21
+          "x": 1140,
+          "y": 632,
+          "w": 194,
+          "h": 42
         }
       },
       {
@@ -531,8 +552,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 950,
-          "y": 738,
+          "x": 1046,
+          "y": 682,
           "w": 80,
           "h": 21
         }
@@ -552,9 +573,9 @@
           "h": 18
         },
         "pageBox": {
-          "x": 1044,
-          "y": 738,
-          "w": 290,
+          "x": 1140,
+          "y": 682,
+          "w": 194,
           "h": 21
         }
       },
@@ -573,10 +594,10 @@
           "h": 30
         },
         "pageBox": {
-          "x": 932,
-          "y": 861,
-          "w": 420,
-          "h": 18
+          "x": 1028,
+          "y": 805,
+          "w": 324,
+          "h": 36
         }
       }
     ],
@@ -594,17 +615,17 @@
         },
         "matched": true,
         "pageName": "Repeated blocks with 2 text field(s) each",
-        "pageCount": 4,
+        "pageCount": 3,
         "pageBox": {
-          "x": 950,
-          "y": 648,
-          "w": 384,
-          "h": 111
+          "x": 510,
+          "y": 199,
+          "w": 840,
+          "h": 59
         },
         "notes": [
-          "board field 1 (page field 1): font IBM Plex Mono on the board, IBM Plex Sans on the page; text size 11px on the board, 14px on the page; text colour #FFFFFF on the board, #4A5357 on the page; capitals on the board, not on the page",
-          "board field 2 (page field 2): font Archivo on the board, IBM Plex Mono on the page; weight 700 on the board, 500 on the page; text colour #FFFFFF on the board, #1F2427 on the page",
-          "item frame: text colour #FFFFFF on the board, #1F2427 on the page; background #1F2427 on the board, none on the page"
+          "board field 1 (page field 1): text colour #FFFFFF on the board, #626B6F on the page",
+          "board field 2 (page field 2): text colour #FFFFFF on the board, #626B6F on the page",
+          "item frame: text colour #FFFFFF on the board, #626B6F on the page; background #1F2427 on the board, none on the page"
         ]
       },
       {
@@ -619,13 +640,13 @@
           "h": 82
         },
         "matched": true,
-        "pageName": "Repeated list items with 3 text field(s) each",
+        "pageName": "Repeated blocks with 3 text field(s) each",
         "pageCount": 7,
         "pageBox": {
           "x": 90,
-          "y": 404,
+          "y": 310,
           "w": 1260,
-          "h": 89
+          "h": 82
         },
         "notes": []
       },
@@ -645,8 +666,8 @@
         "pageCount": 4,
         "pageBox": {
           "x": 106,
-          "y": 582,
-          "w": 786,
+          "y": 484,
+          "w": 882,
           "h": 240
         },
         "notes": []
@@ -665,7 +686,10 @@
           "w": 118,
           "h": 40
         },
-        "exception": null
+        "exception": {
+          "reason": "Top-bar Start work belongs to F-05 (src/shell); not merged on the base. As D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Link",
@@ -679,7 +703,10 @@
           "w": 42,
           "h": 40
         },
-        "exception": null
+        "exception": {
+          "reason": "Split part of the F-05 Start work button in the top bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Link",
@@ -693,7 +720,10 @@
           "w": 100,
           "h": 40
         },
-        "exception": null
+        "exception": {
+          "reason": "Top-bar Start work belongs to F-05 (src/shell); not merged on the base. As D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Link",
@@ -707,7 +737,10 @@
           "w": 36,
           "h": 15
         },
-        "exception": null
+        "exception": {
+          "reason": "Boards name the crumb QUEUE, MY WORK or draw a REF · CLIENT eyebrow; the page keeps F-03's \"My work / line / ref\" crumb on every state (D-17).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -721,21 +754,10 @@
           "w": 197,
           "h": 25
         },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2",
-        "key": "text: Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2",
-        "container": "main",
-        "boardBox": {
-          "x": 88,
-          "y": 155,
-          "w": 1264,
-          "h": 18
-        },
-        "exception": null
+        "exception": {
+          "reason": "Board-only state wording; the tag shows STATE_TAGS.waiting (\"Waiting\", CMP-05), as D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Side panel",
@@ -749,7 +771,10 @@
           "w": 324,
           "h": 526
         },
-        "exception": null
+        "exception": {
+          "reason": "The decision panel is F-03's TaskPanels section, named \"Current human task\" (binding F-09 seam: TaskPanels({ id, tasks }) unchanged).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -763,7 +788,10 @@
           "w": 225,
           "h": 20
         },
-        "exception": null
+        "exception": {
+          "reason": "Shown in the Amount row by F-04's DecisionRows/AmountValue (read-only here); the check cannot read a lone span inside a <dd>, so it reports the amount as missing although it is on the page.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -777,7 +805,10 @@
           "w": 176,
           "h": 18
         },
-        "exception": null
+        "exception": {
+          "reason": "Part of the F-04 Note field label.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text field",
@@ -791,7 +822,10 @@
           "w": 288,
           "h": 74
         },
-        "exception": null
+        "exception": {
+          "reason": "The decision is taken on SCR-03 (F-04) with its version and stale checks; the page links there with \"Open the decision\" (F-03 AC 7).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Button",
@@ -805,7 +839,10 @@
           "w": 288,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Deciding is F-04's (SCR-03); no decision is taken on this page.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Button",
@@ -819,7 +856,10 @@
           "w": 139,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "F-04 (SCR-03).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Button",
@@ -833,7 +873,10 @@
           "w": 139,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "F-04 (SCR-03).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -850,31 +893,11 @@
         "pageBox": {
           "x": 88,
           "y": 85,
-          "w": 1264,
-          "h": 18
+          "w": 300,
+          "h": 15
         },
         "reasons": [
           "inside the main area on the board, inside the top navigation on the page"
-        ]
-      },
-      {
-        "label": "Repeated blocks with 2 text field(s) each",
-        "kind": "Repeated rows",
-        "name": "Repeated blocks with 2 text field(s) each",
-        "boardBox": {
-          "x": 90,
-          "y": 197,
-          "w": 1260,
-          "h": 59
-        },
-        "pageBox": {
-          "x": 950,
-          "y": 648,
-          "w": 384,
-          "h": 111
-        },
-        "reasons": [
-          "order: on the board it comes after Heading \"Lagoon Health · Milestone 2 invoice\"; on the page it comes after Repeated list items with 4 text field(s) each"
         ]
       },
       {
@@ -888,9 +911,9 @@
           "h": 34
         },
         "pageBox": {
-          "x": 934,
-          "y": 516,
-          "w": 416,
+          "x": 1030,
+          "y": 418,
+          "w": 320,
           "h": 50
         },
         "reasons": [
@@ -908,33 +931,13 @@
           "h": 36
         },
         "pageBox": {
-          "x": 950,
-          "y": 582,
-          "w": 384,
+          "x": 1046,
+          "y": 484,
+          "w": 288,
           "h": 21
         },
         "reasons": [
           "inside a side panel on the board, inside the main area on the page"
-        ]
-      },
-      {
-        "label": "Main area \"\"",
-        "kind": "Main area",
-        "name": "",
-        "boardBox": {
-          "x": 60,
-          "y": 56,
-          "w": 1320,
-          "h": 939
-        },
-        "pageBox": {
-          "x": 60,
-          "y": 57,
-          "w": 1320,
-          "h": 946
-        },
-        "reasons": [
-          "order: on the board it comes after Text \"Only a Finance Lead can decide. You are Finance Lead.\"; on the page it comes after Repeated blocks with 3 text field(s) each"
         ]
       },
       {
@@ -948,8 +951,8 @@
           "h": 20
         },
         "pageBox": {
-          "x": 950,
-          "y": 651,
+          "x": 1046,
+          "y": 553,
           "w": 80,
           "h": 21
         },
@@ -968,8 +971,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 950,
-          "y": 680,
+          "x": 1046,
+          "y": 582,
           "w": 80,
           "h": 21
         },
@@ -988,12 +991,13 @@
           "h": 18
         },
         "pageBox": {
-          "x": 1044,
-          "y": 680,
-          "w": 290,
-          "h": 21
+          "x": 1140,
+          "y": 582,
+          "w": 194,
+          "h": 42
         },
         "reasons": [
+          "order: on the board it comes after Text \"Basis\"; on the page it comes after Repeated list items with 4 text field(s) each",
           "inside a side panel on the board, inside the main area on the page"
         ]
       },
@@ -1008,8 +1012,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 950,
-          "y": 709,
+          "x": 1046,
+          "y": 632,
           "w": 80,
           "h": 21
         },
@@ -1028,10 +1032,10 @@
           "h": 18
         },
         "pageBox": {
-          "x": 1044,
-          "y": 709,
-          "w": 290,
-          "h": 21
+          "x": 1140,
+          "y": 632,
+          "w": 194,
+          "h": 42
         },
         "reasons": [
           "inside a side panel on the board, inside the main area on the page"
@@ -1048,8 +1052,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 950,
-          "y": 738,
+          "x": 1046,
+          "y": 682,
           "w": 80,
           "h": 21
         },
@@ -1068,9 +1072,9 @@
           "h": 18
         },
         "pageBox": {
-          "x": 1044,
-          "y": 738,
-          "w": 290,
+          "x": 1140,
+          "y": 682,
+          "w": 194,
           "h": 21
         },
         "reasons": [
@@ -1088,10 +1092,10 @@
           "h": 30
         },
         "pageBox": {
-          "x": 932,
-          "y": 861,
-          "w": 420,
-          "h": 18
+          "x": 1028,
+          "y": 805,
+          "w": 324,
+          "h": 36
         },
         "reasons": [
           "inside a side panel on the board, inside the main area on the page"
@@ -1107,8 +1111,8 @@
         "pageBox": {
           "x": 88,
           "y": 85,
-          "w": 1264,
-          "h": 18
+          "w": 300,
+          "h": 15
         }
       },
       {
@@ -1118,7 +1122,7 @@
         "container": "navigation",
         "pageBox": {
           "x": 88,
-          "y": 86,
+          "y": 85,
           "w": 54,
           "h": 15
         }
@@ -1130,7 +1134,7 @@
         "container": "main",
         "pageBox": {
           "x": 889,
-          "y": 121,
+          "y": 115,
           "w": 75,
           "h": 27
         }
@@ -1141,10 +1145,10 @@
         "name": "Work item",
         "container": "main",
         "pageBox": {
-          "x": 88,
-          "y": 211,
+          "x": 1176,
+          "y": 110,
           "w": 176,
-          "h": 48
+          "h": 36
         }
       },
       {
@@ -1153,10 +1157,10 @@
         "name": "Overview",
         "container": "navigation",
         "pageBox": {
-          "x": 90,
-          "y": 213,
+          "x": 1178,
+          "y": 112,
           "w": 94,
-          "h": 44
+          "h": 32
         }
       },
       {
@@ -1165,10 +1169,94 @@
         "name": "History",
         "container": "navigation",
         "pageBox": {
-          "x": 184,
-          "y": 213,
+          "x": 1272,
+          "y": 112,
           "w": 80,
-          "h": 44
+          "h": 32
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 197,
+          "w": 1264,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "container": "main",
+        "pageBox": {
+          "x": 104,
+          "y": 211,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "container": "main",
+        "pageBox": {
+          "x": 104,
+          "y": 229,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "container": "main",
+        "pageBox": {
+          "x": 314,
+          "y": 211,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting",
+        "container": "main",
+        "pageBox": {
+          "x": 314,
+          "y": 229,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "container": "main",
+        "pageBox": {
+          "x": 944,
+          "y": 211,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "container": "main",
+        "pageBox": {
+          "x": 944,
+          "y": 229,
+          "w": 180,
+          "h": 17
         }
       },
       {
@@ -1177,9 +1265,9 @@
         "name": "You are Finance Lead.",
         "container": "main",
         "pageBox": {
-          "x": 950,
-          "y": 615,
-          "w": 384,
+          "x": 1046,
+          "y": 517,
+          "w": 288,
           "h": 21
         }
       },
@@ -1189,14 +1277,14 @@
         "name": "Open the decision",
         "container": "main",
         "pageBox": {
-          "x": 950,
-          "y": 771,
-          "w": 384,
+          "x": 1046,
+          "y": 715,
+          "w": 288,
           "h": 48
         }
       }
     ],
-    "unexcepted": 13
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
