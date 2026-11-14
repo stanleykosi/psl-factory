@@ -442,3 +442,35 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
     expect(rows.filter((r) => !r._kind).map((r) => r.event)).toEqual(['Started the line']);
   });
 });
+
+describe('F-17 workspace fixtures (W-20xx)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const load = (name: string) => JSON.parse(readFileSync(join(dir, name), 'utf8')) as Record<string, unknown>;
+  const items = readdirSync(dir).filter((name) => /^W-20\d\d(\.next)?\.json$/.test(name));
+
+  it('every W-20xx item is schema-valid, marked sample and carries no board presentation block', () => {
+    expect(items.length).toBeGreaterThanOrEqual(6);
+    for (const name of items) {
+      const body = load(name);
+      expectValid('E-WORK-ITEM', 200, body);
+      expect(body.sample, name).toBe(true);
+      expect(body, name).not.toHaveProperty('presentation');
+      expect(body, name).not.toHaveProperty('decide_presentation');
+    }
+  });
+
+  it('W-2001 to W-2005 carry a workspace; W-2010 is W-1002 with its id changed and no workspace', () => {
+    for (const id of ['W-2001', 'W-2002', 'W-2003', 'W-2004', 'W-2005']) expect(load(`${id}.json`), id).toHaveProperty('workspace');
+    const copy = load('W-2010.json');
+    expect(copy).not.toHaveProperty('workspace');
+    expect({ ...copy, id: 'W-1002' }).toEqual(load('W-1002.json'));
+  });
+
+  it('the mock serves each W-20xx item as its own fixture', async () => {
+    for (const id of ['W-2001', 'W-2002', 'W-2003', 'W-2004', 'W-2005', 'W-2010']) {
+      const response = await fetch(`${base}/api/v1/work/${id}`, { headers: { Cookie: 'psl_mock_persona=pm' } });
+      expect(response.status, id).toBe(200);
+      expect(await response.json(), id).toEqual(load(`${id}.json`));
+    }
+  });
+});

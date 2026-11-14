@@ -15,6 +15,7 @@ import { WarningIcon } from '@/shell/icons';
 import { InfoIcon } from './InfoIcon';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
+import { Workspace } from '@/features/workspace/Workspace';
 
 import {
   AGENT_TAGS,
@@ -773,6 +774,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
         </div>
       </div>
       {after}
+      {item.workspace && <Workspace id={id} item={item} />}
     </div>
   );
 }

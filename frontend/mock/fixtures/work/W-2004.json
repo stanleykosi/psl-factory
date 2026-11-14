@@ -1,0 +1,383 @@
+{
+  "id": "W-2004",
+  "title": "Cash forecast · base case, Nov–Apr",
+  "line": "Cash forecast",
+  "reference": "FC-0014",
+  "state": "action_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week’s records",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "workspace": {
+    "line_key": "cash_forecast",
+    "screen": "SCR-56",
+    "view": "review",
+    "status": {
+      "label": "Awaiting finance decision",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "forecast",
+        "kind": "table",
+        "title": "Forecast · 6 months",
+        "as_of": "2026-11-14T09:40:00Z",
+        "coverage": "3 of 4 bank accounts reconciled",
+        "note": "January receipts are Unknown: Kola Foods hasn’t confirmed its payment date. The forecast shows Unknown, not 0.",
+        "columns": [
+          {
+            "key": "month",
+            "label": "Month",
+            "kind": "text"
+          },
+          {
+            "key": "opening",
+            "label": "Opening",
+            "kind": "money"
+          },
+          {
+            "key": "in",
+            "label": "In",
+            "kind": "money"
+          },
+          {
+            "key": "out",
+            "label": "Out",
+            "kind": "money"
+          },
+          {
+            "key": "closing",
+            "label": "Closing",
+            "kind": "money"
+          },
+          {
+            "key": "confirmed",
+            "label": "Confirmed",
+            "kind": "date"
+          },
+          {
+            "key": "owner",
+            "label": "Owner",
+            "kind": "text"
+          }
+        ],
+        "items": [
+          {
+            "id": "M-11",
+            "cells": [
+              {
+                "column": "month",
+                "text": "Nov"
+              },
+              {
+                "column": "opening",
+                "money": {
+                  "amount": "22600000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "in",
+                "money": {
+                  "amount": "18400000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "out",
+                "money": {
+                  "amount": "21000000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "closing",
+                "money": {
+                  "amount": "20000000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "confirmed",
+                "date": {
+                  "date": "2026-11-10",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "owner",
+                "text": "Ada Okafor"
+              }
+            ]
+          },
+          {
+            "id": "M-12",
+            "cells": [
+              {
+                "column": "month",
+                "text": "Dec"
+              },
+              {
+                "column": "opening",
+                "money": {
+                  "amount": "20000000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "in",
+                "money": {
+                  "amount": "12100000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "out",
+                "money": {
+                  "amount": "24300000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "closing",
+                "money": {
+                  "amount": "7800000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "confirmed",
+                "date": {
+                  "date": "2026-11-12",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "owner",
+                "text": "Ada Okafor",
+                "restricted": true
+              }
+            ]
+          },
+          {
+            "id": "M-01",
+            "cells": [
+              {
+                "column": "month",
+                "text": "Jan"
+              },
+              {
+                "column": "opening",
+                "money": {
+                  "amount": "7800000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "in",
+                "money": {
+                  "currency": "NGN",
+                  "unknown": true
+                }
+              },
+              {
+                "column": "out",
+                "money": {
+                  "amount": "19800000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "closing",
+                "money": {
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "confirmed",
+                "date": {
+                  "unknown": true
+                }
+              },
+              {
+                "column": "owner",
+                "text": "Bisi Ade"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "january",
+        "kind": "figures",
+        "title": "January",
+        "as_of": "2026-11-14T09:40:00Z",
+        "coverage": "Receipts from 11 of 12 clients",
+        "agent": "chidi",
+        "items": [
+          {
+            "id": "J-1",
+            "label": "Opening balance",
+            "money": {
+              "amount": "7800000.00",
+              "currency": "NGN",
+              "unknown": false
+            }
+          },
+          {
+            "id": "J-2",
+            "label": "Receipts in",
+            "money": {
+              "currency": "NGN",
+              "unknown": true
+            },
+            "detail": "Kola Foods hasn’t confirmed its payment date"
+          },
+          {
+            "id": "J-3",
+            "label": "Payments out",
+            "money": {
+              "amount": "19800000.00",
+              "currency": "NGN",
+              "unknown": false
+            }
+          },
+          {
+            "id": "J-4",
+            "label": "Months of runway",
+            "value": "1.4"
+          },
+          {
+            "id": "J-5",
+            "label": "HIDDEN-ITEM-LABEL",
+            "money": {
+              "amount": "5555555.00",
+              "currency": "NGN",
+              "unknown": false
+            },
+            "detail": "HIDDEN-ITEM-DETAIL",
+            "restricted": true
+          }
+        ]
+      },
+      {
+        "key": "dates",
+        "kind": "checklist",
+        "title": "Payment dates",
+        "items": [
+          {
+            "id": "D-1",
+            "text": "Kola Foods payment date",
+            "status": "unknown",
+            "due": {
+              "unknown": true
+            }
+          },
+          {
+            "id": "D-2",
+            "text": "Harbour Bank payment date",
+            "status": "done",
+            "due": {
+              "date": "2026-12-05",
+              "unknown": false
+            }
+          }
+        ]
+      },
+      {
+        "key": "payroll",
+        "kind": "figures",
+        "title": "Payroll lines",
+        "restricted": true,
+        "restricted_label": "Payroll lines are restricted to Finance Leads.",
+        "note": "HIDDEN-SECTION-NOTE",
+        "coverage": "HIDDEN-SECTION-COVERAGE",
+        "items": [
+          {
+            "id": "PR-1",
+            "label": "HIDDEN-ROW-TEXT",
+            "money": {
+              "amount": "9999999.00",
+              "currency": "NGN",
+              "unknown": false
+            },
+            "detail": "HIDDEN-ROW-DETAIL",
+            "cites": [
+              {
+                "reference": "HIDDEN-CITE",
+                "work_id": "W-1001"
+              }
+            ],
+            "cite_label": "HIDDEN-CITE-LABEL"
+          }
+        ]
+      }
+    ]
+  }
+}
