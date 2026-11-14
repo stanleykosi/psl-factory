@@ -574,6 +574,18 @@ describe('phone (below 720px)', () => {
     }
   });
 
+  it('a link to the page already shown closes the drawer and does not claim focus for a later navigation', async () => {
+    nav.pathname = '/notifications';
+    const view = await mount();
+    await openDrawer(phoneBell());
+    fireEvent.click(within(dialog()!).getByRole('link', { name: 'See all alerts' }), { button: 0 });
+    await until(() => expect(dialog()).toBeNull());
+    expect(document.activeElement).toBe(phoneBell());
+    (document.activeElement as HTMLElement).blur();
+    await goTo(view, '/my-work');
+    expect(document.activeElement).not.toBe(phoneBell());
+  });
+
   it('without needs_you there are no tabs, only For your information', async () => {
     scenario = 'board';
     await mount();
