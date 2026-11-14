@@ -1,0 +1,40 @@
+# F-05 QA round 3 at 0758d3e: direct API journeys through http://localhost:4611 (proxy to contract mock :4612)
+# post(persona, csrf, body) = curl -X POST $B/work -H 'Content-Type: application/json' -b psl_mock_persona=<p> -H 'X-CSRFToken: <t>' -d <body>
+reset: 204
+## A valid start
+   persona=pm csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0101","case_revision":6,"intake":{"project":"P-0101","milestone":"M-0103"},"idempotency_key":"11111111-1111-4111-8111-111111111111"}
+   => {"work_id":"W-1401","state":"processing"} [201]
+## B same key, same body (deliberate retry)
+   persona=pm csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0101","case_revision":6,"intake":{"project":"P-0101","milestone":"M-0103"},"idempotency_key":"11111111-1111-4111-8111-111111111111"}
+   => {"work_id":"W-1401","state":"processing"} [201]
+## C same key, different body
+   persona=pm csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0101","case_revision":6,"intake":{"project":"P-0101","milestone":"M-0103","note":"x"},"idempotency_key":"11111111-1111-4111-8111-111111111111"}
+   => {"code":"idempotency_key_reused","message":"This start was already sent with different details. Close the form and start again."} [409]
+## D stale revision
+   persona=pm csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0101","case_revision":5,"intake":{"project":"P-0101","milestone":"M-0103"},"idempotency_key":"22222222-2222-4222-8222-222222222222"}
+   => {"code":"stale_revision","message":"Someone changed this since you opened it. Reload to see the latest version."} [409]
+## E wrong user: finance_lead starts weekly_report
+   persona=finance_lead csrf=mock-csrf-finance_lead body={"line":"weekly_report","case_id":"C-0101","case_revision":6,"intake":{},"idempotency_key":"33333333-3333-4333-8333-333333333333"}
+   => {"code":"forbidden","message":"Your role does not allow you to start this line."} [403]
+## F another persona's CSRF token
+   persona=pm csrf=mock-csrf-finance_lead body={"line":"invoice","case_id":"C-0101","case_revision":6,"intake":{"project":"P-0101","milestone":"M-0103"},"idempotency_key":"44444444-4444-4444-8444-444444444444"}
+   => {"code":"csrf_failed","message":"Your session check failed. Reload and try again."} [403]
+## G extra top-level property
+   persona=pm csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0101","case_revision":6,"intake":{"project":"P-0101","milestone":"M-0103"},"idempotency_key":"55555555-5555-4555-8555-555555555555","evil":1}
+   => {"code":"invalid","message":"Check the highlighted fields and try again.","fields":[{"name":"evil","message":"This field is missing or can't be sent."}]} [422]
+## H missing milestone
+   persona=pm csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0101","case_revision":6,"intake":{"project":"P-0101"},"idempotency_key":"66666666-6666-4666-8666-666666666666"}
+   => {"code":"invalid","message":"Check the highlighted fields and try again.","fields":[{"name":"milestone","message":"Completed milestone is required."}]} [422]
+## I wrong record: pm sends Kora's case (served to ceo only)
+   persona=pm csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0103","case_revision":1,"intake":{"project":"P-0103","milestone":"M-0103"},"idempotency_key":"77777777-7777-4777-8777-777777777777"}
+   => {"code":"not_found","message":"We could not find that record."} [404]
+## J no CSRF header
+   => {"code":"csrf_failed","message":"Your session check failed. Reload and try again."} [403]
+## K persona none: GET lines/invoice/fields/project/options
+   => {"code":"not_found","message":"We could not find that record."} [404]
+## L persona none: GET lines and me.startable_lines
+   => {"items":[],"as_of":"2026-11-14T09:00:00Z"} [200]
+   => {"name":"Sample Person","roles":["Staff"],"destinations":[],"startable_lines":[],"csrf_token":"mock-csrf-none"}
+## M signed out (scenario 401): GET lines
+   => {"code":"not_signed_in","message":"Sign in to continue."} [401]
+reset: 204
