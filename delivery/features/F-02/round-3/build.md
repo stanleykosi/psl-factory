@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 8cb0a4416e6b0e6dc2d53eb6972d588d67258dc7
+COMMIT: 3424065fa2c036c9edcba789c42db364a282bab6
 BUILDER: builder
 LANE: frontend
 
@@ -7,6 +7,7 @@ LANE: frontend
 - My work is rebuilt against the SCR-01 boards (FID-1). The table, phone cards, filter panel and sheet, Filter button and empty Needs me now follow the boards' structure, order, wording and styling. Approved departures stay: the 10/20/50 rows-per-page control, sentence-case state tags, and "Nothing needs you right now".
 - Where v3 lacked a field, the page now uses the D-WORKLIST-FILTERS proposal fields that the v4 mock already validates. The filter panel has Line (checkboxes by `line_key`, from `filters.lines`, with "Show all N lines"), Project (from E-PROJECTS), State and Waiting on (`waiting_on`), and "Show N items". Rows show the agent avatar (`agent`). The header reads "N records you can see · updated HH:MM". Empty Needs me shows the caught-up panel and, on desktop, "Where your work is", grouped by `waiting_on`.
 - Fidelity: with board-like sample data, the desktop and desktop-my-work boards reach visual 91.9 and 90.8 and miss only one item each. No board passes yet. Every remaining missing item falls into one of two groups: items the design engineer has approved, and 23 items listed for their decision in `round-3/fidelity/proposed-exceptions.json`. If all are approved, coverage reaches 100% on all 9 boards. Visual stays below 90 on 7 boards (see Blocked/open below).
+- Agent avatars use the mascot images in `frontend/public/agents/` (tola, chidi, zainab, 192px), merged from the base (PR #12, per the coordinator; no own copies). Each has alt text ("Chidi · Finance agent"), shown beside rows that carry `agent` and in the "{Agent} is drafting" group. The caught-up panel shows Tola, with alt "Tola, the PMO agent".
 - QA-2-2 stays fixed (row/item guard test passes). QA-2-1 is closed: the mock answers an empty `q=` (or any empty optional parameter, or an unknown `waiting_on`) with 404 invalid_query.
 
 ## Changes
@@ -25,6 +26,7 @@ LANE: frontend
   - The tablist is named "My work".
   - Project and Waiting on are in the URL, the query, the badge and the chips. Line chips show the line title from `filters.lines`.
   - The toolbar is hidden on the caught-up view. The Filter button turns dark with a light badge while the panel is open, and on phones it is labelled "Filter, N on".
+- Merge of `origin/dlv-00-delivery-setup` (fc1d213), bringing `frontend/public/agents/*.png` (PR #12). `AGENT_AVATAR` in model.ts points at those files; `AgentAvatar` and `CaughtUp` render them with `next/image` and alt text (3424065).
 - `frontend/src/features/my-work/model.ts`: `project` and `waiting` (waiting_on) added to the view, URL and query. Added `WAITING_ON` words (engineering proposal), `AGENTS`, `filterCount` and `recordsText`. `lineOptions` now returns `{key,title}`: from `filters.lines` in response order, else from the loaded rows.
 - `frontend/src/features/my-work/my-work.css`: board sizes and spacing for all of the above. Token variables only. Phones hide the records line and the result count, as the phone boards do.
 - `frontend/mock/work-list.mjs`:
@@ -43,6 +45,7 @@ LANE: frontend
 
 ## Fixes
 - FID-1 | c5a9264, b5873de | My work rebuilt to the SCR-01 boards using the v4/v6 proposal fields. The fidelity scores below show it is not yet passing. The remaining items need the design engineer.
+- Coordinator note (agent avatars) | 3424065 | Mascot images with alt text in place of tinted circles, using the base's public/agents files.
 - QA-2-1 | b5873de | The mock answers `q=` (and any empty optional parameter or unknown `waiting_on`) with 404 invalid_query. Test: `tests/mock-work-list.test.ts` "a malformed query gets 404".
 
 ## Acceptance criteria
@@ -75,26 +78,26 @@ FID-1 fidelity check. Exceptions file is `fidelity-exceptions.json` (approved on
 
 | board | width | coverage (approved exceptions) | visual | unapproved missing → after proposals |
 |---|---|---|---|---|
-| SCR-01-desktop | 1440 | 96.4 | 91.9 | 1 → 0 |
+| SCR-01-desktop | 1440 | 96.4 | 92.0 | 1 → 0 |
 | SCR-01-desktop-my-work | 1440 | 96.4 | 90.8 | 1 → 0 |
-| SCR-01-desktop-empty | 1440 | 68.1 | 78.8 | 15 → 0 |
-| SCR-01-desktop-filter | 1440 | 87.0 | 82.0 | 7 → 0 |
+| SCR-01-desktop-empty | 1440 | 68.1 | 78.4 | 15 → 0 |
+| SCR-01-desktop-filter | 1440 | 87.0 | 82.1 | 7 → 0 |
 | SCR-01-mobile | 390 | 92.3 | 78.3 | 1 → 0 |
-| SCR-01-mobile-my-work | 390 | 95.0 | 82.8 | 1 → 0 |
-| SCR-01-mobile-empty | 390 | 50.0 | 66.5 | 11 → 0 |
+| SCR-01-mobile-my-work | 390 | 95.0 | 82.6 | 1 → 0 |
+| SCR-01-mobile-empty | 390 | 50.0 | 69.1 | 11 → 0 |
 | SCR-01-mobile-filter | 390 | 86.7 | 87.4 | 4 → 0 |
 | SCR-01-mobile-lead | 390 | 92.9 | 78.3 | 1 → 0 |
 
-(SCR-01-mobile-my-work scores 95 after a final structural fix to the started cards; its report in `round-3/fidelity/` predates that fix and shows 90.)
+These figures come from the head 3424065, after the merge. The matching reports are in `round-3/fidelity/<board>-<width>/` and `scores.txt`.
 
 ## Validation
-- `cd /Users/Hunchoo/psl-factory-worktrees/f-02 && bash /Users/Hunchoo/psl-factory/delivery/checks.sh` exit 0. Django check is clean; lint, typecheck and vitest pass (13 files, 326 tests); `next build` passes. Run on the final tree, after the board-sample id rename.
-- `cd frontend && E2E_PORT=3301 MOCK_PORT=3302 npm run test:e2e` exit 0, 95 passed. This includes `e2e/my-work.spec.ts` at 390 and 1440 with axe and Africa/Lagos time. It ran before the last change, which only renames the board-sample ids (W-12xx → W-14xx) in `E-WORK-LIST.board.json`. That file is not used by the e2e suite. The mock tests were rerun after the rename (47 pass).
+- `cd /Users/Hunchoo/psl-factory-worktrees/f-02 && bash /Users/Hunchoo/psl-factory/delivery/checks.sh` exit 0 on the final tree (after the base merge and the avatar change). Django check is clean; lint, typecheck and vitest pass (13 files, 326 tests); `next build` passes.
+- `cd frontend && E2E_PORT=3301 MOCK_PORT=3302 npm run test:e2e` exit 0 on the same tree: 83 passed, 0 failed. This includes `e2e/my-work.spec.ts` at 390 and 1440 with axe and Africa/Lagos time. One earlier run's log also printed a "95 passed" line; the final run reports 83 with no failures.
 - Fidelity:
   - Command: `delivery/features/F-02/round-3/fidelity/_driver/runall.sh`. It runs `fid-driver.mjs`, the F-05 reviewer's copy of the tool that imports the tool's modules unchanged and adds an `--actions` hook to wait for the list and open the filter state.
   - The servers were my own `npm run dev -- -p 3301` with the mock on 3302. They were stopped afterwards, and `frontend/test-results` was deleted.
   - Mock data: the main fixture shows the spec's 24/12/6/2 data and order. The board-sample dataset exists so that board sample text, order and counts match. Without it, every data-bearing item differs: tab counts, card texts and row order.
-  - Disk was 12 GB free at the end.
+  - Disk was 10 GB free at the end, and no server is left on 3301 or 3302.
 
 ## Blocked
 Not blocked. These items remain open, and each needs the design engineer, not more builder work:
@@ -114,4 +117,5 @@ Not blocked. These items remain open, and each needs the design engineer, not mo
 - **The board-sample mock dataset** (cookie `psl_mock_worklist=board`) is a new mock behaviour for the fidelity check. The spec's personas and scenarios are unchanged.
 - **Line filter is single-select.** It is drawn as checkboxes but keeps one line, because `line` takes one key. A multi-line filter needs a contract change (D-WORKLIST-FILTERS, backend).
 - **Project options.** They come from E-PROJECTS, which the current mock does not serve (F-07), so the Project select offers only "Any project" until F-07's mock lands.
+- **The caught-up panel shows Tola's avatar image**, not the board's thumbs-up pose, because only the avatars are in public/agents.
 - **"records you can see"** is the sum of the queue counts. This is an engineering derivation, because no contract field exists.

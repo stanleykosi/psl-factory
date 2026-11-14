@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:22:46.511Z",
+  "generatedAt": "2026-11-14T05:57:21.139Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-desktop-empty.dc.html",
   "boardName": "SCR-01-desktop-empty.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "15 board item(s) are missing from the page and are not approved exceptions (coverage 68.1% with exceptions, needs 100%).",
-    "Visual match 78.8 is below 90.",
-    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Visual match 78.4 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 59.6,
     "coverageWithExceptions": 68.1,
-    "visual": 78.8
+    "visual": 78.4
   },
   "visual": {
-    "score": 78.8,
-    "allCellsScore": 89.5,
+    "score": 78.4,
+    "allCellsScore": 89.3,
     "width": 1440,
     "height": 900,
     "boardHeight": 900,
     "pageHeight": 900,
     "cell": 12,
-    "contentCells": 4471,
-    "mismatchedCells": 946
+    "contentCells": 4477,
+    "mismatchedCells": 965
   },
   "coverage": {
     "total": 47,
@@ -335,7 +335,7 @@
           "h": 21
         },
         "pageBox": {
-          "x": 118,
+          "x": 242,
           "y": 279,
           "w": 517,
           "h": 21
@@ -357,7 +357,7 @@
           "h": 44
         },
         "pageBox": {
-          "x": 118,
+          "x": 242,
           "y": 310,
           "w": 173,
           "h": 44
@@ -764,7 +764,7 @@
         "boardBox": {
           "x": 1004,
           "y": 315,
-          "w": 260,
+          "w": 261,
           "h": 18
         },
         "exception": null
@@ -876,7 +876,7 @@
         "boardBox": {
           "x": 1004,
           "y": 533,
-          "w": 216,
+          "w": 217,
           "h": 18
         },
         "exception": null
@@ -926,26 +926,6 @@
     ],
     "misplaced": [
       {
-        "label": "Text \"9 things you started are moving. We'll alert you on WhatsApp when one needs you.\"",
-        "kind": "Text",
-        "name": "9 things you started are moving. We'll alert you on WhatsApp when one needs you.",
-        "boardBox": {
-          "x": 409,
-          "y": 293,
-          "w": 516,
-          "h": 21
-        },
-        "pageBox": {
-          "x": 118,
-          "y": 279,
-          "w": 517,
-          "h": 21
-        },
-        "reasons": [
-          "across the page: middle on the board (46% across), left on the page (26% across)"
-        ]
-      },
-      {
         "label": "Link \"See what you started\"",
         "kind": "Link",
         "name": "See what you started",
@@ -956,13 +936,13 @@
           "h": 44
         },
         "pageBox": {
-          "x": 118,
+          "x": 242,
           "y": 310,
           "w": 173,
           "h": 44
         },
         "reasons": [
-          "across the page: middle on the board (42% across), left on the page (14% across)"
+          "across the page: middle on the board (42% across), left on the page (23% across)"
         ]
       },
       {

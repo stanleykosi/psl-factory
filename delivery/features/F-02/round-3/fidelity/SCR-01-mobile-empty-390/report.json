@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:23:09.675Z",
+  "generatedAt": "2026-11-14T05:58:12.306Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-mobile-empty.dc.html",
   "boardName": "SCR-01-mobile-empty.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "11 board item(s) are missing from the page and are not approved exceptions (coverage 50% with exceptions, needs 100%).",
-    "Visual match 66.5 is below 90.",
+    "Visual match 69.1 is below 90.",
     "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 36.4,
     "coverageWithExceptions": 50,
-    "visual": 66.5
+    "visual": 69.1
   },
   "visual": {
-    "score": 66.5,
-    "allCellsScore": 75.1,
+    "score": 69.1,
+    "allCellsScore": 77,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
     "contentCells": 1743,
-    "mismatchedCells": 584
+    "mismatchedCells": 538
   },
   "coverage": {
     "total": 22,
@@ -185,7 +185,7 @@
         },
         "pageBox": {
           "x": 34,
-          "y": 250,
+          "y": 334,
           "w": 322,
           "h": 42
         }
@@ -207,7 +207,7 @@
         },
         "pageBox": {
           "x": 34,
-          "y": 302,
+          "y": 386,
           "w": 173,
           "h": 44
         }
@@ -455,7 +455,7 @@
         },
         "pageBox": {
           "x": 34,
-          "y": 302,
+          "y": 386,
           "w": 173,
           "h": 44
         },

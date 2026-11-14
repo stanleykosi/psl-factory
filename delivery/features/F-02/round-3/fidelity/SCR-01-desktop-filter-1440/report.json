@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:22:52.124Z",
+  "generatedAt": "2026-11-14T05:57:36.520Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-desktop-filter.dc.html",
   "boardName": "SCR-01-desktop-filter.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "7 board item(s) are missing from the page and are not approved exceptions (coverage 87% with exceptions, needs 100%).",
-    "Visual match 82 is below 90.",
+    "Visual match 82.1 is below 90.",
     "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 83.3,
     "coverageWithExceptions": 87,
-    "visual": 82
+    "visual": 82.1
   },
   "visual": {
-    "score": 82,
+    "score": 82.1,
     "allCellsScore": 91.3,
     "width": 1440,
     "height": 900,
     "boardHeight": 900,
     "pageHeight": 900,
     "cell": 12,
-    "contentCells": 4357,
-    "mismatchedCells": 786
+    "contentCells": 4359,
+    "mismatchedCells": 781
   },
   "coverage": {
     "total": 54,

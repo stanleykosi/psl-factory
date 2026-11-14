@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:23:03.397Z",
+  "generatedAt": "2026-11-14T05:58:03.376Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-mobile-my-work.dc.html",
   "boardName": "SCR-01-mobile-my-work.dc.html",
   "pageUrl": "http://localhost:3301/my-work?queue=waiting_on_others",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "1 board item(s) are missing from the page and are not approved exceptions (coverage 95% with exceptions, needs 100%).",
-    "Visual match 82.8 is below 90.",
+    "Visual match 82.6 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 90,
     "coverageWithExceptions": 95,
-    "visual": 82.8
+    "visual": 82.6
   },
   "visual": {
-    "score": 82.8,
-    "allCellsScore": 86.8,
+    "score": 82.6,
+    "allCellsScore": 86.6,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
     "contentCells": 1794,
-    "mismatchedCells": 309
+    "mismatchedCells": 313
   },
   "coverage": {
     "total": 20,

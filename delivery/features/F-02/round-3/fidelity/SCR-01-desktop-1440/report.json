@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:22:25.714Z",
+  "generatedAt": "2026-11-14T05:56:52.316Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-desktop.dc.html",
   "boardName": "SCR-01-desktop.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -19,23 +19,23 @@
   "pass": false,
   "passReasons": [
     "1 board item(s) are missing from the page and are not approved exceptions (coverage 96.4% with exceptions, needs 100%).",
-    "Visual match 91.9 meets 90."
+    "Visual match 92 meets 90."
   ],
   "scores": {
     "coverage": 89.3,
     "coverageWithExceptions": 96.4,
-    "visual": 91.9
+    "visual": 92
   },
   "visual": {
-    "score": 91.9,
+    "score": 92,
     "allCellsScore": 96.7,
     "width": 1440,
     "height": 1060,
     "boardHeight": 1060,
     "pageHeight": 1060,
     "cell": 12,
-    "contentCells": 4389,
-    "mismatchedCells": 354
+    "contentCells": 4390,
+    "mismatchedCells": 353
   },
   "coverage": {
     "total": 28,
