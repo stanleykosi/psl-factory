@@ -7,7 +7,7 @@ import axe from 'axe-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Destination } from '@/api/types';
-import { AppShell } from '@/shell/AppShell';
+import { AppShell, usePhoneBack } from '@/shell/AppShell';
 import { DestinationPage, UnknownPage } from '@/shell/DestinationPage';
 import { HomeRedirect } from '@/shell/HomeRedirect';
 
@@ -246,6 +246,87 @@ describe('phone bar menu', () => {
     expect(projects.getAttribute('href')).toBe('/projects');
     fireEvent.click(projects);
     expect(document.getElementById('phone-menu')).toBeNull();
+  });
+});
+
+describe('phone back link', () => {
+  function SubPage({ label = 'Queue', href = '/my-work' }: { label?: string; href?: string }) {
+    usePhoneBack({ label, href });
+    return <h1 className="shell-title">Exceptions</h1>;
+  }
+  const backLink = () => within(phoneBar()).queryByRole('link', { name: /^Back to / });
+
+  it('a page that sets it gets "← label" in the bar in place of Menu and PSL FACTORY', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/exceptions';
+    render(
+      <AppShell>
+        <SubPage />
+      </AppShell>,
+    );
+    await loaded();
+    const link = await within(phoneBar()).findByRole('link', { name: 'Back to Queue' });
+    expect(link.textContent).toBe('← Queue');
+    expect(link.getAttribute('href')).toBe('/my-work');
+    expect(within(phoneBar()).queryByRole('button', { name: 'Menu' })).toBeNull();
+    expect(within(phoneBar()).queryByText('PSL FACTORY')).toBeNull();
+    expect(document.getElementById('phone-menu')).toBeNull();
+    expect(phoneBar().children[0]).toBe(link);
+    link.focus();
+    expect(document.activeElement).toBe(link);
+    expect(link.tabIndex).toBe(0);
+    expect(within(topNav()).getAllByRole('link').map((a) => a.textContent)).toContain('My work');
+  });
+
+  it('follows the page: a new label replaces it, and leaving the page brings Menu back', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/setup/rules';
+    const { rerender } = render(
+      <AppShell>
+        <SubPage label="Setup" href="/setup" />
+      </AppShell>,
+    );
+    await loaded();
+    await waitFor(() => expect(backLink()).toBeTruthy());
+    expect(backLink()?.getAttribute('href')).toBe('/setup');
+    rerender(
+      <AppShell>
+        <SubPage label="Home" href="/my-work" />
+      </AppShell>,
+    );
+    await waitFor(() => expect(backLink()?.textContent).toBe('← Home'));
+    rerender(
+      <AppShell>
+        <DestinationPage destination="my_work" />
+      </AppShell>,
+    );
+    await waitFor(() => expect(backLink()).toBeNull());
+    expect(menuButton()).toBeTruthy();
+    expect(within(phoneBar()).getByText('PSL FACTORY')).toBeTruthy();
+  });
+
+  it('pages that do not set it keep the menu bar', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    renderAt('/projects');
+    await loaded();
+    expect(backLink()).toBeNull();
+    expect(menuButton()).toBeTruthy();
+  });
+
+  it('the bar with a back link has no axe violations', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    render(
+      <AppShell>
+        <SubPage />
+      </AppShell>,
+    );
+    await loaded();
+    await waitFor(() => expect(backLink()).toBeTruthy());
+    const results = await axe.run(document.body, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] },
+      rules: { 'color-contrast': { enabled: false } },
+    });
+    expect(results.violations.map((v) => v.id)).toEqual([]);
   });
 });
 
