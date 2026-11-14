@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -217,7 +217,7 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -234,11 +234,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`WorkItemView.tsx`: tabs are in the header for every item; on phones they close the tag line (title line on history), the trailing `{phone && tabs}` is gone. Each viewport renders the strip once (checked all four branches of the header)."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "16016b6"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemView.tsx`: tabs are in the header for every item; on phones they close the tag line (title line on history), the trailing `{phone && tabs}` is gone. Each viewport renders the strip once (checked all four branches of the header)."
       ]
     },
     {
@@ -254,7 +268,7 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -271,11 +285,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`WorkItemHistory.tsx:229` `{!side && limitControl}`: Rows per page now renders on the phone board; the compact `select` style is in the phone media block. Focusable and visible."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemHistory.tsx:229` `{!side && limitControl}`: Rows per page now renders on the phone board; the compact `select` style is in the phone media block. Focusable and visible."
       ]
     },
     {
@@ -291,7 +319,7 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -308,11 +336,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "h1 on phones keeps `item.title` as a `work-sr` span with the board title `aria-hidden`; the phone sub-line now uses `startedLine(item)`. Heading contains no focusable child."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "h1 on phones keeps `item.title` as a `work-sr` span with the board title `aria-hidden`; the phone sub-line now uses `startedLine(item)`. Heading contains no focusable child."
       ]
     },
     {
@@ -328,7 +370,7 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -345,11 +387,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`NextStep` takes `quiet` inside the `work-sr` wrapper; the exceptions link is drawn visibly (button in the effect-uncertain desktop panel, `work-note` link elsewhere, `NextStep` link on non-board items). Nothing focusable remains in `work-sr`: the quiet station list drops `tabIndex`, `shown === 0` also drops it, and the `quiet` blocks hold no controls. The new aria-label \"Stations in order\" is on the list, which is fine."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`NextStep` takes `quiet` inside the `work-sr` wrapper; the exceptions link is drawn visibly (button in the effect-uncertain desktop panel, `work-note` link elsewhere, `NextStep` link on non-board items). Nothing focusable remains in `work-sr`: the quiet station list drops `tabIndex`, `shown === 0` also drops it, and the `quiet` blocks hold no controls. The new aria-label \"Stations in order\" is on the list, which is fine."
       ]
     },
     {
@@ -365,7 +421,7 @@
         "delivery/features/F-14/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -382,11 +438,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "History tab present and linked on W-1701, W-1704, W-1706, W-1710, W-1711 at 1440 and 390; the history page shows the same strip."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "History tab present and linked on W-1701, W-1704, W-1706, W-1710, W-1711 at 1440 and 390; the history page shows the same strip."
       ]
     },
     {
@@ -402,7 +472,7 @@
         "delivery/features/F-14/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -419,11 +489,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "W-1711 at 390 has the panel and \"Record and continue\" at the foot, with no empty bar. Desktop W-1711 now has the \"Confirm what happened\" right column. Empty submit on phone shows \"Choose what happened to continue.\"; desktop keeps the button disabled until an option is chosen."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "16016b6"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-1711 at 390 has the panel and \"Record and continue\" at the foot, with no empty bar. Desktop W-1711 now has the \"Confirm what happened\" right column. Empty submit on phone shows \"Choose what happened to continue.\"; desktop keeps the button disabled until an option is chosen."
       ]
     },
     {
@@ -439,7 +523,7 @@
         "delivery/features/F-14/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -456,11 +540,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`aria-label=\"Stations\"` is on the station list at both widths."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "16016b6"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "`aria-label=\"Stations\"` is on the station list at both widths."
       ]
     },
     {
@@ -476,7 +574,7 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -493,11 +591,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -513,7 +625,7 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -530,11 +642,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -550,7 +676,7 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -567,11 +693,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -587,7 +727,7 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -604,11 +744,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -624,7 +778,7 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -641,11 +795,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -661,7 +829,7 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -678,11 +846,25 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "The file went from 57 to 47 entries, and the round-2 unused entries are gone. The new unused entries are listed in UI-3-1."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The file went from 57 to 47 entries, and the round-2 unused entries are gone. The new unused entries are listed in UI-3-1."
       ]
     },
     {
@@ -698,7 +880,7 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -715,11 +897,140 @@
           ],
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "\"Supplied evidence: client UAT sign-off\" keeps its colon at both widths (matched at 390 with no look differences)."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Supplied evidence: client UAT sign-off\" keeps its colon at both widths (matched at 390 with no look differences)."
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "On desktop the Overview/History tabs are absolutely positioned at the right of the crumb row (`work-item.css` `.work-crumbrow .work-tabs { position: absolute; right: 0; top: -8px }`), but for items without `started_by` the same row also holds the sub-line \"revision N\" at the right (`WorkItemView.tsx:73-74`, `!started && sub`, `justify-content: space-between`). Measured on the shared build, /work/W-1002 at 1440: tabs box x 1199-1352, y 77-109; \"revision 2\" box x 1295-1352, y 85-100, so the revision text sits underneath the tab box and is not visible. Affects every non-board item without a started line (W-1001..1006, W-1201 and the live items). Expected: both visible. Fix: give the sub-line room (for example put tabs and sub in one right-hand flex group, or drop the absolute position when `!started`), and add a case for a non-board item without `started_by`. Fidelity boards all have a started line or are hidden-sub boards, so none caught it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-1",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The phone \"See all exceptions\" link is a 15px-high text link, a small touch target. Give it at least 44px of tap height (padding), as the other phone links do. `WorkItemOverview.tsx:598,755`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-2",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On W-1711 the proof box says \"Add another file\" (before any file is added) next to \"Proof can\u2019t be uploaded for this item.\" Both show together, so the button label and hint contradict. Disable or hide the button when `proof.available` is false, and say \"Add a file\" for the first. `frontend/src/features/response/ProofField.tsx:84`. It is F-09's component, so route to the F-09 owner if F-14 does not touch it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "15 exception entries match nothing on any of the 26 boards at this head (numbers are positions in the current 47-entry file): #19 link \"See all exceptions\" (now visible, UI-2-3); #20 the processing next-step line (now drawn, UI-2-2); #22\u2013#34, F-09's ReconcilePanel entries (\"CONFIRM WHAT HAPPENED\", the Chidi sentence, the three radios and their labels, the three short labels, \"Record and continue\", and the \"Your choice is recorded\u2026\" small print), all of which F-09's mounted panel now provides. #21 \"Record the client's response\" is still used on SCR-02-desktop-waiting and SCR-02-mobile-waiting (W-1704 has no F-09 button), so keep it. Remove the 15 entries so the file lists only live gaps. Path: delivery/features/F-14/fidelity-exceptions.json.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"See all exceptions\" placement on boards that do not draw it. Desktop owner-needed, setup-needed and awaiting-reconciliation, and phone effect-uncertain and awaiting-reconciliation (report \"extra\" Link, e.g. desktop awaiting-reconciliation at y\u2248748, phone at y\u2248724). On each, the link is a lone small underlined link under the station track or panel, separated from the content by blank space. F-06 requires the link in these states, and D-41 places it \"in the next-step text the boards draw\". These boards draw no such text, so no decision covers this placement. It is a question for the design engineer, not a builder defect. Proposal: place it as the effect-uncertain board does, as a secondary button in the item's own panel where F-14 owns the panel (owner-needed, setup-needed). Keep the small link only under F-09's panel. Path: frontend/src/features/work-item/WorkItemOverview.tsx:753-755.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        }
       ]
     }
   ],
@@ -824,6 +1135,61 @@
           "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
           "evidence_refs": [
             "delivery/features/F-14/round-2/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "evidence_refs": [
+            "delivery/features/F-14/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-14/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "evidence_refs": [
+            "delivery/features/F-14/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design fidelity gate, D-41 board-is-spec, D-45 tab strip)",
+          "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "evidence_refs": [
+            "delivery/features/F-14/round-3/review-ui.md"
           ]
         }
       }
@@ -1621,7 +1987,7 @@
     }
   },
   "created_at": "2026-11-14T07:46:48Z",
-  "round": 3,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -1695,6 +2061,22 @@
       "round": 3,
       "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T15:19:00Z",
+      "round": 3,
+      "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T15:19:00Z",
+      "round": 4,
+      "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "reason": null
     }
   ],
   "routing": {
@@ -1710,10 +2092,10 @@
     ]
   },
   "gate": {
-    "round": 3,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+    "round": 4,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
