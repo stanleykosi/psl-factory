@@ -155,7 +155,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "3c0e57e947384473d480e82b89a11180083416f6",
     "task_branch": "fe-m3-setup-a-lead-or-admin-opens-setup-reads-every",
-    "head_sha": null,
+    "head_sha": "3c0e57e947384473d480e82b89a11180083416f6",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-11",
     "pr_url": null,
     "pr_number": null,
@@ -166,7 +166,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
