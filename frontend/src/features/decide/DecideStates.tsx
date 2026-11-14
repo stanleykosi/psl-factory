@@ -407,7 +407,9 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
   // the done boards draw Chidi's thumbs-up pose (public/agents/chidi-done.png); other agents keep their avatar
   const agentName = (reloaded ?? item).agent.name;
   const image = agentName?.toLowerCase() === 'chidi' ? '/agents/chidi-done.png' : agentImage(agentName);
-  const showPaid = approved && !reloaded?.next_step.includes('Paid is tracked separately');
+  // desktop draws Paid once, inside the next-step card; the phone board draws it as its own line
+  const phone = useIsPhone();
+  const showPaid = approved && (phone || !reloaded?.next_step.includes('Paid is tracked separately'));
   return (
     <>
       <DecideHeader
