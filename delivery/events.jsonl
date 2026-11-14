@@ -727,3 +727,6 @@
 {"at":"2026-11-14T08:57:04Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
 {"at":"2026-11-14T08:57:13Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-14T08:57:13Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T08:58:58Z","feature":"F-09","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"14d6953dd4a3","findings":{"QA-2-1":"low"},"written_at":"2026-11-14T08:58:40Z"}
+{"at":"2026-11-14T08:59:43Z","feature":"F-09","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"reviewer-qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-14T08:59:44Z","feature":"F-09","round":2,"kind":"transition","head":"14d6953dd4a3","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

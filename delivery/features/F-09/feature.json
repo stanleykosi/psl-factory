@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-09",
   "outcome": "Record a client response or SOW signature with proof, and confirm what happened to an uncertain send",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2B-RESPONSE"
   ],
@@ -107,11 +107,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend + contract mock)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -534,6 +536,29 @@
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T08:41:12Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Pre-existing shell issue, not caused by F-09; the same as F-04 QA-2-1 and still open. **Problem:** when the whole session is already signed out (`/me` answers 401), the frame renders `SignedOutState` with `usePathname()` only (`frontend/src/shell/AppShell.tsx:44,74`). The sign-in link becomes `/accounts/login/?next=%2Fwork%2FW-1601%2Frespond`, which drops `?task=T-1601`. After sign-in the person lands on \"This response isn't open here\" and must go through the work item. **Repro:** cookie `psl_mock_scenario=401`, then open `/work/W-1601/respond?task=T-1601` (evidence `qa-evidence/j15-401-1440.png`). **Expected:** the sign-in link keeps the query string. **Actual:** the query is dropped. F-09's own 401 handling is correct: a 401 on the item GET alone and a 401 on the Record press both give `next=%2Fwork%2FW-1601%2Frespond%3Ftask%3DT-1601`. The fix belongs to the shell lane, which is read-only for F-09.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T08:59:43Z",
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
         }
       ]
@@ -1578,6 +1603,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T08:42:28Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T08:59:44Z",
       "round": 2,
       "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
       "reason": null
