@@ -1,0 +1,16 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "App frame item: the top-bar Start work control is built by F-05 (src/shell/**) and arrives when F-05 merges.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-04(a))"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "App frame item: part of F-05's Start work control.",
+      "approved_by": "coordinator (overnight, provisional — D-04(a))"
+    }
+  ]
+}
