@@ -23,9 +23,10 @@ const KINDS = new Set([
   'display',
 ]);
 
-/** The fields rendered, in the order returned; an optional field of an unhandled kind is left out and never sent. */
+/** The fields rendered, in the order returned. An optional evidence field is drawn as its board shows it but
+ *  disabled until proof upload arrives (FE-M2A-PROOF); it and any other unhandled kind are never sent. */
 export function shownFields(line: Line): Field[] {
-  return line.intake.filter((field) => KINDS.has(field.type));
+  return line.intake.filter((field) => KINDS.has(field.type) || (field.type === 'evidence' && !field.required));
 }
 
 /** False when this drawer can't start the line: another start route, a required unhandled field, or no case to start on. */

@@ -3,9 +3,9 @@
 // SCR-04 intake fields by kind, labelled from the contract: `label`, `placeholder`, `help` as the hint and
 // `required` as aria-required ("(optional)" on the label otherwise). A 422 message sits under the control with
 // aria-invalid and aria-describedby. Values are kept as typed; intake.ts turns them into the submitted shapes.
+// As the boards draw them: a date range is one field box, a display value and a 422 for a field this drawer does
+// not render are read-only boxes, and an optional proof field is its dashed box, disabled until FE-M2A-PROOF.
 import { useId, useRef, type KeyboardEvent, type ReactNode } from 'react';
-
-import { WarningIcon } from '@/shell/icons';
 
 import type { FieldValue, RangeValue } from './intake';
 import { RecordPicker } from './RecordPicker';
@@ -31,13 +31,7 @@ function Label({ htmlFor, id, field, as = 'label' }: { htmlFor?: string; id: str
   const Tag = as;
   return (
     <Tag className="psl-label" id={id} {...(as === 'label' ? { htmlFor } : {})}>
-      {field.label}
-      {!field.required && field.type !== 'display' && (
-        <>
-          {' '}
-          <span className="psl-opt">(optional)</span>
-        </>
-      )}
+      {!field.required && field.type !== 'display' && field.type !== 'evidence' ? `${field.label} (optional)` : field.label}
     </Tag>
   );
 }
@@ -102,22 +96,18 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
       wrap = 'fieldset';
       const range = (value as RangeValue | undefined) ?? { from: '', to: '' };
       control = (
-        <div className="sw-range">
+        <div className={`psl-input sw-range${invalid ? ' is-error' : ''}${readOnly ? ' is-readonly' : ''}`}>
           {(['from', 'to'] as const).map((part) => (
-            <span key={part} className="psl-field">
-              <label className="psl-hint" htmlFor={`${controlId}-${part}`}>
-                {part === 'from' ? 'From' : 'To'}
-              </label>
-              <input
-                id={`${controlId}-${part}`}
-                type="date"
-                className="psl-input"
-                value={range[part]}
-                readOnly={readOnly}
-                onChange={(event) => onChange({ ...range, [part]: event.target.value })}
-                {...common}
-              />
-            </span>
+            <input
+              key={part}
+              id={`${controlId}-${part}`}
+              type="date"
+              aria-label={part === 'from' ? 'From' : 'To'}
+              value={range[part]}
+              readOnly={readOnly}
+              onChange={(event) => onChange({ ...range, [part]: event.target.value })}
+              {...common}
+            />
           ))}
         </div>
       );
@@ -166,8 +156,16 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
       );
       break;
     case 'display':
+      control = <span className="psl-input sw-display">{field.value}</span>;
+      break;
+    case 'evidence':
       control = (
-<span className="sw-display">{field.value}</span>
+        <span className="sw-proof" aria-disabled="true">
+          <svg className="psl-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12.5 5.5L6.5 11.5a1.8 1.8 0 0 0 2.5 2.5l6.5-6.5a3.5 3.5 0 0 0-5-5L4 9a5 5 0 0 0 7 7l4.5-4.5" />
+          </svg>
+          Proof upload comes next
+        </span>
       );
       break;
     default:
@@ -200,7 +198,6 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
       )}
       {error && (
         <span className="psl-error" id={errorId}>
-          <WarningIcon />
           {error}
         </span>
       )}

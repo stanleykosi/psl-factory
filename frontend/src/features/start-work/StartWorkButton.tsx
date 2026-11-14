@@ -42,7 +42,9 @@ export function StartWorkButton({ variant }: { variant: 'bar' | 'phone' }) {
         <span className="psl-split sw-split">
           <button type="button" className="psl-btn psl-btn--start psl-btn--sm" onClick={(e) => open('default', e.currentTarget)}>
             <PlusIcon />
-            Start <span className="sw-word">work</span>
+            <span>
+              Start <span className="sw-word">work</span>
+            </span>
           </button>
           <button
             type="button"

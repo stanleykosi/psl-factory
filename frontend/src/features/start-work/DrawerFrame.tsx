@@ -1,6 +1,7 @@
 'use client';
 
-// CMP-23 drawer frame: a right-hand psl-drawer over a psl-scrim from 720px, a full-width bottom psl-sheet below.
+// CMP-23 drawer frame: a right-hand psl-drawer over a psl-scrim from 720px, a full-width bottom psl-sheet below
+// (every line on the phone, as the design engineer chose on 14 Nov 2026; long forms scroll inside the sheet).
 // A modal dialog labelled by its title: focus moves in and stays in, Esc and the scrim close it, and the opener
 // gets focus back (StartWorkButton). Rendered into document.body so it sits over the page, not inside the bar.
 import { useEffect, useId, useRef, useSyncExternalStore, type KeyboardEvent, type ReactNode } from 'react';
@@ -19,7 +20,7 @@ function subscribe(onChange: () => void) {
 }
 
 /** True from 720px; true where matchMedia is missing (tests), so the drawer is the default. */
-function useWide(): boolean {
+export function useWide(): boolean {
   return useSyncExternalStore(
     subscribe,
     () => (typeof window.matchMedia === 'function' ? window.matchMedia(WIDE).matches : true),
@@ -28,17 +29,20 @@ function useWide(): boolean {
 }
 
 type Props = {
-  eyebrow: string;
+  /** The mono line above the title, from 720px only: the phone sheet head has none (SCR-04-mobile). */
+  eyebrow?: string;
   title: string;
   subline?: ReactNode;
   onClose: () => void;
   footer?: ReactNode;
   children: ReactNode;
+  /** 480px from 720px instead of the bundle's 500px, where the board draws it so. */
+  narrow?: boolean;
   /** Changes when the content is replaced (loading to chooser, chooser to line), so focus moves to it again. */
   focusKey: string;
 };
 
-export function DrawerFrame({ eyebrow, title, subline, onClose, footer, children, focusKey }: Props) {
+export function DrawerFrame({ eyebrow, title, subline, onClose, footer, children, focusKey, narrow = false }: Props) {
   const wide = useWide();
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
@@ -86,22 +90,20 @@ export function DrawerFrame({ eyebrow, title, subline, onClose, footer, children
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`${kind} sw-panel`}
+        className={`${kind} sw-panel${narrow ? ' sw-panel--narrow' : ''}`}
         onKeyDown={onKeyDown}
       >
         {!wide && <div className="psl-sheet__grab" aria-hidden="true" />}
         <div className={`${kind}__head sw-head`}>
           <span className="sw-headtext">
-            <span className="psl-drawer__eyebrow">{eyebrow}</span>
+            {eyebrow && wide && <span className="psl-drawer__eyebrow">{eyebrow}</span>}
             <strong className="psl-drawer__title" id={titleId}>
               {title}
             </strong>
             {subline && <span className="psl-hint">{subline}</span>}
           </span>
           <button type="button" className="psl-iconbtn psl-iconbtn--bare sw-close" aria-label="Close" onClick={onClose}>
-            <svg className="psl-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3.5 3.5l11 11M14.5 3.5l-11 11" />
-            </svg>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
         <div className={`${kind}__body sw-body`}>{children}</div>

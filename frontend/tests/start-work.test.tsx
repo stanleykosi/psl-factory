@@ -97,25 +97,32 @@ async function invoiceWith(milestone?: string) {
   if (milestone) await pick('Completed milestone', milestone);
 }
 
+/** The value a record picker shows, without its "▾". */
+const shown = (name: string) => within(dialog()).getByRole('combobox', { name }).querySelector('.sw-picker__value')!.textContent;
+
 const press = (name: string | RegExp) => fireEvent.click(within(dialog()).getByRole('button', { name }));
 
 describe('the main button and the chooser', () => {
-  it('pm: the main button opens the invoice drawer directly, with no chooser step and no "change line"', async () => {
+  it('pm: the main button opens the invoice drawer directly, with no chooser step; Back and "change line" go to the chooser', async () => {
     await openMain();
     expect(dialog().getAttribute('aria-modal')).toBe('true');
     expect(screen.getByRole('dialog', { name: 'Invoice preparation and delivery' })).toBeTruthy();
     expect(screen.queryByText('Choose a line')).toBeNull();
-    expect(within(dialog()).queryByRole('button', { name: 'change line' })).toBeNull();
-    expect(within(dialog()).getByRole('button', { name: 'Cancel' })).toBeTruthy();
-    expect(within(dialog()).getByRole('button', { name: 'Start the invoice' })).toBeTruthy();
+    expect(within(dialog()).getByText('START WORK')).toBeTruthy();
+    expect(within(dialog()).getByText(/Line chosen from the Start work menu/)).toBeTruthy();
+    expect(within(dialog()).getByRole('button', { name: 'change line' })).toBeTruthy();
+    expect(within(dialog()).getByRole('button', { name: 'Start the invoice' }).className).toContain('psl-btn--start');
     expect(lineGets()).toHaveLength(1);
+    fireEvent.click(within(dialog()).getByRole('button', { name: 'Back' }));
+    expect(screen.getByRole('dialog', { name: 'Choose a line' })).toBeTruthy();
   });
 
   it('ceo (no default_line): the main button opens "Choose a line" with all 8 lines', async () => {
     persona = 'ceo';
     await openMain();
     expect(screen.getByRole('dialog', { name: 'Choose a line' })).toBeTruthy();
-    expect(within(dialog()).getByText('START WORK · Step 1 of 2')).toBeTruthy();
+    expect(within(dialog()).getByText('START WORK')).toBeTruthy();
+    expect(within(dialog()).getByText('Step 1 of 2')).toBeTruthy();
     expect(within(dialog()).getByText('LINES YOU CAN START · 8')).toBeTruthy();
     expect(within(dialog()).getAllByRole('radio')).toHaveLength(8);
   });
@@ -149,12 +156,17 @@ describe('the main button and the chooser', () => {
     fireEvent.click(within(dialog()).getByRole('radio', { name: /Formal minutes/ }));
     expect(next.disabled).toBe(false);
     fireEvent.click(next);
-    expect(screen.getByRole('dialog', { name: 'Formal minutes and action handoff' })).toBeTruthy();
+    // The board's drawer title; the line title stays in the chooser.
+    expect(screen.getByRole('dialog', { name: 'Minutes after a meeting' })).toBeTruthy();
     expect(within(dialog()).getByText(/Line chosen from the Start work menu/)).toBeTruthy();
     expect(within(dialog()).getByRole('button', { name: 'Start minutes' })).toBeTruthy();
-    expect(within(dialog()).getByRole('button', { name: 'Back' })).toBeTruthy();
     fireEvent.click(within(dialog()).getByRole('button', { name: 'change line' }));
     expect(screen.getByRole('dialog', { name: 'Choose a line' })).toBeTruthy();
+    fireEvent.click(within(dialog()).getByRole('radio', { name: /Formal minutes/ }));
+    press('Next');
+    // Cancel, as the minutes board draws it, closes.
+    press('Cancel');
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('only lines E-LINES returned are offered (finance_lead: exactly 1; a /me key missing from E-LINES is absent)', async () => {
@@ -284,9 +296,11 @@ describe('fields by kind', () => {
     expect(within(dialog()).getByLabelText('Count (optional)').getAttribute('type')).toBe('number');
     const audience = within(dialog()).getByRole('radiogroup', { name: 'Audience' });
     expect(within(audience).getAllByRole('radio').map((r) => r.textContent)).toEqual(['Internal', 'Client']);
-    expect(within(dialog()).getByRole('combobox', { name: 'Project' }).textContent).toBe('Choose…');
+    expect(shown('Project')).toBe('Choose…');
     expect(within(dialog()).getByRole('combobox', { name: 'Issues (optional)' })).toBeTruthy();
-    expect(within(dialog()).getByText('Client weekly report · test template v1').tagName).toBe('SPAN');
+    // A display value is a read-only box like an input, not a control.
+    const template = within(dialog()).getByText('Client weekly report · test template v1');
+    expect([template.tagName, template.className]).toEqual(['SPAN', 'psl-input sw-display']);
     expect(within(dialog()).queryByText('Template (optional)')).toBeNull();
   });
 
@@ -302,7 +316,7 @@ describe('fields by kind', () => {
     expect(posts[0].body.intake).toEqual({ pick: 'c' });
   });
 
-  it('optional money and evidence fields are neither rendered nor sent', async () => {
+  it('an optional money field is not rendered; an optional evidence field is drawn disabled; neither is sent', async () => {
     const intake: Field[] = [
       { name: 'note', label: 'Note', type: 'text', required: false },
       { name: 'fee', label: 'Fee', type: 'money', required: false },
@@ -310,7 +324,11 @@ describe('fields by kind', () => {
     ];
     override = (_, url) => (url.pathname === '/api/v1/lines' ? json(200, synthetic(intake)) : undefined);
     await openMain();
-    expect(within(dialog()).queryByText(/Fee|Proof/)).toBeNull();
+    expect(within(dialog()).queryByText(/Fee/)).toBeNull();
+    expect(within(dialog()).getByText('Proof')).toBeTruthy();
+    const proof = within(dialog()).getByText('Proof upload comes next');
+    expect(proof.getAttribute('aria-disabled')).toBe('true');
+    expect(proof.closest('[data-field]')!.querySelector('input, button')).toBeNull();
     fireEvent.change(within(dialog()).getByRole('textbox', { name: 'Note (optional)' }), { target: { value: 'hi' } });
     press('Start work');
     await waitFor(() => expect(posts).toHaveLength(1));
@@ -326,7 +344,7 @@ describe('fields by kind', () => {
     await openMain();
     expect(within(dialog()).getByText(/You can’t start this line from here yet\./)).toBeTruthy();
     expect(within(dialog()).getByRole('link', { name: 'Describe it to Tola' }).getAttribute('href')).toBe('/assistant');
-    expect(within(dialog()).getAllByRole('button').map((b) => b.textContent || b.getAttribute('aria-label'))).toEqual(['Close', 'Cancel']);
+    expect(within(dialog()).getAllByRole('button').map((b) => b.getAttribute('aria-label') || b.textContent)).toEqual(['change line', 'Close', 'Cancel']);
     expect(within(dialog()).queryByText('Proof')).toBeNull();
   });
 });
@@ -350,9 +368,9 @@ describe('record options from E-LINE-OPTIONS', () => {
     fireEvent.click(m4);
     expect(within(dialog()).getByRole('listbox')).toBeTruthy();
     fireEvent.click(within(dialog()).getByRole('option', { name: /Milestone 3/ }));
-    expect(milestone().textContent).toBe('Milestone 3 · UAT signed 07 Nov');
+    expect(shown('Completed milestone')).toBe('Milestone 3 · UAT signed 07 Nov');
     await pick('Project', 'Harmattan Bank · mobile onboarding');
-    expect(milestone().textContent).toBe('Choose…');
+    expect(shown('Completed milestone')).toBe('Choose…');
     fireEvent.click(milestone());
     await within(dialog()).findByRole('option', { name: /Milestone 2 · beta signed/ });
     expect(optionGets().at(-1)!.searchParams.get('parent')).toBe('P-0102');
@@ -456,9 +474,11 @@ describe('server answers', () => {
     expect(milestone.getAttribute('aria-invalid')).toBe('true');
     expect(milestone.getAttribute('aria-describedby')!.split(' ')).toContain(message.closest('.psl-error')!.id);
     const callout = within(dialog()).getByRole('alert');
-    expect(callout.textContent).toBe('1 things to fix before Chidi can start.');
+    expect(callout.textContent).toBe('1 thing to fix before Chidi can start.');
     expect(document.activeElement).toBe(callout);
-    expect(within(dialog()).getByText('1 things to fix')).toBeTruthy();
+    // The count replaces the head's subline; the eyebrow stays (SCR-04-desktop-validation).
+    expect(within(dialog()).getByText('1 thing to fix')).toBeTruthy();
+    expect(within(dialog()).getByText('START WORK')).toBeTruthy();
     await pick('Completed milestone', 'Milestone 3');
     press('Start the invoice');
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-1401'));
@@ -466,14 +486,18 @@ describe('server answers', () => {
     expect(posts[1].body.idempotency_key).not.toBe(posts[0].body.idempotency_key);
   });
 
-  it('422: a message for a field the drawer does not render goes in the callout', async () => {
+  it('422: a message for a field the drawer does not render is drawn as its own box, as the validation board shows', async () => {
     await openMain();
     await pick('Project', 'Harmattan Bank · mobile onboarding');
     await pick('Completed milestone', 'Milestone 2');
     press('Start the invoice');
     const callout = await within(dialog()).findByRole('alert');
-    expect(callout.textContent).toBe(
-      "1 things to fix before Chidi can start.The client register has no billing contact for Harmattan Bank. Add one in the project's client details.",
+    expect(callout.textContent).toBe('1 thing to fix before Chidi can start.');
+    const box = dialog().querySelector('[data-field="billing_contact"]')!;
+    expect(box.querySelector('.psl-label')!.textContent).toBe('Billing contact');
+    expect(box.querySelector('.psl-input')!.textContent).toBe('—');
+    expect(box.querySelector('.psl-error')!.textContent).toBe(
+      "The client register has no billing contact for Harmattan Bank. Add one in the project's client details.",
     );
   });
 
@@ -549,8 +573,8 @@ describe('server answers', () => {
     const reread = optionGets().at(-1)!;
     expect([reread.pathname, reread.searchParams.get('q')]).toEqual(['/api/v1/lines/invoice/fields/project/options', 'Lagoon Health · patient app']);
     expect((within(dialog()).getByRole('textbox', { name: /Anything Chidi/ }) as HTMLTextAreaElement).value).toBe('PO 4471');
-    expect(within(dialog()).getByRole('combobox', { name: 'Project' }).textContent).toBe('Lagoon Health · patient app');
-    expect(within(dialog()).getByRole('combobox', { name: 'Completed milestone' }).textContent).toBe('Milestone 3 · UAT signed 07 Nov');
+    expect(shown('Project')).toBe('Lagoon Health · patient app');
+    expect(shown('Completed milestone')).toBe('Milestone 3 · UAT signed 07 Nov');
     await new Promise((r) => setTimeout(r, 50));
     expect(posts).toHaveLength(1);
     press('Start the invoice');
@@ -568,8 +592,8 @@ describe('server answers', () => {
     await invoiceWith('Milestone 3');
     press('Start the invoice');
     expect(await within(dialog()).findByText('That choice is no longer available. Choose again.')).toBeTruthy();
-    expect(within(dialog()).getByRole('combobox', { name: 'Project' }).textContent).toBe('Choose a project');
-    expect(within(dialog()).getByRole('combobox', { name: 'Completed milestone' }).textContent).toBe('Choose…');
+    expect(shown('Project')).toBe('Choose a project');
+    expect(shown('Completed milestone')).toBe('Choose…');
     expect((within(dialog()).getByRole('button', { name: 'Start the invoice' }) as HTMLButtonElement).disabled).toBe(true);
   });
 
@@ -595,7 +619,7 @@ describe('server answers', () => {
     press('Start the invoice');
     expect((await within(dialog()).findByRole('alert')).textContent).toBe('You can’t start this here. Your role does not allow this.');
     expect((within(dialog()).getByRole('textbox', { name: /Anything Chidi/ }) as HTMLTextAreaElement).value).toBe('PO 4471');
-    expect(within(dialog()).getByRole('combobox', { name: 'Project' }).textContent).toBe('Lagoon Health · patient app');
+    expect(shown('Project')).toBe('Lagoon Health · patient app');
     expect(nav.push).not.toHaveBeenCalled();
   });
 
@@ -604,6 +628,65 @@ describe('server answers', () => {
     await invoiceWith('Milestone 3');
     press('Start the invoice');
     expect(await within(dialog()).findByText('You’re signed out.')).toBeTruthy();
+  });
+});
+
+describe('"What happens next" and the phone sheet', () => {
+  it('desktop: one line, the decision in the deciding red after the first part, and the invoice journey link', async () => {
+    await openMain();
+    const next = dialog().querySelector('div.sw-next')!;
+    expect(next.textContent).toBe(
+      'WHAT HAPPENS NEXT7 stations. Chidi drafts the invoice from the signed SOW · a Finance Lead decides · issue, delivery and verification are automatic.See the full invoice journey',
+    );
+    expect(within(next as HTMLElement).getByText('a Finance Lead decides').className).toBe('sw-decides');
+    expect(within(next as HTMLElement).getByRole('link', { name: 'See the full invoice journey' }).getAttribute('href')).toBe('/projects');
+  });
+
+  it.each(['https://elsewhere.example/journey', '//elsewhere.example/journey', 'javascript:alert(1)'])(
+    'a journey_url that is not a same-origin path (%s) is not linked',
+    async (journey) => {
+      override = (_, url) =>
+        url.pathname === '/api/v1/lines'
+          ? json(200, synthetic([], { next: { station_count: 3, summary: 'Tola drafts', journey_url: journey } }))
+          : undefined;
+      await openMain();
+      expect(within(dialog()).getByText(/3 stations\./)).toBeTruthy();
+      expect(within(dialog()).queryByRole('link', { name: /journey/ })).toBeNull();
+    },
+  );
+
+  describe('below 720px', () => {
+    beforeEach(() => {
+      vi.stubGlobal('matchMedia', (query: string) => ({ matches: false, media: query, addEventListener: () => {}, removeEventListener: () => {} }));
+    });
+
+    it('the chooser sheet counts lines in its head, shows titles only, and its footer is Next alone', async () => {
+      render(<StartWorkButton variant="phone" />);
+      fireEvent.click(screen.getByRole('button', { name: 'Start work' }));
+      await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+      expect(dialog().className).toContain('psl-sheet');
+      expect(within(dialog()).queryByText('START WORK')).toBeNull();
+      expect(within(dialog()).getByText('Lines you can start · 8')).toBeTruthy();
+      expect(within(dialog()).getByRole('radiogroup', { name: 'Lines you can start · 8' })).toBeTruthy();
+      expect(within(dialog()).queryByRole('searchbox')).toBeNull();
+      expect(within(dialog()).queryByText('From a completed milestone')).toBeNull();
+      expect(within(dialog()).queryByRole('button', { name: 'Back' })).toBeNull();
+      expect(within(dialog()).getByRole('link', { name: /Describe it to Tola/ })).toBeTruthy();
+    });
+
+    it('the invoice sheet: its short title, "Step 2 of 2 · change line", "Next:" in one line, and only the start button', async () => {
+      render(<StartWorkButton variant="phone" />);
+      fireEvent.click(screen.getByRole('button', { name: 'Start work' }));
+      await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+      fireEvent.click(within(dialog()).getByRole('radio', { name: /Invoice preparation/ }));
+      press('Next');
+      expect(screen.getByRole('dialog', { name: 'Invoice preparation' })).toBeTruthy();
+      expect(within(dialog()).getByText(/Step 2 of 2/)).toBeTruthy();
+      expect(dialog().querySelector('p.sw-next')!.textContent).toBe('Next: Chidi drafts · a Finance Lead decides');
+      expect([...dialog().querySelectorAll('.sw-foot button')].map((b) => b.textContent)).toEqual(['Start the invoice']);
+      press('change line');
+      expect(screen.getByRole('dialog', { name: 'Choose a line' })).toBeTruthy();
+    });
   });
 });
 

@@ -16,17 +16,19 @@ async function expectNoAxeViolations(page: Page) {
   expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([]);
 }
 
-/** The fixture table: each line's field labels in order and its primary button. */
-const LINES: [string, string[], string][] = [
-  ['Invoice preparation and delivery', ['Project', 'Completed milestone', 'Anything Chidi should know (optional)'], 'Start the invoice'],
-  ['Reviewed weekly client report', ['Project', 'Week', 'Template'], 'Start report'],
-  ['Formal minutes and action handoff', ['Project', 'Meeting', 'Audience'], 'Start minutes'],
-  ['Issue investigation and owner follow-up', ['Project', 'Issue'], 'Start follow-up'],
-  ['Controlled change and signed closure', ['Project', 'What the client asked for'], 'Log change'],
-  ['Emergency change for an incident', ['Project', 'Incident', 'Plan'], 'Ask for preauthorisation'],
-  ['Escalate and communicate', ['Project', 'From issue', 'Escalate to'], 'Raise escalation'],
-  ['Leadership report', ['Report', 'Period', 'Audience'], 'Start report'],
+/** The fixture table: each line's chooser title, its drawer title on the board, its field labels in order and its
+ *  primary button. The invoice sheet on the phone is titled "Invoice preparation" (SCR-04-mobile). */
+const LINES: [string, string, string[], string][] = [
+  ['Invoice preparation and delivery', 'Invoice preparation and delivery', ['Project', 'Completed milestone', 'Anything Chidi should know (optional)'], 'Start the invoice'],
+  ['Reviewed weekly client report', 'Weekly client report', ['Project', 'Week', 'Template'], 'Start report'],
+  ['Formal minutes and action handoff', 'Minutes after a meeting', ['Project', 'Meeting', 'Audience', 'Proof'], 'Start minutes'],
+  ['Issue investigation and owner follow-up', 'Chase an open issue', ['Project', 'Issue'], 'Start follow-up'],
+  ['Controlled change and signed closure', 'Scope or timeline change', ['Project', 'What the client asked for', 'Proof'], 'Log change'],
+  ['Emergency change for an incident', 'Emergency change for an incident', ['Project', 'Incident', 'Plan'], 'Ask for preauthorisation'],
+  ['Escalate and communicate', 'Escalate and communicate', ['Project', 'From issue', 'Escalate to'], 'Raise escalation'],
+  ['Leadership report', 'Leadership report', ['Report', 'Period', 'Audience'], 'Start report'],
 ];
+const titleOn = (title: string, phone: boolean) => (phone && title.startsWith('Invoice') ? 'Invoice preparation' : title);
 
 const dialog = (page: Page) => page.getByRole('dialog');
 
@@ -44,11 +46,11 @@ function chooserButton(page: Page, phone: boolean) {
     : page.locator('nav.psl-nav').getByRole('button', { name: 'More ways to start' });
 }
 
-async function openLine(page: Page, phone: boolean, title: string) {
+async function openLine(page: Page, phone: boolean, line: string, title: string) {
   await chooserButton(page, phone).click();
-  await dialog(page).getByRole('radio', { name: new RegExp(title) }).check();
+  await dialog(page).getByRole('radio', { name: new RegExp(line) }).check();
   await dialog(page).getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByRole('dialog', { name: title })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: titleOn(title, phone) })).toBeVisible();
 }
 
 for (const [label, viewport, phone] of [
@@ -58,7 +60,7 @@ for (const [label, viewport, phone] of [
   test.describe(label, () => {
     test.use({ viewport });
 
-    test('the chooser: grouped lines, search, and no axe violations', async ({ page, context }) => {
+    test('the chooser: bordered line cards, the count, search from 720px, and no axe violations', async ({ page, context }) => {
       await openMyWork(page, context, 'pm');
       if (phone) {
         const plus = page.locator('.shell-phone').getByRole('button', { name: 'Start work' });
@@ -71,8 +73,17 @@ for (const [label, viewport, phone] of [
       }
       await chooserButton(page, phone).click();
       await expect(page.getByRole('dialog', { name: 'Choose a line' })).toBeVisible();
-      await expect(dialog(page).getByText('LINES YOU CAN START · 8')).toBeVisible();
-      await expect(dialog(page).getByRole('searchbox', { name: 'Find a line' })).toBeFocused();
+      if (phone) {
+        // SCR-04-mobile-lines: the count in the sheet head, titles only, no search; focus on the first line.
+        await expect(dialog(page).getByText('Lines you can start · 8')).toBeVisible();
+        await expect(dialog(page).getByRole('searchbox')).toHaveCount(0);
+        await expect(dialog(page).getByRole('radio').first()).toBeFocused();
+      } else {
+        await expect(dialog(page).getByText('LINES YOU CAN START · 8')).toBeVisible();
+        await expect(dialog(page).getByRole('searchbox', { name: 'Find a line' })).toBeFocused();
+      }
+      const card = dialog(page).locator('label.sw-line').first();
+      expect(await card.evaluate((el) => getComputedStyle(el).borderTopWidth)).toBe('2px');
       await expectNoAxeViolations(page);
       if (phone) {
         const box = (await dialog(page).boundingBox())!;
@@ -81,21 +92,23 @@ for (const [label, viewport, phone] of [
       } else {
         await expect(dialog(page)).toHaveClass(/psl-drawer/);
       }
-      await dialog(page).getByRole('searchbox', { name: 'Find a line' }).fill('minutes');
-      await expect(dialog(page).getByRole('radio')).toHaveCount(1);
+      if (!phone) {
+        await dialog(page).getByRole('searchbox', { name: 'Find a line' }).fill('minutes');
+        await expect(dialog(page).getByRole('radio')).toHaveCount(1);
+      }
     });
 
     test('the invoice drawer and its validation state have no axe violations; Esc closes and focus returns', async ({ page, context }) => {
       await openMyWork(page, context, 'pm');
       let opener;
       if (phone) {
-        await openLine(page, phone, 'Invoice preparation and delivery');
+        await openLine(page, phone, 'Invoice preparation and delivery', 'Invoice preparation and delivery');
         opener = chooserButton(page, phone);
       } else {
         opener = page.locator('nav.psl-nav').getByRole('button', { name: 'Start work' });
         await opener.click();
         await expect(page.getByRole('dialog', { name: 'Invoice preparation and delivery' })).toBeVisible();
-        await expect(dialog(page).getByText('change line')).toHaveCount(0);
+        await expect(dialog(page).getByRole('button', { name: 'change line' })).toBeVisible();
       }
       await expect(dialog(page).getByRole('combobox', { name: 'Project' })).toBeFocused();
       await expectNoAxeViolations(page);
@@ -108,10 +121,22 @@ for (const [label, viewport, phone] of [
 
       await dialog(page).getByRole('combobox', { name: 'Project' }).click();
       await dialog(page).getByRole('option', { name: 'Lagoon Health · patient app' }).click();
+      // With a project chosen, the start button is the start orange, 48px or more tall, and about twice Back's width from 720px.
+      const start = dialog(page).getByRole('button', { name: 'Start the invoice' });
+      await expect(start).toHaveCSS('background-color', 'rgb(200, 64, 28)');
+      const startBox = (await start.boundingBox())!;
+      expect(startBox.height).toBeGreaterThanOrEqual(48);
+      if (phone) {
+        await expect(dialog(page).getByRole('button', { name: 'Back' })).toHaveCount(0);
+      } else {
+        const backBox = (await dialog(page).getByRole('button', { name: 'Back' }).boundingBox())!;
+        // flex 2 : 1 beside the padding, as the boards draw it (about twice).
+        expect(startBox.width / backBox.width).toBeGreaterThan(1.7);
+      }
       await dialog(page).getByRole('button', { name: 'Start the invoice' }).click();
       await expect(dialog(page).getByText('Completed milestone is required.')).toBeVisible();
       await expect(dialog(page).getByRole('combobox', { name: 'Completed milestone' })).toHaveAttribute('aria-invalid', 'true');
-      await expect(dialog(page).getByRole('alert')).toHaveText('1 things to fix before Chidi can start.');
+      await expect(dialog(page).getByRole('alert')).toHaveText(phone ? '1 thing to fix' : '1 thing to fix before Chidi can start.');
       await expect(dialog(page).getByRole('alert')).toBeFocused();
       await expectNoAxeViolations(page);
 
@@ -127,18 +152,24 @@ for (const [label, viewport, phone] of [
         : page.locator('nav.psl-nav').getByRole('button', { name: 'Start work' });
       await main.click();
       await expect(page.getByRole('dialog', { name: 'Choose a line' })).toBeVisible();
-      await expect(dialog(page).getByText('LINES YOU CAN START · 8')).toBeVisible();
+      await expect(dialog(page).getByText(phone ? 'Lines you can start · 8' : 'LINES YOU CAN START · 8')).toBeVisible();
       await expectNoAxeViolations(page);
     });
 
-    test('each of the 8 drawers shows its fields and start label, with no Proof field', async ({ page, context }) => {
+    test('each of the 8 drawers shows its board title, fields and start label; Proof is drawn but disabled', async ({ page, context }) => {
       await openMyWork(page, context, 'pm');
-      for (const [title, labels, start] of LINES) {
-        await openLine(page, phone, title);
+      for (const [line, title, labels, start] of LINES) {
+        await openLine(page, phone, line, title);
         const fieldLabels = await dialog(page).locator('[data-field] > .psl-label').allTextContents();
         expect(fieldLabels, title).toEqual(labels);
         await expect(dialog(page).getByRole('button', { name: start })).toBeVisible();
-        await expect(dialog(page).getByText('Proof', { exact: true })).toHaveCount(0);
+        await expect(dialog(page).getByText('Proof upload comes next')).toHaveCount(labels.includes('Proof') ? 1 : 0);
+        await expect(dialog(page).getByRole('button', { name: 'Cancel' })).toHaveCount(phone || line.startsWith('Invoice') ? 0 : 1);
+        // Two-option choices fill the field's width.
+        for (const seg of await dialog(page).locator('.psl-seg').all()) {
+          const [segBox, fieldBox] = [(await seg.boundingBox())!, (await seg.locator('..').boundingBox())!];
+          expect(Math.round(segBox.width), title).toBe(Math.round(fieldBox.width));
+        }
         await page.keyboard.press('Escape');
         await expect(page.getByRole('dialog')).toHaveCount(0);
       }

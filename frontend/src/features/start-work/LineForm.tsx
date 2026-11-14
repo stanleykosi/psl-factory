@@ -1,25 +1,27 @@
 'use client';
 
 // SCR-04 line drawer: the line's intake in the order returned, "What happens next" from `next`, and one start
-// button. Errors come only from the server: a 422 names fields inline and lists the rest at the top; a 409, 403 or
-// 404 keeps what was typed; an uncertain result locks the form until "Check again" (see useStartWork).
+// button. Errors come only from the server: a 422 names fields inline and draws a problem with a field this drawer
+// does not render as its own box; a 409, 403 or 404 keeps what was typed; an uncertain result locks the form until
+// "Check again" (see useStartWork). The head and footer follow the boards: from 720px "START WORK", the title and
+// "Line chosen from the Start work menu · change line" over Back or Cancel and the start button; on the phone the
+// sheet head reads "Step 2 of 2 · change line" and the footer is the start button alone.
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef, type ReactNode } from 'react';
 
 import { SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
 
-import { DrawerFrame } from './DrawerFrame';
+import { DrawerFrame, useWide } from './DrawerFrame';
 import { caseOptionUnusable, parentValue, startableHere } from './intake';
 import { IntakeField } from './IntakeField';
-import { AGENT_NAMES, startLabel } from './labels';
-import type { Line } from './types';
+import { AGENT_NAMES, drawerTitle, footerGoesBack, journeyLabel, narrowDrawer, startLabel } from './labels';
+import type { FieldProblem, Line } from './types';
 import { useStartForm, type Notice } from './useStartWork';
 
 type Props = {
   line: Line;
-  /** Opened from the chooser: shows "change line" and Back returns to the chooser. */
-  fromChooser: boolean;
+  /** Back and "change line" go to the chooser. */
   onBack: () => void;
   onClose: () => void;
   onStarted: (workId: string) => void;
@@ -38,20 +40,26 @@ function InfoIcon() {
   );
 }
 
-function NoticeCallout({ notice, agent, calloutRef }: { notice: Notice; agent: string | undefined; calloutRef: React.Ref<HTMLDivElement> }) {
+export function toFix(count: number): string {
+  return `${count} ${count === 1 ? 'thing' : 'things'} to fix`;
+}
+
+type CalloutProps = { notice: Notice; agent: string | undefined; wide: boolean; calloutRef: React.Ref<HTMLDivElement> };
+
+function NoticeCallout({ notice, agent, wide, calloutRef }: CalloutProps) {
   switch (notice.kind) {
     case 'invalid':
+      // SCR-04-mobile-validation keeps only the count.
       return (
         <div ref={calloutRef} tabIndex={-1} className="psl-callout psl-callout--problem" role="alert">
-          <WarningIcon />
+          {wide && <WarningIcon />}
           <span>
-            {notice.count} things to fix before {agent ? `${agent} can start` : 'this can start'}.
-            {notice.unmatched.length > 0 && (
-              <ul className="sw-list">
-                {notice.unmatched.map((message) => (
-                  <li key={message}>{message}</li>
-                ))}
-              </ul>
+            {wide ? `${toFix(notice.count)} before ${agent ? `${agent} can start` : 'this can start'}.` : toFix(notice.count)}
+            {notice.general && (
+              <>
+                {' '}
+                {notice.general}
+              </>
             )}
           </span>
         </div>
@@ -96,32 +104,75 @@ function NoticeCallout({ notice, agent, calloutRef }: { notice: Notice; agent: s
   }
 }
 
-function WhatHappensNext({ next }: { next: NonNullable<Line['next']> }) {
+/** A 422 problem for a field this drawer does not render (SCR-04-validation "Billing contact"), named from its key. */
+function ProblemBox({ problem }: { problem: FieldProblem }) {
+  const name = problem.name.replace(/_/g, ' ');
+  return (
+    <div className="psl-field sw-field" data-field={problem.name}>
+      <span className="psl-label">{name.charAt(0).toUpperCase() + name.slice(1)}</span>
+      <span className="psl-input is-error sw-display">—</span>
+      <span className="psl-error">{problem.message}</span>
+    </div>
+  );
+}
+
+/** A same-origin path only; anything else is not linked. */
+function safePath(url: string | undefined): string | undefined {
+  return url && url.startsWith('/') && !url.startsWith('//') && !url.startsWith('/\\') ? url : undefined;
+}
+
+/** The decision in the line's words, e.g. "a Finance Lead decides", drawn in the deciding red. */
+function Decides({ by }: { by: string[] }) {
+  return <span className="sw-decides">a {by.join(' or ')} decides</span>;
+}
+
+/**
+ * "What happens next" as one line (SCR-04-desktop): "<n> stations." then the summary, its parts joined by " · ",
+ * with the decision after the first part, then the journey link. On the phone (SCR-04-mobile) one short line:
+ * "Next:" the agent and its first word of work, then the decision.
+ */
+function WhatHappensNext({ lineKey, next, wide }: { lineKey: string; next: NonNullable<Line['next']>; wide: boolean }) {
   const agent = next.agent ? AGENT_NAMES[next.agent] : undefined;
+  const parts = (next.summary ?? '').split(' · ').filter(Boolean);
+  const by = next.decided_by && next.decided_by.length > 0 ? next.decided_by : undefined;
+  const journey = safePath(next.journey_url);
+  if (!wide) {
+    const words = parts[0]?.split(' ') ?? [];
+    const lead = agent && words[0] === agent ? words.slice(0, 2).join(' ') : agent;
+    if (!lead && !by) return null;
+    return (
+      <p className="sw-next sw-plain">
+        <strong>Next:</strong> {lead}
+        {lead && by && ' · '}
+        {by && <Decides by={by} />}
+      </p>
+    );
+  }
+  const pieces: ReactNode[] = [...parts];
+  if (by) pieces.splice(Math.min(1, pieces.length), 0, <Decides key="by" by={by} />);
   return (
     <div className="sw-next">
       <span className="psl-drawer__eyebrow">WHAT HAPPENS NEXT</span>
-      {next.station_count !== undefined && <strong>{next.station_count} stations.</strong>}
-      {next.agent && agent && (
-        <span className="sw-agent">
-          <span className={`psl-avatar psl-avatar--20 psl-avatar--${next.agent}`} aria-hidden="true">
-            {agent.charAt(0)}
-          </span>
-          {agent}
-        </span>
-      )}
-      {next.summary && <span>{next.summary}</span>}
-      {next.decided_by && next.decided_by.length > 0 && <span>Decided by {next.decided_by.join(' or ')}.</span>}
-      {next.journey_url && (
-        <Link href={next.journey_url} className="sw-journey">
-          See the full journey
+      <span>
+        {next.station_count !== undefined && <strong>{next.station_count} stations.</strong>}
+        {pieces.map((piece, at) => (
+          <Fragment key={at}>
+            {at === 0 ? (next.station_count !== undefined ? ' ' : '') : ' · '}
+            {piece}
+          </Fragment>
+        ))}
+      </span>
+      {journey && (
+        <Link href={journey} className="sw-journey">
+          {journeyLabel(lineKey)}
         </Link>
       )}
     </div>
   );
 }
 
-export function LineForm({ line, fromChooser, onBack, onClose, onStarted, pathname }: Props) {
+export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) {
+  const wide = useWide();
   const form = useStartForm(line, onStarted);
   const calloutRef = useRef<HTMLDivElement>(null);
   const here = startableHere(line);
@@ -135,25 +186,31 @@ export function LineForm({ line, fromChooser, onBack, onClose, onStarted, pathna
   const readOnly = form.uncertain || form.busy;
   const unusable = caseOptionUnusable(line, form.values);
   const labels = Object.fromEntries(form.fields.map((f) => [f.name, f.label]));
-  const eyebrow = notice?.kind === 'invalid' ? `${notice.count} things to fix` : 'START WORK';
-  const subline = fromChooser ? (
-    <>
-      Line chosen from the Start work menu ·{' '}
-      <button type="button" className="psl-btn psl-btn--text psl-btn--sm sw-change" onClick={onBack}>
-        change line
-      </button>
-    </>
-  ) : undefined;
+  const title = drawerTitle(line, !wide);
+  const changeLine = (
+    <button type="button" className="psl-btn psl-btn--text psl-btn--sm sw-change" onClick={onBack}>
+      change line
+    </button>
+  );
+  const subline =
+    notice?.kind === 'invalid' ? (
+      toFix(notice.count)
+    ) : wide ? (
+      <>Line chosen from the Start work menu · {changeLine}</>
+    ) : (
+      <>Step 2 of 2 · {changeLine}</>
+    );
 
+  const goesBack = footerGoesBack(line.key);
   const back = (
-    <button type="button" className="psl-btn psl-btn--secondary" onClick={fromChooser ? onBack : onClose}>
-      {fromChooser ? 'Back' : 'Cancel'}
+    <button type="button" className="psl-btn psl-btn--secondary sw-secondary" onClick={goesBack ? onBack : onClose}>
+      {goesBack ? 'Back' : 'Cancel'}
     </button>
   );
 
   if (form.signedOut) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={line.title} subline={subline} onClose={onClose} focusKey="signed-out" footer={back}>
+      <DrawerFrame eyebrow="START WORK" title={title} narrow={narrowDrawer(line.key)} subline={subline} onClose={onClose} focusKey="signed-out" footer={back}>
         <SignedOutState pathname={pathname} />
       </DrawerFrame>
     );
@@ -161,7 +218,7 @@ export function LineForm({ line, fromChooser, onBack, onClose, onStarted, pathna
 
   if (!here) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={line.title} subline={subline} onClose={onClose} focusKey={`cant-${line.key}`} footer={back}>
+      <DrawerFrame eyebrow="START WORK" title={title} narrow={narrowDrawer(line.key)} subline={subline} onClose={onClose} focusKey={`cant-${line.key}`} footer={back}>
         <div className="psl-callout psl-callout--info">
           <InfoIcon />
           <span>
@@ -173,15 +230,15 @@ export function LineForm({ line, fromChooser, onBack, onClose, onStarted, pathna
     );
   }
 
-  const canPress = !form.busy && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
+  const canPress = !form.busy && !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
   const footer = (
     <>
-      {back}
       {form.uncertain && <span className="psl-hint sw-foothint">If it started, it will appear in My work.</span>}
+      {wide && back}
       {notice?.kind !== 'gone' && (
         <button
           type="button"
-          className={`psl-btn sw-primary${form.busy ? ' is-busy' : ''}`}
+          className={`psl-btn psl-btn--start sw-primary${form.busy ? ' is-busy' : ''}`}
           disabled={!canPress}
           aria-busy={form.busy || undefined}
           onClick={() => void form.submit()}
@@ -206,8 +263,8 @@ export function LineForm({ line, fromChooser, onBack, onClose, onStarted, pathna
   );
 
   return (
-    <DrawerFrame eyebrow={eyebrow} title={line.title} subline={subline} onClose={onClose} focusKey={`line-${line.key}`} footer={footer}>
-      {notice && <NoticeCallout notice={notice} agent={agent} calloutRef={calloutRef} />}
+    <DrawerFrame eyebrow="START WORK" title={title} narrow={narrowDrawer(line.key)} subline={subline} onClose={onClose} focusKey={`line-${line.key}`} footer={footer}>
+      {notice && <NoticeCallout notice={notice} agent={agent} wide={wide} calloutRef={calloutRef} />}
       {form.fields.map((field) => (
         <IntakeField
           key={field.name}
@@ -222,7 +279,8 @@ export function LineForm({ line, fromChooser, onBack, onClose, onStarted, pathna
           note={field.name === line.case_field && unusable ? CASE_UNUSABLE : form.fieldNotes[field.name]}
         />
       ))}
-      {line.next && <WhatHappensNext next={line.next} />}
+      {notice?.kind === 'invalid' && notice.unmatched.map((problem) => <ProblemBox key={problem.name} problem={problem} />)}
+      {line.next && <WhatHappensNext lineKey={line.key} next={line.next} wide={wide} />}
     </DrawerFrame>
   );
 }

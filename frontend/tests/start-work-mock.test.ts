@@ -30,7 +30,7 @@ const fixtures = join(__dirname, '../mock/fixtures');
 const readJson = (path: string) => JSON.parse(readFileSync(join(fixtures, path), 'utf8'));
 const PERSONAS = ['pm', 'finance_lead', 'ceo', 'none'];
 
-type Field = { name: string; type: string; options_source?: string; depends_on?: string };
+type Field = { name: string; label: string; type: string; required: boolean; options_source?: string; depends_on?: string };
 type Line = { key: string; intake: Field[] };
 type Option = { value: string; label: string; case_id?: string; case_revision?: number; disabled_reason?: string };
 type Page = { items: Option[]; next_cursor?: string; as_of: string };
@@ -105,10 +105,15 @@ describe('E-LINES', () => {
     expect((await get('/api/v1/lines', 'none')).body.items).toEqual([]);
   });
 
-  it('no line starts another way and no field is evidence or money (out of this release)', async () => {
+  it('no line starts another way, no field is money, and the only evidence is the optional Proof on minutes and change', async () => {
     const { items } = (await get('/api/v1/lines', 'ceo')).body as { items: (Line & { start_via?: string })[] };
     expect(items.every((l) => l.start_via === undefined || l.start_via === 'work_start')).toBe(true);
-    expect(items.flatMap((l) => l.intake).filter((f) => f.type === 'evidence' || f.type === 'money')).toEqual([]);
+    expect(items.flatMap((l) => l.intake).filter((f) => f.type === 'money')).toEqual([]);
+    const evidence = items.flatMap((l) => l.intake.filter((f) => f.type === 'evidence').map((f) => [l.key, f.name, f.label, f.required]));
+    expect(evidence).toEqual([
+      ['minutes', 'proof', 'Proof', false],
+      ['change_request', 'proof', 'Proof', false],
+    ]);
   });
 });
 

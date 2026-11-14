@@ -72,7 +72,9 @@ export function fetchOptions(lineKey: string, field: string, query: OptionsQuery
 }
 
 export type Notice =
-  | { kind: 'invalid'; count: number; unmatched: string[] }
+  /** `unmatched`: 422 problems naming no rendered field, drawn as their own boxes (SCR-04-validation "Billing
+   *  contact"); `general`: the message of a 422 that names no field at all. */
+  | { kind: 'invalid'; count: number; unmatched: FieldProblem[]; general?: string }
   | { kind: 'stale'; fixed: boolean }
   | { kind: 'problem'; lead?: string; message: string }
   | { kind: 'uncertain' }
@@ -95,6 +97,8 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
   const [noticeSeq, setNoticeSeq] = useState(0);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [fieldNotes, setFieldNotes] = useState<Record<string, string>>({});
+  // After a 422 the start button waits for a change, as SCR-04-validation draws it greyed.
+  const [awaitingChange, setAwaitingChange] = useState(false);
   // One write at a time, checked synchronously so a double press cannot send two starts.
   const writing = useRef(false);
   // The exact body last sent; "Check again" resends it unchanged with the same key.
@@ -111,6 +115,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
   const setValue = useCallback(
     (name: string, value: FieldValue | undefined) => {
       const cleared = dependentsOf(fields, name);
+      setAwaitingChange(false);
       setValues((current) => {
         const next = { ...current, [name]: value };
         for (const dependent of cleared) delete next[dependent];
@@ -195,9 +200,10 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
         );
         const names = new Set(fields.map((f) => f.name));
         const inline = Object.fromEntries(problems.filter((p) => names.has(p.name)).map((p) => [p.name, p.message]));
-        const unmatched = problems.length > 0 ? problems.filter((p) => !names.has(p.name)).map((p) => p.message) : [apiError.message];
+        const unmatched = problems.filter((p) => !names.has(p.name));
         setFieldErrors(inline);
-        return show({ kind: 'invalid', count: problems.length || 1, unmatched });
+        setAwaitingChange(true);
+        return show({ kind: 'invalid', count: problems.length || 1, unmatched, general: problems.length > 0 ? undefined : apiError.message });
       }
       if (response.status === 409) {
         setKey(newIdempotencyKey());
@@ -224,6 +230,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
     noticeSeq,
     fieldErrors,
     fieldNotes,
+    awaitingChange,
     submit,
   };
 }

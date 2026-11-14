@@ -40,7 +40,7 @@
         "decided_by": [
           "Finance Lead"
         ],
-        "summary": "Chidi drafts the invoice from the signed SOW; issue, delivery and verification are automatic.",
+        "summary": "Chidi drafts the invoice from the signed SOW · issue, delivery and verification are automatic.",
         "journey_url": "/projects"
       }
     },
@@ -117,6 +117,13 @@
               "label": "Client"
             }
           ]
+        },
+        {
+          "name": "proof",
+          "label": "Proof",
+          "type": "evidence",
+          "required": false,
+          "evidence_kind": "meeting_notes"
         }
       ]
     },
@@ -171,6 +178,13 @@
           "type": "long_text",
           "required": true,
           "help": "Emergency changes for an incident use \"Emergency change\" instead."
+        },
+        {
+          "name": "proof",
+          "label": "Proof",
+          "type": "evidence",
+          "required": false,
+          "evidence_kind": "client_request"
         }
       ]
     },

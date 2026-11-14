@@ -138,9 +138,9 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
         onClick={() => (open ? close() : setOpen(true))}
       >
         <span className="sw-picker__value">{shown || placeholder}</span>
-        <svg className="psl-chev" aria-hidden="true" width="12" height="8" viewBox="0 0 12 8">
-          <path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" />
-        </svg>
+        <span className="psl-chev" aria-hidden="true">
+          ▾
+        </span>
       </button>
       {open && (
         // The popup only catches Esc for its own controls; it is not itself interactive.

@@ -16,7 +16,7 @@ import './start-work.css';
 
 export type StartEntry = 'default' | 'chooser';
 
-type Step = { kind: 'entry' } | { kind: 'chooser' } | { kind: 'line'; line: Line; fromChooser: boolean };
+type Step = { kind: 'entry' } | { kind: 'chooser' } | { kind: 'line'; line: Line };
 
 export function StartWorkDrawer({ entry, onClose }: { entry: StartEntry; onClose: () => void }) {
   const router = useRouter();
@@ -36,7 +36,7 @@ export function StartWorkDrawer({ entry, onClose }: { entry: StartEntry; onClose
   if (step.kind === 'entry') {
     const data = state.status === 'ready' ? state.data : undefined;
     const direct = entry === 'default' && data?.default_line ? data.items.find((l) => l.key === data.default_line) : undefined;
-    if (direct) view = { kind: 'line', line: direct, fromChooser: false };
+    if (direct) view = { kind: 'line', line: direct };
     else if (entry === 'default' && state.status === 'loading') {
       return (
         <DrawerFrame eyebrow="START WORK" title="Start work" onClose={onClose} focusKey="entry-loading">
@@ -58,7 +58,6 @@ export function StartWorkDrawer({ entry, onClose }: { entry: StartEntry; onClose
       <LineForm
         key={view.line.key}
         line={view.line}
-        fromChooser={view.fromChooser}
         onBack={() => setStep({ kind: 'chooser' })}
         onClose={onClose}
         onStarted={onStarted}
@@ -70,7 +69,7 @@ export function StartWorkDrawer({ entry, onClose }: { entry: StartEntry; onClose
     <LineChooser
       state={state}
       onRetry={() => void reload()}
-      onNext={(line) => setStep({ kind: 'line', line, fromChooser: true })}
+      onNext={(line) => setStep({ kind: 'line', line })}
       onClose={onClose}
       pathname={pathname}
     />

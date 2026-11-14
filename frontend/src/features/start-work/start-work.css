@@ -1,5 +1,6 @@
 /* CMP-23 Start work layout. Token variables only; bundle classes are composed, never restyled. From 720px the
-   drawer is a right-hand panel over the scrim; below, a full-width bottom sheet with its footer kept in view. */
+   drawer is a right-hand panel over the scrim; below, a bottom sheet that leaves the top of the page in view
+   (SCR-04-mobile) with its footer kept in view and the form scrolling inside it. */
 
 /* button in the bars. From 720px up to bp-desktop (1080px) the main part reads "+ Start" so the bar still fits
    at 720px, as the who-line drops the role there; " work" stays in the accessible name. On the phone, "+ Start"
@@ -7,69 +8,80 @@
 .sw-split { margin-right: var(--space-3); }
 .sw-split .psl-btn--start { color: var(--on-strong); }
 .sw-phonestart { min-height: var(--control-md); }
-.sw-phonebar { padding-right: 112px; }
-.sw-phoneslot { position: absolute; top: 0; right: var(--space-4); height: 56px; display: flex; align-items: center; }
+.sw-phonebar { padding-right: calc(var(--space-7) * 2 + var(--space-5)); }
+.sw-phoneslot { position: absolute; top: 0; right: var(--space-4); height: calc(var(--control-md) + var(--space-3)); display: flex; align-items: center; }
 @media (min-width: 720px) and (max-width: 1079.98px) {
   .sw-split { margin-right: 0; }
-  .sw-split > .psl-btn:first-child { padding: 0 10px; }
+  .sw-split > .psl-btn:first-child { padding: 0 var(--space-2); }
   .sw-word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 
-/* layer, scrim and panel */
-.sw-layer { position: fixed; inset: 0; z-index: 40; display: flex; justify-content: flex-end; }
+/* layer, scrim and panel. The sheet's top sits 70px below the 56px phone bar, as SCR-04-mobile draws it. */
+.sw-layer { --sw-sheet-top: calc(var(--control-md) + var(--space-3) + 70px); position: fixed; inset: 0; z-index: 40; display: flex; justify-content: flex-end; }
 .sw-layer--sheet { align-items: flex-end; }
 .sw-scrim { position: absolute; inset: 0; }
 .sw-panel { position: relative; outline: none; }
 .sw-layer--drawer .sw-panel { height: 100%; }
-.sw-layer--sheet .sw-panel { width: 100%; max-height: 92vh; }
-.sw-layer--sheet .sw-body { overflow: auto; flex: 1 1 auto; }
-.sw-foot { flex: none; align-items: center; }
+/* SCR-04-desktop and -lines draw that drawer 480px wide; the bundle's psl-drawer is 500px, as the other boards */
+.sw-layer--drawer .sw-panel--narrow { width: 480px; }
+.sw-layer--sheet .sw-panel { width: 100%; height: calc(100% - var(--sw-sheet-top)); }
+.sw-layer--sheet .sw-body { overflow: auto; flex: 1 1 auto; gap: 10px; padding: var(--space-3) var(--space-4); font-size: 14px; }
+.sw-foot { flex: none; align-items: center; flex-wrap: wrap; }
 .sw-layer--sheet .sw-foot { align-items: stretch; }
-.sw-primary { margin-left: auto; }
-.sw-layer--sheet .sw-primary { margin-left: 0; order: -1; }
-.sw-foothint { flex: 1; }
+.sw-secondary { flex: 1 1 0; min-height: var(--control-phone); }
+.sw-primary { flex: 2 1 0; min-height: var(--control-phone); }
+.sw-foothint { flex-basis: 100%; }
 
 /* head */
-.sw-head { align-items: flex-start; }
-.sw-headtext { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sw-headtext { display: flex; flex-direction: column; min-width: 0; }
 .sw-headtext .psl-drawer__title { overflow-wrap: anywhere; }
+.sw-layer--sheet .psl-drawer__title { font-size: 18px; }
 .sw-change { min-height: 0; padding: 0; vertical-align: baseline; }
-.sw-close { flex: none; margin: -8px -8px 0 0; }
+.sw-close { flex: none; margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 0; font-size: 22px; }
 
-/* chooser */
+/* chooser: one bordered card per line; the radio is the card's whole surface, the chosen card has an ink border */
 .sw-plain { margin: 0; }
-.sw-loading { display: flex; flex-direction: column; gap: 10px; }
+.sw-loading { display: flex; flex-direction: column; gap: var(--space-3); }
 .sw-retry { align-self: flex-start; }
-.sw-lines { display: flex; flex-direction: column; gap: var(--space-2); }
-.sw-group { display: flex; flex-direction: column; }
-.sw-group .psl-optgroup { padding-left: 0; }
-.sw-line { padding: 8px 0; }
+/* 14px between cards, the drawer body's own gap (SCR-04-desktop-lines); 10px in the sheet (SCR-04-mobile-lines) */
+.sw-lines, .sw-group { display: flex; flex-direction: column; gap: 14px; }
+.sw-layer--sheet .sw-lines, .sw-layer--sheet .sw-group { gap: 10px; }
+.sw-line { position: relative; display: flex; flex-direction: column; gap: 2px; line-height: 1.3; padding: var(--space-3) 14px; border: 2px solid var(--rule-soft); background: var(--surface); cursor: pointer; }
+.sw-line:has(> input:checked) { border-color: var(--ink); }
+.sw-line > input { position: absolute; inset: -2px; width: auto; height: auto; margin: 0; appearance: none; background: none; border: none; cursor: pointer; }
 .sw-line strong { font-weight: 600; }
-.sw-tola { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-md); }
+.sw-line__sub { font-size: 13px; color: var(--ink-muted); }
+.sw-layer--sheet .sw-line { padding: 10px var(--space-3); }
+.sw-tola { align-items: center; padding: var(--space-3) 14px; border: 2px solid var(--action); text-decoration: none; }
+.psl a.sw-tola { font-weight: 400; color: var(--action-ink); }
+.sw-tola .psl-avatar { width: 28px; height: 28px; }
 
 /* fields */
 .sw-field { margin: 0; padding: 0; border: none; }
 .sw-field legend { padding: 0; margin-bottom: 6px; }
-.sw-range { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.sw-range { gap: var(--space-2); }
+.sw-range input { flex: 1 1 0; }
 .sw-display { overflow-wrap: anywhere; }
-.sw-seg { align-self: flex-start; }
+.sw-seg { display: flex; width: 100%; }
+.sw-proof { display: flex; align-items: center; gap: 10px; padding: 10px var(--space-3); border: 2px dashed var(--ink-subtle); background: var(--steel); color: var(--ink-muted); cursor: not-allowed; }
 .sw-picker { position: relative; }
 .sw-picker > .psl-select { width: 100%; display: flex; align-items: center; gap: var(--space-2); font: inherit; color: inherit; }
 .sw-picker .psl-chev { flex: none; }
 .sw-picker__value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
 .sw-picker__pop { margin-top: var(--space-1); display: flex; flex-direction: column; }
 .sw-picker__pop > .psl-search { margin: var(--space-2); }
-.sw-picker__pop > .psl-loading, .sw-picker__empty, .sw-picker__error { margin: 0; padding: var(--space-2) 12px; }
-.sw-list { margin: var(--space-1) 0 0; padding-left: 18px; }
+.sw-picker__pop > .psl-loading, .sw-picker__empty, .sw-picker__error { margin: 0; padding: var(--space-2) var(--space-3); }
 
-/* what happens next */
-.sw-next { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; background: var(--surface-subtle); }
-.sw-agent { display: inline-flex; align-items: center; gap: var(--space-2); }
+/* what happens next: one line under a hairline (SCR-04-desktop); "Next:" on the phone (SCR-04-mobile) */
+.sw-next { font-size: 13px; }
+div.sw-next { display: flex; flex-direction: column; gap: 6px; border-top: var(--rule-thin) solid var(--rule-soft); padding-top: var(--space-3); }
+.sw-decides { color: var(--signal-ink); font-weight: 600; }
 .sw-journey { align-self: flex-start; }
 
 /* phone: 44px targets */
 @media (max-width: 719.98px) {
-  .sw-layer--sheet .psl-btn, .sw-line, .sw-layer--sheet .psl-option, .sw-layer--sheet .psl-seg__opt { min-height: var(--control-md); }
-  .sw-change { min-height: var(--control-md); }
-  .sw-range { grid-template-columns: 1fr; }
+  .sw-layer--sheet .psl-btn, .sw-layer--sheet .psl-option, .sw-layer--sheet .psl-seg__opt { min-height: var(--control-md); }
+  .sw-layer--sheet .sw-primary { min-height: var(--control-lg); }
+  /* a 44px target that keeps the 18px line of the sheet head */
+  .sw-change { min-height: var(--control-md); margin-block: calc((18px - var(--control-md)) / 2); }
 }

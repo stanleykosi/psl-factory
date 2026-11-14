@@ -128,9 +128,9 @@ describe('resolveCase: the case comes from the chosen option or the fixed line, 
 });
 
 describe('fields this release renders', () => {
-  it('drops optional evidence, money and unknown kinds, keeping the order returned', () => {
+  it('drops optional money and unknown kinds, keeps an optional evidence field (drawn disabled), in the order returned', () => {
     const line = { ...projectLine, intake: [project, f('proof', 'evidence'), milestone, f('fee', 'money'), f('x', 'colour')] };
-    expect(shownFields(line).map((field) => field.name)).toEqual(['project', 'milestone']);
+    expect(shownFields(line).map((field) => field.name)).toEqual(['project', 'proof', 'milestone']);
     expect(startableHere(line)).toBe(true);
   });
 
