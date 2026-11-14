@@ -134,11 +134,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (not client/product acceptance, merge or release)",
+      "snapshot_ref": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "evidence_refs": [
+        "delivery/features/F-15/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -494,6 +496,52 @@
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T20:45:45Z",
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The PR does not exist yet (`feature.json` has no PR). The spec requires the PR and handoff to record two things. First, the D-SIGNIN deferral (sign-out and account menu not built). Second, the `needs_you` contract proposal as a follow-up for the backend developer, which is a separate contract-change task. Neither is a delivery blocker today, but both must be in the PR description. Also record that the shared review server must be started with `FRAME_FIXTURES=1`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:07:50Z",
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carry TECH-2-1 (focus flag after same-page navigation, `AppShell.tsx`) and the wordmark size note below 380px as follow-ups. Nothing in the spec makes either a blocker. QA reproduced TECH-2-1 as a low focus slip.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:07:50Z",
           "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c"
         }
       ]
