@@ -69,7 +69,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T04:01:12Z",
+      "seconds": 52.6,
+      "evidence_ref": "delivery/features/F-05/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -147,7 +160,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "2443664540147f9fc23537d9a6fcc2fc63589478",
     "task_branch": "fe-m2a-start-work-pick-a-line-fill-its-intake-i",
-    "head_sha": null,
+    "head_sha": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-05",
     "pr_url": null,
     "pr_number": null,
@@ -158,7 +171,54 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/fixtures/me.ceo.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/me.pm.json",
+      "frontend/mock/fixtures/start-work/lines.ceo.json",
+      "frontend/mock/fixtures/start-work/lines.finance_lead.json",
+      "frontend/mock/fixtures/start-work/lines.none.json",
+      "frontend/mock/fixtures/start-work/lines.pm.json",
+      "frontend/mock/fixtures/start-work/options/incident.json",
+      "frontend/mock/fixtures/start-work/options/issue.json",
+      "frontend/mock/fixtures/start-work/options/meeting.json",
+      "frontend/mock/fixtures/start-work/options/milestone.json",
+      "frontend/mock/fixtures/start-work/options/project.json",
+      "frontend/mock/fixtures/work/W-1401.json",
+      "frontend/mock/fixtures/work/W-1402.json",
+      "frontend/mock/fixtures/work/W-1403.json",
+      "frontend/mock/fixtures/work/W-1404.json",
+      "frontend/mock/fixtures/work/W-1405.json",
+      "frontend/mock/fixtures/work/W-1406.json",
+      "frontend/mock/fixtures/work/W-1407.json",
+      "frontend/mock/fixtures/work/W-1408.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/package.json",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/schema.d.ts",
+      "frontend/src/features/start-work/DrawerFrame.tsx",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineChooser.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/StartWorkButton.tsx",
+      "frontend/src/features/start-work/StartWorkDrawer.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/types.ts",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/tests/api-schema-drift.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/start-work-intake.test.ts",
+      "frontend/tests/start-work-mock.test.ts",
+      "frontend/tests/start-work.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -226,9 +286,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
   },
   "blocked": null
 }
