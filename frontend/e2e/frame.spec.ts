@@ -257,6 +257,37 @@ test.describe('phone 390', () => {
     expect(ring.color).not.toBe('rgb(255, 255, 255)');
   });
 
+  test('a sub-page back link replaces Menu in the bar as the boards draw it; Menu is one tap back', async ({ page }) => {
+    await page.goto('/frame-fixtures/phone-back');
+    await loaded(page);
+    const header = page.locator('header.psl-phonebar');
+    const back = header.getByRole('link', { name: 'Back to Queue' });
+    await expect(back).toBeVisible();
+    await expect(back).toHaveText('← Queue');
+    await expect(back).toHaveAttribute('href', '/my-work');
+    await expect(header.getByRole('button', { name: 'Menu' })).toHaveCount(0);
+    await expect(header.getByText('PSL FACTORY')).toHaveCount(0);
+    const look = await back.evaluate((el) => {
+      const s = getComputedStyle(el);
+      const bar = el.parentElement!.getBoundingClientRect();
+      const box = el.getBoundingClientRect();
+      return { color: s.color, decoration: s.textDecorationLine, left: box.left - bar.left, height: box.height };
+    });
+    expect(look).toEqual({ color: 'rgb(255, 255, 255)', decoration: 'none', left: 16, height: 44 });
+    await page.screenshot({ path: test.info().outputPath('phone-back-390.png') });
+    await expectNoAxeViolations(page);
+
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    await expect(back).toBeFocused();
+    expect(await outline(page)).toEqual({ style: 'solid', width: '2px', color: await focusOnStrong(page) });
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/my-work$/);
+    await loaded(page);
+    await expect(page.locator('header.psl-phonebar').getByRole('link', { name: /^Back to / })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
+  });
+
   test('404 error card at phone width; Try again is full width', async ({ page, context }) => {
     await setCookies(context, { psl_mock_scenario: '404' });
     await page.goto('/my-work');

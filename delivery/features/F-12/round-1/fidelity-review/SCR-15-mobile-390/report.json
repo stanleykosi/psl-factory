@@ -1,0 +1,292 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:29:40.910Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-12/design/canvas/project/SCR-15-mobile.dc.html",
+  "boardName": "SCR-15-mobile.dc.html",
+  "pageUrl": "http://localhost:4211/notifications",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-12/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page (100%).",
+    "Visual match 92.9 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 92.9
+  },
+  "visual": {
+    "score": 92.9,
+    "allCellsScore": 96.8,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1074,
+    "mismatchedCells": 76
+  },
+  "coverage": {
+    "total": 6,
+    "found": 6,
+    "coverage": 100,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Home",
+        "pageName": "← Home",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 321,
+          "y": 64,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Notifications",
+        "pageName": "Notifications",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 187,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 306,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 304,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "coloured bar under it on the board (#1F2427), none on the page"
+        ],
+        "boardBox": {
+          "x": 330,
+          "y": 110,
+          "w": 44,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 330,
+          "y": 112,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Alert settings",
+        "pageName": "Alert settings",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 460,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 468,
+          "w": 358,
+          "h": 21
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [],
+    "misplaced": [
+      {
+        "label": "Link \"← Home\"",
+        "kind": "Link",
+        "name": "← Home",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 321,
+          "y": 64,
+          "w": 53,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Notifications\"",
+          "across the page: left on the board (11% across), right on the page (89% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Invoice for Lagoon Health is waiting for your review , Chidi · WhatsApp and email · 10:42 , NEW",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 170,
+          "w": 354,
+          "h": 80
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "The UAT response for Lagoon Health is due tomorrow , Tola · Email · 09:00 daily digest",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 251,
+          "w": 354,
+          "h": 80
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "October payroll has 2 problems for HR , Zainab · In app only (you are not HR)",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 332,
+          "w": 354,
+          "h": 60
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Milestone 1 invoice was verified , Chidi · In app · yesterday",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 393,
+          "w": 354,
+          "h": 60
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-12/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

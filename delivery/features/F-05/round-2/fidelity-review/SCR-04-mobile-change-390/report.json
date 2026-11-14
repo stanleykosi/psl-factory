@@ -1,0 +1,585 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:03:46.133Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-04-mobile-change.dc.html",
+  "boardName": "SCR-04-mobile-change.dc.html",
+  "pageUrl": "http://localhost:3511/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-05/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 79.1 is below 90.",
+    "5 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 79.1
+  },
+  "visual": {
+    "score": 79.1,
+    "allCellsScore": 80.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2197,
+    "mismatchedCells": 460
+  },
+  "coverage": {
+    "total": 12,
+    "found": 6,
+    "coverage": 50,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "START",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 12px on the board, 14px on the page",
+          "weight 400 on the board, 600 on the page",
+          "capitals on the board, not on the page",
+          "background none on the board, #C8401C on the page"
+        ],
+        "boardBox": {
+          "x": 338,
+          "y": 21,
+          "w": 36,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Scope or timeline change",
+        "pageName": "Scope or timeline change",
+        "pageRole": "text",
+        "similarity": 100,
+        "note": "not marked up as a heading on the page",
+        "looks": [
+          "text size 20px on the board, 18px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 148,
+          "w": 253,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 216,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 338,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 464,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Emergency changes for an incident use \"Emergency change\" instead.",
+        "pageName": "Emergency changes for an incident use \"Emergency change\" instead.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 435,
+          "w": 358,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 418,
+          "w": 358,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Log change",
+        "pageName": "Log change",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone form is a bottom sheet for every line (design engineer, 14 Nov 2026). SCR-04-mobile-weekly, -minutes, -issue, -change, -incident, -escalation and -leadership draw a full-screen page whose bar reads \"← My work\" / \"START\"; the build opens the same content in the bottom sheet over My work, so that page chrome is not drawn.",
+          "approved_by": "Design engineer, 14 Nov 2026 (relayed by the delivery coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · patient app ▾",
+        "key": "text: Lagoon Health · patient app ▾",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What the client asked for",
+        "key": "text: What the client asked for",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Label of a native input: the build uses <label for>, which the tool skips (it names the input instead); the board draws a plain span.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Add WhatsApp reminders as well as SMS",
+        "key": "text: Add WhatsApp reminders as well as SMS",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 214,
+          "w": 358,
+          "h": 112
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "client-request-17nov.pdf",
+        "key": "text: client-request-17nov.pdf",
+        "container": "page",
+        "boardBox": {
+          "x": 58,
+          "y": 375,
+          "w": 162,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Proof upload is FE-M2A-PROOF: the Proof field is drawn as the board shows it but disabled (\"Proof upload comes next\"), so no uploaded file is listed.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 20 KB",
+        "key": "text: Uploaded · 20 KB",
+        "container": "page",
+        "boardBox": {
+          "x": 58,
+          "y": 395,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Proof upload is FE-M2A-PROOF: the Proof field is drawn as the board shows it but disabled (\"Proof upload comes next\"), so no uploaded file is listed.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Scope or timeline change\"",
+        "kind": "Heading",
+        "name": "Scope or timeline change",
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 148,
+          "w": 253,
+          "h": 24
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Project\"",
+        "kind": "Text",
+        "name": "Project",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 216,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 16,
+          "y": 338,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 464,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Project\"; on the page it comes after Text \"Emergency changes for an incident use \"Emergency change\" instead.\"",
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Emergency changes for an incident use \"Emergency change\" instead.\"",
+        "kind": "Text",
+        "name": "Emergency changes for an incident use \"Emergency change\" instead.",
+        "boardBox": {
+          "x": 16,
+          "y": 435,
+          "w": 358,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 418,
+          "w": 358,
+          "h": 36
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Link \"Log change\"",
+        "kind": "Link",
+        "name": "Log change",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 122,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 280,
+          "y": 82,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 244,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 270,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 324,
+          "y": 185,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Scope or timeline change",
+        "container": "page",
+        "pageBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Step 2 of 2 · change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 253,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 89,
+          "y": 159,
+          "w": 69,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 338,
+          "y": 143,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Project",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 243,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "What the client asked for",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 324,
+          "w": 358,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Proof upload comes next",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 491,
+          "w": 358,
+          "h": 45
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

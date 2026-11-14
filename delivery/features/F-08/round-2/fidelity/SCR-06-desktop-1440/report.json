@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:36:44.424Z",
+  "generatedAt": "2026-11-14T05:50:26.728Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-06-desktop.dc.html",
   "boardName": "SCR-06-desktop.dc.html",
   "pageUrl": "http://localhost:3801/overview",
@@ -19,24 +19,24 @@
   "pass": true,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 93.8 meets 90.",
+    "Visual match 94.1 meets 90.",
     "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 70.8,
     "coverageWithExceptions": 100,
-    "visual": 93.8
+    "visual": 94.1
   },
   "visual": {
-    "score": 93.8,
-    "allCellsScore": 96,
+    "score": 94.1,
+    "allCellsScore": 96.2,
     "width": 1440,
     "height": 1240,
     "boardHeight": 1240,
     "pageHeight": 1240,
     "cell": 12,
     "contentCells": 8065,
-    "mismatchedCells": 503
+    "mismatchedCells": 478
   },
   "coverage": {
     "total": 65,
@@ -1464,7 +1464,9 @@
     ],
     "unexcepted": 0
   },
-  "warnings": [],
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
   "images": {
     "board": "board.png",
     "page": "page.png",
