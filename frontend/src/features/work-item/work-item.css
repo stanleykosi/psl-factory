@@ -11,6 +11,7 @@
 /* header: breadcrumb, title with its state tag, the started line and sample label */
 .work-header { display: flex; flex-direction: column; gap: 10px; }
 .work-header--end { gap: 20px; }
+.work-header--history { gap: 17px; }
 @media (min-width: 720px) {
   /* the boards' 34-36px titles sit in a 36-39px line; the frame's 40px title keeps that line height */
   .work-header .shell-title { line-height: .92; }
@@ -19,8 +20,9 @@
   /* the title wraps before the tag and tabs leave its line */
   .work-titleline { flex-wrap: nowrap; }
   .work-titleline > .work-state, .work-titleline > .work-tabs { flex: none; }
-  .work-header { margin-bottom: -2px; }
-  .work-header--end { margin-bottom: -4px; }
+  .work-header { margin-bottom: -4px; }
+  .work-header--end { margin-bottom: -5px; }
+  .work-header--history { margin-bottom: -8px; }
 }
 .work-header .psl-crumb { line-height: 15px; }
 .work-sub { line-height: 18px; }
@@ -85,13 +87,13 @@
 
 /* agent section (default, verified, owner-needed and effect-uncertain boards) */
 .work-agentsec { background: var(--action-tint); border: 2px solid var(--action); }
-.work-agentsec__head { padding: var(--space-3) var(--space-4); border-bottom: 2px solid var(--action); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.work-agentsec__head { padding: 13.5px var(--space-4); border-bottom: 2px solid var(--action); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .work-agentsec__head h2 { margin: 0; display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-stretch: 112%; font-weight: 700; font-size: 15px; }
 .work-agentsec__head h2 .work-mascot { border: 2px solid var(--action); }
 .work-agentrole { font-family: var(--font-sans); font-weight: 500; font-size: 13px; color: var(--action-ink); }
 .work-agentsec__head small { font-size: 12px; color: var(--action-ink); }
 .work-agentsec__steps { list-style: none; margin: 0; padding: var(--space-1) var(--space-4) var(--space-3); }
-.work-agentsec__steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--rule-soft); }
+.work-agentsec__steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--rule-soft); }
 .work-agentsec__steps li > .psl-mono { font-size: 12px; color: var(--action-ink); }
 .work-agentsec__text { display: block; font-weight: 500; }
 .work-agentsec__src { display: block; font-size: 12px; color: var(--ink-muted); }
@@ -99,6 +101,12 @@
 .work-agentsec__msg p { margin: 0; }
 .work-agentsec__steps + .work-agentsec__msg { padding-top: 0; font-size: 13px; line-height: normal; }
 .work-board--row { gap: 22px; }
+
+/* the ready board tints its current agent station and fact like a person's; the processing board in amber */
+.work-state--ready .work-track--list .psl-station--agent { background: var(--signal-tint); color: var(--signal-ink); }
+.work-state--processing .work-track--list .psl-station--agent, .work-state--processing .work-facts .psl-fact--current { background: var(--waiting-tint); color: var(--waiting-ink); }
+
+.work-state--awaiting_reconciliation .work-track--list .psl-station--stopped, .work-state--awaiting_reconciliation .work-track--list .psl-station--person { background: var(--waiting-tint); color: var(--waiting-ink); }
 
 /* the phone boards' agent note */
 .work-agentbox { background: var(--action-tint); border: 2px solid var(--action); padding: 10px var(--space-3); }
@@ -128,7 +136,8 @@
 
 /* the board's state card */
 .work-statepanel { background: var(--surface); border: 2px solid var(--ink); }
-.work-statepanel h2 { margin: 0; padding: var(--space-3) var(--space-4); background: var(--ink); color: var(--on-strong); font-family: var(--font-display); font-weight: 800; font-size: 15px; text-transform: uppercase; }
+.work-statepanel h2 { margin: 0; padding: var(--space-3) var(--space-4); background: var(--ink); color: var(--on-strong); font-family: var(--font-display); font-weight: 800; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+.work-statepanel--large h2 { font-size: 18px; line-height: 16px; padding-block: 14px; }
 .work-statepanel--signal { border-color: var(--signal); }
 .work-statepanel--signal h2 { background: var(--signal); }
 .work-statepanel--waiting { border-color: var(--waiting); }
@@ -148,16 +157,29 @@
 
 /* the decision task on the default board */
 .work-aside .psl-panel--decide { border-color: var(--signal); }
-.work-aside .psl-panel__head--decide { padding: var(--space-3) var(--space-4); font-size: 16px; letter-spacing: .04em; }
+.work-aside .psl-panel__head--decide { padding: 14px var(--space-4); font-size: 17px; line-height: 16px; letter-spacing: .1em; }
 .work-aside .psl-panel__body { padding: var(--space-4); }
-.work-aside .decide-rows { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-.work-aside .decide-row { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 14px; align-items: baseline; }
+.work-aside .decide-rows { margin: 8px 0 0; display: flex; flex-direction: column; gap: 5px; }
+.work-aside .decide-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; align-items: baseline; }
 .work-aside .decide-row dt { color: var(--ink-muted); }
 .work-aside .decide-row dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .work-aside .psl-panel--decide .psl-btn { min-height: var(--control-phone); }
 
+/* the default board's decision card keeps the room the board draws for the decision controls (F-04), with the
+   small print inside it at the bottom */
+@media (min-width: 1080px) {
+  .work-board--desktop .work-aside > .psl-panel--decide { min-height: 527px; display: flex; flex-direction: column; }
+  .work-board--desktop .work-aside > .psl-panel--decide .psl-panel__body { flex: 1; gap: 4px; }
+  /* the link sits where the board draws the primary decision button */
+  .work-board--desktop .work-aside > .psl-panel--decide .psl-btn { margin: auto 0 96px; }
+  .work-board--desktop .work-aside > .psl-panel--decide + .work-note { position: relative; margin-top: -64px; padding: 0 var(--space-4); }
+}
+
 /* the issue board's invoice preview (PSL's test template) */
-.work-invoice { max-width: 760px; background: var(--surface); border: 2px solid var(--ink); padding: var(--space-6); display: flex; flex-direction: column; gap: 14px; }
+@media (min-width: 1080px) {
+  .work-board--issue .work-columns { grid-template-columns: 762px 443px; gap: 24px; }
+}
+.work-invoice { max-width: 760px; background: var(--surface); border: 2px solid var(--ink); padding: 22px 26px; display: flex; flex-direction: column; gap: 10px; }
 .work-invoice__top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3); }
 .work-invoice__brand { font-family: var(--font-display); font-stretch: 125%; font-weight: 800; font-size: 20px; }
 .work-invoice__test { align-self: flex-start; padding: 3px 6px; font-family: var(--font-mono); font-size: 11px; color: var(--waiting); border: 1.5px solid var(--waiting); }
@@ -168,7 +190,7 @@
 .work-invoice table { width: 100%; border-collapse: collapse; }
 .work-invoice th { padding: var(--space-2) 0; text-align: left; border-bottom: 2px solid var(--ink); font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--ink-muted); }
 .work-invoice th:last-child, .work-invoice td:last-child { text-align: right; }
-.work-invoice td { padding: 10px 0; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+.work-invoice td { padding: 8px 0; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
 .work-invoice tr:last-child td { border-bottom: none; }
 .work-invoice__detail { font-size: 12px; color: var(--ink-muted); }
 .work-invoice__tax { color: var(--waiting-ink); font-weight: 600; font-family: var(--font-mono); }
@@ -179,15 +201,21 @@
 .work-invoicecard__amount .psl-amount { font-size: 18px; font-weight: 400; }
 .work-invoicecard .work-disclosure { font-size: 14px; }
 
-/* phone bottom bar: the state's way onward */
-.work-phonebar { margin: 0 calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); display: flex; flex-direction: column; gap: var(--space-2); }
+/* phone bottom bar: the state's way onward, pinned to the bottom of the screen as the phone boards draw it */
+.work-phonebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; margin: 0; padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); display: flex; flex-direction: column; gap: var(--space-2); }
 .work-phonebar .psl-btn { display: flex; width: 100%; }
+/* the reference (or HISTORY) at the end of the frame's phone bar */
+.work-phonebar--slot { min-height: 84px; box-sizing: border-box; }
+.work-phonebar__note { margin: 0; font-size: 13px; color: var(--ink-muted); }
+.work-barref { position: absolute; top: 0; right: var(--space-4); height: 56px; display: flex; align-items: center; font-size: 12px; color: var(--on-strong); z-index: 1; }
+.work-eyebrowline { line-height: 15px; }
 
 /* history */
 .work-historybar { display: flex; flex-direction: column; }
 .work-historybar .psl-seg { display: flex; }
 .work-historyfoot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .work-historyfoot .psl-showmore { flex: 1 1 auto; border: 2px solid var(--ink); }
+.work-historymeta { display: flex; flex-direction: column; gap: var(--space-2); }
 .work-limit { display: flex; align-items: center; gap: var(--space-2); font-size: 13px; }
 .work-limit select { width: auto; }
 .work-who .psl-tag { padding: 1px 6px; font-family: var(--font-mono); font-size: 10px; font-weight: 400; border-radius: var(--radius-none); box-shadow: inset 0 0 0 1px var(--disabled); }
@@ -206,18 +234,27 @@
 .work-hcard__when { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
 .work-hcard .work-eventline { font-size: 14px; }
 .work-line { font-size: 13px; color: var(--ink-muted); }
-.work-noaccess { max-width: 640px; margin: 40px auto 0; width: 100%; box-sizing: border-box; }
+.work-noaccess { max-width: 700px; margin: 40px auto 0; width: 100%; box-sizing: border-box; }
 .work-noaccess .psl-panel__body { padding: var(--space-6); gap: 14px; }
 .work-noaccess .psl-panel__body p:last-child { margin: 0; }
-.work-noaccess .work-plain { color: var(--ink-muted); }
-.work-noaccess .shell-title { margin: 0; font-size: 30px; }
+/* the room the board draws for its second button and the audit line */
+@media (min-width: 720px) { .work-noaccess .psl-panel__body { padding-bottom: calc(var(--space-6) + 20px); } }
+.work-noaccess .work-plain { color: var(--ink-muted); line-height: 1.3; }
+.work-noaccess .shell-title { margin: -4px 0 0; font-size: 33px; }
 .work-noaccess__tag { align-self: flex-start; }
-.work-noaccess__list { margin: 0; padding-left: 20px; line-height: 1.7; }
+.work-noaccess__list { margin: -2px 0 2px; padding-left: 20px; line-height: 1.7; }
 /* the board pairs the way back with a second button of equal width; it takes its half */
 .work-noaccess .psl-panel__body p:last-child .psl-btn { width: calc(50% - 5px); }
 
 @media (max-width: 719.98px) {
-  .work-header .shell-title { font-size: 22px; }
+  .work-header .shell-title { font-size: 22px; white-space: pre-line; }
+  /* the pinned bar's room, and the default board's decision panel drawn as that bar: only the link shows */
+  .work-board--phone { padding-bottom: 96px; }
+  .work-board--phone .work-aside > .psl-panel--decide { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; border: none; border-top: 2px solid var(--ink); background: var(--surface); padding: var(--space-3) var(--space-4) 18px; }
+  .work-board--phone .psl-panel--decide .psl-panel__head, .work-board--phone .psl-panel--decide .psl-panel__body > :not(a) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .work-board--phone .work-aside > .psl-panel--decide .psl-panel__body { padding: 0; }
+  .work-board--phone .psl-panel--decide .psl-btn { display: flex; width: 100%; }
+  .work-board--phone .work-aside > .work-note { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .work-overview { gap: var(--space-3); }
   .work-columns { gap: var(--space-3); }
   .work-column { gap: var(--space-3); }
@@ -226,14 +263,21 @@
   .work-facts .psl-facts { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .work-facts .psl-fact:nth-child(3n) { border-right: none; }
   .work-facts .psl-fact:nth-child(-n + 3) { border-bottom: 2px solid var(--ink); }
-  .work-facts .psl-fact { padding: var(--space-2); gap: 0; }
+  .work-facts .psl-fact { padding: 9px var(--space-2) var(--space-2); gap: 0; }
   .work-facts .psl-fact b { font-size: 10px; letter-spacing: 0; }
-  .work-header { gap: 6px; }
-  .work-header--end { gap: 6px; }
+  .work-header { gap: 9px; margin-top: -2px; }
+  .work-header--end { gap: 9px; }
   .work-facts .psl-fact strong { font-family: var(--font-sans); font-size: 15px; }
   .work-banner { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; padding: var(--space-2) 10px 0; border: none; }
-  .work-banner__img { width: 110px; height: auto; }
+  .work-banner__img { width: auto; height: 178px; }
+  .work-banner { grid-template-columns: 112px minmax(0, 1fr); }
   .work-banner > div { padding-bottom: var(--space-3); font-size: 14px; }
+  .work-banner strong { display: inline; font-family: var(--font-sans); font-size: 14px; }
+  .work-agentpanel .psl-step { padding: 8px 0; }
+  .work-agentpanel .psl-step__text { line-height: 19px; gap: 0; }
+  .work-agentpanel .psl-step__ref { line-height: 14px; }
+  .work-agentpanel .psl-agent__head { padding: 10px 12px; }
+  .work-agentpanel .psl-agent__head small { line-height: 16px; }
   .work-banner p { color: var(--ink); }
   .work-agentpanel { background: none; border: none; }
   .work-agentpanel__art { display: none; }
@@ -258,6 +302,14 @@
   .work-noaccess .shell-title { font-size: 24px; }
   .work-noaccess .work-plain { font-size: 14px; }
   .work-header--history .shell-title { font-size: 20px; }
+  .work-historybar .psl-seg__opt { flex: 1 1 0; min-width: 0; min-height: 42px; padding-inline: 4px; font-size: 13px; }
+  .work-hcards { gap: 14px; }
+  .work-hcard { gap: 0; padding: 11px 12px; }
+  .work-hcard .work-who { font-size: 12px; line-height: 20px; }
+  .work-hcard__when { line-height: 16px; }
+  .work-hcard .work-eventline { line-height: 20px; }
+  /* "+ N earlier entries" is a quiet line on the board */
+  .work-historyfoot .psl-showmore .psl-btn { min-height: 0; padding: 0; font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: .04em; text-transform: uppercase; text-decoration: none; color: var(--ink-muted); }
 }
 
 @media (max-width: 1079.98px) {
@@ -282,7 +334,7 @@
 .work-track--list .psl-track { display: block; }
 .work-track--list .psl-station { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: var(--space-2);
   min-height: 0; padding: 7px var(--space-3); background: var(--surface); color: var(--ink); border: none; border-bottom: 1px solid var(--rule-soft); }
-.work-track--list .psl-station:last-child { border-bottom: none; }
+.work-track--list .psl-station:last-child, .work-track--list .work-station--last { border-bottom: none; }
 .work-track--list .psl-station strong { font-family: inherit; font-weight: 600; font-size: 14px; line-height: 18px; }
 .work-track--list .psl-station b, .work-track--list .psl-station span { line-height: 18px; }
 .work-track--list .psl-station--person, .work-track--list .psl-station--stopped { background: var(--signal-tint); color: var(--signal-ink); }
@@ -310,3 +362,6 @@
   .work-track:not(.work-track--list) .psl-station--todo { color: var(--ink-subtle); }
   .work-track .psl-station--waiting.work-station--uncertain { background: var(--waiting); border-color: var(--ink); color: var(--on-strong); }
 }
+
+/* a track the board does not draw stays for screen readers only, and never as a scroll area */
+.work-track.work-sr { overflow: hidden; }

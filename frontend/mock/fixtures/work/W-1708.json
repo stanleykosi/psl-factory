@@ -105,7 +105,29 @@
           "primary": true
         }
       ],
-      "note": "You can't fix this yourself: PMO can't assign Finance roles. We've told the admin."
+      "note": "You can't fix this yourself: PMO can't assign Finance roles. We've told the admin.",
+      "large_title": true
+    },
+    "phone": {
+      "stations_shown": 0,
+      "panel": {
+        "title": "Stopped · owner needed",
+        "tone": "signal",
+        "lead": "Finance review has no one to decide it.",
+        "body": [
+          "Rule needed: Finance Lead · Lagoon Health. An admin or the Finance Lead can set it up."
+        ],
+        "links": [
+          {
+            "label": "Fix it in Setup",
+            "href": "/setup",
+            "primary": true
+          }
+        ],
+        "note": "You can't fix this yourself: PMO can't assign Finance roles. We've told the admin.",
+        "bar_note": "Only an admin or Finance Lead can assign Finance roles."
+      },
+      "title": "Lagoon Health · M3\ninvoice"
     }
   }
 }

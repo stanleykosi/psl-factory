@@ -98,6 +98,15 @@ export function agentImage(name: string | undefined): string | undefined {
   return key && AVATARS.has(key) ? `/agents/${key}.png` : undefined;
 }
 
+// The full-pose images the boards draw (public/agents): Tola waiting on the client, Chidi at work.
+const POSES = new Set(['tola-waiting', 'chidi-working']);
+
+/** A full-pose mascot where the boards draw one; the avatar otherwise. */
+export function agentPose(name: string | undefined, pose: 'waiting' | 'working'): string | undefined {
+  const key = `${name?.toLowerCase()}-${pose}`;
+  return POSES.has(key) ? `/agents/${key}.png` : agentImage(name);
+}
+
 const WARNING_STATES = new Set<WorkState>([
   'effect_uncertain',
   'awaiting_reconciliation',

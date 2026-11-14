@@ -11,7 +11,7 @@ import { WarningIcon } from '@/shell/icons';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { formatWat, startedLine, STATE_TAGS, type WorkItem } from './labels';
-import { presentationOf } from './presentation';
+import { presentationOf, viewFor } from './presentation';
 import { useIsPhone } from './usePhone';
 import { useWorkItem } from './useWorkItem';
 import { WorkItemHistory } from './WorkItemHistory';
@@ -22,23 +22,27 @@ import './work-item.css';
 
 export type WorkItemTab = 'overview' | 'history';
 
-type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: ReactNode };
+type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: ReactNode | null };
 
 /**
- * Desktop: the breadcrumb (with "revision N" at its end when the item does not say who started it), then the title
- * line with the state tag and the Overview / History tabs; history keeps its tabs under the title, as drawn.
- * Phones: the title, then the tag with the reference and revision (the boards put the reference in the bar, which
- * the frame owns); the tabs close the page. History on phones reads "History · <ref>" under a HISTORY eyebrow.
+ * Desktop: the breadcrumb or, on the state boards, the reference and client line; then the title line with the
+ * state tag (and the Overview / History tabs where the board draws them: history, and items without a board);
+ * then the started line. Without a started line the revision stays in the page for screen readers only.
+ * Phones: the title, then the tag; the reference sits at the end of the frame's bar, as the boards draw it.
+ * History on phones reads "History · <ref>" with HISTORY in the bar.
  */
 function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
   const tag = STATE_TAGS[item.state];
+  const base = presentationOf(item);
+  const view = viewFor(base, phone);
   // The state boards and history set the tag at the far end of the title line; the default board beside it.
   const end = tab === 'history' || boardLayout(item)?.tag === 'end';
   const history = tab === 'history';
   const started = item.started_by !== undefined;
+  const title = phone && view?.phone?.title ? view.phone.title : item.title;
   const sub = (
-    <div className="work-sub">
-      {/* phones: the reference and revision only (the phone boards draw no started line) */}
+    <div className={`work-sub${base && (!started || phone) ? ' work-sr' : ''}`}>
+      {/* phones: the reference and revision (the bar draws the reference on the boards) */}
       {phone ? (
         <span>
           <span className="psl-mono">{item.reference}</span> · revision {item.revision}
@@ -51,26 +55,33 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
     </div>
   );
   const tagEl = <span className={`psl-tag psl-tag--${tag.tone} work-state`}>{tag.text}</span>;
+  const crumb = base?.eyebrow ? (
+    <p className="psl-crumb work-eyebrowline">{base.eyebrow}</p>
+  ) : (
+    <nav aria-label="Breadcrumb">
+      <p className="psl-crumb">
+        <Link href="/my-work">My work</Link> / {history && base?.back_label ? `${base.back_label} ·` : `${item.line} /`}{' '}
+        <span className="psl-mono">{item.reference}</span>
+      </p>
+    </nav>
+  );
   return (
     <>
       <header className={`work-header${end ? ' work-header--end' : ''}${history ? ' work-header--history' : ''}`}>
         {!phone && (
           <div className="work-crumbrow">
-            <nav aria-label="Breadcrumb">
-              <p className="psl-crumb">
-                <Link href="/my-work">My work</Link> / {item.line} / <span className="psl-mono">{item.reference}</span>
-              </p>
-            </nav>
+            {crumb}
             {!started && sub}
           </div>
         )}
-        {phone && history && <p className="work-eyebrow psl-mono">HISTORY</p>}
+        {phone && base && <span className="work-barref psl-mono">{history ? 'HISTORY' : item.reference}</span>}
+        {phone && !base && history && <p className="work-eyebrow psl-mono">HISTORY</p>}
         <div className="work-titleline">
-          <h1 className="shell-title">{phone && history ? `History · ${item.reference}` : item.title}</h1>
+          <h1 className="shell-title">{phone && history ? `History · ${item.reference}` : title}</h1>
           {!phone && tagEl}
           {!phone && !history && tabs}
         </div>
-        {phone && (
+        {phone && !(base && history) && (
           <div className="work-tagline">
             {tagEl}
             {sub}
@@ -129,7 +140,8 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   }
 
   const { loadedAt, refreshFailed } = state;
-  const tabs = <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
+  // The overview boards draw no tabs; history is reached from the history board's own link. Items without a board keep F-03's tabs.
+  const tabs = tab === 'overview' && boardLayout(state.item) ? null : <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
   return (
     <>
       <WorkItemHeader item={state.item} tab={tab} phone={phone} tabs={tabs} />
@@ -146,7 +158,7 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
       ) : (
         <WorkItemHistory id={id} revision={state.item.revision} counts={view?.history_counts} phone={phone} />
       )}
-      {phone && tabs}
+      {phone && !(tab === 'history' && view) && tabs}
     </>
   );
 }

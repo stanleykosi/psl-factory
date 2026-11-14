@@ -16,6 +16,7 @@ import { InfoIcon } from './InfoIcon';
 import {
   AGENT_TAGS,
   agentImage,
+  agentPose,
   avatarClass,
   currentStationIndex,
   FACTS,
@@ -29,7 +30,7 @@ import {
   type WorkItem,
   type WorkState,
 } from './labels';
-import { isAppPath, presentationOf, type PanelLink, type PanelTone, type WorkItemPresentation } from './presentation';
+import { isAppPath, presentationOf, viewFor, type PanelLink, type PanelTone, type WorkItemPresentation } from './presentation';
 import { useIsPhone } from './usePhone';
 
 const FACT_WORDS: Record<Fact['status'], string> = { earned: 'Earned', current: 'In progress', not_yet: 'Not yet', unknown: 'Unknown' };
@@ -97,23 +98,28 @@ export function FactsStrip({ facts, details, paidNote = true }: FactsProps) {
   );
 }
 
-type TrackProps = { stations: WorkItem['stations']; state?: WorkState; details?: (string | null)[]; list?: boolean };
+type TrackProps = { stations: WorkItem['stations']; state?: WorkState; details?: (string | null)[]; list?: boolean; quiet?: boolean; shown?: number };
 
-export function StationTrack({ stations, state, details, list }: TrackProps) {
+export function StationTrack({ stations, state, details, list, quiet, shown }: TrackProps) {
   const current = currentStationIndex(stations);
   return (
     // A row of boxes from 1080px (bp-desktop), a vertical list below (and on the boards that draw a list);
     // the region stays focusable for keyboard scrolling.
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-    <section className={list ? 'work-track work-track--list' : 'work-track'} aria-label="Stations" tabIndex={0}>
+    <section
+      className={`${list ? 'work-track work-track--list' : 'work-track'}${shown === 0 ? ' work-sr' : ''}`}
+      aria-label="Stations"
+      tabIndex={quiet || shown === 0 ? undefined : 0}
+    >
       <div className="psl-track" role="list">
         {stations.map((station, i) => {
           const { text, modifier } = STATIONS[station.status];
           const detail = details?.[i];
           // the station whose effect is uncertain is a solid amber block in the row (design owner, 14 Nov 2026)
           const uncertain = i === current && state === 'effect_uncertain' ? ' work-station--uncertain' : '';
+          // the phone boards draw only the first stations; the rest stay in the list for screen readers
+          const cut = shown !== undefined && i >= shown ? ' work-sr' : shown !== undefined && i === shown - 1 ? ' work-station--last' : '';
           return (
-            <div key={i} role="listitem" className={`psl-station psl-station--${modifier}${uncertain}`} aria-current={i === current ? 'step' : undefined}>
+            <div key={i} role="listitem" className={`psl-station psl-station--${modifier}${uncertain}${cut}`} aria-current={i === current ? 'step' : undefined}>
               <b>{String(i + 1).padStart(2, '0')}</b>
               <strong>{station.name}</strong>
               {detail ? (
@@ -147,7 +153,12 @@ function AgentSteps({ steps }: { steps: NonNullable<WorkItem['agent']['steps']> 
                 <span className="work-sr">{STEP_WORDS[kind]}: </span>
                 {step.text}
               </span>
-              {step.source && <span className="psl-step__ref psl-mono">Read: {step.source}</span>}
+              {step.source && (
+                <span className="psl-step__ref psl-mono">
+                  <span className="work-sr">Read: </span>
+                  {step.source}
+                </span>
+              )}
             </span>
           </li>
         );
@@ -190,8 +201,8 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
   );
 }
 
-function Mascot({ agent, role, className }: { agent: WorkItem['agent']; role?: string; className: string }) {
-  const src = agentImage(agent.name);
+function Mascot({ agent, role, className, pose }: { agent: WorkItem['agent']; role?: string; className: string; pose?: 'waiting' | 'working' }) {
+  const src = pose ? agentPose(agent.name, pose) : agentImage(agent.name);
   const name = agent.name ?? 'Agent';
   if (!src) {
     return (
@@ -200,7 +211,7 @@ function Mascot({ agent, role, className }: { agent: WorkItem['agent']; role?: s
       </span>
     );
   }
-  // eslint-disable-next-line @next/next/no-img-element -- a fixed 192px asset, as on My work
+  // eslint-disable-next-line @next/next/no-img-element -- a fixed small asset from public/agents, as on My work
   return <img className={className} src={src} alt={role ? `${name}, ${role}` : name} />;
 }
 
@@ -228,7 +239,8 @@ function AgentSection({ agent, view }: { agent: WorkItem['agent']; view: WorkIte
             <AgentName agent={agent} role={view?.role} />
           </span>
         </h2>
-        <small>{CANNOT}</small>
+        {/* only the default board draws the limits line; the others keep it for screen readers */}
+        <small className={view?.limits ? undefined : 'work-sr'}>{view?.limits ?? CANNOT}</small>
       </div>
       {steps.length > 0 && (
         <ol className="work-agentsec__steps">
@@ -261,21 +273,21 @@ function AgentBox({ agent, view, text }: { agent: WorkItem['agent']; view: WorkI
   const [open, setOpen] = useState(false);
   const stepsId = useId();
   const steps = agent.steps ?? [];
+  // `plain`: the board draws the note alone, so the name and role stay for screen readers only.
+  const plain = view?.plain;
   return (
     <section className="work-agentbox" aria-label="Agent at work">
       <div className="work-agentbox__row">
         <Mascot agent={agent} role={view?.role} className="work-mascot" />
         <div className="work-agentbox__text">
-          <AgentName agent={agent} role={view?.role} />
-          <br />
+          <span className={plain ? 'work-sr' : undefined}>
+            <AgentName agent={agent} role={view?.role} />
+            <br />
+          </span>
           {text}
-          {!text && <small>{CANNOT}</small>}
-          {text && (
-            <>
-              {' '}
-              <small>{CANNOT}</small>
-            </>
-          )}
+          {/* the phone boards draw no limits line; it stays for screen readers */}
+          {text && ' '}
+          <small className="work-sr">{CANNOT}</small>
           {steps.length > 0 && (
             <>
               {' '}
@@ -299,10 +311,13 @@ function AgentBox({ agent, view, text }: { agent: WorkItem['agent']; view: WorkI
 function AgentBanner({ agent, view, phone }: { agent: WorkItem['agent']; view: WorkItemPresentation['agent']; phone: boolean }) {
   return (
     <section className="work-banner" aria-label="Agent at work">
-      <Mascot agent={agent} role={view?.role} className="work-banner__img" />
+      <Mascot agent={agent} role={view?.role} className="work-banner__img" pose="waiting" />
       <div>
         {phone ? (
-          <p>{view?.summary}</p>
+          <p>
+            {/* the phone board sets the first sentence in bold */}
+            <strong>{view?.summary?.split(/(?<=\.)\s/)[0]}</strong> {view?.summary?.split(/(?<=\.)\s/).slice(1).join(' ')}
+          </p>
         ) : (
           <>
             {view?.headline && <strong>{view.headline}</strong>}
@@ -311,7 +326,8 @@ function AgentBanner({ agent, view, phone }: { agent: WorkItem['agent']; view: W
             ))}
           </>
         )}
-        <small>
+        {/* the boards draw no limits line here; it stays for screen readers */}
+        <small className="work-sr">
           {agent.name ?? 'Agent'}
           {view?.role && ` · ${view.role}`} · {CANNOT}
         </small>
@@ -329,7 +345,7 @@ function AgentPanel({ agent, view, panel }: { agent: WorkItem['agent']; view: Wo
   return (
     <aside className="work-agentpanel" aria-label={panel?.title ?? 'Agent at work'}>
       <div className="work-agentpanel__art">
-        <Mascot agent={agent} role={view?.role} className="work-agentpanel__img" />
+        <Mascot agent={agent} role={view?.role} className="work-agentpanel__img" pose="working" />
       </div>
       <div className="work-agentpanel__card">
         <section className="psl-agent work-agent" aria-label="Agent at work">
@@ -342,7 +358,7 @@ function AgentPanel({ agent, view, panel }: { agent: WorkItem['agent']; view: Wo
                 {view?.role && ` · ${view.role}`}
                 {agent.status === 'working' && now >= 0 && ` · step ${now + 1} of ${steps.length}`}
               </small>
-              <small>{CANNOT}</small>
+              <small className="work-sr">{CANNOT}</small>
             </span>
             {tag && <span className={`psl-tag psl-tag--${tag.tone}`}>{tag.text}</span>}
           </div>
@@ -389,7 +405,7 @@ function StatePanel({ panel, children }: { panel: NonNullable<WorkItemPresentati
   const headId = useId();
   const tone = panel.tone ?? 'dark';
   return (
-    <aside className={`work-statepanel work-statepanel--${tone}`} aria-labelledby={headId}>
+    <aside className={`work-statepanel work-statepanel--${tone}${panel.large_title ? ' work-statepanel--large' : ''}`} aria-labelledby={headId}>
       <h2 id={headId}>{panel.title}</h2>
       <div className="work-statepanel__body">
         {panel.lead && <p className="work-statepanel__lead">{panel.lead}</p>}
@@ -441,10 +457,11 @@ function PanelSummary({ summary }: { summary: NonNullable<NonNullable<WorkItemPr
 /** The phone boards' bottom bar: the state card's way onward. */
 function PhoneBar({ panel }: { panel: NonNullable<WorkItemPresentation['panel']> }) {
   const links = (panel.links ?? []).filter((l) => isAppPath(l.href));
-  if (links.length === 0) return null;
+  if (links.length === 0 && !panel.bar_slot) return null;
   return (
-    <div className="work-phonebar">
+    <div className={links.length === 0 ? 'work-phonebar work-phonebar--slot' : 'work-phonebar'}>
       <PanelLinks links={links} tone={panel.tone ?? 'dark'} />
+      {panel.bar_note && <p className="work-phonebar__note">{panel.bar_note}</p>}
     </div>
   );
 }
@@ -555,6 +572,7 @@ export function NextStep({ item }: { item: WorkItem }) {
     <p className={`psl-callout psl-callout--${nextStepKind(item.state)} work-next`}>
       <span>
         <strong>Next step.</strong> {item.next_step}
+        {/* F-06: the "See all exceptions" link attaches inside this text */}
       </span>
     </p>
   );
@@ -583,15 +601,15 @@ type Layout = {
 const LAYOUTS: Record<WorkState | 'task' | 'issue', Layout> = {
   task: { track: 'row', tag: 'inline', top: ['track'], desktop: { main: ['agent-section'], aside: [] }, phone: { main: ['track', 'agent-box'], aside: [] } },
   ready: { track: 'list', tag: 'end', top: [], desktop: { main: ['track'], aside: ['panel-agent'] }, phone: { main: ['track', 'agent-box'], aside: ['bar'] } },
-  processing: { track: 'list', tag: 'end', top: [], desktop: { main: ['track'], aside: ['agent-panel'] }, phone: { main: ['agent-panel', 'track'], aside: ['bar'] } },
+  processing: { track: 'list', tag: 'end', top: [], desktop: { main: ['track'], aside: ['agent-panel'] }, phone: { main: ['agent-panel', 'track'], aside: [] } },
   waiting: { track: 'list', tag: 'end', top: ['banner'], desktop: { main: ['track'], aside: ['panel'] }, phone: { main: ['banner', 'track'], aside: ['bar'] } },
   verified: { track: 'row', tag: 'inline', top: ['track'], desktop: { main: ['agent-section'], aside: ['panel'] }, phone: { main: ['track', 'summary'], aside: ['bar'] } },
-  issue: { track: 'list', tag: 'end', top: [], desktop: { main: ['preview', 'track'], aside: ['panel'] }, phone: { main: ['preview', 'summary', 'track'], aside: ['bar'] } },
+  issue: { track: 'list', tag: 'end', top: [], desktop: { main: ['preview'], aside: ['panel'] }, phone: { main: ['preview', 'summary'], aside: ['bar'] } },
   cancelled: { track: 'list', tag: 'end', top: [], desktop: { main: ['track'], aside: ['panel'] }, phone: { main: ['summary', 'track'], aside: ['bar'] } },
   owner_needed: { track: 'row', tag: 'inline', top: ['track'], desktop: { main: ['agent-section'], aside: ['panel'] }, phone: { main: ['agent-box', 'track'], aside: ['bar'] } },
   setup_needed: { track: 'list', tag: 'end', top: [], desktop: { main: ['track'], aside: ['panel'] }, phone: { main: ['summary', 'track'], aside: ['bar'] } },
   effect_uncertain: { track: 'row', tag: 'inline', top: ['track'], desktop: { main: ['agent-section'], aside: ['panel'] }, phone: { main: ['track', 'agent-box'], aside: ['bar'] } },
-  awaiting_reconciliation: { track: 'list', tag: 'end', top: [], desktop: { main: ['track'], aside: ['panel'] }, phone: { main: [], aside: ['track', 'bar'] } },
+  awaiting_reconciliation: { track: 'list', tag: 'end', top: [], desktop: { main: ['track'], aside: ['panel'] }, phone: { main: ['summary'], aside: ['bar'] } },
   // no board yet: the default board's order
   action_needed: { track: 'row', tag: 'inline', top: ['track'], desktop: { main: ['agent-section'], aside: ['panel'] }, phone: { main: ['track', 'agent-box'], aside: ['bar'] } },
   followup_needed: { track: 'row', tag: 'inline', top: ['track'], desktop: { main: ['agent-section'], aside: ['panel'] }, phone: { main: ['track', 'agent-box'], aside: ['bar'] } },
@@ -610,7 +628,7 @@ export function boardLayout(item: WorkItem): Layout | undefined {
 
 export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
   const phone = useIsPhone();
-  const view = presentationOf(item);
+  const view = viewFor(presentationOf(item), phone);
   const layout = boardLayout(item);
   const { agent } = item;
   const panel = view?.panel;
@@ -634,15 +652,15 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
   if (view && layout) {
     const order = phone ? layout.phone : layout.desktop;
     const top = phone ? [] : layout.top;
-    const mainBlocks = [...order.main];
-    // Contract data is never dropped: an agent the board does not draw gets the default card.
-    if (agent.status !== 'none' && ![...top, ...order.main, ...order.aside].some((b) => AGENT_BLOCKS.has(b))) {
-      mainBlocks.push(phone ? 'agent-box' : 'agent-section');
-    }
+    const drawn = [...top, ...order.main, ...order.aside];
+    // Contract data is never dropped: what the board does not draw stays in the page for screen readers only.
+    const quiet: Block[] = [];
+    if (!drawn.includes('track')) quiet.push('track');
+    if (agent.status !== 'none' && !drawn.some((b) => AGENT_BLOCKS.has(b))) quiet.push('agent-section');
     const block = (b: Block): ReactNode => {
       switch (b) {
         case 'track':
-          return <StationTrack key={b} stations={item.stations} state={item.state} details={view.stations} list={phone || layout.track === 'list'} />;
+          return <StationTrack key={b} stations={item.stations} state={item.state} details={view.stations} list={phone || layout.track === 'list'} quiet={quiet.includes('track')} shown={view.stations_shown} />;
         case 'agent-section':
           return agent.status === 'none' ? null : <AgentSection key={b} agent={agent} view={view.agent} />;
         case 'agent-box':
@@ -675,13 +693,23 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
         {top.map(block)}
       </>
     );
-    main = mainBlocks.map(block);
+    main = (
+      <>
+        {order.main.map(block)}
+        {quiet.length > 0 && <div className="work-sr">{quiet.map(block)}</div>}
+      </>
+    );
     aside = order.aside.map(block);
-    after = <NextStep item={item} />;
+    // the boards draw no separate next-step block; the text stays for screen readers (F-06 attaches inside it)
+    after = (
+      <div className="work-sr">
+        <NextStep item={item} />
+      </div>
+    );
   }
 
   return (
-    <div className={layout ? `work-overview work-board work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : 'work-overview'}>
+    <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : 'work-overview'}>
       {before}
       <div className="work-columns">
         <div className="work-column">{main}</div>

@@ -91,6 +91,29 @@
         "text": "Held at design sign-off: PSL hasn't set up who gives it. It resumes as soon as Setup has the role and rule.",
         "kind": "problem"
       }
+    },
+    "eyebrow": "PLN-0151 · OJO FOODS",
+    "phone": {
+      "panel": {
+        "title": "Setup needed",
+        "tone": "signal",
+        "body": [
+          "This plan needs a design sign-off, but PSL hasn't set up who gives it: there is no Design Lead role and no rule saying which role signs off UI design.",
+          "Nothing is lost. The plan resumes at this station as soon as the role and rule exist."
+        ],
+        "note": "This is a business decision for PSL, not something the factory guesses.",
+        "links": [
+          {
+            "label": "Open Setup",
+            "href": "/setup"
+          }
+        ],
+        "summary": {
+          "text": "Held at design sign-off: PSL hasn't set up who gives it. It resumes as soon as Setup has the role and rule.",
+          "kind": "problem"
+        }
+      },
+      "title": "Ojo Foods · ordering app\nplan"
     }
   }
 }

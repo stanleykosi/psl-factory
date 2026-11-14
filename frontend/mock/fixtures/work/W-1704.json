@@ -95,6 +95,19 @@
         "Lagoon Health has had the UAT pack since 06 Nov. Their response is due 14 Nov (from the release plan).",
         "Tola will send a reminder from your mailbox on 13 Nov if nothing arrives. When the client replies, record it here with the proof."
       ]
+    },
+    "eyebrow": "REL-0077 · LAGOON HEALTH",
+    "phone": {
+      "stations_shown": 0,
+      "panel": {
+        "title": "Waiting on the client",
+        "tone": "waiting",
+        "body": [
+          "Lagoon Health has had the UAT pack since 06 Nov. Their response is due 14 Nov (from the release plan).",
+          "Tola will send a reminder from your mailbox on 13 Nov if nothing arrives. When the client replies, record it here with the proof."
+        ],
+        "bar_slot": true
+      }
     }
   }
 }

@@ -113,6 +113,24 @@
           "href": "/assistant"
         }
       ]
+    },
+    "eyebrow": "INV-0412 · LAGOON HEALTH",
+    "phone": {
+      "title": "Lagoon Health · Milestone\n2 invoice",
+      "stations": [
+        null,
+        null,
+        "Chidi · working",
+        "Next",
+        "—",
+        "—",
+        "—"
+      ],
+      "stations_shown": 5,
+      "panel": {
+        "title": "Drafting the invoice",
+        "body": []
+      }
     }
   }
 }

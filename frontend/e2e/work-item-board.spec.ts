@@ -70,7 +70,7 @@ for (const [label, viewport] of [
         await expect(page.locator('h1')).toHaveCount(1);
         const size = await page.locator('main h1').evaluate((el) => getComputedStyle(el).fontSize);
         const phoneSize = path.endsWith('/history') ? '20px' : path === '/work/W-1099' ? '24px' : '22px';
-        expect(size).toBe(viewport === DESKTOP ? (path === '/work/W-1099' ? '30px' : '40px') : phoneSize);
+        expect(size).toBe(viewport === DESKTOP ? (path === '/work/W-1099' ? '33px' : '40px') : phoneSize);
         expect(await page.locator('main h1').evaluate((el) => el.classList.contains('shell-title'))).toBe(true);
       });
     }
@@ -118,9 +118,9 @@ test.describe('focus outlines (AC 20)', () => {
   test('desktop: tabs, panel link, filter and history controls', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await go(page, '/work/W-1705', 'finance_lead');
-    expect(await tabTo(page, page.getByRole('navigation', { name: 'Work item' }).getByRole('link', { name: /History/ }))).toEqual(ring);
     expect(await tabTo(page, page.getByRole('link', { name: 'See in Verified outputs' }))).toEqual(ring);
     await go(page, '/work/W-1705/history', 'finance_lead');
+    expect(await tabTo(page, page.getByRole('navigation', { name: 'Work item' }).getByRole('link', { name: 'Overview' }))).toEqual(ring);
     expect(await tabTo(page, page.getByRole('radio', { name: 'All 7' }))).toEqual(ring);
     expect(await tabTo(page, page.getByLabel('Rows per page'))).toEqual(ring);
   });
@@ -172,7 +172,11 @@ test.describe('history on the boards (AC 18)', () => {
     await go(page, '/work/W-1705/history', 'finance_lead');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('History · INV-0412');
     await expect(page.locator('main').getByText('HISTORY', { exact: true })).toBeVisible();
-    await expect(page.getByRole('list', { name: 'History, newest first' }).getByRole('listitem')).toHaveCount(7);
+    // the phone board lists the five newest entries; "+ 2 earlier entries" shows the rest in place
+    const cards = page.getByRole('list', { name: 'History, newest first' }).getByRole('listitem');
+    await expect(cards).toHaveCount(5);
+    await page.getByRole('button', { name: '+ 2 earlier entries' }).click();
+    await expect(cards).toHaveCount(7);
   });
 });
 

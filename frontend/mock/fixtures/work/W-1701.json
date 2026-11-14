@@ -159,8 +159,24 @@
       "summary": "Chidi drafted v2 from 3 sources.",
       "message": [
         "Chidi drafted invoice v2. It is marked DRAFTED, not REVIEWED, until a Finance Lead decides."
-      ]
+      ],
+      "limits": "Prepares drafts. Cannot approve, send or pay."
     },
-    "task_note": "Approving earns APPROVED only. SENT is earned at station 6."
+    "task_note": "Approving earns APPROVED only. SENT is earned at station 6.",
+    "phone": {
+      "title": "Lagoon Health · Milestone 2 invoice",
+      "stations": [
+        "Done",
+        "Done",
+        "Done",
+        "You · 2h",
+        "Next",
+        "—",
+        "—"
+      ],
+      "agent": {
+        "plain": true
+      }
+    }
   }
 }

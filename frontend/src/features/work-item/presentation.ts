@@ -10,10 +10,16 @@ export type PanelLink = { label: string; href: string; primary?: boolean };
 export type WorkItemPresentation = {
   /** Phone history back link, e.g. "Invoice"; "Work item" when absent. */
   back_label?: string;
+  /** The line above the title on the state boards ("INV-0412 · LAGOON HEALTH"); the breadcrumb when absent. */
+  eyebrow?: string;
+  /** Wording the phone boards draw differently ("M2 invoice"); each field replaces the desktop one below 720px. */
+  phone?: PhonePresentation;
   /** Visible detail per fact ("v2", "Ada", "To client 06 Nov"); an unknown fact still reads Unknown. */
   facts?: Partial<Record<FactName, string>>;
   /** Visible detail per station index ("Approved 10:47", "Held · no reviewer"). */
   stations?: (string | null)[];
+  /** Phone only: the boards draw just the first N stations (the others stay for screen readers). */
+  stations_shown?: number;
   agent?: {
     /** "Finance agent", "PMO agent". */
     role?: string;
@@ -21,6 +27,10 @@ export type WorkItemPresentation = {
     summary?: string;
     /** Bold first line of the waiting banner. */
     headline?: string;
+    /** The limits line the default board draws at the end of the agent's head ("Prepares drafts. Cannot approve, send or pay."). */
+    limits?: string;
+    /** Phone: the note is drawn without the agent's name and role. */
+    plain?: boolean;
     /** The agent card text, one entry per paragraph. */
     message?: string[];
   };
@@ -36,6 +46,12 @@ export type WorkItemPresentation = {
     rows?: { label: string; value: string }[];
     /** Small print under the links. */
     note?: string;
+    /** The board sets this card's heading larger, so it wraps in the narrow column. */
+    large_title?: boolean;
+    /** Phone: the board pins a bar here whose control belongs to another feature; the bar's room is kept. */
+    bar_slot?: boolean;
+    /** Phone: small print under the bar's buttons. */
+    bar_note?: string;
     /** Navigation only: rendered when the href is an app path. */
     links?: PanelLink[];
     /** The phone boards' shorter version; a callout when `kind` is set, else a plain line. */
@@ -60,6 +76,20 @@ export type WorkItemPresentation = {
   /** Entry counts per history filter, for the tab and filter badges. */
   history_counts?: Record<HistoryKind, number>;
 };
+
+export type PhonePresentation = Partial<Pick<WorkItemPresentation, 'facts' | 'stations' | 'stations_shown' | 'agent' | 'panel' | 'preview'>> & {
+  /** The phone boards' shorter title ("Lagoon Health · M2 invoice"). */
+  title?: string;
+};
+
+/** The presentation as seen at this width: below 720px the phone block's fields replace the desktop ones. */
+export function viewFor(view: WorkItemPresentation | undefined, phone: boolean): WorkItemPresentation | undefined {
+  if (!view || !phone || !view.phone) return view;
+  // the phone title is read by the header; the rest replaces the desktop fields
+  const over: Partial<WorkItemPresentation> = { ...view.phone };
+  delete (over as { title?: string }).title;
+  return { ...view, ...over, agent: { ...view.agent, ...over.agent } };
+}
 
 /** PROPOSAL: extra detail lines on a history entry ("Note: …", "Used: …"). */
 export type BoardHistoryEntry = HistoryEntry & { lines?: string[] };

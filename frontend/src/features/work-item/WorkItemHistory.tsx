@@ -2,7 +2,7 @@
 
 // SCR-02 History: read-only (INV-AUDIT). The only controls are the filter, rows per page, Show more and
 // Try again. Restricted entries show who and when only (INV-RESTRICTED).
-import { useRef, type KeyboardEvent } from 'react';
+import { useRef, useState, type KeyboardEvent } from 'react';
 
 import { LoadingState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
@@ -107,7 +107,7 @@ function HistoryRow({ entry, inline }: { entry: BoardHistoryEntry; inline: boole
 }
 
 /** Phone: one card per entry, the time and version on its first line (SCR-02-mobile-history). */
-function HistoryCard({ entry }: { entry: BoardHistoryEntry }) {
+function HistoryCard({ entry, board }: { entry: BoardHistoryEntry; board: boolean }) {
   const tag = ACTOR_TAGS[entry.actor_kind];
   return (
     <div role="listitem" className="work-hcard">
@@ -116,7 +116,8 @@ function HistoryCard({ entry }: { entry: BoardHistoryEntry }) {
         {(!entry.restricted && entry.version) || '—'}
       </span>
       <div className="work-who">
-        <span className={tag.className}>{tag.text}</span>
+        {/* the phone board draws the actor without the kind tag or the extra lines; they stay for screen readers */}
+        <span className={board ? `${tag.className} work-sr` : tag.className}>{tag.text}</span>
         <span>{entry.actor}</span>
       </div>
       {entry.restricted ? (
@@ -128,7 +129,7 @@ function HistoryCard({ entry }: { entry: BoardHistoryEntry }) {
             {entry.detail && ` ${entry.detail}`}
           </span>
           {entry.lines?.map((line, i) => (
-            <span key={i} className="work-line">
+            <span key={i} className={board ? 'work-line work-sr' : 'work-line'}>
               {line}
             </span>
           ))}
@@ -138,11 +139,33 @@ function HistoryCard({ entry }: { entry: BoardHistoryEntry }) {
   );
 }
 
+// the phone board lists the five newest entries and "+ N earlier entries" for the rest
+const PHONE_BOARD_ROWS = 5;
+
 type HistoryProps = { id: string; revision: number; counts?: Counts; phone?: boolean };
 
 export function WorkItemHistory({ id, revision, counts, phone = false }: HistoryProps) {
   const { state, kind, setKind, limit, setLimit, retry, showMore } = useWorkHistory(id, revision);
   const ready = state.status === 'ready' ? state : undefined;
+  const [expanded, setExpanded] = useState(false);
+  const board = phone && counts !== undefined;
+  const hidden = board && !expanded && ready ? Math.max(0, ready.items.length - PHONE_BOARD_ROWS) : 0;
+
+  // On the desktop board the paging controls sit in the side column, under the callout, where the board draws its own.
+  const side = counts !== undefined && !phone;
+  const limitControl = (
+    <label className="work-limit">
+      <span>Rows per page</span>
+      <select className="psl-input" value={limit} onChange={(e) => setLimit(Number(e.target.value) as HistoryLimit)}>
+        {HISTORY_LIMITS.map((n) => (
+          <option key={n} value={n}>
+            {n}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+  const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatWat(ready.asOf)}</p>;
 
   let body;
   if (state.status === 'loading') body = <LoadingState />;
@@ -163,8 +186,8 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
   } else if (phone) {
     body = (
       <div className="work-hcards" role="list" aria-label="History, newest first">
-        {state.items.map((entry, i) => (
-          <HistoryCard key={i} entry={entry} />
+        {(hidden > 0 ? state.items.slice(0, PHONE_BOARD_ROWS) : state.items).map((entry, i) => (
+          <HistoryCard key={i} entry={entry} board={board} />
         ))}
       </div>
     );
@@ -199,28 +222,20 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
         {body}
         {/* rows per page, then Show more: the approved paging footer (D-PAGING r2), under the list */}
         <div className="work-historyfoot">
-          <label className="work-limit">
-            <span>Rows per page</span>
-            <select className="psl-input" value={limit} onChange={(e) => setLimit(Number(e.target.value) as HistoryLimit)}>
-              {HISTORY_LIMITS.map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </label>
-          {ready?.nextCursor && (
+          {!board && !side && limitControl}
+          {(ready?.nextCursor || hidden > 0) && (
             <div className="psl-showmore">
-              <span>Showing {ready.items.length}</span>
+              {!board && <span>Showing {ready!.items.length}</span>}
               <button
                 type="button"
-                className={ready.more === 'loading' ? 'psl-btn psl-btn--text is-busy' : 'psl-btn psl-btn--text'}
-                aria-disabled={ready.more === 'loading' || undefined}
+                className={ready!.more === 'loading' ? 'psl-btn psl-btn--text is-busy' : 'psl-btn psl-btn--text'}
+                aria-disabled={ready!.more === 'loading' || undefined}
                 onClick={() => {
-                  if (ready.more !== 'loading') void showMore();
+                  if (hidden > 0) setExpanded(true);
+                  else if (ready!.more !== 'loading') void showMore();
                 }}
               >
-                {phone && counts ? `+ ${counts[kind] - ready.items.length} earlier entries` : 'Show more'}
+                {board ? `+ ${counts[kind] - (ready!.items.length - hidden)} earlier entries` : 'Show more'}
               </button>
             </div>
           )}
@@ -231,9 +246,9 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
             <span>We couldn&rsquo;t load more entries. Choose Show more to try again.</span>
           </div>
         )}
-        {ready && ready.items.length > 0 && <p className="work-note">As of {formatWat(ready.asOf)}</p>}
+        {!side && asOf}
       </div>
-      <aside className="work-column" aria-label="About history">
+      <aside className={board ? 'work-column work-sr' : 'work-column'} aria-label="About history">
         <section className="psl-panel">
           <h2 className="psl-panel__head">About history</h2>
           <div className="psl-panel__body">
@@ -250,6 +265,12 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
             with who and when.
           </span>
         </div>
+        {side && (
+          <div className="work-historymeta">
+            {limitControl}
+            {asOf}
+          </div>
+        )}
       </aside>
     </div>
   );

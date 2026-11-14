@@ -222,14 +222,12 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
   const strs = { type: 'array', items: str };
   const link = { type: 'object', additionalProperties: false, required: ['label', 'href'], properties: { label: str, href: str, primary: { type: 'boolean' } } };
   const factNames = ['drafted', 'reviewed', 'approved', 'sent', 'receipt_recorded', 'verified'];
-  const presentationSchema = {
-    type: 'object',
-    additionalProperties: false,
-    properties: {
-      back_label: str,
+  // the fields the phone block may replace are the same shapes as the desktop ones
+  const shared = {
       facts: { type: 'object', additionalProperties: false, properties: Object.fromEntries(factNames.map((n) => [n, str])) },
       stations: { type: 'array', items: { anyOf: [str, { type: 'null' }] } },
-      agent: { type: 'object', additionalProperties: false, properties: { role: str, summary: str, headline: str, message: strs } },
+      stations_shown: { type: 'integer', minimum: 0 },
+      agent: { type: 'object', additionalProperties: false, properties: { role: str, summary: str, headline: str, limits: str, plain: { type: 'boolean' }, message: strs } },
       panel: {
         type: 'object',
         additionalProperties: false,
@@ -242,6 +240,9 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
           quote: str,
           rows: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['label', 'value'], properties: { label: str, value: str } } },
           note: str,
+          large_title: { type: 'boolean' },
+          bar_slot: { type: 'boolean' },
+          bar_note: str,
           links: { type: 'array', items: link },
           summary: { type: 'object', additionalProperties: false, required: ['text'], properties: { text: str, kind: { enum: ['info', 'warning', 'problem'] } } },
         },
@@ -263,6 +264,15 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
           basis: str,
         },
       },
+  };
+  const presentationSchema = {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      back_label: str,
+      eyebrow: str,
+      ...shared,
+      phone: { type: 'object', additionalProperties: false, properties: { title: str, ...shared } },
       task_note: str,
       history_counts: {
         type: 'object',

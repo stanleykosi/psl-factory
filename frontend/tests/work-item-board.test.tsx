@@ -93,6 +93,20 @@ describe('header (AC 9) and titles (AC 5)', () => {
     expect(screen.getByText('revision 1')).toBeTruthy();
     expect(document.querySelector('header.work-header')!.textContent).not.toContain('Started by');
   });
+
+  it('board overviews draw no tabs and no next-step block; the next step stays for screen readers', async () => {
+    await open('W-1701');
+    expect(screen.queryByRole('navigation', { name: 'Work item' })).toBeNull();
+    const next = document.querySelector('.work-next')!;
+    expect(next.textContent).toContain('A Finance Lead decides invoice v2.');
+    expect(next.closest('.work-sr')).not.toBeNull();
+  });
+
+  it('the state boards draw the reference and client line instead of the breadcrumb', async () => {
+    await open('W-1703');
+    expect(screen.queryByRole('navigation', { name: 'Breadcrumb' })).toBeNull();
+    expect(screen.getByText('INV-0412 · LAGOON HEALTH')).toBeTruthy();
+  });
 });
 
 describe('phone back link in the frame slot (AC 4)', () => {
@@ -224,7 +238,7 @@ describe('agent card (AC 11)', () => {
     expect(text).toContain(message);
     expect(text).toContain('Cannot approve, send or pay.');
     if (role) {
-      const img = document.querySelector(`img[src="/agents/${name.toLowerCase()}.png"]`)!;
+      const img = document.querySelector(`img[src^="/agents/${name.toLowerCase()}"]`)!;
       expect(img.getAttribute('alt')).toBe(`${name}, ${role}`);
     }
     const scope = cards[0].closest('.work-agentpanel') ?? cards[0];
@@ -385,8 +399,11 @@ describe('history on the boards (AC 18)', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History · INV-0412');
     expect(screen.getByText('HISTORY')).toBeTruthy();
     const cards = within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem');
-    expect(cards).toHaveLength(7);
+    // the phone board lists the five newest entries; "+ 2 earlier entries" shows the rest in place
+    expect(cards).toHaveLength(5);
     expect(cards[0].textContent).toContain('12 Nov 16:40 · ');
+    fireEvent.click(screen.getByRole('button', { name: '+ 2 earlier entries' }));
+    expect(within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem')).toHaveLength(7);
   });
 
   it('with counts the phone button reads "+ N earlier entries"; without counts "Show more" and no badges', async () => {

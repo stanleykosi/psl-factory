@@ -90,6 +90,20 @@
       null,
       null,
       "—"
-    ]
+    ],
+    "eyebrow": "INV-0412 · LAGOON HEALTH",
+    "phone": {
+      "stations_shown": 0,
+      "panel": {
+        "title": "Confirm what happened",
+        "body": [],
+        "bar_slot": true,
+        "summary": {
+          "text": "No receipt found after 6 checks. Confirm what happened before anything is resent.",
+          "kind": "warning"
+        }
+      },
+      "title": "Lagoon Health · Milestone\n2 invoice"
+    }
   }
 }
