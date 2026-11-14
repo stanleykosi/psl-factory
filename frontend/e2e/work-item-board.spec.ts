@@ -180,3 +180,17 @@ test.describe('history on the boards (AC 18)', () => {
   });
 });
 
+
+// A non-board item with no started line keeps "revision N" and the Overview/History tabs side by side.
+test('tabs do not cover the sub-line on an item without a started line', async ({ page }) => {
+  await page.setViewportSize(DESKTOP);
+  await go(page, '/work/W-1002', 'finance_lead');
+  const sub = page.locator('.work-crumbrow .work-sub');
+  const tabs = page.locator('.work-crumbrow .work-tabs');
+  await expect(sub).toContainText(/revision/i);
+  await expect(sub).toBeVisible();
+  await expect(tabs).toBeVisible();
+  const a = (await sub.boundingBox())!;
+  const b = (await tabs.boundingBox())!;
+  expect(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y).toBe(true);
+});

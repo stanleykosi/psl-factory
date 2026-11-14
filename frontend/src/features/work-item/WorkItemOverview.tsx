@@ -657,6 +657,8 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
   const layout = boardLayout(item);
   const { agent } = item;
   const panel = view?.panel;
+  // the exception boards draw "See all exceptions" as a secondary button in the item's own panel on desktop (F-09's panel and the phone bar keep it below)
+  const inPanel = !phone && hasExceptionsLink(item) && panel !== undefined && item.state !== 'awaiting_reconciliation';
 
   // Without a presentation block: the F-03 layout.
   let before: ReactNode = (
@@ -698,8 +700,8 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
           // the effect-uncertain desktop board draws "See all exceptions" as a button between the facts and the small print
           return panel ? (
             <StatePanel key={b} panel={panel}>
-              {!phone && item.state === 'effect_uncertain' && (
-                <Link className="psl-btn psl-btn--secondary psl-btn--lg" href="/exceptions">
+              {inPanel && (
+                <Link className="psl-btn psl-btn--secondary psl-btn--lg work-exceptions" href="/exceptions">
                   See all exceptions
                 </Link>
               )}
@@ -737,8 +739,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
     // The boards draw no next-step block; the text stays for screen readers. The processing desktop board draws
     // its line as small print, and the exception states keep "See all exceptions" visible (never inside hidden text).
     const nextDrawn = !phone && item.state === 'processing';
-    const exceptionsButton = !phone && item.state === 'effect_uncertain' && panel !== undefined;
-    after = (
+        after = (
       <>
         {nextDrawn ? (
           <p className="work-note">
@@ -750,10 +751,10 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
             <NextStep item={item} quiet />
           </div>
         )}
-        {hasExceptionsLink(item) && !exceptionsButton && (
-          <p className="work-note">
-            <Link href="/exceptions">See all exceptions</Link>
-          </p>
+        {hasExceptionsLink(item) && !inPanel && (
+          <Link className="psl-btn psl-btn--secondary psl-btn--lg work-exceptions" href="/exceptions">
+            See all exceptions
+          </Link>
         )}
       </>
     );

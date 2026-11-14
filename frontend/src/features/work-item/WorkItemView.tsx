@@ -70,8 +70,10 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
         {!phone && (
           <div className="work-crumbrow">
             {crumb}
-            {!started && sub}
-            {!history && tabs}
+            <div className="work-crumbright">
+              {!started && sub}
+              {!history && tabs}
+            </div>
           </div>
         )}
         {phone && base && <span className="work-barref psl-mono">{history ? 'HISTORY' : item.reference}</span>}
