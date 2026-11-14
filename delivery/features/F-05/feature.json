@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-05",
   "outcome": "Start work: pick a line, fill its intake in a drawer, land on the new work item",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2A"
   ],
@@ -81,6 +81,18 @@
       "at": "2026-11-14T04:01:12Z",
       "seconds": 52.6,
       "evidence_ref": "delivery/features/F-05/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T05:57:18Z",
+      "seconds": 311.5,
+      "evidence_ref": "delivery/features/F-05/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -265,14 +277,28 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -288,14 +314,28 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -311,14 +351,28 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -357,14 +411,28 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -380,14 +448,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -403,14 +485,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -426,14 +522,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -449,14 +559,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -472,14 +596,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -495,14 +633,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -518,14 +670,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -541,14 +707,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -564,14 +744,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -587,14 +781,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -610,14 +818,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     },
     {
@@ -633,14 +855,28 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T04:39:11Z",
           "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:57:18Z",
+          "refs": [
+            "cc3e185"
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc3e185"
       ]
     }
   ],
@@ -730,9 +966,9 @@
     "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M2A",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "2443664540147f9fc23537d9a6fcc2fc63589478",
+    "base_sha": "bc48a913b366a5104bd77f3b92e751072e12193b",
     "task_branch": "fe-m2a-start-work-pick-a-line-fill-its-intake-i",
-    "head_sha": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+    "head_sha": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-05",
     "pr_url": null,
     "pr_number": null,
@@ -865,6 +1101,14 @@
       "round": 2,
       "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T05:57:20Z",
+      "round": 2,
+      "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "reason": null
     }
   ],
   "routing": {
@@ -882,9 +1126,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
   },
   "blocked": null
 }
