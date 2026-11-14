@@ -1,0 +1,1499 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T11:46:22.968Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-desktop-effect-uncertain.dc.html",
+  "boardName": "SCR-02-desktop-effect-uncertain.dc.html",
+  "pageUrl": "http://localhost:4511/work/W-1710",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 94.1 meets 90.",
+    "5 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 93.5,
+    "coverageWithExceptions": 100,
+    "visual": 94.1
+  },
+  "visual": {
+    "score": 94.1,
+    "allCellsScore": 97.5,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 3800,
+    "mismatchedCells": 225
+  },
+  "coverage": {
+    "total": 62,
+    "found": 58,
+    "coverage": 93.5,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 672
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 614
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "QUEUE / PREPARE AN INVOICE / INV-0412",
+        "pageName": "MY WORK / PREPARE AN INVOICE / INV-0412",
+        "pageRole": "text",
+        "similarity": 82,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 300,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "pageName": "Lagoon Health · Milestone 2 invoice",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 34px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 109,
+          "w": 746,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 110,
+          "w": 787,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "EFFECT UNCERTAIN",
+        "pageName": "EFFECT UNCERTAIN",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 848,
+          "y": 114,
+          "w": 133,
+          "h": 25
+        },
+        "pageBox": {
+          "x": 889,
+          "y": 115,
+          "w": 137,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "pageName": "v2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 314,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 314,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada",
+        "pageName": "Ada",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 314,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 314,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 524,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 524,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10:47",
+        "pageName": "10:47",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 524,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 524,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 734,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "pageName": "Unknown",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 734,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 944,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 944,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 944,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 944,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1154,
+          "y": 181,
+          "w": 180,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 1154,
+          "y": 181,
+          "w": 182,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1154,
+          "y": 199,
+          "w": 180,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1154,
+          "y": 199,
+          "w": 182,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "01",
+        "pageName": "01",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 102,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone evidence",
+        "pageName": "Milestone evidence",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 102,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Done",
+        "pageName": "Done",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 102,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "02",
+        "pageName": "02",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 282,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 282,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Contract amount",
+        "pageName": "Contract amount",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 282,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 282,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Done",
+        "pageName": "Done",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 282,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 282,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "03",
+        "pageName": "03",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 462,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 462,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Draft invoice",
+        "pageName": "Draft invoice",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 462,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 462,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Done",
+        "pageName": "Done",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 462,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 462,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "04",
+        "pageName": "04",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 642,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 642,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance review",
+        "pageName": "Finance review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 642,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 642,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approved 10:47",
+        "pageName": "Approved 10:47",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 642,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 642,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "05",
+        "pageName": "05",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 822,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 822,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Issue",
+        "pageName": "Issue",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 822,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 822,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Issued 10:52",
+        "pageName": "Issued 10:52",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 822,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 822,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "06",
+        "pageName": "06",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1002,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 1002,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Deliver",
+        "pageName": "Deliver",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1002,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1002,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Checking delivery",
+        "pageName": "Checking delivery",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1002,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1002,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "07",
+        "pageName": "07",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1182,
+          "y": 266,
+          "w": 154,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 1182,
+          "y": 266,
+          "w": 156,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verify",
+        "pageName": "Verify",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1182,
+          "y": 286,
+          "w": 154,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1182,
+          "y": 286,
+          "w": 156,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waits",
+        "pageName": "Waits",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1182,
+          "y": 309,
+          "w": 154,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1182,
+          "y": 309,
+          "w": 156,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Chidi · Finance agent",
+        "pageName": "Chidi · Finance agent",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 156,
+          "y": 385,
+          "w": 131,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 375,
+          "w": 185,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The email provider didn't answer when the invoice was sent at 11:02, so we don't know yet whether Lagoon Health received it.",
+        "pageName": "The email provider didn't answer when the invoice was sent at 11:02, so we don't know yet whether Lagoon Health received it.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 442,
+          "w": 882,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 441,
+          "w": 882,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "I'm checking for a delivery receipt using the invoice's reference, so it can never be sent twice. Checked 2 times; next check at 11:10.",
+        "pageName": "I'm checking for a delivery receipt using the invoice's reference, so it can never be sent twice. Checked 2 times; next check at 11:10.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 474,
+          "w": 882,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 472,
+          "w": 882,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Awaiting reconciliation",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 360,
+          "w": 324,
+          "h": 312
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 360,
+          "w": 324,
+          "h": 256
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "AWAITING RECONCILIATION",
+        "pageName": "AWAITING RECONCILIATION",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "letter width 112% on the board, 100% on the page",
+          "background none on the board, #8A5A00 on the page"
+        ],
+        "boardBox": {
+          "x": 1046,
+          "y": 374,
+          "w": 288,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 1030,
+          "y": 362,
+          "w": 320,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Nothing has been resent.",
+        "pageName": "Nothing has been resent.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 436,
+          "w": 288,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1046,
+          "y": 424,
+          "w": 288,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sent at",
+        "pageName": "Sent at",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 466,
+          "w": 74,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1046,
+          "y": 455,
+          "w": 74,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11:02 · no reply",
+        "pageName": "11:02 · no reply",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1131,
+          "y": 466,
+          "w": 203,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1132,
+          "y": 455,
+          "w": 202,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Checks",
+        "pageName": "Checks",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 490,
+          "w": 74,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1046,
+          "y": 482,
+          "w": 74,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "2 · next at 11:10",
+        "pageName": "2 · next at 11:10",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1131,
+          "y": 490,
+          "w": 203,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1132,
+          "y": 482,
+          "w": 202,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "If not found",
+        "pageName": "If not found",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 514,
+          "w": 74,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1046,
+          "y": 509,
+          "w": 74,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance decides whether to resend",
+        "pageName": "Finance decides whether to resend",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1131,
+          "y": 514,
+          "w": 203,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1132,
+          "y": 509,
+          "w": 202,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT stays \"Unknown\", never \"No\", until the check finishes.",
+        "pageName": "SENT stays \"Unknown\", never \"No\", until the check finishes.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 620,
+          "w": 288,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 1046,
+          "y": 561,
+          "w": 288,
+          "h": 36
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Top-bar Start work belongs to F-05 (src/shell); not merged on the base. As D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Split part of the F-05 Start work button in the top bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "QUEUE",
+        "key": "link: QUEUE",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 36,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Boards name the crumb QUEUE, MY WORK or draw a REF · CLIENT eyebrow; the page keeps F-03's \"My work / line / ref\" crumb on every state (D-17).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See all exceptions",
+        "key": "link: See all exceptions",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1046,
+          "y": 562,
+          "w": 288,
+          "h": 46
+        },
+        "exception": {
+          "reason": "F-06 adds this link inside NextStep; F-14 does not edit NextStep.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"QUEUE / PREPARE AN INVOICE / INV-0412\"",
+        "kind": "Text",
+        "name": "QUEUE / PREPARE AN INVOICE / INV-0412",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 300,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Heading \"AWAITING RECONCILIATION\"",
+        "kind": "Heading",
+        "name": "AWAITING RECONCILIATION",
+        "boardBox": {
+          "x": 1046,
+          "y": 374,
+          "w": 288,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 1030,
+          "y": 362,
+          "w": 320,
+          "h": 47
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Waits\"; on the page it comes after Main area \"\""
+        ]
+      },
+      {
+        "label": "Text \"The email provider didn't answer when the invoice was sent at 11:02, so we don't know yet whether Lagoon Health received it.\"",
+        "kind": "Text",
+        "name": "The email provider didn't answer when the invoice was sent at 11:02, so we don't know yet whether Lagoon Health received it.",
+        "boardBox": {
+          "x": 106,
+          "y": 442,
+          "w": 882,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 441,
+          "w": 882,
+          "h": 22
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"Chidi · Finance agent\"; on the page it comes after Text \"Nothing has been resent.\""
+        ]
+      },
+      {
+        "label": "Pagination \"I'm checking for a delivery receipt using the invoice's reference, so it can never be sent twice. Checked 2 times; next check at 11:10.\"",
+        "kind": "Pagination",
+        "name": "I'm checking for a delivery receipt using the invoice's reference, so it can never be sent twice. Checked 2 times; next check at 11:10.",
+        "boardBox": {
+          "x": 106,
+          "y": 474,
+          "w": 882,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 472,
+          "w": 882,
+          "h": 22
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Nothing has been resent.\"; on the page it comes after Text \"11:02 · no reply\""
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1028,
+          "y": 360,
+          "w": 324,
+          "h": 312
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 360,
+          "w": 324,
+          "h": 256
+        },
+        "reasons": [
+          "order: on the board it comes after Pagination \"2 · next at 11:10\"; on the page it comes after Pagination \"I'm checking for a delivery receipt using the invoice's reference, so it can never be sent twice. Checked 2 times; next check at 11:10.\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 300,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "MY WORK",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 167,
+          "w": 1264,
+          "h": 63
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
