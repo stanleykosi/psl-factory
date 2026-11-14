@@ -8,11 +8,11 @@ import addFormats from 'ajv-formats';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
-import { startMockServer } from '../mock/server.mjs';
+import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
 
-// E-WORK-LIST is checked against the v3 package, which the readiness gate approved.
+// E-WORK-LIST is checked against the package the mock serves (OPENAPI_PATH).
 type Response = { content: { 'application/json': { schema: object } } };
-const openapi = JSON.parse(readFileSync(join(__dirname, '../../architecture/packages/v3/openapi.json'), 'utf8')) as {
+const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as {
   paths: { '/api/v1/work': { get: { responses: Record<string, Response> } } };
 };
 const responses = openapi.paths['/api/v1/work'].get.responses;
