@@ -1,0 +1,265 @@
+{
+  "items": [
+    {
+      "value": "P-0101",
+      "label": "Lagoon Health · patient app",
+      "case_id": "C-0101",
+      "case_revision": 6,
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    },
+    {
+      "value": "P-0102",
+      "label": "Harmattan Bank · mobile onboarding",
+      "case_id": "C-0102",
+      "case_revision": 3,
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0103",
+      "label": "Kora Logistics · fleet tracker",
+      "case_id": "C-0103",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0104",
+      "label": "Delta Foods · loyalty app",
+      "case_id": "C-0104",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0105",
+      "label": "Harbour Bank · statements portal",
+      "case_id": "C-0105",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0106",
+      "label": "Niger Mills · stock tracker",
+      "case_id": "C-0106",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0107",
+      "label": "Eko Transit · ticketing",
+      "case_id": "C-0107",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0108",
+      "label": "Sahel Telecom · self-care app",
+      "case_id": "C-0108",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0109",
+      "label": "Ikoyi Clinics · booking",
+      "case_id": "C-0109",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0110",
+      "label": "Benue Agro · farmer wallet",
+      "case_id": "C-0110",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0111",
+      "label": "Atlas Insurance · claims app",
+      "case_id": "C-0111",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0112",
+      "label": "Zuma Retail · point of sale",
+      "case_id": "C-0112",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0113",
+      "label": "Coral Energy · meter readings",
+      "case_id": "C-0113",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0114",
+      "label": "Ibadan Schools · parent app",
+      "case_id": "C-0114",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0115",
+      "label": "Keystone Realty · tenant portal",
+      "case_id": "C-0115",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0116",
+      "label": "Volta Shipping · port tracker",
+      "case_id": "C-0116",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0117",
+      "label": "Aso Hotels · guest app",
+      "case_id": "C-0117",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0118",
+      "label": "Lekki Fitness · member app",
+      "case_id": "C-0118",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0119",
+      "label": "Jos Dairy · route planner",
+      "case_id": "C-0119",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0120",
+      "label": "Calabar Ports · gate pass",
+      "case_id": "C-0120",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0121",
+      "label": "Owerri Medics · cold chain",
+      "case_id": "C-0121",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0122",
+      "label": "Kano Textiles · order desk",
+      "case_id": "C-0122",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0123",
+      "label": "Abuja Water · billing",
+      "case_id": "C-0123",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0124",
+      "label": "Enugu Motors · service booking",
+      "case_id": "C-0124",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0125",
+      "label": "Uyo Bank · agent network",
+      "case_id": "C-0125",
+      "case_revision": 1,
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    },
+    {
+      "value": "P-0126",
+      "label": "Ojo Foods · ordering app",
+      "sample": true,
+      "_personas": [
+        "ceo"
+      ]
+    }
+  ]
+}

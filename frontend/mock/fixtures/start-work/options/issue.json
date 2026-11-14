@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "value": "ISS-0233",
+      "label": "ISS-0233 · Login fails on older Android phones",
+      "sample": true,
+      "_parent": "P-0101",
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "ISS-0241",
+      "label": "ISS-0241 · Client test data late",
+      "sample": true,
+      "_parent": "P-0101",
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    }
+  ]
+}

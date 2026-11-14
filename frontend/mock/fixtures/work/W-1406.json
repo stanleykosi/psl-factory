@@ -1,0 +1,65 @@
+{
+  "id": "W-1406",
+  "title": "Harmattan Bank · Emergency change for an incident",
+  "line": "Emergency change for an incident",
+  "reference": "EMC-0012",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Prepare request",
+      "status": "current_agent"
+    },
+    {
+      "name": "Preauthorise",
+      "status": "not_started"
+    },
+    {
+      "name": "Execute",
+      "status": "not_started"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Reading what you entered",
+        "status": "working"
+      }
+    ]
+  },
+  "next_step": "Tola is preparing the preauthorisation request.",
+  "sample": true
+}

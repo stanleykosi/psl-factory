@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "key": "invoice",
+      "title": "Invoice preparation and delivery",
+      "subtitle": "From a completed milestone",
+      "group": "Client delivery",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "milestone",
+          "label": "Completed milestone",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "depends_on": "project",
+          "help": "Only milestones marked complete, with proof, are listed."
+        },
+        {
+          "name": "note",
+          "label": "Anything Chidi should know",
+          "type": "long_text",
+          "required": false,
+          "placeholder": "e.g. client wants the PO number on it"
+        }
+      ],
+      "next": {
+        "station_count": 7,
+        "agent": "chidi",
+        "decided_by": [
+          "Finance Lead"
+        ],
+        "summary": "Chidi drafts the invoice from the signed SOW; issue, delivery and verification are automatic.",
+        "journey_url": "/projects"
+      }
+    }
+  ],
+  "default_line": "invoice",
+  "as_of": "2026-11-14T09:00:00Z"
+}

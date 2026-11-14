@@ -1,0 +1,297 @@
+{
+  "items": [
+    {
+      "key": "invoice",
+      "title": "Invoice preparation and delivery",
+      "subtitle": "From a completed milestone",
+      "group": "Client delivery",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "milestone",
+          "label": "Completed milestone",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "depends_on": "project",
+          "help": "Only milestones marked complete, with proof, are listed."
+        },
+        {
+          "name": "note",
+          "label": "Anything Chidi should know",
+          "type": "long_text",
+          "required": false,
+          "placeholder": "e.g. client wants the PO number on it"
+        }
+      ],
+      "next": {
+        "station_count": 7,
+        "agent": "chidi",
+        "decided_by": [
+          "Finance Lead"
+        ],
+        "summary": "Chidi drafts the invoice from the signed SOW; issue, delivery and verification are automatic.",
+        "journey_url": "/projects"
+      }
+    },
+    {
+      "key": "weekly_report",
+      "title": "Reviewed weekly client report",
+      "subtitle": "Friday report for a client",
+      "group": "Client delivery",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "week",
+          "label": "Week",
+          "type": "date_range",
+          "required": true,
+          "help": "Must have ended; up to 8 days"
+        },
+        {
+          "name": "template",
+          "label": "Template",
+          "type": "display",
+          "required": false,
+          "value": "Client weekly report · test template v1"
+        }
+      ]
+    },
+    {
+      "key": "minutes",
+      "title": "Formal minutes and action handoff",
+      "subtitle": "After a meeting",
+      "group": "Client delivery",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "meeting",
+          "label": "Meeting",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "depends_on": "project"
+        },
+        {
+          "name": "audience",
+          "label": "Audience",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "internal",
+              "label": "Internal"
+            },
+            {
+              "value": "client",
+              "label": "Client"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "issue_followup",
+      "title": "Issue investigation and owner follow-up",
+      "subtitle": "Log and chase an issue",
+      "group": "Issues and changes",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "issue",
+          "label": "Issue",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "depends_on": "project",
+          "help": "Only open or in-progress issues can be chased."
+        }
+      ]
+    },
+    {
+      "key": "change_request",
+      "title": "Controlled change and signed closure",
+      "subtitle": "Scope or timeline change",
+      "group": "Issues and changes",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "request",
+          "label": "What the client asked for",
+          "type": "long_text",
+          "required": true,
+          "help": "Emergency changes for an incident use \"Emergency change\" instead."
+        }
+      ]
+    },
+    {
+      "key": "emergency_change",
+      "title": "Emergency change for an incident",
+      "subtitle": "Ask for preauthorisation",
+      "group": "Issues and changes",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "incident",
+          "label": "Incident",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "depends_on": "project"
+        },
+        {
+          "name": "plan",
+          "label": "Plan",
+          "type": "long_text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "escalation",
+      "title": "Escalate and communicate",
+      "subtitle": "From an open issue",
+      "group": "Issues and changes",
+      "case_scope": "project",
+      "case_field": "project",
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "project",
+          "label": "Project",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "placeholder": "Choose a project"
+        },
+        {
+          "name": "from_issue",
+          "label": "From issue",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options",
+          "depends_on": "project"
+        },
+        {
+          "name": "escalate_to",
+          "label": "Escalate to",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "internal",
+              "label": "Internal"
+            },
+            {
+              "value": "client",
+              "label": "To the client"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "leadership_report",
+      "title": "Leadership report",
+      "subtitle": "Tuesday or monthly",
+      "group": "Reporting",
+      "case_scope": "fixed",
+      "case_id": "C-PMO-REPORTING",
+      "case_revision": 4,
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "report",
+          "label": "Report",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "internal_tuesday",
+              "label": "Internal Tuesday"
+            },
+            {
+              "value": "monthly_executive",
+              "label": "Monthly executive"
+            }
+          ]
+        },
+        {
+          "name": "report_date",
+          "label": "Period",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "audience",
+          "label": "Audience",
+          "type": "display",
+          "required": false,
+          "value": "PMO staff"
+        }
+      ]
+    }
+  ],
+  "default_line": "invoice",
+  "as_of": "2026-11-14T09:00:00Z"
+}

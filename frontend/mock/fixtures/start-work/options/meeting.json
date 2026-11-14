@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "value": "MTG-0417",
+      "label": "Weekly sync · 17 Nov",
+      "sample": true,
+      "_parent": "P-0101",
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    }
+  ]
+}

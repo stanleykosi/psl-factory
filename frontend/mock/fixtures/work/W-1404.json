@@ -1,0 +1,65 @@
+{
+  "id": "W-1404",
+  "title": "Lagoon Health · Issue investigation and owner follow-up",
+  "line": "Issue investigation and owner follow-up",
+  "reference": "ISF-0078",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Investigate",
+      "status": "current_agent"
+    },
+    {
+      "name": "Find the owner",
+      "status": "not_started"
+    },
+    {
+      "name": "Follow up",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Reading what you entered",
+        "status": "working"
+      }
+    ]
+  },
+  "next_step": "Tola is investigating the issue. The owner is chased next.",
+  "sample": true
+}

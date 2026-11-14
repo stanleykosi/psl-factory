@@ -1,0 +1,69 @@
+{
+  "id": "W-1402",
+  "title": "Lagoon Health · Reviewed weekly client report",
+  "line": "Reviewed weekly client report",
+  "reference": "WCR-0045",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Collect records",
+      "status": "current_agent"
+    },
+    {
+      "name": "Draft report",
+      "status": "not_started"
+    },
+    {
+      "name": "PM review",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Reading what you entered",
+        "status": "working"
+      }
+    ]
+  },
+  "next_step": "Tola is collecting the week’s records. The PM reviews the draft next.",
+  "sample": true
+}

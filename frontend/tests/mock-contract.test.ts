@@ -10,6 +10,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/server.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { START_OPERATIONS } from '../mock/start-work.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -67,7 +69,8 @@ function expectValid(id: string, status: number, body: unknown) {
 
 describe('mock server matches openapi.json', () => {
   for (const id of M1_OPERATIONS as string[]) {
-    for (const persona of PERSONAS as string[]) {
+    // Start work answers per persona and per body; tests/start-work-mock.test.ts covers it.
+    for (const persona of (START_OPERATIONS as string[]).includes(id) ? [] : (PERSONAS as string[])) {
       it(`${id} succeeds for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
         expect(status).toBe(200);
@@ -102,6 +105,7 @@ describe('mock server matches openapi.json', () => {
     expect(names.map((me) => [me.name, me.destinations, me.csrf_token])).toEqual([
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-finance_lead'],
       ['Tunde Bello', ['my_work', 'projects', 'assistant'], 'mock-csrf-pm'],
+      ['Folake Bello', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-ceo'],
       ['Sample Person', [], 'mock-csrf-none'],
     ]);
   });
@@ -128,9 +132,9 @@ describe('mock server matches openapi.json', () => {
   });
 
   it('a non-M-1 operation gets 501 not_mocked', async () => {
-    const result = await request('E-LINES');
+    const result = await request('E-EVIDENCE-UPLOAD');
     expect(result).toEqual({ status: 501, body: { code: 'not_mocked', message: 'Not available in the mock yet.' } });
-    expectValid('E-LINES', 501, result.body);
+    expectValid('E-EVIDENCE-UPLOAD', 501, result.body);
   });
 
   it('refuses to start with NODE_ENV=production', () => {

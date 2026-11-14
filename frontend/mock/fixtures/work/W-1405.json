@@ -1,0 +1,69 @@
+{
+  "id": "W-1405",
+  "title": "Lagoon Health · Controlled change and signed closure",
+  "line": "Controlled change and signed closure",
+  "reference": "CHG-0054",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Assess impact",
+      "status": "current_agent"
+    },
+    {
+      "name": "Decide",
+      "status": "not_started"
+    },
+    {
+      "name": "Notify",
+      "status": "not_started"
+    },
+    {
+      "name": "Execute",
+      "status": "not_started"
+    },
+    {
+      "name": "Close",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Reading what you entered",
+        "status": "working"
+      }
+    ]
+  },
+  "next_step": "Tola is assessing the impact of the change. The deciders review it next.",
+  "sample": true
+}
