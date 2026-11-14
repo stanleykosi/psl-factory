@@ -418,3 +418,5 @@
 {"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"add","finding":"UI-2-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"transition","head":"ab641e93900d","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-14T05:37:04Z","feature":"F-07","round":3,"kind":"transition","head":"ab641e93900d","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-14T05:39:47Z","feature":"F-13","round":0,"kind":"planned","risk":"medium","surfaces":["api","contract-change"],"reviewers":["technical"]}
+{"at":"2026-11-14T05:39:48Z","feature":"F-13","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
