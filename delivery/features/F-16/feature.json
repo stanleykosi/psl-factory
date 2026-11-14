@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-16",
   "outcome": "The decision page matches the SCR-03 boards at 1440 and 390, and every decide rule stays as it is",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -97,6 +97,18 @@
       "at": "2026-11-14T19:59:14Z",
       "seconds": 251.7,
       "evidence_ref": "delivery/features/F-16/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T20:38:57Z",
+      "seconds": 116.4,
+      "evidence_ref": "delivery/features/F-16/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -212,14 +224,28 @@
         "delivery/features/F-16/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T20:12:19Z",
           "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:01Z",
+          "refs": [
+            "040b5e7"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "040b5e7"
       ]
     },
     {
@@ -235,14 +261,28 @@
         "delivery/features/F-16/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T20:12:19Z",
           "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:01Z",
+          "refs": [
+            "040b5e7"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "040b5e7"
       ]
     },
     {
@@ -281,14 +321,28 @@
         "delivery/features/F-16/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T20:12:19Z",
           "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:00Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "df180ca"
       ]
     },
     {
@@ -304,14 +358,28 @@
         "delivery/features/F-16/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T20:12:19Z",
           "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:01Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "df180ca"
       ]
     }
   ],
@@ -403,7 +471,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "6282bb20df21412e21905a3f2540f8847a2b40a3",
     "task_branch": "fe-decide-the-decision-page-matches-the-scr-03-boards",
-    "head_sha": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+    "head_sha": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-16",
     "pr_url": null,
     "pr_number": null,
@@ -422,6 +490,7 @@
       "frontend/mock/fixtures/work/W-1902.next.json",
       "frontend/mock/fixtures/work/W-1903.json",
       "frontend/mock/fixtures/work/W-1904.json",
+      "frontend/public/agents/chidi-done.png",
       "frontend/src/features/decide/DecidePanel.tsx",
       "frontend/src/features/decide/DecideStates.tsx",
       "frontend/src/features/decide/DecideView.tsx",
@@ -506,6 +575,14 @@
       "round": 2,
       "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T20:38:58Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
     }
   ],
   "routing": {
@@ -523,9 +600,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
   },
   "blocked": null
 }
