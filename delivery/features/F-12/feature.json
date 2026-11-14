@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-12",
   "outcome": "A person sees their own alerts, opens one to its work, and sets how they are alerted",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -74,7 +74,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T07:26:26Z",
+      "seconds": 97.6,
+      "evidence_ref": "delivery/features/F-12/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -152,7 +165,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "92d029b21768858dd0d1402ea22d02c98827508e",
     "task_branch": "fe-alerts-a-person-sees-their-own-alerts-opens-one",
-    "head_sha": null,
+    "head_sha": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-12",
     "pr_url": null,
     "pr_number": null,
@@ -163,7 +176,41 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/alerts.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/fixtures/E-ALERT-PREFS-READ.json",
+      "frontend/mock/fixtures/E-ALERT-PREFS.json",
+      "frontend/mock/fixtures/E-NOTIFICATION-READ.json",
+      "frontend/mock/fixtures/E-NOTIFICATIONS.json",
+      "frontend/mock/fixtures/alerts/notifications.empty.json",
+      "frontend/mock/fixtures/alerts/notifications.many.json",
+      "frontend/mock/fixtures/alerts/notifications.none.json",
+      "frontend/mock/fixtures/alerts/notifications.pm.json",
+      "frontend/mock/fixtures/alerts/prefs.invalid.json",
+      "frontend/mock/fixtures/alerts/prefs.locked.json",
+      "frontend/mock/fixtures/alerts/prefs.none.json",
+      "frontend/mock/fixtures/alerts/prefs.phone.json",
+      "frontend/mock/fixtures/alerts/prefs.pm.json",
+      "frontend/mock/proposals/alerts.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/notifications/page.tsx",
+      "frontend/src/app/settings/alerts/page.tsx",
+      "frontend/src/features/alerts/AlertSettingsPage.tsx",
+      "frontend/src/features/alerts/AlertSwitch.tsx",
+      "frontend/src/features/alerts/AlertsFilterPanel.tsx",
+      "frontend/src/features/alerts/NotificationsPage.tsx",
+      "frontend/src/features/alerts/alerts.css",
+      "frontend/src/features/alerts/api.ts",
+      "frontend/src/features/alerts/contract-proposal.ts",
+      "frontend/src/features/alerts/model.ts",
+      "frontend/src/features/alerts/useIsPhone.ts",
+      "frontend/tests/alerts-mock.test.ts",
+      "frontend/tests/alerts-model.test.ts",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -214,6 +261,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T07:26:27Z",
+      "round": 1,
+      "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "reason": null
     }
   ],
   "routing": {
@@ -231,9 +286,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
   },
   "blocked": null
 }
