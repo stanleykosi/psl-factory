@@ -104,11 +104,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -134,21 +136,164 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (visual consistency against concept 3 of design/concepts/alerts-bell-concepts.html as decided in D-53/D-54, SCR-15 row styling, CMP-01 bars and tokens, at desktop and phone width)",
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-ui.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Focus does not return to the trigger after a route change on phone. Spec: \"On any close focus returns to the trigger that opened it\" and \"Opening an alert ... or any route change closes the drawer\". `AppShell.tsx` renders `<PhoneBar key={pathname} ...>`, so the phone bell button that `opener.current` holds is unmounted when Open navigates. The close effect then calls `.focus()` on a detached element, which does nothing, and focus drops to `body`. Desktop is fine because `TopNav` is not keyed. Neither `tests/alerts-bell.test.tsx` (phone case, line 458, uses Escape) nor the e2e covers Open or a footer link on phone. Expected: remember which bar opened it (not the element) and focus the bell that exists after the change, e.g. look it up by a `data-` hook or `aria-controls` match in the visible bar; add a phone test for Open and for \"Alert settings\" that checks `document.activeElement` is the new bell.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Stale read state can overwrite a mark-read. `AppShell` calls `feed.refresh()` on open. If the person clicks Open on an unread alert before that read returns, the POST succeeds and `markRead` updates local state, then the earlier response (read:false, old `unread_count`) replaces it, so the badge is too high until the next open. Cheap guard: drop or re-apply a response that arrives after a local mark-read (keep a set of ids marked this session and re-apply it in `refresh`). `useAlertsFeed.ts:33-47`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"A 401 anywhere stops further requests\" is met only for the GET. A 401 on the mark-read POST in `useOpenAlert` (`AlertParts.tsx`) is swallowed, so the next open still sends a GET. Pass the error to the feed (an `onError` or a shared `stopped` flag) so it stops there too.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`AlertsDrawer` sets `--alerts-top` once on mount from `.shell-topbar`. If the viewport crosses 720px while open (rotate, resize), `phone` flips but the offset stays stale (0 when the bar is hidden). Rare; recompute on resize or set the offset in CSS only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The phone bar overlaps below about 366px. The bell sits in `.sw-phoneslot` beside \"+ Start\", but the wordmark keeps its place, so the two collide on narrow phones. Measured on `/my-work` with the wordmark ending at x=216: at 375 the bell box starts at 225 (9px gap), at 360 it starts at 210 (6px overlap), and at 320 it starts at 170 (46px overlap). At 320 the bell icon and the red \"4\" badge are drawn over \"FACTORY\". Before F-15, the same bar at 320 had the wordmark at 60\u2013216 and Start at 222, so it fitted. 360 is a common Android width, and 320 is the WCAG reflow width. Expected: no overlap down to 320. Options are to let the wordmark shrink or ellipsize, or to tighten the bar's side padding, Menu and \"+ Start\" spacing below about 370px, using tokens. Paths: `frontend/src/styles/shell.css` section (g), the `.psl-phonebar.shell-phonebar--bell` and `.sw-phonebar.shell-phonebar--bell` padding rules. See `round-1/visual-review/phone-bar-narrow.png` (before and after at 390, 375, 360 and 320).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The 720\u20131079px bar is crowded across its whole range, but the tightening is only needed near 720.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,

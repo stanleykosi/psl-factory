@@ -151,7 +151,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "6282bb20df21412e21905a3f2540f8847a2b40a3",
     "task_branch": "fe-decide-the-decision-page-matches-the-scr-03-boards",
-    "head_sha": null,
+    "head_sha": "713e628b94ce0babdd045dbb45f17ac85cafb507",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-16",
     "pr_url": null,
     "pr_number": null,
@@ -162,7 +162,24 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/decide-board.spec.ts",
+      "frontend/mock/fixtures/work/W-1901.approve.json",
+      "frontend/mock/fixtures/work/W-1901.json",
+      "frontend/mock/fixtures/work/W-1902.json",
+      "frontend/mock/fixtures/work/W-1902.next.json",
+      "frontend/mock/fixtures/work/W-1903.json",
+      "frontend/mock/fixtures/work/W-1904.json",
+      "frontend/src/features/decide/DecidePanel.tsx",
+      "frontend/src/features/decide/DecideStates.tsx",
+      "frontend/src/features/decide/DecideView.tsx",
+      "frontend/src/features/decide/DecisionContent.tsx",
+      "frontend/src/features/decide/decide.css",
+      "frontend/src/features/decide/presentation.ts",
+      "frontend/tests/decide-board.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-decide.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,

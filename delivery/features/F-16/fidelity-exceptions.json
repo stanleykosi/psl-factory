@@ -182,5 +182,32 @@
       "reason": "The phone stale board labels the recipient \"To\"; the desktop board and the page say \"Send to\" (Conflicts 16).",
       "approved_by": "builder proposal, pending design engineer"
     }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-03-desktop-stale",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-56",
+      "reason": "The page keeps the 'Basis · unchanged' row and change note an approval-rule test checks; the board does not draw it, so the visual score stays under 90. Everything else matches. Removing it would change what a decider sees before approving."
+    },
+    {
+      "board": "SCR-03-mobile",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-56",
+      "reason": "The page keeps the Version and Prepared-by rows shared with the work item page; the board does not draw it, so the visual score stays under 90. Everything else matches. Removing it would change what a decider sees before approving."
+    },
+    {
+      "board": "SCR-03-mobile-not-yours",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-56",
+      "reason": "The page keeps the disabled comment box chosen in D-55; the board does not draw it, so the visual score stays under 90. Everything else matches. Removing it would change what a decider sees before approving."
+    },
+    {
+      "board": "SCR-03-mobile-own",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-56",
+      "reason": "The page keeps the 'own' values the spec keeps; the board does not draw it, so the visual score stays under 90. Everything else matches. Removing it would change what a decider sees before approving."
+    },
+    {
+      "board": "SCR-03-mobile-stale",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-56",
+      "reason": "The page keeps two stacked version panels and the stale content an approval-rule test checks; the board does not draw it, so the visual score stays under 90. Everything else matches. Removing it would change what a decider sees before approving."
+    }
   ]
 }
