@@ -56,3 +56,6 @@ Block on visible inconsistencies or breakage; matters of taste go under Notes.
 With no visual change, write PASS and say so.
 
 Reply with one line: your file's first line.
+
+## Fix rounds
+In a round that fixes earlier findings, verify those findings and review the changed code; carry forward the rest by a written impact assessment instead of reviewing everything again. Raise a blocking finding only for something that breaks the spec, the boards, security or accessibility, not for taste. Never add "Co-Authored-By" or "Generated with Claude Code" to commits.

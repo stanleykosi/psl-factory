@@ -64,3 +64,6 @@ approver escalates any that is really a product or business decision.
 - Leave every path in `delivery/config.json` `protected_paths` unchanged.
 
 Reply with one line: `SPEC: <short title>`.
+
+## Board and spec conflicts
+Compare every requirement you write with the approved boards. List each place the spec would add, move or remove something a board draws (extra fields, blocks, tabs, controls) under a "Conflicts with the boards" heading, with your recommendation, so the design engineer decides once before the build starts.

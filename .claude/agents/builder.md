@@ -75,3 +75,9 @@ BLOCKED only: exactly what blocks you and who can unblock it.
 
 `## Fixes` lists only findings you actually fixed this round, each with its
 commit. Reviewers verify them; your listing is a claim, not a closure.
+
+## Before you hand in (fewer rounds)
+- Run the design-fidelity tool on every board your feature owns, at 1440 and 390, on a production build. Do not report READY while any board is under 100% coverage after approved exceptions or under visual 90, unless the gap is an approved exception or an open design-engineer decision you name.
+- For a security or input-validation fix, fix the rule, not the reported example. List the whole family of inputs the rule must refuse (encodings, dot segments, case, whitespace, absolute and protocol-relative forms) in the tests, and show the new tests fail on the old code.
+- Where the spec and a board disagree, do not choose: follow the board if the spec is silent, otherwise stop and report the conflict.
+- Never add "Co-Authored-By" or "Generated with Claude Code" to commits or PRs. If a command is refused by the permission system, stop and report; do not work around it.
