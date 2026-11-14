@@ -943,7 +943,7 @@
         "delivery/features/F-14/round-3/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -960,10 +960,24 @@
           ],
           "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:59:10Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
+        "c26c9f3"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
         "c26c9f3"
       ]
     },
