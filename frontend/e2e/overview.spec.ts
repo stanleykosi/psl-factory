@@ -71,6 +71,10 @@ test.describe('desktop 1440', () => {
     await expect(page.getByRole('radio', { name: 'Flat' })).toHaveAttribute('aria-checked', 'true');
     await expect(main(page).getByRole('link', { name: 'See all exceptions' })).toHaveAttribute('href', '/exceptions');
     await expect(rows(page).first().locator('.overview__sub')).toHaveText('RFP · commercial');
+    // The mascot avatars are static files that load (no broken image).
+    const avatar = rows(page).first().getByRole('img', { name: 'Tola · PMO agent' });
+    await expect(avatar).toBeVisible();
+    expect(await avatar.evaluate((img) => (img as HTMLImageElement).complete && (img as HTMLImageElement).naturalWidth)).toBe(192);
     // A normal desktop browser with WebGL gets the 3D option and no "can't show" hint.
     await expect(page.getByText(/can’t show the 3D floor/)).toHaveCount(0);
     expect(await noHorizontalScroll(page)).toBe(true);
@@ -234,6 +238,8 @@ test.describe('desktop 1440', () => {
     await expect(canvas).toBeVisible();
   });
   test('3D floor (tilted board): a label per station, hover and focus readout, lift settles, reset', async ({ page }) => {
+    // Waits for the lift to settle plus an axe pass over 40 overlay buttons; software WebGL is slow on a busy machine.
+    test.setTimeout(60_000);
     await page.addInitScript(() => {
       const w = window as unknown as { __raf: number };
       w.__raf = 0;

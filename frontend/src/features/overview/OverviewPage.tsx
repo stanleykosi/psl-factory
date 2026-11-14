@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState, type ComponentType, type KeyboardEvent } from 'react';
 
@@ -10,7 +11,7 @@ import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
 
-import { AGENT_INITIAL, LINE_IDENTITY, tagTone } from './lines';
+import { AGENT_AVATAR, LINE_IDENTITY, tagTone } from './lines';
 import type { Overview as OverviewData, OverviewLine, OverviewStation } from './types';
 import { useMedia } from './useMedia';
 import { useOverview } from './useOverview';
@@ -50,9 +51,15 @@ function LineName({ line }: { line: string }) {
   return (
     <span className="overview__who">
       {identity && (
-        <span className={`psl-avatar psl-avatar--${identity.agent} overview__avatar`} aria-hidden="true">
-          {AGENT_INITIAL[identity.agent]}
-        </span>
+        // A static 192px file shown at 32px (24px on phones); not run through the image optimiser.
+        <Image
+          className={`psl-avatar psl-avatar--${identity.agent} overview__avatar`}
+          src={AGENT_AVATAR[identity.agent].src}
+          alt={AGENT_AVATAR[identity.agent].alt}
+          width={32}
+          height={32}
+          unoptimized
+        />
       )}
       <span className="overview__id">
         <span className="overview__name">{line}</span>

@@ -171,13 +171,14 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
   it('each board line shows its agent avatar and subtitle; an unknown line shows neither', async () => {
     settle({ ...DEFAULT, lines: [DEFAULT.lines[0], DEFAULT.lines[4], DEFAULT.lines[7], { ...DEFAULT.lines[3], line: 'Something new' }] });
     await open();
-    expect(rows().map((li) => [li.querySelector('.psl-avatar')?.className ?? null, li.querySelector('.overview__sub')?.textContent ?? null])).toEqual([
-      ['psl-avatar psl-avatar--tola overview__avatar', 'RFP · commercial'],
-      ['psl-avatar psl-avatar--chidi overview__avatar', 'Milestone to verified'],
-      ['psl-avatar psl-avatar--zainab overview__avatar', 'Restricted'],
-      [null, null],
+    const avatar = (li: HTMLElement) => li.querySelector('img.overview__avatar');
+    expect(rows().map((li) => [avatar(li)?.getAttribute('src') ?? null, avatar(li)?.getAttribute('alt') ?? null, li.querySelector('.overview__sub')?.textContent ?? null])).toEqual([
+      ['/agents/tola.png', 'Tola · PMO agent', 'RFP · commercial'],
+      ['/agents/chidi.png', 'Chidi · Finance agent', 'Milestone to verified'],
+      ['/agents/zainab.png', 'Zainab · HR agent', 'Restricted'],
+      [null, null, null],
     ]);
-    expect(rows()[0].querySelector('.psl-avatar')!.getAttribute('aria-hidden')).toBe('true');
+    expect(avatar(rows()[0])!.className).toBe('psl-avatar psl-avatar--tola overview__avatar');
   });
 
   it('shows a note word for word, unparsed and not re-cased', async () => {

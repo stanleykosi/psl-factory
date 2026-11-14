@@ -4,8 +4,12 @@ import type { LineStatus, OverviewLine } from './types';
 
 type Agent = 'tola' | 'chidi' | 'zainab';
 
-/** Tola is the PMO agent, Chidi Finance and Zainab HR (design/system README § Mascots). */
-export const AGENT_INITIAL: Record<Agent, string> = { tola: 'T', chidi: 'C', zainab: 'Z' };
+/** The agent avatars (public/agents/, 192px from design/mascots/transparent/*-avatar.png), named as the README § Mascots asks. */
+export const AGENT_AVATAR: Record<Agent, { src: string; alt: string }> = {
+  tola: { src: '/agents/tola.png', alt: 'Tola · PMO agent' },
+  chidi: { src: '/agents/chidi.png', alt: 'Chidi · Finance agent' },
+  zainab: { src: '/agents/zainab.png', alt: 'Zainab · HR agent' },
+};
 
 export const LINE_IDENTITY: Record<string, { agent: Agent; subtitle: string }> = {
   'Pre-sale': { agent: 'tola', subtitle: 'RFP · commercial' },

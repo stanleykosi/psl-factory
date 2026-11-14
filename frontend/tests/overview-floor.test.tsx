@@ -92,14 +92,14 @@ describe('the 3D floor loads only when chosen', () => {
     expect(radio('3D floor').getAttribute('aria-checked')).toBe('true');
     await until(() => expect(screen.getByRole('img', { name: /^3D factory floor: 8 lines/ })).toBeTruthy());
     expect(floor.loaded).toBe(true);
-    expect(screen.getByRole('img').getAttribute('aria-label')).toBe('3D factory floor: 8 lines. The same figures are listed in the flat view below.');
+    expect(screen.getByRole('img', { name: /^3D factory floor/ }).getAttribute('aria-label')).toBe('3D factory floor: 8 lines. The same figures are listed in the flat view below.');
     expect(flatRows()).toHaveLength(8);
     expect(flatRows()[0].closest('.overview__sr')).not.toBeNull();
     expect(document.querySelectorAll('dl.overview__totals > div')).toHaveLength(4);
     expect(screen.getByRole('link', { name: 'See all exceptions' })).toBeTruthy();
 
     fireEvent.click(radio('Flat'));
-    expect(screen.queryByRole('img')).toBeNull();
+    expect(screen.queryByRole('img', { name: /^3D factory floor/ })).toBeNull();
     expect(flatRows()[0].closest('.overview__sr')).toBeNull();
   });
 
@@ -118,9 +118,9 @@ describe('the 3D floor loads only when chosen', () => {
   it('reduced motion turning on while 3D is shown switches to Flat; the switch returns when it turns off', async () => {
     await open();
     fireEvent.click(radio('3D floor'));
-    await until(() => expect(screen.getByRole('img')).toBeTruthy());
+    await until(() => expect(screen.getByRole('img', { name: /^3D factory floor/ })).toBeTruthy());
     act(() => setMedia(REDUCED, true));
-    expect(screen.queryByRole('img')).toBeNull();
+    expect(screen.queryByRole('img', { name: /^3D factory floor/ })).toBeNull();
     expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
     expect(screen.getByText('Motion is turned down on this device, so the floor is shown flat.')).toBeTruthy();
     act(() => setMedia(REDUCED, false));
@@ -130,10 +130,10 @@ describe('the 3D floor loads only when chosen', () => {
   it('a runtime failure in 3D falls back to Flat with a warning and hides the 3D option', async () => {
     await open();
     fireEvent.click(radio('3D floor'));
-    await until(() => expect(screen.getByRole('img')).toBeTruthy());
+    await until(() => expect(screen.getByRole('img', { name: /^3D factory floor/ })).toBeTruthy());
     act(() => floor.fail!());
     expect(screen.getByText('We couldn’t show the 3D floor, so it’s shown flat.').closest('.psl-callout--warning')).not.toBeNull();
-    expect(screen.queryByRole('img')).toBeNull();
+    expect(screen.queryByRole('img', { name: /^3D factory floor/ })).toBeNull();
     expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
     expect(flatRows()).toHaveLength(8);
     expect(flatRows()[0].closest('.overview__sr')).toBeNull();
