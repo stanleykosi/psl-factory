@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 
 import { api, call, setCsrfToken } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
@@ -9,12 +9,13 @@ import type { Me } from '@/api/types';
 
 import { destinationForPath, visibleDestinations } from './destinations';
 import { ForbiddenState, LoadErrorState, LoadingState, NoSectionsState, SignedOutState } from './FrameStates';
-import { PhoneBar } from './PhoneBar';
+import { PhoneBar, type PhoneBack } from './PhoneBar';
 import { TopNav } from './TopNav';
 
 type MeState = { status: 'loading' } | { status: 'ready'; me: Me } | { status: 'error'; error: ApiError };
 
 const MeContext = createContext<Me | null>(null);
+const PhoneBackContext = createContext<((back: PhoneBack | null) => void) | null>(null);
 
 /** The signed-in person from GET /api/v1/me, for pages inside the frame. */
 export function useMe(): Me {
@@ -23,9 +24,26 @@ export function useMe(): Me {
   return me;
 }
 
+/**
+ * A sub-page's back link for the phone bar ("← Queue" on SCR-10-mobile): while the page is mounted the bar
+ * shows this link in place of Menu and PSL FACTORY, as the phone boards draw it. Pages that never call it keep
+ * the menu bar.
+ */
+export function usePhoneBack({ label, href }: PhoneBack) {
+  const setBack = useContext(PhoneBackContext);
+  if (!setBack) throw new Error('usePhoneBack is only available inside AppShell');
+  // Layout effect: the link is set and cleared before paint, so no frame shows the previous page's bar.
+  useLayoutEffect(() => {
+    const back = { label, href };
+    setBack(back);
+    return () => setBack(null);
+  }, [setBack, label, href]);
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/';
   const [state, setState] = useState<MeState>({ status: 'loading' });
+  const [phoneBack, setPhoneBack] = useState<PhoneBack | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -57,7 +75,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     else if (error.kind === 'forbidden') main = <ForbiddenState error={error} />;
     else main = <LoadErrorState error={error} onRetry={() => void load()} />;
   } else if (destinations.length === 0) main = <NoSectionsState />;
-  else main = <MeContext.Provider value={state.me}>{children}</MeContext.Provider>;
+  else
+    main = (
+      <MeContext.Provider value={state.me}>
+        <PhoneBackContext.Provider value={setPhoneBack}>{children}</PhoneBackContext.Provider>
+      </MeContext.Provider>
+    );
 
   return (
     <>
@@ -68,7 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <TopNav me={me} destinations={destinations} current={current} />
       </div>
       <div className="shell-phone">
-        <PhoneBar key={pathname} me={me} destinations={destinations} current={current} />
+        <PhoneBar key={pathname} me={me} destinations={destinations} current={current} back={phoneBack} />
       </div>
       <main id="main" tabIndex={-1} className="shell-main">
         {main}
