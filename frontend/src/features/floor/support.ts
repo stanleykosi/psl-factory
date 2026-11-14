@@ -1,17 +1,24 @@
 // What the overview needs to know about the 3D floor without loading three.js.
 import type { OverviewLine, OverviewStation } from '@/features/overview/types';
 
-/** True when this browser can make a WebGL context; the throwaway context is released at once. */
+/**
+ * True when this browser can make a WebGL context (WebGL 2, else WebGL 1), even a slow or software one;
+ * the throwaway context is released at once. False only when both fail or throw.
+ */
 export function webglAvailable(): boolean {
-  try {
-    const canvas = document.createElement('canvas');
-    const gl = (canvas.getContext('webgl2') ?? canvas.getContext('webgl')) as WebGLRenderingContext | null;
-    if (!gl) return false;
-    gl.getExtension('WEBGL_lose_context')?.loseContext();
-    return true;
-  } catch {
-    return false;
+  const options: WebGLContextAttributes = { failIfMajorPerformanceCaveat: false };
+  for (const kind of ['webgl2', 'webgl'] as const) {
+    try {
+      const gl = document.createElement('canvas').getContext(kind, options) as WebGLRenderingContext | null;
+      if (gl) {
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+        return true;
+      }
+    } catch {
+      // try the next kind
+    }
   }
+  return false;
 }
 
 export type StationChange = { line: string; name: string; before: OverviewStation; after: OverviewStation };
@@ -32,6 +39,10 @@ export function diffCounts(prev: readonly OverviewLine[], next: readonly Overvie
   }
   return changes;
 }
+
+/** The 3D floor's readout and station label: "Line · Station · N items · needs a person". */
+export const describeStation = (line: string, s: OverviewStation) =>
+  `${line} · ${s.name} · ${s.count} ${s.count === 1 ? 'item' : 'items'} · ${s.needs_person ? 'needs a person' : 'no person needed'}`;
 
 export const floorLabel = (lines: number) =>
   `3D factory floor: ${lines} ${lines === 1 ? 'line' : 'lines'}. The same figures are listed in the flat view below.`;
