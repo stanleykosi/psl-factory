@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 230edd60f366ea64a1a138dc66f2084bd447ebd1
+COMMIT: 0758d3e3f8568c084ed88b1c37a05f0641d62510
 BUILDER: builder
 LANE: frontend
 
@@ -67,3 +67,25 @@ Left this round:
 - The servers on 3501 and 3502 were stopped after the run.
 
 ## Blocked
+
+## Extra round (D-47)
+- Merged origin/dlv-00-delivery-setup into the branch (merge commit 0758d3e, no rebase or force). Conflicts in frontend/package.json, src/api/client.ts, src/api/schema.d.ts and tests/api-schema-drift.test.ts took the base (v7 generated types; F-05's types.ts already derives from the generated schema, no local overlays remain). mock/server.mjs, PhoneBar.tsx and tests/mock-contract.test.ts keep both intents: F-05's start-work operations and `ceo` persona sit beside the base's mocks and persona list; PhoneBar draws the base's back link plus "+ Start". The `ceo` persona now reads the empty person's alert data (mock/alerts.mjs) and has notification id N-0201 in the contract test; the unmocked-operation test uses E-PROJECTS because E-EVIDENCE-UPLOAD is now mocked.
+- F-05's phone screens draw no back link (the drawer is a bottom sheet), so there is no page-local back link to replace with `usePhoneBack`.
+
+### Fixes
+- SEC-3-1 / TECH-3-1 | 0758d3e | `safePath` (frontend/src/features/start-work/LineForm.tsx) now also refuses any same-origin result whose path starts with "//". Added to the refused list in tests/start-work.test.tsx: '/.//evil.example', '/..//evil.example', '/a/..//evil.example', '/%2e//evil.example', '/%2e%2e//evil.example' and `<origin>//evil.example`. Run against the old function, those six failed (6 failed, 8 passed); with the fix all pass.
+
+### Validation
+- `bash delivery/checks.sh` in the worktree: exit 0, 907 tests passed. One earlier run, started while another copy of the gate was also running, had 3 timeouts in unrelated tests (setup-rules, work-item-board); a clean re-run passed.
+
+### Fidelity (dev server and mock on 4601/4602, persona pm, stopped afterwards; report.json and side-by-side.png in round-3/fidelity-extra/)
+| Board | Coverage with exceptions | Visual (round 3) | Visual now |
+|---|---|---|---|
+| SCR-04-desktop-1440 | 100 | 92.7 | 85.0 |
+| SCR-04-desktop-lines-1440 | 100 | 92.9 | 85.1 |
+| SCR-04-desktop-change-1440 | 100 | 94.6 | 87.0 |
+| SCR-04-mobile-lines-390 | 100 | 76.6 | 75.6 |
+| SCR-04-mobile-change-390 | 100 | 78.9 | 78.5 |
+| SCR-04-mobile-weekly-390 | 100 | 85.3 | 84.9 |
+
+Coverage still reads 100 with the exceptions file. The desktop scores fell 7 points. In the side-by-side the drawer matches the board. The page behind it changed with the merge: My work now shows the F-02 empty banner and "Where your work is", where the board shows a table. The search field also takes focus with a visible ring. Mobile scores are within 1 point, with the known gaps (bottom sheet, frame bar).
