@@ -277,6 +277,7 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
           rows: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['label', 'value'], properties: { label: str, value: str } } },
           note: str,
           large_title: { type: 'boolean' },
+          note_first: { type: 'boolean' },
           bar_slot: { type: 'boolean' },
           bar_note: str,
           links: { type: 'array', items: link },
