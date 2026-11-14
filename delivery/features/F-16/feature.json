@@ -3,26 +3,64 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-16",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "The decision page matches the SCR-03 boards at 1440 and 390, and every decide rule stays as it is",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DECIDE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop fidelity.** The five desktop boards (`design/canvas/project/SCR-03-desktop`, `-done`, `-stale`, `-not-yours`, and `design/canvas/finance/project/SCR-03-desktop-own`) each pass at 1440: `report.json` has `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` >= 90. \u2014 verify, per board (here the default; swap `--board`, `--page`, `--out` per the table, and `--page` for done and stale per criterion 3):",
+    "**Phone fidelity.** The five `SCR-03-mobile*` boards pass the same way at `--width 390`, `--out \u2026/SCR-03-mobile-<state>-390`. `round-<N>/fidelity/scores.txt` lists all 10 boards with coverage, visual and pass. \u2014 verify: the same command shape, exit 0, and the rows in `scores.txt`.",
+    "**Done and stale are scored on the real UI.** `drive-states.mjs` reaches done (Approve on W-1801) and stale (Approve on W-1802, 409, redraft) through the real page against the mock, at 1440 and 390. The frozen page for stale shows \"VERSION 2 \u00b7 REPLACED\", \"VERSION 3 \u00b7 CURRENT\", \"Send to \u2026 \u00b7 changed\" and \"Review version 3\"; for done it shows \"Invoice v2 for Lagoon Health is approved\". build.md names the frozen pages and notes that no product or mock code was changed to reach them. \u2014 verify: file content of the frozen pages and build.md, and the driver re-run.",
+    "**Exceptions are limited and explained.** Every entry in `delivery/features/F-16/fidelity-exceptions.json` has `role`, `name`, `category`, `reason` and `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed). Each falls into: frame items (top bar, signed-in name, phone bar link name); controls that would be a dead control or a prototype affordance (the \"Preview\" link); contract words and eligibility rules kept from F-04 (see Conflicts); or disagreements between boards. No entry covers a value that a contract field or `decide_presentation` can supply. \u2014 verify: file content, and build.md maps each entry to its category.",
+    "**Phone back link in the frame slot.** At 390: the default, done and stale decision pages show the phone bar link \"\u2190 Decisions\" to `/my-work`; the not-yours, own, cannot-act and not-open pages, the loading state and the no-access page show \"\u2190 Queue\" to `/my-work`. `main` contains no back link of its own. At 1440 the phone bar is not shown. \u2014 verify: e2e at both widths plus a component test inside `AppShell`.",
+    "**Titles.** The page `h1` uses `.shell-title`: computed `font-size` 40px at 1440 and 26px at 390, one `h1` per page, also on no-access, stale and done. \u2014 verify: e2e reading `getComputedStyle`.",
+    "**Header and trail from the data.** On W-1801 the trail reads \"Decisions / 1 of 3 / FINANCE REVIEW \u00b7 INV-0412\" (the station name from `stations`, the reference from the item). On W-1201, with no `decide_presentation`, the trail has no \"1 of 3\". The existing `nav aria-label=\"Breadcrumb\"` keeps its text \"My work / Prepare an invoice / INV-0412\". \u2014 verify: component tests on both fixtures; `tests/decide.test.tsx:97-99` unchanged.",
+    "**Decision values.** W-1801 shows Amount \u20a64,250,000.00, Basis, To, \"Changed since Invoice v1\" and Version through `DecisionRows`, and the facts strip with the board's details. An unknown amount shows \"Unknown\", never 0 or blank, in the rows, the read-only view and the stale comparison. The sample label shows whenever `sample: true`. \u2014 verify: the existing tests at `decide.test.tsx:80-155` pass unchanged, plus a component test on W-1801.",
+    "**Controls only for the right person.** The Note, Approve, Return and Reject appear only when the task's `you_can_act` is true. W-1803 and W-1804 (and W-1203 to W-1206) render none of them, with copy keyed on `cannot_act_reason` only. A fixture with `you_can_act: true` renders them whatever `/me` says, and one with `false` renders none whatever `/me` says. \u2014 verify: existing `cannot act (A-NOT-YOURS)` tests pass unchanged, plus the `/me` case at `decide.test.tsx:415`.",
+    "**Claim and decide are unchanged.** Opening W-1801 sends one claim with `expected_revision` equal to the task revision and the CSRF header (also under StrictMode). Approve sends one decide with the claim revision; a double click sends one; while pending all three buttons are disabled and Approve reads \"Approving\u2026\". The verdicts are `approve | return | reject`. There is no automatic retry of any POST. \u2014 verify: `decide.test.tsx` \"claim and decide\" tests (lines 157-295) pass unchanged.",
+    "**Note rules unchanged.** Return or Reject without a note sends nothing and shows \"Add a note to return or reject.\"; a note over 2000 characters is refused before any request; Approve sends a note only when non-blank. The textarea keeps `maxLength` 2000 and the \"0 / 2000\" counter. \u2014 verify: existing tests (lines 229-271) unchanged.",
+    "**Stale flow unchanged.** A 409 on decide keeps the replaced version, reloads the item once, shows replaced and current versions side by side with \"unchanged\" or \"changed\" marks (two unknown amounts read \"still unknown\"), and \"Review version 3\" claims the new revision. A 409 on claim goes to the same view and sends no decide. Nothing approves by itself. \u2014 verify: existing stale tests (lines 296-353) and `e2e` \"stale flow on the mock\" unchanged, plus the stale board test on W-1802.",
+    "**Uncertain effects unchanged.** A network or 5xx decide reloads once and never resends; if the reload also fails every control stays off and Try again only reads the item; a recorded decision shows the already-decided view. \u2014 verify: `decide.test.tsx` lines 488-590 and the e2e \"decide and reload both fail\" unchanged.",
+    "**Error mapping unchanged.** 401 shows the signed-out callout with `next` set to this decision; 403 and 404 on the item show the no-access view without the id or title; a decide 403 reloads then shows the read-only view; a decide 422 shows the server message and keeps the note; a claim 422 keeps the controls disabled; a 500 on the item shows the error card and Try again re-fetches. \u2014 verify: `decide.test.tsx` \"errors\" tests (lines 435-630) pass unchanged.",
+    "**Done view.** After Approve on W-1801 the page shows the green banner \"YOU APPROVED \u00b7 10:47\" and \"Invoice v2 for Lagoon Health is approved\" (from `client`; on W-1201 without it, \"Invoice v2 is approved\" as today), the facts with the board's details, the reloaded `next_step`, \"Paid is tracked separately by Finance\u2026\", \"Open the work item\" and \"Back to my work\". \"Next decision \u00b7 2 of 3\" links to the fixture's `queue.next.href` (an app path) and is absent when `queue.next` is absent. Return and Reject keep the neutral banner. An echoed verdict outside the three reads \"Decision recorded\", never approved. \u2014 verify: existing done tests (lines 178-228) and `e2e` banner test unchanged, plus a component test on W-1801.",
+    "**Not-yours board.** W-1803 shows the NOT YOUR DECISION tag, \"This decision needs a Finance Lead.\", Amount, Basis, \"Waiting for Finance Lead\", \"Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email\", and the comment box. The comment textarea and button are `disabled`, the line \"Comments aren\u2019t available yet.\" is read by `aria-describedby`, and no request is sent when they are focused or clicked. On W-1203 (no `comment`) there is no comment box. \u2014 verify: component test recording every `fetch`; the existing copy tests (lines 354-434) unchanged.",
+    "**Own board.** W-1804 shows the WAITING FOR REVIEW tag, \"You prepared Invoice v2, so someone else must review it.\", Amount, Basis, \"Prepared by You with Chidi\", the asked person and time, and no controls. \u2014 verify: component test plus the `prepared_by_you` case in the existing copy test.",
+    "**Proposals are contained.** The pager, \"Next decision\", `waiting`, agent summary and the comment box render only when `decide_presentation` carries them; with it absent the page renders exactly as today. A crafted `queue.next.href` of `https://x.example`, `//x.example` or `javascript:alert(1)` renders no link. Opening and using every W-18xx page (including clicking the comment box) sends only GET to E-WORK-ITEM and POST to E-TASK-CLAIM and E-TASK-DECIDE with the unchanged bodies; no other URL is called. \u2014 verify: component tests with a recording `fetch`.",
+    "**Seam with F-14 holds.** `grep -n \"export function DecisionRows\\|export function AmountValue\" frontend/src/features/decide/DecisionContent.tsx` and `grep -n \"export function formatClock\" frontend/src/features/decide/format.ts` match once each. `tests/work-item.test.tsx` and `tests/work-item-board.test.tsx` pass unchanged (the decision card on the work item page renders the same). `git diff --stat` shows no edit to `frontend/src/features/work-item/**` or `frontend/src/shell/**`. \u2014 verify: the commands and the test run.",
+    "**Fixtures are valid and the old ones are untouched.** Every `fixtures/work` file validates against the generated schema with `_kind` and `decide_presentation` stripped; the block validates against a schema written from the local type; only W-18xx files contain `decide_presentation`; `git diff --stat` shows no edit to any W-1xxx file other than the new W-18xx ones. `tests/mock-decide.test.ts` passes, with a new case that W-1801 and W-1802 claim and decide as W-1201 and W-1207 do. \u2014 verify: `tests/mock-contract.test.ts` and `tests/mock-decide.test.ts`.",
+    "**Accessibility at both widths.** For the five states (default W-1801, done, stale, not-yours W-1803, own W-1804), `e2e/decide-board.spec.ts` shows no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 390 and 1440, no sideways page scroll (`scrollWidth <= viewport`), visible focus rings with Tab reaching Note, Approve, Return and Reject in order, 44px targets and the 54px pinned phone Approve, and no animation under `reducedMotion: 'reduce'`. The existing `e2e/decide.spec.ts` stays green. After F-15 merges, the 390 run is repeated and the back link still shows. \u2014 verify: `cd frontend && E2E_PORT=4601 MOCK_PORT=4602 npx playwright test e2e/decide.spec.ts e2e/decide-board.spec.ts` with `timezoneId: 'Africa/Lagos'`; output recorded in build.md.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/decide/decide.css` returns nothing; colours, fonts, radii and spacing come from `var(--\u2026)`. \u2014 verify: the command.",
+    "**Existing tests are not weakened.** `tests/decide.test.tsx`, `tests/mock-decide.test.ts`, `tests/work-item*.test.tsx`, `tests/my-work*.test.tsx`, `tests/shell.test.tsx`, `e2e/decide.spec.ts` and `e2e/work-item.spec.ts` pass. Every changed assertion in the decide tests is listed in build.md with its reason; only a wrapper (`AppShell`) or visible wording the Conflicts list resolves may move, never a behaviour assertion (no removed `expect`, no loosened matcher, no deleted test). \u2014 verify: `delivery/checks.sh` and `git diff` of the test files against build.md.",
+    "**Behaviour has new tests.** `tests/decide-board.test.tsx` covers criteria 7, 15 to 18 (and the sample label on a board fixture), and `e2e/decide-board.spec.ts` covers 5, 6 and 21. \u2014 verify: the test files exist and run in `delivery/checks.sh`.",
+    "**build.md evidence.** build.md contains the contract proposal list (each `decide_presentation` field with its boards), `scores.txt` for all 10 boards, `side-by-side.png` paths, which boards used frozen pages, the exception-to-category map, every changed assertion, and for each board under 90 the measured gap and cause. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "security",
+      "payments"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. The files rebuilt contain the only writes where a person approves, returns or rejects money-relevant work (F-04 readiness rated it high for INV-UNKNOWN amounts, INV-REVISION stale versions and separation of duties), so `payments` and `security` stay on the surfaces for the reviewers, and `ui` is the change itself. The change is layout only on the mock, and no API, auth or contract work, which is why no `api` or `contract-change` surface is listed. High risk means the security reviewer runs and the merge is not auto-delegated. The tests, which should fail on any behaviour change, are the main safeguard. Do not merge on a fidelity score alone."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-16/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +83,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +97,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": false,
+      "assessment_reason": "delivery/features/F-16/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +148,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-DECIDE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "6282bb20df21412e21905a3f2540f8847a2b40a3",
+    "task_branch": "fe-decide-the-decision-page-matches-the-scr-03-boards",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-16",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +195,41 @@
     }
   },
   "created_at": "2026-11-14T17:45:04Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T17:53:50Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T17:53:56Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-16/readiness.md",
+      "delivery/features/F-16/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
