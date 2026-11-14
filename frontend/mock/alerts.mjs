@@ -52,11 +52,12 @@ function shifted(list) {
 /** The data a persona starts with: finance_lead's follows the scenario, the others keep their own records. */
 function initialState(persona, scenario) {
   const own = persona !== 'finance_lead';
-  let list = own ? read(`alerts/notifications.${persona}.json`) : read('E-NOTIFICATIONS.json');
+  const who = persona === 'admin' ? 'none' : persona; // admin has no records of its own yet; it starts with the empty person's
+  let list = own ? read(`alerts/notifications.${who}.json`) : read('E-NOTIFICATIONS.json');
   if (scenario === 'empty') list = read('alerts/notifications.empty.json');
   else if (scenario === 'many' && !own) list = read('alerts/notifications.many.json');
   const prefsFile = { phone: 'phone', locked: 'locked', invalid: 'invalid' }[scenario];
-  const prefs = own ? read(`alerts/prefs.${persona}.json`) : prefsFile ? read(`alerts/prefs.${prefsFile}.json`) : read('E-ALERT-PREFS-READ.json');
+  const prefs = own ? read(`alerts/prefs.${who}.json`) : prefsFile ? read(`alerts/prefs.${prefsFile}.json`) : read('E-ALERT-PREFS-READ.json');
   return { list: shifted(list), prefs, staleDone: false };
 }
 

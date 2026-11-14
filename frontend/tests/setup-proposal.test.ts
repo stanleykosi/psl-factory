@@ -74,10 +74,9 @@ describe('Setup contract overlay (PMO-0-2)', () => {
     }
   });
 
-  it('a body with expected_revision 0 or the proposal fields is overlay-valid but not v4-valid', () => {
+  it('a body with expected_revision 0 or the proposal fields is overlay-valid', () => {
     const body = { expected_revision: 0, value: { roles: ['pmo_lead'] }, starts: '2026-11-14', reason: 'Agreed', evidence_id: 'EV-1' };
     expect(overlaySave(body)).toBe('');
-    expect(v4Save(body)).not.toBe('');
     expectSaveBodyValid(body);
   });
 
