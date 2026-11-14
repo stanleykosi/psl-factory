@@ -267,3 +267,4 @@
 {"at":"2026-11-14T02:56:21Z","feature":"F-07","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-14T02:58:03Z","feature":"F-06","round":0,"kind":"planned","risk":"low","surfaces":["ui","api"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-14T02:58:03Z","feature":"F-06","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-14T02:58:08Z","feature":"F-06","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
