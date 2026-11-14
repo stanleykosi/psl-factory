@@ -15,4 +15,6 @@ SCR-04-mobile-weekly-390 FAIL  coverage 72.7% (8/11; 100% with exceptions)  visu
 SCR-04-mobile-minutes-390 FAIL  coverage 58.3% (7/12; 100% with exceptions)  visual 77.8  missing 5  moved 6  extra 13
 SCR-04-mobile-issue-390 FAIL  coverage 66.7% (6/9; 100% with exceptions)  visual 86.4  missing 3  moved 5  extra 14
 SCR-04-mobile-change-390 FAIL  coverage 50% (6/12; 100% with exceptions)  visual 79.1  missing 6  moved 5  extra 15
-SCR-04-mobile-incident-390 
+SCR-04-mobile-incident-390 FAIL  coverage 50% (5/10; 100% with exceptions)  visual 77.2  missing 5  moved 4  extra 13
+SCR-04-mobile-escalation-390 FAIL  coverage 66.7% (6/9; 100% with exceptions)  visual 78.5  missing 3  moved 5  extra 12
+SCR-04-mobile-leadership-390 FAIL  coverage 66.7% (6/9; 100% with exceptions)  visual 76.2  missing 3  moved 4  extra 12
