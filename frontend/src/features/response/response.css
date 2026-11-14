@@ -80,7 +80,7 @@
 .resp-filebtn[disabled] { color: var(--ink-muted); box-shadow: inset 0 0 0 1.5px var(--disabled); cursor: not-allowed; }
 .resp-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 2px dashed var(--ink); background: var(--surface); font-size: 14px; }
 .resp-card__text { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.resp-card__meta { font-size: 12px; color: var(--ink-muted); }
+.resp-card__meta { font-size: 12px; line-height: 18px; color: var(--ink-muted); } /* the second line of a 14px block, as the boards draw it */
 .resp-clip { flex: none; }
 
 .resp-attest { align-items: flex-start; }
@@ -115,14 +115,13 @@
   .resp-actionbar { padding: 0; border-top: none; background: none; }
 }
 
-/* the way back under the frame's phone bar (D-08), full width like the boards' dark bar */
-.resp-backbar { margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) 0; padding: 0 16px; min-height: 56px; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--ink); color: var(--on-strong); }
-.resp-backbar a { min-height: var(--control-md); display: inline-flex; align-items: center; color: var(--on-strong); text-decoration: none; font-weight: 500; }
-.resp-backbar a:focus-visible { outline: 2px solid var(--focus-on-strong); outline-offset: 2px; }
-.resp-backbar .psl-mono { font-size: 12px; }
+/* the title and, on the phone, the reference the boards draw at the right of the bar */
+.resp-titlerow { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.resp-phoneref { flex: none; font-size: 12px; }
 
 @media (max-width: 719.98px) {
-  .resp-page { gap: 12px; font-size: 15px; }
+  /* the phone boards start the content 14px under the bar; the frame pads 16px */
+  .resp-page { gap: 12px; font-size: 15px; margin-top: -2px; }
   /* room for the action bar pinned to the bottom */
   .resp-page--phone, .resp-page:has(.resp-phonebar) { padding-bottom: 96px; }
   .resp-title { font-size: 24px; }
@@ -130,11 +129,19 @@
   .resp-form { padding: 0; border: none; background: none; gap: 14px; }
   .resp-row, .resp-row--3 { grid-template-columns: minmax(0, 1fr); }
   .resp-pills { flex-direction: column; gap: 6px; }
-  .resp-pill { display: flex; gap: 10px; min-height: var(--control-phone); padding: 0 12px; }
+  /* the phone boards: 48px of content inside a 2px border, the radio inset as the browser draws it, a taller chip */
+  .resp-pill { display: flex; gap: 10px; min-height: 52px; padding: 0 12px; }
+  .resp-pill input { margin: 0 3px 0 5px; }
+  .resp-chip { padding: 8px 10px; }
   .resp-attest { font-size: 14px; }
+  .resp-alert { font-size: 14px; }
   .resp-signature { background: none; border: none; }
   .resp-signature .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .resp-signature .psl-panel__body { padding: 0; }
+  /* the SOW phone board: "What they did" sits 12px above the segments, each 40px plus its border */
+  .resp-form--sow .resp-field:has(> [role="radiogroup"]) { gap: 12px; }
+  .resp-form--sow .resp-segopt { min-height: 42px; }
+  .resp-form--sow .psl-hint { line-height: normal; }
   .resp-success { gap: 12px; }
   .resp-phonebar, .resp-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; }
   .resp-phonebar .psl-btn, .resp-actionbar .psl-btn { width: 100%; min-height: var(--control-lg); }

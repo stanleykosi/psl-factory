@@ -294,25 +294,38 @@ export function SowSignatureForm(props: FormProps) {
           options={responders.map((r) => ({ value: r.id, text: responderText(r, response.variant) }))}
         />
       )}
-      {/* The SOW boards draw no note: it shares the When row. */}
-      <div className="resp-row">
+      {/* The SOW boards draw no note: it shares the When row (on the phone it follows the board's rows). */}
+      <div className={phone ? undefined : 'resp-row'}>
         <WhenField label="When" value={entries.when} onChange={(v) => setEntry('when', v)} />
-        <Note entries={entries} setEntry={setEntry} />
+        {!phone && <Note entries={entries} setEntry={setEntry} />}
       </div>
       <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
       <Actions response={response} entries={entries} setEntry={setEntry} segmented />
-      {/* Nor the attestation: it sits beside the proof it vouches for. */}
-      <div className="resp-row resp-row--proof">
+      {/* Nor the attestation: it sits beside the proof it vouches for (on the phone, after the board's rows). */}
+      {phone ? (
         <ProofField proof={proof} layout="card" />
-        <Attest entries={entries} setEntry={setEntry} short={false} />
-      </div>
+      ) : (
+        <div className="resp-row resp-row--proof">
+          <ProofField proof={proof} layout="card" />
+          <Attest entries={entries} setEntry={setEntry} short={false} />
+        </div>
+      )}
     </>
   );
-  const next = response.next?.length ? (
+  const nextLine = response.next?.length ? (
     <div className="resp-nextline">
       <strong>What happens next:</strong> {response.next.join(' ')}
     </div>
   ) : null;
+  const next = phone ? (
+    <>
+      {nextLine}
+      <Note entries={entries} setEntry={setEntry} />
+      <Attest entries={entries} setEntry={setEntry} short={false} />
+    </>
+  ) : (
+    nextLine
+  );
 
   return (
     <form className={phone ? 'resp-form resp-form--phone resp-form--sow' : 'resp-form resp-form--sow'} aria-busy={busy} onSubmit={(e) => e.preventDefault()}>
