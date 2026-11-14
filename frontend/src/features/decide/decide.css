@@ -270,6 +270,7 @@
 
   /* done: the agent card, the Paid line, then the links */
   .decide-done { gap: 14px; padding-bottom: 130px; }
+  .decide-done .work-facts .psl-fact { padding: 10px; }
   .decide-banner { padding: 14px; }
   .decide-done__row { display: contents; }
   .decide-next { order: 1; flex: none; }
