@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent, type RefObject } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
-import { SearchIcon } from '@/features/my-work/icons';
+import { CloseIcon, FilterIcon, SearchIcon } from '@/features/my-work/icons';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -18,11 +18,14 @@ import {
   buildProjectsQuery,
   isProjectList,
   LIMITS,
+  LIST_TABS,
   parseProjectsView,
   projectsSearch,
   shownText,
   type Limit,
-  type ProjectRow,
+  type ListTab,
+  type ProjectListView,
+  type ProjectRowView,
   type ProjectsView,
 } from './model';
 
@@ -31,7 +34,7 @@ const PHONE_QUERY = '(max-width: 719.98px)';
 
 type ListState =
   | { status: 'loading' }
-  | { status: 'ready'; items: ProjectRow[]; nextCursor?: string }
+  | { status: 'ready'; items: ProjectRowView[]; nextCursor?: string; counts?: ProjectListView['counts'] }
   | { status: 'error'; error: ApiError };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
@@ -50,8 +53,14 @@ function useIsPhone() {
   return useSyncExternalStore(subscribePhone, isPhoneNow, () => false);
 }
 
-/** SCR-22 desktop: Project, PM, Where it is. Only the contract's fields are drawn. */
-function ProjectTable({ items }: { items: ProjectRow[] }) {
+/** A person-needed or stopped count (PROPOSAL); a count the response does not carry shows a dash, never 0. */
+function Count({ value }: { value?: number }) {
+  if (value === undefined) return <span className="projects__none">—</span>;
+  return <span className={value > 0 ? 'projects__count' : 'projects__zero'}>{value}</span>;
+}
+
+/** SCR-22 desktop: Project, PM, Where it is, Next milestone, Needs a person, Stopped. */
+function ProjectTable({ items }: { items: ProjectRowView[] }) {
   return (
     <div className="psl-tablewrap">
       <table className="psl-table projects__table">
@@ -60,6 +69,9 @@ function ProjectTable({ items }: { items: ProjectRow[] }) {
             <th scope="col">PROJECT</th>
             <th scope="col">PM</th>
             <th scope="col">WHERE IT IS</th>
+            <th scope="col">NEXT MILESTONE</th>
+            <th scope="col">NEEDS A PERSON</th>
+            <th scope="col">STOPPED</th>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +87,13 @@ function ProjectTable({ items }: { items: ProjectRow[] }) {
               </td>
               <td>{item.pm}</td>
               <td>{item.stage}</td>
+              <td>{item.next_milestone ?? '—'}</td>
+              <td>
+                <Count value={item.needs_person} />
+              </td>
+              <td>
+                <Count value={item.stopped} />
+              </td>
             </tr>
           ))}
         </tbody>
@@ -83,24 +102,72 @@ function ProjectTable({ items }: { items: ProjectRow[] }) {
   );
 }
 
-/** SCR-22 phone: each card is one link with the title, then where it is and the PM. */
-function ProjectCards({ items }: { items: ProjectRow[] }) {
+/** The phone card's red line: "2 need a person · 1 stopped"; nothing when both are 0 or not carried. */
+function attentionText(item: ProjectRowView) {
+  const parts = [];
+  if (item.needs_person) parts.push(`${item.needs_person} need a person`);
+  if (item.stopped) parts.push(`${item.stopped} stopped`);
+  return parts.join(' · ');
+}
+
+/** SCR-22 phone: each card is one link with the title, where it is and the PM, then what needs attention. */
+function ProjectCards({ items }: { items: ProjectRowView[] }) {
   return (
-    <ul className="psl-list projects__cards">
-      {items.map((item) => (
-        <li key={item.case_id}>
-          <Link href={`/projects/${encodeURIComponent(item.case_id)}`} className="projects__card" data-project-link="">
-            <span className="projects__title">{item.title}</span>
-            <span className="projects__meta">
-              {item.stage} · PM {item.pm}
-            </span>
-            <SampleLabel show={item.sample} />
-          </Link>
-        </li>
-      ))}
+    <ul className="projects__cards">
+      {items.map((item) => {
+        const attention = attentionText(item);
+        return (
+          <li key={item.case_id}>
+            <Link href={`/projects/${encodeURIComponent(item.case_id)}`} className="projects__card" data-project-link="">
+              <span className="projects__title">{item.title}</span>
+              <span className="projects__meta">
+                {item.stage} · PM {item.pm}
+              </span>
+              {attention && <span className="projects__attention">{attention}</span>}
+              <SampleLabel show={item.sample} />
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }
+
+/** The Filter button's panel. Project filters are not in the contract yet, so it says what works today. */
+function FilterSoon({ onClose, anchor }: { onClose: () => void; anchor: RefObject<HTMLButtonElement | null> }) {
+  const panel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    panel.current?.querySelector<HTMLElement>('button')?.focus();
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    const onPointer = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (panel.current?.contains(target) || anchor.current?.contains(target)) return;
+      onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onPointer);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onPointer);
+    };
+  }, [anchor, onClose]);
+  return (
+    <div ref={panel} role="dialog" aria-label="Filter projects" className="psl-pop projects__filterpop">
+      <div className="projects__filterhead">
+        <strong>Filters come next</strong>
+        <button type="button" className="psl-iconbtn psl-iconbtn--bare" aria-label="Close" onClick={onClose}>
+          <CloseIcon />
+        </button>
+      </div>
+      <p>Search finds a project by its name or its client today.</p>
+    </div>
+  );
+}
+
+const listTabId = (key: ListTab) => `projects-tab-${key}`;
+const LIST_PANEL_ID = 'projects-panel';
 
 /** SCR-22 Projects: the projects the person's grants cover, from E-PROJECTS, with search and paging. */
 export function ProjectsList() {
@@ -113,6 +180,8 @@ export function ProjectsList() {
   const [list, setList] = useState<ListState>({ status: 'loading' });
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterButton = useRef<HTMLButtonElement>(null);
 
   const seq = useRef(0);
   const focusRow = useRef<number | null>(null);
@@ -140,7 +209,7 @@ export function ProjectsList() {
       try {
         const data = await fetchPage(v);
         if (mine !== seq.current) return;
-        setList({ status: 'ready', items: data.items, nextCursor: data.next_cursor });
+        setList({ status: 'ready', items: data.items, nextCursor: data.next_cursor, counts: data.counts });
       } catch (error) {
         if (mine !== seq.current) return;
         const e = asApiError(error);
@@ -227,6 +296,19 @@ export function ProjectsList() {
     navigate({ limit: next });
   };
 
+  const onTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const last = LIST_TABS.length - 1;
+    const next = { ArrowRight: index === last ? 0 : index + 1, ArrowLeft: index === 0 ? last : index - 1, Home: 0, End: last }[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    document.getElementById(listTabId(LIST_TABS[next].key))?.focus();
+    navigate({ tab: LIST_TABS[next].key });
+  };
+  const closeFilter = useCallback(() => {
+    setFilterOpen(false);
+    filterButton.current?.focus();
+  }, []);
+
   if (signedOut) return <SignedOutState pathname="/projects" />;
   if (list.status === 'error' && list.error.kind === 'forbidden') {
     return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
@@ -309,33 +391,83 @@ export function ProjectsList() {
             </div>
           )}
         </div>
-        <p className="projects__note">You see projects your roles cover.</p>
+        <p className="projects__note">You see projects your roles cover. Open one for its journey, documents, money and registers.</p>
       </>
     );
   }
 
+  const counts = list.status === 'ready' ? list.counts : undefined;
+  const total = counts?.[view.tab];
+  const filterProps = {
+    ref: filterButton,
+    type: 'button' as const,
+    'aria-haspopup': 'dialog' as const,
+    'aria-expanded': filterOpen,
+    onClick: () => (filterOpen ? closeFilter() : setFilterOpen(true)),
+  };
+
   return (
-    <>
+    <div className="projects__page">
+      <p className="projects__eyebrow">PROJECTS</p>
       <h1 className="shell-title">Projects</h1>
+      <div role="tablist" aria-label="Projects" className="psl-tabs projects__listtabs">
+        {LIST_TABS.map((tab, i) => {
+          const selected = tab.key === view.tab;
+          const count = counts?.[tab.key];
+          return (
+            <button
+              key={tab.key}
+              id={listTabId(tab.key)}
+              type="button"
+              role="tab"
+              className="psl-tab projects__listtab"
+              aria-selected={selected}
+              aria-controls={selected ? LIST_PANEL_ID : undefined}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => navigate({ tab: tab.key })}
+              onKeyDown={(e) => onTabKey(e, i)}
+            >
+              {tab.label}
+              {count !== undefined && <span className="psl-badge">{count}</span>}
+            </button>
+          );
+        })}
+      </div>
       <form role="search" className="psl-toolbar" onSubmit={onSearchSubmit}>
         <div className="psl-search projects__search">
           <SearchIcon />
           <label className="projects__sr" htmlFor="projects-q">
-            Search projects
+            Search
           </label>
           <input
             id="projects-q"
             type="search"
             className="psl-input"
-            placeholder="Search projects"
+            placeholder={phone ? 'Search projects' : 'Search projects or clients'}
             value={text}
             onChange={(e) => onSearchInput(e.target.value)}
           />
         </div>
-        {list.status === 'ready' && <span className="psl-resultcount">{shownText(list.items.length)}</span>}
+        <div className="projects__filter">
+          {phone ? (
+            <button {...filterProps} className="psl-iconbtn projects__iconbtn" aria-label="Filter">
+              <FilterIcon />
+            </button>
+          ) : (
+            <button {...filterProps} className="psl-btn psl-btn--secondary">
+              <FilterIcon />
+              Filter
+            </button>
+          )}
+          {filterOpen && <FilterSoon onClose={closeFilter} anchor={filterButton} />}
+        </div>
+        {list.status === 'ready' && (
+          <span className="psl-resultcount projects__total">{total === undefined ? shownText(list.items.length) : `${total} PROJECTS`}</span>
+        )}
       </form>
-      <div className="projects__panel">{body}</div>
-    </>
+      <div role="tabpanel" id={LIST_PANEL_ID} aria-labelledby={listTabId(view.tab)} className="projects__panel">
+        {body}
+      </div>
+    </div>
   );
 }
-

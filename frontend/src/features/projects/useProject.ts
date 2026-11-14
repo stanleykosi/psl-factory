@@ -5,9 +5,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
 
-import { isJourney, type Journey } from './model';
+import { isJourney, type JourneyView } from './model';
 
-export type JourneyState = { status: 'loading' } | { status: 'error'; error: ApiError } | { status: 'ready'; journey: Journey };
+export type JourneyState = { status: 'loading' } | { status: 'error'; error: ApiError } | { status: 'ready'; journey: JourneyView };
 
 /** One E-PROJECT read per opened project; a late response for an earlier project is ignored. No polling. */
 export function useProject(caseId: string) {
