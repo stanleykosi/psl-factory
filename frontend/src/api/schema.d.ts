@@ -719,6 +719,8 @@ export interface operations {
                 queue: "needs_me" | "waiting_on_others" | "done" | "unassigned";
                 q?: string;
                 line?: string;
+                project?: string;
+                waiting_on?: "me" | "someone_else" | "agent" | "outside_party" | "no_owner";
                 state?: string;
                 cursor?: string;
                 limit?: 10 | 20 | 50;
@@ -753,6 +755,9 @@ export interface operations {
                             waiting_on: string;
                             age_seconds: number;
                             sample: boolean;
+                            line_key?: string;
+                            /** @enum {string} */
+                            agent?: "tola" | "chidi" | "zainab";
                         }[];
                         next_cursor?: string;
                         /** Format: date-time */
@@ -762,6 +767,12 @@ export interface operations {
                             waiting_on_others: number;
                             done: number;
                             unassigned?: number;
+                        };
+                        filters?: {
+                            lines: {
+                                key: string;
+                                title: string;
+                            }[];
                         };
                     };
                 };
@@ -929,6 +940,17 @@ export interface operations {
                             name: string;
                             /** @enum {string} */
                             status: "done" | "current_person" | "current_agent" | "waiting" | "stopped" | "not_started" | "verified";
+                            /** Format: date-time */
+                            started_at?: string;
+                            /** Format: date-time */
+                            finished_at?: string;
+                            held_by?: {
+                                /** @enum {string} */
+                                kind: "person" | "role" | "agent" | "outside_party" | "factory";
+                                /** @description Person, role, agent or outside party name as recorded */
+                                name: string;
+                                is_you: boolean;
+                            };
                         }[];
                         facts: {
                             /** @enum {string} */
@@ -945,6 +967,67 @@ export interface operations {
                             required_role: string;
                             you_can_act: boolean;
                             revision: number;
+                            /** @description PROPOSAL (D-TASK-DECISION-VIEW). Present on decision tasks. Every value comes from backend records and the line's configured approval order; the frontend shows only what is returned. your_step is absent when the person has no step. */
+                            decision?: {
+                                version: {
+                                    /** @description As shown on the board, e.g. "Invoice v2" */
+                                    label: string;
+                                    number: number;
+                                    document_id?: string;
+                                    /** Format: date-time */
+                                    drafted_at?: string;
+                                };
+                                /** @description Amount of the exact version being decided; absent when the decision carries no amount. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                                amount?: {
+                                    /** @description Decimal string; absent when unknown */
+                                    amount?: string;
+                                    currency: string;
+                                    unknown: boolean;
+                                };
+                                /** @description Plain-language basis composed by the backend from contract terms, e.g. "Contract stage 2 of 4 · terms v1" */
+                                basis?: string;
+                                /** @description Who the output goes to when sent, e.g. a billing email; absent when nothing is sent */
+                                recipient?: string;
+                                changes?: {
+                                    previous_label: string;
+                                    items: string[];
+                                };
+                                prepared_by?: {
+                                    name: string;
+                                    role?: string;
+                                    is_you: boolean;
+                                    /** @enum {string} */
+                                    with_agent?: "tola" | "chidi" | "zainab";
+                                };
+                                chain: {
+                                    steps: {
+                                        position: number;
+                                        role: string;
+                                        /** @description Absent until a person is assigned */
+                                        person?: string;
+                                        /** @enum {string} */
+                                        status: "approved" | "returned" | "rejected" | "withdrawn" | "current" | "not_yet";
+                                        /** Format: date-time */
+                                        decided_at?: string;
+                                        is_you: boolean;
+                                    }[];
+                                    your_step?: number;
+                                    step_count: number;
+                                };
+                            };
+                            /**
+                             * @description Present only when you_can_act is false
+                             * @enum {string}
+                             */
+                            cannot_act_reason?: "not_your_role" | "prepared_by_you" | "already_decided" | "not_your_turn";
+                            /** @description Who was asked to act on this task (shown when you cannot act); empty when nobody is assigned yet. */
+                            asked?: {
+                                name: string;
+                                role: string;
+                                /** Format: date-time */
+                                alerted_at?: string;
+                                channels?: ("whatsapp" | "email")[];
+                            }[];
                         }[];
                         agent: {
                             name?: string;
@@ -954,10 +1037,28 @@ export interface operations {
                                 text: string;
                                 status: string;
                                 source?: string;
+                                /** Format: date-time */
+                                at?: string;
                             }[];
+                            /** Format: date-time */
+                            started_at?: string;
                         };
                         next_step: string;
                         sample: boolean;
+                        /** @description Amount of the work item (e.g. the invoice); absent when the line carries no amount. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                        amount?: {
+                            /** @description Decimal string; absent when unknown */
+                            amount?: string;
+                            currency: string;
+                            unknown: boolean;
+                        };
+                        started_by?: {
+                            name: string;
+                            role?: string;
+                            is_you: boolean;
+                        };
+                        /** Format: date-time */
+                        started_at?: string;
                     };
                 };
             };

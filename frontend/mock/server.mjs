@@ -1,4 +1,4 @@
-// Local contract mock for /api/v1. Routes come from the reviewed openapi.json; M-1
+// Local contract mock for /api/v1. Routes come from the v4 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
 // Persona: cookie psl_mock_persona (finance_lead | pm | none; default finance_lead).
@@ -12,7 +12,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v2-reviewed', 'openapi.json');
+export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v4', 'openapi.json');
 
 export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE'];
 export const PERSONAS = ['finance_lead', 'pm', 'none'];
