@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-12",
   "outcome": "A person sees their own alerts, opens one to its work, and sets how they are alerted",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -84,7 +84,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -100,7 +100,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-12/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -147,13 +147,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M4",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "92d029b21768858dd0d1402ea22d02c98827508e",
+    "task_branch": "fe-alerts-a-person-sees-their-own-alerts-opens-one",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-12",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -196,14 +196,22 @@
     }
   },
   "created_at": "2026-11-14T04:55:46Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-14T05:58:37Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T06:36:33Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -222,7 +230,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
