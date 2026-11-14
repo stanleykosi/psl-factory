@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-15",
   "outcome": "Alert bell in the top bar, with a drawer of \"Needs you\" and \"For your information\"",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-ALERTS-MENU"
   ],
@@ -104,13 +104,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "changes_requested",
-      "reviewer": "reviewer-technical",
-      "authority": "technical reviewer (lead)",
-      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
-      "evidence_refs": [
-        "delivery/features/F-15/round-1/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -136,22 +134,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
-      "evidence_refs": [
-        "delivery/features/F-15/round-1/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "changes_requested",
-      "reviewer": "reviewer-ui",
-      "authority": "UI reviewer (visual consistency against concept 3 of design/concepts/alerts-bell-concepts.html as decided in D-53/D-54, SCR-15 row styling, CMP-01 bars and tokens, at desktop and phone width)",
-      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
-      "evidence_refs": [
-        "delivery/features/F-15/round-1/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -294,7 +288,63 @@
       ]
     }
   ],
-  "prior_review_records": [],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "evidence_refs": [
+            "delivery/features/F-15/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-15/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "evidence_refs": [
+            "delivery/features/F-15/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (visual consistency against concept 3 of design/concepts/alerts-bell-concepts.html as decided in D-53/D-54, SCR-15 row styling, CMP-01 bars and tokens, at desktop and phone width)",
+          "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "evidence_refs": [
+            "delivery/features/F-15/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -390,7 +440,7 @@
     }
   },
   "created_at": "2026-11-14T17:42:20Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -416,6 +466,22 @@
       "round": 1,
       "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T19:49:12Z",
+      "round": 1,
+      "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T19:49:12Z",
+      "round": 2,
+      "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "reason": null
     }
   ],
   "routing": {
@@ -431,10 +497,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

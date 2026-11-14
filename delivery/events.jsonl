@@ -944,3 +944,5 @@
 {"at":"2026-11-14T19:47:51Z","feature":"F-15","round":1,"kind":"finding","action":"add","finding":"TECH-1-4","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
 {"at":"2026-11-14T19:47:51Z","feature":"F-15","round":1,"kind":"finding","action":"add","finding":"UI-1-1","by":"reviewer-ui","severity":"high","owner":"frontend","blocking":true,"role":"ui"}
 {"at":"2026-11-14T19:47:51Z","feature":"F-15","round":1,"kind":"finding","action":"add","finding":"UI-1-2","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-14T19:49:12Z","feature":"F-15","round":1,"kind":"transition","head":"07d078ef95ae","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-14T19:49:12Z","feature":"F-15","round":2,"kind":"transition","head":"07d078ef95ae","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
