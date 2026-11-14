@@ -257,6 +257,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
     busy: flow.busy,
     locked: notice?.kind === 'unconfirmed',
     phone,
+    touched: flow.touched,
     onRecord: () => void flow.record(),
     notice: <FormNotice notice={notice} />,
   };

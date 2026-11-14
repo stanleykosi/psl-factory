@@ -23,6 +23,8 @@ export type FormProps = {
   /** Record is off whatever the entries (uncertain effect, reload failed). */
   locked: boolean;
   phone: boolean;
+  /** The person has changed something: the missing-choices line becomes an alert. */
+  touched: boolean;
   onRecord: () => void;
   /** Callouts that belong just above Record (422 message, claim warning). */
   notice?: ReactNode;
@@ -131,11 +133,16 @@ function RecordRow({ props, ready, line, children }: { props: FormProps; ready: 
       {text}
     </button>
   );
-  const alert = line && !props.busy && (
-    <div role="alert" className="resp-alert">
-      {line}
-    </div>
-  );
+  const alert =
+    line &&
+    !props.busy &&
+    (props.touched ? (
+      <div role="alert" className="resp-alert">
+        {line}
+      </div>
+    ) : (
+      <div className="resp-alert resp-alert--hint">{line}</div>
+    ));
   if (props.phone) {
     return (
       <>

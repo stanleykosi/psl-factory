@@ -232,12 +232,16 @@ describe('validation (SCR-16-desktop-validation)', () => {
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
-  it('names only the missing choices', async () => {
+  it('names only the missing choices: a neutral hint until something changes, then the alert', async () => {
     await open();
-    expect(screen.getByRole('alert').textContent).toBe('Choose when and what they did to record this.');
+    expect(screen.queryByRole('alert')).toBeNull();
+    const hint = screen.getByText('Choose when and what they did to record this.');
+    expect(hint.className).toContain('resp-alert--hint');
+    choose('Approved');
+    expect(screen.getByRole('alert').textContent).toBe('Choose when to record this.');
+    cleanup();
     await open('W-1605', 'T-1605');
-    const alerts = screen.getAllByRole('alert');
-    expect(alerts[alerts.length - 1].textContent).toBe('Choose who responded, when, what they did, which version and how they responded to record this.');
+    expect(screen.getByText('Choose who responded, when, what they did, which version and how they responded to record this.').className).toContain('resp-alert--hint');
   });
 
   it('W-1609 (no case) disables the proof and never enables Record', async () => {

@@ -266,7 +266,13 @@ export function useResponse(id: string, taskId: string | undefined) {
     await confirm(formItem, response ? effectiveEntries(entries, response).who : '');
   }, [notice, formItem, confirm, entries, response]);
 
-  const setEntry = useCallback(<K extends keyof Entries>(key: K, value: Entries[K]) => setEntries((e) => ({ ...e, [key]: value })), []);
+  // Until the person changes something, what is missing is a hint, not an error.
+  const [changed, setChanged] = useState(false);
+  const setEntry = useCallback(<K extends keyof Entries>(key: K, value: Entries[K]) => {
+    setChanged(true);
+    setEntries((e) => ({ ...e, [key]: value }));
+  }, []);
+  const touched = changed || proof.files.length > 0;
 
-  return { view, task, response, entries: response ? effectiveEntries(entries, response) : entries, setEntry, proof, notice, busy, record, recheck, retry: load };
+  return { view, task, response, entries: response ? effectiveEntries(entries, response) : entries, setEntry, touched, proof, notice, busy, record, recheck, retry: load };
 }

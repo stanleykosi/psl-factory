@@ -91,6 +91,7 @@
 /* Record, its alert line and the audit line */
 .resp-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .resp-alert { padding: 10px 12px; background: var(--signal-tint); color: var(--signal-ink); }
+.resp-alert--hint { background: var(--surface-subtle); color: var(--ink-muted); }
 .resp-record { min-height: 48px; padding: 0 20px; white-space: nowrap; }
 .resp-form--sow .resp-record { width: 100%; max-width: 320px; min-height: var(--control-lg); }
 
