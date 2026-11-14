@@ -46,7 +46,7 @@ export function PhoneBar({ me, destinations, current, back = null, bell }: Props
 
   return (
     <>
-      <header className={`psl-phonebar psl-on-dark${canStart ? ' sw-phonebar' : ''}`}>
+      <header className={`psl-phonebar psl-on-dark${canStart ? ' sw-phonebar' : ''}${bell ? ' shell-phonebar--bell' : ''}`}>
         {hasMenu && (
           <button
             ref={buttonRef}
@@ -69,7 +69,6 @@ export function PhoneBar({ me, destinations, current, back = null, bell }: Props
         )}
         {back?.note && <span className="shell-phonenote">{back.note}</span>}
         <SampleLabel />
-        {bell && <AlertsBell {...bell} phone />}
       </header>
       {hasMenu && open && (
         <nav id="phone-menu" aria-label="Main" className="psl-pop psl-menu">
@@ -91,10 +90,11 @@ export function PhoneBar({ me, destinations, current, back = null, bell }: Props
           ))}
         </nav>
       )}
-      {/* After the menu in the DOM, so Tab goes Menu, its links, then "+ Start"; drawn at the bar's right end. */}
-      {canStart && (
+      {/* After the menu in the DOM, so Tab goes Menu, its links, the bell, then "+ Start"; drawn at the bar's right end. */}
+      {(bell || canStart) && (
         <span className="sw-phoneslot psl-on-dark">
-          <StartWorkButton variant="phone" />
+          {bell && <AlertsBell {...bell} phone />}
+          {canStart && <StartWorkButton variant="phone" />}
         </span>
       )}
     </>

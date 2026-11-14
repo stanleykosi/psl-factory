@@ -444,12 +444,13 @@ describe('phone (below 720px)', () => {
   beforeEach(() => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
   });
-  const phoneBell = () => within(phoneBar()).getByRole('button', { name: /^Alerts/ });
+  const phoneBell = () => within(document.querySelector('.shell-phone') as HTMLElement).getByRole('button', { name: /^Alerts/ });
 
   it('Menu, PSL FACTORY, bell, then + Start; same name; no chip', async () => {
     await mount();
     expect(phoneBell().getAttribute('aria-label')).toBe('Alerts, 4 unread, 3 need you');
-    expect(phoneBar().querySelector('.shell-bellchip')).toBeNull();
+    expect(document.querySelector('.shell-phone .shell-bellchip')).toBeNull();
+    expect(phoneBar().textContent).toContain('PSL FACTORY');
     const order = [...document.querySelectorAll('.shell-phone button')].map((b) => b.getAttribute('aria-label'));
     expect(order).toEqual(['Menu', 'Alerts, 4 unread, 3 need you', 'Start work']);
   });

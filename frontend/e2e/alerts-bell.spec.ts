@@ -31,7 +31,7 @@ const shot = (page: Page, name: string) => page.screenshot({ path: test.info().o
 const noHorizontalScroll = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 const bar = (page: Page) => page.locator('nav.psl-nav');
 const bell = (page: Page) => bar(page).getByRole('button', { name: /^Alerts/ });
-const phoneBell = (page: Page) => page.locator('header.psl-phonebar').getByRole('button', { name: /^Alerts/ });
+const phoneBell = (page: Page) => page.locator('.shell-phone').getByRole('button', { name: /^Alerts/ });
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Alerts' });
 const opens = (page: Page) => dialog(page).getByRole('link', { name: /^Open:/ });
 const box = async (l: Locator) => (await l.boundingBox())!;
@@ -381,7 +381,7 @@ test.describe('phone 390', () => {
     expect(boxes[2].width).toBeGreaterThanOrEqual(44);
     expect(boxes[2].height).toBeGreaterThanOrEqual(44);
     await expect(phoneBell(page)).toHaveAccessibleName('Alerts, 4 unread, 3 need you');
-    await expect(header.locator('.shell-bellchip')).toHaveCount(0);
+    await expect(page.locator('.shell-phone .shell-bellchip')).toHaveCount(0);
     await parts[0].focus();
     await page.keyboard.press('Tab');
     await expect(phoneBell(page)).toBeFocused();

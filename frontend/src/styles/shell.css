@@ -99,7 +99,9 @@ body { margin: 0; background: var(--steel); }
   .shell-topbar .shell-bellwrap ~ .shell-navend { margin-left: 0; }
   .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: calc(var(--space-1) / 2); padding-right: calc(var(--space-1) / 2); }
 }
-.shell-phone .shell-bellwrap { margin-left: auto; }
-/* after a sub-page's note (which holds the right edge with its own auto margin) the bell follows it */
-.shell-phone .shell-phonenote ~ .shell-bellwrap { margin-left: var(--space-2); }
+/* phone: the bell is drawn in "+ Start"'s slot at the bar's right end (after the menu in the DOM, so Tab goes Menu,
+   its links, bell, "+ Start"); the bar keeps room for it */
+.shell-phone .sw-phoneslot .shell-bellwrap:not(:last-child) { margin-right: var(--space-2); }
+.psl-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-4) + var(--control-md) + var(--space-2)); }
+.psl-phonebar.sw-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-7) * 2 + var(--space-5) + var(--control-md) + var(--space-2)); }
 .shell-phone .shell-bell { width: var(--control-md); height: var(--control-md); }

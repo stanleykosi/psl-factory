@@ -381,7 +381,7 @@ describe('phone back link', () => {
     await loaded();
     await waitFor(() => expect(backLink()?.textContent).toBe('← Setup'));
     const kids = Array.from(phoneBar().children);
-    expect(kids.map((k) => k.className)).toEqual([kids[0].className, 'shell-phonenote', 'psl-sample', 'shell-bellwrap']);
+    expect(kids.map((k) => k.className)).toEqual([kids[0].className, 'shell-phonenote', 'psl-sample']);
     // the bar spreads its children with space-between; the auto margin is what holds the note at the right
     const css = readFileSync(join(__dirname, '../src/styles/shell.css'), 'utf8');
     expect(css).toMatch(/\.shell-phonenote\s*\{[^}]*margin-left:\s*auto/);
