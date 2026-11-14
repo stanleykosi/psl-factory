@@ -764,7 +764,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     ]);
     expect(within(panel).getByRole('button', { name: 'Record and continue' })).toBeTruthy();
     expect(panel.textContent).toContain('Your choice is recorded with your name. A resend reuses the same invoice number.');
-    expect(panel.closest('.work-column')!.parentElement!.className).toBe('work-columns');
+    expect(panel.closest('.work-aside')).not.toBeNull();
   });
 
   it('on the phone it shows the warning callout instead', async () => {

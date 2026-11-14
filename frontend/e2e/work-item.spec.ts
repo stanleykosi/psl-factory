@@ -151,7 +151,7 @@ for (const [width, background, color] of [
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/work/W-1005');
     await loaded(page);
-    const deliver = page.getByRole('region', { name: 'Stations' }).locator('li[aria-current="step"]');
+    const deliver = page.getByRole('region', { name: 'Stations' }).locator('[role="listitem"][aria-current="step"]');
     await expect(deliver).toContainText('Deliver');
     expect(await deliver.evaluate((el) => [getComputedStyle(el).backgroundColor, getComputedStyle(el).color])).toEqual([background, color]);
   });

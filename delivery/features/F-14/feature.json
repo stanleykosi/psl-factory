@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -106,22 +106,38 @@
       "at": "2026-11-14T15:09:45Z",
       "seconds": 77.2,
       "evidence_ref": "delivery/features/F-14/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T15:56:36Z",
+      "seconds": 96.5,
+      "evidence_ref": "delivery/features/F-14/round-4/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend production build with the contract mock)",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -140,18 +156,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design fidelity gate, D-41 board-is-spec, D-45 tab strip, D-48 round-4 calls)",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -931,14 +951,42 @@
         "delivery/features/F-14/round-3/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:59:10Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "c26c9f3"
       ]
     },
     {
@@ -954,14 +1002,42 @@
         "delivery/features/F-14/round-3/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T16:04:56Z",
+          "refs": [
+            "Measured in the browser: 44px high at 390 on W-1711 and W-1710; click goes to `/exceptions`."
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Measured in the browser: 44px high at 390 on W-1711 and W-1710; click goes to `/exceptions`."
       ]
     },
     {
@@ -1000,14 +1076,42 @@
         "delivery/features/F-14/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "this commit"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T16:04:56Z",
+          "refs": [
+            "`fidelity-exceptions.json` has 32 entries. I matched each entry's reason against the `exception` fields across all 26 reports, and every entry is used on at least one board: #19 \"Record the client's response\" on 2 boards, Start work / More ways to start on 13 each, \"\u2190 Queue\" on 12, and so on. #21 from round 3 was kept as asked. No entry is unused."
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "this commit"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`fidelity-exceptions.json` has 32 entries. I matched each entry's reason against the `exception` fields across all 26 reports, and every entry is used on at least one board: #19 \"Record the client's response\" on 2 boards, Start work / More ways to start on 13 each, \"\u2190 Queue\" on 12, and so on. #21 from round 3 was kept as asked. No entry is unused."
       ]
     },
     {
@@ -1023,13 +1127,87 @@
         "delivery/features/F-14/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T16:04:56Z",
+          "refs": [
+            "Desktop owner-needed, setup-needed and effect-uncertain show `psl-btn psl-btn--secondary psl-btn--lg` (288\u00d750) in the side panel at x 1046. Effect-uncertain still matches the board with no look differences. Desktop awaiting-reconciliation (W-1711) shows a full-width secondary button under the columns, below F-09's panel. On the phone, all four exception items show a full-width secondary button below the content and above the pinned action bar, not covered by it at 844px height (side-by-side SCR-02-mobile-owner-needed-390 and SCR-02-mobile-awaiting-reconciliation-390). The order inside the panel is in UI-4-1."
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Desktop owner-needed, setup-needed and effect-uncertain show `psl-btn psl-btn--secondary psl-btn--lg` (288\u00d750) in the side panel at x 1046. Effect-uncertain still matches the board with no look differences. Desktop awaiting-reconciliation (W-1711) shows a full-width secondary button under the columns, below F-09's panel. On the phone, all four exception items show a full-width secondary button below the content and above the pinned action bar, not covered by it at 844px height (side-by-side SCR-02-mobile-owner-needed-390 and SCR-02-mobile-awaiting-reconciliation-390). The order inside the panel is in UI-4-1."
+      ]
+    },
+    {
+      "id": "UI-4-1",
+      "round": 4,
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop owner-needed (W-1708) and setup-needed (W-1709), the new secondary \"See all exceptions\" button sits above the panel's primary action (\"Fix it in Setup\" / \"Open Setup\"). On setup-needed it also pushes the \"This is a business decision\u2026\" small print below the primary button. The boards put the primary action first and secondary actions under it: setup-needed draws \"Open Setup\" and then \"Tell the PMO Lead\". The effect-uncertain board, which D-48 cites, has no primary action, so its placement does not carry over directly. Expected: the secondary button after the primary action, with the panel's text order as the board draws it. Actual: the button is rendered as StatePanel children ahead of the panel's own action. Fidelity still passes because the board does not draw this button. Path: frontend/src/features/work-item/WorkItemOverview.tsx:701-707.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T16:04:56Z",
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
+        }
+      ]
+    },
+    {
+      "id": "QA-4-1",
+      "round": 4,
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The awaiting-reconciliation board item cannot record a reconcile answer in the mock. Repro: reset the mock. `POST http://localhost:4511/api/v1/work/W-1711/actions` with `{\"expected_revision\":5,\"action\":\"reconcile\",\"outcome\":\"unknown\"}`, the finance_lead CSRF token and the cookie `psl_mock_persona=finance_lead` returns `501 {\"code\":\"not_mocked\"}`. The cause is that `mock/fixtures/response/` has no `W-1711.{delivered,not_delivered,unknown}.json` sidecar. In the browser, Unknown and Not delivered both end in \"We couldn't confirm your answer. Reload the work item\u2026\". Choosing \"It arrived\" shows \"Proof can't be uploaded for this item\" with Record disabled, because `mock/fixtures/work/W-1711.json` has no `case_id` or `case_revision`. Expected: the board item can be walked to a recorded answer, as W-1603 can (W-1603 not_delivered: one POST, then the page reloads to PROCESSING at revision 7). Actual: on W-1711 only the error and uncertain branches can be reached. The product code behaves correctly here: a 501 is treated as an uncertain effect and is never re-sent. Only the demo data falls short. Suggested fix: add `case_id`/`case_revision` to W-1711 and the three outcome sidecars, in F-09's fixtures folder.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T16:20:11Z",
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
         }
       ]
     }
@@ -1217,13 +1395,13 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b7f7166781cd81326c03669da4ae88f092c4cf33",
     "task_branch": "fe-workitem-the-work-item-page-and-its-history-match",
-    "head_sha": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+    "head_sha": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-14",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/22",
+    "pr_number": 22,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -2077,6 +2255,30 @@
       "round": 4,
       "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T15:56:37Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T16:04:57Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T16:20:11Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
     }
   ],
   "routing": {
@@ -2093,9 +2295,9 @@
   },
   "gate": {
     "round": 4,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
   },
   "blocked": null
 }

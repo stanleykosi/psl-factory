@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 230edd60f366ea64a1a138dc66f2084bd447ebd1
+COMMIT: 0758d3e3f8568c084ed88b1c37a05f0641d62510
 REVIEWER: reviewer-ux
 AUTHORITY: UX reviewer
 
 ## Summary
+- Extra-round impact check at head 0758d3e (only change: safePath fix, no markup, plus the v7 base merge). I opened the Start work drawer on http://localhost:4611 (mock 4612) as pm and ceo at 1440 and 390. It opens as a dialog, lists the 8 lines (phone: "Lines you can start · 8"), pm's line-specific open shows the form with project and milestone pickers, and there is no horizontal scroll in any of the four combinations. Nothing changed for the user. The findings below are carried forward from the earlier round-3 review at 230edd6.
 - Walked pm and ceo at 1440 and 390 on the shared build (:3511) with the contract mock. I opened all 8 lines for each persona and width. No horizontal scroll, no dead ends. Primary buttons are 48px tall at 1440 and 50px at 390.
 - Primary buttons are grey while the form is incomplete. When enabled they are Start orange rgb(200,64,28) (checked on Leadership report and on the change line after filling it). Nothing regressed in the core lines.
 - The 422 flow works at both widths. Invoice, Harmattan, first milestone: the alert callout takes focus ("1 thing to fix before Chidi can start." on desktop, "1 thing to fix" on phone) and the button is disabled. Picking another milestone re-enables it.
