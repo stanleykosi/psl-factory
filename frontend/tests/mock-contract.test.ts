@@ -216,22 +216,102 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
     expect(response.status).toBe(403);
   });
 
-  it('every fixture in fixtures/work is schema-valid with _kind removed', () => {
+  // PROPOSAL (D-WORKITEM-VIEW): the board fixtures' `presentation` block and history `lines`, as typed in
+  // src/features/work-item/presentation.ts. Checked here on their own, then stripped for the contract check.
+  const str = { type: 'string', minLength: 1 };
+  const strs = { type: 'array', items: str };
+  const link = { type: 'object', additionalProperties: false, required: ['label', 'href'], properties: { label: str, href: str, primary: { type: 'boolean' } } };
+  const factNames = ['drafted', 'reviewed', 'approved', 'sent', 'receipt_recorded', 'verified'];
+  const presentationSchema = {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      back_label: str,
+      facts: { type: 'object', additionalProperties: false, properties: Object.fromEntries(factNames.map((n) => [n, str])) },
+      stations: { type: 'array', items: { anyOf: [str, { type: 'null' }] } },
+      agent: { type: 'object', additionalProperties: false, properties: { role: str, summary: str, headline: str, message: strs } },
+      panel: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['title', 'body'],
+        properties: {
+          title: str,
+          tone: { enum: ['dark', 'signal', 'waiting', 'verified'] },
+          lead: str,
+          body: strs,
+          quote: str,
+          rows: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['label', 'value'], properties: { label: str, value: str } } },
+          note: str,
+          links: { type: 'array', items: link },
+          summary: { type: 'object', additionalProperties: false, required: ['text'], properties: { text: str, kind: { enum: ['info', 'warning', 'problem'] } } },
+        },
+      },
+      preview: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['template_label', 'brand', 'bill_to', 'number', 'issue_note', 'lines', 'tax', 'footer', 'version', 'basis'],
+        properties: {
+          template_label: str,
+          brand: str,
+          bill_to: { type: 'object', additionalProperties: false, required: ['name', 'email'], properties: { name: str, email: str } },
+          number: str,
+          issue_note: str,
+          lines: { type: 'array', minItems: 1, items: { type: 'object', additionalProperties: false, required: ['description', 'amount'], properties: { description: str, detail: str, amount: str } } },
+          tax: str,
+          footer: str,
+          version: str,
+          basis: str,
+        },
+      },
+      task_note: str,
+      history_counts: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['all', 'decisions', 'agent_work', 'evidence'],
+        properties: Object.fromEntries(['all', 'decisions', 'agent_work', 'evidence'].map((k) => [k, { type: 'integer', minimum: 0 }])),
+      },
+    },
+  };
+  const validPresentation = ajv.compile(presentationSchema);
+  const boardFixture = (name: string) => /^W-17\d\d(\.history)?\.json$/.test(name);
+
+  it('every fixture in fixtures/work is schema-valid with _kind, presentation and lines removed', () => {
     // Item bodies are W-<digits>.json and histories W-<digits>.history.json; other sidecars (F-04's) are not checked here.
     const files = readdirSync(workDir).filter((name) => /^W-\d+(\.history)?\.json$/.test(name));
     expect(files.length).toBeGreaterThanOrEqual(7);
     for (const name of files) {
       const body = readJson(join(workDir, name));
       if (name.endsWith('.history.json')) {
-        const items = (body.items as Record<string, unknown>[]).map((item) =>
-          Object.fromEntries(Object.entries(item).filter(([key]) => key !== '_kind')),
-        );
+        const items = (body.items as Record<string, unknown>[]).map((item) => {
+          if (!boardFixture(name)) expect(item, name).not.toHaveProperty('lines');
+          else if (item.lines !== undefined) expect(ajv.validate(strs, item.lines), name).toBe(true);
+          return Object.fromEntries(Object.entries(item).filter(([key]) => key !== '_kind' && key !== 'lines'));
+        });
         expectValid('E-WORK-HISTORY', 200, { ...body, items });
       } else {
-        expectValid('E-WORK-ITEM', 200, body);
+        const { presentation, ...item } = body;
+        if (boardFixture(name)) {
+          expect(validPresentation(presentation), `${name}: ${ajv.errorsText(validPresentation.errors)}`).toBe(true);
+        } else {
+          expect(presentation, name).toBeUndefined();
+        }
+        expectValid('E-WORK-ITEM', 200, item);
         expect(body.sample, name).toBe(true);
       }
     }
+    expect(files.filter(boardFixture)).toHaveLength(12);
+  });
+
+  it('the board fixtures leave every existing fixture byte-for-byte unchanged', () => {
+    const run = spawnSync('git', ['diff', '--name-only', '--diff-filter=MDR', '8930da1', '--', '.'], { cwd: workDir, encoding: 'utf8' });
+    expect(run.status).toBe(0);
+    expect(run.stdout.trim()).toBe('');
+  });
+
+  it('an unknown W-17xx id still falls back to the default fixture', async () => {
+    const other = await get('/api/v1/work/W-1799');
+    expect(other.status).toBe(200);
+    expect(other.body).toEqual(readJson(join(__dirname, '../mock/fixtures/E-WORK-ITEM.json')));
   });
 
   it('W-1004 carries the A-WORKITEM given and a 12-row history', () => {
