@@ -1,0 +1,28 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "Frame item, built by F-05 (CMP-23 Start work)",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "Frame item, built by F-05 (CMP-23 split button)",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+    },
+    {
+      "role": "link",
+      "name": "\u2190 Home",
+      "reason": "Frame phone bar (F-01 PhoneBar) draws menu and brand, not a back link",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+    },
+    {
+      "role": "text",
+      "name": "Tunde Bello \u00b7 PMO",
+      "reason": "Frame who-line; the fidelity tool sets the persona cookie with path /projects for /projects/P-0101, so /api/v1/me answers the default persona (Ada Okafor)",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+    }
+  ]
+}

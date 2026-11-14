@@ -1,0 +1,200 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-13",
+  "outcome": "The frontend builds, type-checks and mocks against the v7 contract",
+  "state": "IMPLEMENTING",
+  "task_ids": [
+    "FE-CONTRACT-V7"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "Only v7 is referenced. Verify: `cd frontend && grep -rnE \"packages/v[0-9]+\" --exclude-dir=node_modules --exclude-dir=.next --exclude=schema.d.ts --exclude=package-lock.json .` prints only `packages/v7` matches: `package.json`, `mock/server.mjs`, `src/api/client.ts` and `tests/api-schema-drift.test.ts`. Also check `grep -n \"v4\\|v3\" mock/server.mjs src/api/client.ts tests/api-schema-drift.test.ts tests/mock-work-list.test.ts tests/mock-decide.test.ts`: none of the matches refers to a contract package.",
+    "`OPENAPI_PATH` is `architecture/packages/v7/openapi.json`. Verify: `cd frontend && node -e \"import('./mock/server.mjs').then(m=>console.log(m.OPENAPI_PATH))\"` ends in `architecture/packages/v7/openapi.json`.",
+    "`schema.d.ts` is the unedited v7 output. Verify: `cd frontend && npm run gen:api && git diff --exit-code src/api/schema.d.ts` exits 0 after the commit. `tests/api-schema-drift.test.ts` is named for v7, compares against `../architecture/packages/v7/openapi.json`, and passes.",
+    "A new test in `tests/api-schema-drift.test.ts` asserts that all three point at the same file: the `gen:api` script path in `package.json`, the path the drift test regenerates from, and `OPENAPI_PATH` from `mock/server.mjs`, all resolved to absolute paths. Verify:",
+    "E-WORK-LIST is checked against v7 through the shared constant. Verify:",
+    "Every existing fixture validates against v7 with no fixture edits. Verify:",
+    "Negative paths still hold on v7, with no test weakened. Verify: in the same vitest run, these cases pass with assertions unchanged:",
+    "Types compile with no app-code edits. Verify:",
+    "Lint, the full unit suite and the build pass. Verify: `cd frontend && npm run lint && npm test && npm run build` exits 0.",
+    "The browser suite passes unchanged on the v7 mock. Verify:",
+    "The mock serves v7 routes locally. Verify:",
+    "build.md records strip removals. Verify: build.md has a \"Proposal strips removed\" line reading \"none on base <sha>: frontend/mock/exceptions.mjs absent\". If F-06 merged before the branch was cut, it instead lists each removed strip (`mock/exceptions.mjs` `contractBody` and its comment, `tests/mock-contract.test.ts:37`, `tests/exceptions-mock.test.ts:30`) with the v7 schema path that now declares each field. In that case E-EXCEPTIONS fixtures validate against v7 unstripped in the same vitest run."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "The rating is medium, not low: - this is a cross-layer contract change that every lane builds on; - the regenerated `src/api/schema.d.ts` is imported by all typed client code; - a mistake here (a stale path left behind, as `mock-work-list.test.ts:15` already shows, or a non-additive change from v4 to v7) would quietly weaken the contract check for all features. It touches no data, money, identity, migration or runtime write, and it changes no screen. That is why the surfaces are only `api` (the mock's routes and response validation) and `contract-change` (the v4 to v7 repoint, consuming the r1 proposals under the recorded exception). `ui` and `dependency` do not apply. Product acceptance is not required: this is conformance work, and the client sees nothing change."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-13/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-13/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": "stanleykosi/psl-factory",
+    "task_id": "FE-CONTRACT-V7",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "abd0b3e6a6ab9e856a829a8bfcd0556dc62a2f91",
+    "task_branch": "fe-contract-v7-the-frontend-builds-type-checks-and-mock",
+    "head_sha": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-13",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": null
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-14T05:32:53Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T05:39:48Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T05:40:06Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-13/readiness.md",
+      "delivery/features/F-13/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}
