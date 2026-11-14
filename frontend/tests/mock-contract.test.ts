@@ -11,7 +11,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/server.mjs';
 // @ts-expect-error plain ESM module without type declarations
-import { contractBody } from '../mock/exceptions.mjs';
+import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody as monthEndBody } from '../mock/finance.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -28,16 +30,16 @@ const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001' };
 const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', none: 'N-0201' };
-const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all' };
+const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
 };
-// Operations a persona may not use answer the declared status instead of 200 (E-EXCEPTIONS is Leads only).
-const PERSONA_STATUS: Record<string, Record<string, number>> = { 'E-EXCEPTIONS': { pm: 403 } };
-// Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06).
-const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = { 'E-EXCEPTIONS': contractBody };
+// Operations a persona may not use answer the declared status instead of 200 (E-EXCEPTIONS is Leads only, E-MONTH-END Finance only).
+const PERSONA_STATUS: Record<string, Record<string, number>> = { 'E-EXCEPTIONS': { pm: 403 }, 'E-MONTH-END': { pm: 403, none: 403 } };
+// Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10).
+const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = { 'E-EXCEPTIONS': exceptionsBody, 'E-MONTH-END': monthEndBody };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
