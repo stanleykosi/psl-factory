@@ -158,3 +158,8 @@
 {"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"MERGED","to":"DONE"}
 {"at":"2026-11-14T00:26:50Z","feature":"F-04","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-14T00:29:34Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T00:29:34Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"medium","owner":"integration","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T00:29:34Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T00:29:34Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-4","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T00:29:42Z","feature":"F-02","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"55e81940bdf7","written_at":"2026-11-14T00:29:42Z"}
