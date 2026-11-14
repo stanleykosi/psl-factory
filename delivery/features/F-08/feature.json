@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-08",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "The totals render exactly as returned, never summed. Verify: `tests/overview.test.tsx` renders the default fixture and finds dt/dd pairs \"IN PROGRESS\"/18, \"NEED A PERSON\"/5, \"STOPPED\"/3 and \"VERIFIED THIS MONTH\"/28, although the station counts sum to a different number. A second fixture with totals `{0,0,0,0}` but non-zero stations shows four 0s.",
+    "Every returned line and station is shown in order, with an exact count. Verify: in the component test, the \"Lines\" section has 8 `<li>` rows in fixture order. Each `<ol aria-label=\"<line> stations\">` has as many items as the fixture's stations, and each item's text includes \"<name>: <count> item(s)\", which proves singular and plural.",
+    "Square state follows `count` and `needs_person`, and the tag tone follows `needs_person` only. Verify: in the component test, a station with `needs_person: true, count: 0` has the needs-person class and \", needs a person\" in its text; `count: 3, needs_person: false` has the work class and a visible \"3\"; `count: 0, needs_person: false` has the empty class and no numeral. Pre-sale's tag reads exactly \"1 WAITING\" with `psl-tag--person`, and Closing's reads \"ON TRACK\" with `psl-tag--neutral`. A fixture `note` of \"all good\" renders as \"all good\", unparsed and not re-cased.",
+    "The coverage time shows. Verify: the component test finds \"FACTORY FLOOR \u00b7 UPDATED 14 Nov 16:40 WAT\" and a `<time dateTime=\"2026-11-14T15:40:00Z\">`.",
+    "Empty lines. Verify: with cookie `psl_mock_overview=empty`, e2e at 1440 shows four 0 tiles, \"No lines to show yet.\", no `radiogroup` \"View\" and the \"See all exceptions\" link. The component test covers the same with `lines: []`.",
+    "All-zero lines. Verify: with `psl_mock_overview=zero` (e2e) or `zero.json` (component), all squares are empty-styled, no numerals are shown and tags appear verbatim.",
+    "Wrong user: a person without `overview` never fetches E-OVERVIEW. Verify: a component test with the `me.pm.json` fixture shows \"This section isn't open to your role.\" with a link to `/my-work`, and `fetch` was never called with `/api/v1/overview`. `e2e/frame.spec.ts:108` still passes unchanged.",
+    "401, 403 and 404 from E-OVERVIEW. Verify: in the component test, 401 renders \"You're signed out.\" with a sign-in link whose `next` is `/overview`. 403 and 404 each render \"The factory floor isn't open to your role.\" plus the server message and no tiles. After each, advancing fake timers 30 s makes no further overview request. In e2e, `page.route('**/api/v1/overview', \u2026)` fulfils 403 with the mock's 403 body (a scenario cookie would also hit `/me`). The page shows the not-open text with no axe violations.",
+    "Provider failure, no stale figures. Verify: in the component test, the first load succeeds, then the 15 s poll gets a 500 (or a rejected fetch). The page shows `role=\"alert\"` with \"We couldn't load the factory floor. Your work is safe; nothing was changed.\", \"Last loaded 14 Nov 16:40 WAT.\" and \"Reference <code> for support.\", and **no** totals `<dl>` or Lines section. Try again with a 200 restores the figures.",
+    "Polling follows visibility. Verify: with fake timers in the component test, there is a second request at 15 000 ms and none before. With `document.visibilityState` stubbed to `hidden` and `visibilitychange` dispatched, no request happens over 60 s. Back to `visible` after more than 15 s triggers one immediate request. There is never more than one request in flight: a slow response plus a tick gives one request.",
+    "Out-of-order responses never win. Verify: in the component test, poll A is slow and poll B fast with a later `as_of`. After both resolve, B's figures and time show.",
+    "The 3D option follows reduced motion, WebGL and width. Verify: in the component test, with `@/features/floor/support` mocked:",
+    "three.js is not loaded until 3D is chosen. Verify:",
+    "The 3D floor shows the same figures, renders on demand and moves only on change. Verify:",
+    "The no-WebGL fallback still shows every line and count. Verify: in e2e, `addInitScript` makes `HTMLCanvasElement.prototype.getContext` return null for `webgl`/`webgl2`. `/overview` shows no \"View\" switch, the \"can't show the 3D floor\" hint, 8 line rows, and station items whose sr text includes each count. There are no axe violations.",
+    "A runtime failure in 3D falls back to flat. Verify: in the component test, the mocked `Floor3D` calls `onFailure()`, or the mocked import rejects. The page shows the warning \"We couldn't show the 3D floor, so it's shown flat.\", \"Flat\" content returns and the radiogroup is gone.",
+    "Reduced motion (SCR-06 reduced-motion state). Verify: in e2e, `page.emulateMedia({ reducedMotion: 'reduce' })` at 1440 shows the flat view with the reduced-motion hint and no \"3D floor\" option. There are no axe violations, and a screenshot is saved.",
+    "Exceptions place. Verify: the component test finds h2 \"All exceptions \u00b7 everyone's\", a link named \"See all exceptions\" with `href=\"/exceptions\"`, and the text \"Your own exceptions also appear in My work \u00b7 Needs me, marked Fix.\" No request to `/api/v1/exceptions` is made. Tests do not navigate the link. `grep -rn \"features/exceptions\" frontend/src/features/overview frontend/src/app/overview` prints nothing.",
+    "Layouts and accessibility at 390px and 1440px (A-ACCESSIBILITY). Verify: e2e at 1440 \u00d7 900 and 390 \u00d7 844 for the default flat view, and at 1440 for 3D. Each has axe with WCAG 2.2 AA tags (the `my-work.spec.ts` helper pattern) and zero violations, `document.documentElement.scrollWidth <= innerWidth`, and screenshots `overview-1440.png` and `overview-390.png`. At 390 there is no \"View\" radiogroup, the totals form 2 columns, and every line name and tag is visible. Keyboard: Tab reaches \"Flat\" and \"3D floor\", arrow keys move the selection, and the focus outline is 2px solid. The \"See all exceptions\" link is reachable.",
+    "Mock contract. Verify:",
+    "Dependency pinned. Verify: `node -e \"const p=require('./frontend/package.json');console.log(p.dependencies.three,p.devDependencies['@types/three'])\"` prints `0.187.0 0.187.0`. `git diff main -- frontend/package.json` shows only those two lines added. `npm ci` in `frontend/` succeeds, and `delivery/checks.sh` passes (lint, typecheck, vitest, `next build`).",
+    "The mock seam stays small. Verify: `git diff main -- frontend/mock/server.mjs` shows only the import, the `M1_OPERATIONS` entry, the dispatch line and at most one header-comment line."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "dependency"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it medium: - The page is read-only and shows no money or identity data. - It adds the first runtime npm dependency since the app frame: `three`, pinned exactly, with `@types/three` as a devDependency, in frontend/package.json and the lockfile. That needs a client-only dynamic import, a WebGL and reduced-motion fallback, and care with bundle weight. That is the `dependency` surface. - It shares the `M1_OPERATIONS` seam (server.mjs:24, tests/mock-contract.test.ts:69-76) with three parallel lanes. - It shows factory-wide counts. These must come from E-OVERVIEW as returned (INV-ACCESS), never be computed in the browser, and always show their `as_of` time. Surfaces are `ui` (SCR-06 on desktop and phone) and `dependency` (three). Moving SCR-12 out removes `payments`. There is no `api` or `contract-change`, because it reads one existing GET and changes nothing in schema.d.ts or openapi.json. There is no `security` or `auth`, because gating comes from `/me` destinations and the backend."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-08/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,21 +69,38 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T03:35:12Z",
+      "seconds": 97.9,
+      "evidence_ref": "delivery/features/F-08/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (UI against the contract mock only; no backend exists for E-OVERVIEW in this lane)",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -59,16 +110,104 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-08/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design system and approved SCR-06 artboards)",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/package-lock.json` adds `\"peer\": true` to `node_modules/eslint-plugin-import` (hunk at about line 3913). This is npm-version metadata, not three or one of its dependencies. The brief expects a lockfile change limited to three and its deps. It is harmless and `npm ci` passes, but ideally revert that one line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "3D floor: token cubes collide with each other and with the count sprite at busy stations (visible at 1440 on Invoices, Pre-sale and Planning). Expected: tokens sit clear of the sprite and the neighbouring block. Actual: the two-row token grid (`frontend/src/features/floor/scene.ts:140-143`) runs into the sprite placed at `scene.ts:135` and the adjacent block. The sprite text stays legible at 2x.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Tag tones and line identity differ from the approved SCR-06 artboard. The artboard shows ON TRACK in green, WAITING in amber, STOPPED and UNCERTAIN in red, and an avatar and subtitle per line (e.g. \"RFP \u00b7 commercial\"). The build draws every tag neutral (ON TRACK, the 2 PROBLEMS in the zero variant) or in the signal tint (WAITING, STOPPED, UNCERTAIN, 2 PROBLEMS), and omits avatars and subtitles, because E-OVERVIEW has no fields for them. This follows the recorded PMO-0-4 decision (spec.md lines 84, 91; readiness.md line 25), which is flagged for product acceptance. Expected: product confirms or supplies the tone rule before merge. Actual: as described, in `frontend/src/features/overview/OverviewPage.tsx` (`LineRows`, the `psl-tag` class choice). If product does not accept the recorded decision, this becomes blocking.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -87,13 +226,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M3-OVERVIEW",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "d8e454f0fa0716ca9ee237f7f42364f78e807fde",
+    "task_branch": "fe-m3-overview-a-lead-opens-overview-and-sees-every-lin",
+    "head_sha": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-08",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +242,73 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      ".gitignore",
+      "architecture/build_model.py",
+      "architecture/model.json",
+      "architecture/packages/v6/delivery.md",
+      "architecture/packages/v6/endpoints.csv",
+      "architecture/packages/v6/handoff.md",
+      "architecture/packages/v6/impact.json",
+      "architecture/packages/v6/index.html",
+      "architecture/packages/v6/integrations.csv",
+      "architecture/packages/v6/manifest.json",
+      "architecture/packages/v6/manifest.sha256",
+      "architecture/packages/v6/model.json",
+      "architecture/packages/v6/openapi.json",
+      "architecture/packages/v6/reviews.json",
+      "architecture/packages/v6/tasks.csv",
+      "architecture/packages/v6/traceability.csv",
+      "architecture/packages/v6/validation.json",
+      "architecture/sources/decisions-2026-11-14-v2.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-01/.lock",
+      "delivery/features/F-02/.lock",
+      "delivery/features/F-03/.lock",
+      "delivery/features/F-04/.lock",
+      "delivery/features/F-05/feature.json",
+      "delivery/features/F-05/readiness-v5-not-ready.md",
+      "delivery/features/F-05/readiness.md",
+      "delivery/features/F-05/spec.md",
+      "delivery/features/F-06/.lock",
+      "delivery/features/F-06/feature.json",
+      "delivery/features/F-06/round-1/acceptance-pmo.md",
+      "delivery/features/F-06/round-1/build.md",
+      "delivery/features/F-06/round-1/checks.md",
+      "delivery/features/F-06/round-1/e2e-coordinator.md",
+      "delivery/features/F-06/round-1/review-qa.md",
+      "delivery/features/F-06/round-1/review-technical.md",
+      "delivery/features/F-06/round-1/review-ui.md",
+      "delivery/features/F-06/round-1/review-ux.md",
+      "delivery/features/F-07/.lock",
+      "delivery/features/F-08/.lock",
+      "delivery/features/F-08/feature.json",
+      "frontend/e2e/decide.spec.ts",
+      "frontend/e2e/overview.spec.ts",
+      "frontend/mock/fixtures/E-OVERVIEW.json",
+      "frontend/mock/fixtures/overview/changed.json",
+      "frontend/mock/fixtures/overview/empty.json",
+      "frontend/mock/fixtures/overview/zero.json",
+      "frontend/mock/overview.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/package-lock.json",
+      "frontend/package.json",
+      "frontend/src/app/overview/page.tsx",
+      "frontend/src/features/floor/Floor3D.tsx",
+      "frontend/src/features/floor/scene.ts",
+      "frontend/src/features/floor/support.ts",
+      "frontend/src/features/overview/OverviewPage.tsx",
+      "frontend/src/features/overview/overview.css",
+      "frontend/src/features/overview/types.ts",
+      "frontend/src/features/overview/useMedia.ts",
+      "frontend/src/features/overview/useOverview.ts",
+      "frontend/tests/floor.test.ts",
+      "frontend/tests/mock-overview.test.ts",
+      "frontend/tests/overview-floor-reject.test.tsx",
+      "frontend/tests/overview-floor.test.tsx",
+      "frontend/tests/overview-imports.test.ts",
+      "frontend/tests/overview.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +341,67 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 3,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T02:59:44Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T02:59:48Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T03:35:13Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T03:39:54Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:44:52Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-08/readiness.md",
+      "delivery/features/F-08/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
   },
   "blocked": null
 }

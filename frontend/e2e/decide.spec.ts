@@ -131,7 +131,8 @@ test('at 390 Approve is the 54px action-blue phone footer button', async ({ page
   await openDecision(page, 'W-1201', 'T-1201');
   const approve = page.locator('.psl-actionbar').getByRole('button', { name: 'Approve v2' });
   expect((await approve.boundingBox())!.height).toBeGreaterThanOrEqual(54);
-  expect(await approve.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(36, 89, 214)');
+  // toHaveCSS retries, so the check waits for the colour transition to settle.
+  await expect(approve).toHaveCSS('background-color', 'rgb(36, 89, 214)');
 });
 
 test('the approve done view has the green success banner; return has the neutral one', async ({ page }) => {

@@ -16,6 +16,7 @@ SRC = {
     'S-DECISIONS-V2': ('Frontend decisions and role boundary, 13 Nov 2026', 'sources/decisions-2026-11-13-v2.md', '2026-11-13b', 'private'),
     'S-DECISIONS-V3': ('Contract fields for the approved boards; decision variants parked, 13 Nov 2026', 'sources/decisions-2026-11-13-v3.md', '2026-11-13c', 'private'),
     'S-DECISIONS-V4': ('Sample tag hidden; remaining frontend screens split to build in parallel, 14 Nov 2026', 'sources/decisions-2026-11-14.md', '2026-11-14', 'private'),
+    'S-DECISIONS-V5': ('Build in parallel, split where the contract is missing, frontend drafts contract proposals, 14 Nov 2026', 'sources/decisions-2026-11-14-v2.md', '2026-11-14b', 'private'),
 }
 def sha(p): return hashlib.sha256(open(os.path.join(HERE, p), 'rb').read()).hexdigest()
 sources = [{'id': k, 'title': t, 'path': p, 'version': v, 'classification': c, 'sha256': sha(p)} for k, (t, p, v, c) in SRC.items()]
@@ -282,15 +283,17 @@ EP = [
   O({'report_id': S(), 'title': S(), 'figures': A(O({'label': S(), 'value': MONEY, 'sources': A(S())}))})),
 ]
 endpoints = []
-for (i, m, path, t, trig, perm, h, svc, req, recs, invs, decs, task, scen, params, reqbody, resp) in EP:
+def make_endpoint(i, m, path, t, trig, perm, h, svc, req, recs, invs, decs, task, scen, params, reqbody, resp):
     write = m != 'GET'
-    endpoints.append({'id': i, 'title': t, 'refs': [req] + recs + invs + decs + [task, scen], 'evidence': ['S-SCREENS', 'S-BACKEND'],
+    return {'id': i, 'title': t, 'refs': [req] + recs + invs + decs + [task, scen], 'evidence': ['S-SCREENS', 'S-BACKEND'],
         'method': m, 'path': path, 'trigger': trig, 'security': ['Session', 'Csrf'] if write else ['Session'], 'permission': perm, 'parameters': params,
         'request': reqbody,
         'responses': [(created if i == 'E-WORK-START' else ok)(t, resp)] + (STD_WRITE if write else STD_READ),
         'handler': h, 'service': svc, 'local_work': 'Resolve the record, check grants and authority, call ' + svc + ('; write one audit event' if write else '') + '.',
         'integration_calls': [], 'failure_recovery': ('409 on stale revision: the client reloads and shows the newer version; 422 names the fields; nothing is partially written.' if write else 'Read-only; 404 hides records the person may not see.'),
-        'implementation': 'unimplemented'})
+        'implementation': 'unimplemented'}
+for row in EP:
+    endpoints.append(make_endpoint(*row))
 # integration calls: alerts and agents
 for e in endpoints:
     if e['id'] == 'E-NOTIFICATIONS': e['integration_calls'] = [{'integration': 'I-ALERTS', 'operation': 'queue_alert'}]
@@ -343,6 +346,162 @@ add_props(wl_resp['properties']['items']['items'], {'line_key': S(), 'agent': AG
 for eid, decs in (('E-WORK-ITEM', ['D-WORKITEM-DETAIL', 'D-TASK-DECISION-VIEW']), ('E-WORK-LIST', ['D-WORKLIST-FILTERS'])):
     e = EP_BY_ID[eid]; e['refs'] = e['refs'] + decs; e['evidence'] = e['evidence'] + ['S-DECISIONS-V3']
 EP_BY_ID['E-WORK-ITEM']['refs'].append('A-NOT-YOURS')
+
+# ---- v6 PROPOSAL (backend developer to confirm; S-DECISIONS-V5): Start work, record a response, reconcile,
+# RFP outcome and project tabs. Every addition to an existing payload is optional and every v5 required list is kept,
+# so built screens and their fixtures keep validating. Values that are business rules (allowed actions, response
+# options, who may record, amounts) are supplied by the backend; the contract only carries them.
+V6_EV = ['S-DECISIONS-V5', 'S-SCREENS']
+LABELLED = O({'value': S(), 'label': S()})
+DATE = S(format='date')
+PAGE_LIMIT = P('limit', 'query', False, {'type': 'integer', 'enum': [10, 20, 50], 'description': 'Rows per page chosen by the person; default 20'})
+# -- Start work (SCR-04; F-05 PMO-0-1..0-5) -> D-START-INTAKE
+FIELD_KINDS = ['text', 'long_text', 'date', 'date_range', 'period', 'datetime', 'integer', 'money', 'choice', 'record', 'records', 'evidence', 'display']
+lines_ep = EP_BY_ID['E-LINES']
+lines_resp = lines_ep['responses'][0]['schema']
+line_row = lines_resp['properties']['items']['items']
+field = line_row['properties']['intake']['items']
+field['properties']['type']['description'] = ('PROPOSAL (D-START-INTAKE): one of ' + ', '.join(FIELD_KINDS) + '. The submitted intake value per kind: '
+    'text/long_text a string; date YYYY-MM-DD; date_range {from, to}; period YYYY-MM; datetime ISO 8601; integer a number; money {amount, currency, unknown} '
+    '(left blank = unknown=true with no amount, never 0); choice one options[].value; record one option value from E-LINE-OPTIONS; records a list of them; '
+    'evidence an evidence_id returned by E-EVIDENCE-UPLOAD on the line\'s case; display is shown, never sent.')
+add_props(field, {
+    'help': S(description='Hint under the field as composed by the backend, e.g. "Only milestones marked complete, with proof, are listed."'),
+    'placeholder': S(),
+    'options': A(LABELLED),
+    'options_source': S(enum=['line_options'], description='Present on record/records fields: read the options from E-LINE-OPTIONS for this line and field'),
+    'depends_on': S(description='Name of the field whose value narrows these options (e.g. milestone depends on project); sent as parent to E-LINE-OPTIONS'),
+    'evidence_kind': S(description='Kind to send to E-EVIDENCE-UPLOAD for an evidence field'),
+    'multiple': B,
+    'value': S(description='For display fields: the value shown, e.g. "Client weekly report · test template v1"'),
+    'restricted': B,
+})
+field['properties']['options']['description'] = 'Fixed choices for a choice field (e.g. Audience: Internal or Client), listed by the backend.'
+add_props(line_row, {
+    'subtitle': S(description='One line under the title in the chooser, e.g. "From a completed milestone"'),
+    'case_scope': S(enum=['project', 'fixed'], description='project: the case is the project chosen in the intake field named by case_field; fixed: start on case_id below'),
+    'case_field': S(description='Name of the record field whose chosen option carries case_id and case_revision (case_scope project)'),
+    'case_id': S(description='Case to start on when case_scope is fixed (e.g. the Finance back-office case)'),
+    'case_revision': I(minimum=1),
+    'next': O({'station_count': I(minimum=1), 'agent': AGENT_KEY, 'decided_by': A(S(description='Role that decides, as configured on the line')), 'summary': S(), 'journey_url': S()}, []),
+    'start_via': S(enum=['work_start', 'finance_import'], description='Which endpoint starts the line: E-WORK-START, or E-IMPORT for a file import line'),
+})
+line_row['properties']['next']['description'] = 'The "What happens next" block. Absent fields are not shown; the frontend derives none of it from roles.'
+add_props(lines_resp, {'default_line': S(description='Line key the main Start work button opens directly. Absent: the button opens the menu (e.g. CEO and CTO, D-LEADERS-START).')})
+EP_BY_ID['E-ME']['responses'][0]['schema']['properties']['startable_lines']['description'] = 'PROPOSAL (D-START-INTAKE): line keys, the same as E-LINES items[].key, never display titles. Start work shows when the list is not empty.'
+ws = EP_BY_ID['E-WORK-START']
+ws['request']['properties']['intake']['description'] = 'Field name to value, one entry per E-LINES intake field the person filled; value shapes per field type (D-START-INTAKE). Evidence values are evidence_ids uploaded to the same case before the start.'
+ws['responses'] = [r if r['status'] != '422' else {'status': '422', 'description': 'Validation failed; fields named', 'schema': O({'code': S(), 'message': S(), 'fields': A(O({'name': S(), 'message': S()}))}, ['code', 'message'])} for r in ws['responses']]
+eu = EP_BY_ID['E-EVIDENCE-UPLOAD']
+add_props(eu['responses'][0]['schema'], {'case_revision': I(minimum=1, description='The case revision after the upload; send it as case_revision on the start, response or action that follows')})
+eu['trigger'] = 'File drop in a form (record a response, reconcile, Start work proof fields)'
+# -- Record a response (SCR-16) and reconcile (SCR-02 awaiting reconciliation; F-06 PMO-0-1..0-5) -> D-RESPONSE-VIEW, D-WORK-ACTIONS-VIEW
+wi = EP_BY_ID['E-WORK-ITEM']['responses'][0]['schema']
+add_props(wi, {
+    'case_id': S(description='Case the work belongs to; the path for E-EVIDENCE-UPLOAD'),
+    'case_revision': I(minimum=1),
+    'allowed_actions': A(S(enum=['resume', 'cancel', 'reconcile'])),
+    'reconcile': O({'what': S(description='What was sent, e.g. "Invoice INV-0412 v2 to the billing contact"'), 'sent_at': DT,
+                    'checks': O({'count': I(), 'first_at': DT, 'last_at': DT, 'agent': AGENT_KEY}, ['count']),
+                    'outcomes': A(S(enum=['delivered', 'not_delivered', 'unknown'])), 'evidence_kind': S(),
+                    'resend': S(description='What a not-delivered answer allows, as the backend states it, e.g. "one resend of the same version"')}, ['outcomes']),
+    'rfp_outcome': O({'submission': O({'id': S(), 'label': S(), 'sent_at': DT, 'delivery': S()}, ['id', 'label']),
+                      'results': A(S(enum=['won', 'lost', 'pending', 'unknown'])), 'reasons': A(LABELLED), 'record_as': A(LABELLED), 'evidence_kind': S(),
+                      'recorded': O({'result': S(enum=['won', 'lost', 'pending', 'unknown']), 'at': DT, 'by': S()}, ['result'])}, ['submission', 'results', 'record_as']),
+})
+wi['properties']['allowed_actions']['description'] = 'PROPOSAL (D-WORK-ACTIONS-VIEW): the E-WORK-ACTION actions this person may take now, decided by the backend. Absent or empty: offer none.'
+wi['properties']['reconcile']['description'] = 'PROPOSAL (D-WORK-ACTIONS-VIEW): present when the state is awaiting_reconciliation or effect_uncertain.'
+wi['properties']['rfp_outcome']['description'] = 'PROPOSAL (D-RFP-OUTCOME): present on an RFP when the backend lets this person record its outcome. results, reasons and record_as come from the backend.'
+task_item = wi['properties']['tasks']['items']
+task_item['properties']['kind']['description'] = 'Task kind as named by the backend. A task with a response block is a recorded response (open the response form); one with a decision block is a decision.'
+add_props(task_item, {'response': O({
+    'variant': S(enum=['client_response', 'sow_signature', 'team_input'], description='Which SCR-16 form to show'),
+    'responders': A(O({'id': S(), 'name': S(), 'role': S(), 'organisation': S()}, ['id', 'name'])),
+    'actions': A(O({'value': S(enum=['approved', 'changes_requested', 'signed', 'rejected', 'estimate', 'input']), 'label': S()}, ['value'])),
+    'versions': A(O({'id': S(), 'label': S(), 'note': S(description='e.g. "the version sent for UAT"'), 'sent_at': DT}, ['id', 'label'])),
+    'teams': A(O({'key': S(), 'name': S(), 'given': B, 'estimate_needed': B}, ['key', 'name', 'given'])),
+    'blocking': S(description='Plain sentence on who holds review, e.g. "Security and Product haven\'t given input yet."'),
+    'evidence_kind': S(), 'claim_required': B,
+}, ['actions', 'responders'])})
+task_item['properties']['response']['description'] = ('PROPOSAL (D-RESPONSE-VIEW): present on tasks a person records for someone who does not log in. Which actions a task accepts and who may have responded are '
+    'backend rules; the frontend offers only what is listed. claim_required true: call E-TASK-CLAIM before E-RESPONSE.')
+rs = EP_BY_ID['E-RESPONSE']
+add_props(rs['request'], {'case_revision': I(minimum=1), 'version_id': S(), 'team': S(), 'estimate_person_days': {'type': 'number', 'minimum': 0},
+                          'what': S(description='What they gave (team input)'), 'evidence_ids': A(S(description='Further proof files beyond evidence_id ("Add another file")')),
+                          'note': {'type': 'string', 'description': 'Up to 2000 characters'}})
+# -- Project tabs (SCR-38, SCR-12, SCR-11, SCR-29; F-07 PMO-0-1) -> D-PROJECT-TAB-ROWS
+REF_LINK = O({'reference': S(), 'title': S(), 'work_id': S(), 'state': STATE, 'at': DT}, ['reference'])
+PAID = O({'status': S(enum=['paid', 'part_paid', 'not_paid', 'not_due', 'finance_tracks', 'unknown']), 'owed': MONEY_OR_UNKNOWN('Amount still owed as recorded by Finance.')}, ['status'])
+PAID['description'] = 'Paid is Finance data, separate from the invoice (INV-FACTS). Composed by the backend from receipts and allocations; never derived by the frontend.'
+OWNER = O({'name': S(), 'role': S(), 'recorded_by_pm': B, 'outside_party': B}, ['name'])
+MILESTONE_ROW = O({'position': I(minimum=1), 'name': S(), 'contract_amount': MONEY_OR_UNKNOWN('From the signed SOW.'), 'amount_note': S(description='e.g. "amount set at go-live"'),
+                   'completion': O({'status': S(enum=['done', 'not_yet']), 'at': DT, 'proof': S(description='Proof label, e.g. "client UAT sign-off"'), 'evidence_id': S()}, ['status']),
+                   'invoice': REF_LINK, 'paid': PAID,
+                   'changes': A(O({'reference': S(), 'title': S(), 'amount': MONEY_OR_UNKNOWN('Change amount; unknown until a SOW amendment with it is signed.'), 'work_id': S()}, ['reference', 'amount']))}, ['position', 'name', 'contract_amount', 'completion'])
+DOCUMENT_ROW = O({'document_id': S(), 'title': S(), 'kind': S(), 'version': S(), 'status': S(), 'updated_at': DT, 'test_template': B, 'work_id': S(), 'sample': B}, ['document_id', 'title', 'version', 'status'])
+MONEY_ROW = O({'position': I(minimum=1), 'stage': S(), 'amount': MONEY_OR_UNKNOWN('Stage amount.'), 'amount_note': S(), 'invoice': REF_LINK, 'invoice_status': S(description='As composed by the backend, e.g. "Verified 03 Nov", "Held · owner needed"'),
+               'paid': PAID, 'figure_id': S(description='Figure in E-REPORT whose sources explain this amount')}, ['position', 'stage', 'amount'])
+REGISTER_ROW = O({'register': S(enum=['issues', 'changes', 'emergencies', 'rfps']), 'reference': S(), 'title': S(), 'severity': S(enum=['high', 'medium', 'low'], description='Set by the PM'),
+                  'owner': OWNER, 'state': S(description='State text as composed by the backend'), 'age_seconds': I(), 'work_id': S(), 'sample': B}, ['register', 'reference', 'title'])
+ACTION_ROW = O({'action_id': S(), 'title': S(), 'from': O({'meeting': S(), 'at': DATE}, ['meeting']), 'owner': OWNER, 'due': O({'date': DATE, 'unknown': B}, ['unknown']),
+                'state': S(enum=['open', 'overdue', 'done']), 'work_id': S()}, ['action_id', 'title', 'state'])
+for name, row in (('milestones', MILESTONE_ROW), ('documents', DOCUMENT_ROW), ('money', MONEY_ROW), ('registers', REGISTER_ROW), ('actions', ACTION_ROW)):
+    row['description'] = 'Row on the ' + name + ' tab (D-PROJECT-TAB-ROWS, proposal); present only when that tab is requested.'
+pt = EP_BY_ID['E-PROJECT-TAB']
+pt_resp = pt['responses'][0]['schema']
+pt_resp['properties']['items']['description'] = 'v5 untyped rows, kept for compatibility. PROPOSAL (D-PROJECT-TAB-ROWS): read the typed array named by the tab instead (milestones, documents, money, registers or actions); items holds the same rows.'
+add_props(pt_resp, {'milestones': A(MILESTONE_ROW), 'documents': A(DOCUMENT_ROW), 'money': A(MONEY_ROW), 'registers': A(REGISTER_ROW), 'actions': A(ACTION_ROW)})
+add_props(pt_resp, {'summary': O({'registers': O({'issues': I(), 'changes': I(), 'emergencies': I(), 'rfps': I()}, []), 'actions': O({'total': I(), 'overdue': I(), 'without_owner': I()}, []),
+                                  'report_id': S(description='Money tab: E-REPORT id for the drill-down')}, [])})
+pt['parameters'][2:2] = [P('register', 'query', False, S(enum=['issues', 'changes', 'emergencies', 'rfps'], description='Registers tab only')), P('q', 'query', False)]
+pr = EP_BY_ID['E-PROJECT']['responses'][0]['schema']
+add_props(pr, {'revision': I(minimum=1, description='Case revision, for starts from the project page'),
+               'tab_counts': O({'milestones': I(), 'documents': I(), 'registers': I(), 'actions': I()}, [])})
+rp = EP_BY_ID['E-REPORT']['responses'][0]['schema']
+add_props(rp['properties']['figures']['items'], {'id': S(), 'source_details': A(O({'label': S(), 'reference': S(), 'kind': S(enum=['document', 'rule', 'record', 'evidence']), 'document_id': S(), 'work_id': S()}, ['label', 'reference', 'kind']))})
+add_props(rp, {'agent': AGENT_KEY})
+# -- new endpoints
+EP_V6 = [
+ ('E-LINE-OPTIONS', 'GET', '/api/v1/lines/{line_key}/fields/{field}/options', 'Options for a Start work field', 'Open a record choice in a Start work drawer', 'factory.start on the line; each option filtered by the person\'s grants.', 'api.lines.options', 'workflows.factory_definitions + domain services', 'R-START', ['REC-CASE', 'REC-GRANT'], ['INV-ACCESS', 'INV-SAMPLE'], ['D-START-INTAKE', 'D-PAGING'], 'T-START', 'A-START-INTAKE',
+  [P('line_key'), P('field'), P('parent', 'query', False, S(description='Value chosen in the field named by depends_on')), P('q', 'query', False), P('cursor', 'query', False), PAGE_LIMIT], None,
+  LIST(O({'value': S(), 'label': S(), 'hint': S(), 'case_id': S(), 'case_revision': I(minimum=1), 'disabled_reason': S(), 'sample': B}, ['value', 'label']))),
+ ('E-RFP-OUTCOME', 'POST', '/api/v1/work/{work_id}/rfp-outcome', 'Record an RFP outcome', 'Record the outcome form (won, lost, pending, unknown)', 'rfp.outcome on the case, as the backend allows; lessons use rfp.dispose.', 'api.rfp.outcome', 'pmo.rfp.outcome / dispose', 'R-RESPONSE', ['REC-WORK', 'REC-EVIDENCE', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT', 'INV-UNKNOWN'], ['D-RFP-OUTCOME'], 'T-RESPONSE', 'A-RFP-OUTCOME', [P('work_id')],
+  O(dict(EXPECTED, case_revision=I(minimum=1), submission_id=S(), result=S(enum=['won', 'lost', 'pending', 'unknown']), learned_at=DT, record_as=S(description='One of rfp_outcome.record_as[].value'),
+         evidence_id=S(), note={'type': 'string', 'description': 'Up to 2000 characters'}, reason=S(description='One of rfp_outcome.reasons[].value'), lessons={'type': 'string', 'description': 'Lost: what we would do differently'},
+         awarded_amount=MONEY_OR_UNKNOWN('Won: as stated in the award letter.'), expected_decision_on=DATE, remind_at=DT), ['expected_revision', 'case_revision', 'submission_id', 'result', 'learned_at', 'record_as', 'evidence_id']),
+  O({'work_id': S(), 'result': S(enum=['won', 'lost', 'pending', 'unknown']), 'state': STATE, 'revision': I(minimum=1), 'engagement_work_id': S()}, ['work_id', 'result', 'state', 'revision'])),
+]
+for row in EP_V6:
+    e = make_endpoint(*row); e['evidence'] = e['evidence'] + ['S-DECISIONS-V5']; endpoints.append(e); EP_BY_ID[e['id']] = e
+for eid, decs in (('E-LINES', ['D-START-INTAKE']), ('E-ME', ['D-START-INTAKE']), ('E-WORK-START', ['D-START-INTAKE']), ('E-EVIDENCE-UPLOAD', ['D-START-INTAKE', 'D-RESPONSE-VIEW']),
+                  ('E-WORK-ITEM', ['D-RESPONSE-VIEW', 'D-WORK-ACTIONS-VIEW', 'D-RFP-OUTCOME']), ('E-RESPONSE', ['D-RESPONSE-VIEW']), ('E-WORK-ACTION', ['D-WORK-ACTIONS-VIEW']),
+                  ('E-PROJECT-TAB', ['D-PROJECT-TAB-ROWS']), ('E-PROJECT', ['D-PROJECT-TAB-ROWS']), ('E-REPORT', ['D-PROJECT-TAB-ROWS'])):
+    e = EP_BY_ID[eid]; e['refs'] = e['refs'] + decs; e['evidence'] = sorted(set(e['evidence']) | {'S-DECISIONS-V5'})
+EP_BY_ID['E-LINES']['refs'].append('A-START-INTAKE'); EP_BY_ID['E-WORK-ITEM']['refs'] += ['A-RESPONSE', 'A-RECONCILE']; EP_BY_ID['E-PROJECT-TAB']['refs'].append('A-PROJECT-TABS')
+decisions += [
+    dec('D-START-INTAKE', 'What Start work needs from the contract', 'backend developer', 'E-LINES, E-LINE-OPTIONS, E-WORK-START, E-EVIDENCE-UPLOAD, E-ME; SCR-04', 'proposed',
+        'PROPOSAL for the backend developer to confirm: (1) each E-LINES line says which case it starts on: case_scope project (the case and its revision come from the chosen option of the field named by case_field) or fixed (case_id and case_revision on the line, e.g. the Finance back-office lines with no Project field); (2) intake[].type takes a defined kind (text, long_text, date, date_range, period, datetime, integer, money, choice, record, records, evidence, display) with help, placeholder, fixed options, depends_on, evidence_kind, display value and restricted; (3) record fields read their options from a new E-LINE-OPTIONS endpoint, filtered by grants on the backend and narrowed by parent; (4) proof is uploaded first with E-EVIDENCE-UPLOAD on the line\'s case, which now returns the case revision after the upload, and the evidence_id is the intake value; (5) lines carry an optional subtitle, a "what happens next" block (station count, agent, deciding role, summary) and start_via (E-WORK-START, or E-IMPORT for an import line); (6) E-LINES returns default_line for the main button, absent for people whose button opens the menu; (7) /me startable_lines holds line keys; (8) a 422 on E-WORK-START names each field with its message.',
+        'The approved SCR-04 drawers (16 lines, desktop and phone, plus validation) show choice lists from records, proof files, money and period fields and a "What happens next" block; v5 gives only key, title, group and name/label/type/required, and requires a case revision no read returns. All additions are optional, so v5 payloads stay valid. Field kinds, options, deciding roles and the default line come from the backend; the frontend derives none of them from roles. A blank money value is unknown, never 0 (INV-UNKNOWN). Whether the management accounts drawer starts through E-WORK-START or E-IMPORT, and E-IMPORT\'s missing entity, basis, extracted-at and control total, are for the backend developer.',
+        ['Options inline in E-LINES (grows with records, cannot filter by parent)', 'One start endpoint per line', 'Read project options from E-PROJECTS (no revision, ties Start work to the projects feature)'],
+        ['R-START', 'D-LEADERS-START'], ('S-DECISIONS-V5', 'S-SCREENS', 'S-BACKEND')),
+    dec('D-RESPONSE-VIEW', 'What Record a response needs from the work item', 'backend developer', 'E-WORK-ITEM tasks[].response, case_id, case_revision; E-RESPONSE; SCR-16', 'proposed',
+        'PROPOSAL for the backend developer to confirm: E-WORK-ITEM gains optional case_id and case_revision (so proof can be uploaded from the work item) and each task an optional response block: the SCR-16 variant (client response, SOW signature, team input), the responders the backend allows, the actions this task accepts with their labels, the versions being answered, the teams with given or missing input, a blocking sentence, the evidence kind and claim_required. E-RESPONSE gains optional case_revision, version_id, team, estimate_person_days, what, evidence_ids and note. When claim_required is true the frontend calls E-TASK-CLAIM before E-RESPONSE.',
+        'The approved SCR-16 boards show a who-responded picker, per-variant action choices, a version picker, several proof files and the team-input status; v5 tasks[] carry none of it. Which actions a task accepts and who may have responded are backend business rules, so the contract only carries what the backend allows. For the backend developer: workflows.factory.provide_information requires a factory_information task claimed by the actor, an evidence kind listed in context["missing"] and a case revision, while E-RESPONSE had no claim step and a different action vocabulary; claim_required, evidence_kind and case_revision are proposed to bridge that, and the API maps actions to the backend vocabulary.',
+        ['E-RESPONSE takes the file directly (one write, but no reuse of E-EVIDENCE-UPLOAD)', 'Frontend lists fixed actions per task kind (a business rule in the frontend)'],
+        ['R-RESPONSE'], ('S-DECISIONS-V5', 'S-SCREENS', 'S-BACKEND')),
+    dec('D-WORK-ACTIONS-VIEW', 'Which work actions a person may take, and what reconcile shows', 'backend developer', 'E-WORK-ITEM allowed_actions, reconcile; E-WORK-ACTION; SCR-02 awaiting reconciliation', 'proposed',
+        'PROPOSAL for the backend developer to confirm: E-WORK-ITEM gains optional allowed_actions (resume, cancel, reconcile: what this person may do now, decided by the backend from the line\'s operator and recovery authority) and a reconcile block (what was sent and when, the agent\'s checks, the outcomes the backend accepts, the evidence kind and the resend the backend allows after not delivered). The frontend offers an action only when it is listed.',
+        'The approved SCR-02 awaiting-reconciliation board offers "It arrived / It didn\'t arrive, allow one resend / I can\'t tell yet"; a not-delivered answer authorises a resend to a client (INV-RESEND). Offering actions the API did not grant would put recovery authority in the frontend. The resend allowance is stated by the backend; none is assumed here.',
+        ['Try the action and show the 403', 'Separate GET for allowed actions'], ['R-EXCEPTION'], ('S-DECISIONS-V5', 'S-SCREENS')),
+    dec('D-RFP-OUTCOME', 'Recording an RFP outcome', 'backend developer', 'New E-RFP-OUTCOME; E-WORK-ITEM rfp_outcome; SCR-16 RFP outcome boards', 'proposed',
+        'PROPOSAL for the backend developer to confirm: a separate POST /api/v1/work/{work_id}/rfp-outcome records won, lost, pending or unknown against one submission, with when it was learned, the role recorded as, proof and a note; optional reason and lessons (lost), awarded amount (won, may be unknown), expected decision date and reminder (pending). E-WORK-ITEM gains an optional rfp_outcome block with the submission, the results, reasons and record-as roles the backend allows, and any outcome already recorded. Lessons map to the backend dispose step.',
+        'Eight approved SCR-16 states record an RFP outcome; E-RESPONSE\'s actions cannot carry it and stretching rejected or input would misrecord it. The backend already has pmo.rfp.outcome (submission, result won/lost/pending/unknown, observed_at, role, evidence, note, case revision) and dispose (lessons); reason, awarded amount, expected decision date and reminder have no backend field today and stay optional until the backend developer confirms them. Who may record outcomes is a PSL rule the backend holds ("only roles PSL allows").',
+        ['New actions on E-RESPONSE', 'Leave the RFP outcome states unbuilt'], ['R-RESPONSE'], ('S-DECISIONS-V5', 'S-SCREENS', 'S-BACKEND', 'S-AUDIT')),
+    dec('D-PROJECT-TAB-ROWS', 'Row shapes for the five project tabs', 'backend developer', 'E-PROJECT-TAB, E-PROJECT tab counts, E-REPORT sources; SCR-38, SCR-12, SCR-11, SCR-29', 'proposed',
+        'PROPOSAL for the backend developer to confirm: E-PROJECT-TAB rows are typed per tab, in an optional array named by the tab (the untyped v5 items stays and holds the same rows): milestones (position, name, contract amount, completion with proof, invoice, paid, changes with their own amount), documents (document, version, status, test template), money (stage, amount, invoice and its status, paid, the E-REPORT figure that explains it), registers (register, reference, title, severity, owner, state, age; filtered by register and q) and actions (title, from which meeting, owner, due date or unknown, open/overdue/done); a summary carries register and action counts and the money report id. E-PROJECT gains optional revision and tab counts; E-REPORT figures gain an id and source details (document, rule, record, evidence).',
+        'The approved project tab boards show these columns; v5 rows are untyped ("documented in handoff", never documented). Every amount uses the money form with unknown=true and no value when unknown, never 0, and paid is Finance data separate from the invoice (INV-UNKNOWN, INV-FACTS). Paid status categories and owed amounts are composed by the backend from receipts and allocations, not by the frontend. The documents tab has no approved list board, so its row is an engineering proposal.',
+        ['Keep untyped rows documented in prose', 'One endpoint per tab'], ['R-PROJECT', 'R-REPORTS'], ('S-DECISIONS-V5', 'S-SCREENS')),
+]
 
 # ---------------------------------------------------------------- integrations and jobs
 integrations = [
@@ -471,6 +630,53 @@ milestones = [
     {'id': 'M-4', 'title': 'Alerts and assistant', 'refs': ['T-ALERTS', 'T-ASSISTANT', 'FE-M4'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-ALERTS and A-ASSISTANT pass on mock and synthetic providers'], 'gate_ids': ['D-ALERT-PROVIDERS', 'D-AGENT-PROVIDER', 'D-NOTIFY-MODEL', 'D-CONVERSATION-MODEL']},
 ]
+
+# ---- v6 (S-DECISIONS-V5): scenarios, frontend task split, milestones and coverage for the proposals above
+def SC6(*a):
+    s = SC(*a); s['evidence'] = ['S-SCREENS', 'S-DECISIONS-V5']; return s
+scenarios += [
+    SC6('A-START-INTAKE', 'Start work drawers are built from what the backend returns', 'R-START', 'A PM with factory.start on two projects, a Finance user with the back-office lines, a CEO, and a milestone that is not complete',
+        'Each opens Start work, chooses a line and fills its intake', 'Fields render by their defined kind; record options come from E-LINE-OPTIONS filtered by grants and narrowed by the parent field; the case and its revision come from the chosen project or the line\'s fixed case; proof is uploaded first and sent as an evidence_id; a blank money value is sent as unknown, never 0; the CEO\'s main button opens the menu because no default_line is returned; a 422 names each field'),
+    SC6('A-RFP-OUTCOME', 'Record an RFP outcome against one submission', 'R-RESPONSE', 'A submitted RFP whose work item returns rfp_outcome, and a person not among the record_as roles',
+        'Record won with the award letter; record lost with reason and lessons; record pending; the other person opens the RFP', 'Each is stored once with its proof and the role recorded as; an unknown awarded amount stays unknown; lost lessons are kept; the person not allowed sees no outcome form (no rfp_outcome block); a stale revision returns 409'),
+    SC6('A-PROJECT-TABS', 'Project tabs show typed rows with separate facts', 'R-PROJECT', 'A project with four milestones (one amount unknown, one change with unknown amount), registers, documents and nine actions (three overdue, one without owner)',
+        'Read each tab', 'Rows match their tab\'s shape; unknown amounts have unknown=true and no value; completion, invoice and paid are separate; register filter and search narrow rows; action summary counts match the rows; tab counts match E-PROJECT'),
+]
+for s in scenarios:
+    if s['id'] in ('A-RESPONSE', 'A-RECONCILE'):
+        s['evidence'] = sorted(set(s['evidence']) | {'S-DECISIONS-V5'})
+    if s['id'] == 'A-RESPONSE':
+        s['then'] += '; the form offers only the responders, actions and versions the task returns, and claims first when claim_required'
+    if s['id'] == 'A-RECONCILE':
+        s['then'] += '; only actions in allowed_actions are offered'
+# Like FE-DECIDE in v4, frontend tasks build against the proposals on the contract mock and are not gated by them; FE-CONNECT-1 and the backend tasks are.
+V6_TASK_EV = ['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V5']
+task_by_id = {t['id']: t for t in tasks}
+def retitle(i, title):
+    t = task_by_id[i]; t['title'] = title; t['evidence'] = sorted(set(t['evidence']) | {'S-DECISIONS-V5'})
+retitle('FE-M2A', 'Frontend: core Start work: button, line chooser and intake drawers without proof fields (invoice, weekly, minutes, issue, change, incident, escalation, leadership)')
+t = task_by_id['FE-M2A']; t['acceptance'] = ['A-START', 'A-START-INTAKE']
+retitle('FE-M2B', 'Frontend: all-exceptions list (exceptions only)')
+t = task_by_id['FE-M2B']; t['refs'] = ['R-EXCEPTION']; t['acceptance'] = ['A-ACCESSIBILITY']
+retitle('FE-M3-PROJECTS', 'Frontend: projects list and project journey (tabs in FE-M3-PROJECT-TABS and FE-M3-REPORT)')
+tasks += [
+    dict(T('FE-M2A-PROOF', 'Frontend: Start work proof fields and the Finance and payroll drawers (accounts, schedules, fixed assets, forecast, BU totals, ledger, payroll restricted)', [], ['R-START', 'R-FINANCE'], [], ['FE-M2A', 'FE-M2B-RESPONSE'], ['A-START-INTAKE', 'A-PAYROLL'], FE), evidence=V6_TASK_EV),
+    dict(T('FE-M2B-RESPONSE', 'Frontend: record a response (client response, SOW signature, team input, RFP outcome) and reconcile on the work item', [], ['R-RESPONSE', 'R-EXCEPTION'], [], ['FE-WORKITEM'], ['A-RESPONSE', 'A-RECONCILE', 'A-RFP-OUTCOME'], FE), evidence=V6_TASK_EV),
+    dict(T('FE-M3-PROJECT-TABS', 'Frontend: project tabs: milestones, documents, registers and actions', [], ['R-PROJECT'], [], ['FE-M3-PROJECTS'], ['A-PROJECT-TABS'], FE), evidence=V6_TASK_EV),
+    dict(T('FE-M3-REPORT', 'Frontend: project money tab report with drill-down (SCR-12)', [], ['R-PROJECT', 'R-REPORTS'], [], ['FE-M3-PROJECTS'], ['A-PROJECT', 'A-REPORT'], FE), evidence=V6_TASK_EV),
+]
+for m in milestones:
+    if m['id'] == 'M-2':
+        m['refs'] += ['FE-M2A-PROOF', 'FE-M2B-RESPONSE']; m['exit_criteria'] = m['exit_criteria'] + ['A-START-INTAKE and A-RFP-OUTCOME pass on the contract mock']
+    if m['id'] == 'M-3':
+        m['refs'] += ['FE-M3-PROJECT-TABS', 'FE-M3-REPORT']; m['exit_criteria'] = m['exit_criteria'] + ['A-PROJECT-TABS passes']
+for r in requirements:
+    if r['id'] == 'R-START': r['coverage'] = 'E-LINES, E-LINE-OPTIONS, E-WORK-START / A-START, A-START-INTAKE'
+    if r['id'] == 'R-RESPONSE': r['coverage'] = 'E-EVIDENCE-UPLOAD, E-RESPONSE, E-RFP-OUTCOME / A-RESPONSE, A-RFP-OUTCOME'
+    if r['id'] == 'R-PROJECT': r['coverage'] = 'E-PROJECTS, E-PROJECT, E-PROJECT-TAB, E-DOCUMENT / A-PROJECT, A-PROJECT-TABS'
+for j in journeys:
+    if j['id'] == 'JR-01': j['refs'] = j['refs'] + ['E-LINE-OPTIONS', 'E-EVIDENCE-UPLOAD']
+    if j['id'] == 'JR-03': j['refs'] = j['refs'] + ['E-WORK-ITEM', 'E-RFP-OUTCOME']
 
 model = {
     'schema_version': '1.0', 'pins': {'skill': '0.1.0', 'generator': '0.1.0'},
