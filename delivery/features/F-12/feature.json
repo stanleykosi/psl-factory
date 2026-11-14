@@ -108,11 +108,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance (delivery acceptance only; not client/product acceptance, merge or release)",
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -217,6 +219,98 @@
           "action": "add",
           "by": "reviewer-qa",
           "at": "2026-11-14T07:38:46Z",
+          "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The fidelity exceptions in `fidelity-exceptions.json` (E-2 twice, E-6) are approved by \"coordinator (overnight, provisional)\" under D-24. Readiness says only the design engineer can approve exceptions. The delegation is real and logged (D-24, overnight run), and D-24 says \"Revert: say which\", so I accept it for delivery. The design engineer must confirm D-24 before merge or product acceptance. E-1, E-3, E-4 and E-5 are covered by D-24 but not listed in the JSON, and the design check passed without them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:40:09Z",
+          "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` lists `operation_ids: []`, but the spec's endpoints are E-NOTIFICATIONS, E-NOTIFICATION-READ, E-ALERT-PREFS-READ and E-ALERT-PREFS. The coverage below is checked from the spec, so this is a record gap only. Fill it in at close-out.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:40:09Z",
+          "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `git.task_id` reads `FE-M4`, a task v7 retired (delivery.md:1369). The in-scope task is FE-ALERTS. Correct the record. It has no effect on the code.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:40:09Z",
+          "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-4",
+      "round": 1,
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec header names base `1827260` but the feature base is `92d029b`. Build.md's diff checks ran against the latter. The path list agrees, so I found no impact.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:40:09Z",
           "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
         }
       ]
