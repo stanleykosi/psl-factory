@@ -643,3 +643,6 @@
 {"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"add","finding":"UX-2-2","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
 {"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"add","finding":"SEC-2-1","by":"reviewer-security","severity":"low","owner":"frontend","blocking":false,"role":"security"}
 {"at":"2026-11-14T07:45:03Z","feature":"F-12","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"coordinator, provisional for the design engineer (hunchoweb)","commit":"831b17164ca8","written_at":"2026-11-14T07:45:02Z"}
+{"at":"2026-11-14T07:45:34Z","feature":"F-12","round":1,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/18","git.pr_number":18}}
+{"at":"2026-11-14T07:45:34Z","feature":"F-12","round":1,"kind":"transition","head":"831b17164ca8","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T07:45:54Z","feature":"F-12","round":1,"kind":"fields","fields":{"git.ci_status":"passed"}}

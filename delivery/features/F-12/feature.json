@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-12",
   "outcome": "A person sees their own alerts, opens one to its work, and sets how they are alerted",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -343,11 +343,11 @@
     "task_branch": "fe-alerts-a-person-sees-their-own-alerts-opens-one",
     "head_sha": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-12",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/18",
+    "pr_number": 18,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -458,6 +458,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-14T07:38:57Z",
+      "round": 1,
+      "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T07:45:34Z",
       "round": 1,
       "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
       "reason": null
