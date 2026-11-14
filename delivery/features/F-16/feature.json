@@ -321,7 +321,7 @@
         "delivery/features/F-16/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -338,10 +338,24 @@
           ],
           "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:51:11Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
+        "df180ca"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
         "df180ca"
       ]
     },
@@ -358,7 +372,7 @@
         "delivery/features/F-16/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -375,10 +389,24 @@
           ],
           "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:51:11Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
+        "df180ca"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
         "df180ca"
       ]
     }
