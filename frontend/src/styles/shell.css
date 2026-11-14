@@ -82,6 +82,23 @@ body { margin: 0; background: var(--steel); }
 @media (min-width: 1080px) {
   .shell-bellchip { display: inline-flex; }
 }
+/* the bar's 24px gap is wider than concept 3 draws between bell, name and Start work; 12px there (and Start work's
+   own right margin dropped, as it is now last) keeps the bar on one line at 1080px with the chip and the role */
+.shell-topbar .shell-bellwrap ~ .psl-nav__who, .shell-topbar .shell-bellwrap ~ .shell-navend { margin-left: calc(var(--space-3) - var(--space-5)); }
+.shell-topbar .shell-navend > .sw-split:last-child { margin-right: 0; }
+/* 1080px to 1279px, where the chip and the role both show: 10px link padding instead of 14px keeps the bar's 28px gutter */
+@media (min-width: 1080px) and (max-width: 1279.98px) {
+  .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: 10px; padding-right: 10px; }
+}
+/* 720px up to bp-desktop: a 32px bell with no gap on either side (the icon keeps 6px clear inside it) and 2px link
+   padding, so the bell fits beside the name at 720px without cutting it */
+@media (min-width: 720px) and (max-width: 1079.98px) {
+  .shell-topbar .shell-bell { width: 32px; height: 32px; }
+  .shell-topbar .psl-nav__links:has(+ .shell-bellwrap) { margin-right: calc(var(--space-2) * -1); }
+  .shell-topbar .shell-bellwrap ~ .psl-nav__who { margin-left: calc(var(--space-2) * -1); }
+  .shell-topbar .shell-bellwrap ~ .shell-navend { margin-left: 0; }
+  .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: calc(var(--space-1) / 2); padding-right: calc(var(--space-1) / 2); }
+}
 .shell-phone .shell-bellwrap { margin-left: auto; }
 /* after a sub-page's note (which holds the right edge with its own auto margin) the bell follows it */
 .shell-phone .shell-phonenote ~ .shell-bellwrap { margin-left: var(--space-2); }

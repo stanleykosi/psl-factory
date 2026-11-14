@@ -55,7 +55,7 @@
 @keyframes alerts-slide-in { from { transform: translateX(100%); } }
 @keyframes alerts-slide-up { from { transform: translateY(100%); } }
 @media (prefers-reduced-motion: reduce) {
-  .alerts-dscrim, .alerts-drawer { animation: none; transition: none; }
+  .alerts-layer .alerts-dscrim, .alerts-layer .alerts-drawer { animation: none; transition: none; }
 }
 .alerts-grab { flex: none; width: 40px; height: 4px; margin: 8px auto 0; border-radius: 2px; background: var(--ink-subtle); }
 .alerts-dhead { flex: none; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 2px solid var(--ink); }
