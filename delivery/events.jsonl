@@ -1018,3 +1018,5 @@
 {"at":"2026-11-14T20:51:44Z","feature":"F-16","round":2,"kind":"finding","action":"verify","finding":"UX-1-2","by":"reviewer-ux"}
 {"at":"2026-11-14T20:51:44Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"UI-2-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-14T20:51:45Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-14T21:01:53Z","feature":"F-15","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"abf4b7a0660a","written_at":"2026-11-14T21:01:37Z"}
+{"at":"2026-11-14T21:02:39Z","feature":"F-15","round":2,"kind":"transition","head":"abf4b7a0660a","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

@@ -18,5 +18,8 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 2. Next v7 tasks with dependencies met: workspace frame, M2B RFP, Finance and Setup sub-slices; FE-ASSISTANT needs F-05 merged.
 3. Follow-ups: F-12 QA-1-1 (D-27), F-11 TECH-3-1 / QA-3-1 / UX-3-1, D-21 Tola poses, F-06 preview on Overview after F-06 merges, F-07 pluralisation.
 
+- Start shared review copies with `FRAME_FIXTURES=1` (as playwright.config.ts does), or the frame fixture e2e specs fail.
+- After every merge, record PR, CI, decision and approval in the feature record at once so the board reaches Done.
+
 ## Review copies running
 F-06 :3611/:3612, F-08 :3811/:3812, F-11 :4111/:4112, F-12 :4211/:4212, F-09 :4911/:4912. Stop each once its PR is merged or closed.
