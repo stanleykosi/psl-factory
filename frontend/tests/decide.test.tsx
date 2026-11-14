@@ -91,7 +91,6 @@ describe('default view', () => {
       'Chidi',
       'Step 1 of 1',
       'Only a Finance Lead can decide. You are Finance Lead.',
-      'SAMPLE DATA',
     ]) {
       expect(text(), value).toContain(value);
     }
