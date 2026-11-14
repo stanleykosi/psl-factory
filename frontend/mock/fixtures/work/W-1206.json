@@ -100,6 +100,7 @@
             {
               "position": 3,
               "role": "CEO",
+              "person": "Ada Okafor",
               "status": "not_yet",
               "is_you": true
             }

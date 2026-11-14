@@ -13,8 +13,16 @@ export function When({ at }: { at: string }) {
   return <time dateTime={at}>{formatWat(at)}</time>;
 }
 
-/** The common header: crumb, station eyebrow, title and sub-line. */
-export function DecideHeader({ item, eyebrow, title, sub }: { item: WorkItem; eyebrow?: ReactNode; title: string; sub?: string }) {
+type HeaderProps = { item: WorkItem; eyebrow?: ReactNode; title: string; sub?: string; banner?: 'success' | 'neutral' };
+
+/** The common header: crumb, station eyebrow, title and sub-line. The done view sets the eyebrow and title in a banner. */
+export function DecideHeader({ item, eyebrow, title, sub, banner }: HeaderProps) {
+  const heading = (
+    <>
+      {eyebrow && <p className="decide-eyebrow">{eyebrow}</p>}
+      <h1 className="shell-title">{title}</h1>
+    </>
+  );
   return (
     <header className="decide-header">
       <nav aria-label="Breadcrumb">
@@ -22,8 +30,7 @@ export function DecideHeader({ item, eyebrow, title, sub }: { item: WorkItem; ey
           <Link href="/my-work">My work</Link> / {item.line} / <span className="psl-mono">{item.reference}</span>
         </p>
       </nav>
-      {eyebrow && <p className="decide-eyebrow">{eyebrow}</p>}
-      <h1 className="shell-title">{title}</h1>
+      {banner ? <div className={`decide-banner decide-banner--${banner}`}>{heading}</div> : heading}
       {(sub || item.sample) && (
         <p className="decide-sub">
           {sub && <span>{sub}</span>}
@@ -116,7 +123,7 @@ export function ApprovalChain({ chain }: { chain: TaskDecision['chain'] }) {
         Approval chain
       </h2>
       <p className="decide-plain">
-        {chain.your_step ? `Step ${chain.your_step} of ${chain.step_count}` : `${chain.step_count} steps`}
+        {chain.your_step ? `Step ${chain.your_step} of ${chain.step_count}` : chain.step_count === 1 ? '1 step' : `${chain.step_count} steps`}
       </p>
       <ol className="decide-steps">
         {chain.steps.map((step) => (

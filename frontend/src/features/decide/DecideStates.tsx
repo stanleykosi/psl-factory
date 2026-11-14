@@ -216,15 +216,18 @@ export function StaleView({ replaced, current, onReview }: { replaced: TaskDecis
 
 type DoneProps = { id: string; item: WorkItem; result: DecideResult; label: string; reloaded: WorkItem | null; refreshFailed: boolean };
 
+/** An echo other than the three verdicts gets neutral words: the page never claims a decision it wasn't told. */
+const RECORDED = { eyebrow: 'DECISION RECORDED', heading: (label: string) => `Decision recorded on ${label}` };
+
 export function DoneView({ id, item, result, label, reloaded, refreshFailed }: DoneProps) {
-  // The verdict sent is one of the three; the response echoes it.
-  const verdict = (result.verdict in VERDICT_WORDS ? result.verdict : 'approve') as Verdict;
-  const words = VERDICT_WORDS[verdict];
-  const approved = verdict === 'approve';
+  const known = Object.hasOwn(VERDICT_WORDS, result.verdict);
+  const words = known ? VERDICT_WORDS[result.verdict as Verdict] : RECORDED;
+  const approved = known && result.verdict === 'approve';
   return (
     <>
       <DecideHeader
         item={item}
+        banner={approved ? 'success' : 'neutral'}
         eyebrow={
           <>
             {words.eyebrow} · <time dateTime={result.decided_at}>{formatClock(result.decided_at)}</time>

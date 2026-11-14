@@ -13,6 +13,11 @@
 .decide-header .psl-crumb a { text-decoration: underline; text-underline-offset: 2px; }
 .decide-header .shell-title { overflow-wrap: anywhere; }
 .decide-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--signal-ink); }
+/* done: SCR-03-desktop-done / -mobile-done banner; return and reject (no board) use the neutral one */
+.decide-banner { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border: 2px solid; }
+.decide-banner--success { background: var(--verified-tint); border-color: var(--verified); color: var(--verified-ink); }
+.decide-banner--neutral { background: var(--neutral-tint); border-color: var(--neutral-ink); color: var(--neutral-ink); }
+.decide-banner .decide-eyebrow, .decide-banner .shell-title { color: inherit; }
 .decide-sub { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); color: var(--ink-muted); }
 
 /* decision rows */
@@ -80,6 +85,7 @@
   /* the buttons and the one line sit in a bar pinned to the bottom; the page leaves room for it */
   .decide-board { padding-bottom: 220px; }
   .decide-panel .psl-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; }
+  .decide-panel .decide-approve { min-height: var(--control-xl); font-size: 17px; } /* phone footer, as on SCR-03-mobile */
   .decide-step { grid-template-columns: 24px minmax(0, 1fr); }
   .decide-step__status { grid-column: 2; text-align: left; }
 }

@@ -27,8 +27,24 @@ function UncertainNotice() {
   );
 }
 
+/** The decide had an uncertain effect and the reload failed: say so plainly; Try again only reads the item. */
+function UnconfirmedNotice({ checking, onRecheck }: { checking: boolean; onRecheck: () => void }) {
+  return (
+    <div className="psl-callout psl-callout--warning decide-retry" role="alert">
+      <WarningIcon />
+      <span>
+        <strong>We couldn&rsquo;t confirm whether your decision was recorded.</strong> We also couldn&rsquo;t reload this item to
+        check, so the decision buttons stay off. Try again reloads the item; it doesn&rsquo;t send your decision again.
+      </span>
+      <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={checking} onClick={onRecheck}>
+        {checking ? 'Checking…' : 'Try again'}
+      </button>
+    </div>
+  );
+}
+
 export function DecideView({ id, taskId }: { id: string; taskId: string | undefined }) {
-  const { view, claim, submit, uncertain, retry, retryClaim, decide, reviewCurrent } = useDecision(id, taskId);
+  const { view, claim, submit, uncertain, retry, retryClaim, decide, recheck, reviewCurrent } = useDecision(id, taskId);
   const pathname = `/work/${encodeURIComponent(id)}/decide${taskId ? `?task=${encodeURIComponent(taskId)}` : ''}`;
 
   if (view.kind === 'loading') return <LoadingState />;
@@ -70,6 +86,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
     );
   }
 
+  const unconfirmed = view.kind === 'unconfirmed';
   if (view.kind === 'forbidden' || !task.you_can_act || !claim) {
     return (
       <>
@@ -84,7 +101,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
   return (
     <>
       {header}
-      {uncertain && <UncertainNotice />}
+      {unconfirmed ? <UnconfirmedNotice checking={view.checking} onRecheck={recheck} /> : uncertain && <UncertainNotice />}
       <div className="decide-board">
         <div className="decide-main">
           <MiniLine item={item} requiredRole={task.required_role} />
@@ -96,7 +113,15 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
           <AgentNote id={id} agent={item.agent} />
         </div>
         <div className="decide-aside">
-          <DecidePanel item={item} task={task} claim={claim} submit={submit} onDecide={(v, n) => void decide(v, n)} onRetryClaim={retryClaim} />
+          <DecidePanel
+            item={item}
+            task={task}
+            claim={claim}
+            submit={submit}
+            locked={unconfirmed}
+            onDecide={(v, n) => void decide(v, n)}
+            onRetryClaim={retryClaim}
+          />
         </div>
       </div>
     </>

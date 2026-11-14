@@ -15,11 +15,13 @@ type Props = {
   task: WorkTask & { decision: TaskDecision };
   claim: ClaimState;
   submit: SubmitState;
+  /** True while a decision's effect is unconfirmed: every control stays off. */
+  locked: boolean;
   onDecide: (verdict: Verdict, note: string) => void;
   onRetryClaim: () => void;
 };
 
-export function DecidePanel({ item, task, claim, submit, onDecide, onRetryClaim }: Props) {
+export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRetryClaim }: Props) {
   const [note, setNote] = useState('');
   const [noteError, setNoteError] = useState<string | null>(null);
   const noteRef = useRef<HTMLTextAreaElement>(null);
@@ -27,7 +29,7 @@ export function DecidePanel({ item, task, claim, submit, onDecide, onRetryClaim 
 
   const busy = submit.status === 'busy';
   const ready = claim.status === 'ready';
-  const disabled = !ready || busy;
+  const disabled = !ready || busy || locked;
   const index = personStationIndex(item.stations);
   const next = index >= 0 ? item.stations[index + 1] : undefined;
 
@@ -118,7 +120,7 @@ export function DecidePanel({ item, task, claim, submit, onDecide, onRetryClaim 
           )}
           <button
             type="button"
-            className="psl-btn psl-btn--confirm psl-btn--lg psl-btn--block"
+            className="psl-btn psl-btn--lg psl-btn--block decide-approve"
             disabled={disabled}
             aria-describedby={claim.status === 'pending' ? ids.reason : undefined}
             onClick={() => press('approve')}

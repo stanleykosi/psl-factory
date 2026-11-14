@@ -2,7 +2,8 @@
 
 // SCR-03 flow: read the item, claim an actionable task once per task revision, decide one exact version.
 // Nothing retries a decision: a 409 shows the stale view, a network or server error reloads the item so the
-// person can see whether it was recorded (uncertain effect), and only a deliberate new tap sends again.
+// person can see whether it was recorded (uncertain effect), and only a deliberate new tap sends again. When
+// that reload fails too, the controls stay off and Try again only reads the item.
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
@@ -18,6 +19,8 @@ export type DecideViewState =
   /** 403 on a write: read-only, keyed on the reloaded reason when there is one. */
   | { kind: 'forbidden'; item: WorkItem }
   | { kind: 'stale'; replaced: TaskDecision; item: WorkItem }
+  /** Decide had an uncertain effect and the reload failed: nothing is known, so nothing can be decided. */
+  | { kind: 'unconfirmed'; item: WorkItem; replaced: TaskDecision; revision: number; checking: boolean }
   | { kind: 'done'; result: DecideResult; label: string; item: WorkItem; reloaded: WorkItem | null; refreshFailed: boolean };
 
 export type ClaimState =
@@ -33,6 +36,7 @@ export type SubmitState =
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 const ACCESS_LOST = new Set<ApiError['kind']>(['unauthenticated', 'not_found']);
+const NO_ACCESS = new Set<ApiError['kind']>(['unauthenticated', 'forbidden', 'not_found']);
 
 export function useDecision(id: string, taskId: string | undefined) {
   const [view, setView] = useState<DecideViewState>({ kind: 'loading' });
@@ -115,6 +119,34 @@ export function useDecision(id: string, taskId: string | undefined) {
     [toForbidden, toStale],
   );
 
+  /**
+   * After an uncertain decide: read the item (never resend). The controls come back only when the task is still
+   * actionable at the claimed revision; a newer revision is stale; a failed read leaves the controls off.
+   */
+  const reconcile = useCallback(
+    async (item: WorkItem, replaced: TaskDecision, revision: number) => {
+      let reloaded: WorkItem;
+      try {
+        reloaded = await fetchItem();
+      } catch (error) {
+        const apiError = asApiError(error);
+        setView(NO_ACCESS.has(apiError.kind) ? { kind: 'error', error: apiError } : { kind: 'unconfirmed', item, replaced, revision, checking: false });
+        return;
+      }
+      const now = findDecisionTask(reloaded, taskId);
+      if (now && now.you_can_act && now.revision !== revision) setView({ kind: 'stale', replaced, item: reloaded });
+      else setView({ kind: 'item', item: reloaded });
+    },
+    [fetchItem, taskId],
+  );
+
+  /** "Try again" on the unconfirmed view: one GET, never the decision. */
+  const recheck = useCallback(() => {
+    if (view.kind !== 'unconfirmed' || view.checking) return;
+    setView({ ...view, checking: true });
+    void reconcile(view.item, view.replaced, view.revision);
+  }, [view, reconcile]);
+
   const runClaim = useCallback(
     async (item: WorkItem, key: string) => {
       const task = findDecisionTask(item, taskId)!;
@@ -133,7 +165,8 @@ export function useDecision(id: string, taskId: string | undefined) {
   );
 
   // Claim once when an actionable task is on screen (E-TASK-CLAIM trigger "Open a decision you are eligible for").
-  const actionable = view.kind === 'item' ? findDecisionTask(view.item, taskId) : undefined;
+  // The unconfirmed view keeps the claim it had, so its (locked) controls stay on screen.
+  const actionable = view.kind === 'item' || view.kind === 'unconfirmed' ? findDecisionTask(view.item, taskId) : undefined;
   const claimKey = actionable?.you_can_act ? `${actionable.id}:${actionable.revision}` : null;
   useEffect(() => {
     if (view.kind !== 'item' || !claimKey || claimedKey.current === claimKey) return;
@@ -181,17 +214,13 @@ export function useDecision(id: string, taskId: string | undefined) {
         }
         // Uncertain effect: reload once, never resend.
         setUncertain(true);
-        const reloaded = await reload();
+        await reconcile(item, task.decision, claim.revision);
         setSubmit({ status: 'idle' });
-        if (reloaded instanceof ApiError) return;
-        const now = findDecisionTask(reloaded, taskId);
-        if (now && now.you_can_act && now.revision !== task.revision) setView({ kind: 'stale', replaced: task.decision, item: reloaded });
-        else setView({ kind: 'item', item: reloaded });
       } finally {
         writing.current = false;
       }
     },
-    [view, claim, claimKey, taskId, handleWriteError, fetchItem, reload],
+    [view, claim, claimKey, taskId, handleWriteError, fetchItem, reconcile],
   );
 
   /** "Review version n": show the current version and claim it again, even at an unchanged revision. */
@@ -205,5 +234,5 @@ export function useDecision(id: string, taskId: string | undefined) {
   }, [view]);
 
   const claimNow: ClaimState | null = claimKey ? (claim?.key === claimKey ? claim : { key: claimKey, status: 'pending' }) : null;
-  return { view, claim: claimNow, submit, uncertain, retry: load, retryClaim, decide, reviewCurrent };
+  return { view, claim: claimNow, submit, uncertain, retry: load, retryClaim, decide, recheck, reviewCurrent };
 }

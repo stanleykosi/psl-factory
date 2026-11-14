@@ -44,7 +44,26 @@ test.beforeEach(async ({ request }) => {
   expect((await request.post(`${MOCK}/__mock/reset`)).status()).toBe(204);
 });
 
-const STATES: [string, (page: Page) => Promise<void>][] = [
+/**
+ * Decide fails in the network and every item read fails until the returned switch is turned off. The decide
+ * never reaches the mock, so its state is untouched; the failed reads are 503s from the browser route.
+ */
+async function reachUnconfirmed(page: Page) {
+  const state = { down: false };
+  await page.route('**/api/v1/tasks/T-1201/decision', (route) => {
+    state.down = true;
+    return route.abort('failed');
+  });
+  await page.route('**/api/v1/work/W-1201', (route) =>
+    state.down ? route.fulfill({ status: 503, contentType: 'application/json', body: '{"code":"server_error","message":"Down."}' }) : route.continue(),
+  );
+  await openDecision(page, 'W-1201', 'T-1201');
+  await page.getByRole('button', { name: 'Approve v2' }).click();
+  await expect(page.getByText('We couldn’t confirm whether your decision was recorded.')).toBeVisible();
+  return state;
+}
+
+const STATES: [string, (page: Page) => Promise<unknown>][] = [
   ['default W-1201', (page) => openDecision(page, 'W-1201', 'T-1201')],
   [
     'done after approving W-1201',
@@ -63,6 +82,7 @@ const STATES: [string, (page: Page) => Promise<void>][] = [
       await expect(page.getByText('A newer version arrived while you were reading.')).toBeVisible();
     },
   ],
+  ['unconfirmed W-1201 (decide and reload both failed)', reachUnconfirmed],
   ['not-yours W-1203', (page) => openDecision(page, 'W-1203', 'T-1203')],
   ['own W-1204', (page) => openDecision(page, 'W-1204', 'T-1204')],
 ];
@@ -104,6 +124,56 @@ test('at 390 the action bar is pinned in view with 44px targets', async ({ page 
   await expect(page.getByText('Station 4 of 7 · Finance review · only a Finance Lead can decide')).toBeVisible();
   await expect(page.getByRole('list', { name: 'Facts' })).toBeHidden();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test('at 390 Approve is the 54px action-blue phone footer button', async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await openDecision(page, 'W-1201', 'T-1201');
+  const approve = page.locator('.psl-actionbar').getByRole('button', { name: 'Approve v2' });
+  expect((await approve.boundingBox())!.height).toBeGreaterThanOrEqual(54);
+  expect(await approve.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(36, 89, 214)');
+});
+
+test('the approve done view has the green success banner; return has the neutral one', async ({ page }) => {
+  await page.setViewportSize(DESKTOP);
+  await openDecision(page, 'W-1201', 'T-1201');
+  await expect(page.getByRole('button', { name: 'Approve v2' })).toHaveCSS('background-color', 'rgb(36, 89, 214)');
+  await page.getByRole('button', { name: 'Approve v2' }).click();
+  const banner = page.locator('.decide-banner');
+  await expect(banner.getByRole('heading', { level: 1 })).toHaveText('Invoice v2 is approved');
+  await expect(banner).toHaveCSS('background-color', 'rgb(221, 239, 227)');
+  await expect(banner.getByText(/^YOU APPROVED · \d\d:\d\d$/)).toHaveCSS('color', 'rgb(22, 80, 47)');
+  await expect(banner.getByRole('heading', { level: 1 })).toHaveCSS('color', 'rgb(22, 80, 47)');
+
+  await page.request.post(`${MOCK}/__mock/reset`);
+  await openDecision(page, 'W-1201', 'T-1201');
+  await page.getByLabel(/^Note/).fill('Wrong PO');
+  await page.getByRole('button', { name: 'Return' }).click();
+  await expect(banner.getByRole('heading', { level: 1 })).toHaveText('Invoice v2 was returned');
+  await expect(banner).toHaveCSS('background-color', 'rgb(226, 229, 224)');
+});
+
+test('decide and reload both fail: the controls stay off and Try again only re-reads the item', async ({ page }) => {
+  await page.setViewportSize(DESKTOP);
+  const writes: string[] = [];
+  page.on('request', (r) => {
+    if (r.method() === 'POST') writes.push(new URL(r.url()).pathname);
+  });
+  const state = await reachUnconfirmed(page);
+  for (const name of ['Approve v2', 'Return', 'Reject']) await expect(page.getByRole('button', { name })).toBeDisabled();
+  await expect(page.getByText(/We’ve reloaded this item/)).toHaveCount(0);
+  // Still down: Try again reads, fails, and the controls stay off.
+  const read = page.waitForResponse((r) => r.url().endsWith('/api/v1/work/W-1201') && r.request().method() === 'GET');
+  await page.getByRole('button', { name: 'Try again' }).click();
+  expect((await read).status()).toBe(503);
+  await expect(page.getByRole('button', { name: 'Try again' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Approve v2' })).toBeDisabled();
+  // Back up: the task is still open at the claimed revision, so the controls return for a deliberate tap.
+  state.down = false;
+  await page.getByRole('button', { name: 'Try again' }).click();
+  await expect(page.getByRole('button', { name: 'Approve v2' })).toBeEnabled();
+  await expect(page.getByText('We couldn’t confirm whether your decision was recorded.')).toHaveCount(0);
+  expect(writes).toEqual(['/api/v1/tasks/T-1201/claim', '/api/v1/tasks/T-1201/decision']);
 });
 
 test('at 1440 the panel is a right-hand column beside the decision', async ({ page }) => {

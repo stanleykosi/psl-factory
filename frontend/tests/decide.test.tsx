@@ -98,6 +98,8 @@ describe('default view', () => {
     expect(screen.getByText('FINANCE REVIEW · INV-0412')).toBeTruthy();
     expect(screen.getByText('Lagoon Health · Milestone 2 invoice')).toBeTruthy();
     expect(button('Approve v2')).toBeTruthy();
+    // Approve is the default action-blue primary (SCR-03 boards, Button README), not the green Confirm.
+    expect(button('Approve v2').className).toBe('psl-btn psl-btn--lg psl-btn--block decide-approve');
     expect(button('Return')).toBeTruthy();
     expect(button('Reject')).toBeTruthy();
     expect(screen.getByText(/Approving earns APPROVED only\. Issue is the next station\./)).toBeTruthy();
@@ -183,6 +185,10 @@ describe('claim and decide', () => {
       { method: 'POST', path: '/api/v1/tasks/T-1201/decision', body: { expected_revision: 2, verdict: 'approve' }, csrf: 'mock-csrf-finance_lead' },
     ]);
     expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47');
+    // SCR-03-desktop-done: the eyebrow and heading sit in the green success banner.
+    const banner = screen.getByText(/^YOU APPROVED ·/).closest('.decide-banner')!;
+    expect(banner.className).toBe('decide-banner decide-banner--success');
+    expect(within(banner as HTMLElement).getByRole('heading', { level: 1 }).textContent).toBe('Invoice v2 is approved');
     expect(screen.getByText('Decided by Ada Okafor')).toBeTruthy();
     await screen.findByText('Chidi issues invoice v2 and emails it to Lagoon Health.');
     expect(screen.getByText('Chidi issues invoice v2 and emails it to Lagoon Health.').closest('.psl-callout')!.className).toContain('psl-callout--success');
@@ -203,6 +209,21 @@ describe('claim and decide', () => {
     fireEvent.click(button('Approve v2'));
     await screen.findByText('We couldn’t refresh this item. Open the work item to see the latest.');
     expect(screen.getByText('Invoice v2 is approved')).toBeTruthy();
+  });
+
+  it('an echoed verdict other than the three shows a neutral "Decision recorded", never approved', async () => {
+    answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.approve'));
+    answers.decide = (_, c) => json(200, { task_id: c.path.split('/')[4], verdict: 'constructor', decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:47:00Z', work_state: 'ready' });
+    await open();
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText('Decision recorded on Invoice v2');
+    expect(screen.getByText(/^DECISION RECORDED ·/).textContent).toBe('DECISION RECORDED · 10:47');
+    expect(screen.getByText(/^DECISION RECORDED ·/).closest('.decide-banner')!.className).toBe('decide-banner decide-banner--neutral');
+    await screen.findByText('Chidi issues invoice v2 and emails it to Lagoon Health.');
+    expect(screen.getByText('Chidi issues invoice v2 and emails it to Lagoon Health.').closest('.psl-callout')!.className).toContain('psl-callout--info');
+    expect(text()).not.toMatch(/YOU APPROVED|is approved|Paid is tracked separately/);
+    expect(decisionControls()).toHaveLength(0);
   });
 
   it('Return or Reject without a note sends nothing and asks for one; a note is sent as typed', async () => {
@@ -228,7 +249,7 @@ describe('claim and decide', () => {
     fireEvent.click(button('Return'));
     await screen.findByText('Invoice v2 was returned');
     expect(counts().decides.map((c) => c.body)).toEqual([{ expected_revision: 2, verdict: 'return', note: 'Wrong PO' }]);
-    expect(screen.getByText(/^YOU RETURNED ·/)).toBeTruthy();
+    expect(screen.getByText(/^YOU RETURNED ·/).closest('.decide-banner')!.className).toBe('decide-banner decide-banner--neutral');
     await screen.findByText('Bisi Ade corrects invoice v2 and resubmits it.');
     expect(screen.getByText('Bisi Ade corrects invoice v2 and resubmits it.').closest('.psl-callout')!.className).toContain('psl-callout--info');
     expect(screen.queryByText(/Paid is tracked separately/)).toBeNull();
@@ -477,6 +498,83 @@ describe('errors', () => {
     expect(counts().claims).toHaveLength(1);
   });
 
+  it('decide network error and a failed reload keep every control off; Try again only reads the item', async () => {
+    const down = () => json(503, { code: 'server_error', message: 'Down.' });
+    answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : n <= 2 ? down() : json(200, item('W-1201')));
+    answers.decide = () => Promise.reject(new TypeError('offline'));
+    await open();
+    await ready();
+    fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'Checked the PO' } });
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText('We couldn’t confirm whether your decision was recorded.');
+    const off = () => {
+      for (const name of [/^Approve v2/, 'Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled, String(name)).toBe(true);
+    };
+    off();
+    expect(text()).not.toContain('We’ve reloaded this item');
+    expect(counts().gets).toBe(2);
+    // A tap on a disabled control sends nothing.
+    fireEvent.click(button(/^Approve v2/));
+    expect(counts().decides).toHaveLength(1);
+    // Try again fails too: still unconfirmed, still off, one more GET.
+    fireEvent.click(button('Try again'));
+    await waitFor(() => expect(counts().gets).toBe(3));
+    await waitFor(() => expect((button('Try again') as HTMLButtonElement).disabled).toBe(false));
+    off();
+    // Try again succeeds: the task is still actionable at the claimed revision, so the controls come back.
+    fireEvent.click(button('Try again'));
+    await ready();
+    expect(counts().gets).toBe(4);
+    expect(text()).toContain('We’ve reloaded this item so you can see whether it was recorded.');
+    expect(screen.queryByText('We couldn’t confirm whether your decision was recorded.')).toBeNull();
+    expect(counts().decides).toHaveLength(1);
+    expect(counts().claims).toHaveLength(1);
+    expect(calls.filter((c) => c.method !== 'GET').map((c) => c.path)).toEqual(['/api/v1/tasks/T-1201/claim', '/api/v1/tasks/T-1201/decision']);
+  });
+
+  it('after an uncertain decide, Try again leading to a recorded decision shows the already-decided view', async () => {
+    answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : n === 1 ? json(500, { code: 'server_error', message: 'Down.' }) : json(200, item('W-1201.approve')));
+    answers.decide = () => json(502, { code: 'server_error', message: 'Bad gateway.' });
+    await open();
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Try again' }));
+    await screen.findByText('This decision has already been made.');
+    expect(decisionControls()).toHaveLength(0);
+    expect(counts().decides).toHaveLength(1);
+  });
+
+  it.each([
+    ['403', 403, { code: 'forbidden', message: 'No.' }, () => expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this work item')],
+    ['404', 404, { code: 'not_found', message: 'Gone.' }, () => expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this work item')],
+    ['401', 401, { code: 'not_signed_in', message: 'Sign in.' }, () => expect(screen.getByRole('link', { name: 'Sign in' })).toBeTruthy()],
+  ])('after an uncertain decide, a %s on the reload replaces the page with no controls', async (_, status, body, check) => {
+    answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : json(status, body));
+    answers.decide = () => Promise.reject(new TypeError('offline'));
+    await open();
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    await waitFor(() => expect(decisionControls()).toHaveLength(0));
+    check();
+    expect(counts().decides).toHaveLength(1);
+  });
+
+  it('after an uncertain decide, the stale check compares with the claimed revision', async () => {
+    // The backend may move the revision on claim: the reload shows the task at the claim revision, still undecided.
+    const claimed = item('W-1201');
+    claimed.tasks[0].revision = 3;
+    answers.claim = () => json(200, { task_id: 'T-1201', revision: 3, claimed_by: 'Ada Okafor' });
+    answers.item = (n) => json(200, n === 0 ? item('W-1201') : claimed);
+    answers.decide = () => Promise.reject(new TypeError('offline'));
+    await open();
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText(/We couldn’t confirm your decision\./);
+    await ready();
+    expect(screen.queryByText('A newer version arrived while you were reading.')).toBeNull();
+    expect(counts().decides.map((c) => c.body)).toEqual([{ expected_revision: 3, verdict: 'approve' }]);
+  });
+
   it('decide 500 then a reload that shows it was recorded gives the already-decided view', async () => {
     answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.approve'));
     answers.decide = () => json(500, { code: 'server_error', message: 'Down.' });
@@ -528,6 +626,14 @@ describe('errors', () => {
     expect(decisionControls()).toHaveLength(0);
     expect(calls.every((c) => c.method === 'GET')).toBe(true);
   });
+});
+
+it('a chain of one step without your_step reads "1 step"', async () => {
+  const one = item('W-1201');
+  delete one.tasks[0].decision!.chain.your_step;
+  answers.item = () => json(200, one);
+  await open();
+  expect(within(screen.getByRole('region', { name: 'Approval chain' })).getByText('1 step')).toBeTruthy();
 });
 
 it('the decision fixture types line up with the contract', () => {
