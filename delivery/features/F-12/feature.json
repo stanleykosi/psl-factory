@@ -90,11 +90,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -120,11 +122,13 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer (F-12 round 1)",
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-ux.md"
+      ]
     },
     "ui": {
       "status": "pending",
@@ -134,14 +138,63 @@
       "evidence_refs": []
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-security.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`AlertSettingsPage.tsx:34,90-91`: a 200 save response without `events` goes to the \"missing_events\" error card, and the \"saved\" notice is then not shown. The spec says to replace state with the PUT body, so this is consistent. Consider keeping the previous prefs and revision if a v7 PUT ever returns no events.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:31:20Z",
+          "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone back links \"\u2190 Home\" and \"\u2190 Notifications\" sit level with the heading, not on their own line (build.md E-4). The builder discloses it. It needs the design engineer's approval and is not a code defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:31:20Z",
+          "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
