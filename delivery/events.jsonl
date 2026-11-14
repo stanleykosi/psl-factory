@@ -128,3 +128,4 @@
 {"at":"2026-11-14T00:10:43Z","feature":"F-02","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"55e81940bdf7","findings":{"QA-2-1":"low"},"written_at":"2026-11-14T00:10:30Z"}
 {"at":"2026-11-14T00:10:43Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"reviewer-qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-14T00:10:43Z","feature":"F-02","round":2,"kind":"transition","head":"55e81940bdf7","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-14T00:11:58Z","feature":"F-02","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"55e81940bdf7","findings":{"PMO-2-1":"low","PMO-2-2":"medium","PMO-2-3":"low","PMO-2-4":"low"},"written_at":"2026-11-14T00:11:48Z"}
