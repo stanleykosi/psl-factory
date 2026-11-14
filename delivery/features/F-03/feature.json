@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-03",
   "outcome": "Open one work item and read its history",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -106,11 +106,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -136,18 +138,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (visual lens only; no code or spec edits)",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -419,7 +425,7 @@
         "delivery/features/F-03/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -436,11 +442,48 @@
           ],
           "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:16:54Z",
+          "refs": [
+            "Measured on /work/W-1005 with the scratch build at head 3f68441 (next dev on 3221, mock on 3222). Widths 390, 760, 900 and 1079: `ol` display block, seven stations stacked with seven distinct tops and one left edge, trackClient equals trackScroll, no station outside the track, document scrollWidth equals viewport. Widths 1080 and 1440: `ol` display grid, one row (one distinct top), trackClient equals trackScroll (1024 and 1264), all seven inside the track. Screenshots checked at 390, 760, 1080 and 1079 for W-1005, and at 1080 for W-1003. Shots in `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/a400a30b-92cb-4efc-99c2-4a72d08a67f7/scratchpad/f03r3-ui/shots/`."
+          ],
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3f68441"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Measured on /work/W-1005 with the scratch build at head 3f68441 (next dev on 3221, mock on 3222). Widths 390, 760, 900 and 1079: `ol` display block, seven stations stacked with seven distinct tops and one left edge, trackClient equals trackScroll, no station outside the track, document scrollWidth equals viewport. Widths 1080 and 1440: `ol` display grid, one row (one distinct top), trackClient equals trackScroll (1024 and 1264), all seven inside the track. Screenshots checked at 390, 760, 1080 and 1079 for W-1005, and at 1080 for W-1003. Shots in `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/a400a30b-92cb-4efc-99c2-4a72d08a67f7/scratchpad/f03r3-ui/shots/`."
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "spec.md Acceptance criterion 4 (line 202) still says \"At 390px the stations are a vertical list\" and asserts only the 390px scrollWidth. Screen states item 5 (line 122) already has the below-1080px rule. Expected: AC 4 states the same rule as Screen states item 5 (list below 1080px, row from 1080px, e2e at 390, 760, 900, 1079, 1080, 1440). Actual: AC 4 covers 390 only. Doc only; no visual change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:16:54Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
       ]
     }
   ],
@@ -715,6 +758,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T00:13:10Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T00:16:54Z",
       "round": 3,
       "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
       "reason": null
