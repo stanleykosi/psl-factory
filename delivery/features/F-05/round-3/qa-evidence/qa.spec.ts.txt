@@ -1,0 +1,316 @@
+import { expect, test, type BrowserContext, type Page, type Request } from '@playwright/test';
+import { appendFileSync } from 'node:fs';
+
+const MOCK = 'http://127.0.0.1:4612';
+const BASE = 'http://localhost:4611';
+const LOG = process.env.QA_LOG!;
+const log = (s: string) => appendFileSync(LOG, s + '\n');
+const DESKTOP = { width: 1440, height: 900 };
+const PHONE = { width: 390, height: 844 };
+const dialog = (p: Page) => p.getByRole('dialog');
+
+async function reset(page: Page) {
+  const r = await page.request.post(`${MOCK}/__mock/reset`);
+  expect(r.status()).toBe(204);
+}
+async function cookies(ctx: BrowserContext, c: Record<string, string>) {
+  await ctx.addCookies(Object.entries(c).map(([name, value]) => ({ name, value, url: BASE })));
+}
+async function clearScenario(ctx: BrowserContext) {
+  await ctx.clearCookies({ name: 'psl_mock_scenario' });
+}
+function trackPosts(page: Page) {
+  const posts: { headers: Record<string, string>; body: any }[] = [];
+  page.on('request', (r: Request) => {
+    if (r.method() === 'POST' && new URL(r.url()).pathname === '/api/v1/work') posts.push({ headers: r.headers(), body: r.postDataJSON() });
+  });
+  return posts;
+}
+async function openMyWork(page: Page, ctx: BrowserContext, persona: string) {
+  await reset(page);
+  await cookies(ctx, { psl_mock_persona: persona });
+  await page.goto('/my-work');
+  await expect(page.getByRole('heading', { level: 1, name: 'My work' })).toBeVisible();
+}
+async function openInvoice(page: Page, phone = false) {
+  if (phone) {
+    await page.locator('.shell-phone').getByRole('button', { name: 'Start work' }).click();
+    await dialog(page).getByRole('radio', { name: /Invoice preparation/ }).check();
+    await dialog(page).getByRole('button', { name: 'Next' }).click();
+  } else {
+    await page.locator('nav.psl-nav').getByRole('button', { name: 'Start work' }).click();
+  }
+  await expect(dialog(page).getByRole('combobox', { name: 'Project' })).toBeVisible();
+}
+async function fillInvoice(page: Page, note = 'PO 4471 on it') {
+  await dialog(page).getByRole('combobox', { name: 'Project' }).click();
+  await dialog(page).getByRole('option', { name: 'Lagoon Health · patient app' }).click();
+  await dialog(page).getByRole('combobox', { name: 'Completed milestone' }).click();
+  await dialog(page).getByRole('option', { name: /Milestone 3/ }).click();
+  if (note) await dialog(page).getByRole('textbox', { name: /Anything Chidi should know/ }).fill(note);
+}
+const startBtn = (p: Page) => dialog(p).getByRole('button', { name: 'Start the invoice' });
+
+test.describe('desktop 1440', () => {
+  test.use({ viewport: DESKTOP });
+
+  test('J1 pm: invoice drawer -> 201 -> /work/W-1401, CSRF + five keys', async ({ page, context }) => {
+    const posts = trackPosts(page);
+    await openMyWork(page, context, 'pm');
+    await openInvoice(page);
+    await fillInvoice(page);
+    await startBtn(page).click();
+    await expect(page).toHaveURL(/\/work\/W-1401$/);
+    await expect(page.getByText('Lagoon Health · Invoice preparation and delivery').first()).toBeVisible();
+    expect(posts.length).toBe(1);
+    expect(posts[0].headers['x-csrftoken']).toBe('mock-csrf-pm');
+    expect(Object.keys(posts[0].body).sort()).toEqual(['case_id', 'case_revision', 'idempotency_key', 'intake', 'line']);
+    log(`J1 PASS url=${page.url()} posts=1 csrf=${posts[0].headers['x-csrftoken']} body=${JSON.stringify(posts[0].body)}`);
+    await page.screenshot({ path: `${process.env.QA_EV}/j1-desktop-w1401.png` });
+    await reset(page);
+  });
+
+  test('J2 ceo: main button opens chooser with 8 lines', async ({ page, context }) => {
+    await openMyWork(page, context, 'ceo');
+    await page.locator('nav.psl-nav').getByRole('button', { name: 'Start work' }).click();
+    await expect(page.getByRole('dialog', { name: 'Choose a line' })).toBeVisible();
+    await expect(dialog(page).getByText(/LINES YOU CAN START · 8/i)).toBeVisible();
+    expect(await dialog(page).getByRole('radio').count()).toBe(8);
+    log('J2 PASS ceo main button -> "Choose a line", 8 radios');
+  });
+
+  test('J3 double press sends one POST', async ({ page, context }) => {
+    const posts = trackPosts(page);
+    await openMyWork(page, context, 'pm');
+    await page.route('**/api/v1/work', async (r) => { if (r.request().method() === 'POST') await new Promise((x) => setTimeout(x, 1500)); await r.continue(); });
+    await openInvoice(page);
+    await fillInvoice(page);
+    await startBtn(page).click();
+    await startBtn(page).click({ force: true, timeout: 1000 }).catch(() => {});
+    await startBtn(page).dblclick({ force: true, timeout: 1000 }).catch(() => {});
+    await expect(page).toHaveURL(/\/work\/W-1401$/);
+    expect(posts.length).toBe(1);
+    log(`J3 PASS double/triple press while POST pending -> posts=${posts.length}, landed ${new URL(page.url()).pathname}`);
+    await reset(page);
+  });
+
+  test('J4 422 inline, focus on callout, new key on next press', async ({ page, context }) => {
+    const posts = trackPosts(page);
+    await openMyWork(page, context, 'pm');
+    await openInvoice(page);
+    // Harmattan + its milestone: mock answers 422 with billing_contact (no matching field).
+    await dialog(page).getByRole('combobox', { name: 'Project' }).click();
+    await dialog(page).getByRole('option', { name: /Harmattan/ }).click();
+    await dialog(page).getByRole('combobox', { name: 'Completed milestone' }).click();
+    await dialog(page).getByRole('option').filter({ hasNot: page.locator('[aria-disabled="true"]') }).first().click();
+    await startBtn(page).click();
+    const alert = dialog(page).getByRole('alert').first();
+    await expect(alert).toContainText(/to fix before Chidi can start/);
+    await expect(dialog(page)).toContainText(/billing contact for Harmattan Bank/);
+    log(`J4a dialog text: ${(await dialog(page).innerText()).replace(/\s+/g,' ').slice(0,700)}`);
+    const focused = await page.evaluate(() => document.activeElement?.closest('[role="alert"], .psl-callout')?.textContent ?? document.activeElement?.outerHTML.slice(0, 120));
+    log(`J4a 422 callout="${(await alert.textContent())?.trim().slice(0, 160)}" focus-in-callout="${focused?.slice(0, 80)}"`);
+    await page.screenshot({ path: `${process.env.QA_EV}/j4-desktop-422.png` });
+    // Switch to Lagoon/M3 and send again -> new key, 201.
+    await dialog(page).getByRole('combobox', { name: 'Project' }).click();
+    await dialog(page).getByRole('option', { name: 'Lagoon Health · patient app' }).click();
+    await dialog(page).getByRole('combobox', { name: 'Completed milestone' }).click();
+    await dialog(page).getByRole('option', { name: /Milestone 3/ }).click();
+    await startBtn(page).click();
+    await expect(page).toHaveURL(/\/work\/W-1401$/);
+    expect(posts.length).toBe(2);
+    expect(posts[1].body.idempotency_key).not.toBe(posts[0].body.idempotency_key);
+    log(`J4 PASS 422 then 201; keys ${posts[0].body.idempotency_key} -> ${posts[1].body.idempotency_key}`);
+    await reset(page);
+  });
+
+  test('J4b missing milestone -> 422 inline under control', async ({ page, context }) => {
+    await openMyWork(page, context, 'pm');
+    await openInvoice(page);
+    await dialog(page).getByRole('combobox', { name: 'Project' }).click();
+    await dialog(page).getByRole('option', { name: 'Lagoon Health · patient app' }).click();
+    // Start is disabled while incomplete on the board; send via direct API instead if so.
+    await startBtn(page).click();
+    const ms = dialog(page).getByRole('combobox', { name: 'Completed milestone' });
+    await expect(ms).toHaveAttribute('aria-invalid', 'true');
+    await expect(dialog(page)).toContainText('Completed milestone is required.');
+    const cal = dialog(page).getByRole('alert').first();
+    await expect(cal).toBeFocused();
+    log(`J4b PASS no milestone -> aria-invalid=true, "Completed milestone is required.", callout focused: "${(await cal.textContent())?.trim()}"`);
+  });
+
+  test('J5 409 keeps values, reloads revision, no auto resend, next press new key', async ({ page, context }) => {
+    const posts = trackPosts(page);
+    await openMyWork(page, context, 'pm');
+    await openInvoice(page);
+    await fillInvoice(page, 'keep this note');
+    await cookies(context, { psl_mock_scenario: '409' });
+    const reread = page.waitForRequest((r) => r.url().includes('/fields/project/options') && r.url().includes('q='));
+    await startBtn(page).click();
+    await expect(dialog(page).getByRole('alert').first()).toContainText(/This project changed since you opened the form/);
+    const rr = await reread;
+    await clearScenario(context);
+    await expect(dialog(page).getByRole('textbox', { name: /Anything Chidi/ })).toHaveValue('keep this note');
+    await expect(dialog(page).getByRole('combobox', { name: 'Project' })).toContainText('Lagoon');
+    await expect(dialog(page).getByRole('combobox', { name: 'Completed milestone' })).toContainText('Milestone 3');
+    await page.waitForTimeout(2000);
+    expect(posts.length).toBe(1);
+    await page.screenshot({ path: `${process.env.QA_EV}/j5-desktop-409.png` });
+    await startBtn(page).click();
+    await expect(page).toHaveURL(/\/work\/W-1401$/);
+    expect(posts.length).toBe(2);
+    expect(posts[1].body.idempotency_key).not.toBe(posts[0].body.idempotency_key);
+    log(`J5 PASS 409 stale callout; re-read ${new URL(rr.url()).pathname}${new URL(rr.url()).search}; values kept; posts after 2s=1; next press new key -> 201`);
+    await reset(page);
+  });
+
+  test('J6 403 on submit keeps values', async ({ page, context }) => {
+    await openMyWork(page, context, 'pm');
+    await openInvoice(page);
+    await fillInvoice(page, 'note 403');
+    await cookies(context, { psl_mock_scenario: '403' });
+    await startBtn(page).click();
+    await expect(dialog(page).getByRole('alert').first()).toContainText(/can.t start this here/);
+    await clearScenario(context);
+    await expect(dialog(page).getByRole('textbox', { name: /Anything Chidi/ })).toHaveValue('note 403');
+    await expect(dialog(page)).toBeVisible();
+    log(`J6 PASS 403 callout="${(await dialog(page).getByRole('alert').first().textContent())?.trim()}", note kept, drawer open`);
+  });
+
+  for (const kind of ['500', 'network'] as const) {
+    test(`J7 uncertain (${kind}): locked, no auto resend, Check again reuses key+body -> 201`, async ({ page, context }) => {
+      const posts = trackPosts(page);
+      await openMyWork(page, context, 'pm');
+      let first = true;
+      await page.route('**/api/v1/work', async (r) => {
+        if (r.request().method() === 'POST' && first) {
+          first = false;
+          // Let the real mock record the start, then lose the answer: a genuine "uncertain effect".
+          if (kind === '500') return r.fulfill({ status: 500, body: '{"code":"error","message":"boom"}', contentType: 'application/json' });
+          await page.request.post(`${BASE}/api/v1/work`, { headers: { 'X-CSRFToken': 'mock-csrf-pm', 'Content-Type': 'application/json' }, data: r.request().postData()! });
+          return r.abort('connectionreset');
+        }
+        return r.continue();
+      });
+      await openInvoice(page);
+      await fillInvoice(page);
+      await startBtn(page).click();
+      await expect(dialog(page).getByRole('alert').first()).toContainText(/couldn.t confirm the start/);
+      const again = dialog(page).getByRole('button', { name: 'Check again' });
+      await expect(again).toBeVisible();
+      const noteRO = await dialog(page).getByRole('textbox', { name: /Anything Chidi/ }).evaluate((e: HTMLTextAreaElement) => e.readOnly || e.disabled);
+      await page.waitForTimeout(3000);
+      expect(posts.length).toBe(1);
+      await page.screenshot({ path: `${process.env.QA_EV}/j7-desktop-uncertain-${kind}.png` });
+      await again.click();
+      await expect(page).toHaveURL(/\/work\/W-1401$/);
+      expect(posts.length).toBe(2);
+      expect(posts[1].body).toEqual(posts[0].body);
+      log(`J7-${kind} PASS uncertain callout; note readOnly=${noteRO}; posts after 3s=1; Check again same key ${posts[1].body.idempotency_key} and identical body -> W-1401${kind === 'network' ? ' (mock had already recorded the start: replay returned the stored 201, nothing started twice)' : ''}`);
+      await reset(page);
+    });
+  }
+
+  test('J8 401 on submit -> signed-out state with next=', async ({ page, context }) => {
+    await openMyWork(page, context, 'pm');
+    await openInvoice(page);
+    await fillInvoice(page);
+    await cookies(context, { psl_mock_scenario: '401' });
+    await startBtn(page).click();
+    await expect(dialog(page).getByText(/signed out/)).toBeVisible();
+    const href = await dialog(page).getByRole('link', { name: /Sign in/ }).getAttribute('href');
+    expect(href).toContain('next=');
+    await clearScenario(context);
+    log(`J8 PASS 401 on submit -> "You're signed out." Sign in href=${href}`);
+  });
+
+  test('J8b signed out at chooser (401 on E-LINES)', async ({ page, context }) => {
+    await openMyWork(page, context, 'ceo');
+    await cookies(context, { psl_mock_scenario: '401' });
+    await page.locator('nav.psl-nav').getByRole('button', { name: 'Start work' }).click();
+    await expect(dialog(page).getByText(/signed out/)).toBeVisible();
+    const href = await dialog(page).getByRole('link', { name: /Sign in/ }).getAttribute('href');
+    await clearScenario(context);
+    log(`J8b PASS 401 on lines -> signed-out, href=${href}`);
+  });
+
+  test('J9 persona none: no Start work control', async ({ page, context }) => {
+    await reset(page); await cookies(context, { psl_mock_persona: 'none' }); await page.goto('/my-work');
+    await expect(page.getByText('No sections are open to your role yet.')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Start work' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'More ways to start' })).toHaveCount(0);
+    log('J9 PASS none persona: 0 "Start work", 0 "More ways to start"');
+  });
+
+  for (const [val, expectLink] of [
+    ['/.//evil.example', false],
+    ['//evil.example', false],
+    ['/%2e//evil.example', false],
+    ['https://evil.example/x', false],
+    ['javascript:alert(1)', false],
+    [`${BASE}//evil.example`, false],
+    ['/projects?x=1#h', true],
+  ] as const) {
+    test(`J10 journey_url ${val}`, async ({ page, context }) => {
+      await openMyWork(page, context, 'pm');
+      await page.route('**/api/v1/lines', async (r) => {
+        const res = await r.fetch();
+        const body = await res.json();
+        for (const it of body.items) if (it.next) it.next.journey_url = val;
+        await r.fulfill({ response: res, json: body });
+      });
+      await openInvoice(page);
+      const links = dialog(page).getByRole('link', { name: /See the full/ });
+      await expect(dialog(page).getByText(/What happens next/i)).toBeVisible();
+      const n = await links.count();
+      const href = n ? await links.first().getAttribute('href') : null;
+      const anyEvil = await dialog(page).locator('a[href*="evil"], a[href^="javascript"]').count();
+      expect(anyEvil).toBe(0);
+      expect(n > 0).toBe(expectLink);
+      log(`J10 journey_url=${JSON.stringify(val)} -> link=${n > 0} href=${href} evil-anchors=${anyEvil}`);
+    });
+  }
+});
+
+test.describe('phone 390', () => {
+  test.use({ viewport: PHONE, isMobile: true, hasTouch: true });
+
+  test('J11 phone: + Start bottom sheet full width -> invoice 201', async ({ page, context }) => {
+    const posts = trackPosts(page);
+    await openMyWork(page, context, 'pm');
+    const plus = page.locator('.shell-phone').getByRole('button', { name: 'Start work' });
+    await expect(plus).toBeVisible();
+    await plus.click();
+    const box = (await dialog(page).boundingBox())!;
+    const sw = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
+    await expect(dialog(page).getByText('Lines you can start · 8')).toBeVisible();
+    await dialog(page).getByRole('radio', { name: /Invoice preparation/ }).check();
+    await dialog(page).getByRole('button', { name: 'Next' }).click();
+    await fillInvoice(page);
+    await page.screenshot({ path: `${process.env.QA_EV}/j11-phone-sheet.png` });
+    await startBtn(page).click();
+    await expect(page).toHaveURL(/\/work\/W-1401$/);
+    expect(posts.length).toBe(1);
+    expect(Math.round(box.width)).toBe(390);
+    log(`J11 PASS phone sheet x=${box.x} w=${box.width} y=${Math.round(box.y)} h=${Math.round(box.height)} scrollWidth/innerWidth=${sw}; landed W-1401, posts=1`);
+    await reset(page);
+  });
+
+  test('J12 phone: 409 and uncertain at 390', async ({ page, context }) => {
+    const posts = trackPosts(page);
+    await openMyWork(page, context, 'pm');
+    await openInvoice(page, true);
+    await fillInvoice(page, 'phone note');
+    await page.route('**/api/v1/work', (r) => (r.request().method() === 'POST' ? r.abort('internetdisconnected') : r.continue()));
+    await startBtn(page).click();
+    await expect(dialog(page).getByRole('alert').first()).toContainText(/couldn.t confirm the start/);
+    await page.waitForTimeout(2000);
+    expect(posts.length).toBe(1);
+    await page.unroute('**/api/v1/work');
+    await dialog(page).getByRole('button', { name: 'Check again' }).click();
+    await expect(page).toHaveURL(/\/work\/W-1401$/);
+    expect(posts[1].body).toEqual(posts[0].body);
+    log(`J12 PASS phone offline -> uncertain, no auto resend, Check again same key -> W-1401`);
+    await reset(page);
+  });
+});

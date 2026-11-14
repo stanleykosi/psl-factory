@@ -16,23 +16,23 @@
     },
     {
       "role": "text",
-      "name": "Bisi Adeyemi · Finance",
+      "name": "Bisi Adeyemi \u00b7 Finance",
       "category": "frame item",
       "reason": "The issue and permission boards are drawn signed in as Bisi Adeyemi; the frame shows the signed-in persona (finance_lead, Ada Okafor). As D-17.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "role": "link",
-      "name": "← Queue",
+      "name": "\u2190 Queue",
       "category": "frame item",
       "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "role": "link",
-      "name": "← Invoice",
+      "name": "\u2190 Invoice",
       "category": "frame item",
-      "reason": "As \"← Queue\": the frame names the phone back link \"Back to Invoice\".",
+      "reason": "As \"\u2190 Queue\": the frame names the phone back link \"Back to Invoice\".",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
@@ -58,7 +58,7 @@
     },
     {
       "role": "text",
-      "name": "APPROVED · READY TO SEND",
+      "name": "APPROVED \u00b7 READY TO SEND",
       "category": "contract state word (Contract rule 6)",
       "reason": "Board-only wording for the issue step; the item is `ready` and the tag shows STATE_TAGS.ready (\"Ready to continue\").",
       "approved_by": "builder proposal, pending design engineer"
@@ -121,23 +121,9 @@
     },
     {
       "role": "text",
-      "name": "₦4,250,000.00",
+      "name": "\u20a64,250,000.00",
       "category": "control owned by another feature",
       "reason": "Shown in the Amount row by F-04's DecisionRows/AmountValue (read-only here); the check cannot read a lone span inside a <dd>, so it reports the amount as missing although it is on the page.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "link",
-      "name": "See all exceptions",
-      "category": "control owned by another feature",
-      "reason": "F-06 adds this link inside NextStep; F-14 does not edit NextStep.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "No person needs to act yet. An agent drafting is not a review or an approval.",
-      "category": "control owned by another feature",
-      "reason": "Shown as the item's next_step inside NextStep, whose markup (and its \"Next step.\" prefix) F-14 may not change (F-06 seam).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
@@ -145,97 +131,6 @@
       "name": "Record the client's response",
       "category": "control owned by another feature",
       "reason": "F-09 (ResponseEntryLink).",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "CONFIRM WHAT HAPPENED",
-      "category": "control owned by another feature",
-      "reason": "F-09 ReconcilePanel heading.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "Chidi checked 6 times over 2 hours and found no delivery receipt. The factory won't resend until a person confirms what happened, so the client is never invoiced twice.",
-      "category": "control owned by another feature",
-      "reason": "F-09 ReconcilePanel text.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "radio",
-      "name": "It arrived. I have proof the client received it (upload it next).",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "It arrived. I have proof the client received it (upload it next).",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice label.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "radio",
-      "name": "It didn't arrive. Allow one resend of the same version.",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "It didn't arrive. Allow one resend of the same version.",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice label.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "radio",
-      "name": "I can't tell yet. Keep it held and remind me tomorrow.",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "I can't tell yet. Keep it held and remind me tomorrow.",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice label.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "It arrived.",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice label (bold part).",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "It didn't arrive.",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice label (bold part).",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "I can't tell yet.",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile choice label (bold part).",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "link",
-      "name": "Record and continue",
-      "category": "control owned by another feature",
-      "reason": "F-09 reconcile submit.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "text",
-      "name": "Your choice is recorded with your name. A resend reuses the same invoice number.",
-      "category": "control owned by another feature",
-      "reason": "F-09 ReconcilePanel small print.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
@@ -305,7 +200,7 @@
       "role": "link",
       "name": "QUEUE",
       "category": "disagreement between boards",
-      "reason": "Boards name the crumb QUEUE, MY WORK or draw a REF · CLIENT eyebrow; the page keeps F-03's \"My work / line / ref\" crumb on every state (D-17).",
+      "reason": "Boards name the crumb QUEUE, MY WORK or draw a REF \u00b7 CLIENT eyebrow; the page keeps F-03's \"My work / line / ref\" crumb on every state (D-17).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
@@ -319,7 +214,7 @@
       "role": "text",
       "name": "Chidi drafted v2 from 3 sources. See his steps",
       "category": "disagreement between boards",
-      "reason": "The default phone board writes the agent note without the agent's name; the other phone boards (ready, owner-needed, effect-uncertain) write \"Chidi · Finance agent\" first. The page uses that one form; the note and \"See his steps\" are shown.",
+      "reason": "The default phone board writes the agent note without the agent's name; the other phone boards (ready, owner-needed, effect-uncertain) write \"Chidi \u00b7 Finance agent\" first. The page uses that one form; the note and \"See his steps\" are shown.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
