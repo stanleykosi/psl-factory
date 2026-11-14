@@ -252,7 +252,7 @@ describe('overview', () => {
     expect(next.className).toBe('psl-callout psl-callout--warning work-next');
     expect(next.textContent).toContain('Nothing has been resent.');
     expect(facts()[3].textContent).toBe('SENTUnknown');
-    expect(screen.queryAllByRole('button')).toEqual([]);
+    expect(within(screen.getByRole('main')).queryAllByRole('button')).toEqual([]);
     const stations = within(screen.getByRole('region', { name: 'Stations' })).getAllByRole('listitem');
     expect(stations[5].getAttribute('aria-current')).toBe('step');
     expect(stations[5].className).toBe('psl-station psl-station--waiting work-station--uncertain');
@@ -391,7 +391,7 @@ describe('history', () => {
     );
     await open('W-1004', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    const controls = [...document.querySelectorAll('button, input, select, textarea, [contenteditable]')];
+    const controls = [...screen.getByRole('main').querySelectorAll('button, input, select, textarea, [contenteditable]')];
     expect(controls.map((el) => [el.tagName, el.getAttribute('role'), el.textContent])).toEqual([
       ['BUTTON', 'radio', 'All'],
       ['BUTTON', 'radio', 'Decisions'],

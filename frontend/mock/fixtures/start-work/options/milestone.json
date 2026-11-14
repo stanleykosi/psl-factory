@@ -1,0 +1,37 @@
+{
+  "items": [
+    {
+      "value": "M-0103",
+      "label": "Milestone 3 · UAT signed 07 Nov",
+      "sample": true,
+      "_parent": "P-0101",
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    },
+    {
+      "value": "M-0104",
+      "label": "Milestone 4 · hypercare",
+      "disabled_reason": "Milestone 4 isn't marked complete yet. Record its completion and proof first.",
+      "sample": true,
+      "_parent": "P-0101",
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    },
+    {
+      "value": "M-0202",
+      "label": "Milestone 2 · beta signed 30 Oct",
+      "sample": true,
+      "_parent": "P-0102",
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    }
+  ]
+}

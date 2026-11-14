@@ -3,6 +3,7 @@
 import Link from 'next/link';
 
 import type { Me } from '@/api/types';
+import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 
 import type { DestinationInfo } from './destinations';
 import { SampleLabel } from './SampleLabel';
@@ -10,7 +11,8 @@ import { SampleLabel } from './SampleLabel';
 type Props = { me: Me | null; destinations: DestinationInfo[]; current: DestinationInfo | undefined };
 
 /**
- * CMP-01 top bar (desktop, 720px and wider). No Start work, bell or account menu in this release.
+ * CMP-01 top bar (desktop, 720px and wider). Start work (CMP-23) shows only when /me startable_lines is not empty;
+ * no bell or account menu in this release.
  * Below 1080px the role is visually hidden (name only) but stays in the accessible name.
  */
 export function TopNav({ me, destinations, current }: Props) {
@@ -28,6 +30,7 @@ export function TopNav({ me, destinations, current }: Props) {
           </div>
         )}
         <span className="shell-navend">
+          {me && me.startable_lines.length > 0 && <StartWorkButton variant="bar" />}
           <SampleLabel />
         </span>
         {me && (
