@@ -1,7 +1,8 @@
 // Local contract mock for /api/v1. Routes come from the v7 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
-// Persona: cookie psl_mock_persona (finance_lead | pm | none; default finance_lead).
+// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none; default finance_lead).
+// Start work: E-LINES, E-LINE-OPTIONS and E-WORK-START are answered by start-work.mjs.
 // Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
 // applied only when the operation declares that status.
 // Work items: E-WORK-ITEM and E-WORK-HISTORY pick fixtures/work/<id>.json and <id>.history.json when
@@ -26,14 +27,15 @@ import { monthEnd } from './finance.mjs';
 import { overview } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
+import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { workList } from './work-list.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT'];
-export const PERSONAS = ['finance_lead', 'pm', 'none', 'admin'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', ...START_OPERATIONS];
+export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 
@@ -209,9 +211,10 @@ function send(res, status, body) {
 export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'))) {
   const routes = loadRoutes(openapi);
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
-  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME').map((id) => [id, readFixture(id)]));
+  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && !START_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
   const work = readWorkFixtures();
   const validators = bodyValidators(openapi);
+  const startWork = createStartWorkMock(openapi);
   // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
   const overrides = new Map();
   const alerts = createAlertsMock({ openapi });
@@ -225,6 +228,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       const method = (req.method ?? 'GET').toLowerCase();
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
+        startWork.reset();
         resetResponses();
         resetSetup();
         alerts.reset();
@@ -263,6 +267,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (TASK_OPERATIONS.includes(route.operationId)) {
         return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));
       }
+      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona }));
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
       return send(res, 200, fixtures[route.operationId]);
     });

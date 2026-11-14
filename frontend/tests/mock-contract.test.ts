@@ -11,6 +11,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/server.mjs';
 // @ts-expect-error plain ESM module without type declarations
+import { START_OPERATIONS } from '../mock/start-work.mjs';
+// @ts-expect-error plain ESM module without type declarations
 import { contractEvidence } from '../mock/evidence.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
@@ -35,7 +37,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1' };
-const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', none: 'N-0201', admin: 'N-0201' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
@@ -100,7 +102,8 @@ function expectValid(id: string, status: number, body: unknown) {
 
 describe('mock server matches openapi.json', () => {
   for (const id of M1_OPERATIONS as string[]) {
-    for (const persona of PERSONAS as string[]) {
+    // Start work answers per persona and per body; tests/start-work-mock.test.ts covers it.
+    for (const persona of (START_OPERATIONS as string[]).includes(id) ? [] : (PERSONAS as string[])) {
       const expected = PERSONA_STATUS[id]?.[persona] ?? 200;
       it(`${id} answers ${expected} for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
@@ -136,6 +139,7 @@ describe('mock server matches openapi.json', () => {
     expect(names.map((me) => [me.name, me.destinations, me.csrf_token])).toEqual([
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-finance_lead'],
       ['Tunde Bello', ['my_work', 'projects', 'assistant'], 'mock-csrf-pm'],
+      ['Folake Bello', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-ceo'],
       ['Sample Person', [], 'mock-csrf-none'],
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
     ]);
@@ -163,9 +167,9 @@ describe('mock server matches openapi.json', () => {
   });
 
   it('a non-M-1 operation gets 501 not_mocked', async () => {
-    const result = await request('E-LINES');
+    const result = await request('E-TEMPLATES');
     expect(result).toEqual({ status: 501, body: { code: 'not_mocked', message: 'Not available in the mock yet.' } });
-    expectValid('E-LINES', 501, result.body);
+    expectValid('E-TEMPLATES', 501, result.body);
   });
 
   it('refuses to start with NODE_ENV=production', () => {

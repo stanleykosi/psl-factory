@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import type { Me } from '@/api/types';
+import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 
 import type { DestinationInfo } from './destinations';
 import { MenuIcon } from './icons';
@@ -20,13 +21,14 @@ type Props = {
 };
 
 /**
- * CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label. On a sub-page
+ * CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label and "+ Start" (CMP-23). On a sub-page
  * that sets a back link the bar shows "← label" instead of Menu and PSL FACTORY (SCR-10-mobile, SCR-22-mobile).
  */
 export function PhoneBar({ me, destinations, current, back = null }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const hasMenu = me !== null && back === null;
+  const canStart = me !== null && me.startable_lines.length > 0;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -41,7 +43,7 @@ export function PhoneBar({ me, destinations, current, back = null }: Props) {
 
   return (
     <>
-      <header className="psl-phonebar psl-on-dark">
+      <header className={`psl-phonebar psl-on-dark${canStart ? ' sw-phonebar' : ''}`}>
         {hasMenu && (
           <button
             ref={buttonRef}
@@ -84,6 +86,12 @@ export function PhoneBar({ me, destinations, current, back = null }: Props) {
             </Link>
           ))}
         </nav>
+      )}
+      {/* After the menu in the DOM, so Tab goes Menu, its links, then "+ Start"; drawn at the bar's right end. */}
+      {canStart && (
+        <span className="sw-phoneslot psl-on-dark">
+          <StartWorkButton variant="phone" />
+        </span>
       )}
     </>
   );
