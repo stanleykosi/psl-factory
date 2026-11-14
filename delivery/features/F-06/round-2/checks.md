@@ -1,11 +1,11 @@
-GATE: FAIL
+GATE: PASS
 COMMIT: c4d0b05e5e25272eb9a66bf37cc0c390ba487c01
-ATTEMPT: 1
+ATTEMPT: 2
 
 ## Summary
 - checks.sh passed
-- Protected paths: M delivery/config.json
-- Commit c4d0b05e5e25, round 2, attempt 1
+- Protected paths: none changed
+- Commit c4d0b05e5e25, round 2, attempt 2
 
 ## checks.sh (last 80 lines of checks.log)
 
@@ -14,7 +14,7 @@ ATTEMPT: 1
 System check identified no issues (0 silenced).
 == frontend: install, lint, typecheck, test, build
 
-added 449 packages in 2m
+added 449 packages in 1m
 
 > psl-factory-frontend@0.1.0 lint
 > eslint . --max-warnings 0
@@ -33,29 +33,29 @@ added 449 packages in 2m
 
  Test Files  15 passed (15)
       Tests  363 passed (363)
-   Start at  06:06:20
-   Duration  58.82s (tests 50%, environment 29%, transform 9%, import 6%, setup 5%, worker 1%)
+   Start at  06:11:45
+   Duration  39.07s (tests 56%, environment 24%, setup 8%, transform 7%, import 4%, worker 1%)
 
-    Isolate  15 workers spawned · ~8.24s startup each (spawn + environment, per file)
-             at least ~9.42s faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  15 workers spawned · ~3.97s startup each (spawn + environment, per file)
+             at least ~4.54s faster with isolate: false — reuses workers across files instead of one per file
 
 
 > psl-factory-frontend@0.1.0 build
 > next build
 
 ▲ Next.js 16.4.6 (Turbopack)
-✓ Running next.config.ts took 7.5s
+✓ Running next.config.ts took 10.0s
 
   Creating an optimized production build ...
-✓ Compiled successfully in 3.9s
+✓ Compiled successfully in 4.5s
   Running TypeScript ...
-  Finished TypeScript in 61s ...
+  Finished TypeScript in 6.9s ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/9) ...
   Generating static pages using 7 workers (2/9) 
   Generating static pages using 7 workers (4/9) 
   Generating static pages using 7 workers (6/9) 
-✓ Generating static pages using 7 workers (9/9) in 2.1s
+✓ Generating static pages using 7 workers (9/9) in 859ms
   Finalizing page optimization ...
 
 Route (app)

@@ -368,3 +368,5 @@
 {"at":"2026-11-14T04:55:45Z","feature":"F-11","round":0,"kind":"created","tasks":["FE-M3-SETUP"]}
 {"at":"2026-11-14T04:55:46Z","feature":"F-12","round":0,"kind":"created","tasks":["FE-M4"]}
 {"at":"2026-11-14T05:08:54Z","feature":"F-06","round":2,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":0,"seconds":402.1,"commit":"c4d0b05e5e25","protected":["M delivery/config.json"]}
+{"at":"2026-11-14T05:13:03Z","feature":"F-06","round":2,"kind":"gate","verdict":"PASS","attempt":2,"exit_code":0,"seconds":219.3,"commit":"c4d0b05e5e25"}
+{"at":"2026-11-14T05:13:04Z","feature":"F-06","round":2,"kind":"transition","head":"c4d0b05e5e25","from":"IMPLEMENTING","to":"IN_REVIEW"}
