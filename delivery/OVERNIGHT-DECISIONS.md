@@ -23,6 +23,9 @@ Each entry: what was decided, why, and how to revert.
 ## Waiting for you
 - **Check Exceptions (F-06)**: merged with my provisional product acceptance (D-11). Open /exceptions; confirm or reject D-04's exceptions.
 
+- **Decisions for PSL or the backend developer** (raised in architecture v7; the screens behind them are built only up to what doesn't need the rule): sign-in method (D-SIGNIN), who holds Admin (D-ADMIN-AUTHORITY), payroll field visibility (D-PAYROLL-VISIBILITY), the costing rule (D-COSTING-RULE), who decides changes (D-CHANGE-DECIDERS), receipt allocation (D-RECEIPT-ALLOCATION), assistant speech input (D-SPEECH-INPUT), plus the existing payment-exception variants (D-DECISION-VARIANTS).
+- **For you (design):** where the alert bell sits and where the account-menu links go (D-ALERTS-ENTRY); no board draws a bell.
+
 ## Decisions taken
 - **D-01 · 3D floor concept: 3, the tilted swimlane board.** Four live concepts: https://claude.ai/artifact/Mc4ouUKmHtRsyJk8xkALKw (copy in `design/concepts/floor-3d-concepts.html`). I picked 3 because it is your approved flat board leaned back like a drafting table: same reading order, every label readable, closest to the design you drew, and the lightest to run. 1 (isometric conveyor) was the runner-up; 2 (city) and 4 (amphitheatre) look striking but hide labels and read worse at a glance. Built into the Overview's "3D floor" option in F-08. Revert: reply with another concept number and F-08 gets a round to swap it.
 - **D-02 · Phone Start work forms** use a bottom sheet for every line (your answer, 14 Nov).
@@ -35,3 +38,4 @@ Each entry: what was decided, why, and how to revert.
 - **D-09 · Projects "Active" tab** shows only active projects (the board's Active tab also drew one closed project and "5 PROJECTS"; I treated that as a board slip). Revert: tell me Active should include recently closed ones.
 - **D-10 · Journey tag words** come only from the state list ("WAITING"), not the board's custom "AWAITING FINANCE DECISION"; the richer wording needs a field from the backend and is noted for v7. On phones the journey shows the coloured square without a visible tag, as your board does; the detail line beside it still says what is happening in words, so colour is not the only signal. Revert: ask for visible tags on phones.
 - **D-11 · Exceptions (F-06) merged with provisional product acceptance** after it passed the design check (desktop 100%/90.7, phone 100%/91.6 with the board's rows), all reviews, QA and PMO. Revert: tell me what to change; F-06 reopens.
+- **D-12 · Architecture v7 drafted as a proposal** (commit 61a7ade): the fields every remaining board needs, one typed `workspace` block per line plus a step write, and a frontend task for each of the 27 unassigned screens (now zero unassigned). All additive; v6 screens keep working. Business rules are not designed, only raised as open decisions above. Revert: drop v7.
