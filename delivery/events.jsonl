@@ -933,3 +933,5 @@
 {"at":"2026-11-14T17:53:49Z","feature":"F-16","round":0,"kind":"planned","risk":"high","surfaces":["ui","security","payments"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-14T17:53:50Z","feature":"F-16","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-14T17:53:56Z","feature":"F-16","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-14T18:59:57Z","feature":"F-15","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":167.0,"commit":"07d078ef95ae"}
+{"at":"2026-11-14T18:59:58Z","feature":"F-15","round":1,"kind":"transition","head":"07d078ef95ae","from":"IMPLEMENTING","to":"IN_REVIEW"}

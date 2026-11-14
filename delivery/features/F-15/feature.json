@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-15",
   "outcome": "Alert bell in the top bar, with a drawer of \"Needs you\" and \"For your information\"",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-ALERTS-MENU"
   ],
@@ -88,7 +88,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T18:59:57Z",
+      "seconds": 167.0,
+      "evidence_ref": "delivery/features/F-15/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -159,7 +172,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "d97b99b3881b7a523715c75c0268d34bfe637964",
     "task_branch": "fe-alerts-menu-bell-and-drawer",
-    "head_sha": null,
+    "head_sha": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-15",
     "pr_url": null,
     "pr_number": null,
@@ -170,7 +183,36 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/alerts-bell.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/proposals/alerts-needs-you.json",
+      "frontend/src/features/alerts/AlertParts.tsx",
+      "frontend/src/features/alerts/AlertsBell.tsx",
+      "frontend/src/features/alerts/AlertsDrawer.tsx",
+      "frontend/src/features/alerts/NotificationsPage.tsx",
+      "frontend/src/features/alerts/alerts.css",
+      "frontend/src/features/alerts/model.ts",
+      "frontend/src/features/alerts/types.ts",
+      "frontend/src/features/alerts/useAlertsFeed.ts",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/bell-feed.ts",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/work-item-board.test.tsx",
+      "frontend/tests/work-item.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -221,6 +263,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T18:59:58Z",
+      "round": 1,
+      "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "reason": null
     }
   ],
   "routing": {
@@ -237,9 +287,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
   },
   "blocked": null
 }
