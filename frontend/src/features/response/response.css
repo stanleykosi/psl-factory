@@ -1,7 +1,10 @@
 /* SCR-16 record a response and the SCR-02 reconcile panel. Token variables only; bundle classes are composed,
    and only the board's own layouts are added (pills, proof chips, the phone back bar and action bar). */
 
-.resp-page { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.resp-page { display: flex; flex-direction: column; gap: 20px; min-width: 0; line-height: normal; }
+.resp-page .resp-title { line-height: normal; }
+/* the SOW and success boards set the display line height on their headings */
+.resp-page .resp-title--tight { line-height: 1.08; }
 .resp-plain { margin: 0; line-height: 1.5; }
 .resp-footnote { margin: 0; font-size: 13px; color: var(--ink-muted); }
 .resp-retry { align-items: center; flex-wrap: wrap; }
@@ -11,6 +14,7 @@
 .resp-crumb a { text-decoration: underline; text-underline-offset: 2px; }
 .resp-title { font-size: 34px; overflow-wrap: anywhere; }
 .resp-page:has(.resp-form--sow) .resp-title { font-size: 32px; }
+.resp-page:has(.resp-form--sow) .resp-header { gap: 20px; } /* the SOW board spaces crumb and heading like the page */
 .resp-intro { margin: 0; max-width: 760px; color: var(--ink-muted); }
 .resp-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-muted); }
 
@@ -37,8 +41,13 @@
 .resp-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .resp-label { font-weight: 500; }
 .resp-form--sow .resp-label { font-weight: 600; }
+/* the SOW board's boxes are 44px inside a 2px border */
+.resp-form--sow .psl-input:not(textarea) { min-height: calc(var(--control-md) + 4px); }
 .resp-select { padding-right: 12px; }
-.resp-static { min-height: var(--control-md); display: flex; align-items: center; padding: 0 12px; border: 2px solid var(--ink); background: var(--surface); overflow-wrap: anywhere; }
+.resp-static { min-height: calc(var(--control-md) + 4px); display: flex; align-items: center; padding: 0 12px; border: 2px solid var(--ink); background: var(--surface); overflow-wrap: anywhere; }
+.resp-notehead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.psl-input--area.resp-note { min-height: var(--control-md); }
+
 .resp-summary { margin: 0; color: var(--ink-muted); font-size: 14px; }
 
 /* "What they did": radio pills (client response) or a segmented group (SOW), native radios either way */
@@ -75,6 +84,8 @@
 .resp-clip { flex: none; }
 
 .resp-attest { align-items: flex-start; }
+.resp-row--proof { align-items: end; }
+.resp-row--proof .resp-attest { padding-bottom: 12px; }
 .resp-nextline { margin: 0; padding: 10px 12px; background: var(--surface-subtle); font-size: 14px; line-height: 1.5; }
 
 /* Record, its alert line and the audit line */

@@ -89,24 +89,28 @@ function Actions({ response, entries, setEntry, segmented }: Pick<FormProps, 're
 }
 
 function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntry'>) {
+  const labelId = useId();
   const countId = useId();
+  // One line high to start (no board draws it); it grows by dragging. The counter sits on the label line.
   return (
     <div className="resp-field">
-      <label className="resp-field">
-        <span className="resp-label">
+      <span className="resp-notehead">
+        <label id={labelId} htmlFor={`${labelId}-note`} className="resp-label">
           Note <span className="psl-opt">(optional)</span>
+        </label>
+        <span id={countId} className="psl-hint">
+          {entries.note.length} / {NOTE_MAX}
         </span>
-        <textarea
-          className="psl-input psl-input--area"
-          maxLength={NOTE_MAX}
-          value={entries.note}
-          aria-describedby={countId}
-          onChange={(e) => setEntry('note', e.target.value)}
-        />
-      </label>
-      <span id={countId} className="psl-hint">
-        {entries.note.length} / {NOTE_MAX}
       </span>
+      <textarea
+        id={`${labelId}-note`}
+        className="psl-input psl-input--area resp-note"
+        rows={1}
+        maxLength={NOTE_MAX}
+        value={entries.note}
+        aria-describedby={countId}
+        onChange={(e) => setEntry('note', e.target.value)}
+      />
     </div>
   );
 }
@@ -240,8 +244,11 @@ export function ClientResponseForm(props: FormProps) {
         <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
       </div>
       <Actions response={response} entries={entries} setEntry={setEntry} segmented={false} />
-      {versionSelect}
-      <Note entries={entries} setEntry={setEntry} />
+      {/* No board draws the note, so it shares the version's row instead of pushing the board's rows down. */}
+      <div className={versionSelect ? 'resp-row' : undefined}>
+        {versionSelect}
+        <Note entries={entries} setEntry={setEntry} />
+      </div>
       <ProofField proof={proof} hint={response.proof_hint} />
       <Attest entries={entries} setEntry={setEntry} short={false} />
       <RecordRow props={props} ready={ready} line={line} />
@@ -287,18 +294,24 @@ export function SowSignatureForm(props: FormProps) {
           options={responders.map((r) => ({ value: r.id, text: responderText(r, response.variant) }))}
         />
       )}
-      <WhenField label="When" value={entries.when} onChange={(v) => setEntry('when', v)} />
+      {/* The SOW boards draw no note: it shares the When row. */}
+      <div className="resp-row">
+        <WhenField label="When" value={entries.when} onChange={(v) => setEntry('when', v)} />
+        <Note entries={entries} setEntry={setEntry} />
+      </div>
       <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
       <Actions response={response} entries={entries} setEntry={setEntry} segmented />
-      <ProofField proof={proof} layout="card" />
-      <Note entries={entries} setEntry={setEntry} />
-      <Attest entries={entries} setEntry={setEntry} short={false} />
+      {/* Nor the attestation: it sits beside the proof it vouches for. */}
+      <div className="resp-row resp-row--proof">
+        <ProofField proof={proof} layout="card" />
+        <Attest entries={entries} setEntry={setEntry} short={false} />
+      </div>
     </>
   );
   const next = response.next?.length ? (
-    <p className="resp-nextline">
+    <div className="resp-nextline">
       <strong>What happens next:</strong> {response.next.join(' ')}
-    </p>
+    </div>
   ) : null;
 
   return (

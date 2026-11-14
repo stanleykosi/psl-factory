@@ -102,6 +102,7 @@ async function openWork(id: string) {
 }
 
 const text = () => document.body.textContent ?? '';
+const crumb = () => document.querySelector('.resp-crumb') as HTMLElement;
 const recordButton = (name: RegExp | string = /^Record (response|signature)$|^Recording…$/) => screen.getByRole('button', { name }) as HTMLButtonElement;
 const fileInput = () => document.querySelector('input[type="file"]') as HTMLInputElement;
 const pdf = (name = 'Lagoon_UAT_signoff_11Nov.pdf', size = 184 * 1024) => new File([new Uint8Array(size).fill(37)], name, { type: 'application/pdf' });
@@ -154,7 +155,7 @@ describe('entry from the work item (SCR-02 waiting)', () => {
 describe('default form (A-RESPONSE)', () => {
   it('W-1601 shows only the returned options, in board order', async () => {
     await open();
-    expect(screen.getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('QUEUE / PREPARE FOR RELEASE / REL-0077 · STATION 3 OF 5');
+    expect(crumb().textContent).toBe('QUEUE / PREPARE FOR RELEASE / REL-0077 · STATION 3 OF 5');
     expect(screen.getByRole('link', { name: 'QUEUE' }).getAttribute('href')).toBe('/my-work');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Record the client\'s UAT response');
     expect(text()).toContain("Lagoon Health's client contact doesn't log in to PSL Factory");
@@ -445,7 +446,7 @@ describe('absent fields are left out (W-1606)', () => {
 
   it('the form has no intro, aside or proof hint, and no board copy', async () => {
     await open('W-1606', 'T-1606');
-    expect(screen.getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('QUEUE / PREPARE FOR RELEASE / REL-0083 · STATION 3 OF 5');
+    expect(crumb().textContent).toBe('QUEUE / PREPARE FOR RELEASE / REL-0083 · STATION 3 OF 5');
     expect(screen.queryByRole('complementary')).toBeNull();
     expect(document.querySelector('.resp-intro')).toBeNull();
     expect(document.querySelector('.resp-drop .psl-hint')).toBeNull();
@@ -478,9 +479,9 @@ describe('absent fields are left out (W-1606)', () => {
 describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
   it('W-1602 shows the project crumb, the Signature panel and what happens next', async () => {
     await open('W-1602', 'T-1602');
-    const crumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
-    expect(crumb.textContent).toBe('PROJECTS / TAMARIND LOANS / DOCUMENTS / SOW-0207');
-    expect(within(crumb).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([['PROJECTS', '/projects']]);
+    const trail = crumb();
+    expect(trail.textContent).toBe('PROJECTS / TAMARIND LOANS / DOCUMENTS / SOW-0207');
+    expect(within(trail).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([['PROJECTS', '/projects']]);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Record the client\'s SOW signature');
     expect(screen.getByRole('heading', { level: 2, name: 'Signature' })).toBeTruthy();
     expect(text()).toContain('SOW-0207 v1 · Tamarind Loans · sent 18 Dec 10:30');
@@ -694,7 +695,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
   it('W-1603 shows the checks, the three outcomes with the API’s notes and the button', async () => {
     answers.me = 'finance_lead';
     await openWork('W-1603');
-    const panel = screen.getByRole('region', { name: 'Confirm what happened' });
+    const panel = screen.getByRole('complementary', { name: 'Confirm what happened' });
     expect(within(panel).getByRole('heading', { level: 2 }).textContent).toBe('Confirm what happened');
     expect(panel.textContent).toContain('Chidi checked 6 times over 2 hours and found no delivery receipt. The factory won’t resend until a person confirms what happened, so the client is never invoiced twice.');
     const options = within(within(panel).getByRole('radiogroup', { name: 'Confirm what happened' })).getAllByRole('radio') as HTMLInputElement[];
@@ -718,7 +719,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
   it('W-1607 shows only two outcomes and no notes', async () => {
     answers.me = 'finance_lead';
     await openWork('W-1607');
-    const panel = screen.getByRole('region', { name: 'Confirm what happened' });
+    const panel = screen.getByRole('complementary', { name: 'Confirm what happened' });
     expect(within(panel).getAllByRole('radio').map((o) => (o as HTMLInputElement).labels![0].textContent)).toEqual(['It didn’t arrive.', 'I can’t tell yet.']);
     expect(panel.textContent).not.toContain('Allow');
     expect(panel.textContent).toContain('Chidi checked'.replace('Chidi', 'The factory') + ' 3 times and found no delivery receipt.');

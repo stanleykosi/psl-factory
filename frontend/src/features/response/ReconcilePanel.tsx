@@ -105,7 +105,7 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
 
   return (
     <div className="work-column">
-      <section className="resp-reconcile" aria-labelledby={phone ? undefined : headId} aria-label={phone ? 'Confirm what happened' : undefined}>
+      <aside className="resp-reconcile" aria-labelledby={phone ? undefined : headId} aria-label={phone ? 'Confirm what happened' : undefined}>
         {!phone && (
           <h2 id={headId} className="resp-reconcile__head">
             Confirm what happened
@@ -179,7 +179,7 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
           </div>
           <p className="resp-footnote">Your choice is recorded with your name.{resendNote}</p>
         </div>
-      </section>
+      </aside>
     </div>
   );
 }

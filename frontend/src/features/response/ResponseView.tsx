@@ -38,23 +38,19 @@ function Crumb({ item, response }: { item: ResponseWorkItem; response: TaskRespo
   const document = response.context?.document;
   if (project) {
     return (
-      <nav aria-label="Breadcrumb">
-        <p className="psl-crumb resp-crumb">
-          <Link href="/projects">PROJECTS</Link> / {project.title.toUpperCase()}
-          {document && ` / DOCUMENTS / ${document.reference.toUpperCase()}`}
-        </p>
-      </nav>
+      <p className="psl-crumb resp-crumb">
+        <Link href="/projects">PROJECTS</Link> / {project.title.toUpperCase()}
+        {document && ` / DOCUMENTS / ${document.reference.toUpperCase()}`}
+      </p>
     );
   }
   const current = currentStationIndex(item.stations);
   const station = current >= 0 ? ` · STATION ${current + 1} OF ${item.stations.length}` : '';
   return (
-    <nav aria-label="Breadcrumb">
-      <p className="psl-crumb resp-crumb">
-        <Link href="/my-work">QUEUE</Link> / {item.line.toUpperCase()} / {item.reference.toUpperCase()}
-        {station}
-      </p>
-    </nav>
+    <p className="psl-crumb resp-crumb">
+      <Link href="/my-work">QUEUE</Link> / {item.line.toUpperCase()} / {item.reference.toUpperCase()}
+      {station}
+    </p>
   );
 }
 
@@ -160,7 +156,7 @@ function SuccessView({ id, before, task, recorded, next, responderId, phone }: {
       ) : (
         <p className="resp-eyebrow">{[before.reference, organisation].filter(Boolean).join(' · ').toUpperCase()}</p>
       )}
-      <h1 className="shell-title resp-title">{heading}</h1>
+      <h1 className="shell-title resp-title resp-title--tight">{heading}</h1>
       <div className="resp-success">
         <div className="psl-callout psl-callout--success" role="status">
           <CheckIcon />
@@ -272,7 +268,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
         ))}
       <header className="resp-header">
         {!phone && <Crumb item={item} response={response} />}
-        <h1 className="shell-title resp-title">{phone && sow && current >= 0 ? item.stations[current].name : task.title}</h1>
+        <h1 className={sow ? 'shell-title resp-title resp-title--tight' : 'shell-title resp-title'}>{phone && sow && current >= 0 ? item.stations[current].name : task.title}</h1>
         {!phone && !sow && response.intro && <p className="resp-intro">{response.intro}</p>}
       </header>
       <PageNotice notice={notice} onRecheck={recheck} />
@@ -281,10 +277,10 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
         {!phone && !sow && <AgentAside response={response} />}
         {!phone && sow && response.intro && (
           <aside className="resp-aside" aria-label="About this signature">
-            <p className="psl-callout psl-callout--info">
+            <div className="psl-callout psl-callout--info">
               <InfoIcon />
               <span>{response.intro}</span>
-            </p>
+            </div>
           </aside>
         )}
       </div>

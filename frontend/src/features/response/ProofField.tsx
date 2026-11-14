@@ -107,7 +107,7 @@ export function ProofField({ proof, hint, layout = 'drop', label = 'Proof' }: { 
         disabled={disabled}
         onClick={() => input.current?.click()}
       >
-        {empty || layout === 'drop' ? BUTTON_TEXT[layout] : BUTTON_TEXT.drop}
+        {BUTTON_TEXT[layout]}
       </button>
     </>
   );
@@ -136,7 +136,7 @@ export function ProofField({ proof, hint, layout = 'drop', label = 'Proof' }: { 
           {proof.files.map((f) => (
             <Chip key={f.key} file={f} proof={proof} />
           ))}
-          {picker}
+          {empty && picker}
           {hintShown && (
             <span id={hintId} className="psl-hint">
               {shownHint}
