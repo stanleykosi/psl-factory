@@ -1,0 +1,555 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T20:07:57.234Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/finance/project/SCR-03-desktop-own.dc.html",
+  "boardName": "SCR-03-desktop-own.dc.html",
+  "pageUrl": "http://localhost:4631/work/W-1904/decide?task=T-1904",
+  "viewport": {
+    "width": 1440,
+    "height": 860
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-16/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 91.6 meets 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 81.3,
+    "coverageWithExceptions": 100,
+    "visual": 91.6
+  },
+  "visual": {
+    "score": 91.6,
+    "allCellsScore": 97.3,
+    "width": 1440,
+    "height": 860,
+    "boardHeight": 860,
+    "pageHeight": 860,
+    "cell": 12,
+    "contentCells": 2788,
+    "mismatchedCells": 235
+  },
+  "coverage": {
+    "total": 16,
+    "found": 13,
+    "coverage": 81.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1064,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1005,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1182,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1124,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 358
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 529
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "pageName": "Approve invoice v2",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Lagoon Health · Milestone 2 invoice\" on the board, \"Approve invoice v2\" on the page",
+        "looks": [
+          "text size 32px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 702,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 114,
+          "w": 421,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING FOR REVIEW",
+        "pageName": "WAITING FOR REVIEW",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1207,
+          "y": 119,
+          "w": 145,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1207,
+          "y": 114,
+          "w": 145,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INVOICE V2 · ₦4,250,000.00",
+        "pageName": "INVOICE V2 · ₦4,250,000.00",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 179,
+          "w": 898,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "You prepared Invoice v2, so someone else must review it.",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 1012,
+          "y": 174,
+          "w": 340,
+          "h": 184
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 177,
+          "w": 340,
+          "h": 231
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You prepared this invoice, so someone else must review it.",
+        "pageName": "You prepared Invoice v2, so someone else must review it.",
+        "pageRole": "heading",
+        "similarity": 90,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1068,
+          "y": 237,
+          "w": 256,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1068,
+          "y": 242,
+          "w": 256,
+          "h": 42
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bisi Ade · Finance",
+        "key": "text: Bisi Ade · Finance",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1248,
+          "y": 20,
+          "w": 104,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The own board (Finance canvas) is drawn signed in as Bisi Ade; the frame shows the signed-in persona (Conflicts 22).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE / INVOICES / INV-0412",
+        "key": "text: FINANCE / INVOICES / INV-0412",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "The own board (Finance canvas) draws a Finance trail; the not-yours board draws \"DECISION · INV-0412\" for the same read-only view, which the page uses for every cannot-act reason (Conflicts 1).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING · FINANCE REVIEWER",
+        "key": "text: WAITING · FINANCE REVIEWER",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 176,
+          "w": 336,
+          "h": 37
+        },
+        "exception": {
+          "reason": "The card head names the role the contract requires (task.required_role, \"Finance Lead\"): \"Waiting · Finance Lead\". The board's \"Finance reviewer\" is not a contract value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"WAITING FOR REVIEW\"",
+        "kind": "Text",
+        "name": "WAITING FOR REVIEW",
+        "boardBox": {
+          "x": 1207,
+          "y": 119,
+          "w": 145,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1207,
+          "y": 114,
+          "w": 145,
+          "h": 23
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Heading \"Lagoon Health · Milestone 2 invoice\""
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 358
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 529
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"INVOICE V2 · ₦4,250,000.00\"; on the page it comes after Side panel \"\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECISION · INV-0412",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING · FINANCE LEAD",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1014,
+          "y": 179,
+          "w": 336,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor (Finance Lead) was alerted at 12 Nov 10:20",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 306,
+          "w": 308,
+          "h": 53
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the work item",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 372,
+          "w": 123,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Approval chain",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 430,
+          "w": 1264,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 step",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 460,
+          "w": 1264,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
