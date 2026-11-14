@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:18:38.251Z",
+  "generatedAt": "2026-11-14T07:55:06.871Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-desktop-success.dc.html",
   "boardName": "SCR-16-desktop-success.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601/respond?task=T-1601",
@@ -232,7 +232,7 @@
         "pageBox": {
           "x": 88,
           "y": 120,
-          "w": 1264,
+          "w": 384,
           "h": 37
         }
       },
@@ -240,7 +240,7 @@
         "kind": "Status message",
         "role": "status",
         "name": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 15:04 with 1 proof file.",
-        "pageName": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 08:18 with 1 proof file.",
+        "pageName": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 08:55 with 1 proof file.",
         "pageRole": "status",
         "similarity": 92,
         "looks": [],

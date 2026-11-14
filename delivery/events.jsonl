@@ -652,3 +652,6 @@
 {"at":"2026-11-14T07:51:01Z","feature":"F-11","round":2,"kind":"transition","head":"edc476370a1b","from":"IMPLEMENTING","to":"IN_REVIEW"}
 {"at":"2026-11-14T07:51:05Z","feature":"F-11","round":2,"kind":"transition","head":"edc476370a1b","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-14T07:51:11Z","feature":"F-11","round":3,"kind":"transition","head":"edc476370a1b","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-14T07:56:57Z","feature":"F-14","round":0,"kind":"planned","risk":"medium","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-14T07:56:58Z","feature":"F-14","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-14T07:57:26Z","feature":"F-14","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}

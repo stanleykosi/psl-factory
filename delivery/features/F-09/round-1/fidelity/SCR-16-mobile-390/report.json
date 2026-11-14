@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:18:07.538Z",
+  "generatedAt": "2026-11-14T07:54:48.132Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile.dc.html",
   "boardName": "SCR-16-mobile.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601/respond?task=T-1601",
@@ -18,52 +18,31 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
   "pass": false,
   "passReasons": [
-    "Every board item is on the page (100%).",
-    "Visual match 66.8 is below 90.",
-    "8 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80.3 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 100,
+    "coverage": 88.9,
     "coverageWithExceptions": 100,
-    "visual": 66.8
+    "visual": 80.3
   },
   "visual": {
-    "score": 66.8,
-    "allCellsScore": 68,
+    "score": 80.3,
+    "allCellsScore": 81,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 2260,
-    "mismatchedCells": 750
+    "contentCells": 2257,
+    "mismatchedCells": 445
   },
   "coverage": {
     "total": 9,
-    "found": 9,
-    "coverage": 100,
+    "found": 8,
+    "coverage": 88.9,
     "matched": [
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "← Queue",
-        "pageName": "← Queue",
-        "pageRole": "link",
-        "similarity": 100,
-        "looks": [],
-        "boardBox": {
-          "x": 16,
-          "y": 6,
-          "w": 61,
-          "h": 44
-        },
-        "pageBox": {
-          "x": 16,
-          "y": 62,
-          "w": 62,
-          "h": 44
-        }
-      },
       {
         "kind": "Heading",
         "role": "heading",
@@ -80,7 +59,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 124,
+          "y": 70,
           "w": 358,
           "h": 52
         }
@@ -101,7 +80,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 188,
+          "y": 134,
           "w": 358,
           "h": 18
         }
@@ -121,8 +100,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 30,
-          "y": 343,
+          "x": 35,
+          "y": 291,
           "w": 18,
           "h": 18
         }
@@ -142,8 +121,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 30,
-          "y": 397,
+          "x": 35,
+          "y": 349,
           "w": 18,
           "h": 18
         }
@@ -163,8 +142,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 30,
-          "y": 451,
+          "x": 35,
+          "y": 407,
           "w": 18,
           "h": 18
         }
@@ -188,7 +167,7 @@
         },
         "pageBox": {
           "x": 27,
-          "y": 534,
+          "y": 494,
           "w": 289,
           "h": 17
         }
@@ -213,7 +192,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 671,
+          "y": 633,
           "w": 20,
           "h": 20
         }
@@ -242,28 +221,26 @@
       }
     ],
     "patterns": [],
-    "missing": [],
-    "misplaced": [
+    "missing": [
       {
-        "label": "Link \"← Queue\"",
         "kind": "Link",
+        "role": "link",
         "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
         "boardBox": {
           "x": 16,
           "y": 6,
           "w": 61,
           "h": 44
         },
-        "pageBox": {
-          "x": 16,
-          "y": 62,
-          "w": 62,
-          "h": 44
-        },
-        "reasons": [
-          "inside the main area on the board, inside the top navigation on the page"
-        ]
-      },
+        "exception": {
+          "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Queue\" in the board's place, but the frame names it \"Back to Queue\" for screen readers, and the tool matches on that name. The page draws no back link of its own. On SCR-02 phone boards the page is F-03's (D-25/D-26).",
+          "approved_by": ""
+        }
+      }
+    ],
+    "misplaced": [
       {
         "label": "Text \"Lagoon Health · build 2.4.0 · Dr Amaka Obi\"",
         "kind": "Text",
@@ -276,7 +253,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 188,
+          "y": 134,
           "w": 358,
           "h": 18
         },
@@ -295,8 +272,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 30,
-          "y": 343,
+          "x": 35,
+          "y": 291,
           "w": 18,
           "h": 18
         },
@@ -315,8 +292,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 30,
-          "y": 397,
+          "x": 35,
+          "y": 349,
           "w": 18,
           "h": 18
         },
@@ -335,8 +312,8 @@
           "h": 18
         },
         "pageBox": {
-          "x": 30,
-          "y": 451,
+          "x": 35,
+          "y": 407,
           "w": 18,
           "h": 18
         },
@@ -356,7 +333,7 @@
         },
         "pageBox": {
           "x": 27,
-          "y": 534,
+          "y": 494,
           "w": 289,
           "h": 17
         },
@@ -376,7 +353,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 671,
+          "y": 633,
           "w": 20,
           "h": 20
         },
@@ -407,39 +384,15 @@
     ],
     "extra": [
       {
-        "kind": "Button",
-        "role": "button",
-        "name": "Menu",
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
         "container": "banner",
         "pageBox": {
           "x": 16,
           "y": 6,
-          "w": 44,
+          "w": 57,
           "h": 44
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "PSL FACTORY",
-        "container": "banner",
-        "pageBox": {
-          "x": 218,
-          "y": 15,
-          "w": 156,
-          "h": 26
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Back",
-        "container": "main",
-        "pageBox": {
-          "x": 0,
-          "y": 56,
-          "w": 390,
-          "h": 56
         }
       },
       {
@@ -449,7 +402,7 @@
         "container": "form",
         "pageBox": {
           "x": 16,
-          "y": 245,
+          "y": 191,
           "w": 358,
           "h": 44
         }
@@ -461,7 +414,7 @@
         "container": "form",
         "pageBox": {
           "x": 16,
-          "y": 303,
+          "y": 249,
           "w": 358,
           "h": 19
         }
@@ -473,7 +426,7 @@
         "container": "form",
         "pageBox": {
           "x": 16,
-          "y": 498,
+          "y": 456,
           "w": 358,
           "h": 19
         }
@@ -485,7 +438,7 @@
         "container": "form",
         "pageBox": {
           "x": 324,
-          "y": 530,
+          "y": 490,
           "w": 24,
           "h": 24
         }
@@ -497,7 +450,7 @@
         "container": "form",
         "pageBox": {
           "x": 52,
-          "y": 575,
+          "y": 537,
           "w": 66,
           "h": 19
         }
@@ -509,7 +462,7 @@
         "container": "form",
         "pageBox": {
           "x": 324,
-          "y": 577,
+          "y": 539,
           "w": 50,
           "h": 18
         }
@@ -521,7 +474,7 @@
         "container": "form",
         "pageBox": {
           "x": 16,
-          "y": 601,
+          "y": 563,
           "w": 358,
           "h": 47
         }
@@ -533,7 +486,7 @@
         "container": "form",
         "pageBox": {
           "x": 46,
-          "y": 670,
+          "y": 632,
           "w": 215,
           "h": 18
         }
