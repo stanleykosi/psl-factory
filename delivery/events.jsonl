@@ -962,3 +962,24 @@
 {"at":"2026-11-14T20:12:19Z","feature":"F-16","round":1,"kind":"finding","action":"add","finding":"UI-1-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":true,"role":"ui"}
 {"at":"2026-11-14T20:12:20Z","feature":"F-16","round":1,"kind":"transition","head":"713e628b94ce","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-14T20:12:20Z","feature":"F-16","round":2,"kind":"transition","head":"713e628b94ce","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-14T20:16:34Z","feature":"F-14","round":4,"kind":"finding","action":"add","finding":"PMO-4-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T20:16:34Z","feature":"F-14","round":4,"kind":"finding","action":"add","finding":"PMO-4-2","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T20:16:44Z","feature":"F-05","round":3,"kind":"transition","head":"0758d3e3f856","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T20:16:45Z","feature":"F-07","round":3,"kind":"transition","head":"4e8a8c7d7595","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T20:16:46Z","feature":"F-14","round":4,"kind":"transition","head":"c26c9f34deee","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T20:16:54Z","feature":"F-05","round":3,"kind":"decision","decision":"HUMAN_APPROVAL","head":"0758d3e3f856","reasons":["risk 'high' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'security' always needs a human","1495 changed files exceed the auto-merge limit of 15","approver recommendation is None, not 'AUTO_MERGE'"]}
+{"at":"2026-11-14T20:16:54Z","feature":"F-05","round":3,"kind":"transition","head":"0758d3e3f856","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T20:16:55Z","feature":"F-05","round":3,"kind":"transition","head":"0758d3e3f856","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T20:16:55Z","feature":"F-05","round":3,"kind":"transition","head":"0758d3e3f856","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T20:16:56Z","feature":"F-05","round":3,"kind":"transition","head":"0758d3e3f856","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T20:16:57Z","feature":"F-07","round":3,"kind":"decision","decision":"HUMAN_APPROVAL","head":"4e8a8c7d7595","reasons":["risk 'medium' is not auto-mergeable","1740 changed files exceed the auto-merge limit of 15","approver recommendation is None, not 'AUTO_MERGE'"]}
+{"at":"2026-11-14T20:16:57Z","feature":"F-07","round":3,"kind":"transition","head":"4e8a8c7d7595","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T20:16:58Z","feature":"F-07","round":3,"kind":"transition","head":"4e8a8c7d7595","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T20:16:58Z","feature":"F-07","round":3,"kind":"transition","head":"4e8a8c7d7595","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T20:16:59Z","feature":"F-07","round":3,"kind":"transition","head":"4e8a8c7d7595","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T20:17:01Z","feature":"F-14","round":4,"kind":"decision","decision":"HUMAN_APPROVAL","head":"c26c9f34deee","reasons":["risk 'medium' is not auto-mergeable","725 changed files exceed the auto-merge limit of 15","approver recommendation is None, not 'AUTO_MERGE'"]}
+{"at":"2026-11-14T20:17:02Z","feature":"F-14","round":4,"kind":"transition","head":"c26c9f34deee","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T20:17:18Z","feature":"F-14","round":4,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"6fb928cd1ce6e5a25703903b11c0ad8ef1dd8b17"}}
+{"at":"2026-11-14T20:17:18Z","feature":"F-14","round":4,"kind":"transition","head":"c26c9f34deee","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T20:17:19Z","feature":"F-14","round":4,"kind":"transition","head":"c26c9f34deee","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T20:17:19Z","feature":"F-14","round":4,"kind":"transition","head":"c26c9f34deee","from":"MERGED","to":"DONE"}

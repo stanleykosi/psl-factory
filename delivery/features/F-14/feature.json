@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -140,11 +140,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (not client/product acceptance, merge or release)",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -1210,6 +1212,52 @@
           "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
         }
       ]
+    },
+    {
+      "id": "PMO-4-1",
+      "round": 4,
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Design engineer sign-off is outstanding on `delivery/features/F-14/fidelity-exceptions.json`. All 32 entries still read \"builder proposal, pending design engineer\", although the fidelity gate counts them as approved. The UI review confirmed each entry is used on at least one board. Expected: confirmation before or at merge, as with F-02's D-17 file. Also to confirm: the PROPOSAL `presentation` contract block (build.md round 1) goes to the architecture owner, not into `architecture/**` from this PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T20:16:34Z",
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-4-2",
+      "round": 4,
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Merge ordering. The integration owner will merge the current dlv-00 into the branch before the PR. After that merge, re-run `delivery/checks.sh`, and re-score the F-09-owned boards (awaiting-reconciliation, waiting) if F-09 has landed. The readiness order note says F-09's score depends on F-14. I could not run git here, so this acceptance rests on the checked head, not on the merged result.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T20:16:34Z",
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1381,9 +1429,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -1402,9 +1450,9 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "6fb928cd1ce6e5a25703903b11c0ad8ef1dd8b17",
     "merge_policy": "not_configured",
     "changed_paths": [
       ".claude/agents/approver.md",
@@ -2155,9 +2203,13 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "725 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -2276,6 +2328,46 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-14T16:20:11Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T20:16:46Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T20:17:02Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T20:17:18Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T20:17:19Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T20:17:19Z",
       "round": 4,
       "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
       "reason": null
