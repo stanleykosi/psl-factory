@@ -273,3 +273,4 @@
 {"at":"2026-11-14T02:59:48Z","feature":"F-08","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-14T03:11:13Z","feature":"F-05","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-14T03:11:15Z","feature":"F-05","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-14T03:11:36Z","feature":"F-05","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
