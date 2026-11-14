@@ -69,10 +69,11 @@ const main = () => document.querySelector('main') ?? document.body;
 const phoneBar = () => document.querySelector('header.psl-phonebar') as HTMLElement;
 const decisionControls = () => screen.queryAllByRole('button', { name: /^(approve|return|reject)/i });
 /** Only the three contract operations: GET E-WORK-ITEM, POST E-TASK-CLAIM and E-TASK-DECIDE (and the frame's /me). */
+// The shell's alert bell (F-15) reads GET /api/v1/notifications; it is the frame's read, not the page's.
 const onlyContractCalls = () =>
   calls.every(
     (c) =>
-      (c.method === 'GET' && (c.path === '/api/v1/me' || /^\/api\/v1\/work\/W-\d+$/.test(c.path))) ||
+      (c.method === 'GET' && (c.path === '/api/v1/me' || c.path === '/api/v1/notifications' || /^\/api\/v1\/work\/W-\d+$/.test(c.path))) ||
       (c.method === 'POST' && /^\/api\/v1\/tasks\/T-\d+\/(claim|decision)$/.test(c.path)),
   );
 const factTexts = () => within(screen.getByRole('list', { name: 'Facts' })).getAllByRole('listitem').map((li) => li.textContent);
