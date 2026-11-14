@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { diffCounts, floorLabel } from '@/features/floor/support';
+import { describeStation, diffCounts, floorLabel } from '@/features/floor/support';
 import type { Overview } from '@/features/overview/types';
 
 const read = (path: string): Overview => JSON.parse(readFileSync(join(__dirname, '../mock/fixtures', path), 'utf8'));
@@ -34,4 +34,10 @@ describe('diffCounts', () => {
 
 it('floorLabel names the line count', () => {
   expect(floorLabel(8)).toBe('3D factory floor: 8 lines. The same figures are listed in the flat view below.');
+});
+
+it('describeStation reads Line · Station · N items · needs a person', () => {
+  expect(describeStation('Invoices', { name: 'Approve', count: 1, needs_person: true })).toBe('Invoices · Approve · 1 item · needs a person');
+  expect(describeStation('Planning', { name: 'Scope', count: 2, needs_person: false })).toBe('Planning · Scope · 2 items · no person needed');
+  expect(describeStation('Closing', { name: 'Review', count: 0, needs_person: false })).toBe('Closing · Review · 0 items · no person needed');
 });

@@ -1,0 +1,23 @@
+/* 3D floor (concept 3): the canvas with HTML labels laid over it, then a readout bar. Token variables only;
+   loaded with the floor module, so the flat Overview never fetches it. */
+
+.floor__stage { position: relative; height: clamp(460px, 50vw, 640px); overflow: hidden; background: var(--surface-subtle); }
+.floor__stage .overview__floor { height: 100%; cursor: grab; touch-action: pan-y; }
+.floor__stage .overview__floor:active { cursor: grabbing; }
+.floor__labels { position: absolute; inset: 0; pointer-events: none; }
+.floor__label { position: absolute; left: 0; top: 0; will-change: transform; }
+
+.floor__chip { pointer-events: auto; display: inline-flex; align-items: baseline; gap: 6px; min-height: 24px; padding: 2px 6px; border: 2px solid var(--ink); background: var(--surface); color: var(--ink); font: 500 12px/18px var(--font-sans); white-space: nowrap; cursor: pointer; }
+.floor__chip b { font: 800 15px/18px var(--font-display); }
+.floor__chip--empty { border-color: var(--ink-subtle); color: var(--ink-muted); }
+.floor__chip--person { background: var(--signal); border-color: var(--signal); color: var(--on-strong); }
+.floor__chip--person em { font: 500 10px/18px var(--font-mono); font-style: normal; letter-spacing: 0.06em; }
+.floor__chip--hot, .floor__chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.floor__line { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 4px 8px; background: var(--ink); color: var(--surface); }
+.floor__line strong { font: 700 13px/16px var(--font-display); white-space: nowrap; }
+.floor__line .psl-tag { margin: 0; padding: 0 5px; font-size: 10px; line-height: 15px; }
+
+.floor__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 10px 16px; border-top: 2px solid var(--ink); background: var(--surface); }
+.floor__readout { flex: 1 1 320px; margin: 0; min-height: 18px; font: 500 13px/18px var(--font-mono); color: var(--ink); }
+.floor__readout--person { color: var(--signal-ink); }

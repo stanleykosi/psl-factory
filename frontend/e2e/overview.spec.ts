@@ -21,7 +21,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 const main = (page: Page) => page.getByRole('main');
-const rows = (page: Page) => page.locator('section[aria-label="Lines"] ul > li.overview__row');
+const rows = (page: Page) => page.locator('section[aria-label="Lines"] [role="list"] > .overview__row');
 const tiles = (page: Page) => page.locator('dl.overview__totals > div');
 const viewSwitch = (page: Page) => page.getByRole('radiogroup', { name: 'View' });
 // A full-page capture briefly narrows the window, which (correctly) drops the 3D floor; the 3D shot is the viewport only.
@@ -56,6 +56,10 @@ test.describe('desktop 1440', () => {
   test.use({ viewport: DESKTOP });
 
   test('default flat: four totals, eight lines with counts, View switch, exceptions link', async ({ page }) => {
+    const notFound: string[] = [];
+    page.on('response', (r) => {
+      if (r.status() >= 400) notFound.push(`${r.status()} ${r.url()}`);
+    });
     await page.goto('/overview');
     await loaded(page);
     await expect(page).toHaveTitle('Overview · PSL Factory');
@@ -66,8 +70,14 @@ test.describe('desktop 1440', () => {
     await expect(page.getByRole('list', { name: 'Invoices stations' }).getByRole('listitem')).toHaveCount(7);
     await expect(page.getByRole('radio', { name: 'Flat' })).toHaveAttribute('aria-checked', 'true');
     await expect(main(page).getByRole('link', { name: 'See all exceptions' })).toHaveAttribute('href', '/exceptions');
+    await expect(rows(page).first().locator('.overview__sub')).toHaveText('RFP · commercial');
+    // A normal desktop browser with WebGL gets the 3D option and no "can't show" hint.
+    await expect(page.getByText(/can’t show the 3D floor/)).toHaveCount(0);
     expect(await noHorizontalScroll(page)).toBe(true);
     await shot(page, 'overview-1440');
+    // The link to /exceptions is not prefetched (that route is another feature's), so nothing on the page fails to load.
+    await page.waitForTimeout(1000);
+    expect(notFound).toEqual([]);
     await expectNoAxeViolations(page);
   });
 
@@ -107,6 +117,15 @@ test.describe('desktop 1440', () => {
     await expect(page.locator('.overview__station:not(.overview__station--empty)')).toHaveCount(0);
     expect((await page.locator('.overview__sq').allTextContents()).join('')).toBe('');
     await expect(rows(page).locator('.psl-tag')).toHaveText(NOTES);
+  });
+
+  test('a line status (proposed field, mock variant) gives the board tag tones', async ({ page, context }) => {
+    await setCookies(context, { psl_mock_overview: 'status' });
+    await page.goto('/overview');
+    await loaded(page);
+    const tones = await rows(page).locator('.psl-tag').evaluateAll((tags) => tags.map((t) => t.className.replace('psl-tag ', '')));
+    expect(tones).toEqual(['psl-tag--waiting', 'psl-tag--person', 'psl-tag--person', 'psl-tag--done', 'psl-tag--waiting', 'psl-tag--done', 'psl-tag--done', 'psl-tag--person']);
+    await expectNoAxeViolations(page);
   });
 
   test('403 from E-OVERVIEW: the floor is not open, with the server message', async ({ page }) => {
@@ -186,7 +205,8 @@ test.describe('desktop 1440', () => {
     await page.getByRole('radio', { name: '3D floor' }).click();
     const canvas = page.getByRole('img', { name: /^3D factory floor: 8 lines/ });
     await expect(canvas).toBeVisible();
-    expect(await canvas.boundingBox()).toMatchObject({ height: 480 });
+    // The stage follows concept 3 (D-01): clamp(460px, 50vw, 640px), so 640px at 1440.
+    expect(await canvas.boundingBox()).toMatchObject({ height: 640 });
     expect(await canvas.evaluate((el) => Boolean((el as HTMLCanvasElement).getContext('webgl2') ?? (el as HTMLCanvasElement).getContext('webgl')))).toBe(true);
     await expect(rows(page)).toHaveCount(8);
     await expect(tiles(page)).toHaveCount(4);
@@ -213,19 +233,61 @@ test.describe('desktop 1440', () => {
     await shot(page, 'overview-3d-1440', false);
     await expect(canvas).toBeVisible();
   });
+  test('3D floor (tilted board): a label per station, hover and focus readout, lift settles, reset', async ({ page }) => {
+    await page.addInitScript(() => {
+      const w = window as unknown as { __raf: number };
+      w.__raf = 0;
+      const raf = window.requestAnimationFrame.bind(window);
+      window.requestAnimationFrame = (cb) => {
+        w.__raf += 1;
+        return raf(cb);
+      };
+    });
+    const rafCount = () => page.evaluate(() => (window as unknown as { __raf: number }).__raf);
+    await page.goto('/overview');
+    await loaded(page);
+    await page.getByRole('radio', { name: '3D floor' }).click();
+    await expect(page.getByRole('img', { name: /^3D factory floor: 8 lines/ })).toBeVisible();
+    const chips = page.locator('.floor__chip');
+    await expect(chips).toHaveCount(40);
+    await expect(page.locator('.floor__line strong')).toHaveText(LINES);
+    const readout = page.locator('.floor__readout');
+    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the board.');
+
+    const approve = page.getByRole('button', { name: '1 Approve PERSON. Invoices · Approve · 1 item · needs a person' });
+    await expect(approve).toHaveText('1 Approve PERSON');
+    await approve.hover();
+    await expect(readout).toHaveText('Invoices · Approve · 1 item · needs a person');
+    // The lift and the lean ease in, then frames stop.
+    await page.waitForTimeout(2500);
+    const settled = await rafCount();
+    await page.waitForTimeout(1000);
+    expect(await rafCount()).toBe(settled);
+
+    await page.getByRole('button', { name: 'Reset view' }).click();
+    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the board.');
+    await page.getByRole('button', { name: '1 Brief. Pre-sale · Brief · 1 item · no person needed' }).focus();
+    await expect(readout).toHaveText('Pre-sale · Brief · 1 item · no person needed');
+    await shot(page, 'overview-3d-board-1440', false);
+    await expectNoAxeViolations(page);
+
+    await page.getByRole('radio', { name: 'Flat' }).click();
+    await expect(page.locator('canvas')).toHaveCount(0);
+    await expect(chips).toHaveCount(0);
+  });
 });
 
 test.describe('phone 390', () => {
   test.use({ viewport: PHONE, hasTouch: true, isMobile: true });
 
-  test('flat only: 2 x 2 totals, every line name and tag visible, no sideways scroll', async ({ page }) => {
+  test('flat only (SCR-06-mobile): summary line, line cards with name and tag, no sideways scroll', async ({ page }) => {
     await page.goto('/overview');
     await loaded(page);
     await expect(viewSwitch(page)).toHaveCount(0);
     await expect(page.locator('.overview__hint')).toHaveCount(0);
-    const columns = await page.locator('dl.overview__totals').evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
-    expect(columns).toBe(2);
-    await expect(tiles(page).locator('dd')).toHaveText(['18', '5', '3', '28']);
+    await expect(page.locator('.overview__summary')).toHaveText('18 in progress · 5 need a person');
+    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT')).toBeVisible();
+    expect(await page.locator('.overview__sq').first().evaluate((el) => el.getBoundingClientRect().width)).toBe(18);
     for (const [i, name] of LINES.entries()) {
       await expect(rows(page).nth(i).locator('.overview__name')).toHaveText(name);
       await expect(rows(page).nth(i).locator('.overview__name')).toBeVisible();
