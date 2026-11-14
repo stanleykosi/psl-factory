@@ -1,0 +1,596 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:05:55.582Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-10/design/canvas/finance/project/SCR-36-mobile.dc.html",
+  "boardName": "SCR-36-mobile.dc.html",
+  "pageUrl": "http://localhost:4001/finance/month-end?period=2026-10",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-worktrees/f-10/delivery/features/F-10/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page (100%).",
+    "Visual match 94.9 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 94.9
+  },
+  "visual": {
+    "score": 94.9,
+    "allCellsScore": 96,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1836,
+    "mismatchedCells": 94
+  },
+  "coverage": {
+    "total": 23,
+    "found": 23,
+    "coverage": 100,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Finance",
+        "pageName": "← Finance",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 70,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 301,
+          "y": 62,
+          "w": 73,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Month-end · Oct",
+        "pageName": "Month-end · Oct",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 292,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 of 7 done · 3 waiting",
+        "pageName": "2 of 7 done · 3 waiting",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 106,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 of 7",
+        "pageName": "2 of 7",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 106,
+          "w": 36,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 36,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bank statements",
+        "pageName": "Bank statements",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 150,
+          "w": 110,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 152,
+          "w": 110,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "pageName": "WAITING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 291,
+          "y": 150,
+          "w": 69,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 152,
+          "w": 69,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 of 3 accounts imported",
+        "pageName": "2 of 3 accounts imported",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 177,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 179,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Management accounts",
+        "pageName": "Management accounts",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 234,
+          "w": 146,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 236,
+          "w": 146,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NEEDS FINANCE DECISION",
+        "pageName": "NEEDS FINANCE DECISION",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 190,
+          "y": 234,
+          "w": 170,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 190,
+          "y": 236,
+          "w": 170,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "In review · Finance reviewer",
+        "pageName": "In review · Finance reviewer",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 261,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 263,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Income detail and schedules",
+        "pageName": "Income detail and schedules",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 318,
+          "w": 187,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 320,
+          "w": 187,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "pageName": "DONE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 311,
+          "y": 318,
+          "w": 49,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 311,
+          "y": 320,
+          "w": 49,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified 05 Nov",
+        "pageName": "Verified 05 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 345,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 347,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Fixed asset schedule",
+        "pageName": "Fixed asset schedule",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 402,
+          "w": 136,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 404,
+          "w": 136,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "pageName": "WAITING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 291,
+          "y": 402,
+          "w": 69,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 404,
+          "w": 69,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting for register review",
+        "pageName": "Waiting for register review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 429,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 431,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cash forecast",
+        "pageName": "Cash forecast",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 486,
+          "w": 88,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 488,
+          "w": 88,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "pageName": "DONE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 311,
+          "y": 486,
+          "w": 49,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 311,
+          "y": 488,
+          "w": 49,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Published 06 Nov",
+        "pageName": "Published 06 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 513,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 515,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Business-unit totals",
+        "pageName": "Business-unit totals",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 570,
+          "w": 130,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 572,
+          "w": 130,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "pageName": "WAITING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 291,
+          "y": 570,
+          "w": 69,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 572,
+          "w": 69,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting for payroll matching",
+        "pageName": "Waiting for payroll matching",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 597,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 599,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Import the missing statement",
+        "pageName": "Import the missing statement",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [],
+    "misplaced": [
+      {
+        "label": "Link \"← Finance\"",
+        "kind": "Link",
+        "name": "← Finance",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 70,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 301,
+          "y": 62,
+          "w": 73,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Month-end · Oct\"",
+          "across the page: left on the board (13% across), right on the page (87% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-10/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -1,0 +1,590 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:02:47.547Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-04-mobile-lines.dc.html",
+  "boardName": "SCR-04-mobile-lines.dc.html",
+  "pageUrl": "http://localhost:3511/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-05/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 76.8 is below 90."
+  ],
+  "scores": {
+    "coverage": 71.4,
+    "coverageWithExceptions": 100,
+    "visual": 76.8
+  },
+  "visual": {
+    "score": 76.8,
+    "allCellsScore": 88,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1205,
+    "mismatchedCells": 280
+  },
+  "coverage": {
+    "total": 14,
+    "found": 10,
+    "coverage": 71.4,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Choose a line",
+        "pageName": "Choose a line",
+        "pageRole": "dialog",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Choose a line",
+        "pageName": "Choose a line",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 150,
+          "w": 115,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 148,
+          "w": 134,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lines you can start · 6",
+        "pageName": "Lines you can start · 8",
+        "pageRole": "text",
+        "similarity": 96,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 172,
+          "w": 127,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 127,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Invoice preparation and delivery",
+        "pageName": "Invoice preparation and delivery",
+        "pageRole": "radio",
+        "similarity": 100,
+        "note": "a radio on the page, a link on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Arial on the page",
+          "text colour #1F2427 on the board, #000000 on the page",
+          "coloured bar under it on the board (#1F2427), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 215,
+          "w": 358,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 216,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Reviewed weekly client report",
+        "pageName": "Reviewed weekly client report",
+        "pageRole": "radio",
+        "similarity": 100,
+        "note": "a radio on the page, a link on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Arial on the page",
+          "text colour #1F2427 on the board, #000000 on the page",
+          "coloured bar under it on the board (#D5D9D3), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 267,
+          "w": 358,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 268,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Formal minutes and action handoff",
+        "pageName": "Formal minutes and action handoff",
+        "pageRole": "radio",
+        "similarity": 100,
+        "note": "a radio on the page, a link on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Arial on the page",
+          "text colour #1F2427 on the board, #000000 on the page",
+          "coloured bar under it on the board (#D5D9D3), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 319,
+          "w": 358,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 320,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Issue investigation and owner follow-up",
+        "pageName": "Issue investigation and owner follow-up",
+        "pageRole": "radio",
+        "similarity": 100,
+        "note": "a radio on the page, a link on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Arial on the page",
+          "text colour #1F2427 on the board, #000000 on the page",
+          "coloured bar under it on the board (#D5D9D3), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 371,
+          "w": 358,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 373,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Controlled change and signed closure",
+        "pageName": "Controlled change and signed closure",
+        "pageRole": "radio",
+        "similarity": 100,
+        "note": "a radio on the page, a link on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Arial on the page",
+          "text colour #1F2427 on the board, #000000 on the page",
+          "coloured bar under it on the board (#D5D9D3), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 423,
+          "w": 358,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 425,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "link",
+        "name": "Next",
+        "pageName": "Next",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 778,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone form is a bottom sheet for every line (design engineer, 14 Nov 2026). SCR-04-mobile-weekly, -minutes, -issue, -change, -incident, -escalation and -leadership draw a full-screen page whose bar reads \"← My work\" / \"START\"; the build opens the same content in the bottom sheet over My work, so that page chrome is not drawn.",
+          "approved_by": "Design engineer, 14 Nov 2026 (relayed by the delivery coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "key": "text: Lagoon Health · Milestone 2 invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 122,
+          "w": 245,
+          "h": 19
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank · go-live report",
+        "key": "text: Harmattan Bank · go-live report",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 179,
+          "w": 221,
+          "h": 19
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "×",
+        "key": "text: ×",
+        "container": "dialog",
+        "boardBox": {
+          "x": 361,
+          "y": 150,
+          "w": 13,
+          "h": 39
+        },
+        "exception": {
+          "reason": "The phone board draws the close mark as plain text; the build draws the same × inside a button named \"Close\" (it matches the board's Close).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 122,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 280,
+          "y": 82,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 244,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 270,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 324,
+          "y": 185,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 338,
+          "y": 143,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice preparation and delivery",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 228,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Reviewed weekly client report",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 280,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Formal minutes and action handoff",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 332,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Issue investigation and owner follow-up",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 385,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Controlled change and signed closure",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 437,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Emergency change for an incident",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 477,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Escalate and communicate",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 529,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Leadership report",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 581,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "T Not sure which line? Describe it to Tola",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 634,
+          "w": 358,
+          "h": 56
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

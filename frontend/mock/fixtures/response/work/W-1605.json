@@ -1,0 +1,156 @@
+{
+  "id": "W-1605",
+  "title": "Harmattan Bank · release to UAT",
+  "line": "Prepare for release",
+  "reference": "REL-0081",
+  "state": "waiting",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Prepare UAT pack",
+      "status": "done"
+    },
+    {
+      "name": "Send to client",
+      "status": "done"
+    },
+    {
+      "name": "Client UAT response",
+      "status": "current_person"
+    },
+    {
+      "name": "Go-live readiness",
+      "status": "not_started"
+    },
+    {
+      "name": "Go-live",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-04T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-05T11:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-05T15:00:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-06T09:10:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-06T09:12:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-1605",
+      "kind": "record_response",
+      "title": "Record the client's UAT response",
+      "required_role": "PM",
+      "you_can_act": true,
+      "revision": 3,
+      "response": {
+        "variant": "client_response",
+        "responders": [
+          {
+            "id": "P-KA",
+            "name": "Kemi Adeyemi",
+            "role": "Client contact",
+            "organisation": "Harmattan Bank"
+          },
+          {
+            "id": "P-SO",
+            "name": "Segun Okoro",
+            "role": "Product owner",
+            "organisation": "Harmattan Bank"
+          }
+        ],
+        "actions": [
+          {
+            "value": "approved",
+            "label": "Approved"
+          },
+          {
+            "value": "changes_requested",
+            "label": "Asked for changes"
+          },
+          {
+            "value": "rejected",
+            "label": "Rejected"
+          }
+        ],
+        "versions": [
+          {
+            "id": "V-310",
+            "label": "Mobile banking · build 3.1.0",
+            "note": "the version sent for UAT"
+          },
+          {
+            "id": "V-311",
+            "label": "Mobile banking · build 3.1.1",
+            "note": "the hotfix build"
+          }
+        ],
+        "evidence_kind": "client_response_proof",
+        "claim_required": true,
+        "intro": "Harmattan Bank's contacts don't log in to PSL Factory, so you record what they said and attach the proof.",
+        "proof_hint": "Signed PDF or the client's email saved as PDF",
+        "channels": [
+          {
+            "value": "email",
+            "label": "Email"
+          },
+          {
+            "value": "letter",
+            "label": "Letter"
+          },
+          {
+            "value": "in_person",
+            "label": "In person"
+          }
+        ]
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting",
+    "steps": [
+      {
+        "text": "Prepared the UAT pack",
+        "status": "done",
+        "source": "Release plan REL-0081"
+      },
+      {
+        "text": "Sent the UAT pack to Harmattan Bank",
+        "status": "done",
+        "source": "Delivery receipt · 06 Nov"
+      },
+      {
+        "text": "Waiting for the client's UAT response",
+        "status": "waiting"
+      }
+    ]
+  },
+  "next_step": "A PM records the client's UAT response with the proof.",
+  "sample": true,
+  "case_id": "C-1605",
+  "case_revision": 2
+}

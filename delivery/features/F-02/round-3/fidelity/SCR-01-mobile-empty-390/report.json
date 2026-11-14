@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:23:09.675Z",
+  "generatedAt": "2026-11-14T06:22:56.390Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-mobile-empty.dc.html",
   "boardName": "SCR-01-mobile-empty.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -18,30 +18,30 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "11 board item(s) are missing from the page and are not approved exceptions (coverage 50% with exceptions, needs 100%).",
-    "Visual match 66.5 is below 90.",
-    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 73 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 36.4,
-    "coverageWithExceptions": 50,
-    "visual": 66.5
+    "coverage": 86.4,
+    "coverageWithExceptions": 100,
+    "visual": 73
   },
   "visual": {
-    "score": 66.5,
-    "allCellsScore": 75.1,
+    "score": 73,
+    "allCellsScore": 78.3,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
-    "pageHeight": 844,
+    "pageHeight": 962,
     "cell": 12,
-    "contentCells": 1743,
-    "mismatchedCells": 584
+    "contentCells": 1882,
+    "mismatchedCells": 508
   },
   "coverage": {
     "total": 22,
-    "found": 8,
-    "coverage": 36.4,
+    "found": 19,
+    "coverage": 86.4,
     "matched": [
       {
         "kind": "Text",
@@ -184,10 +184,10 @@
           "h": 47
         },
         "pageBox": {
-          "x": 34,
-          "y": 250,
-          "w": 322,
-          "h": 42
+          "x": 32,
+          "y": 404,
+          "w": 326,
+          "h": 43
         }
       },
       {
@@ -206,10 +206,243 @@
           "h": 48
         },
         "pageBox": {
-          "x": 34,
-          "y": 302,
+          "x": 108,
+          "y": 460,
           "w": 173,
-          "h": 44
+          "h": 48
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "While you're free",
+        "pageName": "While you’re free",
+        "pageRole": "complementary",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 574,
+          "w": 358,
+          "h": 311
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 538,
+          "w": 358,
+          "h": 409
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "While you're free Tola can get these ready. You check each one before it goes anywhere.",
+        "pageName": "While you’re free Tola can get these ready. You check each one before it goes anywhere.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 76,
+          "y": 588,
+          "w": 282,
+          "h": 61
+        },
+        "pageBox": {
+          "x": 76,
+          "y": 552,
+          "w": 282,
+          "h": 61
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "While you're free",
+        "pageName": "While you’re free",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 76,
+          "y": 589,
+          "w": 110,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 76,
+          "y": 553,
+          "w": 110,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Draft the Harmattan Bank weekly report",
+        "pageName": "Draft the Harmattan Bank weekly report",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 675,
+          "w": 260,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 637,
+          "w": 261,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Due Friday · from this week's activity",
+        "pageName": "Due Friday · from this week's activity",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 696,
+          "w": 197,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 655,
+          "w": 197,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Draft it",
+        "pageName": "Draft it",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 720,
+          "w": 66,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 679,
+          "w": 66,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Not now",
+        "pageName": "Not now",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 720,
+          "w": 65,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 145,
+          "y": 786,
+          "w": 65,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Write up yesterday's Ojo Foods call",
+        "pageName": "Write up yesterday's Ojo Foods call",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 786,
+          "w": 227,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 743,
+          "w": 227,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Recording note added 11 Nov · minutes not started",
+        "pageName": "Recording note added 11 Nov · minutes not started",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 807,
+          "w": 274,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 762,
+          "w": 274,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Draft minutes",
+        "pageName": "Draft minutes",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 831,
+          "w": 107,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 786,
+          "w": 107,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Not now",
+        "pageName": "Not now",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 145,
+          "y": 831,
+          "w": 65,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 151,
+          "y": 892,
+          "w": 65,
+          "h": 40
         }
       }
     ],
@@ -265,160 +498,6 @@
           "reason": "Start work opens the F-05 start flow (top bar on every board; the same link in the empty boards' caught-up panel). F-05 is not merged; src/shell/** is not F-02's.",
           "approved_by": "Coordinator, F-02 round 3 brief (top-bar Start work belongs to F-05; list as a frame item)"
         }
-      },
-      {
-        "kind": "Side panel",
-        "role": "complementary",
-        "name": "While you're free",
-        "key": "complementary: While you're free",
-        "container": "page",
-        "boardBox": {
-          "x": 16,
-          "y": 574,
-          "w": 358,
-          "h": 311
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "While you're free Tola can get these ready. You check each one before it goes anywhere.",
-        "key": "text: While you're free Tola can get these ready. You check each one before it goes anywhere.",
-        "container": "complementary",
-        "boardBox": {
-          "x": 76,
-          "y": 588,
-          "w": 282,
-          "h": 61
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "While you're free",
-        "key": "text: While you're free",
-        "container": "complementary",
-        "boardBox": {
-          "x": 76,
-          "y": 589,
-          "w": 110,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Draft the Harmattan Bank weekly report",
-        "key": "text: Draft the Harmattan Bank weekly report",
-        "container": "complementary",
-        "boardBox": {
-          "x": 32,
-          "y": 675,
-          "w": 260,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Due Friday · from this week's activity",
-        "key": "text: Due Friday · from this week's activity",
-        "container": "complementary",
-        "boardBox": {
-          "x": 32,
-          "y": 696,
-          "w": 197,
-          "h": 15
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Draft it",
-        "key": "link: Draft it",
-        "container": "complementary",
-        "boardBox": {
-          "x": 32,
-          "y": 720,
-          "w": 66,
-          "h": 40
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Not now",
-        "key": "link: Not now",
-        "container": "complementary",
-        "boardBox": {
-          "x": 104,
-          "y": 720,
-          "w": 65,
-          "h": 40
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Write up yesterday's Ojo Foods call",
-        "key": "text: Write up yesterday's Ojo Foods call",
-        "container": "complementary",
-        "boardBox": {
-          "x": 32,
-          "y": 786,
-          "w": 227,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Recording note added 11 Nov · minutes not started",
-        "key": "text: Recording note added 11 Nov · minutes not started",
-        "container": "complementary",
-        "boardBox": {
-          "x": 32,
-          "y": 807,
-          "w": 274,
-          "h": 15
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Draft minutes",
-        "key": "link: Draft minutes",
-        "container": "complementary",
-        "boardBox": {
-          "x": 32,
-          "y": 831,
-          "w": 107,
-          "h": 40
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Not now",
-        "key": "link: Not now",
-        "container": "complementary",
-        "boardBox": {
-          "x": 145,
-          "y": 831,
-          "w": 65,
-          "h": 40
-        },
-        "exception": null
       }
     ],
     "misplaced": [
@@ -444,23 +523,43 @@
         ]
       },
       {
-        "label": "Link \"See what you started\"",
-        "kind": "Link",
-        "name": "See what you started",
+        "label": "Side panel \"While you're free\"",
+        "kind": "Side panel",
+        "name": "While you're free",
         "boardBox": {
-          "x": 104,
-          "y": 496,
-          "w": 183,
-          "h": 48
+          "x": 16,
+          "y": 574,
+          "w": 358,
+          "h": 311
         },
         "pageBox": {
-          "x": 34,
-          "y": 302,
-          "w": 173,
-          "h": 44
+          "x": 16,
+          "y": 538,
+          "w": 358,
+          "h": 409
         },
         "reasons": [
-          "across the page: middle on the board (50% across), left on the page (31% across)"
+          "order: on the board it comes after Text \"Due Friday · from this week's activity\"; on the page it comes after Link \"Draft it\""
+        ]
+      },
+      {
+        "label": "Link \"Not now\"",
+        "kind": "Link",
+        "name": "Not now",
+        "boardBox": {
+          "x": 104,
+          "y": 720,
+          "w": 65,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 145,
+          "y": 786,
+          "w": 65,
+          "h": 40
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Draft it\"; on the page it comes after Link \"Draft minutes\""
         ]
       }
     ],
@@ -478,7 +577,7 @@
         }
       }
     ],
-    "unexcepted": 11
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

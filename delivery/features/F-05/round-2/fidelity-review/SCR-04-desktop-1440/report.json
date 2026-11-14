@@ -1,0 +1,1008 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:00:02.127Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-04-desktop.dc.html",
+  "boardName": "SCR-04-desktop.dc.html",
+  "pageUrl": "http://localhost:3511/my-work",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-05/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 92.8 meets 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 67.5,
+    "coverageWithExceptions": 100,
+    "visual": 92.8
+  },
+  "visual": {
+    "score": 92.8,
+    "allCellsScore": 95.7,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 4493,
+    "mismatchedCells": 324
+  },
+  "coverage": {
+    "total": 40,
+    "found": 27,
+    "coverage": 67.5,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 82,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 350,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1060,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1178,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1254,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 483
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 439
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 40px on the board, 36px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 209,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 169,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me 3",
+        "pageName": "Needs me 0",
+        "pageRole": "tab",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 149,
+          "w": 124,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 150,
+          "w": 124,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others 2",
+        "pageName": "Waiting on others 3",
+        "pageRole": "tab",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 214,
+          "y": 149,
+          "w": 172,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 214,
+          "y": 150,
+          "w": 172,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done 28",
+        "pageName": "Done 2",
+        "pageRole": "tab",
+        "similarity": 94,
+        "looks": [],
+        "boardBox": {
+          "x": 386,
+          "y": 149,
+          "w": 99,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 386,
+          "y": 150,
+          "w": 93,
+          "h": 44
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Invoice preparation and delivery",
+        "pageName": "Invoice preparation and delivery",
+        "pageRole": "dialog",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 958,
+          "y": 0,
+          "w": 482,
+          "h": 900
+        },
+        "pageBox": {
+          "x": 960,
+          "y": 0,
+          "w": 480,
+          "h": 900
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "START WORK",
+        "pageName": "START WORK",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 21,
+          "w": 66,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 18,
+          "w": 355,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice preparation and delivery",
+        "pageName": "Invoice preparation and delivery",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 980,
+          "y": 36,
+          "w": 303,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 35,
+          "w": 355,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Line chosen from the Start work menu · change line",
+        "pageName": "Line chosen from the Start work menu · change line",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 59,
+          "w": 299,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 59,
+          "w": 355,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "change line",
+        "pageName": "change line",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 1212,
+          "y": 59,
+          "w": 67,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1214,
+          "y": 60,
+          "w": 69,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Close",
+        "pageName": "Close",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Arial on the page"
+        ],
+        "boardBox": {
+          "x": 1380,
+          "y": 18,
+          "w": 40,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1384,
+          "y": 10,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 114,
+          "w": 440,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 115,
+          "w": 438,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Completed milestone",
+        "pageName": "Completed milestone",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 200,
+          "w": 440,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 200,
+          "w": 438,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only milestones marked complete, with proof, are listed.",
+        "pageName": "Only milestones marked complete, with proof, are listed.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 278,
+          "w": 440,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 277,
+          "w": 438,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "WHAT HAPPENS NEXT",
+        "pageName": "WHAT HAPPENS NEXT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 408,
+          "w": 440,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 451,
+          "w": 438,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "7 stations. Chidi drafts the invoice from the signed SOW · a Finance Lead decides · issue, delivery and verification are automatic.",
+        "pageName": "7 stations. Chidi drafts the invoice from the signed SOW · a Finance Lead decides · issue, delivery and verification are automatic.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 428,
+          "w": 440,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 473,
+          "w": 438,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See the full invoice journey",
+        "pageName": "See the full invoice journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 980,
+          "y": 468,
+          "w": 440,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 518,
+          "w": 156,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back",
+        "pageName": "Back",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background none on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 980,
+          "y": 838,
+          "w": 143,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 838,
+          "w": 155,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start the invoice",
+        "pageName": "Start the invoice",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1133,
+          "y": 838,
+          "w": 287,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 1147,
+          "y": 838,
+          "w": 273,
+          "h": 48
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "My work",
+        "key": "tablist: My work",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 147,
+          "w": 397,
+          "h": 48
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "(table)",
+        "key": "table:",
+        "container": "table",
+        "boardBox": {
+          "x": 90,
+          "y": 217,
+          "w": 1260,
+          "h": 264
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer). (an unnamed table: the report shows it as \"(table)\")",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WORK",
+        "key": "columnheader: WORK",
+        "container": "table",
+        "boardBox": {
+          "x": 90,
+          "y": 217,
+          "w": 644,
+          "h": 35
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "key": "columnheader: STATE",
+        "container": "table",
+        "boardBox": {
+          "x": 734,
+          "y": 217,
+          "w": 490,
+          "h": 35
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "AGE",
+        "key": "columnheader: AGE",
+        "container": "table",
+        "boardBox": {
+          "x": 1224,
+          "y": 217,
+          "w": 127,
+          "h": 35
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2h",
+        "key": "text: 2h",
+        "container": "table",
+        "boardBox": {
+          "x": 1224,
+          "y": 252,
+          "w": 127,
+          "h": 58
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "40m",
+        "key": "text: 40m",
+        "container": "table",
+        "boardBox": {
+          "x": 1224,
+          "y": 310,
+          "w": 127,
+          "h": 57
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1d",
+        "key": "text: 1d",
+        "container": "table",
+        "boardBox": {
+          "x": 1224,
+          "y": 367,
+          "w": 127,
+          "h": 57
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3d",
+        "key": "text: 3d",
+        "container": "table",
+        "boardBox": {
+          "x": 1224,
+          "y": 424,
+          "w": 127,
+          "h": 57
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · patient app ▾",
+        "key": "text: Lagoon Health · patient app ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 980,
+          "y": 138,
+          "w": 440,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 3 · UAT signed 07 Nov ▾",
+        "key": "text: Milestone 3 · UAT signed 07 Nov ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 980,
+          "y": 224,
+          "w": 440,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Anything Chidi should know (optional)",
+        "key": "text: Anything Chidi should know (optional)",
+        "container": "dialog",
+        "boardBox": {
+          "x": 980,
+          "y": 309,
+          "w": 440,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Label of a native input: the build uses <label for>, which the tool skips (it names the input instead); the board draws a plain span.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "e.g. client wants the PO number on it",
+        "key": "text: e.g. client wants the PO number on it",
+        "container": "dialog",
+        "boardBox": {
+          "x": 994,
+          "y": 348,
+          "w": 231,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Only milestones marked complete, with proof, are listed.\"",
+        "kind": "Text",
+        "name": "Only milestones marked complete, with proof, are listed.",
+        "boardBox": {
+          "x": 980,
+          "y": 278,
+          "w": 440,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 277,
+          "w": 438,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Completed milestone\"; on the page it comes after Main area \"\""
+        ]
+      },
+      {
+        "label": "Pagination \"WHAT HAPPENS NEXT\"",
+        "kind": "Pagination",
+        "name": "WHAT HAPPENS NEXT",
+        "boardBox": {
+          "x": 980,
+          "y": 408,
+          "w": 440,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 982,
+          "y": 451,
+          "w": 438,
+          "h": 17
+        },
+        "reasons": [
+          "order: on the board it comes after Main area \"\"; on the page it comes after dialog \"Invoice preparation and delivery\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 1258,
+          "y": 106,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 220,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 88,
+          "y": 220,
+          "w": 460,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 558,
+          "y": 220,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 1302,
+          "y": 233,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Project",
+        "container": "dialog",
+        "pageBox": {
+          "x": 982,
+          "y": 142,
+          "w": 438,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Completed milestone",
+        "container": "dialog",
+        "pageBox": {
+          "x": 982,
+          "y": 227,
+          "w": 438,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Anything Chidi should know (optional)",
+        "container": "dialog",
+        "pageBox": {
+          "x": 982,
+          "y": 336,
+          "w": 438,
+          "h": 88
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

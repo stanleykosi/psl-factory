@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:23:25.012Z",
+  "generatedAt": "2026-11-14T06:23:11.381Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-mobile-lead.dc.html",
   "boardName": "SCR-01-mobile-lead.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -18,25 +18,25 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 92.9% with exceptions, needs 100%).",
-    "Visual match 78.3 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81.1 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 85.7,
-    "coverageWithExceptions": 92.9,
-    "visual": 78.3
+    "coverageWithExceptions": 100,
+    "visual": 81.1
   },
   "visual": {
-    "score": 78.3,
-    "allCellsScore": 84.7,
+    "score": 81.1,
+    "allCellsScore": 86.9,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1652,
-    "mismatchedCells": 359
+    "contentCells": 1623,
+    "mismatchedCells": 306
   },
   "coverage": {
     "total": 14,
@@ -273,9 +273,9 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 345,
+          "y": 342,
           "w": 358,
-          "h": 109
+          "h": 106
         }
       },
       {
@@ -294,9 +294,9 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 462,
+          "y": 456,
           "w": 358,
-          "h": 109
+          "h": 106
         }
       }
     ],
@@ -331,7 +331,10 @@
           "w": 358,
           "h": 105
         },
-        "exception": null
+        "exception": {
+          "reason": "\"Awaiting Finance decision\" is not a contract state (the card shows \"Waiting\"); the phone boards title this row \"M2 invoice\", the desktop boards \"Milestone 2 invoice\".",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       }
     ],
     "misplaced": [
@@ -379,7 +382,7 @@
           "x": 16,
           "y": 228,
           "w": 358,
-          "h": 452
+          "h": 444
         }
       },
       {
@@ -391,7 +394,7 @@
           "x": 16,
           "y": 228,
           "w": 358,
-          "h": 109
+          "h": 106
         }
       },
       {
@@ -401,13 +404,13 @@
         "container": "main",
         "pageBox": {
           "x": 32,
-          "y": 592,
+          "y": 584,
           "w": 326,
           "h": 18
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

@@ -2,7 +2,7 @@
 name: approver
 description: Delivery merge approver. After all reviews and acceptance pass on a feature's PR head, recommends AUTO_MERGE or ESCALATE to the designated human, and writes the feature folder's decision.md.
 tools: Read, Grep, Glob, Bash, Write
-model: opus
+model: sonnet
 ---
 
 You are the merge approver for one feature. Read

@@ -1,0 +1,443 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T11:37:30.953Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-desktop-permission.dc.html",
+  "boardName": "SCR-02-desktop-permission.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1099",
+  "viewport": {
+    "width": 1440,
+    "height": 720
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 95.5 meets 90."
+  ],
+  "scores": {
+    "coverage": 70.6,
+    "coverageWithExceptions": 100,
+    "visual": 95.5
+  },
+  "visual": {
+    "score": 95.5,
+    "allCellsScore": 98.6,
+    "width": 1440,
+    "height": 720,
+    "boardHeight": 720,
+    "pageHeight": 720,
+    "cell": 12,
+    "contentCells": 2220,
+    "mismatchedCells": 99
+  },
+  "coverage": {
+    "total": 17,
+    "found": 12,
+    "coverage": 70.6,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 496
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 448
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NO ACCESS",
+        "pageName": "NO ACCESS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 400,
+          "y": 154,
+          "w": 81,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 400,
+          "y": 155,
+          "w": 81,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "You can't open this work item",
+        "pageName": "You can’t open this work item",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 30px on the board, 33px on the page"
+        ],
+        "boardBox": {
+          "x": 400,
+          "y": 189,
+          "w": 640,
+          "h": 32
+        },
+        "pageBox": {
+          "x": 400,
+          "y": 188,
+          "w": 640,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "It belongs to a project or line you don't have access to. Nothing about it is shown here, not even its name or amount.",
+        "pageName": "It belongs to a project or line you don’t have access to. Nothing about it is shown here, not even its name or amount.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 400,
+          "y": 235,
+          "w": 640,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 400,
+          "y": 237,
+          "w": 640,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "If your work needs it, ask the PMO Lead for access to the project.",
+        "pageName": "If your work needs it, ask the PMO Lead for access to the project.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 420,
+          "y": 285,
+          "w": 620,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 420,
+          "y": 286,
+          "w": 620,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "If someone sent you this link, ask them what they need from you.",
+        "pageName": "If someone sent you this link, ask them what they need from you.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 420,
+          "y": 309,
+          "w": 620,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 420,
+          "y": 310,
+          "w": 620,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to my queue",
+        "pageName": "Back to my queue",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 400,
+          "y": 347,
+          "w": 315,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 400,
+          "y": 349,
+          "w": 315,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1036,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Top-bar Start work belongs to F-05 (src/shell); not merged on the base. As D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1154,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Split part of the F-05 Start work button in the top bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bisi Adeyemi · Finance",
+        "key": "text: Bisi Adeyemi · Finance",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1220,
+          "y": 20,
+          "w": 132,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The issue and permission boards are drawn signed in as Bisi Adeyemi; the frame shows the signed-in persona (finance_lead, Ada Okafor). As D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask for access",
+        "key": "link: Ask for access",
+        "container": "main",
+        "boardBox": {
+          "x": 725,
+          "y": 347,
+          "w": 315,
+          "h": 50
+        },
+        "exception": {
+          "reason": "No access-request operation in scope.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This attempt is recorded in the audit history.",
+        "key": "text: This attempt is recorded in the audit history.",
+        "container": "main",
+        "boardBox": {
+          "x": 400,
+          "y": 411,
+          "w": 640,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Audit logging of access attempts is not in scope, so the page must not claim it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

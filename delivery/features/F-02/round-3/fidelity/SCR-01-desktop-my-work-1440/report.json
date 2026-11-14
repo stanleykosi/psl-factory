@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:22:34.570Z",
+  "generatedAt": "2026-11-14T06:22:04.227Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-desktop-my-work.dc.html",
   "boardName": "SCR-01-desktop-my-work.dc.html",
   "pageUrl": "http://localhost:3301/my-work?queue=waiting_on_others",
@@ -16,27 +16,27 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 96.4% with exceptions, needs 100%).",
-    "Visual match 90.8 meets 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 91 meets 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 89.3,
-    "coverageWithExceptions": 96.4,
-    "visual": 90.8
+    "coverageWithExceptions": 100,
+    "visual": 91
   },
   "visual": {
-    "score": 90.8,
-    "allCellsScore": 94.9,
+    "score": 91,
+    "allCellsScore": 95,
     "width": 1440,
     "height": 1060,
     "boardHeight": 1060,
     "pageHeight": 1060,
     "cell": 12,
-    "contentCells": 5893,
-    "mismatchedCells": 543
+    "contentCells": 5877,
+    "mismatchedCells": 531
   },
   "coverage": {
     "total": 28,
@@ -625,7 +625,10 @@
           "w": 534,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "SCR-01-desktop and -desktop-my-work name the tab list \"Queues\"; the other seven SCR-01 boards name it \"My work\". Built as \"My work\".",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       }
     ],
     "misplaced": [
@@ -688,7 +691,7 @@
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

@@ -1,0 +1,775 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:22:22.385Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-12/design/canvas/project/SCR-15-desktop-settings.dc.html",
+  "boardName": "SCR-15-desktop-settings.dc.html",
+  "pageUrl": "http://localhost:4201/settings/alerts",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-12/round-1/fidelity/exception-requests.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 96.4 meets 90."
+  ],
+  "scores": {
+    "coverage": 94.1,
+    "coverageWithExceptions": 100,
+    "visual": 96.4
+  },
+  "visual": {
+    "score": 96.4,
+    "allCellsScore": 97.9,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 5329,
+    "mismatchedCells": 191
+  },
+  "coverage": {
+    "total": 34,
+    "found": 32,
+    "coverage": 94.1,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 428,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 515,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 601,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 733
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 741
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SETTINGS / ALERTS",
+        "pageName": "SETTINGS / ALERTS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "How you're alerted",
+        "pageName": "How you’re alerted",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 1264,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "Alerts for each kind of work",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 180,
+          "w": 1260,
+          "h": 271
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 181,
+          "w": 1260,
+          "h": 274
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHEN",
+        "pageName": "WHEN",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 180,
+          "w": 562,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 181,
+          "w": 562,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHATSAPP",
+        "pageName": "WHATSAPP",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 652,
+          "y": 180,
+          "w": 202,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 652,
+          "y": 181,
+          "w": 202,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "EMAIL",
+        "pageName": "EMAIL",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 853,
+          "y": 180,
+          "w": 169,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 853,
+          "y": 181,
+          "w": 169,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "TIMING",
+        "pageName": "TIMING",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1022,
+          "y": 180,
+          "w": 328,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1022,
+          "y": 181,
+          "w": 328,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "A decision is waiting for me",
+        "pageName": "A decision is waiting for me",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 215,
+          "w": 562,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 219,
+          "w": 562,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Straight away",
+        "pageName": "Straight away",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1022,
+          "y": 215,
+          "w": 328,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 1022,
+          "y": 219,
+          "w": 328,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Information is requested from me",
+        "pageName": "Information is requested from me",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 262,
+          "w": 562,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 266,
+          "w": 562,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Straight away",
+        "pageName": "Straight away",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1022,
+          "y": 262,
+          "w": 328,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 1022,
+          "y": 266,
+          "w": 328,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Work I started is stuck",
+        "pageName": "Work I started is stuck",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 309,
+          "w": 562,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 313,
+          "w": 562,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Straight away",
+        "pageName": "Straight away",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1022,
+          "y": 309,
+          "w": 328,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 1022,
+          "y": 313,
+          "w": 328,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Work I started is verified",
+        "pageName": "Work I started is verified",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 356,
+          "w": 562,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 360,
+          "w": 562,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "In the daily digest",
+        "pageName": "In the daily digest",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1022,
+          "y": 356,
+          "w": 328,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 1022,
+          "y": 360,
+          "w": 328,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Everything else",
+        "pageName": "Everything else",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 403,
+          "w": 562,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 407,
+          "w": 562,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "In the daily digest",
+        "pageName": "In the daily digest",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1022,
+          "y": 403,
+          "w": 328,
+          "h": 47
+        },
+        "pageBox": {
+          "x": 1022,
+          "y": 407,
+          "w": 328,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Daily digest at",
+        "pageName": "Daily digest at",
+        "pageRole": "combobox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 106,
+          "y": 519,
+          "w": 585,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 525,
+          "w": 585,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Quiet hours",
+        "pageName": "Quiet hours",
+        "pageRole": "combobox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 106,
+          "y": 601,
+          "w": 585,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 610,
+          "w": 585,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WhatsApp number",
+        "pageName": "WhatsApp number",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 749,
+          "y": 491,
+          "w": 585,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 749,
+          "y": 494,
+          "w": 585,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "+234 803 *** 4412 · verified",
+        "pageName": "+234 803 *** 4412 · verified",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 749,
+          "y": 519,
+          "w": 585,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 749,
+          "y": 525,
+          "w": 585,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Alerts never include amounts or client details beyond the name.",
+        "pageName": "Alerts never include amounts or client details beyond the name.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 749,
+          "y": 547,
+          "w": 585,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 749,
+          "y": 556,
+          "w": 585,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save settings",
+        "pageName": "Save settings",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 683,
+          "w": 260,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 692,
+          "w": 260,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+          "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+          "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-12/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

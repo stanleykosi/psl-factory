@@ -1,0 +1,436 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:23:00.122Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-12/design/canvas/project/SCR-15-mobile-settings.dc.html",
+  "boardName": "SCR-15-mobile-settings.dc.html",
+  "pageUrl": "http://localhost:4201/settings/alerts",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-12/round-1/fidelity/exception-requests.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 97.6 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 75,
+    "coverageWithExceptions": 100,
+    "visual": 97.6
+  },
+  "visual": {
+    "score": 97.6,
+    "allCellsScore": 98,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1893,
+    "mismatchedCells": 46
+  },
+  "coverage": {
+    "total": 16,
+    "found": 12,
+    "coverage": 75,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Notifications",
+        "pageName": "← Notifications",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 102,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 279,
+          "y": 64,
+          "w": 95,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "How you're alerted",
+        "pageName": "How you’re alerted",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 73,
+          "w": 250,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "A decision is waiting for me",
+        "pageName": "A decision is waiting for me",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 122,
+          "w": 330,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 126,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Straight away",
+        "pageName": "Straight away",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 179,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 182,
+          "w": 330,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Information is requested from me",
+        "pageName": "Information is requested from me",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 234,
+          "w": 330,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 237,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Straight away",
+        "pageName": "Straight away",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 291,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 293,
+          "w": 330,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Work I started is stuck",
+        "pageName": "Work I started is stuck",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 346,
+          "w": 330,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 348,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Straight away",
+        "pageName": "Straight away",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 403,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 404,
+          "w": 330,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Work I started is verified",
+        "pageName": "Work I started is verified",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 458,
+          "w": 330,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 459,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Daily digest",
+        "pageName": "Daily digest",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 515,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 515,
+          "w": 330,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Quiet hours 20:00 to 07:00 and weekends",
+        "pageName": "Quiet hours 20:00 to 07:00 and weekends",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 556,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 556,
+          "w": 358,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save settings",
+        "pageName": "Save settings",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 772,
+          "w": 358,
+          "h": 54
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WhatsApp Email",
+        "key": "text: WhatsApp Email",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 147,
+          "w": 330,
+          "h": 26
+        },
+        "exception": {
+          "reason": "E-6 (SCR-15-mobile-settings): the visible words beside each phone switch are aria-hidden as the spec requires (each switch already carries the name \"WhatsApp, <label>\" / \"Email, <label>\"), so the tool cannot read them; they are on screen in the drawn place.",
+          "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WhatsApp Email",
+        "key": "text: WhatsApp Email",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 259,
+          "w": 330,
+          "h": 26
+        },
+        "exception": {
+          "reason": "E-6 (SCR-15-mobile-settings): the visible words beside each phone switch are aria-hidden as the spec requires (each switch already carries the name \"WhatsApp, <label>\" / \"Email, <label>\"), so the tool cannot read them; they are on screen in the drawn place.",
+          "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WhatsApp Email",
+        "key": "text: WhatsApp Email",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 371,
+          "w": 330,
+          "h": 26
+        },
+        "exception": {
+          "reason": "E-6 (SCR-15-mobile-settings): the visible words beside each phone switch are aria-hidden as the spec requires (each switch already carries the name \"WhatsApp, <label>\" / \"Email, <label>\"), so the tool cannot read them; they are on screen in the drawn place.",
+          "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WhatsApp Email",
+        "key": "text: WhatsApp Email",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 483,
+          "w": 330,
+          "h": 26
+        },
+        "exception": {
+          "reason": "E-6 (SCR-15-mobile-settings): the visible words beside each phone switch are aria-hidden as the spec requires (each switch already carries the name \"WhatsApp, <label>\" / \"Email, <label>\"), so the tool cannot read them; they are on screen in the drawn place.",
+          "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"← Notifications\"",
+        "kind": "Link",
+        "name": "← Notifications",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 102,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 279,
+          "y": 64,
+          "w": 95,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"How you're alerted\"",
+          "across the page: left on the board (17% across), right on the page (84% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-12/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

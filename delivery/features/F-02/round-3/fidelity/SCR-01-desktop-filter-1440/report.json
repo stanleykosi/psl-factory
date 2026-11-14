@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:22:52.124Z",
+  "generatedAt": "2026-11-14T06:22:35.501Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-desktop-filter.dc.html",
   "boardName": "SCR-01-desktop-filter.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -18,25 +18,25 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "7 board item(s) are missing from the page and are not approved exceptions (coverage 87% with exceptions, needs 100%).",
-    "Visual match 82 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 83.6 is below 90.",
     "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 83.3,
-    "coverageWithExceptions": 87,
-    "visual": 82
+    "coverageWithExceptions": 100,
+    "visual": 83.6
   },
   "visual": {
-    "score": 82,
-    "allCellsScore": 91.3,
+    "score": 83.6,
+    "allCellsScore": 92.2,
     "width": 1440,
     "height": 900,
     "boardHeight": 900,
     "pageHeight": 900,
     "cell": 12,
-    "contentCells": 4357,
-    "mismatchedCells": 786
+    "contentCells": 4292,
+    "mismatchedCells": 705
   },
   "coverage": {
     "total": 54,
@@ -229,7 +229,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 538
+          "h": 526
         }
       },
       {
@@ -445,7 +445,7 @@
           "x": 558,
           "y": 272,
           "w": 380,
-          "h": 607
+          "h": 603
         }
       },
       {
@@ -466,7 +466,7 @@
           "x": 560,
           "y": 274,
           "w": 376,
-          "h": 47
+          "h": 44
         }
       },
       {
@@ -485,7 +485,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 337,
+          "y": 333,
           "w": 27,
           "h": 21
         }
@@ -510,7 +510,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 370,
+          "y": 366,
           "w": 20,
           "h": 20
         }
@@ -535,7 +535,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 406,
+          "y": 402,
           "w": 20,
           "h": 20
         }
@@ -560,7 +560,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 442,
+          "y": 438,
           "w": 20,
           "h": 20
         }
@@ -585,7 +585,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 478,
+          "y": 474,
           "w": 20,
           "h": 20
         }
@@ -607,7 +607,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 510,
+          "y": 506,
           "w": 91,
           "h": 20
         }
@@ -628,7 +628,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 543,
+          "y": 540,
           "w": 344,
           "h": 21
         }
@@ -649,7 +649,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 628,
+          "y": 625,
           "w": 344,
           "h": 21
         }
@@ -670,7 +670,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 713,
+          "y": 710,
           "w": 344,
           "h": 21
         }
@@ -692,7 +692,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 814,
+          "y": 811,
           "w": 167,
           "h": 50
         }
@@ -714,7 +714,7 @@
         },
         "pageBox": {
           "x": 753,
-          "y": 814,
+          "y": 811,
           "w": 167,
           "h": 50
         }
@@ -756,7 +756,7 @@
         },
         "pageBox": {
           "x": 99,
-          "y": 286,
+          "y": 280,
           "w": 24,
           "h": 20
         }
@@ -777,7 +777,7 @@
         },
         "pageBox": {
           "x": 129,
-          "y": 286,
+          "y": 280,
           "w": 196,
           "h": 20
         }
@@ -800,7 +800,7 @@
         },
         "pageBox": {
           "x": 331,
-          "y": 282,
+          "y": 276,
           "w": 28,
           "h": 28
         }
@@ -821,7 +821,7 @@
         },
         "pageBox": {
           "x": 381,
-          "y": 286,
+          "y": 280,
           "w": 31,
           "h": 20
         }
@@ -844,7 +844,7 @@
         },
         "pageBox": {
           "x": 470,
-          "y": 282,
+          "y": 276,
           "w": 28,
           "h": 28
         }
@@ -868,9 +868,9 @@
         },
         "pageBox": {
           "x": 509,
-          "y": 274,
+          "y": 276,
           "w": 66,
-          "h": 44
+          "h": 28
         }
       },
       {
@@ -889,7 +889,7 @@
         },
         "pageBox": {
           "x": 90,
-          "y": 344,
+          "y": 332,
           "w": 1260,
           "h": 129
         }
@@ -910,7 +910,7 @@
         },
         "pageBox": {
           "x": 90,
-          "y": 344,
+          "y": 332,
           "w": 430,
           "h": 38
         }
@@ -931,7 +931,7 @@
         },
         "pageBox": {
           "x": 520,
-          "y": 344,
+          "y": 332,
           "w": 320,
           "h": 38
         }
@@ -952,7 +952,7 @@
         },
         "pageBox": {
           "x": 841,
-          "y": 344,
+          "y": 332,
           "w": 421,
           "h": 38
         }
@@ -973,7 +973,7 @@
         },
         "pageBox": {
           "x": 1261,
-          "y": 344,
+          "y": 332,
           "w": 89,
           "h": 38
         }
@@ -997,7 +997,7 @@
         },
         "pageBox": {
           "x": 520,
-          "y": 381,
+          "y": 369,
           "w": 320,
           "h": 91
         }
@@ -1021,7 +1021,7 @@
         },
         "pageBox": {
           "x": 1261,
-          "y": 381,
+          "y": 369,
           "w": 89,
           "h": 91
         }
@@ -1075,7 +1075,10 @@
           "w": 158,
           "h": 15
         },
-        "exception": null
+        "exception": {
+          "reason": "Only SCR-01-desktop-filter drops \"· updated 10:42\"; the page keeps one header line on every state.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -1089,7 +1092,10 @@
           "w": 348,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Built as a native select showing \"Any project\" with the board's small arrow; the check cannot read a select's shown value.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -1103,7 +1109,10 @@
           "w": 348,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "\"Needs a person\" is not a contract state (the State filter offers the 11 E-WORK-LIST states); native select value is also unreadable to the check.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -1117,7 +1126,10 @@
           "w": 348,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Native select (Waiting on); the check cannot read a select's shown value.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -1131,7 +1143,10 @@
           "w": 93,
           "h": 17
         },
-        "exception": null
+        "exception": {
+          "reason": "State chip: \"Needs a person\" is not a contract state.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -1145,7 +1160,10 @@
           "w": 357,
           "h": 57
         },
-        "exception": null
+        "exception": {
+          "reason": "SCR-01-desktop-filter draws a second invoice row (Harmattan Bank, 20m) that SCR-01-desktop's Needs me rows do not have; the board sample follows SCR-01-desktop.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -1159,7 +1177,10 @@
           "w": 94,
           "h": 57
         },
-        "exception": null
+        "exception": {
+          "reason": "Same second invoice row as above.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       }
     ],
     "misplaced": [
@@ -1177,7 +1198,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 538
+          "h": 526
         },
         "reasons": [
           "order: on the board it comes after Text \"2 OF 4 ITEMS\"; on the page it comes after Filter \"FILTER\""
@@ -1195,7 +1216,7 @@
         },
         "pageBox": {
           "x": 576,
-          "y": 337,
+          "y": 333,
           "w": 27,
           "h": 21
         },
@@ -1215,12 +1236,12 @@
         },
         "pageBox": {
           "x": 520,
-          "y": 381,
+          "y": 369,
           "w": 320,
           "h": 91
         },
         "reasons": [
-          "order: on the board it comes after Checkbox \"Invoice preparation and delivery\"; on the page it comes after Checkbox \"Planning and delivery handoff\""
+          "order: on the board it comes after Checkbox \"Invoice preparation and delivery\"; on the page it comes after Table \"\""
         ]
       },
       {
@@ -1235,12 +1256,12 @@
         },
         "pageBox": {
           "x": 1261,
-          "y": 381,
+          "y": 369,
           "w": 89,
           "h": 91
         },
         "reasons": [
-          "order: on the board it comes after Text \"Station 4 of 7 · Finance review\"; on the page it comes after Text \"Station 4 of 7 · Finance review\""
+          "order: on the board it comes after Text \"Station 4 of 7 · Finance review\"; on the page it comes after Checkbox \"Planning and delivery handoff\""
         ]
       }
     ],
@@ -1264,7 +1285,7 @@
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 342,
+          "y": 330,
           "w": 1264,
           "h": 197
         }
@@ -1276,7 +1297,7 @@
         "container": "table",
         "pageBox": {
           "x": 106,
-          "y": 421,
+          "y": 409,
           "w": 398,
           "h": 21
         }
@@ -1288,13 +1309,13 @@
         "container": "main",
         "pageBox": {
           "x": 104,
-          "y": 497,
+          "y": 485,
           "w": 94,
           "h": 18
         }
       }
     ],
-    "unexcepted": 7
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

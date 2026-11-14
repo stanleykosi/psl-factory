@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:23:03.397Z",
+  "generatedAt": "2026-11-14T06:22:51.889Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-mobile-my-work.dc.html",
   "boardName": "SCR-01-mobile-my-work.dc.html",
   "pageUrl": "http://localhost:3301/my-work?queue=waiting_on_others",
@@ -16,27 +16,27 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 95% with exceptions, needs 100%).",
-    "Visual match 82.8 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 90.1 meets 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 90,
-    "coverageWithExceptions": 95,
-    "visual": 82.8
+    "coverageWithExceptions": 100,
+    "visual": 90.1
   },
   "visual": {
-    "score": 82.8,
-    "allCellsScore": 86.8,
+    "score": 90.1,
+    "allCellsScore": 92.7,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1794,
-    "mismatchedCells": 309
+    "contentCells": 1736,
+    "mismatchedCells": 171
   },
   "coverage": {
     "total": 20,
@@ -244,9 +244,7 @@
         "pageRole": "link",
         "similarity": 100,
         "note": "a link on the page, plain text on the board",
-        "looks": [
-          "text colour #1F2427 on the board, #2459D6 on the page"
-        ],
+        "looks": [],
         "boardBox": {
           "x": 30,
           "y": 240,
@@ -256,8 +254,8 @@
         "pageBox": {
           "x": 30,
           "y": 242,
-          "w": 174,
-          "h": 18
+          "w": 186,
+          "h": 20
         }
       },
       {
@@ -278,7 +276,7 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 266,
+          "y": 268,
           "w": 151,
           "h": 22
         }
@@ -291,9 +289,7 @@
         "pageRole": "link",
         "similarity": 100,
         "note": "a link on the page, plain text on the board",
-        "looks": [
-          "text colour #1F2427 on the board, #2459D6 on the page"
-        ],
+        "looks": [],
         "boardBox": {
           "x": 30,
           "y": 326,
@@ -302,9 +298,9 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 324,
-          "w": 206,
-          "h": 18
+          "y": 325,
+          "w": 221,
+          "h": 20
         }
       },
       {
@@ -315,9 +311,7 @@
         "pageRole": "link",
         "similarity": 100,
         "note": "a link on the page, plain text on the board",
-        "looks": [
-          "text colour #1F2427 on the board, #2459D6 on the page"
-        ],
+        "looks": [],
         "boardBox": {
           "x": 30,
           "y": 412,
@@ -326,9 +320,9 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 406,
-          "w": 152,
-          "h": 18
+          "y": 408,
+          "w": 163,
+          "h": 20
         }
       },
       {
@@ -349,7 +343,7 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 430,
+          "y": 434,
           "w": 101,
           "h": 22
         }
@@ -362,9 +356,7 @@
         "pageRole": "link",
         "similarity": 100,
         "note": "a link on the page, plain text on the board",
-        "looks": [
-          "text colour #1F2427 on the board, #2459D6 on the page"
-        ],
+        "looks": [],
         "boardBox": {
           "x": 30,
           "y": 498,
@@ -373,9 +365,9 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 487,
-          "w": 104,
-          "h": 18
+          "y": 491,
+          "w": 111,
+          "h": 20
         }
       },
       {
@@ -396,7 +388,7 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 512,
+          "y": 517,
           "w": 93,
           "h": 22
         }
@@ -409,9 +401,7 @@
         "pageRole": "link",
         "similarity": 100,
         "note": "a link on the page, plain text on the board",
-        "looks": [
-          "text colour #1F2427 on the board, #2459D6 on the page"
-        ],
+        "looks": [],
         "boardBox": {
           "x": 30,
           "y": 584,
@@ -420,9 +410,9 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 569,
-          "w": 136,
-          "h": 18
+          "y": 574,
+          "w": 146,
+          "h": 20
         }
       },
       {
@@ -443,7 +433,7 @@
         },
         "pageBox": {
           "x": 30,
-          "y": 593,
+          "y": 600,
           "w": 59,
           "h": 22
         }
@@ -480,7 +470,10 @@
           "w": 137,
           "h": 21
         },
-        "exception": null
+        "exception": {
+          "reason": "A processing item's tag reads the contract state words \"Processing\"; the board shows the agent's activity, which the contract has no field for.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       }
     ],
     "misplaced": [
@@ -540,7 +533,7 @@
           "x": 16,
           "y": 228,
           "w": 358,
-          "h": 511
+          "h": 517
         }
       },
       {
@@ -550,13 +543,13 @@
         "container": "main",
         "pageBox": {
           "x": 32,
-          "y": 651,
+          "y": 658,
           "w": 326,
           "h": 18
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

@@ -1,0 +1,560 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T11:45:32.531Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-history.dc.html",
+  "boardName": "SCR-02-mobile-history.dc.html",
+  "pageUrl": "http://localhost:4511/work/W-1705/history",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 97.2 meets 90."
+  ],
+  "scores": {
+    "coverage": 95.5,
+    "coverageWithExceptions": 100,
+    "visual": 97.2
+  },
+  "visual": {
+    "score": 97.2,
+    "allCellsScore": 98.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1542,
+    "mismatchedCells": 43
+  },
+  "coverage": {
+    "total": 22,
+    "found": 21,
+    "coverage": 95.5,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HISTORY",
+        "pageName": "HISTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 324,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 324,
+          "y": 0,
+          "w": 50,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "History · INV-0412",
+        "pageName": "History · INV-0412",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 201,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov 16:40 · v2",
+        "pageName": "12 Nov 16:40 · Version: v2",
+        "pageRole": "text",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 172,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 173,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 191,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 189,
+          "w": 141,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approved invoice v2 for ₦4,250,000.00",
+        "pageName": "Approved invoice v2 for ₦4,250,000.00",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 212,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 209,
+          "w": 330,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approved invoice v2",
+        "pageName": "Approved invoice v2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 212,
+          "w": 131,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 210,
+          "w": 131,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov 16:12 · v2",
+        "pageName": "12 Nov 16:12 · Version: v2",
+        "pageRole": "text",
+        "similarity": 89,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 266,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 269,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bisi Ade · Finance",
+        "pageName": "Bisi Ade · Finance",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 285,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 285,
+          "w": 96,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sent v2 for review",
+        "pageName": "Sent v2 for review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 306,
+          "w": 117,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 306,
+          "w": 117,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov 15:58 · v2",
+        "pageName": "12 Nov 15:58 · Version: v2",
+        "pageRole": "text",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 360,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 365,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent",
+        "pageName": "Chidi · Finance agent",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 379,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 381,
+          "w": 112,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafted invoice v2 with the PO number added",
+        "pageName": "Drafted invoice v2 with the PO number added",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 400,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 401,
+          "w": 330,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafted invoice v2",
+        "pageName": "Drafted invoice v2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 400,
+          "w": 117,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 402,
+          "w": 117,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov 11:04 · v1",
+        "pageName": "12 Nov 11:04 · Version: v1",
+        "pageRole": "text",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 454,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 461,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 473,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 477,
+          "w": 141,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Returned v1",
+        "pageName": "Returned v1",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 494,
+          "w": 79,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 498,
+          "w": 79,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11 Nov 17:30 · —",
+        "pageName": "11 Nov 17:30",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 548,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 557,
+          "w": 86,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PMO",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 567,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 573,
+          "w": 99,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Supplied evidence: client UAT sign-off",
+        "pageName": "Supplied evidence client UAT sign-off",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 588,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 593,
+          "w": 330,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Supplied evidence",
+        "pageName": "Supplied evidence",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 588,
+          "w": 119,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 594,
+          "w": 119,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "+ 2 EARLIER ENTRIES",
+        "pageName": "+ 2 EARLIER ENTRIES",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 630,
+          "w": 358,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 638,
+          "w": 146,
+          "h": 14
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Invoice",
+        "key": "link: ← Invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 66,
+          "h": 44
+        },
+        "exception": {
+          "reason": "As \"← Queue\": the frame names the phone back link \"Back to Invoice\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Invoice",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 62,
+          "h": 44
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "History, newest first",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 160,
+          "w": 358,
+          "h": 466
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov 16:12",
+        "container": "main",
+        "pageBox": {
+          "x": 30,
+          "y": 269,
+          "w": 86,
+          "h": 15
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

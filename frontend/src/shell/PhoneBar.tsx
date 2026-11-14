@@ -9,13 +9,24 @@ import type { DestinationInfo } from './destinations';
 import { MenuIcon } from './icons';
 import { SampleLabel } from './SampleLabel';
 
-type Props = { me: Me | null; destinations: DestinationInfo[]; current: DestinationInfo | undefined };
+/** A sub-page's way back, drawn in the phone bar as "← label", with an optional mono note at the right ("RULES"). */
+export type PhoneBack = { label: string; href: string; note?: string };
 
-/** CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label. */
-export function PhoneBar({ me, destinations, current }: Props) {
+type Props = {
+  me: Me | null;
+  destinations: DestinationInfo[];
+  current: DestinationInfo | undefined;
+  back?: PhoneBack | null;
+};
+
+/**
+ * CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label. On a sub-page
+ * that sets a back link the bar shows "← label" instead of Menu and PSL FACTORY (SCR-10-mobile, SCR-22-mobile).
+ */
+export function PhoneBar({ me, destinations, current, back = null }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const hasMenu = me !== null;
+  const hasMenu = me !== null && back === null;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -44,7 +55,14 @@ export function PhoneBar({ me, destinations, current }: Props) {
             <MenuIcon />
           </button>
         )}
-        <span className="psl-brand">PSL FACTORY</span>
+        {back ? (
+          <Link href={back.href} aria-label={`Back to ${back.label}`}>
+            {`← ${back.label}`}
+          </Link>
+        ) : (
+          <span className="psl-brand">PSL FACTORY</span>
+        )}
+        {back?.note && <span className="shell-phonenote">{back.note}</span>}
         <SampleLabel />
       </header>
       {hasMenu && open && (

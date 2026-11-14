@@ -2,12 +2,13 @@
 
 // SCR-07 project page: breadcrumb, title, the project tab bar, then the tab. Journey shows the PM and route line, the
 // facts strip, every line's work in the order returned, what is next and Tola's summary. Data comes only from
-// E-PROJECT (PROPOSAL fields optional, see model.ts); the backend decides access (INV-ACCESS).
+// E-PROJECT (v7 optional fields, see model.ts); the backend decides access (INV-ACCESS).
+import Image from 'next/image';
 import Link from 'next/link';
 
-import { avatarClass, STATE_TAGS } from '@/features/work-item/labels';
+import { STATE_TAGS } from '@/features/work-item/labels';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
-import { useMe } from '@/shell/AppShell';
+import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 
@@ -105,9 +106,7 @@ function AgentSummary({ journey }: { journey: JourneyView }) {
   return (
     <aside className="projects__agent" aria-label={`${agent}'s summary`}>
       <div className="projects__agenthead">
-        <span className={`${avatarClass(agent)} projects__avatar`} aria-hidden="true">
-          {agent.charAt(0).toUpperCase()}
-        </span>
+        <Image src={`/agents/${agent.toLowerCase()}.png`} alt="" aria-hidden="true" width={36} height={36} unoptimized className={`psl-avatar psl-avatar--${agent.toLowerCase()} projects__avatar`} />
         <span className="projects__agentname">
           {agent} {role && <span className="projects__agentrole">· {role}</span>}
         </span>
@@ -185,9 +184,6 @@ function ProjectView({ journey, base, tab }: { journey: JourneyView; base: strin
             <Link href="/projects">Projects</Link> / <span aria-current="page">{clientOf(journey)}</span>
           </p>
         </nav>
-        <Link href="/projects" className="projects__back">
-          &larr; Projects
-        </Link>
         <h1 className="shell-title">{journey.title}</h1>
       </header>
       <ProjectTabs base={base} current={tab} counts={journey.tab_counts} />
@@ -221,6 +217,7 @@ function ProjectPage({ caseId, tab }: { caseId: string; tab: ProjectTab }) {
 /** /projects/<case_id>[/<tab>]: one project, for anyone whose /me lists Projects. Without it no request is made. */
 export function ProjectJourneyPage({ caseId, tab = 'journey' }: { caseId: string; tab?: ProjectTab }) {
   const me = useMe();
+  usePhoneBack({ label: 'Projects', href: '/projects' });
   if (!me.destinations.includes('projects')) {
     return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   }

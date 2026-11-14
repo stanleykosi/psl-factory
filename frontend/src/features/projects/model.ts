@@ -10,36 +10,17 @@ export type Limit = NonNullable<ProjectsQuery['limit']>;
 export type Journey = operations['E-PROJECT']['responses'][200]['content']['application/json'];
 export type JourneyLine = Journey['lines'][number];
 
-// PROPOSAL fields: the SCR-22 and SCR-07 boards draw values that E-PROJECTS and E-PROJECT (v6) do not carry. The
-// shapes follow architecture v7 (D-PROJECTS-VIEW, proposed); the contract mock serves them. Every one is optional and
-// read through the guards below, so a body without them, or with another shape, still renders ("—" or "Not known").
-export type ListTab = 'active' | 'closed' | 'all';
-export type MilestoneDue = { date?: string; unknown: boolean };
-export type NextMilestone = { name: string; due?: MilestoneDue };
-export type ProjectRowView = ProjectRow & { reference?: string; next_milestone?: NextMilestone; needs_person?: number; stopped?: number };
-export type ProjectListView = ProjectList & { items: ProjectRowView[]; counts?: Partial<Record<ListTab, number>>; total?: number };
-export type FactMoney = { amount?: string; currency: string; unknown: boolean };
-export type JourneyFact = { label: string; value?: string; money?: FactMoney; unknown?: boolean };
-export type LineTone = 'neutral' | 'person' | 'agent' | 'stopped' | 'uncertain' | 'verified' | 'restricted';
-export type JourneyLineView = JourneyLine & {
-  reference?: string;
-  title?: string;
-  detail?: string;
-  station?: { index: number; count: number; name?: string };
-  status_label?: string;
-  tone?: LineTone;
-};
-export type JourneyView = Omit<Journey, 'lines'> & {
-  lines: JourneyLineView[];
-  revision?: number;
-  tab_counts?: { milestones?: number; documents?: number; registers?: number; actions?: number };
-  pm?: { name: string; role?: string; is_you?: boolean };
-  route?: string;
-  work_count?: number;
-  line_count?: number;
-  facts?: JourneyFact[];
-  agent_summary?: { agent: 'tola' | 'chidi' | 'zainab'; text: string };
-};
+// The SCR-22 and SCR-07 boards' extra values (reference, next milestone, counts, facts, agent summary) are in the v7
+// contract types. They stay optional, and are read through the guards below, so a body without them still renders.
+export type ListTab = NonNullable<ProjectsQuery['status']>;
+export type ProjectRowView = ProjectRow;
+export type JourneyLineView = JourneyLine;
+export type JourneyView = Journey;
+export type LineTone = NonNullable<JourneyLine['tone']>;
+export type JourneyFact = NonNullable<Journey['facts']>[number];
+export type FactMoney = NonNullable<JourneyFact['money']>;
+export type ProjectListView = ProjectList;
+export type NextMilestone = NonNullable<ProjectRow['next_milestone']>;
 
 export type ProjectTab = 'journey' | 'milestones' | 'documents' | 'money' | 'registers' | 'actions';
 type CountKey = keyof NonNullable<JourneyView['tab_counts']>;
@@ -84,15 +65,13 @@ export function projectsSearch(view: ProjectsView): string {
   return search ? `?${search}` : '';
 }
 
-/** PROPOSAL (v7): `status` is not an E-PROJECTS parameter in v6. */
-export type ProjectsRequest = ProjectsQuery & { status?: Exclude<ListTab, typeof DEFAULT_TAB> };
 
 /**
  * limit is always sent; q only when it has text, so the request never carries an empty q. Active, the default tab,
  * sends no status (TECH-2-2): a backend without the parameter then answers as it always has.
  */
-export function buildProjectsQuery(view: ProjectsView, cursor?: string): ProjectsRequest {
-  const query: ProjectsRequest = { limit: view.limit };
+export function buildProjectsQuery(view: ProjectsView, cursor?: string): ProjectsQuery {
+  const query: ProjectsQuery = { limit: view.limit };
   if (view.tab !== DEFAULT_TAB) query.status = view.tab;
   const q = view.q?.trim();
   if (q) query.q = q;
@@ -121,7 +100,7 @@ export const shownText = (loaded: number) => `${loaded} shown`;
 
 const isText = (value: unknown) => typeof value === 'string' && value !== '';
 
-// Guards for the PROPOSAL fields: each returns undefined unless the value has the drafted v7 shape (TECH-2-1).
+// Guards for the optional v7 fields: each returns undefined unless the value has the contract shape (TECH-2-1).
 type Loose = Record<string, unknown>;
 const isObject = (value: unknown): value is Loose => typeof value === 'object' && value !== null && !Array.isArray(value);
 

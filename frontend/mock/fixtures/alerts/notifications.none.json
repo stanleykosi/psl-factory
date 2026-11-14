@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "id": "N-0201",
+      "work_id": "W-1002",
+      "agent": "chidi",
+      "text": "A sample alert for this account",
+      "at": "2026-11-14T09:00:00Z",
+      "read": false,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-14T09:00:00Z"
+    }
+  ],
+  "as_of": "2026-11-14T10:00:00Z",
+  "total": 1,
+  "unread_count": 1
+}

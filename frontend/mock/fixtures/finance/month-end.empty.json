@@ -1,0 +1,19 @@
+{
+  "period": "2026-10",
+  "as_of": "2026-11-14T09:42:00Z",
+  "coverage": "FROM RECORDS YOU CAN SEE",
+  "summary": {
+    "done": 0,
+    "waiting": 0,
+    "in_progress": 0,
+    "total": 0
+  },
+  "cash_received": {
+    "currency": "NGN",
+    "unknown": true
+  },
+  "cash_received_detail": {
+    "has_unknown": true
+  },
+  "tasks": []
+}

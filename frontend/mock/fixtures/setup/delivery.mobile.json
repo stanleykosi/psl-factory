@@ -1,0 +1,70 @@
+{
+  "items": [
+    {
+      "component": "delivery.hypercare_window",
+      "name": "Hypercare window",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Hypercare"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.hypercare_criteria",
+      "name": "Hypercare criteria",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Hypercare"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.closure_finance_confirmer",
+      "name": "Finance confirmation",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Closure"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.handover_review",
+      "name": "Handover review",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Handover"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    }
+  ],
+  "as_of": "2026-11-12T10:40:00+01:00",
+  "not_set_count": 4
+}
