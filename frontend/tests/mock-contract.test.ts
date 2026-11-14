@@ -325,6 +325,36 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
   const validPresentation = ajv.compile(presentationSchema);
   const boardFixture = (name: string) => /^W-17\d\d(\.history)?\.json$/.test(name);
 
+  // PROPOSAL (F-16 board data): the decision board fixtures' `decide_presentation` block, as typed in
+  // src/features/decide/presentation.ts; W-19xx also carry F-14's `presentation.facts` for the facts' details.
+  const decideBoardFixture = (name: string) => /^W-19\d\d(\.[a-z]+)?\.json$/.test(name);
+  const decidePresentationSchema = {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      queue: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['position', 'total'],
+        properties: {
+          position: { type: 'integer', minimum: 1 },
+          total: { type: 'integer', minimum: 1 },
+          next: { type: 'object', additionalProperties: false, required: ['label', 'href'], properties: { label: str, href: { type: 'string', pattern: '^/(?!/)' } } },
+        },
+      },
+      subject: str,
+      client: str,
+      waiting: str,
+      agent: {
+        type: 'object',
+        additionalProperties: false,
+        properties: { role: str, summary: str, phone_summary: str, link_label: str, note: str, phone_note: str },
+      },
+      comment: { type: 'object', additionalProperties: false, required: ['label', 'action'], properties: { label: str, action: str } },
+    },
+  };
+  const validDecidePresentation = ajv.compile(decidePresentationSchema);
+
   it('every fixture in fixtures/work is schema-valid with _kind, presentation and lines removed', () => {
     // Item bodies are W-<digits>.json and histories W-<digits>.history.json; other sidecars (F-04's) are not checked here.
     const files = readdirSync(workDir).filter((name) => /^W-\d+(\.history)?\.json$/.test(name));
@@ -339,17 +369,42 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
         });
         expectValid('E-WORK-HISTORY', 200, { ...body, items });
       } else {
-        const { presentation, ...item } = body;
-        if (boardFixture(name)) {
+        const { presentation, decide_presentation: decidePresentation, ...item } = body;
+        if (boardFixture(name) || (decideBoardFixture(name) && presentation !== undefined)) {
           expect(validPresentation(presentation), `${name}: ${ajv.errorsText(validPresentation.errors)}`).toBe(true);
         } else {
           expect(presentation, name).toBeUndefined();
+        }
+        if (decideBoardFixture(name) && decidePresentation !== undefined) {
+          expect(validDecidePresentation(decidePresentation), `${name}: ${ajv.errorsText(validDecidePresentation.errors)}`).toBe(true);
+        } else {
+          expect(decidePresentation, name).toBeUndefined();
         }
         expectValid('E-WORK-ITEM', 200, item);
         expect(body.sample, name).toBe(true);
       }
     }
     expect(files.filter(boardFixture)).toHaveLength(12);
+  });
+
+  it('the decision board sidecars (W-19xx decided and redrafted items) are schema-valid with the PROPOSAL blocks removed', () => {
+    const files = readdirSync(workDir).filter((name) => /^W-19\d\d\.[a-z]+\.json$/.test(name));
+    expect(files.sort()).toEqual(['W-1901.approve.json', 'W-1902.next.json']);
+    for (const name of files) {
+      const { presentation, decide_presentation: decidePresentation, ...item } = readJson(join(workDir, name));
+      if (presentation !== undefined) expect(validPresentation(presentation), name).toBe(true);
+      expect(validDecidePresentation(decidePresentation), `${name}: ${ajv.errorsText(validDecidePresentation.errors)}`).toBe(true);
+      expectValid('E-WORK-ITEM', 200, item);
+    }
+    // only the W-19xx files carry the decision board block
+    const others = readdirSync(workDir).filter((name) => name.endsWith('.json') && !decideBoardFixture(name));
+    for (const name of others) expect(readJson(join(workDir, name)), name).not.toHaveProperty('decide_presentation');
+  });
+
+  it('a crafted next-decision href that is not an app path fails the block schema', () => {
+    for (const href of ['https://x.example', '//x.example', 'javascript:alert(1)']) {
+      expect(validDecidePresentation({ queue: { position: 1, total: 3, next: { label: 'Next', href } } }), href).toBe(false);
+    }
   });
 
   it('the board fixtures leave every existing fixture byte-for-byte unchanged', () => {

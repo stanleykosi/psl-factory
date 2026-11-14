@@ -61,7 +61,7 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
         Your decision
       </h2>
       <div className="psl-panel__body">
-        <p className="decide-plain">
+        <p className="decide-plain decide-who">
           Only a {task.required_role} can decide. You are {task.required_role}.
         </p>
         <div className="psl-field">

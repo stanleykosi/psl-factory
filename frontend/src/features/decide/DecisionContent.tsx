@@ -1,44 +1,90 @@
 // SCR-03 decision content: the header, the version rows, the approval chain, the phone station line and the
 // agent note. Only values from tasks[].decision and E-WORK-ITEM are shown; absent fields are left out.
+import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { TaskDecision, WorkItem } from '@/api/types';
-import { avatarClass, formatWat } from '@/features/work-item/labels';
+import { agentImage, avatarClass, formatWat } from '@/features/work-item/labels';
+import { showSampleLabel } from '@/shell/sample';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { AGENT_NAMES, formatAmount, personStationIndex, STEP_STATUS, type Amount } from './format';
+import type { DecidePresentation } from './presentation';
 
 export function When({ at }: { at: string }) {
   return <time dateTime={at}>{formatWat(at)}</time>;
 }
 
-type HeaderProps = { item: WorkItem; eyebrow?: ReactNode; title: string; sub?: string; banner?: 'success' | 'neutral' };
+type HeaderProps = {
+  item: WorkItem;
+  title: string;
+  /** The board's visible trail ("DECISIONS / 1 OF 3 / FINANCE REVIEW · INV-0412"); the Breadcrumb nav stays for screen readers. */
+  trail?: ReactNode;
+  /** The phone boards' line above the title ("FINANCE REVIEW · INV-0412"); phones show it instead of the trail. */
+  phoneEyebrow?: string;
+  /** The done view's banner line ("YOU APPROVED · 10:47"). */
+  eyebrow?: ReactNode;
+  sub?: string;
+  /** A state tag at the end of the title line (the own board). */
+  tag?: ReactNode;
+  banner?: 'success' | 'neutral';
+  /** The stale phone board draws no title: the header stays for screen readers only below 720px. */
+  quietOnPhone?: boolean;
+  /** Move focus to the title on arrival (the done view, after a decision). */
+  focusHeading?: boolean;
+};
 
-/** The common header: crumb, station eyebrow, title and sub-line. The done view sets the eyebrow and title in a banner. */
-export function DecideHeader({ item, eyebrow, title, sub, banner }: HeaderProps) {
+/** The common header: the trail, the title (in a banner on the done view), the state tag and the sub-line. */
+export function DecideHeader({ item, title, trail, phoneEyebrow, eyebrow, sub, tag, banner, quietOnPhone, focusHeading }: HeaderProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (focusHeading) ref.current?.focus();
+  }, [focusHeading]);
   const heading = (
-    <>
-      {eyebrow && <p className="decide-eyebrow">{eyebrow}</p>}
-      <h1 className="shell-title">{title}</h1>
-    </>
+    <h1 ref={ref} tabIndex={focusHeading ? -1 : undefined} className="shell-title">
+      {title}
+    </h1>
   );
+  const sample = item.sample && showSampleLabel();
   return (
-    <header className="decide-header">
-      <nav aria-label="Breadcrumb">
+    <header className={`decide-header${quietOnPhone ? ' decide-header--quiet' : ''}`}>
+      <nav aria-label="Breadcrumb" className="decide-sr">
         <p className="psl-crumb">
           <Link href="/my-work">My work</Link> / {item.line} / <span className="psl-mono">{item.reference}</span>
         </p>
       </nav>
-      {banner ? <div className={`decide-banner decide-banner--${banner}`}>{heading}</div> : heading}
-      {(sub || item.sample) && (
-        <p className="decide-sub">
-          {sub && <span>{sub}</span>}
-          {/* The shared frame label only (design engineer, 14 Nov 2026: no screen-level sample tags). */}
-          {item.sample && <SampleLabel />}
-        </p>
+      {trail && <p className="decide-trail">{trail}</p>}
+      {phoneEyebrow && <p className="decide-phone-eyebrow">{phoneEyebrow}</p>}
+      {banner ? (
+        <div className={`decide-banner decide-banner--${banner}`}>
+          {eyebrow && <p className="decide-eyebrow">{eyebrow}</p>}
+          {heading}
+        </div>
+      ) : (
+        <div className="decide-titleline">
+          {heading}
+          {(sub || sample) && (
+            <p className="decide-sub">
+              {sub && <span>{sub}</span>}
+              {/* The shared frame label only (design engineer, 14 Nov 2026: no screen-level sample tags). */}
+              {item.sample && <SampleLabel />}
+            </p>
+          )}
+          {tag}
+        </div>
       )}
     </header>
+  );
+}
+
+/** The actionable trail: "Decisions / 1 of 3 / FINANCE REVIEW · INV-0412" (phones show the station part above the title). */
+export function DecisionTrail({ item, queue }: { item: WorkItem; queue?: string }) {
+  return (
+    <>
+      <Link href="/my-work">Decisions</Link> / {queue && `${queue} / `}
+      {stationEyebrow(item)}
+    </>
   );
 }
 
@@ -159,38 +205,57 @@ const MINI_CLASS: Partial<Record<WorkItem['stations'][number]['status'], string>
 };
 
 /** CMP-03 on the phone: "Station 4 of 7 · Finance review · only a Finance Lead can decide". */
-export function MiniLine({ item, requiredRole }: { item: WorkItem; requiredRole: string }) {
+export function MiniLine({ item, requiredRole, waiting }: { item: WorkItem; requiredRole: string; waiting?: string }) {
   const index = personStationIndex(item.stations);
   if (index < 0) return null;
   return (
-    <p className="psl-mini decide-mini">
+    <div className="psl-mini decide-mini">
       <span className="psl-mini__bar" aria-hidden="true">
         {item.stations.map((s, i) => (
           <i key={i} className={MINI_CLASS[s.status]} />
         ))}
       </span>
       <span className="psl-mini__text">
-        Station {index + 1} of {item.stations.length} · {item.stations[index].name} · only a {requiredRole} can decide
+        Station {index + 1} of {item.stations.length} · {item.stations[index].name} · {waiting && `${waiting} · `}only a {requiredRole} can decide
       </span>
-    </p>
+    </div>
   );
 }
 
-/** The agent that prepared the item: who it is, that it cannot decide, and where its steps are. */
-export function AgentNote({ id, agent }: { id: string; agent: WorkItem['agent'] }) {
+type AgentProps = { id: string; agent: WorkItem['agent']; view?: DecidePresentation['agent']; mode?: 'steps' | 'note' };
+
+/**
+ * The agent that prepared the item: who it is, what it did, that it cannot decide, and where its steps are. The
+ * stale board draws the redraft note instead of the summary and the link. Phones show the shorter wording when the
+ * board block carries one.
+ */
+export function AgentNote({ id, agent, view, mode = 'steps' }: AgentProps) {
   if (agent.status === 'none' || !agent.name) return null;
+  const image = agentImage(agent.name);
+  const desktop = mode === 'note' ? view?.note : view?.summary;
+  const phone = mode === 'note' ? view?.phone_note : view?.phone_summary;
   return (
-    <section className="psl-agent decide-agent" aria-label="Agent">
-      <div className="psl-agent__head">
+    <section className={`decide-agent${phone ? ' decide-agent--phone' : ''}`} aria-label="Agent">
+      {image ? (
+        <Image className="decide-agent__img" src={image} alt="" width={36} height={36} unoptimized />
+      ) : (
         <span className={avatarClass(agent.name)} aria-hidden="true">
           {agent.name.charAt(0).toUpperCase()}
         </span>
-        <span className="decide-agent__text">
-          <strong>{agent.name}</strong>
-          <small>Cannot approve, send or pay.</small>
-          <Link href={`/work/${encodeURIComponent(id)}`}>See {agent.name}&rsquo;s steps</Link>
+      )}
+      <span className="decide-agent__text">
+        <span className="decide-agent__head">
+          <span className="decide-agent__who">
+            <strong>{agent.name}</strong>
+            {view?.role && ` · ${view.role}`}
+            {mode === 'steps' && ' · '}
+          </span>
+          {phone && <span className="decide-agent__short">{phone} </span>}
+          {mode === 'steps' && <small>Cannot approve, send or pay.</small>}
         </span>
-      </div>
+        {desktop && <span className="decide-agent__summary">{desktop} </span>}
+        {mode === 'steps' && <Link href={`/work/${encodeURIComponent(id)}`}>{view?.link_label ?? `See ${agent.name}’s steps`}</Link>}
+      </span>
     </section>
   );
 }
