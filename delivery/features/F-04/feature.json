@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-04",
   "outcome": "Decide one exact version: approve, return or reject, with stale and cannot-act views",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -97,11 +97,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -127,25 +129,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer, round 2 (visual review against the approved SCR-03 boards and the design system)",
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -162,7 +170,7 @@
         "delivery/features/F-04/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -179,11 +187,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "`useDecision.ts:126-141` `reconcile()`. A failed reload after an uncertain decide gives `unconfirmed` for network/5xx errors, and the error view for the `NO_ACCESS` kinds (unauthenticated, forbidden, not_found). The view renders SignedOut or NoAccess (`DecideView.tsx:51-54`). `decide()` (line 186) still requires `view.kind === 'item'`, and `DecidePanel` gets `locked` (`DecideView.tsx:121`, `DecidePanel.tsx:32`), so all three buttons stay off. `recheck()` (144-148) only calls `reconcile`, which is one GET. The controls come back only through `reconcile`'s success path. \"We've reloaded this item\" is replaced by `UnconfirmedNotice` in this state. Tests: decide.test.tsx \"decide network error and a failed reload keep every control off; Try again only reads the item\". It asserts the buttons are disabled, the second GET fails, and the only POSTs are one claim and one decide. There are also \"Try again leading to a recorded decision shows the already-decided view\" and the 403/404/401 `it.each`. The e2e double-failure test uses `page.route`. All are in the passing gate (checks.md: 319 unit tests)."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`useDecision.ts:126-141` `reconcile()`. A failed reload after an uncertain decide gives `unconfirmed` for network/5xx errors, and the error view for the `NO_ACCESS` kinds (unauthenticated, forbidden, not_found). The view renders SignedOut or NoAccess (`DecideView.tsx:51-54`). `decide()` (line 186) still requires `view.kind === 'item'`, and `DecidePanel` gets `locked` (`DecideView.tsx:121`, `DecidePanel.tsx:32`), so all three buttons stay off. `recheck()` (144-148) only calls `reconcile`, which is one GET. The controls come back only through `reconcile`'s success path. \"We've reloaded this item\" is replaced by `UnconfirmedNotice` in this state. Tests: decide.test.tsx \"decide network error and a failed reload keep every control off; Try again only reads the item\". It asserts the buttons are disabled, the second GET fails, and the only POSTs are one claim and one decide. There are also \"Try again leading to a recorded decision shows the already-decided view\" and the 403/404/401 `it.each`. The e2e double-failure test uses `page.route`. All are in the passing gate (checks.md: 319 unit tests)."
       ]
     },
     {
@@ -199,7 +221,7 @@
         "delivery/features/F-04/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -216,11 +238,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "`DecideStates.tsx:222-224`. `Object.hasOwn(VERDICT_WORDS, result.verdict)` decides whether the verdict is known. Unknown echoes get \"DECISION RECORDED\" / \"Decision recorded on <label>\", the neutral banner and an info callout, with no Paid line. The test uses the inherited key `constructor` and asserts no \"approved\" wording."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`DecideStates.tsx:222-224`. `Object.hasOwn(VERDICT_WORDS, result.verdict)` decides whether the verdict is known. Unknown echoes get \"DECISION RECORDED\" / \"Decision recorded on <label>\", the neutral banner and an info callout, with no Paid line. The test uses the inherited key `constructor` and asserts no \"approved\" wording."
       ]
     },
     {
@@ -236,7 +272,7 @@
         "delivery/features/F-04/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -253,11 +289,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "`useDecision.ts:137` compares `now.revision !== revision`, and `decide()` passes `claim.revision` (line 217). Test \"after an uncertain decide, the stale check compares with the claimed revision\": the claim returns rev 3, the reload shows rev 3, no stale view appears, and the next decide body is `expected_revision: 3`."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`useDecision.ts:137` compares `now.revision !== revision`, and `decide()` passes `claim.revision` (line 217). Test \"after an uncertain decide, the stale check compares with the claimed revision\": the claim returns rev 3, the reload shows rev 3, no stale view appears, and the next decide body is `expected_revision: 3`."
       ]
     },
     {
@@ -273,7 +323,7 @@
         "delivery/features/F-04/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -290,11 +340,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "round-2 build.md \"Not built\" now says 422 for a missing or blank note and 501 `not_mocked` for a valid note. This matches `frontend/mock/server.mjs` and `mock-decide.test.ts` as checked in round 1. The mock is unchanged this round."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "n/a (report only)"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "round-2 build.md \"Not built\" now says 422 for a missing or blank note and 501 `not_mocked` for a valid note. This matches `frontend/mock/server.mjs` and `mock-decide.test.ts` as checked in round 1. The mock is unchanged this round."
       ]
     },
     {
@@ -402,7 +466,7 @@
         "delivery/features/F-04/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -419,11 +483,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "Default W-1201 Approve computes to rgb(36, 89, 214) (#2459D6, action blue) at 1440 (50px) and 390 (54px, full width). This matches \"Approve v2\" on SCR-03-desktop.dc.html and SCR-03-mobile.dc.html. While unconfirmed it is disabled and grey, as intended."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Default W-1201 Approve computes to rgb(36, 89, 214) (#2459D6, action blue) at 1440 (50px) and 390 (54px, full width). This matches \"Approve v2\" on SCR-03-desktop.dc.html and SCR-03-mobile.dc.html. While unconfirmed it is disabled and grey, as intended."
       ]
     },
     {
@@ -439,7 +517,7 @@
         "delivery/features/F-04/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -456,11 +534,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "Approve done (W-1201, approve answered by a local route stub): banner background rgb(221, 239, 227) (verified-tint), border rgb(34, 118, 74) (verified), eyebrow \"YOU APPROVED \u00b7 HH:mm\" and heading in rgb(22, 80, 47) (verified-ink). This matches SCR-03-desktop-done.dc.html and SCR-03-mobile-done.dc.html for the banner and eyebrow. The heading colour is noted below."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Approve done (W-1201, approve answered by a local route stub): banner background rgb(221, 239, 227) (verified-tint), border rgb(34, 118, 74) (verified), eyebrow \"YOU APPROVED \u00b7 HH:mm\" and heading in rgb(22, 80, 47) (verified-ink). This matches SCR-03-desktop-done.dc.html and SCR-03-mobile-done.dc.html for the banner and eyebrow. The heading colour is noted below."
       ]
     },
     {
@@ -476,7 +568,7 @@
         "delivery/features/F-04/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -493,11 +585,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "W-1203 reads \"Approval chain 1 step\" at both widths. W-1208 reads \"Step 3 of 3\"."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-1203 reads \"Approval chain 1 step\" at both widths. W-1208 reads \"Step 3 of 3\"."
       ]
     },
     {
@@ -513,7 +619,7 @@
         "delivery/features/F-04/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -530,11 +636,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "Phone Approve is 54px with 17px text, full width, as on SCR-03-mobile."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Phone Approve is 54px with 17px text, full width, as on SCR-03-mobile."
       ]
     },
     {
@@ -550,7 +670,7 @@
         "delivery/features/F-04/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -567,11 +687,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "W-1206 step 3 reads \"CEO \u00b7 Ada Okafor (you)\"."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-1206 step 3 reads \"CEO \u00b7 Ada Okafor (you)\"."
       ]
     },
     {
@@ -587,7 +721,7 @@
         "delivery/features/F-04/round-1/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -604,11 +738,25 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "useDecision.ts:126-141: `reconcile()` catches a failed read. A 401, 403 or 404 goes to the `error` view (signed-out or no-access, no controls). Any other failure goes to `unconfirmed`. The controls come back only when the reloaded task is actionable at `claim.revision`; a different revision shows the stale view. useDecision.ts:186: `decide()` returns early unless `view.kind === 'item'`. DecidePanel.tsx:32: `locked` disables all three buttons. useDecision.ts:172: the claim effect runs only in the `item` view, so the unconfirmed view sends no claim. useDecision.ts:144-148: `recheck()` calls `reconcile()` only, which is one GET. The UnconfirmedNotice (DecideView.tsx:31-44) no longer says the item was reloaded. Unit test \"decide network error and a failed reload keep every control off; Try again only reads the item\" asserts the disabled buttons and that the only POSTs were claim and decide. The builder also reports an e2e test with the same POST-count check. When the reconcile read succeeds after the claim moved the revision (for example 2 to 3), the page claims again at revision 3 before the buttons come back. A claim records no decision, so this is safe."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "useDecision.ts:126-141: `reconcile()` catches a failed read. A 401, 403 or 404 goes to the `error` view (signed-out or no-access, no controls). Any other failure goes to `unconfirmed`. The controls come back only when the reloaded task is actionable at `claim.revision`; a different revision shows the stale view. useDecision.ts:186: `decide()` returns early unless `view.kind === 'item'`. DecidePanel.tsx:32: `locked` disables all three buttons. useDecision.ts:172: the claim effect runs only in the `item` view, so the unconfirmed view sends no claim. useDecision.ts:144-148: `recheck()` calls `reconcile()` only, which is one GET. The UnconfirmedNotice (DecideView.tsx:31-44) no longer says the item was reloaded. Unit test \"decide network error and a failed reload keep every control off; Try again only reads the item\" asserts the disabled buttons and that the only POSTs were claim and decide. The builder also reports an e2e test with the same POST-count check. When the reconcile read succeeds after the claim moved the revision (for example 2 to 3), the page claims again at revision 3 before the buttons come back. A claim records no decision, so this is safe."
       ]
     },
     {
@@ -624,7 +772,7 @@
         "delivery/features/F-04/round-1/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -641,11 +789,94 @@
           ],
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-14T01:56:23Z",
+          "refs": [
+            "DecideStates.tsx:219-225: `Object.hasOwn(VERDICT_WORDS, result.verdict)` gates the words. An unknown or inherited key falls back to `RECORDED`, and `approved` requires a known `approve`. A unit test echoes `constructor` and asserts the neutral wording, and that the page does not say \"approved\"."
+          ],
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "3c93fe0"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "DecideStates.tsx:219-225: `Object.hasOwn(VERDICT_WORDS, result.verdict)` gates the words. An unknown or inherited key falls back to `RECORDED`, and `approved` requires a known `approve`. A unit test echoes `constructor` and asserts the neutral wording, and that the page does not say \"approved\"."
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In the unconfirmed state the Note textarea stays editable while all three decision buttons are off. Harmless, but it invites typing a note that cannot be sent. Optionally disable it or leave it, as the design engineer prefers. `frontend/src/features/decide/DecidePanel.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T01:56:23Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In the unconfirmed state the page heading still reads \"Approve invoice v2\" and the \"Approving earns APPROVED only\" hint stays visible. This is acceptable, because the warning is above it, but \"Approve invoice v2\" can read as if the approval happened. Consider keeping it as is, since it names the item.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T01:56:23Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Try again button in the unconfirmed state uses `psl-btn--sm` (40px) at `frontend/src/features/decide/DecideView.tsx:39`. The Button README reserves control-sm for the top bar and dense toolbars; the default content control is control-md (44px). Expected 44px, actual 40px at 390 and 1440. Visible only in that state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:56:23Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
       ]
     }
   ],
@@ -891,6 +1122,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T01:52:05Z",
+      "round": 2,
+      "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T01:56:23Z",
       "round": 2,
       "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
       "reason": null
