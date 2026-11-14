@@ -122,11 +122,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance (delivery acceptance only; client/product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -710,6 +712,98 @@
           "action": "add",
           "by": "reviewer-qa",
           "at": "2026-11-14T16:14:54Z",
+          "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The recorded gate `round-3/checks.md` is for 2892f00, not this head. Technical states it did not re-run the full gate (it ran 271 tests in 7 files). The full gate on 4e8a8c7 (875 vitest tests, lint, typecheck, build) and the 111-test e2e run are builder-reported in `build.md`, not tool-recorded. Independent evidence on this head (QA's journeys, UI's fidelity re-run, technical's targeted tests) covers the behaviour, so I do not block. Expected: the coordinator re-runs `delivery/checks.sh` on 4e8a8c7 and records it before merge, as was done for F-05 (commit 54bc36a). If that run fails, this PASS lapses.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:17:51Z",
+          "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-3-1 / UX-3-1: \"1 PROJECTS\" is not pluralised (`frontend/src/features/projects/ProjectsList.tsx:472`). Cosmetic. Carry to a follow-up.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:17:51Z",
+          "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-3-1: `tests/mock-contract.test.ts` still strips the v7 PROPOSAL fields from the E-PROJECTS and E-PROJECT bodies (`contractBody`, `PROPOSED_FIELDS` in `mock/projects.mjs`), though `build.md` says it is gone. The full v7 body is validated in `mock-projects.test.ts`, so coverage holds. Remove it and correct the build note in a follow-up.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:17:51Z",
+          "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carry-overs still open in feature.json: PMO-1-1 (`operation_ids` is `[]`; set it to E-PROJECTS and E-PROJECT), PMO-1-2 (A-PROJECT's money half stays open until FE-M3-REPORT; milestones, documents, money, registers and actions are not proved by this feature), PMO-1-3, QA-1-1 (double-encoded case_id; recheck at FE-CONNECT-1), UX-2-2 (phone access to closed projects, product), UI-2-2 (title size, frame-owned).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:17:51Z",
           "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4"
         }
       ]
