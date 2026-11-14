@@ -1,0 +1,6 @@
+{ "exceptions": [
+  { "role": "link", "name": "Start work", "reason": "Start work opens the F-05 start flow (top bar on every board; the same link in the empty boards' caught-up panel). F-05 is not merged; src/shell/** is not F-02's.", "approved_by": "Coordinator, F-02 round 3 brief (top-bar Start work belongs to F-05; list as a frame item)" },
+  { "role": "link", "name": "More ways to start", "reason": "Split part of the F-05 Start work button in the top bar.", "approved_by": "Coordinator, F-02 round 3 brief (frame item, F-05)" },
+  { "role": "link", "name": "Start", "reason": "Phone top-bar Start button, F-05.", "approved_by": "Coordinator, F-02 round 3 brief (frame item, F-05)" },
+  { "role": "heading", "name": "You're all caught up", "reason": "The empty Needs me heading reads \"Nothing needs you right now\".", "approved_by": "Design engineer, 14 Nov 2026 (round-2/acceptance-product.md)" }
+] }

@@ -1,0 +1,262 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "← My work",
+      "reason": "Phone form is a bottom sheet for every line (design engineer, 14 Nov 2026). SCR-04-mobile-weekly, -minutes, -issue, -change, -incident, -escalation and -leadership draw a full-screen page whose bar reads \"← My work\" / \"START\"; the build opens the same content in the bottom sheet over My work, so that page chrome is not drawn.",
+      "approved_by": "Design engineer, 14 Nov 2026 (relayed by the delivery coordinator)"
+    },
+    {
+      "role": "tablist",
+      "name": "My work",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "table",
+      "name": "(table)",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "columnheader",
+      "name": "WORK",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "columnheader",
+      "name": "STATE",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "columnheader",
+      "name": "AGE",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "2h",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "40m",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "1d",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "3d",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Lagoon Health · Milestone 2 invoice",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Harmattan Bank · go-live report",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "tab",
+      "name": "Unassigned 1",
+      "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Lagoon Health · patient app ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Lagoon Health ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 3 · UAT signed 07 Nov ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 3 · UAT signed ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Harmattan Bank · mobile onboarding ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "INC-0031 · Payments failing for some cards ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "ISS-0233 · Login fails on older Android phones ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "ISS-0241 · Client test data late ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Weekly sync · 17 Nov ▾",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Add WhatsApp reminders as well as SMS",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Disable the new card router; fall back to the old one.",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "e.g. client wants the PO number on it",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Find a line…",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "12–18 Nov 2026",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "17 Nov 2026",
+      "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Anything Chidi should know (optional)",
+      "reason": "Label of a native input: the build uses <label for>, which the tool skips (it names the input instead); the board draws a plain span.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "What the client asked for",
+      "reason": "Label of a native input: the build uses <label for>, which the tool skips (it names the input instead); the board draws a plain span.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Plan",
+      "reason": "Label of a native input: the build uses <label for>, which the tool skips (it names the input instead); the board draws a plain span.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Period",
+      "reason": "Label of a native input: the build uses <label for>, which the tool skips (it names the input instead); the board draws a plain span.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "weekly-sync-notes-17nov.docx",
+      "reason": "Proof upload is FE-M2A-PROOF: the Proof field is drawn as the board shows it but disabled (\"Proof upload comes next\"), so no uploaded file is listed.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Uploaded · 38 KB",
+      "reason": "Proof upload is FE-M2A-PROOF: the Proof field is drawn as the board shows it but disabled (\"Proof upload comes next\"), so no uploaded file is listed.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "client-request-17nov.pdf",
+      "reason": "Proof upload is FE-M2A-PROOF: the Proof field is drawn as the board shows it but disabled (\"Proof upload comes next\"), so no uploaded file is listed.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Uploaded · 20 KB",
+      "reason": "Proof upload is FE-M2A-PROOF: the Proof field is drawn as the board shows it but disabled (\"Proof upload comes next\"), so no uploaded file is listed.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 4 · hypercare ▾",
+      "reason": "Validation board sample: the spec keeps Milestone 4 unselectable (disabled_reason) and uses the mock's Harmattan billing-contact 422 (spec Assumptions) and \"Completed milestone is required.\" in its place.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 4 ▾",
+      "reason": "Validation board sample: the spec keeps Milestone 4 unselectable (disabled_reason) and uses the mock's Harmattan billing-contact 422 (spec Assumptions) and \"Completed milestone is required.\" in its place.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 4 isn't marked complete yet. Record its completion and proof first.",
+      "reason": "Validation board sample: the spec keeps Milestone 4 unselectable (disabled_reason) and uses the mock's Harmattan billing-contact 422 (spec Assumptions) and \"Completed milestone is required.\" in its place.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "Not marked complete yet.",
+      "reason": "Validation board sample: the spec keeps Milestone 4 unselectable (disabled_reason) and uses the mock's Harmattan billing-contact 422 (spec Assumptions) and \"Completed milestone is required.\" in its place.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "No billing contact for this client.",
+      "reason": "Validation board sample: the spec keeps Milestone 4 unselectable (disabled_reason) and uses the mock's Harmattan billing-contact 422 (spec Assumptions) and \"Completed milestone is required.\" in its place.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "link",
+      "name": "Planning and delivery handoff After an engagement is logged",
+      "reason": "Out of scope (spec Not included: the Planning and delivery handoff line is FE-M4); E-LINES does not return it.",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    },
+    {
+      "role": "text",
+      "name": "×",
+      "reason": "The phone board draws the close mark as plain text; the build draws the same × inside a button named \"Close\" (it matches the board's Close).",
+      "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+    }
+  ]
+}

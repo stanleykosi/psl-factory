@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-08",
   "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
@@ -85,22 +85,18 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "reviewer-technical",
-      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
-      "evidence_refs": [
-        "delivery/features/F-08/round-1/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "passed",
-      "reviewer": "qa",
-      "authority": "integrated QA (UI against the contract mock only; no backend exists for E-OVERVIEW in this lane)",
-      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
-      "evidence_refs": [
-        "delivery/features/F-08/round-1/review-qa.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -119,22 +115,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
-      "evidence_refs": [
-        "delivery/features/F-08/round-1/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "UI design reviewer (design system and approved SCR-06 artboards)",
-      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
-      "evidence_refs": [
-        "delivery/features/F-08/round-1/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -206,9 +198,159 @@
           "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
         }
       ]
+    },
+    {
+      "id": "FID-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Built page does not follow the approved boards (design-fidelity check fails; design engineer review 14 Nov 2026)",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "design engineer (hunchoweb)",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, but spec.md and readiness.md put E-OVERVIEW (read only) in scope. Expected: the record names E-OVERVIEW. Actual: it names none, so coverage cannot be read from the record. Evidence is intact in build.md, the e2e and `mock-overview.test.ts`. Add E-OVERVIEW to the record at merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In `feature.json` acceptance_criteria, criteria 12, 13, 14 and 20 are cut off at their lead-in line (\"Verify:\"). The sub-bullets are in spec.md lines 193-205 and 211-214, and build.md covers each. The record should carry the full text. `baseline.explicit_exception` is also null, though readiness.md says the scope gate is the recorded early-start exception (mock-only, unreleased). Reconcile both before merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "UI-1-2 is the tag tone and line identity gap against the approved artboard. If product rejects the recorded PMO-0-4 rule, UI-1-2 becomes blocking. Resolve it in product acceptance, not here.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
     }
   ],
-  "prior_review_records": [],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "passed",
+          "reviewer": "qa",
+          "authority": "integrated QA (UI against the contract mock only; no backend exists for E-OVERVIEW in this lane)",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "passed",
+          "reviewer": "pmo-acceptance",
+          "authority": "PMO delivery acceptance (delivery only; product acceptance, merge and release keep their own authorities)",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/acceptance-pmo.md"
+          ]
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-08/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design system and approved SCR-06 artboards)",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -341,7 +483,7 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 3,
   "history": [
     {
@@ -383,6 +525,22 @@
       "round": 1,
       "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
       "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T04:27:55Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T04:27:55Z",
+      "round": 2,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
     }
   ],
   "routing": {
@@ -398,10 +556,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
