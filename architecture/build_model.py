@@ -15,6 +15,7 @@ SRC = {
     'S-DECISIONS': ('Decisions relayed 13 Nov 2026', 'sources/decisions-2026-11-13.md', '2026-11-13', 'private'),
     'S-DECISIONS-V2': ('Frontend decisions and role boundary, 13 Nov 2026', 'sources/decisions-2026-11-13-v2.md', '2026-11-13b', 'private'),
     'S-DECISIONS-V3': ('Contract fields for the approved boards; decision variants parked, 13 Nov 2026', 'sources/decisions-2026-11-13-v3.md', '2026-11-13c', 'private'),
+    'S-DECISIONS-V4': ('Sample tag hidden; remaining frontend screens split to build in parallel, 14 Nov 2026', 'sources/decisions-2026-11-14.md', '2026-11-14', 'private'),
 }
 def sha(p): return hashlib.sha256(open(os.path.join(HERE, p), 'rb').read()).hexdigest()
 sources = [{'id': k, 'title': t, 'path': p, 'version': v, 'classification': c, 'sha256': sha(p)} for k, (t, p, v, c) in SRC.items()]
@@ -443,9 +444,15 @@ tasks = [
     T('FE-DECIDE', 'Frontend: standard decision panel and phone action bar (approve, return, reject; stale-version reload; not yours; own work)', [], ['R-DECIDE'], [], ['T-FRONTEND-SHELL'], ['A-DECIDE', 'A-STALE', 'A-NOT-YOURS'], FE),
     T('FE-DECIDE-VARIANTS', 'Frontend: payment-exception, CEO final costing and CTO emergency decision variants (parked)', [], ['R-DECIDE'], ['D-DECISION-VARIANTS'], ['FE-DECIDE'], ['A-DECIDE-VARIANTS'], FE),
     T('FE-CONNECT-1', 'Connect the first feature to the real API', [], ['R-SESSION', 'R-MYWORK', 'R-WORKITEM', 'R-DECIDE'], [], ['FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE', 'T-FOUNDATION', 'T-MYWORK', 'T-WORKITEM', 'T-DECIDE'], ['A-ME', 'A-MYWORK', 'A-WORKITEM', 'A-DECIDE', 'A-STALE', 'A-NOT-YOURS'], FE),
-    T('FE-M2', 'Frontend: start work drawers, record a response, exceptions', [], ['R-START', 'R-RESPONSE', 'R-EXCEPTION'], [], ['FE-MYWORK', 'FE-WORKITEM', 'FE-DECIDE'], ['A-START', 'A-RESPONSE', 'A-RECONCILE'], FE),
-    T('FE-M3', 'Frontend: projects, overview and factory floor, Finance, payroll, setup', [], ['R-PROJECT', 'R-REPORTS', 'R-OVERVIEW', 'R-MOTION', 'R-FINANCE', 'R-SETUP'], [], ['FE-M2'], ['A-PROJECT', 'A-OVERVIEW', 'A-MONTHEND', 'A-PAYROLL', 'A-SETUP'], FE),
-    T('FE-M4', 'Frontend: notification centre, alert settings, assistant', [], ['R-ALERTS', 'R-ASSISTANT'], [], ['FE-M3'], ['A-ALERTS', 'A-ASSISTANT'], FE),
+    dict(T('FE-M2', 'Frontend: start work drawers, record a response, exceptions (retired 14 Nov 2026: split into FE-M2A and FE-M2B)', [], ['R-START', 'R-RESPONSE', 'R-EXCEPTION'], [], ['T-FRONTEND-SHELL'], ['A-START', 'A-RESPONSE', 'A-RECONCILE'], FE), status='retired'),
+    dict(T('FE-M3', 'Frontend: projects, overview and factory floor, Finance, payroll, setup (retired 14 Nov 2026: split into FE-M3-PROJECTS, -OVERVIEW, -FINANCE, -SETUP)', [], ['R-PROJECT', 'R-REPORTS', 'R-OVERVIEW', 'R-MOTION', 'R-FINANCE', 'R-SETUP'], [], ['T-FRONTEND-SHELL'], ['A-PROJECT', 'A-OVERVIEW', 'A-MONTHEND', 'A-PAYROLL', 'A-SETUP'], FE), status='retired'),
+    dict(T('FE-M2A', 'Frontend: Start work button and line intake drawers', [], ['R-START'], [], ['T-FRONTEND-SHELL'], ['A-START'], FE), evidence=['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V4']),
+    dict(T('FE-M2B', 'Frontend: record a client response and the all-exceptions list', [], ['R-RESPONSE', 'R-EXCEPTION'], [], ['FE-WORKITEM'], ['A-RESPONSE', 'A-RECONCILE'], FE), evidence=['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V4']),
+    dict(T('FE-M3-PROJECTS', 'Frontend: projects list, project journey and project tabs', [], ['R-PROJECT'], [], ['T-FRONTEND-SHELL'], ['A-PROJECT'], FE), evidence=['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V4']),
+    dict(T('FE-M3-OVERVIEW', 'Frontend: overview, factory floor and reports', [], ['R-OVERVIEW', 'R-MOTION', 'R-REPORTS'], [], ['T-FRONTEND-SHELL'], ['A-OVERVIEW'], FE), evidence=['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V4']),
+    dict(T('FE-M3-FINANCE', 'Frontend: Finance month end, import and payroll', [], ['R-FINANCE'], [], ['T-FRONTEND-SHELL'], ['A-MONTHEND', 'A-PAYROLL'], FE), evidence=['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V4']),
+    dict(T('FE-M3-SETUP', 'Frontend: setup, rules, people and templates', [], ['R-SETUP'], [], ['T-FRONTEND-SHELL'], ['A-SETUP'], FE), evidence=['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V4']),
+    dict(T('FE-M4', 'Frontend: notification centre, alert settings, assistant', [], ['R-ALERTS', 'R-ASSISTANT'], [], ['T-FRONTEND-SHELL'], ['A-ALERTS', 'A-ASSISTANT'], FE), evidence=['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V4']),
 ]
 for t in tasks:
     if t['id'] == 'T-ALERTS': t['refs'] += ['I-ALERTS', 'JOB-ALERTS']
@@ -457,9 +464,9 @@ milestones = [
      'exit_criteria': ['A-ME, A-MYWORK, A-WORKITEM, A-HISTORY, A-DECIDE, A-STALE, A-NOT-YOURS pass on PostgreSQL'], 'gate_ids': ['D-API-STYLE', 'D-AUTH']},
     {'id': 'M-1C', 'title': 'First feature connected end to end', 'refs': ['FE-CONNECT-1'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['The frontend runs on the real API with sample data; the same scenarios pass'], 'gate_ids': []},
-    {'id': 'M-2', 'title': 'Start, respond and recover', 'refs': ['T-START', 'T-RESPONSE', 'T-EXCEPTIONS', 'T-BACKEND-ROLES', 'FE-M2', 'FE-DECIDE-VARIANTS'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
+    {'id': 'M-2', 'title': 'Start, respond and recover', 'refs': ['T-START', 'T-RESPONSE', 'T-EXCEPTIONS', 'T-BACKEND-ROLES', 'FE-M2', 'FE-M2A', 'FE-M2B', 'FE-DECIDE-VARIANTS'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-START, A-RESPONSE, A-RECONCILE, A-RESUME pass', 'A-DECIDE-VARIANTS passes once D-DECISION-VARIANTS is decided'], 'gate_ids': ['D-RETURN', 'D-DECISION-VARIANTS']},
-    {'id': 'M-3', 'title': 'Projects, overview, Finance, payroll and setup', 'refs': ['T-PROJECTS', 'T-FLOOR', 'T-FINANCE', 'T-PAYROLL', 'T-SETUP', 'FE-M3'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
+    {'id': 'M-3', 'title': 'Projects, overview, Finance, payroll and setup', 'refs': ['T-PROJECTS', 'T-FLOOR', 'T-FINANCE', 'T-PAYROLL', 'T-SETUP', 'FE-M3', 'FE-M3-PROJECTS', 'FE-M3-OVERVIEW', 'FE-M3-FINANCE', 'FE-M3-SETUP'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-PROJECT, A-REPORT, A-OVERVIEW, A-MONTHEND, A-PAYROLL, A-SETUP pass'], 'gate_ids': []},
     {'id': 'M-4', 'title': 'Alerts and assistant', 'refs': ['T-ALERTS', 'T-ASSISTANT', 'FE-M4'], 'evidence': ['S-SCREENS'], 'owner_role': 'delivery owner',
      'exit_criteria': ['A-ALERTS and A-ASSISTANT pass on mock and synthetic providers'], 'gate_ids': ['D-ALERT-PROVIDERS', 'D-AGENT-PROVIDER', 'D-NOTIFY-MODEL', 'D-CONVERSATION-MODEL']},

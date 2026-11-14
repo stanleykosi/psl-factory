@@ -95,6 +95,14 @@
       "version": "2026-11-13c",
       "classification": "private",
       "sha256": "41c744d742c105653eeb9b15f9d798ff1534e4ff4f3c5fecbcc024d0c217b5d0"
+    },
+    {
+      "id": "S-DECISIONS-V4",
+      "title": "Sample tag hidden; remaining frontend screens split to build in parallel, 14 Nov 2026",
+      "path": "sources/decisions-2026-11-14.md",
+      "version": "2026-11-14",
+      "classification": "private",
+      "sha256": "79aa4bab872d636c3e9b7867f42cb4b71c8360956a8e9b0971c58cd995c963e3"
     }
   ],
   "requirements": [
@@ -9559,7 +9567,7 @@
     },
     {
       "id": "FE-M2",
-      "title": "Frontend: start work drawers, record a response, exceptions",
+      "title": "Frontend: start work drawers, record a response, exceptions (retired 14 Nov 2026: split into FE-M2A and FE-M2B)",
       "refs": [
         "R-START",
         "R-RESPONSE",
@@ -9570,11 +9578,9 @@
         "S-SCOPE"
       ],
       "owner_role": "frontend developer",
-      "status": "planned",
+      "status": "retired",
       "depends_on": [
-        "FE-MYWORK",
-        "FE-WORKITEM",
-        "FE-DECIDE"
+        "T-FRONTEND-SHELL"
       ],
       "gate_ids": [],
       "acceptance": [
@@ -9588,7 +9594,7 @@
     },
     {
       "id": "FE-M3",
-      "title": "Frontend: projects, overview and factory floor, Finance, payroll, setup",
+      "title": "Frontend: projects, overview and factory floor, Finance, payroll, setup (retired 14 Nov 2026: split into FE-M3-PROJECTS, -OVERVIEW, -FINANCE, -SETUP)",
       "refs": [
         "R-PROJECT",
         "R-REPORTS",
@@ -9602,9 +9608,9 @@
         "S-SCOPE"
       ],
       "owner_role": "frontend developer",
-      "status": "planned",
+      "status": "retired",
       "depends_on": [
-        "FE-M2"
+        "T-FRONTEND-SHELL"
       ],
       "gate_ids": [],
       "acceptance": [
@@ -9612,6 +9618,155 @@
         "A-OVERVIEW",
         "A-MONTHEND",
         "A-PAYROLL",
+        "A-SETUP"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M2A",
+      "title": "Frontend: Start work button and line intake drawers",
+      "refs": [
+        "R-START"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V4"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "T-FRONTEND-SHELL"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-START"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M2B",
+      "title": "Frontend: record a client response and the all-exceptions list",
+      "refs": [
+        "R-RESPONSE",
+        "R-EXCEPTION"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V4"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "FE-WORKITEM"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-RESPONSE",
+        "A-RECONCILE"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M3-PROJECTS",
+      "title": "Frontend: projects list, project journey and project tabs",
+      "refs": [
+        "R-PROJECT"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V4"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "T-FRONTEND-SHELL"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-PROJECT"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M3-OVERVIEW",
+      "title": "Frontend: overview, factory floor and reports",
+      "refs": [
+        "R-OVERVIEW",
+        "R-MOTION",
+        "R-REPORTS"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V4"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "T-FRONTEND-SHELL"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-OVERVIEW"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M3-FINANCE",
+      "title": "Frontend: Finance month end, import and payroll",
+      "refs": [
+        "R-FINANCE"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V4"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "T-FRONTEND-SHELL"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-MONTHEND",
+        "A-PAYROLL"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M3-SETUP",
+      "title": "Frontend: setup, rules, people and templates",
+      "refs": [
+        "R-SETUP"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V4"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "T-FRONTEND-SHELL"
+      ],
+      "gate_ids": [],
+      "acceptance": [
         "A-SETUP"
       ],
       "estimate": null,
@@ -9627,12 +9782,13 @@
       ],
       "evidence": [
         "S-SCREENS",
-        "S-SCOPE"
+        "S-SCOPE",
+        "S-DECISIONS-V4"
       ],
       "owner_role": "frontend developer",
       "status": "planned",
       "depends_on": [
-        "FE-M3"
+        "T-FRONTEND-SHELL"
       ],
       "gate_ids": [],
       "acceptance": [
@@ -9716,6 +9872,8 @@
         "T-EXCEPTIONS",
         "T-BACKEND-ROLES",
         "FE-M2",
+        "FE-M2A",
+        "FE-M2B",
         "FE-DECIDE-VARIANTS"
       ],
       "evidence": [
@@ -9740,7 +9898,11 @@
         "T-FINANCE",
         "T-PAYROLL",
         "T-SETUP",
-        "FE-M3"
+        "FE-M3",
+        "FE-M3-PROJECTS",
+        "FE-M3-OVERVIEW",
+        "FE-M3-FINANCE",
+        "FE-M3-SETUP"
       ],
       "evidence": [
         "S-SCREENS"

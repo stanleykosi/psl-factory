@@ -1,0 +1,56 @@
+{
+  "project_id": "psl-factory-frontend",
+  "generator_version": "0.1.0",
+  "skill_version": "0.1.0",
+  "schema_version": "1.0",
+  "template_version": "0.1.0",
+  "implementation_hashes": {
+    "arch.py": "2626eea8e079746a9993eaf93f95c684be3a446515504b02712ba74d28a65032",
+    "model.schema.json": "e63dd514cc9ac812c552bff27c74778cc3732147997461c914680a2e037e4215",
+    "explorer.html": "7b3edb69cbabc5ec5a863412a73f87aa4efd50f95d16ea0586ceedf5d7ba9f9b",
+    "explorer.js": "b87422f91fdb3b4eb06fbfbeea31d3602956852a8a23af4d5d6a3dfd88406ead",
+    "explorer.css": "bc62f37bac17e0691c8797bfd6fc2e65078ecc243577a6dcbdf0100d76e7c973"
+  },
+  "input_digest": "5ebad6a4a904344d2444a76945c20b87c412b0f7b2d8ed3c65efb8170b136b68",
+  "base_manifest_digest": "9d4cbc10137ee452d29d240876cf07fbf13d02ac63e9b0fbdddb1256ae568ff0",
+  "scope_gate": {
+    "status": "EXCEPTION",
+    "reason": "early start authorized by hunchoweb (PSL factory design engineer): Design engineer authorised continuing design on scope version 2 (assistant page added) before PSL names an approver (Q-01 open); PSL approval still required",
+    "scope_sha256": "d3152ccdbfd302680d07d6e2a9d49097c9875df984296e97e16f1ebec8a4b727"
+  },
+  "mode": "update",
+  "authorized_actions": [
+    "local_artifact_generation"
+  ],
+  "status": "complete",
+  "pending_decisions": [
+    "D-API-STYLE",
+    "D-AUTH",
+    "D-HOSTING",
+    "D-NOTIFY-MODEL",
+    "D-ALERT-PROVIDERS",
+    "D-CONVERSATION-MODEL",
+    "D-AGENT-PROVIDER",
+    "D-RETURN",
+    "D-TASK-DECISION-VIEW",
+    "D-WORKITEM-DETAIL",
+    "D-WORKLIST-FILTERS",
+    "D-DECISION-VARIANTS"
+  ],
+  "artifact_validation": "passed",
+  "application_acceptance": "not_executed_by_generator",
+  "files": {
+    "delivery.md": "39dbf694f3ad5a386efdf4f9e8db8888fb4c0dc7eb561ce1707faab6cda2a093",
+    "endpoints.csv": "3bd7938da0d9ad43be25c1625627d4a4b75d8ed4e024e81a7b1f14be9995e584",
+    "handoff.md": "a525a0a5ea95d09df2b42b936f15e6efa23695f7336f179f1a9a0de40e185874",
+    "impact.json": "fc3826e51e2f12aa7fccc05b9e960f9e91b73728d498e3298081f1a32d7f5bec",
+    "index.html": "c528ba321cd5990aa5a26a4adf66b455fa2a7aff43d54a29a958356c2d413914",
+    "integrations.csv": "b485757962b22533530c29f35fbd93e706e148d90d82d45507a0e1f815b0577e",
+    "model.json": "02324dc92fae4aad82b4c3a2a433fc1a7a8f74abd5694a21525d38c70234b96e",
+    "openapi.json": "22943665416e712e82d49c5e837ce65ed741ab7199aa21405ce051c761b17d69",
+    "reviews.json": "bcf04a29db9f962417fe2b729349e7689c8893cc421115fe7bacf2547c87f2d5",
+    "tasks.csv": "d6436abcb3784f4a1ce8767d744c2a71554523a3150f3efd9ddd2c762fd0fddd",
+    "traceability.csv": "7f5d016a6cedd3207a112a56f911d487780491072afa36cc2fb352a423634944",
+    "validation.json": "79d9b92b836d3cf2920ecbe66208d8ae5eee69f08d2608592dd2459c9275afdd"
+  }
+}
