@@ -919,3 +919,4 @@
 {"at":"2026-11-14T16:20:11Z","feature":"F-14","round":4,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"c26c9f34deee","findings":{"QA-4-1":"low"},"written_at":"2026-11-14T16:19:06Z"}
 {"at":"2026-11-14T16:20:11Z","feature":"F-14","round":4,"kind":"finding","action":"add","finding":"QA-4-1","by":"reviewer-qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-14T16:20:11Z","feature":"F-14","round":4,"kind":"transition","head":"c26c9f34deee","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-14T16:22:29Z","feature":"F-14","round":4,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/22","git.pr_number":22,"git.ci_status":"passed"}}
