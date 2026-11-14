@@ -1,11 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { api, call } from '@/api/client';
 
-import { AGENTS, type Agent, type Counts, type WaitingOn, type WorkItem } from './model';
+import { AGENT_AVATAR, AGENTS, type Agent, type Counts, type WaitingOn, type WorkItem } from './model';
 import { AgentAvatar } from './WorkRows';
 
 const GROUPS: WaitingOn[] = ['agent', 'outside_party', 'someone_else'];
@@ -48,6 +49,7 @@ export function CaughtUp({ counts, phone, onSeeStarted }: { counts: Counts | nul
   return (
     <div className="my-work__caughtup">
       <section aria-label="Nothing needs you" className="my-work__nothing">
+        <Image src={AGENT_AVATAR.tola.src} alt="Tola, the PMO agent" width={96} height={96} className="my-work__mascot" />
         <div className="my-work__nothingtext">
           <h2>Nothing needs you right now</h2>
           <p>

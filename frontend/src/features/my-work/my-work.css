@@ -19,6 +19,7 @@
 .my-work__search { flex: 1 1 320px; max-width: 460px; }
 .my-work__filter { position: relative; flex: none; }
 .my-work__iconbtn { position: relative; }
+.my-work__avatar { object-fit: cover; }
 .my-work__badge-open { background: var(--surface); color: var(--ink); }
 .my-work__chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 
@@ -89,6 +90,7 @@
 /* empty Needs me (SCR-01-*-empty): caught up, then where the person's started work is */
 .my-work__caughtup { display: flex; flex-direction: column; gap: var(--space-4); max-width: 780px; }
 .my-work__nothing { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-4) 28px; background: var(--mascot-tola-tint); border: 2px solid var(--ink); }
+.my-work__mascot { flex: none; width: 96px; height: 96px; align-self: flex-end; }
 .my-work__nothingtext { display: flex; flex-direction: column; gap: 10px; }
 .my-work__nothingtext h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 30px; line-height: 1.05; }
 .my-work__nothingtext p { margin: 0; color: var(--ink-muted); line-height: 1.5; }
@@ -115,4 +117,5 @@
   .my-work__foot { margin-top: var(--space-2); border-top: 2px solid var(--ink); }
   .my-work__nothing { flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); }
   .my-work__nothingtext h2 { font-size: 24px; }
+  .my-work__mascot { width: 72px; height: 72px; align-self: flex-start; }
 }

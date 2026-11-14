@@ -1,8 +1,9 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { SampleLabel } from '@/shell/SampleLabel';
 
-import { formatAge, KINDS, miniSegments, stateTag, stationText, type WorkItem } from './model';
+import { AGENT_AVATAR, formatAge, KINDS, miniSegments, stateTag, stationText, type WorkItem } from './model';
 
 function KindTag({ kind }: { kind: WorkItem['kind'] }) {
   const tag = KINDS[kind];
@@ -14,10 +15,11 @@ function StateTag({ state, words }: { state: string; words?: string }) {
   return <span className={`psl-tag psl-tag--${tag.family}`}>{words ?? tag.words}</span>;
 }
 
-/** CMP-18: an agent's round avatar on its own tint, beside the work it drafted or is doing. */
+/** CMP-18: the agent's mascot on its own tint, beside the work it drafted or is doing. */
 export function AgentAvatar({ agent }: { agent?: WorkItem['agent'] }) {
   if (!agent) return null;
-  return <span className={`psl-avatar psl-avatar--20 psl-avatar--${agent}`} aria-hidden="true" />;
+  const avatar = AGENT_AVATAR[agent];
+  return <Image src={avatar.src} alt={avatar.alt} width={20} height={20} className={`psl-avatar psl-avatar--20 psl-avatar--${agent} my-work__avatar`} />;
 }
 
 function Segments({ item, className }: { item: WorkItem; className: string }) {

@@ -548,6 +548,9 @@ describe('screen states', () => {
     const where = await screen.findByRole('region', { name: 'Where your work is' });
     await until(() => expect(where.querySelectorAll('.my-work__group')).toHaveLength(2));
     expect([...where.querySelectorAll('.my-work__grouphead')].map((g) => g.textContent)).toEqual(['Tola is drafting1', 'Other people are reviewing2']);
+    // Agents show their mascot image (public/agents/), never initials.
+    expect(screen.getByRole('img', { name: 'Tola, the PMO agent' }).getAttribute('src')).toContain('agents%2Ftola.png');
+    expect(within(where).getByRole('img', { name: 'Tola · PMO agent' })).toBeTruthy();
     expect(within(where).getByRole('link', { name: 'See all 3' }).getAttribute('href')).toBe('/my-work?queue=waiting_on_others');
     expect(calls.filter((c) => c.searchParams.has('waiting_on')).map((c) => c.searchParams.get('waiting_on'))).toEqual(['agent', 'outside_party', 'someone_else']);
     fireEvent.click(screen.getByRole('button', { name: 'See what you started' }));

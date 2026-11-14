@@ -64,6 +64,13 @@ export const WAITING_KEYS = Object.keys(WAITING_ON) as WaitingOn[];
 
 export const AGENTS: Record<Agent, string> = { tola: 'Tola', chidi: 'Chidi', zainab: 'Zainab' };
 
+/** CMP-18 mascot avatars: public/agents/ (from design/mascots/transparent/*-avatar.png, base PR #12). */
+export const AGENT_AVATAR: Record<Agent, { src: string; alt: string }> = {
+  tola: { src: '/agents/tola.png', alt: 'Tola · PMO agent' },
+  chidi: { src: '/agents/chidi.png', alt: 'Chidi · Finance agent' },
+  zainab: { src: '/agents/zainab.png', alt: 'Zainab · HR agent' },
+};
+
 export type View = { queue: Queue; q?: string; line?: string; project?: string; state?: WorkState; waiting?: WaitingOn; limit: Limit };
 
 /** Reads the view from the URL; invalid values fall back to the defaults. */
