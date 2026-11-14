@@ -305,6 +305,34 @@ describe('phone back link', () => {
     expect(within(phoneBar()).getByText('PSL FACTORY')).toBeTruthy();
   });
 
+  it('swapping to a different sub-page shows only the new link, and the old one never returns', async () => {
+    function ProjectPage() {
+      usePhoneBack({ label: 'Projects', href: '/projects' });
+      return <h1 className="shell-title">Lagoon Health</h1>;
+    }
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/exceptions';
+    const { rerender } = render(
+      <AppShell>
+        <SubPage />
+      </AppShell>,
+    );
+    await loaded();
+    expect(backLink()?.textContent).toBe('← Queue');
+    nav.pathname = '/projects/lagoon';
+    rerender(
+      <AppShell>
+        <ProjectPage />
+      </AppShell>,
+    );
+    // Synchronously after the commit: the layout effect has already swapped the link.
+    expect(within(phoneBar()).getAllByRole('link').map((a) => a.textContent)).toEqual(['← Projects']);
+    expect(backLink()?.getAttribute('href')).toBe('/projects');
+    await act(async () => {});
+    expect(within(phoneBar()).queryByText('← Queue')).toBeNull();
+    expect(within(phoneBar()).queryByRole('button', { name: 'Menu' })).toBeNull();
+  });
+
   it('pages that do not set it keep the menu bar', async () => {
     fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
     renderAt('/projects');

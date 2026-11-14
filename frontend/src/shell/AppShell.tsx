@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 
 import { api, call, setCsrfToken } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
@@ -32,7 +32,8 @@ export function useMe(): Me {
 export function usePhoneBack({ label, href }: PhoneBack) {
   const setBack = useContext(PhoneBackContext);
   if (!setBack) throw new Error('usePhoneBack is only available inside AppShell');
-  useEffect(() => {
+  // Layout effect: the link is set and cleared before paint, so no frame shows the previous page's bar.
+  useLayoutEffect(() => {
     const back = { label, href };
     setBack(back);
     return () => setBack(null);
