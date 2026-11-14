@@ -720,3 +720,4 @@
 {"at":"2026-11-14T08:41:58Z","feature":"F-09","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"14d6953dd4a3","written_at":"2026-11-14T08:41:57Z"}
 {"at":"2026-11-14T08:42:27Z","feature":"F-09","round":2,"kind":"finding","action":"verify","finding":"UI-1-1","by":"reviewer-ui"}
 {"at":"2026-11-14T08:42:28Z","feature":"F-09","round":2,"kind":"transition","head":"14d6953dd4a3","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-14T08:55:27Z","feature":"F-02","round":3,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"d245fef1f9e38ae3e707cdcb02ea7b9b14994488"}}

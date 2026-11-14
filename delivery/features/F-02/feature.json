@@ -978,9 +978,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "d245fef1f9e38ae3e707cdcb02ea7b9b14994488",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/my-work.spec.ts",
