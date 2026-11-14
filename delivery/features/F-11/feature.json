@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-11",
   "outcome": "A Lead or Admin opens Setup, reads every rule with its value or \"Not set\", and saves a role-list rule as its next version",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-SETUP"
   ],
@@ -129,11 +129,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical review (lead)",
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -159,25 +161,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (round 3, design-fidelity gate)",
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -503,7 +511,7 @@
         "delivery/features/F-11/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -520,11 +528,25 @@
           ],
           "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:13:12Z",
+          "refs": [
+            "`SetRulePanel.announce` now calls `staysOpen(page)`, which each view supplies from its own render condition (`RulesView.tsx:118`, `FinanceRulesView.tsx:138`). New unit tests: \"a re-read that makes a different rule editable keeps the panel\u2026\" (one alert inside the panel, no EDITOR_GONE, the panel falls back to `documents.client_reviewer`), and \"a Show more that brings the panel back drops the stale callout\". See TECH-3-1 for the hide-not-clear residue."
+          ],
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "604e1b0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`SetRulePanel.announce` now calls `staysOpen(page)`, which each view supplies from its own render condition (`RulesView.tsx:118`, `FinanceRulesView.tsx:138`). New unit tests: \"a re-read that makes a different rule editable keeps the panel\u2026\" (one alert inside the panel, no EDITOR_GONE, the panel falls back to `documents.client_reviewer`), and \"a Show more that brings the panel back drops the stale callout\". See TECH-3-1 for the hide-not-clear residue."
       ]
     },
     {
@@ -586,7 +608,7 @@
         "delivery/features/F-11/round-2/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "FIX_SUBMITTED",
+      "state": "OPEN",
       "history": [
         {
           "action": "add",
@@ -603,11 +625,33 @@
           ],
           "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:13:12Z",
+          "refs": [
+            "Unit test \"a server error whose re-read leaves every rule read-only\u2026\": a 500 response with every row `can_change: false`. The panel region is gone, the page alert has EDITOR_GONE and not NOT_SAVED, and there is 1 PUT and 2 reads. The code adds NOT_SAVED only when `rejected` is set (403/404/409 callers)."
+          ],
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+          "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "reviewer-security",
+          "at": "2026-11-14T08:13:12Z",
+          "refs": [],
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+          "reason": "Non-blocking, low. The code is correct, but I did not confirm in this round that the 5xx-then-withdrawn case is tested for \"no NOT_SAVED\". Keep it as a test gap."
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "604e1b0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Unit test \"a server error whose re-read leaves every rule read-only\u2026\": a 500 response with every row `can_change: false`. The panel region is gone, the page alert has EDITOR_GONE and not NOT_SAVED, and there is 1 PUT and 2 reads. The code adds NOT_SAVED only when `rejected` is set (403/404/409 callers)."
       ]
     },
     {
@@ -621,7 +665,7 @@
       "reproduction": "round-2/review-ui.md fidelity table; rule: visual >= 90 at 390 (feedback-design-fidelity)",
       "evidence_refs": [],
       "raised_by": "coordinator",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -638,11 +682,94 @@
           ],
           "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T08:13:12Z",
+          "refs": [
+            "604e1b0"
+          ],
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "604e1b0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "604e1b0"
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Rules hides a stale `closedNotice` rather than clearing it (`RulesView.tsx:77`, `closedNotice && editable.length === 0`). If editable rows come back (Show more), the notice stays in state. If editable later drops to 0 through a path that bypasses `announce`, the old message reappears and `OutcomeNotice` takes focus again. For example: the panel's save, then a re-read that hits ACCESS_LOST and moves to the error state, then Retry, then a first page with no editable row. The path is very unlikely and writes nothing. Expected: clear the notice when the panel returns (for example, `setClosedNotice(null)` in the Show more handler, or a key on the notice), as Finance does on a disclosure toggle.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:13:12Z",
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
+        }
+      ]
+    },
+    {
+      "id": "TECH-3-2",
+      "round": 3,
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`.psl-phonebar` is `justify-content: space-between`. When the SAMPLE DATA tag is on (`NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1`), the bar has three children: link, note and tag. The note then sits in the middle of the bar rather than at the right (`PhoneBar.tsx:65`, `shell.css:25`). The tag is off by default, so the fidelity runs and the boards are unaffected. Expected, if the tag is ever turned on: `margin-left: auto` on `.shell-phonenote`, or group the note with the tag.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:13:12Z",
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-1",
+      "round": 3,
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried from UX-1-2: phone \"\u2190 Setup\" goes to the reserved Roles page, the nearest Setup home until the phone Setup home is built. Unchanged.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T08:13:12Z",
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
+        }
       ]
     }
   ],
@@ -1635,6 +1762,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T08:08:50Z",
+      "round": 3,
+      "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T08:13:36Z",
       "round": 3,
       "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
       "reason": null

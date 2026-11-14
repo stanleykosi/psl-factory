@@ -662,3 +662,17 @@
 {"at":"2026-11-14T08:05:31Z","feature":"F-11","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":60.9,"commit":"604e1b0a0f8f"}
 {"at":"2026-11-14T08:08:50Z","feature":"F-11","round":3,"kind":"transition","head":"604e1b0a0f8f","from":"IMPLEMENTING","to":"IN_REVIEW"}
 {"at":"2026-11-14T08:08:51Z","feature":"F-09","round":1,"kind":"transition","head":"4efaee8910bf","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-14T08:09:59Z","feature":"F-11","round":3,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"604e1b0a0f8f","written_at":"2026-11-14T08:09:09Z"}
+{"at":"2026-11-14T08:10:59Z","feature":"F-09","round":1,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"4efaee8910bf","written_at":"2026-11-14T08:10:19Z"}
+{"at":"2026-11-14T08:10:59Z","feature":"F-11","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"604e1b0a0f8f","findings":{"TECH-3-1":"low","TECH-3-2":"low"},"written_at":"2026-11-14T08:10:39Z"}
+{"at":"2026-11-14T08:11:58Z","feature":"F-11","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"604e1b0a0f8f","written_at":"2026-11-14T08:11:47Z"}
+{"at":"2026-11-14T08:12:58Z","feature":"F-09","round":1,"kind":"review","role":"technical","verdict":"CHANGES","reviewer":"reviewer-technical","commit":"4efaee8910bf","findings":{"TECH-1-1":"medium","TECH-1-2":"low","TECH-1-3":"low"},"written_at":"2026-11-14T08:12:32Z"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"finding","action":"verify","finding":"FID-2-1","by":"reviewer-ui"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"604e1b0a0f8f","findings":{"UX-3-1":"low"},"written_at":"2026-11-14T08:13:00Z"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"finding","action":"verify","finding":"TECH-2-1","by":"reviewer-technical"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"finding","action":"verify","finding":"SEC-2-1","by":"reviewer-technical"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"finding","action":"reopen","finding":"SEC-2-1","by":"reviewer-security"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"finding","action":"add","finding":"TECH-3-1","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"finding","action":"add","finding":"TECH-3-2","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-14T08:13:12Z","feature":"F-11","round":3,"kind":"finding","action":"add","finding":"UX-3-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-14T08:13:36Z","feature":"F-11","round":3,"kind":"transition","head":"604e1b0a0f8f","from":"IN_REVIEW","to":"INTEGRATED_QA"}
