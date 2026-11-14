@@ -1,0 +1,28 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+      "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+      "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+    },
+    {
+      "role": "text",
+      "name": "WhatsApp Email",
+      "reason": "E-6 (SCR-15-mobile-settings): the visible words beside each phone switch are aria-hidden as the spec requires (each switch already carries the name \"WhatsApp, <label>\" / \"Email, <label>\"), so the tool cannot read them; they are on screen in the drawn place.",
+      "approved_by": "REQUESTED by the F-12 builder, round 1; not approved"
+    }
+  ],
+  "requests_without_a_tool_entry": [
+    "E-1: SCR-15-desktop-whatsapp, SCR-15-mobile-whatsapp, SCR-15-desktop-email and SCR-15-mobile-email are rendered by the backend alert job (T-ALERTS / JOB-ALERTS), not the frontend. F-12 owns only their targets: Review now -> /work/<work_id>, alert settings -> /settings/alerts.",
+    "E-3: Save settings is drawn as a link and built as a button (it submits). The tool matches it and notes the role difference; no entry needed.",
+    "E-4: the phone back links \"← Home\" and \"← Notifications\" cannot sit inside the frame's phone bar (D-08). Under the bar on their own line they pushed every row down (SCR-15-mobile visual 76.2), so they sit at the right, level with the heading, as F-10's back link does under D-19, until the frame gets its back-link slot (D-13). The tool reports them as moved (not missing); visual 91.8 / 97.0.",
+    "E-5: STATES-desktop and STATES-mobile are checked element by element for the SCR-15 cards (empty, loading, error) in unit and e2e tests and by the reviewer's side-by-side, not by a whole-board score."
+  ]
+}

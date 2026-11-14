@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-11",
   "outcome": "A Lead or Admin opens Setup, reads every rule with its value or \"Not set\", and saves a role-list rule as its next version",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-SETUP"
   ],
@@ -105,11 +105,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical review (lead)",
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -135,28 +137,242 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (round 1, design-fidelity gate)",
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-security.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After any write, `refresh` re-reads only the first page (`useSetupRules.ts:40-44`). If the person loads a second page with Show more and saves an editable row from it, the reloaded page no longer holds that row. On 200 the panel says \"Saved as version N.\" but `row` falls back to `rows[0]` (`SetRulePanel.tsx:41`), so a different rule is now selected. On an uncertain result `fresh` is undefined, so the panel shows \"This rule changed. Check the version shown\u2026\" (`SetRulePanel.tsx:152-158`) even though nothing is known. No unsafe write follows, because the next save carries the read revision and the backend answers 409. Expected: keep the selected row in view after the re-read, for example by re-reading up to the loaded depth or treating \"row not found\" as \"couldn't check\". Or record that editable rows always arrive on the first page.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Two overlapping uploads in one edit can leave the wrong file showing. The file input stays enabled while an upload is in flight (`ProofField.tsx:37-44`). `pickProof` reads `current.caseRevision` from the render closure (`SetRulePanel.tsx:88`), so both uploads send the same `case_revision`. Whichever answer arrives last wins: either a 409 \"The record changed\" that wipes a good upload, or the earlier file's `evidence_id`. Expected: ignore or disable a new choice while `proof.status === 'uploading'`, or apply only the latest pick's result, for example with a per-pick token like `generation`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`versionText` calls `Intl.DateTimeFormat#formatToParts` on `new Date(row.effective_from)` (`format.ts:22`). An unparsable `effective_from` throws a RangeError while rendering and takes down the whole Setup view. The contract says `format: date-time`, but the field is a proposal and the screen should tolerate bad data. Expected: fall back to \"v{revision}\" when the date is invalid.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A Finance row with `group` but no `group_label` shows the raw `group` key as the panel heading and button label (`FinanceRulesView.tsx:28`). That puts a technical identifier on screen, contrary to the AGENTS.md guidance. Expected: put such rows under \"Other Finance rules\" or use a neutral heading.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone fidelity visual scores are below 90 (66 / 78.9 / 83.7), so acceptance criterion 25 is not met. The builder attributes this to the back link sitting under the shell phone bar (D-08). This is acceptable only if the design engineer records the exception, as for earlier features. Source: round-1/build.md, Validation.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On a phone, \"\u2190 Setup\" goes to /setup/roles. That page shows the desktop frame with a horizontally scrolling tab bar and \"Roles comes next.\" The boards do not draw this page. This follows the spec (A-6, reserved routes) and is fine until F-11C builds the phone Setup home. Source: frontend/src/app/setup/roles/page.tsx.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Save stays enabled while a proof upload is still in flight. Expected: Save waits (or is disabled) while Proof shows \"Uploading\u2026\", so a rule is never saved without the proof the person is attaching. Actual: `onSave` runs during an upload. The body has no `evidence_id`, and the success path bumps `generation`, so the upload's result is thrown away. The file still lands on the setup case, though, with no link to any rule version, and the person sees \"Saved as version N.\" A second file chosen during an upload also isn't guarded (both use the same `case_revision`; one gets 409). Path: frontend/src/features/setup/SetRulePanel.tsx:245 (button `disabled={busy \\ | \\ | locked}` ignores `current.proof.status === 'uploading'`), frontend/src/features/setup/SetRulePanel.tsx:77-96.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-2",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Backend proposal: `evidence_id` on E-SETUP-RULE-SAVE must be tied to the rule. Expected (T-SETUP): the backend accepts `evidence_id` only if that evidence belongs to this rule's `proof_case`, was uploaded by the same person and hasn't been used by another version. Otherwise it returns 422. Actual: the mock never checks `evidence_id` (frontend/mock/setup.mjs:131-158), and the A-3 proposal in build.md doesn't state this rule. Without it, any evidence id the person can name could be filed as proof for a rule change (INV-AUDIT). Record it with the A-3 proposal.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-3",
+      "round": 1,
+      "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Backend proposal: send `proof_case` only on rows the person may change, and authorise uploads to that case by the rule's change right. Expected: `proof_case` (a case id and revision) is omitted when `can_change` is false. E-EVIDENCE-UPLOAD to the setup case is allowed only for someone who may change the matching rule. Actual: the readonly mock scenario still serves `proof_case` on rows with `can_change:false` (frontend/mock/setup.mjs:69-70; frontend/mock/fixtures/setup/rules.desktop.json). The frontend never uses it there, because the panel only shows editable rows, but the proposal should say this.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T07:18:05Z",
+          "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -291,6 +507,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T07:08:55Z",
+      "round": 1,
+      "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T07:18:06Z",
       "round": 1,
       "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
       "reason": null
