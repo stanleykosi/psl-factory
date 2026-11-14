@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-08",
   "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
@@ -85,11 +85,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -115,21 +117,95 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design system and approved SCR-06 artboards)",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/package-lock.json` adds `\"peer\": true` to `node_modules/eslint-plugin-import` (hunk at about line 3913). This is npm-version metadata, not three or one of its dependencies. The brief expects a lockfile change limited to three and its deps. It is harmless and `npm ci` passes, but ideally revert that one line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "3D floor: token cubes collide with each other and with the count sprite at busy stations (visible at 1440 on Invoices, Pre-sale and Planning). Expected: tokens sit clear of the sprite and the neighbouring block. Actual: the two-row token grid (`frontend/src/features/floor/scene.ts:140-143`) runs into the sprite placed at `scene.ts:135` and the adjacent block. The sprite text stays legible at 2x.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Tag tones and line identity differ from the approved SCR-06 artboard. The artboard shows ON TRACK in green, WAITING in amber, STOPPED and UNCERTAIN in red, and an avatar and subtitle per line (e.g. \"RFP \u00b7 commercial\"). The build draws every tag neutral (ON TRACK, the 2 PROBLEMS in the zero variant) or in the signal tint (WAITING, STOPPED, UNCERTAIN, 2 PROBLEMS), and omits avatars and subtitles, because E-OVERVIEW has no fields for them. This follows the recorded PMO-0-4 decision (spec.md lines 84, 91; readiness.md line 25), which is flagged for product acceptance. Expected: product confirms or supplies the tone rule before merge. Actual: as described, in `frontend/src/features/overview/OverviewPage.tsx` (`LineRows`, the `psl-tag` class choice). If product does not accept the recorded decision, this becomes blocking.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -286,6 +362,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T03:35:13Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T03:39:54Z",
       "round": 1,
       "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
       "reason": null
