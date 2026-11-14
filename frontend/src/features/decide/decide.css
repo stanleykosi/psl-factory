@@ -1,0 +1,85 @@
+/* SCR-03 decision layout. Token variables only; bundle classes are composed. The panel is a right-hand
+   column from bp-desktop; below 720px its buttons sit in an action bar pinned to the bottom of the viewport. */
+
+.decide-plain { margin: 0; }
+.decide-muted { color: var(--ink-muted); }
+.decide-changed { color: var(--signal-ink); font-weight: 600; }
+.decide-h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 18px; line-height: 1.25; }
+.decide-h3 { margin: 0 0 var(--space-1); font-size: 14px; font-weight: 600; }
+.decide-list { margin: 0; padding-left: 18px; }
+
+/* header */
+.decide-header { display: flex; flex-direction: column; gap: var(--space-2); }
+.decide-header .psl-crumb a { text-decoration: underline; text-underline-offset: 2px; }
+.decide-header .shell-title { overflow-wrap: anywhere; }
+.decide-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--signal-ink); }
+.decide-sub { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); color: var(--ink-muted); }
+
+/* decision rows */
+.decide-rows { margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.decide-row { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: var(--space-3); align-items: baseline; }
+.decide-row dt { font-size: 13px; color: var(--ink-muted); }
+.decide-row dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.decide-by { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
+.decide-main > .decide-rows { background: var(--surface); border: 2px solid var(--ink); padding: 14px; }
+
+/* approval chain */
+.decide-chain { display: flex; flex-direction: column; gap: var(--space-2); }
+.decide-steps { margin: 0; padding: 0; list-style: none; background: var(--surface); border: 2px solid var(--rule-soft); }
+.decide-step { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: var(--space-2); align-items: baseline; padding: 8px 12px; border-bottom: 1px solid var(--rule-soft); }
+.decide-step:last-child { border-bottom: none; }
+.decide-step__pos { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.decide-step__who strong { font-weight: 600; }
+.decide-step__status { font-size: 13px; text-align: right; }
+.decide-step--current { background: var(--signal-tint); color: var(--signal-ink); }
+.decide-step--approved .decide-step__status { color: var(--verified-ink); }
+
+/* agent note */
+.decide-agent .psl-agent__head { border-bottom: none; }
+.decide-agent__text { display: flex; flex-direction: column; gap: 2px; }
+.decide-agent__text small { font-size: 13px; color: var(--ink-muted); }
+
+/* the board: content on the left, the decision panel on the right from bp-desktop */
+.decide-board { display: grid; gap: var(--space-5); align-items: start; }
+.decide-main { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.decide-panel .psl-panel__head { margin: 0; }
+.decide-reason { margin: 0; }
+.decide-doesnt { margin: 0; }
+.decide-retry { align-items: center; flex-wrap: wrap; }
+@media (min-width: 1080px) {
+  .decide-board { grid-template-columns: minmax(0, 1fr) 360px; }
+  .decide-aside { position: sticky; top: var(--space-4); }
+}
+/* inside the panel the action bar is plain content; it becomes a bar only on the phone */
+@media (min-width: 720px) {
+  .decide-panel .psl-actionbar { padding: 0; border-top: none; background: none; }
+}
+
+/* the read-only view, stale columns and done */
+.decide-readonly { max-width: 760px; }
+.decide-tag { align-self: flex-start; }
+.decide-stale { display: flex; flex-direction: column; gap: var(--space-4); }
+.decide-stale > p { margin: 0; }
+.decide-compare { display: grid; gap: var(--space-4); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.decide-colhead { margin: 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; }
+.decide-compare .decide-row { grid-template-columns: 96px minmax(0, 1fr); }
+.decide-done { display: flex; flex-direction: column; gap: var(--space-4); }
+.decide-done .work-note { display: none; } /* the done view says the Paid line itself */
+.decide-next { margin: 0; }
+.decide-links { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+/* the phone station line wraps instead of widening the page */
+.decide-mini { display: none; margin: 0; flex-wrap: wrap; }
+.decide-mini .psl-mini__text { white-space: normal; }
+
+@media (max-width: 719.98px) {
+  .decide-desktop-only { display: none; }
+  .decide-mini { display: flex; }
+  .decide-row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .decide-compare { grid-template-columns: minmax(0, 1fr); }
+  /* the buttons and the one line sit in a bar pinned to the bottom; the page leaves room for it */
+  .decide-board { padding-bottom: 220px; }
+  .decide-panel .psl-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; }
+  .decide-step { grid-template-columns: 24px minmax(0, 1fr); }
+  .decide-step__status { grid-column: 2; text-align: left; }
+}
