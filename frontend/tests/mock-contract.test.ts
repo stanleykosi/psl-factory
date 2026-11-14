@@ -20,6 +20,8 @@ import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
 import { contractBody as monthEndBody } from '../mock/finance.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody as projectsBody } from '../mock/projects.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -58,6 +60,8 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-MONTH-END': monthEndBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
+  'E-PROJECTS': (body) => projectsBody('E-PROJECTS', body),
+  'E-PROJECT': (body) => projectsBody('E-PROJECT', body),
 };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
@@ -163,9 +167,9 @@ describe('mock server matches openapi.json', () => {
   });
 
   it('a non-M-1 operation gets 501 not_mocked', async () => {
-    const result = await request('E-PROJECTS');
+    const result = await request('E-TEMPLATES');
     expect(result).toEqual({ status: 501, body: { code: 'not_mocked', message: 'Not available in the mock yet.' } });
-    expectValid('E-PROJECTS', 501, result.body);
+    expectValid('E-TEMPLATES', 501, result.body);
   });
 
   it('refuses to start with NODE_ENV=production', () => {
