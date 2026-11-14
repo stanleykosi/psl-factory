@@ -22,6 +22,7 @@ const shot = (page: Page, name: string) => page.screenshot({ path: test.info().o
 const noHorizontalScroll = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 const projectLinks = (page: Page) => page.locator('[data-project-link]');
 const lineLinks = (page: Page) => page.locator('ol.projects__lines a');
+const projectTabs = (page: Page) => page.getByRole('tablist', { name: 'Project' }).getByRole('tab');
 
 async function listLoaded(page: Page) {
   await expect(page.getByRole('status')).toHaveCount(0);
@@ -73,28 +74,31 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('list default: 20 projects, 20 shown, Show more, rows per page', async ({ page }) => {
+    test('list default (Active): 20 projects, Filter, Show more, rows per page; tabs, total and note from 720px', async ({ page }) => {
       await page.goto('/projects');
       await listLoaded(page);
       await expect(projectLinks(page)).toHaveCount(20);
       await expect(projectLinks(page).first()).toHaveAttribute('href', '/projects/P-0101');
-      await expect(page.locator('.psl-resultcount')).toHaveText('20 shown');
       await expect(page.getByRole('button', { name: 'Show more' })).toBeVisible();
       await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toBeVisible();
-      await expect(page.getByText('You see projects your roles cover.')).toBeVisible();
-      await expect(page.getByRole('tab')).toHaveCount(0);
-      await expect(page.getByRole('button', { name: /filter/i })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
       if (phone) {
         await expect(page.getByRole('table')).toHaveCount(0);
-        await expect(projectLinks(page).first()).toContainText('Release · UAT with client · PM Tunde Bello');
+        await expect(page.getByRole('tablist')).toBeHidden();
+        await expect(projectLinks(page).first()).toContainText('Release · UAT with client · PM Tunde Bello2 need a person · 1 stopped');
         await expectTouchTargets([
-          page.getByRole('searchbox', { name: 'Search projects' }),
+          page.getByRole('searchbox', { name: 'Search' }),
+          page.getByRole('button', { name: 'Filter' }),
           ...(await page.getByRole('radio').all()),
           page.getByRole('button', { name: 'Show more' }),
           ...(await projectLinks(page).all()).slice(0, 3),
         ]);
       } else {
-        await expect(page.getByRole('columnheader')).toHaveText(['PROJECT', 'PM', 'WHERE IT IS']);
+        await expect(page.locator('.projects__eyebrow')).toHaveText('PROJECTS');
+        await expect(page.getByRole('tab')).toHaveText(['Active22', 'Closed2', 'All I can see24']);
+        await expect(page.locator('.psl-resultcount')).toHaveText('22 PROJECTS');
+        await expect(page.getByRole('columnheader')).toHaveText(['PROJECT', 'PM', 'WHERE IT IS', 'NEXT MILESTONE', 'NEEDS A PERSON', 'STOPPED']);
+        await expect(page.getByText('You see projects your roles cover. Open one for its journey, documents, money and registers.')).toBeVisible();
       }
       expect(await noHorizontalScroll(page)).toBe(true);
       await expect(page.locator('main .psl-sample')).toHaveCount(0);
@@ -145,23 +149,32 @@ for (const [label, viewport] of [
       expect((await motion(page)).running).toBe(0);
     });
 
-    test('journey default: P-0101 with every line in order and its tag', async ({ page }) => {
+    test('journey default: P-0101 as drawn, every line in order with its tag', async ({ page }) => {
       await page.goto('/projects/P-0101');
       await journeyLoaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
-      const tabs = page.getByRole('navigation', { name: 'Project' }).getByRole('link');
-      await expect(tabs).toHaveText(['Journey']);
-      await expect(tabs.first()).toHaveAttribute('aria-current', 'page');
-      await expect(page.locator('.psl-callout')).toContainText('What is next');
-      await expect(lineLinks(page)).toHaveCount(12);
-      await expect(lineLinks(page).nth(5)).toHaveAttribute('href', '/work/W-1004');
+      const tabs = projectTabs(page);
+      // Phones draw the tabs without counts.
+      await expect(tabs).toHaveText(phone ? ['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Milestones4', 'Documents6', 'Money', 'Registers6', 'Actions9'], {
+        useInnerText: phone,
+      });
+      await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+      await expect(page.locator('.projects__next')).toContainText('What is next');
+      await expect(lineLinks(page)).toHaveCount(8);
+      await expect(lineLinks(page).nth(6)).toHaveAttribute('href', '/work/W-1001');
       if (phone) {
         await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toBeHidden();
         await expect(page.getByRole('link', { name: '← Projects' })).toBeVisible();
-        await expectTouchTargets([page.getByRole('link', { name: '← Projects' }), tabs.first(), ...(await lineLinks(page).all())]);
+        await expect(page.locator('.projects__phoneline')).toHaveText('8 pieces of work · 2 waiting on people · 1 stopped');
+        await expect(page.getByRole('complementary')).toBeHidden();
+        // Each line's link covers its whole row.
+        await expectTouchTargets([page.getByRole('link', { name: '← Projects' }), tabs.first(), ...(await page.locator('ol.projects__lines > li').all())]);
       } else {
-        await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText('Projects / Lagoon Health · patient app');
+        await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText('Projects / Lagoon Health');
         await expect(page.getByRole('link', { name: '← Projects' })).toBeHidden();
+        await expect(page.locator('.projects__route')).toHaveText('PM Tunde Bello · Route A from RFP-0031 · 8 pieces of work across 6 lines');
+        await expect(page.getByRole('region', { name: 'Facts earned' })).toBeVisible();
+        await expect(page.getByRole('complementary', { name: "Tola's summary" })).toContainText('Lagoon Health is moving.');
       }
       const tagWraps = await page.locator('ol.projects__lines .psl-tag').evaluateAll((els) => els.filter((el) => el.getBoundingClientRect().height > 30).length);
       expect(tagWraps).toBe(0);
@@ -175,7 +188,7 @@ for (const [label, viewport] of [
       await page.goto('/projects/P-0105');
       await journeyLoaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sabi Market · web store');
-      await expect(page.getByRole('navigation', { name: 'Project' })).toBeVisible();
+      await expect(page.getByRole('tablist', { name: 'Project' })).toBeVisible();
       await expect(page.getByText('No work on this project yet.')).toBeVisible();
       await expect(page.locator('main ol')).toHaveCount(0);
       expect(await noHorizontalScroll(page)).toBe(true);
@@ -187,7 +200,7 @@ for (const [label, viewport] of [
       await page.goto('/projects/P-0099');
       await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Back to projects' })).toHaveAttribute('href', '/projects');
-      await expect(page.getByRole('navigation', { name: 'Project' })).toHaveCount(0);
+      await expect(page.getByRole('tablist', { name: 'Project' })).toHaveCount(0);
       expect(await page.title()).toBe('Project · PSL Factory');
       const text = await page.locator('body').innerText();
       expect(text).not.toContain('P-0099');
@@ -196,6 +209,22 @@ for (const [label, viewport] of [
       if (phone) await expectTouchTargets([page.getByRole('link', { name: 'Back to projects' })]);
       await shot(page, `project-no-access-${w}`);
       await expectNoAxeViolations(page);
+    });
+
+    test('project tab: Milestones opens a coming-next panel under the same header', async ({ page }) => {
+      await page.goto('/projects/P-0101/milestones');
+      await journeyLoaded(page);
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
+      await expect(projectTabs(page).nth(1)).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByRole('heading', { level: 2, name: 'Milestones come next' })).toBeVisible();
+      await expect(lineLinks(page)).toHaveCount(0);
+      expect(await page.title()).toBe('Project · PSL Factory');
+      expect(await noHorizontalScroll(page)).toBe(true);
+      await shot(page, `project-milestones-${w}`);
+      await expectNoAxeViolations(page);
+      await page.getByRole('link', { name: 'Open the journey' }).click();
+      await expect(page).toHaveURL(/\/projects\/P-0101$/);
+      await expect(lineLinks(page)).toHaveCount(8);
     });
 
     test('not open: a 403 on the list shows the section is not open', async ({ page }) => {
@@ -217,11 +246,11 @@ test.describe('desktop 1440 details', () => {
     await page.goto('/projects');
     await listLoaded(page);
     const request = page.waitForRequest((r) => r.url().includes('/api/v1/projects?') && r.url().includes('q=lagoon'));
-    await page.getByRole('searchbox', { name: 'Search projects' }).fill('lagoon');
-    expect(new URL((await request).url()).search).toBe('?limit=20&q=lagoon');
+    await page.getByRole('searchbox', { name: 'Search' }).fill('lagoon');
+    expect(new URL((await request).url()).search).toBe('?limit=20&status=active&q=lagoon');
     await expect(page).toHaveURL(/\/projects\?q=lagoon$/);
     await expect(projectLinks(page)).toHaveText(['Lagoon Health · patient app']);
-    await page.getByRole('searchbox', { name: 'Search projects' }).fill('zzz');
+    await page.getByRole('searchbox', { name: 'Search' }).fill('zzz');
     await expect(page.getByRole('heading', { name: 'No projects match' })).toBeVisible();
     await page.getByRole('button', { name: 'Clear search' }).click();
     await expect(projectLinks(page)).toHaveCount(20);
@@ -232,10 +261,10 @@ test.describe('desktop 1440 details', () => {
     await listLoaded(page);
     const more = page.waitForRequest((r) => r.url().includes('cursor='));
     await page.getByRole('button', { name: 'Show more' }).click();
-    expect(new URL((await more).url()).search).toBe('?limit=20&cursor=o20');
-    await expect(projectLinks(page)).toHaveCount(24);
+    expect(new URL((await more).url()).search).toBe('?limit=20&status=active&cursor=o20');
+    await expect(projectLinks(page)).toHaveCount(22);
     await expect(projectLinks(page).nth(20)).toBeFocused();
-    await expect(page.locator('.psl-showmore')).toContainText('All 24 showing');
+    await expect(page.locator('.psl-showmore')).toContainText('All 22 showing');
     await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
 
     await page.getByRole('radio', { name: '10' }).click();
@@ -266,26 +295,55 @@ test.describe('desktop 1440 details', () => {
     await expect(projectLinks(page)).toHaveCount(20);
   });
 
-  test('a journey line opens its work item: W-1004', async ({ page }) => {
+  test('a journey line opens its work item: Invoice · Milestone 2 is W-1001', async ({ page }) => {
     await page.goto('/projects');
     await listLoaded(page);
     await projectLinks(page).first().click();
     await expect(page).toHaveURL(/\/projects\/P-0101$/);
     await journeyLoaded(page);
-    await lineLinks(page).nth(5).click();
-    await expect(page).toHaveURL(/\/work\/W-1004$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Lagoon Health · Milestone 3 invoice' })).toBeVisible();
+    await lineLinks(page).nth(6).click();
+    await expect(page).toHaveURL(/\/work\/W-1001$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Lagoon Health · Milestone 2 invoice' })).toBeVisible();
   });
 
-  test('pm: exactly four projects, never P-0102; P-0102 opens as no access', async ({ page, context }) => {
+  test('tabs: Closed and All I can see change the request and the URL; Filter says filters come next', async ({ page, context }) => {
     await setCookies(context, { psl_mock_persona: 'pm' });
     await page.goto('/projects');
     await listLoaded(page);
     await expect(projectLinks(page)).toHaveCount(4);
-    await expect(page.locator('main')).not.toContainText('Harbour Bank');
-    await page.goto('/projects/P-0102');
+    const closed = page.waitForRequest((r) => r.url().includes('status=closed'));
+    await page.getByRole('tab', { name: /Closed/ }).click();
+    expect(new URL((await closed).url()).search).toBe('?limit=20&status=closed');
+    await expect(page).toHaveURL(/\?status=closed$/);
+    await expect(projectLinks(page)).toHaveText(['Sabi Market · web store']);
+    await page.getByRole('tab', { name: /Closed/ }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(page).toHaveURL(/\?status=all$/);
+    await expect(projectLinks(page)).toHaveCount(5);
+    await expect(page.getByRole('tab', { name: /All I can see/ })).toBeFocused();
+    await page.getByRole('button', { name: 'Filter' }).click();
+    await expect(page.getByRole('dialog', { name: 'Filter projects' })).toContainText('Filters come next');
+    await expectNoAxeViolations(page);
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Filter' })).toBeFocused();
+  });
+
+  test('an unknown project tab is the not-found page', async ({ page }) => {
+    await page.goto('/projects/P-0101/nope');
+    await expect(page.getByRole('heading', { name: 'This page doesn’t exist.' })).toBeVisible();
+    await expect(page.getByRole('tablist', { name: 'Project' })).toHaveCount(0);
+  });
+
+  test('pm: the four active board projects, never P-0104; P-0104 opens as no access', async ({ page, context }) => {
+    await setCookies(context, { psl_mock_persona: 'pm' });
+    await page.goto('/projects');
+    await listLoaded(page);
+    await expect(projectLinks(page)).toHaveCount(4);
+    await expect(page.locator('main')).not.toContainText('Delta Foods');
+    await page.goto('/projects/P-0104');
     await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
-    expect(await page.locator('body').innerText()).not.toContain('Harbour Bank');
+    expect(await page.locator('body').innerText()).not.toContain('Delta Foods');
   });
 
   test('persona none: no projects request on the list or a journey', async ({ page, context }) => {
@@ -324,14 +382,16 @@ test.describe('desktop 1440 details', () => {
     await expectNoAxeViolations(page);
     fail = false;
     await card.getByRole('button', { name: 'Try again' }).click();
-    await expect(lineLinks(page)).toHaveCount(12);
+    await expect(lineLinks(page)).toHaveCount(8);
   });
 
   test('keyboard focus is visible on every control', async ({ page }) => {
     await page.goto('/projects');
     await listLoaded(page);
     for (const target of [
-      page.getByRole('searchbox', { name: 'Search projects' }),
+      page.getByRole('tab', { name: /Active/ }),
+      page.getByRole('searchbox', { name: 'Search' }),
+      page.getByRole('button', { name: 'Filter' }),
       projectLinks(page).first(),
       page.getByRole('radio', { name: '20' }),
       page.getByRole('button', { name: 'Show more' }),
@@ -342,8 +402,9 @@ test.describe('desktop 1440 details', () => {
     await journeyLoaded(page);
     for (const target of [
       page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Projects' }),
-      page.getByRole('navigation', { name: 'Project' }).getByRole('link', { name: 'Journey' }),
+      projectTabs(page).first(),
       lineLinks(page).first(),
+      page.getByRole('link', { name: 'Ask me about this project' }),
     ]) {
       expect(await keyboardRing(page, target)).toEqual({ style: 'solid', width: '2px' });
     }

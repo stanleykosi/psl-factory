@@ -10,6 +10,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/server.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody } from '../mock/projects.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -71,7 +73,8 @@ describe('mock server matches openapi.json', () => {
       it(`${id} succeeds for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
         expect(status).toBe(200);
-        expectValid(id, 200, body);
+        // The projects mock adds the boards' PROPOSAL fields (F-07); the contract part must still be valid.
+        expectValid(id, 200, id === 'E-PROJECTS' || id === 'E-PROJECT' ? contractBody(id, body) : body);
       });
     }
 

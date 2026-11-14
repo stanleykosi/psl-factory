@@ -9,8 +9,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { OPENAPI_PATH, SCENARIO_BODIES, startMockServer } from '../mock/server.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody, PROPOSED_FIELDS } from '../mock/projects.mjs';
 
-// E-PROJECTS and E-PROJECT against the openapi the mock loads (v4; both endpoints are identical in v5).
+// E-PROJECTS and E-PROJECT against the openapi the mock loads (v4; both endpoints are identical in v5). The mock adds
+// the boards' PROPOSAL fields; a 200 body is checked without them (contractBody).
 type Response = { content: { 'application/json': { schema: object } } };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, { get: { responses: Record<string, Response> } }> };
 const ajv = new Ajv2020({ allErrors: true, strict: true });
@@ -24,9 +27,9 @@ const fixtures = join(__dirname, '../mock/fixtures');
 const readJson = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 type Item = { case_id: string; title: string; pm: string; stage: string; sample: boolean };
 type Line = { line: string; state: string; work_id: string };
-type ListBody = { items: Item[]; next_cursor?: string; as_of: string };
+type ListBody = { items: Item[]; next_cursor?: string; as_of: string; counts?: Record<string, number> };
 type JourneyBody = { case_id: string; title: string; lines: Line[]; next: string };
-const rows = readJson(join(fixtures, 'projects/list.json')).rows as { personas: string[]; item: Item }[];
+const rows = readJson(join(fixtures, 'projects/list.json')).rows as { personas: string[]; status: string; item: Item }[];
 const rowsOf = (persona: string) => rows.filter((r) => r.personas.includes(persona)).map((r) => r.item);
 const STATES = [
   'ready',
@@ -51,18 +54,19 @@ beforeAll(async () => {
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
-async function get(path: string, persona: string, validators: Record<string, ReturnType<typeof ajv.compile>>) {
+async function get(path: string, persona: string, operationId: string, validators: Record<string, ReturnType<typeof ajv.compile>>) {
   const response = await fetch(base + path, { headers: { Cookie: `psl_mock_persona=${persona}` } });
   const body = await response.json();
   const validate = validators[String(response.status)];
   expect(validate, `undeclared status ${response.status}`).toBeTruthy();
-  expect(validate(body), `${path} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+  const contract = response.status === 200 ? contractBody(operationId, body) : body;
+  expect(validate(contract), `${path} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
   return { status: response.status, body };
 }
 const list = (query: string, persona = 'finance_lead') =>
-  get(`/api/v1/projects${query ? `?${query}` : ''}`, persona, listValidators) as Promise<{ status: number; body: ListBody }>;
+  get(`/api/v1/projects${query ? `?${query}` : ''}`, persona, 'E-PROJECTS', listValidators) as Promise<{ status: number; body: ListBody }>;
 const journey = (caseId: string, persona = 'finance_lead') =>
-  get(`/api/v1/projects/${caseId}`, persona, journeyValidators) as Promise<{ status: number; body: JourneyBody }>;
+  get(`/api/v1/projects/${caseId}`, persona, 'E-PROJECT', journeyValidators) as Promise<{ status: number; body: JourneyBody }>;
 
 describe('E-PROJECTS mock honours the query', () => {
   for (const persona of ['finance_lead', 'pm', 'none']) {
@@ -85,13 +89,18 @@ describe('E-PROJECTS mock honours the query', () => {
     }
   }
 
-  it('finance_lead pages 3/2/1 at 10/20/50; pm sees 4 PM Tunde Bello rows without P-0102; none sees nothing', async () => {
+  it('finance_lead pages 3/2/1 at 10/20/50; pm sees the five SCR-22 board rows without P-0104; none sees nothing', async () => {
     expect(rowsOf('finance_lead').length).toBeGreaterThanOrEqual(23);
     expect(rowsOf('finance_lead').length).toBeLessThanOrEqual(30);
     const pm = (await list('', 'pm')).body;
-    expect(pm.items).toHaveLength(4);
-    expect(pm.items.every((i) => i.pm === 'Tunde Bello')).toBe(true);
-    expect(pm.items.map((i) => i.case_id)).not.toContain('P-0102');
+    expect(pm.items.map((i) => [i.title, i.pm, i.stage])).toEqual([
+      ['Lagoon Health · patient app', 'Tunde Bello', 'Release · UAT with client'],
+      ['Harmattan Bank · mobile onboarding', 'Kunle Ade', 'Go-live · report sent'],
+      ['Kora Logistics · fleet tracker', 'Tunde Bello', 'Pre-sale · costing approval'],
+      ['Ojo Foods · ordering app', 'Sola Martins', 'Planning · held'],
+      ['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov'],
+    ]);
+    expect(pm.items.map((i) => i.case_id)).not.toContain('P-0104');
     expect(pm).not.toHaveProperty('next_cursor');
     expect((await list('', 'none')).body.items).toEqual([]);
     const first = (await list('')).body;
@@ -103,7 +112,28 @@ describe('E-PROJECTS mock honours the query', () => {
     expect((await list('q=lagoon')).body.items.map((i) => i.case_id)).toEqual(['P-0101']);
     expect((await list('q=LAGOON&limit=10')).body.items.map((i) => i.case_id)).toEqual(['P-0101']);
     expect((await list('q=zzz')).body.items).toEqual([]);
-    expect((await list('q=bank', 'pm')).body.items).toEqual([]);
+    expect((await list('q=bank', 'pm')).body.items.map((i) => i.case_id)).toEqual(['P-0102']);
+    expect((await list('q=delta', 'pm')).body.items).toEqual([]);
+  });
+
+  it('PROPOSAL status narrows to active or closed; counts cover every row the persona can see', async () => {
+    const all = (await list('', 'pm')).body;
+    expect(all.counts).toEqual({ active: 4, closed: 1, all: 5 });
+    expect((await list('status=active', 'pm')).body.items.map((i) => i.case_id)).toEqual(['P-0101', 'P-0102', 'P-0103', 'P-0106']);
+    expect((await list('status=closed', 'pm')).body.items.map((i) => i.case_id)).toEqual(['P-0105']);
+    expect((await list('status=closed&q=lagoon', 'pm')).body).toMatchObject({ items: [], counts: { active: 4, closed: 1, all: 5 } });
+    const finance = (await list('status=active&limit=50')).body;
+    expect(finance.items.map((i) => i.case_id)).toEqual(rows.filter((r) => r.status === 'active').map((r) => r.item.case_id));
+    expect((await list('', 'none')).body.counts).toEqual({ active: 0, closed: 0, all: 0 });
+    expect(await list('status=all')).toEqual({ status: 404, body: { code: 'invalid_query', message: 'We could not read that list request.' } });
+  });
+
+  it('PROPOSAL row fields: the board values for P-0101 and a missing next milestone for closed P-0105', async () => {
+    const [p0101, , , , p0105] = (await list('', 'pm')).body.items as (Item & Record<string, unknown>)[];
+    expect([p0101.next_milestone, p0101.needs_person, p0101.stopped]).toEqual(['UAT sign-off · due 14 Nov', 2, 1]);
+    expect(p0105).not.toHaveProperty('next_milestone');
+    expect([p0105.needs_person, p0105.stopped]).toEqual([0, 0]);
+    expect(PROPOSED_FIELDS.row).toEqual(['next_milestone', 'needs_person', 'stopped']);
   });
 
   it('a bad limit, a bad cursor or an empty q gets 404 invalid_query', async () => {
@@ -126,10 +156,10 @@ describe('E-PROJECT mock', () => {
     }
   });
 
-  it('a listed project the persona cannot see is 404: P-0102 for pm, P-0101 for none', async () => {
-    expect(await journey('P-0102', 'pm')).toEqual({ status: 404, body: SCENARIO_BODIES[404] });
+  it('a listed project the persona cannot see is 404: P-0104 for pm, P-0101 for none', async () => {
+    expect(await journey('P-0104', 'pm')).toEqual({ status: 404, body: SCENARIO_BODIES[404] });
     expect(await journey('P-0101', 'none')).toEqual({ status: 404, body: SCENARIO_BODIES[404] });
-    expect((await journey('P-0102')).body.title).toBe('Harbour Bank · mobile onboarding');
+    expect((await journey('P-0104')).body.title).toBe('Delta Foods · ordering app');
   });
 
   it('every visible row opens its own journey, with the same case_id and title', async () => {
@@ -142,11 +172,25 @@ describe('E-PROJECT mock', () => {
     }
   });
 
-  it('P-0101 covers all 11 states; P-0105 has no lines; other ids get the default journey', async () => {
-    const p0101 = (await journey('P-0101', 'pm')).body;
-    expect(new Set(p0101.lines.map((l) => l.state))).toEqual(new Set(STATES));
+  it('P-0101 is the SCR-07 board; the default journey covers all 11 states; P-0105 has no lines', async () => {
+    const p0101 = (await journey('P-0101', 'pm')).body as JourneyBody & Record<string, unknown>;
+    expect(p0101.lines.map((l) => (l as Line & { title: string }).title)).toEqual([
+      'RFP response',
+      'Log an engagement',
+      'Commercial submission',
+      'Plan a project',
+      'Invoice · Milestone 1',
+      'Prepare for release',
+      'Invoice · Milestone 2',
+      'Invoice · Milestone 3',
+    ]);
+    expect(new Set(p0101.lines.map((l) => l.line)).size).toBe(6);
+    expect(p0101).toMatchObject({ client: 'Lagoon Health', pm: 'Tunde Bello', route: 'Route A from RFP-0031', revision: 7 });
+    expect(p0101.tab_counts).toEqual({ milestones: 4, documents: 6, registers: 6, actions: 9 });
+    const fallback = (await journey('X-1', 'none')).body;
+    expect(fallback).toEqual(readJson(join(fixtures, 'E-PROJECT.json')));
+    expect(new Set(fallback.lines.map((l) => l.state))).toEqual(new Set(STATES));
     expect((await journey('P-0105', 'pm')).body.lines).toEqual([]);
-    expect((await journey('X-1', 'none')).body).toEqual(readJson(join(fixtures, 'E-PROJECT.json')));
   });
 
   it('E-PROJECT-TAB and E-DOCUMENT still answer 501', async () => {
@@ -162,6 +206,8 @@ describe('E-PROJECT mock', () => {
   });
 });
 
+const validate200 = (body: unknown) => journeyValidators['200'](body);
+
 describe('project fixtures', () => {
   const journeyFiles = [
     join(fixtures, 'E-PROJECT.json'),
@@ -174,8 +220,9 @@ describe('project fixtures', () => {
     expect(journeyFiles.length).toBeGreaterThan(20);
     for (const path of journeyFiles) {
       const validate = journeyValidators['200'];
-      expect(validate(readJson(path)), `${path}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+      expect(validate(contractBody('E-PROJECT', readJson(path))), `${path}: ${ajv.errorsText(validate.errors)}`).toBe(true);
     }
+    expect(validate200(readJson(join(fixtures, 'E-PROJECT.json'))), 'the fallback has no PROPOSAL fields').toBe(true);
     const validate = listValidators['200'];
     const body = readJson(join(fixtures, 'E-PROJECTS.json'));
     expect(validate(body), ajv.errorsText(validate.errors)).toBe(true);

@@ -41,8 +41,8 @@ vi.mock('next/navigation', async () => {
   };
 });
 
-type Item = { case_id: string; title: string; pm: string; stage: string; sample: boolean };
-type Body = { items: Item[]; next_cursor?: string; as_of: string };
+type Item = { case_id: string; title: string; pm: string; stage: string; sample: boolean; next_milestone?: string; needs_person?: number; stopped?: number };
+type Body = { items: Item[]; next_cursor?: string; as_of: string; counts?: Record<string, number> };
 const me = (persona: string) => JSON.parse(readFileSync(join(__dirname, `../mock/fixtures/me.${persona}.json`), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const fromMock = (url: URL, persona = 'finance_lead') => projects({ operationId: 'E-PROJECTS', url, persona }) as { status: number; body: Body };
@@ -96,6 +96,7 @@ const rows = () => document.querySelectorAll('tbody tr');
 const titles = () => [...rows()].map((r) => r.querySelector('a')!.textContent);
 const lastCall = () => calls[calls.length - 1];
 const query = (url: URL) => Object.fromEntries(url.searchParams);
+const tabs = () => within(screen.getByRole('tablist', { name: 'Projects' })).getAllByRole('tab');
 const radios = () => within(screen.getByRole('radiogroup', { name: 'Rows per page' })).getAllByRole('radio');
 
 function renderPage(search = '') {
@@ -114,33 +115,84 @@ async function open(search = '') {
   return result;
 }
 
-describe('list reads E-PROJECTS (JR-08 open project)', () => {
-  it('finance_lead: one GET ?limit=20, PROJECT / PM / WHERE IT IS, rows in response order with verbatim fields', async () => {
+const ACTIVE_20 = 'http://x/api/v1/projects?limit=20&status=active';
+const cellsOf = (i: Item) => [i.title, i.pm, i.stage, i.next_milestone ?? '—', String(i.needs_person ?? '—'), String(i.stopped ?? '—')];
+
+describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
+  it('finance_lead: one GET for the Active tab, the eyebrow, tabs with counts, six columns, rows in response order', async () => {
     await open();
     expect(calls).toHaveLength(1);
     expect(calls[0].pathname).toBe('/api/v1/projects');
-    expect(calls[0].search).toBe('?limit=20');
+    expect(calls[0].search).toBe('?limit=20&status=active');
+    expect(document.querySelector('.projects__eyebrow')!.textContent).toBe('PROJECTS');
     expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeTruthy();
-    expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['PROJECT', 'PM', 'WHERE IT IS']);
-    const expected = fromMock(new URL('http://x/api/v1/projects?limit=20')).body.items;
+    expect(tabs().map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
+      ['Active22', 'true'],
+      ['Closed2', 'false'],
+      ['All I can see24', 'false'],
+    ]);
+    expect(screen.getByRole('tabpanel').getAttribute('aria-labelledby')).toBe(tabs()[0].id);
+    expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
+      'PROJECT',
+      'PM',
+      'WHERE IT IS',
+      'NEXT MILESTONE',
+      'NEEDS A PERSON',
+      'STOPPED',
+    ]);
+    const expected = fromMock(new URL(ACTIVE_20)).body.items;
     expect(rows()).toHaveLength(20);
-    expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual(
-      expected.map((i) => [i.title, i.pm, i.stage]),
-    );
+    expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual(expected.map(cellsOf));
+    expect([...rows()[0].querySelectorAll('td')].slice(4).map((td) => td.firstElementChild!.className)).toEqual(['projects__count', 'projects__count']);
     const first = within(rows()[0] as HTMLElement).getByRole('link', { name: 'Lagoon Health · patient app' });
     expect(first.getAttribute('href')).toBe('/projects/P-0101');
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('20 shown');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('22 PROJECTS');
     expect(screen.getByRole('button', { name: 'Show more' })).toBeTruthy();
-    expect(screen.getByText('You see projects your roles cover.')).toBeTruthy();
+    expect(screen.getByText('You see projects your roles cover. Open one for its journey, documents, money and registers.')).toBeTruthy();
   });
 
-  it('pm sees exactly the four projects returned for pm, never P-0102', async () => {
+  it('pm sees the four active SCR-22 board projects, never P-0104', async () => {
     persona = 'pm';
     await open();
-    expect(titles()).toEqual(fromMock(new URL('http://x/api/v1/projects'), 'pm').body.items.map((i) => i.title));
-    expect(rows()).toHaveLength(4);
-    expect(document.body.textContent).not.toContain('Harbour Bank');
+    expect(titles()).toEqual(['Lagoon Health · patient app', 'Harmattan Bank · mobile onboarding', 'Kora Logistics · fleet tracker', 'Ojo Foods · ordering app']);
+    expect(document.body.textContent).not.toContain('Delta Foods');
     expect(screen.getByText('All 4 showing')).toBeTruthy();
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('4 PROJECTS');
+  });
+
+  it('Closed and All I can see send status=closed and no status, write ?status=, and arrow keys move between tabs', async () => {
+    persona = 'pm';
+    await open();
+    fireEvent.click(tabs()[1]);
+    await until(() => expect(titles()).toEqual(['Sabi Market · web store']));
+    expect(query(lastCall())).toEqual({ limit: '20', status: 'closed' });
+    expect(window.location.search).toBe('?status=closed');
+    expect([...rows()[0].querySelectorAll('td')].map((td) => td.textContent)).toEqual(['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov', '—', '0', '0']);
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECTS');
+    tabs()[1].focus();
+    fireEvent.keyDown(tabs()[1], { key: 'ArrowRight' });
+    await until(() => expect(rows()).toHaveLength(5));
+    expect(query(lastCall())).toEqual({ limit: '20' });
+    expect(window.location.search).toBe('?status=all');
+    expect(document.activeElement).toBe(tabs()[2]);
+    expect(tabs().map((t) => t.tabIndex)).toEqual([-1, -1, 0]);
+    fireEvent.keyDown(tabs()[2], { key: 'Home' });
+    await until(() => expect(rows()).toHaveLength(4));
+    expect(window.location.search).toBe('');
+  });
+
+  it('Filter opens a panel that says filters come next; Escape closes it and returns focus', async () => {
+    await open();
+    const button = screen.getByRole('button', { name: 'Filter' });
+    expect(button.getAttribute('aria-haspopup')).toBe('dialog');
+    fireEvent.click(button);
+    const dialog = screen.getByRole('dialog', { name: 'Filter projects' });
+    expect(dialog.textContent).toContain('Filters come next');
+    expect(button.getAttribute('aria-expanded')).toBe('true');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(button);
+    expect(calls).toHaveLength(1);
   });
 
   it('server order is kept: the page never sorts or filters', async () => {
@@ -154,8 +206,8 @@ describe('list reads E-PROJECTS (JR-08 open project)', () => {
   });
 });
 
-describe('only contract fields render', () => {
-  it('no tabs, no Filter, no milestone, person or stopped columns and no placeholder text', async () => {
+describe('a body without the PROPOSAL fields', () => {
+  it('still draws every board element: tabs without counts, Filter, six columns with dashes, and N shown', async () => {
     respond = () =>
       json(200, {
         items: [
@@ -165,16 +217,15 @@ describe('only contract fields render', () => {
         as_of: '2026-11-14T09:00:00Z',
       });
     await open();
-    expect(screen.queryByRole('tab')).toBeNull();
-    expect(screen.queryByRole('tablist')).toBeNull();
-    expect(screen.queryByRole('button', { name: /filter/i })).toBeNull();
-    const text = document.body.textContent!;
-    for (const absent of ['undefined', 'NEXT MILESTONE', 'NEEDS A PERSON', 'STOPPED', 'Active', 'Closed', 'All I can see', 'PROJECTS']) {
-      expect(text).not.toContain(absent);
-    }
-    const cells = [...document.querySelectorAll('td')].map((td) => td.textContent!.trim());
-    expect(cells.some((c) => ['', '0', '—', '-'].includes(c))).toBe(false);
-    expect(document.querySelectorAll('th')).toHaveLength(3);
+    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed', 'All I can see']);
+    expect(screen.getByRole('button', { name: 'Filter' })).toBeTruthy();
+    expect(document.querySelectorAll('th')).toHaveLength(6);
+    expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual([
+      ['Alpha works', 'Ada Okafor', 'Planning', '—', '—', '—'],
+      ['Beta works', 'Kunle Ade', 'Go-live', '—', '—', '—'],
+    ]);
+    expect(document.body.textContent).not.toContain('undefined');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 shown');
   });
 });
 
@@ -182,7 +233,8 @@ describe('search', () => {
   it('sends one q=lagoon&limit=20 request 300 ms after the last keystroke; clearing drops q', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
     await open();
-    const box = screen.getByRole('searchbox', { name: 'Search projects' });
+    const box = screen.getByRole('searchbox', { name: 'Search' });
+    expect(box.getAttribute('placeholder')).toBe('Search projects or clients');
     for (const text of ['l', 'la', 'lag', 'lagoon']) {
       fireEvent.change(box, { target: { value: text } });
       await act(() => vi.advanceTimersByTimeAsync(100));
@@ -192,7 +244,7 @@ describe('search', () => {
     expect(calls).toHaveLength(1);
     await act(() => vi.advanceTimersByTimeAsync(1));
     await until(() => expect(calls).toHaveLength(2));
-    expect(calls[1].search).toBe('?limit=20&q=lagoon');
+    expect(calls[1].search).toBe('?limit=20&status=active&q=lagoon');
     expect(window.location.search).toBe('?q=lagoon');
     await until(() => expect(titles()).toEqual(['Lagoon Health · patient app']));
 
@@ -206,7 +258,7 @@ describe('search', () => {
 
   it('no match shows No projects match; Clear search restores the full list', async () => {
     await open('?q=zzz');
-    expect(query(calls[0])).toEqual({ limit: '20', q: 'zzz' });
+    expect(query(calls[0])).toEqual({ limit: '20', status: 'active', q: 'zzz' });
     expect(screen.getByRole('heading', { name: 'No projects match' })).toBeTruthy();
     expect(document.querySelector('.psl-showmore')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Clear search' }));
@@ -229,11 +281,11 @@ describe('paging (D-PAGING r2)', () => {
     await open();
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await until(() => expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull());
-    expect(query(lastCall())).toEqual({ limit: '20', cursor: 'o20' });
-    const all = fromMock(new URL('http://x/api/v1/projects?limit=50')).body.items;
+    expect(query(lastCall())).toEqual({ limit: '20', status: 'active', cursor: 'o20' });
+    const all = fromMock(new URL('http://x/api/v1/projects?limit=50&status=active')).body.items;
     expect(titles()).toEqual(all.map((i) => i.title));
     expect(screen.getByText(`All ${all.length} showing`)).toBeTruthy();
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe(`${all.length} shown`);
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe(`${all.length} PROJECTS`);
     expect(document.activeElement?.textContent).toBe(all[20].title);
   });
 
@@ -246,33 +298,33 @@ describe('paging (D-PAGING r2)', () => {
     ]);
     fireEvent.click(radios()[0]);
     await until(() => expect(rows()).toHaveLength(10));
-    expect(query(lastCall())).toEqual({ limit: '10' });
+    expect(query(lastCall())).toEqual({ limit: '10', status: 'active' });
     expect(window.location.search).toBe('?limit=10');
   });
 
   it('?limit=10 loads 10; ?limit=7 falls back to 20', async () => {
     const first = await open('?limit=10');
-    expect(query(calls[0])).toEqual({ limit: '10' });
+    expect(query(calls[0])).toEqual({ limit: '10', status: 'active' });
     expect(rows()).toHaveLength(10);
     first.unmount();
     calls = [];
     await open('?limit=7');
-    expect(query(calls[0])).toEqual({ limit: '20' });
+    expect(query(calls[0])).toEqual({ limit: '20', status: 'active' });
   });
 
   it('arrow keys move the radiogroup selection with a roving tabindex', async () => {
     await open();
     radios()[1].focus();
     fireEvent.keyDown(radios()[1], { key: 'ArrowRight' });
-    await until(() => expect(rows()).toHaveLength(24));
+    await until(() => expect(rows()).toHaveLength(22));
     expect(radios()[2].getAttribute('aria-checked')).toBe('true');
     expect(document.activeElement).toBe(radios()[2]);
     expect(radios().map((r) => r.tabIndex)).toEqual([-1, -1, 0]);
-    expect(query(lastCall())).toEqual({ limit: '50' });
+    expect(query(lastCall())).toEqual({ limit: '50', status: 'active' });
     fireEvent.keyDown(radios()[2], { key: 'ArrowRight' });
-    await until(() => expect(query(lastCall())).toEqual({ limit: '10' }));
+    await until(() => expect(query(lastCall())).toEqual({ limit: '10', status: 'active' }));
     fireEvent.keyDown(radios()[0], { key: 'ArrowLeft' });
-    await until(() => expect(query(lastCall())).toEqual({ limit: '50' }));
+    await until(() => expect(query(lastCall())).toEqual({ limit: '50', status: 'active' }));
   });
 
   it('a failed Show more keeps the loaded rows and shows the inline problem; Try again recovers', async () => {
@@ -348,7 +400,7 @@ describe('access and failures', () => {
     respond = (url) => mockResponse(url);
     fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
     await until(() => expect(rows()).toHaveLength(20));
-    expect(query(lastCall())).toEqual({ limit: '20' });
+    expect(query(lastCall())).toEqual({ limit: '20', status: 'active' });
   });
 
   it('loading shows status with no old rows; a late response for an earlier q is ignored', async () => {
@@ -356,34 +408,37 @@ describe('access and failures', () => {
     const pending: Record<string, () => void> = {};
     respond = (url) =>
       new Promise<Response>((resolve) => (pending[url.searchParams.get('q') ?? ''] = () => resolve(mockResponse(url))));
-    const box = screen.getByRole('searchbox', { name: 'Search projects' });
+    const box = screen.getByRole('searchbox', { name: 'Search' });
     fireEvent.change(box, { target: { value: 'lagoon' } });
     fireEvent.submit(box.closest('form')!);
     await until(() => expect(pending.lagoon).toBeTruthy());
     expect(screen.getByRole('status')).toBeTruthy();
     expect(rows()).toHaveLength(0);
-    fireEvent.change(box, { target: { value: 'harbour' } });
+    fireEvent.change(box, { target: { value: 'harmattan' } });
     fireEvent.submit(box.closest('form')!);
-    await until(() => expect(pending.harbour).toBeTruthy());
-    await act(async () => pending.harbour());
-    await until(() => expect(titles()).toEqual(['Harbour Bank · mobile onboarding']));
+    await until(() => expect(pending.harmattan).toBeTruthy());
+    await act(async () => pending.harmattan());
+    await until(() => expect(titles()).toEqual(['Harmattan Bank · mobile onboarding']));
     await act(async () => pending.lagoon());
     await act(async () => {
       await new Promise((r) => realImmediate(r));
     });
-    expect(titles()).toEqual(['Harbour Bank · mobile onboarding']);
+    expect(titles()).toEqual(['Harmattan Bank · mobile onboarding']);
   });
 });
 
 describe('phone and sample label', () => {
-  it('below 720px each project is one card link: title, then where it is · PM', async () => {
+  it('below 720px each project is one card link: title, where it is · PM, then what needs a person', async () => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: true, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
     await open();
     expect(screen.queryByRole('table')).toBeNull();
     const cards = document.querySelectorAll('.projects__cards a');
     expect(cards).toHaveLength(20);
     expect(cards[0].getAttribute('href')).toBe('/projects/P-0101');
-    expect(cards[0].textContent).toBe('Lagoon Health · patient appRelease · UAT with client · PM Tunde Bello');
+    expect(cards[0].textContent).toBe('Lagoon Health · patient appRelease · UAT with client · PM Tunde Bello2 need a person · 1 stopped');
+    expect(cards[0].querySelector('.projects__attention')!.textContent).toBe('2 need a person · 1 stopped');
+    expect(screen.getByRole('searchbox').getAttribute('placeholder')).toBe('Search projects');
+    expect(screen.getByRole('button', { name: 'Filter' }).textContent).toBe('');
     expect(document.querySelector('.psl-seg--phone')).toBeTruthy();
   });
 
