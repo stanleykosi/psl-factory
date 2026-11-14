@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-15",
   "outcome": "Alert bell in the top bar, with a drawer of \"Needs you\" and \"For your information\"",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-ALERTS-MENU"
   ],
@@ -100,6 +100,18 @@
       "at": "2026-11-14T18:59:57Z",
       "seconds": 167.0,
       "evidence_ref": "delivery/features/F-15/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T20:32:13Z",
+      "seconds": 191.0,
+      "evidence_ref": "delivery/features/F-15/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -162,14 +174,28 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T19:47:51Z",
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:29:00Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "abf4b7a"
       ]
     },
     {
@@ -185,14 +211,28 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T19:47:51Z",
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:29:01Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "abf4b7a"
       ]
     },
     {
@@ -208,14 +248,28 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T19:47:51Z",
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:29:01Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "abf4b7a"
       ]
     },
     {
@@ -231,14 +285,28 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T19:47:51Z",
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:29:01Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "abf4b7a"
       ]
     },
     {
@@ -254,14 +322,28 @@
         "delivery/features/F-15/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T19:47:51Z",
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:29:01Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "abf4b7a"
       ]
     },
     {
@@ -277,14 +359,28 @@
         "delivery/features/F-15/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T19:47:51Z",
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:29:01Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "abf4b7a"
       ]
     }
   ],
@@ -367,7 +463,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "d97b99b3881b7a523715c75c0268d34bfe637964",
     "task_branch": "fe-alerts-menu-bell-and-drawer",
-    "head_sha": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+    "head_sha": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-15",
     "pr_url": null,
     "pr_number": null,
@@ -379,7 +475,56 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-15/feature.json",
+      "delivery/features/F-15/round-1/build.md",
+      "delivery/features/F-15/round-1/review-technical.md",
+      "delivery/features/F-15/round-1/review-ui.md",
+      "delivery/features/F-15/round-1/review-ux.md",
+      "delivery/features/F-15/round-1/visual-review/bars-720-1440.png",
+      "delivery/features/F-15/round-1/visual-review/phone-bar-narrow.png",
+      "delivery/features/F-15/round-1/visual-review/sbs-1440-open.png",
+      "delivery/features/F-15/round-1/visual-review/sbs-390.png",
+      "delivery/features/F-15/round-1/visual/desktop-closed.jpg",
+      "delivery/features/F-15/round-1/visual/desktop-open.jpg",
+      "delivery/features/F-15/round-1/visual/phone-closed.jpg",
+      "delivery/features/F-15/round-1/visual/phone-open.jpg",
+      "delivery/features/F-15/spec.md",
+      "delivery/features/F-16/feature.json",
+      "delivery/features/F-16/fidelity-exceptions.json",
+      "delivery/features/F-16/round-1/build.md",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-1440/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-1440/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-done-1440/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-done-1440/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-not-yours-1440/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-not-yours-1440/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-own-1440/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-own-1440/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-stale-1440/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-desktop-stale-1440/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-390/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-390/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-done-390/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-done-390/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-not-yours-390/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-not-yours-390/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-own-390/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-own-390/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-stale-390/report.json",
+      "delivery/features/F-16/round-1/fidelity/SCR-03-mobile-stale-390/side-by-side.png",
+      "delivery/features/F-16/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-16/round-1/fidelity/frozen/done-1440.html",
+      "delivery/features/F-16/round-1/fidelity/frozen/done-390.html",
+      "delivery/features/F-16/round-1/fidelity/frozen/stale-1440.html",
+      "delivery/features/F-16/round-1/fidelity/frozen/stale-390.html",
+      "delivery/features/F-16/round-1/fidelity/scores.txt",
+      "delivery/features/F-16/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-16/spec.md",
       "frontend/e2e/alerts-bell.spec.ts",
+      "frontend/e2e/overview.spec.ts",
+      "frontend/e2e/projects.spec.ts",
       "frontend/mock/alerts.mjs",
       "frontend/mock/proposals/alerts-needs-you.json",
       "frontend/src/features/alerts/AlertParts.tsx",
@@ -482,6 +627,14 @@
       "round": 2,
       "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T20:32:13Z",
+      "round": 2,
+      "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "reason": null
     }
   ],
   "routing": {
@@ -498,9 +651,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c"
   },
   "blocked": null
 }
