@@ -21,6 +21,8 @@ export type AlertsFeed = {
   loading: boolean;
   refresh: () => Promise<void>;
   markRead: (id: string) => void;
+  /** A failed request elsewhere (a mark-read): a 401 stops further reads, as it does for the list. */
+  stop: (error: ApiError) => void;
 };
 
 export function useAlertsFeed(enabled: boolean): AlertsFeed {
@@ -30,6 +32,7 @@ export function useAlertsFeed(enabled: boolean): AlertsFeed {
   const inFlight = useRef(false);
   const stopped = useRef(false);
   const loadedAt = useRef(0);
+  const readIds = useRef(new Set<string>());
 
   const refresh = useCallback(async () => {
     if (inFlight.current || stopped.current) return;
@@ -40,7 +43,11 @@ export function useAlertsFeed(enabled: boolean): AlertsFeed {
       // A body without an items list is not an alerts list: shown as a load error, never as "no alerts".
       if (!Array.isArray(list?.items)) throw networkError();
       loadedAt.current = Date.now();
-      setData({ items: list.items, unreadCount: list.unread_count, asOf: list.as_of, now: loadedAt.current });
+      // A list read before a mark-read can arrive after it: keep what this session marked read.
+      const stale = list.items.filter((alert) => alert.read === false && readIds.current.has(alert.id)).length;
+      const items = stale ? list.items.map((alert) => (readIds.current.has(alert.id) ? { ...alert, read: true } : alert)) : list.items;
+      const unreadCount = list.unread_count === undefined ? undefined : Math.max(0, list.unread_count - stale);
+      setData({ items, unreadCount, asOf: list.as_of, now: loadedAt.current });
       setError(undefined);
     } catch (caught) {
       const e = caught instanceof ApiError ? caught : networkError();
@@ -67,6 +74,7 @@ export function useAlertsFeed(enabled: boolean): AlertsFeed {
   }, [enabled, refresh]);
 
   const markRead = useCallback((id: string) => {
+    readIds.current.add(id);
     setData((prev) => {
       const item = prev?.items.find((alert) => alert.id === id);
       if (!prev || !item || item.read) return prev;
@@ -75,5 +83,11 @@ export function useAlertsFeed(enabled: boolean): AlertsFeed {
     });
   }, []);
 
-  return { data, error, loading, refresh, markRead };
+  const stop = useCallback((e: ApiError) => {
+    if (e.kind !== 'unauthenticated') return;
+    stopped.current = true;
+    setError(e);
+  }, []);
+
+  return { data, error, loading, refresh, markRead, stop };
 }

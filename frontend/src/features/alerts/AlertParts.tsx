@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useRef, type MouseEvent } from 'react';
 
 import { api, call } from '@/api/client';
-import type { ApiError } from '@/api/errors';
+import { ApiError } from '@/api/errors';
 import { formatClock } from '@/features/decide/format';
 
 import type { Alert } from './types';
@@ -39,9 +39,9 @@ export type OpenAlert = (event: MouseEvent<HTMLAnchorElement>, alert: Alert) => 
 /**
  * An unread alert is marked read first (one POST); the work opens whether or not that worked, and nothing retries.
  * A read alert, or a click with a modifier key or another button, is left to the link. `onRead` hears a mark-read
- * the server accepted.
+ * the server accepted; `onError` hears one that failed.
  */
-export function useOpenAlert(onRead?: (alert: Alert) => void): OpenAlert {
+export function useOpenAlert(onRead?: (alert: Alert) => void, onError?: (error: ApiError) => void): OpenAlert {
   const router = useRouter();
   const opening = useRef(false);
   return useCallback(
@@ -53,13 +53,14 @@ export function useOpenAlert(onRead?: (alert: Alert) => void): OpenAlert {
       try {
         await call(api.POST('/api/v1/notifications/{notification_id}/read', { params: { path: { notification_id: alert.id } } }));
         onRead?.(alert);
-      } catch {
+      } catch (caught) {
         // The row stays unread: the list is re-read later and shows what the server holds.
+        if (caught instanceof ApiError) onError?.(caught);
       }
       opening.current = false;
       router.push(workHref(alert));
     },
-    [router, onRead],
+    [router, onRead, onError],
   );
 }
 

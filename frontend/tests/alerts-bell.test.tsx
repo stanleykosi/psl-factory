@@ -332,6 +332,39 @@ describe('Open and mark read', () => {
     expect(badge()).toBe('4');
   });
 
+  it('a list that was read before the mark-read and arrives after it does not bring the alert back as unread', async () => {
+    await mount();
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    hook = async (c) => {
+      if (c.method !== 'GET') return undefined;
+      const stale = fromMock(c);
+      await gate;
+      return stale;
+    };
+    await openDrawer();
+    fireEvent.click(openLinks()[0], { button: 0 });
+    await until(() => expect(nav.push).toHaveBeenCalledWith('/work/w-inv-lh-002'));
+    expect(badge()).toBe('3');
+    release();
+    await settle();
+    await settle();
+    expect(badge()).toBe('3');
+    expect(chip()).toBe('2 need you');
+  });
+
+  it('a 401 on the mark-read goes to the work and stops further reads', async () => {
+    hook = (c) => (c.method === 'POST' ? json(401, { code: 'unauthenticated', message: 'Sign in.' }) : undefined);
+    await mount();
+    await openDrawer();
+    fireEvent.click(openLinks()[0], { button: 0 });
+    await until(() => expect(nav.push).toHaveBeenCalledWith('/work/w-inv-lh-002'));
+    expect(lists()).toHaveLength(2);
+    await act(async () => fireEvent.click(bell()));
+    await settle();
+    expect(lists()).toHaveLength(2);
+  });
+
   for (const [label, init] of [
     ['Ctrl', { button: 0, ctrlKey: true }],
     ['Cmd', { button: 0, metaKey: true }],
@@ -440,6 +473,33 @@ describe('states', () => {
   });
 });
 
+describe('the drawer top offset', () => {
+  it('is measured again when the viewport crosses 720px while it is open', async () => {
+    let phone = false;
+    const listeners = new Set<() => void>();
+    vi.stubGlobal('matchMedia', (q: string) => ({
+      get matches() {
+        return phone && q.includes('max-width');
+      },
+      media: q,
+      addEventListener: (_: string, fn: () => void) => listeners.add(fn),
+      removeEventListener: (_: string, fn: () => void) => listeners.delete(fn),
+    }));
+    // The top bar is 56px tall on screen above 720px and hidden (no box) below.
+    const rect = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+      return { bottom: this.classList.contains('shell-topbar') && !phone ? 56 : 0 } as DOMRect;
+    });
+    await mount();
+    await openDrawer();
+    const layer = () => dialog()!.parentElement as HTMLElement;
+    expect(layer().style.getPropertyValue('--alerts-top')).toBe('56px');
+    phone = true;
+    await act(async () => listeners.forEach((fn) => fn()));
+    expect(layer().style.getPropertyValue('--alerts-top')).toBe('0px');
+    rect.mockRestore();
+  });
+});
+
 describe('phone (below 720px)', () => {
   beforeEach(() => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
@@ -475,6 +535,43 @@ describe('phone (below 720px)', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
     await until(() => expect(dialog()).toBeNull());
     expect(document.activeElement).toBe(phoneBell());
+  });
+
+  /** The phone bar remounts on a route change (key={pathname}): the page changes and the bell there takes focus. */
+  async function goTo(view: Awaited<ReturnType<typeof mount>>, path: string) {
+    nav.pathname = path;
+    view.rerender(
+      <AppShell>
+        <Page />
+      </AppShell>,
+    );
+    await until(() => expect(dialog()).toBeNull());
+  }
+
+  it('Open on an alert: the phone bar remounts and focus lands on the new bell', async () => {
+    const view = await mount();
+    const before = phoneBell();
+    await openDrawer(before);
+    fireEvent.click(openLinks()[0], { button: 0 });
+    await until(() => expect(nav.push).toHaveBeenCalledWith('/work/w-inv-lh-002'));
+    await goTo(view, '/work/w-inv-lh-002');
+    expect(before.isConnected).toBe(false);
+    expect(document.activeElement).toBe(phoneBell());
+  });
+
+  it('Alert settings and See all alerts: focus lands on the new phone bell', async () => {
+    for (const [name, path] of [
+      ['Alert settings', '/settings/alerts'],
+      ['See all alerts', '/notifications'],
+    ]) {
+      nav.pathname = '/my-work';
+      const view = await mount();
+      await openDrawer(phoneBell());
+      fireEvent.click(within(dialog()!).getByRole('link', { name }), { button: 0 });
+      await goTo(view, path);
+      expect(document.activeElement).toBe(phoneBell());
+      view.unmount();
+    }
   });
 
   it('without needs_you there are no tabs, only For your information', async () => {

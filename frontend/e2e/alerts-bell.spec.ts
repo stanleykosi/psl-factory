@@ -120,7 +120,7 @@ test.describe('desktop 1440', () => {
     expect(panel.x + panel.width).toBe(1440);
     expect(panel.y).toBe(topbar.y + topbar.height);
     expect(panel.y + panel.height).toBe(900);
-    expect(await page.locator('.alerts-dscrim').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgba(20, 24, 26, 0.4)');
+    expect(await page.locator('.alerts-dscrim').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgba(31, 36, 39, 0.45)');
 
     const text = await d.evaluate((el) => (el as HTMLElement).innerText);
     const marks = ['Alerts', 'Close', 'NEEDS YOU', ...NEED, 'FOR YOUR INFORMATION', ...INFO, 'See all alerts', 'Alert settings'];
@@ -461,4 +461,62 @@ test.describe('phone 390', () => {
     await phoneBell(page).click();
     expect(await dialog(page).evaluate((el) => [getComputedStyle(el).animationName, getComputedStyle(el).transitionDuration])).toEqual(['none', '0s']);
   });
+});
+
+test.describe('phone bar at narrow widths', () => {
+  test.use({ hasTouch: true, isMobile: true });
+  for (const width of [320, 360, 375, 390]) {
+    test(`${width}px: the wordmark ends 8px or more before the bell; bell 44px; Menu, bell and + Start in order; no horizontal scroll`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await ready(page);
+      const header = page.locator('header.psl-phonebar');
+      const [menu, brand, bellBox, start] = await Promise.all(
+        [header.getByRole('button', { name: 'Menu' }), header.locator('.psl-brand'), phoneBell(page), page.locator('.shell-phone').getByRole('button', { name: 'Start work' })].map(box),
+      );
+      expect(menu.x + menu.width).toBeLessThanOrEqual(brand.x);
+      expect(brand.x + brand.width + 8).toBeLessThanOrEqual(bellBox.x);
+      expect(bellBox.x + bellBox.width).toBeLessThanOrEqual(start.x);
+      expect(start.x + start.width).toBeLessThanOrEqual(width);
+      expect([bellBox.width, bellBox.height, menu.width, menu.height].every((n) => n >= 44)).toBe(true);
+      expect(await noHorizontalScroll(page)).toBe(true);
+    });
+  }
+
+  test('Open from the sheet: focus is on the bell of the page it opens', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await ready(page);
+    await phoneBell(page).click();
+    await opens(page).first().click();
+    await expect(page).toHaveURL(/\/work\//);
+    await expect(dialog(page)).toHaveCount(0);
+    await expect(phoneBell(page)).toBeFocused();
+  });
+
+  test('Alert settings: focus is on the bell of the settings page', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await ready(page);
+    await phoneBell(page).click();
+    await dialog(page).getByRole('link', { name: 'Alert settings' }).click();
+    await expect(page).toHaveURL(/\/settings\/alerts/);
+    await expect(phoneBell(page)).toBeFocused();
+  });
+});
+
+test.describe('top bar across 720 to 1440', () => {
+  for (const width of [720, 760, 900, 1079, 1080, 1440]) {
+    test(`${width}px: nothing overlaps or is cut; 8px or more between the bell and the name${width >= 760 ? '; links keep 4px padding' : ''}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await ready(page);
+      const parts = [bar(page).locator('.psl-brand'), bar(page).locator('.psl-nav__links'), bell(page), bar(page).locator('.psl-nav__who'), bar(page).getByRole('button', { name: 'Start work' })];
+      const boxes = await Promise.all(parts.map(box));
+      for (let i = 1; i < boxes.length; i++) expect(boxes[i - 1].x + boxes[i - 1].width).toBeLessThanOrEqual(boxes[i].x);
+      // the bell's own 2px border counts as part of the bell, so the gap is measured from its box
+      expect(boxes[3].x - (boxes[2].x + boxes[2].width)).toBeGreaterThanOrEqual(8);
+      expect(boxes[4].x + boxes[4].width).toBeLessThanOrEqual(width - 28);
+      expect(await bar(page).locator('.psl-nav__who').evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+      expect(await noHorizontalScroll(page)).toBe(true);
+      const pad = await bar(page).locator('.psl-navlink').first().evaluate((el) => getComputedStyle(el).paddingLeft);
+      if (width >= 760 && width < 1080) expect(pad).toBe('4px');
+    });
+  }
 });

@@ -20,22 +20,26 @@ import './alerts.css';
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 type Tab = 'need' | 'info';
 
-type Props = { feed: AlertsFeed; phone: boolean; pathname: string; onClose: () => void };
+type Props = { feed: AlertsFeed; phone: boolean; pathname: string; onClose: () => void; onLeave: () => void };
 
 const plainClick = (event: MouseEvent) => event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
-export function AlertsDrawer({ feed, phone, pathname, onClose }: Props) {
+export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props) {
   const layerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const [chosen, setChosen] = useState<Tab>();
   const { data, error, refresh, markRead } = feed;
-  const openAlert = useOpenAlert((alert) => markRead(alert.id));
+  const openAlert = useOpenAlert((alert) => markRead(alert.id), feed.stop);
 
-  // The drawer starts at the bar's bottom edge as it is on screen now; the page behind does not scroll.
+  // The drawer starts at the bar's bottom edge as it is on screen now (again when the viewport crosses 720px).
   useLayoutEffect(() => {
     const bar = document.querySelector('.shell-topbar')?.getBoundingClientRect();
     layerRef.current?.style.setProperty('--alerts-top', `${Math.max(0, bar?.bottom ?? 0)}px`);
+  }, [phone]);
+
+  // The page behind does not scroll.
+  useLayoutEffect(() => {
     const root = document.documentElement;
     const overflow = root.style.overflow;
     root.style.overflow = 'hidden';
@@ -73,10 +77,10 @@ export function AlertsDrawer({ feed, phone, pathname, onClose }: Props) {
 
   const open: OpenAlert = (event, alert) => {
     void openAlert(event, alert);
-    if (plainClick(event)) onClose();
+    if (plainClick(event)) onLeave();
   };
   const follow = (event: MouseEvent) => {
-    if (plainClick(event)) onClose();
+    if (plainClick(event)) onLeave();
   };
 
   const items = data?.items ?? [];

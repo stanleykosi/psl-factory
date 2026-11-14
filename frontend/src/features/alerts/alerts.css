@@ -48,7 +48,7 @@
    full-height sheet below. The scrim is the concept's value, rgba(20, 24, 26, 0.4), as the spec fixes it. */
 .alerts-layer { position: fixed; inset: var(--alerts-top, 56px) 0 0 0; z-index: 40; }
 .alerts-layer--sheet { inset: 0; }
-.alerts-dscrim { position: absolute; inset: 0; background: rgba(20, 24, 26, 0.4); animation: alerts-fade 200ms ease-out; }
+.alerts-dscrim { position: absolute; inset: 0; background: var(--scrim); animation: alerts-fade 200ms ease-out; }
 .alerts-drawer { position: absolute; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100%; display: flex; flex-direction: column; background: var(--surface); border-left: 2px solid var(--ink); outline: none; animation: alerts-slide-in 200ms ease-out; }
 .alerts-layer--sheet .alerts-drawer { top: 36px; left: 0; width: auto; border-left: none; border-top: 2px solid var(--ink); animation-name: alerts-slide-up; }
 @keyframes alerts-fade { from { opacity: 0; } }

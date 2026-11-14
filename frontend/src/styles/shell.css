@@ -90,13 +90,18 @@ body { margin: 0; background: var(--steel); }
 @media (min-width: 1080px) and (max-width: 1279.98px) {
   .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: 10px; padding-right: 10px; }
 }
-/* 720px up to bp-desktop: a 32px bell with no gap on either side (the icon keeps 6px clear inside it) and 2px link
-   padding, so the bell fits beside the name at 720px without cutting it */
+/* 720px up to bp-desktop: the flex gap (8px) is the clear space between the bell and the name */
 @media (min-width: 720px) and (max-width: 1079.98px) {
+  .shell-topbar .shell-bellwrap ~ .psl-nav__who, .shell-topbar .shell-bellwrap ~ .shell-navend { margin-left: 0; }
+}
+/* 720px to 759px only, where the earlier 4px link padding does not fit beside the name: a 32px bell (the icon keeps
+   6px clear inside it), a 4px gap between items (8px kept between the bell and the name, none between the links and
+   the bell) and 2px link padding */
+@media (min-width: 720px) and (max-width: 759.98px) {
+  .shell-topbar .psl-nav__in { gap: var(--space-1); }
   .shell-topbar .shell-bell { width: 32px; height: 32px; }
-  .shell-topbar .psl-nav__links:has(+ .shell-bellwrap) { margin-right: calc(var(--space-2) * -1); }
-  .shell-topbar .shell-bellwrap ~ .psl-nav__who { margin-left: calc(var(--space-2) * -1); }
-  .shell-topbar .shell-bellwrap ~ .shell-navend { margin-left: 0; }
+  .shell-topbar .psl-nav__links:has(+ .shell-bellwrap) { margin-right: calc(var(--space-1) * -1); }
+  .shell-topbar .shell-bellwrap ~ .psl-nav__who { margin-left: var(--space-1); }
   .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: calc(var(--space-1) / 2); padding-right: calc(var(--space-1) / 2); }
 }
 /* phone: the bell is drawn in "+ Start"'s slot at the bar's right end (after the menu in the DOM, so Tab goes Menu,
@@ -105,3 +110,12 @@ body { margin: 0; background: var(--steel); }
 .psl-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-4) + var(--control-md) + var(--space-2)); }
 .psl-phonebar.sw-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-7) * 2 + var(--space-5) + var(--control-md) + var(--space-2)); }
 .shell-phone .shell-bell { width: var(--control-md); height: var(--control-md); }
+/* phones narrower than 380px (the 390px boards keep their 16px sides): the bar's 16px sides drop to 8px, the wordmark to 13px and the gap between the bell and
+   "+ Start" to 4px, so the wordmark ends at least 8px before the bell down to 320px (controls stay 44px) */
+@media (max-width: 379.98px) {
+  .psl-phonebar.shell-phonebar--bell { padding-left: var(--space-2); padding-right: calc(var(--space-2) + var(--control-md) + var(--space-1)); }
+  .psl-phonebar.sw-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-7) * 2 + var(--space-5) + var(--control-md) + var(--space-1)); }
+  .shell-phonebar--bell .psl-brand { font-size: 13px; }
+  .shell-phone .sw-phoneslot { right: var(--space-2); }
+  .shell-phone .sw-phoneslot .shell-bellwrap:not(:last-child) { margin-right: var(--space-1); }
+}

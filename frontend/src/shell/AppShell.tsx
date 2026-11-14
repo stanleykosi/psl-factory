@@ -79,14 +79,26 @@ export function AppShell({ children }: { children: ReactNode }) {
   const phone = useIsPhone();
   const [alertsAt, setAlertsAt] = useState<string | null>(null);
   const alertsOpen = ready && alertsAt === pathname;
-  const opener = useRef<HTMLButtonElement | null>(null);
+  // Which bar's bell opened it: the phone bar remounts on a route change, so the bell is looked up again on close.
+  const opener = useRef('.shell-topbar .shell-bell');
   const wasOpen = useRef(false);
+  const leaving = useRef(false);
   const closeAlerts = useCallback(() => setAlertsAt(null), []);
+  // Open and the footer links close the drawer and then change the page; the bar there is the one to take focus.
+  const leaveAlerts = useCallback(() => {
+    leaving.current = true;
+    setAlertsAt(null);
+  }, []);
+  useEffect(() => {
+    if (!leaving.current) return;
+    leaving.current = false;
+    document.querySelector<HTMLElement>(opener.current)?.focus();
+  }, [pathname]);
   useEffect(() => {
     if (alertsOpen) wasOpen.current = true;
     else if (wasOpen.current) {
       wasOpen.current = false;
-      opener.current?.focus();
+      document.querySelector<HTMLElement>(opener.current)?.focus();
     }
   }, [alertsOpen]);
 
@@ -100,7 +112,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       open: alertsOpen,
       onOpen: (button) => {
         if (alertsOpen) return closeAlerts();
-        opener.current = button;
+        leaving.current = false;
+        opener.current = button.closest('.shell-phone') ? '.shell-phone .shell-bell' : '.shell-topbar .shell-bell';
         setAlertsAt(pathname);
         void feed.refresh();
       },
@@ -136,7 +149,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main id="main" tabIndex={-1} className="shell-main" inert={alertsOpen}>
         {main}
       </main>
-      {alertsOpen && <AlertsDrawer feed={feed} phone={phone} pathname={pathname} onClose={closeAlerts} />}
+      {alertsOpen && <AlertsDrawer feed={feed} phone={phone} pathname={pathname} onClose={closeAlerts} onLeave={leaveAlerts} />}
     </>
   );
 }
