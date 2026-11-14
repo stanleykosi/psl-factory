@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -150,7 +150,7 @@
         "delivery/features/F-07/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -167,11 +167,25 @@
           ],
           "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T05:37:03Z",
+          "refs": [
+            "Journey link names are now the unique line titles (\"Invoice \u00b7 Milestone 1\", \"Invoice \u00b7 Milestone 2\", \"Invoice \u00b7 Milestone 3\"), so the link list no longer repeats. The builder's test for repeated titles adds a hidden suffix. I did not drive that case live."
+          ],
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "f6e7943"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Journey link names are now the unique line titles (\"Invoice \u00b7 Milestone 1\", \"Invoice \u00b7 Milestone 2\", \"Invoice \u00b7 Milestone 3\"), so the link list no longer repeats. The builder's test for repeated titles adds a hidden suffix. I did not drive that case live."
       ]
     },
     {
@@ -300,6 +314,144 @@
           "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
         }
       ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The proposal shapes the client reads are not type-guarded and differ from the v7 draft. Today they only reach the page from the mock, so nothing breaks. Once a backend serves v7, `ProjectsList.tsx:97` (`item.next_milestone ?? '\u2014'`) would render an object `{name, due}` as a React child and throw. `ProjectJourney.tsx:117` would print \"PM [object Object]\" because v7 `pm` is `{name, role, is_you}`. v7 `facts` is an array of `{label, value, money, unknown}`, but the client reads an object, so the strip shows \"Not known\". v7 `summary` is `agent_summary` `{agent, text}`, and the line `tone` and `station` are new. The client should check `typeof` before rendering each proposal field (string for `next_milestone`, `pm` and the line text), so that an unexpected shape degrades to \"\u2014\" or \"Not known\" instead of throwing. When v7 is frozen, align `model.ts` and the mock fixtures to it. Under the standing rule this does not block the round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T05:37:03Z",
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Active tab sends `status=active` by default (`model.ts` `buildProjectsQuery`). A v6 backend does not know this parameter. If it ignores it, the \"Active\" tab shows every project, closed ones included, with no marker. If it rejects unknown query parameters, the list shows the error card. The client does not filter and shows no status, so it cannot tell. Please record this as a coordination point with the backend developer, or send `status` only when the page has seen `counts` (which the list cannot know before the first read).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T05:37:03Z",
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "With a search active on desktop, the total still reads \"4 PROJECTS\" while the table shows one row (\"All 1 showing\"). The tab counts are for the whole tab, but the label next to the search box reads as the result count. Consider \"1 of 4 PROJECTS\" while a search is active.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T05:37:03Z",
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phones the Active / Closed / All tabs are hidden, as on SCR-22-mobile, so a phone user cannot reach closed projects such as Sabi Market. If that is intended, record it. If not, the board needs a phone way to see closed projects.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T05:37:03Z",
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The phone Filter icon button on SCR-22-mobile has a doubled frame. Expected (board): a 44px white button with a 2px ink frame, the same weight as the search box beside it. Actual: `psl-iconbtn` already draws a 2px ink ring (`box-shadow: inset 0 0 0 2px`), and `.projects__iconbtn` adds `border: 2px solid var(--ink)`. The frame reads as 4px and heavier than the search box. Computed at 390: `border: 2px solid rgb(31,36,39)` plus `box-shadow: rgb(31,36,39) 0 0 0 2px inset`. Fix: drop the border from `.projects__iconbtn`, and use the bundle class's ring as it is. `frontend/src/features/projects/projects.css:97`; see fidelity-review/SCR-22-mobile-390/side-by-side.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T05:37:03Z",
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The SCR-22 desktop title \"Projects\" is 36px; the board draws it at 40px (the tool flags \"text size 40px on the board, 36px on the page\"). The cause is the frame-wide `.shell-title` (36px, `frontend/src/styles/shell.css:33`). My work (SCR-01, also 40px on its board) has had the same gap since F-02, so this is a frame follow-up, not this lane's work. Boards vary from 28 to 40px, so the frame needs a size option instead of a per-page override.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T05:37:03Z",
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -358,6 +510,61 @@
           "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
           "evidence_refs": [
             "delivery/features/F-07/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+          "evidence_refs": [
+            "delivery/features/F-07/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-07/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+          "evidence_refs": [
+            "delivery/features/F-07/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (round 2, design-fidelity gate)",
+          "snapshot_ref": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+          "evidence_refs": [
+            "delivery/features/F-07/round-2/review-ui.md"
           ]
         }
       }
@@ -476,7 +683,7 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 3,
   "history": [
     {
@@ -542,6 +749,22 @@
       "round": 2,
       "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T05:37:03Z",
+      "round": 2,
+      "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T05:37:04Z",
+      "round": 3,
+      "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "reason": null
     }
   ],
   "routing": {
@@ -557,10 +780,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

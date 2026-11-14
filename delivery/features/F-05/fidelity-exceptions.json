@@ -1,0 +1,10 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "← My work",
+      "reason": "Phone form is a bottom sheet for every line (design engineer, 14 Nov 2026). SCR-04-mobile-weekly, -minutes, -issue, -change, -incident, -escalation and -leadership draw a full-screen page whose bar reads \"← My work\" / \"START\"; the build opens the same content in the bottom sheet over My work, so that page chrome is not drawn.",
+      "approved_by": "Design engineer, 14 Nov 2026 (relayed by the delivery coordinator)"
+    }
+  ]
+}

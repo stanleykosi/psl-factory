@@ -408,3 +408,13 @@
 {"at":"2026-11-14T05:34:23Z","feature":"F-06","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"c4d0b05e5e25","reasons":["46 changed files exceed the auto-merge limit of 15","finding TECH-2-1 was accepted as a risk","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
 {"at":"2026-11-14T05:34:23Z","feature":"F-06","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
 {"at":"2026-11-14T05:34:23Z","feature":"F-06","round":2,"kind":"transition","head":"c4d0b05e5e25","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T05:36:59Z","feature":"F-07","round":2,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"ab641e93900d","findings":{"UI-2-1":"low","UI-2-2":"low"},"written_at":"2026-11-14T05:36:34Z"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"verify","finding":"UX-1-1","by":"reviewer-ux"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"add","finding":"TECH-2-1","by":"reviewer-technical","severity":"medium","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"add","finding":"TECH-2-2","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"add","finding":"UX-2-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"add","finding":"UX-2-2","by":"reviewer-ux","severity":"low","owner":"product","blocking":false,"role":"ux"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"add","finding":"UI-2-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"finding","action":"add","finding":"UI-2-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-14T05:37:03Z","feature":"F-07","round":2,"kind":"transition","head":"ab641e93900d","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-14T05:37:04Z","feature":"F-07","round":3,"kind":"transition","head":"ab641e93900d","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
