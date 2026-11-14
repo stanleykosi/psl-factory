@@ -363,3 +363,7 @@
 {"at":"2026-11-14T04:39:11Z","feature":"F-05","round":1,"kind":"finding","action":"add","finding":"UI-1-12","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-14T04:39:11Z","feature":"F-05","round":1,"kind":"transition","head":"9ee65d4d689c","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-14T04:39:11Z","feature":"F-05","round":2,"kind":"transition","head":"9ee65d4d689c","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-14T04:55:45Z","feature":"F-09","round":0,"kind":"created","tasks":["FE-M2B-RESPONSE"]}
+{"at":"2026-11-14T04:55:45Z","feature":"F-10","round":0,"kind":"created","tasks":["FE-M3-FINANCE"]}
+{"at":"2026-11-14T04:55:45Z","feature":"F-11","round":0,"kind":"created","tasks":["FE-M3-SETUP"]}
+{"at":"2026-11-14T04:55:46Z","feature":"F-12","round":0,"kind":"created","tasks":["FE-M4"]}
