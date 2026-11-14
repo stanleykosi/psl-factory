@@ -6,6 +6,7 @@ import axe from 'axe-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setCsrfToken } from '@/api/client';
+import { safePath } from '@/features/start-work/LineForm';
 import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 import type { Field, Line, Lines } from '@/features/start-work/types';
 
@@ -316,6 +317,17 @@ describe('fields by kind', () => {
     expect(posts[0].body.intake).toEqual({ pick: 'c' });
   });
 
+  it('the change line: the request’s help is drawn under the proof box that follows it, and still describes the request', async () => {
+    await openChooser();
+    fireEvent.click(within(dialog()).getByRole('radio', { name: /Controlled change/ }));
+    press('Next');
+    const hint = within(dialog()).getByText('Emergency changes for an incident use "Emergency change" instead.');
+    expect(hint.closest('[data-field]')!.getAttribute('data-field')).toBe('proof');
+    expect(dialog().querySelector('[data-field="request"] .psl-hint')).toBeNull();
+    const request = within(dialog()).getByRole('textbox', { name: 'What the client asked for' });
+    expect(request.getAttribute('aria-describedby')!.split(' ')).toContain(hint.id);
+  });
+
   it('an optional money field is not rendered; an optional evidence field is drawn disabled; neither is sent', async () => {
     const intake: Field[] = [
       { name: 'note', label: 'Note', type: 'text', required: false },
@@ -479,7 +491,11 @@ describe('server answers', () => {
     // The count replaces the head's subline; the eyebrow stays (SCR-04-desktop-validation).
     expect(within(dialog()).getByText('1 thing to fix')).toBeTruthy();
     expect(within(dialog()).getByText('START WORK')).toBeTruthy();
+    // The start button is greyed until something changes (UX-1-3).
+    const start = within(dialog()).getByRole('button', { name: 'Start the invoice' }) as HTMLButtonElement;
+    expect(start.disabled).toBe(true);
     await pick('Completed milestone', 'Milestone 3');
+    expect(start.disabled).toBe(false);
     press('Start the invoice');
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-1401'));
     expect(posts).toHaveLength(2);
@@ -499,6 +515,34 @@ describe('server answers', () => {
     expect(box.querySelector('.psl-error')!.textContent).toBe(
       "The client register has no billing contact for Harmattan Bank. Add one in the project's client details.",
     );
+  });
+
+  it('422: a problem for the disabled proof box, or one name twice, is drawn as its own boxes', async () => {
+    override = (request, url) => {
+      if (request.method === 'POST')
+        return json(422, {
+          code: 'invalid',
+          message: 'Some fields need attention.',
+          fields: [
+            { name: 'proof', message: 'Attach the client’s request.' },
+            { name: 'billing_contact', message: 'First.' },
+            { name: 'billing_contact', message: 'Second.' },
+          ],
+        });
+      if (url.pathname === '/api/v1/lines')
+        return json(200, synthetic([{ name: 'proof', label: 'Proof', type: 'evidence', required: false }]));
+      return undefined;
+    };
+    await openMain();
+    press('Start work');
+    expect((await within(dialog()).findByRole('alert')).textContent).toBe('3 things to fix before this can start.');
+    const boxes = [...dialog().querySelectorAll('.sw-field')].filter((box) => box.querySelector('.psl-error'));
+    expect(boxes.map((box) => [box.getAttribute('data-field'), box.querySelector('.psl-error')!.textContent])).toEqual([
+      ['proof', 'Attach the client’s request.'],
+      ['billing_contact', 'First.'],
+      ['billing_contact', 'Second.'],
+    ]);
+    expect(dialog().querySelector('.sw-proof')!.parentElement!.querySelector('.psl-error')).toBeNull();
   });
 
   it('a double press sends one start', async () => {
@@ -631,6 +675,17 @@ describe('server answers', () => {
   });
 });
 
+describe('safePath: journey_url is linked only as a same-origin path', () => {
+  const origin = 'http://localhost:3501';
+  it.each(['/\t/evil.example', '/\n/evil.example', '//evil', '/\\evil', 'https://evil', 'javascript:alert(1)', ''])('%j is refused', (url) => {
+    expect(safePath(url, origin)).toBeUndefined();
+  });
+  it('a same-origin path is kept, with its query and hash', () => {
+    expect(safePath('/projects/P-1/journey?line=invoice#next', origin)).toBe('/projects/P-1/journey?line=invoice#next');
+    expect(safePath(`${origin}/projects`, origin)).toBe('/projects');
+  });
+});
+
 describe('"What happens next" and the phone sheet', () => {
   it('desktop: one line, the decision in the deciding red after the first part, and the invoice journey link', async () => {
     await openMain();
@@ -642,7 +697,7 @@ describe('"What happens next" and the phone sheet', () => {
     expect(within(next as HTMLElement).getByRole('link', { name: 'See the full invoice journey' }).getAttribute('href')).toBe('/projects');
   });
 
-  it.each(['https://elsewhere.example/journey', '//elsewhere.example/journey', 'javascript:alert(1)'])(
+  it.each(['https://elsewhere.example/journey', '//elsewhere.example/journey', '/\t/elsewhere.example', '/\n/elsewhere.example', 'javascript:alert(1)'])(
     'a journey_url that is not a same-origin path (%s) is not linked',
     async (journey) => {
       override = (_, url) =>

@@ -29,6 +29,11 @@ export function shownFields(line: Line): Field[] {
   return line.intake.filter((field) => KINDS.has(field.type) || (field.type === 'evidence' && !field.required));
 }
 
+/** True for a field the person can fill in this drawer: not the disabled proof box. */
+export function fillable(field: Field): boolean {
+  return KINDS.has(field.type);
+}
+
 /** False when this drawer can't start the line: another start route, a required unhandled field, or no case to start on. */
 export function startableHere(line: Line): boolean {
   if (line.start_via !== undefined && line.start_via !== 'work_start') return false;

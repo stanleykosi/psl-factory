@@ -4,6 +4,7 @@
 // (named groups for assistive technology; the board draws no visible group headings),
 // with a search on title and subtitle. Only returned lines are offered; nothing is added from /me or from roles.
 // On the phone (SCR-04-mobile-lines) the sheet shows the count in its head and the titles only, with no search.
+import Image from 'next/image';
 import Link from 'next/link';
 import { useId, useMemo, useState } from 'react';
 
@@ -25,9 +26,7 @@ type Props = {
 function TolaLink({ onClose }: { onClose: () => void }) {
   return (
     <Link href="/assistant" className="psl-callout psl-callout--info sw-tola" onClick={onClose}>
-      <span className="psl-avatar psl-avatar--tola" aria-hidden="true">
-        T
-      </span>
+      <Image className="psl-avatar psl-avatar--tola" src="/agents/tola.png" alt="" width={28} height={28} />
       <span>
         <strong>Not sure which line?</strong> Describe it to Tola
       </span>

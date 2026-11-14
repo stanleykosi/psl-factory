@@ -14,6 +14,7 @@ import { ApiError, errorFromResponse, networkError } from '@/api/errors';
 import {
   buildIntake,
   dependentsOf,
+  fillable,
   newIdempotencyKey,
   parentValue,
   resolveCase,
@@ -198,7 +199,8 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
         const problems = ((error as { fields?: FieldProblem[] } | undefined)?.fields ?? []).filter(
           (p) => typeof p?.name === 'string' && typeof p?.message === 'string',
         );
-        const names = new Set(fields.map((f) => f.name));
+        // A problem for the disabled proof box is drawn as its own box, like a field this drawer does not render.
+        const names = new Set(fields.filter(fillable).map((f) => f.name));
         const inline = Object.fromEntries(problems.filter((p) => names.has(p.name)).map((p) => [p.name, p.message]));
         const unmatched = problems.filter((p) => !names.has(p.name));
         setFieldErrors(inline);

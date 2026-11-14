@@ -16,7 +16,7 @@ import { DrawerFrame, useWide } from './DrawerFrame';
 import { caseOptionUnusable, parentValue, startableHere } from './intake';
 import { IntakeField } from './IntakeField';
 import { AGENT_NAMES, drawerTitle, footerGoesBack, journeyLabel, narrowDrawer, startLabel } from './labels';
-import type { FieldProblem, Line } from './types';
+import type { Field, FieldProblem, Line } from './types';
 import { useStartForm, type Notice } from './useStartWork';
 
 type Props = {
@@ -116,9 +116,17 @@ function ProblemBox({ problem }: { problem: FieldProblem }) {
   );
 }
 
-/** A same-origin path only; anything else is not linked. */
-function safePath(url: string | undefined): string | undefined {
-  return url && url.startsWith('/') && !url.startsWith('//') && !url.startsWith('/\\') ? url : undefined;
+/** A same-origin link only, as its path; anything else is not linked. The URL parser drops tabs and newlines and
+ *  reads a backslash as "/", so a value holding a control character or a backslash is refused before it is resolved. */
+export function safePath(url: string | undefined, origin = window.location.origin): string | undefined {
+  if (!url || /[\u0000-\u001f\u007f\\]/.test(url)) return undefined;
+  let resolved: URL;
+  try {
+    resolved = new URL(url, origin);
+  } catch {
+    return undefined;
+  }
+  return resolved.origin === origin ? resolved.pathname + resolved.search + resolved.hash : undefined;
 }
 
 /** The decision in the line's words, e.g. "a Finance Lead decides", drawn in the deciding red. */
@@ -169,6 +177,14 @@ function WhatHappensNext({ lineKey, next, wide }: { lineKey: string; next: NonNu
       )}
     </div>
   );
+}
+
+/** A field's help goes under the proof box straight after it, the proof for that answer (SCR-04-*-change). */
+function movedHelp(fields: Field[], at: number): { id: string; text?: string } | undefined {
+  const owner = fields[at + 1]?.type === 'evidence' ? fields[at] : fields[at]?.type === 'evidence' ? fields[at - 1] : undefined;
+  if (!owner?.help || owner.type === 'evidence') return undefined;
+  const id = `sw-help-${owner.name}`;
+  return owner === fields[at] ? { id } : { id, text: owner.help };
 }
 
 export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) {
@@ -265,7 +281,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) 
   return (
     <DrawerFrame eyebrow="START WORK" title={title} narrow={narrowDrawer(line.key)} subline={subline} onClose={onClose} focusKey={`line-${line.key}`} footer={footer}>
       {notice && <NoticeCallout notice={notice} agent={agent} wide={wide} calloutRef={calloutRef} />}
-      {form.fields.map((field) => (
+      {form.fields.map((field, at) => (
         <IntakeField
           key={field.name}
           lineKey={line.key}
@@ -277,9 +293,10 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) 
           readOnly={readOnly}
           error={form.fieldErrors[field.name]}
           note={field.name === line.case_field && unusable ? CASE_UNUSABLE : form.fieldNotes[field.name]}
+          movedHelp={movedHelp(form.fields, at)}
         />
       ))}
-      {notice?.kind === 'invalid' && notice.unmatched.map((problem) => <ProblemBox key={problem.name} problem={problem} />)}
+      {notice?.kind === 'invalid' && notice.unmatched.map((problem, at) => <ProblemBox key={`${problem.name}-${at}`} problem={problem} />)}
       {line.next && <WhatHappensNext lineKey={line.key} next={line.next} wide={wide} />}
     </DrawerFrame>
   );

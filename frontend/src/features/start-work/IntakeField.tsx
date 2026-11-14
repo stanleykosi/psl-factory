@@ -23,6 +23,9 @@ type Props = {
   error: string | undefined;
   /** A note under the control that is not an error, e.g. "That choice is no longer available." */
   note: string | undefined;
+  /** This field's help, drawn under the proof box that follows it (SCR-04-*-change): its id, so it still
+   *  describes this control, and, on the proof box, the text drawn there. */
+  movedHelp?: { id: string; text?: string };
 };
 
 const NATIVE: Record<string, string> = { date: 'date', period: 'month', datetime: 'datetime-local', integer: 'number' };
@@ -36,17 +39,17 @@ function Label({ htmlFor, id, field, as = 'label' }: { htmlFor?: string; id: str
   );
 }
 
-export function IntakeField({ lineKey, field, value, onChange, parent, parentLabel, readOnly, error, note }: Props) {
+export function IntakeField({ lineKey, field, value, onChange, parent, parentLabel, readOnly, error, note, movedHelp }: Props) {
   const id = useId();
   const controlId = `${id}-control`;
   const labelId = `${id}-label`;
-  const helpId = `${id}-help`;
+  const helpId = movedHelp?.id ?? `${id}-help`;
   const errorId = `${id}-error`;
   const noteId = `${id}-note`;
   const waiting = field.depends_on !== undefined && parent === undefined;
-  const hint = field.help;
+  const hint = movedHelp ? undefined : field.help;
   const waitId = `${id}-wait`;
-  const describedBy = [waiting && waitId, hint && helpId, note && noteId, error && errorId].filter(Boolean).join(' ') || undefined;
+  const describedBy = [waiting && waitId, (hint || (movedHelp && !movedHelp.text)) && helpId, note && noteId, error && errorId].filter(Boolean).join(' ') || undefined;
   const invalid = error !== undefined;
   const common = {
     'aria-describedby': describedBy,
@@ -189,6 +192,11 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
       {hint && (
         <span className="psl-hint" id={helpId}>
           {hint}
+        </span>
+      )}
+      {movedHelp?.text && (
+        <span className="psl-hint" id={movedHelp.id}>
+          {movedHelp.text}
         </span>
       )}
       {note && (

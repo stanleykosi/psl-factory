@@ -36,7 +36,8 @@
 .sw-headtext { display: flex; flex-direction: column; min-width: 0; }
 .sw-headtext .psl-drawer__title { overflow-wrap: anywhere; }
 .sw-layer--sheet .psl-drawer__title { font-size: 18px; }
-.sw-change { min-height: 0; padding: 0; vertical-align: baseline; }
+/* the boards draw "change line" as a plain link: regular weight */
+.sw-change { min-height: 0; padding: 0; vertical-align: baseline; font-weight: 400; }
 .sw-close { flex: none; margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 0; font-size: 22px; }
 
 /* chooser: one bordered card per line; the radio is the card's whole surface, the chosen card has an ink border */
@@ -54,7 +55,7 @@
 .sw-layer--sheet .sw-line { padding: 10px var(--space-3); }
 .sw-tola { align-items: center; padding: var(--space-3) 14px; border: 2px solid var(--action); text-decoration: none; }
 .psl a.sw-tola { font-weight: 400; color: var(--action-ink); }
-.sw-tola .psl-avatar { width: 28px; height: 28px; }
+.sw-tola .psl-avatar { width: 28px; height: 28px; object-fit: cover; }
 
 /* fields */
 .sw-field { margin: 0; padding: 0; border: none; }
