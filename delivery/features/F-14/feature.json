@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -106,6 +106,18 @@
       "at": "2026-11-14T15:09:45Z",
       "seconds": 77.2,
       "evidence_ref": "delivery/features/F-14/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T15:56:36Z",
+      "seconds": 96.5,
+      "evidence_ref": "delivery/features/F-14/round-4/checks.md"
     }
   ],
   "reviews": {
@@ -931,14 +943,28 @@
         "delivery/features/F-14/round-3/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
       ]
     },
     {
@@ -954,14 +980,28 @@
         "delivery/features/F-14/round-3/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
       ]
     },
     {
@@ -1000,14 +1040,28 @@
         "delivery/features/F-14/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "this commit"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "this commit"
       ]
     },
     {
@@ -1023,14 +1077,28 @@
         "delivery/features/F-14/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T15:19:00Z",
           "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
       ]
     }
   ],
@@ -1217,7 +1285,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b7f7166781cd81326c03669da4ae88f092c4cf33",
     "task_branch": "fe-workitem-the-work-item-page-and-its-history-match",
-    "head_sha": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+    "head_sha": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-14",
     "pr_url": null,
     "pr_number": null,
@@ -2077,6 +2145,14 @@
       "round": 4,
       "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T15:56:37Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
     }
   ],
   "routing": {
@@ -2093,9 +2169,9 @@
   },
   "gate": {
     "round": 4,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
   },
   "blocked": null
 }

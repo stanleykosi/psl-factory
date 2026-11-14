@@ -109,10 +109,10 @@
   ],
   "reviews": {
     "technical": {
-      "status": "changes_requested",
+      "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead)",
-      "snapshot_ref": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
       "evidence_refs": [
         "delivery/features/F-05/round-3/review-technical.md"
       ]
@@ -153,16 +153,16 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer (design-fidelity gate)",
-      "snapshot_ref": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
       "evidence_refs": [
         "delivery/features/F-05/round-3/review-ui.md"
       ]
     },
     "security": {
-      "status": "changes_requested",
+      "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "security reviewer",
-      "snapshot_ref": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
       "evidence_refs": [
         "delivery/features/F-05/round-3/review-security.md"
       ]
@@ -524,7 +524,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -541,11 +541,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -561,7 +575,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -578,11 +592,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -598,7 +626,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -615,11 +643,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -635,7 +677,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -652,11 +694,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -672,7 +728,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -689,11 +745,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -709,7 +779,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -726,11 +796,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -746,7 +830,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -763,11 +847,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -783,7 +881,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -800,11 +898,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:44Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -820,7 +932,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -837,11 +949,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:45Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -857,7 +983,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -874,11 +1000,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:45Z",
+          "refs": [
+            "The pickers still draw the \"\u25be\" glyph (desktop-1440, mobile-weekly-390)."
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The pickers still draw the \"\u25be\" glyph (desktop-1440, mobile-weekly-390)."
       ]
     },
     {
@@ -894,7 +1034,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -911,11 +1051,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:45Z",
+          "refs": [
+            "The phone \"+ Start\" is drawn by the base's PhoneBar. The desktop top-bar control is unchanged since round 2."
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The phone \"+ Start\" is drawn by the base's PhoneBar. The desktop top-bar control is unchanged since round 2."
       ]
     },
     {
@@ -931,7 +1085,7 @@
         "delivery/features/F-05/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -948,11 +1102,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:54:45Z",
+          "refs": [
+            "`start-work.css` is unchanged by the merge."
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`start-work.css` is unchanged by the merge."
       ]
     },
     {
@@ -968,7 +1136,7 @@
         "delivery/features/F-05/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -993,11 +1161,35 @@
           "refs": [],
           "head": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
           "reason": "Every value in the coordinator's list is refused at head: `\"/\\t/evil.example\"`, `\"/\\n/evil.example\"`, `\"//evil\"`, `\"/\\\\evil\"` and `\"https://evil\"` all return `undefined`. I checked this by replicating the function in node and with the new unit tests at `tests/start-work.test.tsx:678-687`, which pass. A same-origin path with query and hash, and an absolute same-origin URL, are kept. It still fails on dot-segment values that normalise to `//host` (see TECH-3-1)."
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:54:59Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:54:59Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
-        "230edd6"
+        "0758d3e"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -1161,14 +1353,42 @@
         "delivery/features/F-05/round-3/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T06:47:30Z",
           "head": "230edd60f366ea64a1a138dc66f2084bd447ebd1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:54:59Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:54:59Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0758d3e"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -1184,14 +1404,42 @@
         "delivery/features/F-05/round-3/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-security",
           "at": "2026-11-14T06:47:30Z",
           "head": "230edd60f366ea64a1a138dc66f2084bd447ebd1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:54:59Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-14T15:54:59Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0758d3e"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "0758d3e"
       ]
     }
   ],
