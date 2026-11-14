@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -89,11 +89,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (UI against the contract mock only)",
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -150,6 +152,29 @@
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T03:38:29Z",
+          "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "An opaque `case_id` containing reserved characters is encoded twice. `/projects/P%2F..%3Cb%3E` sent `GET /api/v1/projects/P%252F..%253Cb%253E`, because Next hands the route param already encoded and openapi-fetch encodes it again. Expected: one level of encoding, so the backend sees the same id the URL carried. Actual: the id the server decodes is `P%2F..%3Cb%3E`. Real ids are uuids (REC-CASE), so there is no impact today, and the mock falls back to the default journey for unknown ids. The fix is to decodeURIComponent the segment before the client call, in `frontend/src/features/projects/useProject.ts` or the route page. Check this when FE-CONNECT-1 meets the real API.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T03:41:55Z",
           "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
         }
       ]
@@ -336,6 +361,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T03:38:29Z",
+      "round": 1,
+      "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:41:55Z",
       "round": 1,
       "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
       "reason": null
