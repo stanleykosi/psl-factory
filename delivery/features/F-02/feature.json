@@ -103,10 +103,10 @@
       ]
     },
     "integrated_qa": {
-      "status": "passed",
+      "status": "changes_requested",
       "reviewer": "reviewer-qa",
       "authority": "integrated QA (frontend against the contract mock only)",
-      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "evidence_refs": [
         "delivery/features/F-02/round-2/review-qa.md"
       ]
@@ -135,7 +135,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "evidence_refs": [
         "delivery/features/F-02/round-2/review-ux.md"
       ]
@@ -144,7 +144,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI reviewer (visual consistency against the approved SCR-01 and STATES boards, tokens and layout at desktop and phone width)",
-      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "evidence_refs": [
         "delivery/features/F-02/round-2/review-ui.md"
       ]
@@ -456,6 +456,52 @@
           "action": "add",
           "by": "pmo-acceptance",
           "at": "2026-11-14T00:35:09Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The list and the item page disagree for three of the six rows the mock shares. List row W-1004 reads \"Lagoon Health \u00b7 Milestone 1 invoice, INV-0405\" but `/work/W-1004` shows \"Lagoon Health \u00b7 Milestone 3 invoice, INV-0419\". List row W-1005 reads \"Harmattan Bank \u00b7 Go-live invoice, INV-0409\" but `/work/W-1005` shows \"Kora Logistics \u00b7 Milestone 1 invoice, INV-0405\". List row W-1006 reads \"Kora Logistics \u00b7 Milestone 1 invoice, INV-0399\" but `/work/W-1006` shows \"Delta Foods \u00b7 Milestone 1 invoice, INV-0388\". State and station do agree (Ready to continue / Effect uncertain / Verified). A person clicking the row lands on a different invoice, so the journey \"open the matching item\" fails in the mock. This is fixture data, not component logic, but the mock is the contract that both sides build to. Expected: the list row and `work/<id>` fixture describe the same title, reference and client for each id. Source: `frontend/mock/fixtures/E-WORK-LIST.rows.json` against `frontend/mock/fixtures/work/W-1004.json`, `W-1005.json`, `W-1006.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T01:34:23Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock answers an unknown id with the default item. `GET /api/v1/work/W-1007` with finance_lead returns 200 with `id: W-1001`, so any list row without a fixture (W-1101..W-1120, 18 of 24 rows on the first tab) opens W-1001's page under the URL of another id. Clicking W-1115 in the browser would show the wrong item the same way. A 404 for unknown ids (the mock already does that for W-1099) would catch this. Source: `frontend/mock/server.mjs` near line 68.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T01:34:23Z",
           "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
         }
       ]
