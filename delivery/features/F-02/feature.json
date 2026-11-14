@@ -97,7 +97,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead)",
-      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "evidence_refs": [
         "delivery/features/F-02/round-2/review-technical.md"
       ]
