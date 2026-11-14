@@ -151,6 +151,13 @@ describe('E-EVIDENCE-UPLOAD', () => {
     expect((row((await rules()).body, RFP) as Row & { proof_case: { case_revision: number } }).proof_case.case_revision).toBe(3);
   });
 
+  it('/__mock/reset restarts evidence ids at EV-1 (QA-1-2)', async () => {
+    expect((await upload('C-SETUP-1', body(1))).body.evidence_id).toBe('EV-1');
+    expect((await upload('C-SETUP-1', body(2))).body.evidence_id).toBe('EV-2');
+    await fetch(`${base}/__mock/reset`, { method: 'POST' });
+    expect((await upload('C-SETUP-1', body(1))).body.evidence_id).toBe('EV-1');
+  });
+
   it('unknown cases are 404, bad bodies 422, pm and none 403', async () => {
     expect((await upload('C-NOPE', body(1))).status).toBe(404);
     expect((await upload('C-SETUP-1', { kind: 'rule_proof' })).status).toBe(422);

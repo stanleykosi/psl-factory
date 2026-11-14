@@ -36,10 +36,14 @@ const DATA = Object.fromEntries(AREAS.map((area) => [area, { desktop: read(`${ar
 // persona:scenario:component -> the saved fields; persona:case_id -> current case revision (shared with evidence.mjs).
 const overrides = new Map();
 export const caseRevisions = new Map();
+// Uploads since the last reset, so evidence ids restart at EV-1 (QA-1-2).
+let uploads = 0;
+export const nextEvidenceId = () => `EV-${(uploads += 1)}`;
 
 export function resetSetup() {
   overrides.clear();
   caseRevisions.clear();
+  uploads = 0;
 }
 
 // MOCK_SETUP_SCENARIO sets the default for a whole mock run. The design-fidelity tool scopes its cookies to the
