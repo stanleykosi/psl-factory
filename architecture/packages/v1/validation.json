@@ -1,0 +1,163 @@
+{
+  "artifact_validation": "passed",
+  "application_acceptance": "not_executed_by_generator",
+  "product_scenarios": {
+    "A-ME": "not_run",
+    "A-MYWORK": "not_run",
+    "A-WORKITEM": "not_run",
+    "A-HISTORY": "not_run",
+    "A-DECIDE": "not_run",
+    "A-STALE": "not_run",
+    "A-START": "not_run",
+    "A-RESPONSE": "not_run",
+    "A-RECONCILE": "not_run",
+    "A-RESUME": "not_run",
+    "A-PROJECT": "not_run",
+    "A-OVERVIEW": "not_run",
+    "A-MONTHEND": "not_run",
+    "A-PAYROLL": "not_run",
+    "A-SETUP": "not_run",
+    "A-ALERTS": "not_run",
+    "A-ASSISTANT": "not_run",
+    "A-REPORT": "not_run",
+    "A-ACCESSIBILITY": "not_run"
+  },
+  "open_decisions": [
+    "D-API-STYLE",
+    "D-AUTH",
+    "D-HOSTING",
+    "D-UPDATES",
+    "D-PAGING",
+    "D-NOTIFY-MODEL",
+    "D-ALERT-PROVIDERS",
+    "D-CONVERSATION-MODEL",
+    "D-AGENT-PROVIDER",
+    "D-RETURN",
+    "D-FIRST-FEATURE"
+  ],
+  "gates": {
+    "T-FOUNDATION": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-FRONTEND-SHELL": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-MYWORK": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-WORKITEM": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-DECIDE": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-START": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-RESPONSE": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-EXCEPTIONS": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-RETURN",
+      "D-UPDATES"
+    ],
+    "T-PROJECTS": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-FLOOR": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-RETURN",
+      "D-UPDATES"
+    ],
+    "T-FINANCE": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-PAYROLL": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-SETUP": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING"
+    ],
+    "T-ALERTS": [
+      "D-ALERT-PROVIDERS",
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-NOTIFY-MODEL",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-ASSISTANT": [
+      "D-AGENT-PROVIDER",
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-CONVERSATION-MODEL",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "T-BACKEND-ROLES": [],
+    "M-1": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-FIRST-FEATURE",
+      "D-PAGING",
+      "D-UPDATES"
+    ],
+    "M-2": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-RETURN",
+      "D-UPDATES"
+    ],
+    "M-3": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-PAGING",
+      "D-RETURN",
+      "D-UPDATES"
+    ],
+    "M-4": [
+      "D-AGENT-PROVIDER",
+      "D-ALERT-PROVIDERS",
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-CONVERSATION-MODEL",
+      "D-NOTIFY-MODEL",
+      "D-PAGING",
+      "D-UPDATES"
+    ]
+  }
+}

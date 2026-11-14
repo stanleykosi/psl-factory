@@ -1,0 +1,91 @@
+{
+  "checks": "delivery/checks.sh",
+  "merge_policy": "delivery/merge-policy.json",
+  "protected_paths": [
+    "delivery/checks.sh",
+    "delivery/config.json",
+    "delivery/merge-policy.json"
+  ],
+  "max_rounds": 3,
+  "max_gate_attempts": 3,
+  "design_gate": "required",
+  "require_pushed": true,
+  "checks_timeout_seconds": 1800,
+  "routing": {
+    "low": {
+      "technical": "haiku",
+      "qa": "sonnet"
+    },
+    "medium": {
+      "technical": "sonnet",
+      "qa": "sonnet"
+    },
+    "high": {
+      "technical": "opus",
+      "qa": "opus"
+    }
+  },
+  "prices_as_of": "2026-11-11",
+  "prices_usd_per_mtok": {
+    "claude-fable-5-2": {
+      "input": 8.0,
+      "cache_write_5m": 10.0,
+      "cache_write_1h": 16.0,
+      "cache_read": 0.2,
+      "output": 40.0
+    },
+    "claude-opus-5-5": {
+      "input": 4.0,
+      "cache_write_5m": 5.0,
+      "cache_write_1h": 8.0,
+      "cache_read": 0.2,
+      "output": 20.0
+    },
+    "claude-sonnet-5-5": {
+      "input": 2.0,
+      "cache_write_5m": 2.5,
+      "cache_write_1h": 4.0,
+      "cache_read": 0.1,
+      "output": 10.0
+    },
+    "claude-haiku-5-5": {
+      "input": 0.1,
+      "cache_write_5m": 0.125,
+      "cache_write_1h": 0.2,
+      "cache_read": 0.01,
+      "output": 0.5,
+      "long_context": {
+        "over_prompt_tokens": 100000,
+        "input": 0.5,
+        "cache_write_5m": 0.625,
+        "cache_write_1h": 1.0,
+        "cache_read": 0.05,
+        "output": 2.5
+      }
+    }
+  },
+  "fast_multiplier": 2.0,
+  "us_inference_multiplier": 1.1,
+  "transcripts_dir": null,
+  "surface_reviewers": {
+    "ui": {
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "security": {
+      "security": "opus"
+    },
+    "auth": {
+      "security": "opus"
+    },
+    "payments": {
+      "security": "opus"
+    },
+    "data-migration": {
+      "security": "opus"
+    },
+    "external-messaging": {
+      "security": "opus"
+    }
+  }
+}

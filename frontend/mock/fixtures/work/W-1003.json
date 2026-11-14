@@ -1,0 +1,36 @@
+{
+  "id": "W-1003",
+  "title": "Delta Foods · Weekly client update",
+  "line": "Weekly client update",
+  "reference": "WCU-0031",
+  "state": "processing",
+  "revision": 3,
+  "stations": [
+    {"name":"Collect records","status":"done"},
+    {"name":"Check sources","status":"done"},
+    {"name":"Draft update","status":"current_agent"},
+    {"name":"PM review","status":"not_started"},
+    {"name":"Deliver","status":"not_started"}
+  ],
+  "facts": [
+    {"name":"drafted","status":"current"},
+    {"name":"reviewed","status":"not_yet"},
+    {"name":"approved","status":"not_yet"},
+    {"name":"sent","status":"not_yet"},
+    {"name":"receipt_recorded","status":"not_yet"},
+    {"name":"verified","status":"not_yet"}
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {"text":"Read this week's meeting minutes","status":"done","source":"Minutes · 10 Nov"},
+      {"text":"Read the open issues and changes","status":"done","source":"Issue register · 4 open"},
+      {"text":"Writing the progress section","status":"working"},
+      {"text":"Hand the draft to the PM for review","status":"next"}
+    ]
+  },
+  "next_step": "Tola is drafting the update. The PM reviews it next.",
+  "sample": true
+}

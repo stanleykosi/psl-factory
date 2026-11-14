@@ -1,0 +1,965 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-03",
+  "outcome": "Open one work item and read its history",
+  "state": "DONE",
+  "task_ids": [
+    "FE-WORKITEM"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**W-1004 (A-WORKITEM)** shows the six facts as separate boxes: Drafted, Reviewed and Approved Earned with times; Sent \"Not yet\"; Receipt recorded \"Unknown\"; Verified \"Not yet\". No box is empty or reads 0, and the Paid note is present. \u2014 verify: unit test renders the W-1004 fixture and asserts six list items, the exact texts, and no fact text matching `^$|^0$`. Also open http://localhost:3201/work/W-1004 with the mock on 3202 and look.",
+    "**Unknown or missing facts** always read \"Unknown\". \u2014 verify: unit test with every fact `unknown`, and with a facts array missing `sent`, asserts \"Unknown\" for each and never \"0\", \"No\" or blank.",
+    "**The state tag** shows the CMP-05 wording and colour class for all 11 states. \u2014 verify: a table-driven unit test over the 11 enum values asserts the text and the `psl-tag--*` class from the Contract table.",
+    "**The station track** shows every station from `stations[]` in order, with number, name and mapped status. The current one has `aria-current=\"step\"`. At 390px only the track scrolls sideways. \u2014 verify: unit test for the 7 status mappings. The e2e at 390px asserts `document.documentElement.scrollWidth <= 390` on /work/W-1001.",
+    "**The agent card never offers a decision.**",
+    "**Reduced motion:** the current agent step pulses only when motion is allowed. \u2014 verify: the e2e runs with `reducedMotion: 'reduce'` and asserts the current step's computed `animation-name` is `none`.",
+    "**Decision link only when the person can act:**",
+    "**Next step:** `next_step` appears in a callout of the mapped kind. effect_uncertain (W-1005) shows a warning callout and no action button anywhere on the page. \u2014 verify: unit test on W-1005 asserting the `psl-callout--warning` class and zero buttons outside the tabs and Try-again controls.",
+    "**Sample label:** \"SAMPLE DATA\" shows on the item when `sample: true`, even with `NEXT_PUBLIC_API_MODE=live`. \u2014 verify: unit test with the env stubbed to `live`.",
+    "**No access (403/404):** a 404 or a 403 shows \"You can't open this work item\" with \"Back to my queue\" to /my-work. Neither the id nor any title appears. \u2014 verify: open http://localhost:3201/work/W-1099 and see the permission view. Unit tests with fetch stubbed to 403 and to 404 assert that the requested id string is absent from `document.body.textContent`.",
+    "**401:** a 401 on the item shows the shell's signed-out callout with a sign-in link whose `next` is `/work/W-1001`. \u2014 verify: unit test.",
+    "**Server or network error:** shows the work-item error card with \"Reference <code> for support.\" and Try again. Clicking Try again re-fetches and then shows the item. \u2014 verify: unit test where the first fetch returns 500 and the second returns 200.",
+    "**History (A-HISTORY):** /work/W-1004/history lists rows in the order returned (newest first), each with when in WAT, a PERSON/AGENT/FACTORY tag, actor and event. The list includes a return and an approval. \u2014 verify: unit test against the W-1004 history fixture asserts the row order equals the fixture order, and that `2026-11-12T15:40:00Z` renders as \"12 Nov 16:40\".",
+    "**Restricted history rows:** a restricted row shows only when, the actor-kind tag, the actor and \"Restricted\". Its event, detail and version strings never appear. \u2014 verify: unit test with a restricted item that does carry `event`, `detail` and `version` asserts those strings are absent.",
+    "**History is read-only:** the history view contains no input or button that edits or deletes an entry. Its only controls are the filter, the rows-per-page select, Show more and Try again. \u2014 verify: unit test enumerating the controls.",
+    "**Filter and paging requests:** choosing \"Decisions\" sends `kind=decisions&limit=20`. Choosing 10 rows sends `limit=10`. \"Show more\" sends `cursor=<next_cursor>` and appends rows. Show more is absent when the response has no `next_cursor`. \u2014 verify: unit test inspecting the stubbed `fetch` request URLs. In the browser, /work/W-1004/history with 10 rows shows 10 rows, then 12 after Show more, and no Show more after that.",
+    "**Mock: per-id selection with fallback.**",
+    "**Every fixture is schema-valid:** every file in `frontend/mock/fixtures/work/` (with `_kind` stripped) validates against the v3 E-WORK-ITEM or E-WORK-HISTORY 200 schema. \u2014 verify: a new test iterating the directory with the existing Ajv setup.",
+    "**Polling (D-UPDATES r2):**",
+    "**Accessibility (A-ACCESSIBILITY):** axe reports no WCAG 2.2 AA violations, and keyboard focus shows the focus ring on the tabs, filter and Show more. Pages and states checked:",
+    "**Gate:** `delivery/checks.sh` passes (lint, typecheck, vitest, next build). \u2014 verify: the gate run."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it medium, not low. It renders several cross-layer contract shapes (11 states, 7 station statuses, 4 fact statuses, restricted history). It carries rules that must not be weakened in the UI: INV-FACTS, INV-UNKNOWN, INV-AGENT and INV-RESTRICTED (`architecture/packages/v3/handoff.md`, Invariants). It also has to share `frontend/mock/server.mjs` and the E-WORK-ITEM fixture with two parallel features (PMO-0-3). It is not high: it is read-only, holds no money logic, identity or migrations, writes nothing, and runs locally on the mock. Surfaces: - `ui`: SCR-02 and the history view. - `api`: it consumes two contract operations through the generated client and extends the contract mock. The surfaces exclude `contract-change` because openapi.json is not edited; the gaps in PMO-0-1 and PMO-0-2 go to architecture. They exclude `auth` because the page only reacts to 401, 403 and 404. Product acceptance is not required. The work conforms to the client-approved SCR-02 boards and adds no new flow, copy or business rule. Omitting design values that the contract lacks is conformance, not new behaviour."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-03/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:33:26Z",
+      "evidence_ref": "delivery/features/F-03/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:48:27Z",
+      "evidence_ref": "delivery/features/F-03/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T00:13:10Z",
+      "seconds": 41.4,
+      "evidence_ref": "delivery/features/F-03/round-3/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (UI against the contract mock only)",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (not client/product acceptance, merge or release)",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-03/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (visual lens only; no code or spec edits)",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The fixture-directory test in `frontend/tests/mock-contract.test.ts` (the \"every fixture in fixtures/work is schema-valid\" test) treats every `*.json` that does not end in `.history.json` as an E-WORK-ITEM body and requires `sample: true`. If F-04 adds decision fixtures to `fixtures/work/` (for example `W-1001.decision.json`), this test fails. Fix when F-04 lands: have the test match only `^W-\\d+(\\.history)?\\.json$` or ignore other suffixes. The integration owner should tell F-04 either to use this naming rule or to keep decision fixtures out of this folder.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:39:52Z",
+          "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "99b181f"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "mock-contract.test.ts directory test now filters on `^W-\\d+(\\.history)?\\.json$`."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "99b181f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "mock-contract.test.ts directory test now filters on `^W-\\d+(\\.history)?\\.json$`."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`workResponse` in `frontend/mock/server.mjs` looks up `own(workId)` for the item. A request to `/api/v1/work/W-1004.history` therefore returns the history body as an E-WORK-ITEM response. This affects only the dev mock, and only for odd ids. Reject ids that contain \".\" in the item lookup, or key the item fixtures with a prefix. Because F-04 will add more suffixed files to the same folder, this is worth tightening when the file is merged.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:39:52Z",
+          "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "99b181f"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "server.mjs `own()` returns undefined unless workId matches `^W-\\d+$`, so `W-1004.history` returns the default item. A new test covers it."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "99b181f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "server.mjs `own()` returns undefined unless workId matches `^W-\\d+$`, so `W-1004.history` returns the default item. A new test covers it."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/work-item/useWorkItem.ts` poll catch: any error during a poll, including 401, 403 or 404 (access revoked mid-session), is shown as \"We couldn't refresh this item\" with the stale item still on screen. The spec assumption (a failed poll keeps the last good data) allows this. A 401 or 403 on a poll could instead move to the signed-out or no-access state, so stale data does not stay visible after access is lost. Consider this for a later round or the architecture revision.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:39:52Z",
+          "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "4f3831d"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "useWorkItem.ts poll catch sets the error state and returns without rescheduling for unauthenticated, forbidden and not_found. A unit test covers 403, 404 and 401."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "4f3831d"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "useWorkItem.ts poll catch sets the error state and returns without rescheduling for unauthenticated, forbidden and not_found. A unit test covers 403, 404 and 401."
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Processing station colour differs from the approved artboard. W-1003 station 03 (\"Draft update\", current_agent) renders with `psl-station--agent` (action blue tint and blue border, `frontend/src/features/work-item/labels.ts:45`, bundle `frontend/src/styles/psl-bundle.css:321`). The approved artboard `design/canvas/project/SCR-02-desktop-processing.dc.html` shows the agent-working station in the amber waiting tint with amber text (\"Chidi \u00b7 working\"). Expected: the station colour matches the artboard, or the design owner records the bundle mapping as approved in spec.md. Actual: blue. Design owner to confirm which is authoritative; the frontend follows that decision.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T23:39:52Z",
+          "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "none (decision)"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "Closed on the design-owner decision recorded in round-2/build.md and the 14 Nov 2026 decision: the agent station keeps the design system's blue (`psl-station--agent`), and the amber in the processing artboard is superseded. Checked on /work/W-1003 at 1440px (station 03 blue, \"Agent working\") and at 390px (blue row, \"Agent working\" on the right). The agent card on the phone also uses the blue action tint."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "none (decision)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Closed on the design-owner decision recorded in round-2/build.md and the 14 Nov 2026 decision: the agent station keeps the design system's blue (`psl-station--agent`), and the amber in the processing artboard is superseded. Checked on /work/W-1003 at 1440px (station 03 blue, \"Agent working\") and at 390px (blue row, \"Agent working\" on the right). The agent card on the phone also uses the blue action tint."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "No-access primary action differs from the approved permission artboard. `frontend/src/features/work-item/WorkItemStates.tsx:40` styles \"Back to my queue\" as `psl-btn--secondary` (outline). `design/canvas/project/SCR-02-desktop-permission.dc.html` shows it as the filled dark primary button, with \"NO ACCESS\" as a grey tag rather than red text. The spec does not record this change. Expected: the artboard's primary/tag treatment. Actual: outline button and red eyebrow text.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T23:39:52Z",
+          "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:48:27Z",
+          "refs": [
+            "7d2a270"
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "/work/W-1099 at 1440px and 390px: grey NO ACCESS tag, filled dark \"Back to my queue\" button, no item id or title shown. Matches the SCR-02-desktop-permission artboard (tag #E2E5E0, button #1F2427). The \"Ask for access\" control and the audit line are omitted, as the spec's gaps list records."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7d2a270"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "/work/W-1099 at 1440px and 390px: grey NO ACCESS tag, filled dark \"Back to my queue\" button, no item id or title shown. Matches the SCR-02-desktop-permission artboard (tag #E2E5E0, button #1F2427). The \"Ask for access\" control and the audit line are omitted, as the spec's gaps list records."
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Between 720px and about 920px the seven stations sit in a row that is wider than the track. Station 07 \"Verify\" is clipped and hidden behind an internal horizontal scroll with no visible cue. Expected: all seven stations visible at every width where the row layout is used, or the list layout used until the row fits. Actual at 760px on /work/W-1005: `.work-track` clientWidth 704, scrollWidth 864, and the seventh station is cut off. The row fits at 1000px. Cause: `frontend/src/features/work-item/work-item.css` (`.work-track { overflow-x: auto; }` at the top of the file, with the row rules above the 719.98px media query). Screenshot: `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/a400a30b-92cb-4efc-99c2-4a72d08a67f7/scratchpad/f03r2-ui/track-760.png`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T00:13:10Z",
+          "refs": [
+            "3f68441"
+          ],
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:16:54Z",
+          "refs": [
+            "Measured on /work/W-1005 with the scratch build at head 3f68441 (next dev on 3221, mock on 3222). Widths 390, 760, 900 and 1079: `ol` display block, seven stations stacked with seven distinct tops and one left edge, trackClient equals trackScroll, no station outside the track, document scrollWidth equals viewport. Widths 1080 and 1440: `ol` display grid, one row (one distinct top), trackClient equals trackScroll (1024 and 1264), all seven inside the track. Screenshots checked at 390, 760, 1080 and 1079 for W-1005, and at 1080 for W-1003. Shots in `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/a400a30b-92cb-4efc-99c2-4a72d08a67f7/scratchpad/f03r3-ui/shots/`."
+          ],
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3f68441"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Measured on /work/W-1005 with the scratch build at head 3f68441 (next dev on 3221, mock on 3222). Widths 390, 760, 900 and 1079: `ol` display block, seven stations stacked with seven distinct tops and one left edge, trackClient equals trackScroll, no station outside the track, document scrollWidth equals viewport. Widths 1080 and 1440: `ol` display grid, one row (one distinct top), trackClient equals trackScroll (1024 and 1264), all seven inside the track. Screenshots checked at 390, 760, 1080 and 1079 for W-1005, and at 1080 for W-1003. Shots in `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/a400a30b-92cb-4efc-99c2-4a72d08a67f7/scratchpad/f03r3-ui/shots/`."
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "spec.md Acceptance criterion 4 (line 202) still says \"At 390px the stations are a vertical list\" and asserts only the 390px scrollWidth. Screen states item 5 (line 122) already has the below-1080px rule. Expected: AC 4 states the same rule as Screen states item 5 (list below 1080px, row from 1080px, e2e at 390, 760, 900, 1079, 1080, 1440). Actual: AC 4 covers 390 only. Doc only; no visual change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:16:54Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock persona cookie does not change the item payload. `pm` on W-1001 still shows \"You are Finance Lead.\" and \"Open the decision\", because the mock fixture returns `you_can_act: true`. The page is right to render what the API says. This is a mock limit, so real wrong-user behaviour must be retested against the backend (W-1002 covers the `you_can_act: false` rendering).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-14T00:22:36Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The history fallback is generic. `/work/W-1002 | W-1003 | W-1005/history` all show the default invoice history (\"Drafted invoice\", \"Started the line\"), which does not match a weekly client update (W-1003). The spec allows this fallback. Add per-id history fixtures before anyone demos those pages.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-14T00:22:36Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, but the spec and readiness name E-WORK-ITEM and E-WORK-HISTORY as the operations in scope. Both are covered by the evidence, so the record is incomplete, not the delivery. The coordinator should fill `operation_ids` before merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:23:23Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The `feature.json` copy of acceptance criterion 4 still says \"At 390px only the track scrolls sideways\". `spec.md` line 202 already holds the 1080px rule, which is the authoritative version: list below 1080px, row from 1080px, checked at 390, 760, 900 and 1079, with no sideways scroll. This also settles UI-3-1, which is still OPEN in the record. Refresh the record's criterion and mark UI-3-1 fixed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:23:23Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The traceability to carry forward: `feature.json` has no \"carried forward\" list. The open non-blocking items are QA-3-1 (mock persona does not vary `you_can_act`; retest wrong-user on the real backend), QA-3-2 (per-id history fixtures for W-1002, W-1003 and W-1005 before demos) and the contract gaps listed in `spec.md` (amount with `unknown=true`, per-station detail and times, history filter counts, Documents tab, CSV, \"Ask for access\"). The architecture v4 proposal covers the gaps. A-WORKITEM's \"unknown amount\" part is not met in this feature because the v3 schema has no amount field (PMO-0-1). The fact-level Unknown is shown instead. This is a known, routed contract gap and not a delivery defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:23:23Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-03/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (visual lens only; no code or spec edits)",
+          "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-03/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (visual lens only; no code or spec edits)",
+          "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": "stanleykosi/psl-factory",
+    "task_id": "FE-WORKITEM",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "c4f35ab089fe4dbd969648cf142bafcfe85ec0c4",
+    "task_branch": "fe-workitem-open-one-work-item-and-read-its-history",
+    "head_sha": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-03",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/4",
+    "pr_number": 4,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "2c3a09b8745640ae0d22a8270b99a501b00ac630",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "frontend/e2e/work-item.spec.ts",
+      "frontend/mock/fixtures/work/W-1001.history.json",
+      "frontend/mock/fixtures/work/W-1002.json",
+      "frontend/mock/fixtures/work/W-1003.json",
+      "frontend/mock/fixtures/work/W-1004.history.json",
+      "frontend/mock/fixtures/work/W-1004.json",
+      "frontend/mock/fixtures/work/W-1005.json",
+      "frontend/mock/fixtures/work/W-1006.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/work/[id]/history/page.tsx",
+      "frontend/src/app/work/[id]/page.tsx",
+      "frontend/src/features/work-item/WorkItemHistory.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemStates.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/labels.ts",
+      "frontend/src/features/work-item/useWorkHistory.ts",
+      "frontend/src/features/work-item/useWorkItem.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/work-item.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-03/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "21 changed files exceed the auto-merge limit of 15"
+    ],
+    "decided_for_head_sha": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-13T22:44:58Z",
+  "round": 3,
+  "round_limit": 3,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-13T23:07:47Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T23:08:06Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:33:26Z",
+      "round": 1,
+      "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-13T23:39:52Z",
+      "round": 1,
+      "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T23:39:52Z",
+      "round": 2,
+      "head": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:48:28Z",
+      "round": 2,
+      "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T00:05:20Z",
+      "round": 2,
+      "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T00:05:20Z",
+      "round": 3,
+      "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T00:13:10Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T00:16:54Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T00:22:36Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T00:23:50Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T00:25:58Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T00:26:11Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T00:26:32Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T00:26:32Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-03/readiness.md",
+      "delivery/features/F-03/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 3,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+  },
+  "blocked": null
+}

@@ -1,0 +1,29 @@
+{
+  "id": "W-1002",
+  "title": "Harbour Bank · Receipt for INV-0398",
+  "line": "Record a receipt",
+  "reference": "RCP-0117",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {"name":"Bank statement","status":"done"},
+    {"name":"Match receipt","status":"current_person"},
+    {"name":"Allocate","status":"not_started"},
+    {"name":"Confirm","status":"not_started"},
+    {"name":"Verify","status":"not_started"}
+  ],
+  "facts": [
+    {"name":"drafted","status":"earned","at":"2026-11-03T09:12:00Z"},
+    {"name":"reviewed","status":"earned","at":"2026-11-03T13:40:00Z"},
+    {"name":"approved","status":"earned","at":"2026-11-03T14:02:00Z"},
+    {"name":"sent","status":"earned","at":"2026-11-03T14:10:00Z"},
+    {"name":"receipt_recorded","status":"current"},
+    {"name":"verified","status":"not_yet"}
+  ],
+  "tasks": [
+    {"id":"T-2002","kind":"do","title":"Match the receipt to INV-0398","required_role":"Finance Officer","you_can_act":false,"revision":1}
+  ],
+  "agent": {"status": "none"},
+  "next_step": "A Finance Officer matches the bank receipt to INV-0398.",
+  "sample": true
+}

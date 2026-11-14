@@ -1,0 +1,33 @@
+{
+  "schema_version": "merge-policy-0.1.0",
+  "auto_merge_enabled": true,
+  "auto_merge_risk_levels": ["low"],
+  "always_human_surfaces": [
+    "security",
+    "auth",
+    "payments",
+    "data-migration",
+    "infra",
+    "dependency",
+    "contract-change",
+    "external-messaging",
+    "product-decision"
+  ],
+  "always_human_paths": [
+    ".github/*",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "architecture/*",
+    "migrations/*",
+    "*/migrations/*",
+    "*.lock",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "*.env*",
+    "scripts/merge-decision.py",
+    "docs/templates/merge-policy.json"
+  ],
+  "max_auto_merge_changed_files": 15,
+  "merge_method": "squash",
+  "merge_identity": null
+}

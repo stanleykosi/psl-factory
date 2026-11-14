@@ -1,0 +1,56 @@
+/* The frame's own layout. Token variables only; no bundle class is restyled. */
+
+/* (a) top bar from 720px, phone bar below */
+.shell-topbar { display: none; }
+.shell-phone { position: relative; }
+@media (min-width: 720px) {
+  .shell-topbar { display: block; }
+  .shell-phone { display: none; }
+}
+
+/* (b) phone-bar menu button matches .psl-phonebar a */
+.shell-menubutton {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: var(--control-md); min-height: var(--control-md); padding: 0;
+  color: var(--on-strong); background: transparent; border: none; font: inherit; cursor: pointer;
+}
+
+/* (c) phone menu panel under the bar; items keep the 44px phone touch target (tokens.json size note) */
+#phone-menu { position: absolute; top: 100%; left: var(--space-4); right: var(--space-4); z-index: 10; }
+#phone-menu .psl-menuitem { min-height: var(--control-md); }
+.shell-menuwho { margin: 0; padding: var(--space-2) 14px; display: flex; flex-direction: column; }
+.shell-menuwho strong { font-weight: 600; }
+.shell-menuwho small { font-size: 12px; color: var(--ink-muted); }
+
+/* (d) skip link, visually hidden until focused */
+.shell-skip { position: absolute; left: var(--space-4); top: var(--space-2); z-index: 20; transform: translateY(-200%); }
+.shell-skip:focus { transform: none; display: inline-flex; align-items: center; min-height: var(--control-md); padding: 0 var(--space-3); background: var(--surface); }
+
+/* (e) page layout: SCR-01 centres the bar content and the page at 1320px */
+body { margin: 0; background: var(--steel); }
+.shell-topbar .psl-nav__in { max-width: 1320px; margin: 0 auto; }
+.shell-main { max-width: 1320px; margin: 0 auto; padding: var(--space-6) var(--space-6) calc(var(--space-6) * 2); display: flex; flex-direction: column; gap: var(--space-5); }
+.shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 36px; line-height: 1.08; }
+.shell-reference { margin: 0; font-size: 13px; color: var(--ink-muted); }
+/* STATES error card: white surface, 2px signal border, mono eyebrow, message, reference, Try again */
+.shell-errorcard { background: var(--surface); border: 2px solid var(--signal); padding: 14px; display: flex; flex-direction: column; gap: var(--space-2); }
+.shell-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--signal-ink); }
+.shell-errorcard__action { max-width: 200px; }
+.shell-loading { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.shell-skel { display: grid; gap: 10px; }
+@media (max-width: 719.98px) {
+  .shell-main { padding: var(--space-4); gap: var(--space-3); }
+  .shell-title { font-size: 26px; }
+  .shell-errorcard__action { max-width: none; }
+}
+
+/* (f) narrow desktops (720px up to bp-desktop 1080px): the bar keeps the page's 28px gutter so the
+   wordmark and the page title share a left edge; it fits at 720px by tightening the gaps between items and
+   links, and the who-line shows the name only (design owner, 13 Nov 2026); the role stays for screen readers */
+.shell-navend { margin-left: auto; flex: none; }
+@media (min-width: 720px) and (max-width: 1079.98px) {
+  .shell-topbar .psl-nav__in { gap: var(--space-2); }
+  .shell-topbar .psl-navlink { padding-left: var(--space-1); padding-right: var(--space-1); }
+  .psl-nav__who { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .shell-who-role { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}

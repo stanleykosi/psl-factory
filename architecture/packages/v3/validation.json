@@ -1,0 +1,136 @@
+{
+  "artifact_validation": "passed",
+  "application_acceptance": "not_executed_by_generator",
+  "product_scenarios": {
+    "A-ME": "not_run",
+    "A-MYWORK": "not_run",
+    "A-WORKITEM": "not_run",
+    "A-HISTORY": "not_run",
+    "A-DECIDE": "not_run",
+    "A-STALE": "not_run",
+    "A-START": "not_run",
+    "A-RESPONSE": "not_run",
+    "A-RECONCILE": "not_run",
+    "A-RESUME": "not_run",
+    "A-PROJECT": "not_run",
+    "A-OVERVIEW": "not_run",
+    "A-MONTHEND": "not_run",
+    "A-PAYROLL": "not_run",
+    "A-SETUP": "not_run",
+    "A-ALERTS": "not_run",
+    "A-ASSISTANT": "not_run",
+    "A-REPORT": "not_run",
+    "A-ACCESSIBILITY": "not_run"
+  },
+  "open_decisions": [
+    "D-API-STYLE",
+    "D-AUTH",
+    "D-HOSTING",
+    "D-NOTIFY-MODEL",
+    "D-ALERT-PROVIDERS",
+    "D-CONVERSATION-MODEL",
+    "D-AGENT-PROVIDER",
+    "D-RETURN"
+  ],
+  "gates": {
+    "T-FOUNDATION": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-FRONTEND-SHELL": [],
+    "T-MYWORK": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-WORKITEM": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-DECIDE": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-START": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-RESPONSE": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-EXCEPTIONS": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-RETURN"
+    ],
+    "T-PROJECTS": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-FLOOR": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-FINANCE": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-PAYROLL": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-SETUP": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "T-ALERTS": [
+      "D-ALERT-PROVIDERS",
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-NOTIFY-MODEL"
+    ],
+    "T-ASSISTANT": [
+      "D-AGENT-PROVIDER",
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-CONVERSATION-MODEL"
+    ],
+    "T-BACKEND-ROLES": [],
+    "FE-MYWORK": [],
+    "FE-WORKITEM": [],
+    "FE-DECIDE": [],
+    "FE-CONNECT-1": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "FE-M2": [],
+    "FE-M3": [],
+    "FE-M4": [],
+    "M-1": [],
+    "M-1B": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "M-1C": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "M-2": [
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-RETURN"
+    ],
+    "M-3": [
+      "D-API-STYLE",
+      "D-AUTH"
+    ],
+    "M-4": [
+      "D-AGENT-PROVIDER",
+      "D-ALERT-PROVIDERS",
+      "D-API-STYLE",
+      "D-AUTH",
+      "D-CONVERSATION-MODEL",
+      "D-NOTIFY-MODEL"
+    ]
+  }
+}

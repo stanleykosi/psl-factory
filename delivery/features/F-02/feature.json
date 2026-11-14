@@ -1,0 +1,762 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-02",
+  "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
+  "state": "PR_OPEN",
+  "task_ids": [
+    "FE-MYWORK"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Queue tabs and counts (A-MYWORK).** As finance_lead, `/my-work` shows the tabs Needs me 24, Waiting on others 12, Done 6 and Unassigned 2, in that order, each count in a `.psl-badge`. \u2014 verify: open http://localhost:3301/my-work with the mock on 3302 and look. Add a component test with stubbed `fetch` asserting tab names, order and badge text equal to the response `counts`.",
+    "**Unassigned only when present (lead-view).** With the `pm` persona (cookie `psl_mock_persona=pm`) there is no Unassigned tab. A response whose `counts` omits `unassigned` renders three tabs, and a zero count shows \"0\". \u2014 verify: component test with two stubbed responses; e2e at 390px for finance_lead shows four tabs and the tablist scrolls sideways (`scrollWidth > clientWidth` on the tablist, `document.documentElement.scrollWidth <= 390`).",
+    "**Each tab requests its queue.** Clicking each tab sends `queue=needs_me|waiting_on_others|done|unassigned` with `limit=20`, and the URL gains `?queue=\u2026`. Arrow keys move the selection. \u2014 verify: component test inspecting stubbed `fetch` request URLs and `window.location.search`; a keyboard test with ArrowRight, Home and End.",
+    "**Kinds come from the API (A-MYWORK).** Needs me shows only DECIDE, DO and FIX tags. Every one of the four kinds renders with its mapped tag and class. A row with `kind: \"started\"` and state `action_needed` shows STARTED, which proves kind is not derived from state. \u2014 verify: mock test that every finance_lead needs_me item has kind in {decide, do, fix}; component test on a crafted response.",
+    "**State words and colours.** Each of the 11 states renders the CMP-05 words and family class from the C2 table. \u2014 verify: table-driven unit test over the state map, plus a component test that the rendered `.psl-tag` text and class match.",
+    "**Station bar and age.** `{index:4,count:7,name:\"Finance review\"}` with state `waiting` renders 7 segments (3 `d`, the 4th `w`), the text \"Station 4 of 7 \u00b7 Finance review\" and the bar `aria-hidden`. Verified renders \"All N stations done\". `age_seconds` 30 \u2192 `1m`, 7200 \u2192 `2h`, 86400 \u2192 `1d`. \u2014 verify: unit tests.",
+    "**Sample labels (R-SAMPLE).** Every row with `sample: true` shows SAMPLE DATA, and a row with `sample: false` shows none. \u2014 verify: component test counting `.psl-sample` inside the list against the number of sample rows.",
+    "**Row links.** Each title (desktop) or card (phone) links to `/work/{id}`. \u2014 verify: component test asserting `href=\"/work/W-1001\"`.",
+    "**Search.** Typing \"lagoon\" sends one request with `q=lagoon` 300 ms after the last keystroke. Clearing the box sends a request with no `q` parameter, and no request ever contains `q=` with an empty value. A search with no match shows \"No work matches\" and Clear filters. \u2014 verify: fake-timer component test inspecting request URLs; e2e typing \"zzz\" at 1440px shows the no-results state.",
+    "**Filters.** Choosing Line \"Prepare an invoice\" and State \"Action needed\" in the panel, then Show results, sends `line=Prepare%20an%20invoice&state=action_needed`. The Filter badge shows 2, chips show both values, and the URL holds both. Removing a chip or using Clear all reloads without it. Esc closes the panel without applying and returns focus to Filter. There is no Project or Waiting-on control. \u2014 verify: component test, and the SCR-01 filter state at 390px (bottom sheet) and 1440px (popover) in e2e.",
+    "**Paging (D-PAGING r2).** At the default, the first request has `limit=20`. finance_lead Needs me shows 20 rows, \"20 of 24 showing\" and \"Show 4 more\". Clicking it sends `cursor=<next_cursor>`, shows 24 rows, then \"All 24 showing\" with no button. Choosing 10 in Rows per page sends `limit=10` without a cursor, shows 10 rows and sets `?limit=10` in the URL. A reload keeps 10. \u2014 verify: component test with request inspection; e2e on http://localhost:3301/my-work?limit=10.",
+    "**URL restore.** Opening `/my-work?queue=done&q=lagoon&state=verified&limit=50` sends exactly those values. Invalid values (`queue=bogus`, `limit=7`, `state=nope`) fall back to needs_me, 20 and no state. Nothing is written to localStorage, sessionStorage or document.cookie. \u2014 verify: component test, plus an assertion that the storage lengths are unchanged and the cookie string is unchanged.",
+    "**Polling (D-UPDATES r2).** With fake timers, a new page-1 request goes out at 15 000 ms while visible. None goes out while `document.visibilityState` is `hidden`. One goes out on return to visible after more than 15 s. \u2014 verify: component test stubbing `visibilityState` and dispatching `visibilitychange`.",
+    "**A refresh keeps loaded rows.** After Show more (24 rows) and focus on row 22's link, a poll whose page 1 changes row 1's state updates row 1 and keeps 24 rows. `document.activeElement` stays the same link, and no `role=\"status\"` loading text appears. The counts and the updated time take the new values. \u2014 verify: component test.",
+    "**A failed refresh keeps the screen.** A poll that rejects (network) or returns 500 keeps the rows and shows \"Couldn't refresh \u00b7 updated 10:42\". A poll that returns 401 shows the signed-out callout with `next=%2Fmy-work`. \u2014 verify: component tests.",
+    "**Empty (SCR-01-*-empty).** As `pm`, Needs me shows \"Nothing needs you right now\" and a \"See what's waiting on others\" button, which selects Waiting on others. \u2014 verify: e2e at 390px and 1440px with the pm cookie.",
+    "**Wrong role.** As `pm`, `/my-work?queue=unassigned` shows \"This queue isn't open to your role.\" with the mock's message and a \"Go to Needs me\" link, and no rows. \u2014 verify: e2e, plus a mock test that the pm unassigned request returns 403 with a schema-valid error body.",
+    "**Load failures.** A 404, 500 or network failure on E-WORK-LIST shows the STATES error card (\"We couldn't load your queue. Your work is safe; nothing was changed.\", `Reference {code} for support.`, Try again). Try again repeats the request and recovers. A 401 shows the shell's signed-out callout. \u2014 verify: component tests with stubbed `fetch`; e2e uses `page.route('**/api/v1/work*')` to return 500 (not the scenario cookie, which would also fail `/me`).",
+    "**Loading.** While E-WORK-LIST is pending, skeleton bars and `role=\"status\"` \"Loading your queue\u2026\" show, with no rows from the previous view. A late response from an earlier view does not replace the current one. \u2014 verify: component test resolving two stubbed responses out of order; e2e holding the route open.",
+    "**Mock honours the query and stays on contract.** For each persona \u00d7 queue \u00d7 limit (10, 20, 50), following `next_cursor` to the end returns every row of that queue exactly once, and each page has at most `limit` items. `counts` equal the row totals. `q`, `line` and `state` narrow the results. Every 200 and error body validates against the v3 E-WORK-LIST schemas with the existing Ajv setup. The existing `tests/mock-contract.test.ts` still passes unchanged. \u2014 verify: new `frontend/tests/mock-work-list.test.ts`; `npm test`.",
+    "**Accessibility (A-ACCESSIBILITY).** Axe (WCAG 2.2 AA tags, as in `e2e/frame.spec.ts`) reports no violations at 390\u00d7844 and 1440\u00d7900 for default, filter open, empty (pm), no results, loading, error and lead-view. Focus-visible outlines show on tabs, Filter, chips, the rows-per-page options, Show more and row links. With `reducedMotion: 'reduce'` nothing animates. \u2014 verify: `cd frontend && E2E_PORT=3301 MOCK_PORT=3302 npx playwright test e2e/my-work.spec.ts`, with the browser context `timezoneId: 'Africa/Lagos'`. If this cannot run inside checks.sh, record the command and its output in build.md.",
+    "**Product acceptance items are visible.** build.md lists, with screenshots at 390px and 1440px: the rows-per-page control in the list footer, and the filter panel with Line and State only. \u2014 verify: build.md content."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it medium, not low: - It combines several behaviours that interact: queues, search, two filters, cursor paging with a page-size choice, and visibility-aware polling that must not disturb rows the person loaded. - It is the first feature to use E-WORK-LIST's query contract, which FE-CONNECT-1 inherits. - It changes `frontend/mock/server.mjs`, a file shared with F-03 and F-04 while the lanes run in parallel (PMO-0-4). It is not high: it is read-only, it sends no writes or CSRF-bound actions, and it involves no money, identity, migrations or deployment. Visibility rules (INV-ACCESS, INV-RESTRICTED) stay in the backend. Surfaces: - `ui`: SCR-01 and the shared STATES boards, components CMP-03/05/06/07/16/22. The surfaces exclude `api` and `contract-change`, because openapi.json is consumed, not changed. They exclude `dependency`, because no packages are added. They exclude `auth`, because the page reads only `/me` through the existing shell. Product acceptance is required. The rows-per-page control and its placement are not on the approved boards, and the filter panel ships without Project and Waiting on. The design engineer should confirm both on the built page."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-02/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:36:15Z",
+      "evidence_ref": "delivery/features/F-02/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-13T23:47:29Z",
+      "evidence_ref": "delivery/features/F-02/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend against the contract mock only)",
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; not client/product acceptance, merge or release)",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-02/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "product/design owner for the frontend (design engineer, as recorded in design/review.json and architecture/sources/decisions-2026-11-13*.md)",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (visual consistency against the approved SCR-01 and STATES boards, tokens and layout at desktop and phone width)",
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/server.mjs:~97-100` conflicts textually with F-03's branch (9bb054b) at the generic return. Resolution is to keep both: the `E-WORK-ITEM`/`E-WORK-HISTORY` branch and the `E-WORK-LIST` branch, in either order. F-03 also changes the `node:fs` import to `{ readdirSync, readFileSync }`, while F-02 adds `import { workList } from './work-list.mjs'` after the `node:url` import, so there is no clash there. After merging, rerun `tests/mock-work-list.test.ts` and `tests/mock-contract.test.ts`. Also confirm that the W-1001 to W-1006 ids in `E-WORK-LIST.rows.json` resolve to F-03's `fixtures/work/` files, which the spec leaves to the integration owner.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/work-list.mjs:30` returns 403 for `queue=unassigned` whenever the persona is not a lead, which includes persona `none`. C8 says `none` gets 200 with empty items and zero counts. The page never reaches this case, so it has no user impact. Optional tidy: apply the 403 only to personas other than `none`, or note the choice in the file.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:47:29Z",
+          "refs": [
+            "55e8194"
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "`frontend/mock/work-list.mjs:31` now refuses unassigned with 403 only for non-lead personas other than `none`. Persona `none` reaches the normal path and gets empty items with zero counts (no `unassigned` key, since it is not a lead), matching C8. `tests/mock-work-list.test.ts` asserts that exact body, and the 403 case for `pm` is kept."
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "55e8194"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`frontend/mock/work-list.mjs:31` now refuses unassigned with 403 only for non-lead personas other than `none`. Persona `none` reaches the normal path and gets empty items with zero counts (no `unassigned` key, since it is not a lead), matching C8. `tests/mock-work-list.test.ts` asserts that exact body, and the 403 case for `pm` is kept."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/my-work/MyWork.tsx:86-89,174-176`. `navigate` merges into `viewRef.current`, which is only updated in an effect after the URL change renders. Two navigations in the same tick (before React re-renders) would drop the first change. Today each user action issues a single `navigate`, so nothing breaks. Remember this if combined actions are added later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone cards (390px, `.my-work__card` header, `WorkRows.tsx` card markup and `my-work.css`): the kind tag and the title share a flex row, so the tag is inline with short titles (\"DECIDE Zuma Cement \u00b7 Payment exception\") and stacked above longer ones (\"DECIDE\" on its own line over \"Coastal Freight \u00b7 Milestone 2 invoice\"). Expected: the kind tag always sits on one line above the title, or always inline, with the same vertical rhythm on every card. Actual: card headers differ in height and alignment within the same list. Evidence: screenshot `f02-shots/phone-390-lead.png` (finance_lead, default view, 20 cards).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-13T23:40:57Z",
+          "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-13T23:47:29Z",
+          "refs": [
+            "a3ecdcd"
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "Scratch copy of `frontend/` at 55e8194, `next dev` on 3321 with the contract mock on 3322, Chromium at 390x844 (Africa/Lagos, reduced motion), finance_lead, `/my-work`. Measured all 20 `.my-work__card` elements: tag bottom is above title top on every card, tag and title left edges match (diff 0), gap 4px, tag height 23px on every card. Screenshot inspected at full length; headers align. Pre-fix header misalignment no longer appears."
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a3ecdcd"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Scratch copy of `frontend/` at 55e8194, `next dev` on 3321 with the contract mock on 3322, Chromium at 390x844 (Africa/Lagos, reduced motion), finance_lead, `/my-work`. Measured all 20 `.my-work__card` elements: tag bottom is above title top on every card, tag and title left edges match (diff 0), gap 4px, tag height 23px on every card. Screenshot inspected at full length; headers align. Pre-fix header misalignment no longer appears."
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock accepts an empty `q=` (`GET /api/v1/work?queue=done&q=` returns 200 and ignores it), while the v3 contract says `q` has minLength 1. The UI never sends an empty `q` (checked: clearing the search box sent no `q`), so nothing breaks here, but the mock would hide that bug if the UI regressed. Source: `frontend/mock/work-list.mjs`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T00:10:43Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, but the spec and readiness name E-WORK-LIST as this feature's endpoint. Record E-WORK-LIST so the coverage check can see it. Scope landed matches: `changed_paths` are all inside the spec's ownership (my-work app and feature folders, mock handler, rows fixture, `server.mjs` branch, tests); nothing in `src/shell`, `src/api`, openapi.json, package files or `apps/` changed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "TECH-1-1 stays OPEN: the textual conflict with F-03 in `frontend/mock/server.mjs`. It must be resolved at merge (keep both branches), and `tests/mock-work-list.test.ts` and `tests/mock-contract.test.ts` rerun, with W-1001 to W-1006 checked against F-03's fixtures. Owner named (integration owner); not a blocker for this slice but a condition of merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The product-acceptance screenshots in round-1 build.md (criterion 22) were taken at head b6b4e25, before the round-2 phone-card change (kind tag above the title). Round 2 build.md does not refresh them. Give the design engineer the current build or fresh 390px screenshots so they judge the shipped head.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-2-1 (open, non-blocking): the mock accepts an empty `q=` although the contract says minLength 1. The UI never sends it. Also open and non-blocking: TECH-1-3 (two navigations in one tick). Neither affects acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `operation_ids` is still `[]` while spec and readiness name E-WORK-LIST (this restates PMO-2-1, which stays OPEN). Record E-WORK-LIST so the coverage check can see it. Nothing else in scope is missing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:35:09Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Review and product-acceptance records point at 55e8194 (`snapshot_ref`), while the head is now eab6dff. This is correct for what each reviewer saw, and the carry-forward basis is below. The merge sync record (`merge_decision.pre_merge_sync`) is still `checks_rerun: not_run`; the coordinator's integration run above is the evidence to record there.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:35:09Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+          "evidence_refs": [
+            "delivery/features/F-02/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-02/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+          "evidence_refs": [
+            "delivery/features/F-02/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (visual consistency against the approved SCR-01 and STATES boards, tokens and layout at desktop and phone width)",
+          "snapshot_ref": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+          "evidence_refs": [
+            "delivery/features/F-02/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": "stanleykosi/psl-factory",
+    "task_id": "FE-MYWORK",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "37aa53ea379d155892bb84ab665d4ae310fdbf9c",
+    "task_branch": "fe-mywork-my-work-shows-a-person-s-queues-with-sea",
+    "head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/5",
+    "pr_number": 5,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/events.jsonl",
+      "delivery/features/F-02/feature.json",
+      "delivery/features/F-02/round-1/build.md",
+      "delivery/features/F-02/round-1/checks.md",
+      "delivery/features/F-02/round-1/review-technical.md",
+      "delivery/features/F-02/round-1/review-ui.md",
+      "delivery/features/F-02/round-1/review-ux.md",
+      "delivery/features/F-02/round-2/acceptance-pmo.md",
+      "delivery/features/F-02/round-2/build.md",
+      "delivery/features/F-02/round-2/checks.md",
+      "delivery/features/F-02/round-2/review-qa.md",
+      "delivery/features/F-02/round-2/review-technical.md",
+      "delivery/features/F-02/round-2/review-ui.md",
+      "delivery/features/F-02/round-2/review-ux.md",
+      "delivery/features/F-03/decision.md",
+      "delivery/features/F-03/feature.json",
+      "delivery/features/F-03/round-1/build.md",
+      "delivery/features/F-03/round-1/checks.md",
+      "delivery/features/F-03/round-1/review-technical.md",
+      "delivery/features/F-03/round-1/review-ui.md",
+      "delivery/features/F-03/round-1/review-ux.md",
+      "delivery/features/F-03/round-2/build.md",
+      "delivery/features/F-03/round-2/checks.md",
+      "delivery/features/F-03/round-2/review-technical.md",
+      "delivery/features/F-03/round-2/review-ui.md",
+      "delivery/features/F-03/round-2/review-ux.md",
+      "delivery/features/F-03/round-3/acceptance-pmo.md",
+      "delivery/features/F-03/round-3/build.md",
+      "delivery/features/F-03/round-3/checks.md",
+      "delivery/features/F-03/round-3/review-qa.md",
+      "delivery/features/F-03/round-3/review-technical.md",
+      "delivery/features/F-03/round-3/review-ui.md",
+      "delivery/features/F-03/round-3/review-ux.md",
+      "delivery/features/F-03/spec.md",
+      "delivery/features/F-04/feature.json",
+      "delivery/features/F-04/readiness.md",
+      "delivery/features/F-04/spec.md",
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/e2e/work-item.spec.ts",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/work/W-1001.history.json",
+      "frontend/mock/fixtures/work/W-1002.json",
+      "frontend/mock/fixtures/work/W-1003.json",
+      "frontend/mock/fixtures/work/W-1004.history.json",
+      "frontend/mock/fixtures/work/W-1004.json",
+      "frontend/mock/fixtures/work/W-1005.json",
+      "frontend/mock/fixtures/work/W-1006.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/src/app/my-work/page.tsx",
+      "frontend/src/app/work/[id]/history/page.tsx",
+      "frontend/src/app/work/[id]/page.tsx",
+      "frontend/src/features/my-work/FilterPanel.tsx",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/MyWorkPage.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/icons.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/work-item/WorkItemHistory.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemStates.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/labels.ts",
+      "frontend/src/features/work-item/useWorkHistory.ts",
+      "frontend/src/features/work-item/useWorkItem.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-work-list.test.ts",
+      "frontend/tests/my-work-model.test.ts",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/work-item.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-02/decision.md"
+    ],
+    "script_decision": "BLOCKED",
+    "script_reasons": [
+      "technical review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "integrated_qa review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "ux review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "ui review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'"
+    ],
+    "decided_for_head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-13T22:44:58Z",
+  "round": 2,
+  "round_limit": 3,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-13T23:13:37Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T23:13:47Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:36:16Z",
+      "round": 1,
+      "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-13T23:40:57Z",
+      "round": 1,
+      "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-13T23:40:57Z",
+      "round": 2,
+      "head": "b6b4e25c64c758886df0b98151e9c67d52ccd039",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-13T23:47:29Z",
+      "round": 2,
+      "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T00:05:26Z",
+      "round": 2,
+      "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T00:10:43Z",
+      "round": 2,
+      "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T00:35:51Z",
+      "round": 2,
+      "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-02/readiness.md",
+      "delivery/features/F-02/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "55e81940bdf715f222ebd7f15f26a9150d981915"
+  },
+  "blocked": null
+}
