@@ -34,7 +34,9 @@ import {
   type Queue,
   type View,
   type WorkItem,
+  type Suggestion,
   type WorkList,
+  type WorkListWithSuggestions,
 } from './model';
 import { StartedCards, WorkCards, WorkTable } from './WorkRows';
 
@@ -74,6 +76,7 @@ export function MyWork() {
   const [counts, setCounts] = useState<Counts | null | undefined>(undefined);
   const [asOf, setAsOf] = useState<string>();
   const [lineFilters, setLineFilters] = useState<WorkList['filters']>();
+  const [suggestions, setSuggestions] = useState<Suggestion[]>();
   const [refreshFailed, setRefreshFailed] = useState(false);
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
@@ -106,6 +109,7 @@ export function MyWork() {
     setCounts(data.counts ?? null);
     setAsOf(data.as_of);
     setLineFilters(data.filters);
+    setSuggestions((data as WorkListWithSuggestions).suggestions);
     setRefreshFailed(false);
     lastSuccess.current = Date.now();
   }, []);
@@ -378,7 +382,7 @@ export function MyWork() {
       </div>
     );
   } else if (caughtUp) {
-    body = <CaughtUp counts={counts} phone={phone} onSeeStarted={() => navigate({ queue: 'waiting_on_others' })} />;
+    body = <CaughtUp counts={counts} phone={phone} suggestions={suggestions} onSeeStarted={() => navigate({ queue: 'waiting_on_others' })} />;
   } else if (list.items.length === 0) {
     body = (
       <div className="psl-empty">

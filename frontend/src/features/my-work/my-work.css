@@ -22,6 +22,8 @@
 .my-work__avatar { object-fit: cover; }
 .my-work__badge-open { background: var(--surface); color: var(--ink); }
 .my-work__chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+/* desktop: the chip row is as tall as a chip (SCR-01-desktop-filter); phones keep the 44px target */
+@media (min-width: 720px) { .my-work__chips .psl-btn--text { min-height: 28px; } }
 
 /* filter fields (SCR-01-*-filter): Line checkboxes, then Project, State and Waiting on */
 .my-work__fieldset { margin: 0; padding: 0; border: none; display: flex; flex-direction: column; min-width: 0; }
@@ -36,14 +38,15 @@
 
 /* desktop filter popover under the button */
 .my-work__pop { position: absolute; top: calc(100% + var(--space-2)); left: 0; z-index: 5; width: 380px; }
-.my-work__pophead { padding: var(--space-3) var(--space-4); border-bottom: 2px solid var(--ink); font-family: var(--font-display); font-weight: 800; font-size: 14px; text-transform: uppercase; }
+.my-work__pophead { padding: var(--space-3) var(--space-4); line-height: 1.25; border-bottom: 2px solid var(--ink); font-family: var(--font-display); font-weight: 800; font-size: 14px; text-transform: uppercase; }
 .my-work__popbody { padding: var(--space-4); display: flex; flex-direction: column; gap: 14px; font-size: 14px; }
 .my-work__popfoot { display: flex; gap: 10px; padding: var(--space-3) var(--space-4); border-top: 2px solid var(--ink); }
 
 /* phone bottom sheet over the scrim */
 .my-work__scrim { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; justify-content: flex-end; }
 .my-work__sheet { max-height: 85vh; overflow-y: auto; }
-.my-work__sheetbody { gap: 14px; }
+.my-work__sheetbody { gap: var(--space-3); }
+.my-work__sheettitle { font-family: var(--font-display); font-weight: 800; font-size: 14px; text-transform: uppercase; }
 
 /* list */
 .my-work__panel { display: flex; flex-direction: column; min-width: 0; }
@@ -64,10 +67,11 @@
 .my-work__table .my-work__age { font-family: var(--font-mono); color: var(--ink-muted); white-space: nowrap; vertical-align: middle; }
 
 /* phone cards (SCR-01-mobile): each its own bordered card */
-.my-work__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); line-height: 1.3; }
+.my-work__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); font-size: 15px; line-height: 1.3; }
 .my-work__cards .my-work__card { display: flex; flex-direction: column; gap: 6px; padding: var(--space-3); background: var(--surface); border: 2px solid var(--ink); color: var(--ink); text-decoration: none; }
 .my-work__cardtop { display: flex; justify-content: space-between; gap: var(--space-2); }
 .my-work__cardwork { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.my-work__cardwork .my-work__kind { margin-bottom: 0; }
 .my-work__cardtitle { font-weight: 600; color: var(--ink); }
 .my-work__cards .psl-tag { padding: 2px 6px; font-size: 11px; line-height: 1.3; }
 .my-work__card .my-work__age { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
@@ -78,7 +82,7 @@
 
 /* phone, Waiting on others (SCR-01-mobile-my-work): title and what it waits on */
 .my-work__started { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: var(--space-3); background: var(--surface); border: 2px solid var(--ink); }
-.my-work__started .my-work__cardtitle { text-decoration: none; }
+.my-work__started .my-work__cardtitle { color: var(--ink); text-decoration: none; }
 .my-work__started .psl-tag { padding: 3px 8px; font-size: 12px; }
 
 /* footer: shown text, rows per page, Show more (D-PAGING; product acceptance) */
@@ -88,10 +92,21 @@
 .my-work__rowslabel { letter-spacing: .06em; }
 
 /* empty Needs me (SCR-01-*-empty): caught up, then where the person's started work is */
-.my-work__caughtup { display: flex; flex-direction: column; gap: var(--space-4); max-width: 780px; }
-.my-work__nothing { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-4) 28px; background: var(--mascot-tola-tint); border: 2px solid var(--ink); }
-.my-work__mascot { flex: none; width: 96px; height: 96px; align-self: flex-end; }
-.my-work__nothingtext { display: flex; flex-direction: column; gap: 10px; }
+.my-work__caughtwrap { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.my-work__caughtup { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+
+/* "While you're free" (proposed suggestions field): agent tint, action outline */
+.my-work__free { flex: 1 1 360px; max-width: 420px; background: var(--action-tint); border: 2px solid var(--action); }
+.my-work__freehead { display: flex; align-items: center; gap: 10px; padding: var(--space-3) 14px; color: var(--action-ink); font-size: 14px; line-height: 1.45; }
+.my-work__freeavatar { width: 34px; height: 34px; object-fit: cover; }
+.my-work__freeitem { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3) 14px; line-height: 1.2; border-top: 1px solid color-mix(in srgb, var(--action) 20%, var(--action-tint)); font-size: 14px; }
+.my-work__freedetail { font-size: 12px; color: var(--ink-muted); }
+.my-work__freeactions { display: flex; gap: 6px; align-items: center; }
+.my-work__free .my-work__freeaction { min-height: 40px; padding: 0 12px; font-size: 13px; }
+.my-work__free .my-work__notnow { padding: 0 var(--space-2); min-height: 40px; font-size: 13px; color: var(--ink-muted); }
+.my-work__nothing { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-4) 28px 0; background: var(--mascot-tola-tint); border: 2px solid var(--ink); }
+.my-work__mascot { flex: none; width: 150px; height: 150px; align-self: flex-end; }
+.my-work__nothingtext { display: flex; flex-direction: column; gap: 10px; padding-bottom: var(--space-4); }
 .my-work__nothingtext h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 30px; line-height: 1.05; }
 .my-work__nothingtext p { margin: 0; color: var(--ink-muted); line-height: 1.5; }
 .my-work__nothingactions { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -115,7 +130,14 @@
   .my-work__rows { margin: 0; justify-content: space-between; }
   .my-work__more { min-height: var(--control-md); width: 100%; }
   .my-work__foot { margin-top: var(--space-2); border-top: 2px solid var(--ink); }
-  .my-work__nothing { flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); }
-  .my-work__nothingtext h2 { font-size: 24px; }
-  .my-work__mascot { width: 72px; height: 72px; align-self: flex-start; }
+  /* SCR-01-mobile-empty: Tola on top, centred text and stacked buttons */
+  .my-work__nothing { flex-direction: column; align-items: center; gap: 10px; padding: var(--space-3) 14px var(--space-4); }
+  .my-work__mascot { align-self: center; }
+  .my-work__nothingtext { align-items: center; gap: var(--space-3); padding-bottom: 0; text-align: center; }
+  .my-work__nothingtext h2 { font-size: 22px; }
+  .my-work__nothingtext p { line-height: 1.55; }
+  .my-work__nothingactions { flex-direction: column; }
+  .my-work__nothingactions .psl-btn { min-height: 48px; }
+  .my-work__caughtwrap { gap: var(--space-3); }
+  .my-work__free { max-width: none; }
 }

@@ -12,6 +12,12 @@ export type Limit = NonNullable<WorkQuery['limit']>;
 export type WaitingOn = NonNullable<WorkQuery['waiting_on']>;
 export type LineOption = { key: string; title: string };
 export type Agent = NonNullable<WorkItem['agent']>;
+/**
+ * PROPOSAL (F-02 round 3, not in architecture v4/v6): agent suggestions for an idle person ("While you're free",
+ * SCR-01-*-empty). Typed here until the contract has them; the page hides the panel when the field is absent.
+ */
+export type Suggestion = { id: string; agent: Agent; title: string; detail: string; action: string; href: string };
+export type WorkListWithSuggestions = WorkList & { suggestions?: Suggestion[] };
 
 export const QUEUES: { key: Queue; label: string; empty: string }[] = [
   { key: 'needs_me', label: 'Needs me', empty: 'Nothing needs you right now' },

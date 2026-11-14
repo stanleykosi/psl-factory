@@ -173,9 +173,8 @@ export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, o
     return (
       <div className="psl-scrim my-work__scrim">
         <div ref={panel} className="psl-sheet my-work__sheet" role="dialog" aria-label="Filter">
-          <div className="psl-sheet__grab" aria-hidden="true" />
           <div className="psl-sheet__head">
-            <strong>Filter</strong>
+            <strong className="my-work__sheettitle">Filter</strong>
             <button type="button" className="psl-link my-work__linkbutton" onClick={clear}>
               Clear
             </button>

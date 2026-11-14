@@ -378,7 +378,8 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     fireEvent.click(filter);
     const sheet = screen.getByRole('dialog', { name: 'Filter' });
     expect(sheet.className).toContain('psl-sheet');
-    expect(sheet.querySelector('.psl-sheet__grab')).toBeTruthy();
+    // SCR-01-mobile-filter: no grab handle; the head is FILTER with Clear.
+    expect(sheet.querySelector('.psl-sheet__grab')).toBeNull();
     expect(within(sheet.querySelector('.psl-sheet__head') as HTMLElement).getByRole('button', { name: 'Clear' })).toBeTruthy();
     expect(within(sheet).getByRole('button', { name: /^Show / }).className).toContain('psl-btn--xl psl-btn--block');
     expect(within(sheet).getByRole('button', { name: 'All 6 lines' })).toBeTruthy();
@@ -556,6 +557,32 @@ describe('screen states', () => {
     fireEvent.click(screen.getByRole('button', { name: 'See what you started' }));
     await until(() => expect(tabs()[1].getAttribute('aria-selected')).toBe('true'));
     await until(() => expect(rows()).toHaveLength(3));
+  });
+
+  it('While you\'re free shows the proposed suggestions when present; Not now hides one; absent means no panel', async () => {
+    persona = 'pm';
+    const suggestions = [
+      { id: 'S-1', agent: 'tola', title: 'Draft the weekly report', detail: 'Due Friday', action: 'Draft it', href: '/assistant' },
+      { id: 'S-2', agent: 'tola', title: 'Write up the call', detail: 'Notes added', action: 'Draft minutes', href: '/assistant' },
+    ];
+    work = (url) => {
+      const { status, body } = fromMock(url, 'pm');
+      return json(status, url.searchParams.get('queue') === 'needs_me' ? { ...body, suggestions } : body);
+    };
+    await open();
+    const free = await screen.findByRole('complementary', { name: 'While you’re free' });
+    expect(free.textContent).toContain('Tola can get these ready. You check each one before it goes anywhere.');
+    expect(within(free).getByRole('img', { name: 'Tola · PMO agent' })).toBeTruthy();
+    expect(within(free).getByRole('link', { name: 'Draft it' }).getAttribute('href')).toBe('/assistant');
+    fireEvent.click(within(free).getAllByRole('button', { name: 'Not now' })[0]);
+    expect(within(free).queryByText('Draft the weekly report')).toBeNull();
+    expect(within(free).getByText('Write up the call')).toBeTruthy();
+  });
+
+  it('without suggestions there is no While you\'re free panel', async () => {
+    persona = 'pm';
+    await open();
+    expect(screen.queryByRole('complementary', { name: /free/ })).toBeNull();
   });
 
   it('other empty queues say so', async () => {
