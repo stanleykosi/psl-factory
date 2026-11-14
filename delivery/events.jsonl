@@ -483,3 +483,4 @@
 {"at":"2026-11-14T06:17:37Z","feature":"F-07","round":3,"kind":"finding","action":"verify","finding":"UI-2-1","by":"reviewer-ui"}
 {"at":"2026-11-14T06:17:37Z","feature":"F-07","round":3,"kind":"finding","action":"add","finding":"UX-3-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
 {"at":"2026-11-14T06:17:37Z","feature":"F-07","round":3,"kind":"finding","action":"add","finding":"UI-3-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-14T06:18:36Z","feature":"F-11","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}

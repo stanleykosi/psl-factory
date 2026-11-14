@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-11",
   "outcome": "A Lead or Admin opens Setup, reads every rule with its value or \"Not set\", and saves a role-list rule as its next version",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-SETUP"
   ],
@@ -87,7 +87,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -103,7 +103,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-11/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -150,13 +150,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M3-SETUP",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "3c0e57e947384473d480e82b89a11180083416f6",
+    "task_branch": "fe-m3-setup-a-lead-or-admin-opens-setup-reads-every",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-11",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -199,14 +199,22 @@
     }
   },
   "created_at": "2026-11-14T04:55:45Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-14T05:48:10Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T06:18:36Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -225,7 +233,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
