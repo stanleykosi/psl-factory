@@ -2,6 +2,8 @@
 // next step. Read-only; the only link that leads to an action is "Open the decision" when you_can_act.
 import Link from 'next/link';
 
+import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf } from '@/features/response';
+
 import {
   AGENT_TAGS,
   avatarClass,
@@ -151,11 +153,14 @@ export function TaskPanels({ id, tasks }: { id: string; tasks: WorkItem['tasks']
       <div className="psl-panel__body">
         <p className="work-plain">Only a {task.required_role} can decide.</p>
         {task.you_can_act && <p className="work-plain">You are {task.required_role}.</p>}
-        {task.you_can_act && (
-          <Link className="psl-btn" href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
-            Open the decision
-          </Link>
-        )}
+        {task.you_can_act &&
+          (responseOf(task) ? (
+            <ResponseEntryLink id={id} task={task} />
+          ) : (
+            <Link className="psl-btn" href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
+              Open the decision
+            </Link>
+          ))}
       </div>
     </section>
   ));
@@ -181,6 +186,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
           <AgentCard agent={item.agent} />
           <NextStep item={item} />
         </div>
+        <ReconcilePanel id={id} item={asResponseItem(item)} />
         {item.tasks.length > 0 && (
           <div className="work-column">
             <TaskPanels id={id} tasks={item.tasks} />

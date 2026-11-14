@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { workList } from './work-list.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -49,7 +50,13 @@ const HISTORY_LIMITS = [10, 20, 50];
 function readWorkFixtures() {
   const dir = join(here, 'fixtures', 'work');
   const files = readdirSync(dir).filter((name) => name.endsWith('.json'));
-  return Object.fromEntries(files.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(dir, name), 'utf8'))]));
+  // F-09: the v7 response items (fixtures/response/work/) are served from the same map; v4 checks read only fixtures/work/.
+  const responseDir = join(here, 'fixtures', 'response', 'work');
+  const responseFiles = readdirSync(responseDir).filter((name) => name.endsWith('.json'));
+  return Object.fromEntries([
+    ...files.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(dir, name), 'utf8'))]),
+    ...responseFiles.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(responseDir, name), 'utf8'))]),
+  ]);
 }
 
 /** One history page: filter by the mock-only `_kind`, page by an "o:<offset>" cursor, strip `_kind`. */
@@ -207,11 +214,15 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       const method = (req.method ?? 'GET').toLowerCase();
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
+        resetResponses();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
+      if (RESPONSE_OPERATIONS.includes(route.operationId)) {
+        return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
+      }
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
 
       const cookies = parseCookies(req.headers.cookie);
