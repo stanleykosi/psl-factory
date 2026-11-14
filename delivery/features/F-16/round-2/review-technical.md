@@ -1,4 +1,5 @@
-VERDICT: PASS (head df180ca0716d9a70e19bc82f5df57cce37e99aeb)
+VERDICT: PASS
+COMMIT: df180ca0716d9a70e19bc82f5df57cce37e99aeb
 
 # F-16 round 2 technical review
 

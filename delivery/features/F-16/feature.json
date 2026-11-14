@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-16",
   "outcome": "The decision page matches the SCR-03 boards at 1440 and 390, and every decide rule stays as it is",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -113,11 +113,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
+      "status": "passed",
+      "reviewer": "technical",
       "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -143,25 +145,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (fidelity gate)",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -224,7 +232,7 @@
         "delivery/features/F-16/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -241,11 +249,25 @@
           ],
           "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T20:51:44Z",
+          "refs": [
+            "Done: focus on H1 and role=status \"Your decision was recorded.\" at 1440 and 390. Stale: focus on the alert's H2 with role=alert text, at both widths."
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "040b5e7"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Done: focus on H1 and role=status \"Your decision was recorded.\" at 1440 and 390. Stale: focus on the alert's H2 with role=alert text, at both widths."
       ]
     },
     {
@@ -261,7 +283,7 @@
         "delivery/features/F-16/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -278,11 +300,25 @@
           ],
           "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T20:51:44Z",
+          "refs": [
+            "500 and 401 (intercepted item request) each render one h1 \"Decision\" at 1440 and 390; the 500 card keeps its alert."
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "040b5e7"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "500 and 401 (intercepted item request) each render one h1 \"Decision\" at 1440 and 390; the 500 card keeps its alert."
       ]
     },
     {
@@ -408,6 +444,29 @@
       "verified_by": "reviewer-ui",
       "verification_refs": [
         "df180ca"
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phone done, \"Paid is tracked separately by Finance\" now reads twice. It is the last sentence of the next-step card, and it is also the separate line under the card. The SCR-03-mobile-done card text ends at \"...once the delivery receipt comes back.\" and the Paid sentence appears only as the line below. Round 2 removed the same duplication on desktop only (DecideStates.tsx DoneView). Expected: on phones, drop the Paid sentence from the card text and keep the line. See round-2/fidelity-review/SCR-03-mobile-done-390/side-by-side.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:51:44Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
       ]
     }
   ],
@@ -608,6 +667,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T20:38:58Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T20:51:45Z",
       "round": 2,
       "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
       "reason": null
