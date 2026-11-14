@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -94,22 +94,50 @@
       "at": "2026-11-14T11:43:22Z",
       "seconds": 59.2,
       "evidence_ref": "delivery/features/F-14/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T15:09:45Z",
+      "seconds": 77.2,
+      "evidence_ref": "delivery/features/F-14/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T15:56:36Z",
+      "seconds": 96.5,
+      "evidence_ref": "delivery/features/F-14/round-4/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend production build with the contract mock)",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -128,18 +156,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design fidelity gate, D-41 board-is-spec, D-45 tab strip, D-48 round-4 calls)",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -205,14 +237,42 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`WorkItemView.tsx`: tabs are in the header for every item; on phones they close the tag line (title line on history), the trailing `{phone && tabs}` is gone. Each viewport renders the strip once (checked all four branches of the header)."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "16016b6"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemView.tsx`: tabs are in the header for every item; on phones they close the tag line (title line on history), the trailing `{phone && tabs}` is gone. Each viewport renders the strip once (checked all four branches of the header)."
       ]
     },
     {
@@ -228,14 +288,42 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`WorkItemHistory.tsx:229` `{!side && limitControl}`: Rows per page now renders on the phone board; the compact `select` style is in the phone media block. Focusable and visible."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemHistory.tsx:229` `{!side && limitControl}`: Rows per page now renders on the phone board; the compact `select` style is in the phone media block. Focusable and visible."
       ]
     },
     {
@@ -251,14 +339,42 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "h1 on phones keeps `item.title` as a `work-sr` span with the board title `aria-hidden`; the phone sub-line now uses `startedLine(item)`. Heading contains no focusable child."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "h1 on phones keeps `item.title` as a `work-sr` span with the board title `aria-hidden`; the phone sub-line now uses `startedLine(item)`. Heading contains no focusable child."
       ]
     },
     {
@@ -274,14 +390,42 @@
         "delivery/features/F-14/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`NextStep` takes `quiet` inside the `work-sr` wrapper; the exceptions link is drawn visibly (button in the effect-uncertain desktop panel, `work-note` link elsewhere, `NextStep` link on non-board items). Nothing focusable remains in `work-sr`: the quiet station list drops `tabIndex`, `shown === 0` also drops it, and the `quiet` blocks hold no controls. The new aria-label \"Stations in order\" is on the list, which is fine."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`NextStep` takes `quiet` inside the `work-sr` wrapper; the exceptions link is drawn visibly (button in the effect-uncertain desktop panel, `work-note` link elsewhere, `NextStep` link on non-board items). Nothing focusable remains in `work-sr`: the quiet station list drops `tabIndex`, `shown === 0` also drops it, and the `quiet` blocks hold no controls. The new aria-label \"Stations in order\" is on the list, which is fine."
       ]
     },
     {
@@ -297,14 +441,42 @@
         "delivery/features/F-14/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "History tab present and linked on W-1701, W-1704, W-1706, W-1710, W-1711 at 1440 and 390; the history page shows the same strip."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "History tab present and linked on W-1701, W-1704, W-1706, W-1710, W-1711 at 1440 and 390; the history page shows the same strip."
       ]
     },
     {
@@ -320,14 +492,42 @@
         "delivery/features/F-14/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "W-1711 at 390 has the panel and \"Record and continue\" at the foot, with no empty bar. Desktop W-1711 now has the \"Confirm what happened\" right column. Empty submit on phone shows \"Choose what happened to continue.\"; desktop keeps the button disabled until an option is chosen."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "16016b6"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-1711 at 390 has the panel and \"Record and continue\" at the foot, with no empty bar. Desktop W-1711 now has the \"Confirm what happened\" right column. Empty submit on phone shows \"Choose what happened to continue.\"; desktop keeps the button disabled until an option is chosen."
       ]
     },
     {
@@ -343,14 +543,42 @@
         "delivery/features/F-14/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "`aria-label=\"Stations\"` is on the station list at both widths."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "16016b6"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "`aria-label=\"Stations\"` is on the station list at both widths."
       ]
     },
     {
@@ -366,14 +594,42 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -389,14 +645,42 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -412,14 +696,42 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -435,14 +747,42 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -458,14 +798,42 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:18:59Z",
+          "refs": [
+            "16016b6"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "16016b6"
       ]
     },
     {
@@ -481,14 +849,42 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "The file went from 57 to 47 entries, and the round-2 unused entries are gone. The new unused entries are listed in UI-3-1."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The file went from 57 to 47 entries, and the round-2 unused entries are gone. The new unused entries are listed in UI-3-1."
       ]
     },
     {
@@ -504,13 +900,314 @@
         "delivery/features/F-14/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T14:38:26Z",
           "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:08:28Z",
+          "refs": [
+            "3971d64"
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "refs": [
+            "\"Supplied evidence: client UAT sign-off\" keeps its colon at both widths (matched at 390 with no look differences)."
+          ],
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3971d64"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Supplied evidence: client UAT sign-off\" keeps its colon at both widths (matched at 390 with no look differences)."
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "On desktop the Overview/History tabs are absolutely positioned at the right of the crumb row (`work-item.css` `.work-crumbrow .work-tabs { position: absolute; right: 0; top: -8px }`), but for items without `started_by` the same row also holds the sub-line \"revision N\" at the right (`WorkItemView.tsx:73-74`, `!started && sub`, `justify-content: space-between`). Measured on the shared build, /work/W-1002 at 1440: tabs box x 1199-1352, y 77-109; \"revision 2\" box x 1295-1352, y 85-100, so the revision text sits underneath the tab box and is not visible. Affects every non-board item without a started line (W-1001..1006, W-1201 and the live items). Expected: both visible. Fix: give the sub-line room (for example put tabs and sub in one right-hand flex group, or drop the absolute position when `!started`), and add a case for a non-board item without `started_by`. Fidelity boards all have a started line or are hidden-sub boards, so none caught it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T15:59:10Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "c26c9f3"
+      ]
+    },
+    {
+      "id": "UX-3-1",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The phone \"See all exceptions\" link is a 15px-high text link, a small touch target. Give it at least 44px of tap height (padding), as the other phone links do. `WorkItemOverview.tsx:598,755`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T16:04:56Z",
+          "refs": [
+            "Measured in the browser: 44px high at 390 on W-1711 and W-1710; click goes to `/exceptions`."
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Measured in the browser: 44px high at 390 on W-1711 and W-1710; click goes to `/exceptions`."
+      ]
+    },
+    {
+      "id": "UX-3-2",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On W-1711 the proof box says \"Add another file\" (before any file is added) next to \"Proof can\u2019t be uploaded for this item.\" Both show together, so the button label and hint contradict. Disable or hide the button when `proof.available` is false, and say \"Add a file\" for the first. `frontend/src/features/response/ProofField.tsx:84`. It is F-09's component, so route to the F-09 owner if F-14 does not touch it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "15 exception entries match nothing on any of the 26 boards at this head (numbers are positions in the current 47-entry file): #19 link \"See all exceptions\" (now visible, UI-2-3); #20 the processing next-step line (now drawn, UI-2-2); #22\u2013#34, F-09's ReconcilePanel entries (\"CONFIRM WHAT HAPPENED\", the Chidi sentence, the three radios and their labels, the three short labels, \"Record and continue\", and the \"Your choice is recorded\u2026\" small print), all of which F-09's mounted panel now provides. #21 \"Record the client's response\" is still used on SCR-02-desktop-waiting and SCR-02-mobile-waiting (W-1704 has no F-09 button), so keep it. Remove the 15 entries so the file lists only live gaps. Path: delivery/features/F-14/fidelity-exceptions.json.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "this commit"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T16:04:56Z",
+          "refs": [
+            "`fidelity-exceptions.json` has 32 entries. I matched each entry's reason against the `exception` fields across all 26 reports, and every entry is used on at least one board: #19 \"Record the client's response\" on 2 boards, Start work / More ways to start on 13 each, \"\u2190 Queue\" on 12, and so on. #21 from round 3 was kept as asked. No entry is unused."
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "this commit"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`fidelity-exceptions.json` has 32 entries. I matched each entry's reason against the `exception` fields across all 26 reports, and every entry is used on at least one board: #19 \"Record the client's response\" on 2 boards, Start work / More ways to start on 13 each, \"\u2190 Queue\" on 12, and so on. #21 from round 3 was kept as asked. No entry is unused."
+      ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"See all exceptions\" placement on boards that do not draw it. Desktop owner-needed, setup-needed and awaiting-reconciliation, and phone effect-uncertain and awaiting-reconciliation (report \"extra\" Link, e.g. desktop awaiting-reconciliation at y\u2248748, phone at y\u2248724). On each, the link is a lone small underlined link under the station track or panel, separated from the content by blank space. F-06 requires the link in these states, and D-41 places it \"in the next-step text the boards draw\". These boards draw no such text, so no decision covers this placement. It is a question for the design engineer, not a builder defect. Proposal: place it as the effect-uncertain board does, as a secondary button in the item's own panel where F-14 owns the panel (owner-needed, setup-needed). Keep the small link only under F-09's panel. Path: frontend/src/features/work-item/WorkItemOverview.tsx:753-755.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T15:19:00Z",
+          "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T15:55:00Z",
+          "refs": [
+            "c26c9f3"
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T16:04:56Z",
+          "refs": [
+            "Desktop owner-needed, setup-needed and effect-uncertain show `psl-btn psl-btn--secondary psl-btn--lg` (288\u00d750) in the side panel at x 1046. Effect-uncertain still matches the board with no look differences. Desktop awaiting-reconciliation (W-1711) shows a full-width secondary button under the columns, below F-09's panel. On the phone, all four exception items show a full-width secondary button below the content and above the pinned action bar, not covered by it at 844px height (side-by-side SCR-02-mobile-owner-needed-390 and SCR-02-mobile-awaiting-reconciliation-390). The order inside the panel is in UI-4-1."
+          ],
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c26c9f3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Desktop owner-needed, setup-needed and effect-uncertain show `psl-btn psl-btn--secondary psl-btn--lg` (288\u00d750) in the side panel at x 1046. Effect-uncertain still matches the board with no look differences. Desktop awaiting-reconciliation (W-1711) shows a full-width secondary button under the columns, below F-09's panel. On the phone, all four exception items show a full-width secondary button below the content and above the pinned action bar, not covered by it at 844px height (side-by-side SCR-02-mobile-owner-needed-390 and SCR-02-mobile-awaiting-reconciliation-390). The order inside the panel is in UI-4-1."
+      ]
+    },
+    {
+      "id": "UI-4-1",
+      "round": 4,
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop owner-needed (W-1708) and setup-needed (W-1709), the new secondary \"See all exceptions\" button sits above the panel's primary action (\"Fix it in Setup\" / \"Open Setup\"). On setup-needed it also pushes the \"This is a business decision\u2026\" small print below the primary button. The boards put the primary action first and secondary actions under it: setup-needed draws \"Open Setup\" and then \"Tell the PMO Lead\". The effect-uncertain board, which D-48 cites, has no primary action, so its placement does not carry over directly. Expected: the secondary button after the primary action, with the panel's text order as the board draws it. Actual: the button is rendered as StatePanel children ahead of the panel's own action. Fidelity still passes because the board does not draw this button. Path: frontend/src/features/work-item/WorkItemOverview.tsx:701-707.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T16:04:56Z",
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
+        }
+      ]
+    },
+    {
+      "id": "QA-4-1",
+      "round": 4,
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The awaiting-reconciliation board item cannot record a reconcile answer in the mock. Repro: reset the mock. `POST http://localhost:4511/api/v1/work/W-1711/actions` with `{\"expected_revision\":5,\"action\":\"reconcile\",\"outcome\":\"unknown\"}`, the finance_lead CSRF token and the cookie `psl_mock_persona=finance_lead` returns `501 {\"code\":\"not_mocked\"}`. The cause is that `mock/fixtures/response/` has no `W-1711.{delivered,not_delivered,unknown}.json` sidecar. In the browser, Unknown and Not delivered both end in \"We couldn't confirm your answer. Reload the work item\u2026\". Choosing \"It arrived\" shows \"Proof can't be uploaded for this item\" with Record disabled, because `mock/fixtures/work/W-1711.json` has no `case_id` or `case_revision`. Expected: the board item can be walked to a recorded answer, as W-1603 can (W-1603 not_delivered: one POST, then the page reloads to PROCESSING at revision 7). Actual: on W-1711 only the error and uncertain branches can be reached. The product code behaves correctly here: a 501 is treated as an uncertain effect and is never re-sent. Only the demo data falls short. Suggested fix: add `case_id`/`case_revision` to W-1711 and the three outcome sidecars, in F-09's fixtures folder.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T16:20:11Z",
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
         }
       ]
     }
@@ -619,6 +1316,61 @@
           ]
         }
       }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "evidence_refs": [
+            "delivery/features/F-14/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-14/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "evidence_refs": [
+            "delivery/features/F-14/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design fidelity gate, D-41 board-is-spec, D-45 tab strip)",
+          "snapshot_ref": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+          "evidence_refs": [
+            "delivery/features/F-14/round-3/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -643,7 +1395,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b7f7166781cd81326c03669da4ae88f092c4cf33",
     "task_branch": "fe-workitem-the-work-item-page-and-its-history-match",
-    "head_sha": "5b9605a81d197187056995c793c626b1b3c2c55d",
+    "head_sha": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-14",
     "pr_url": null,
     "pr_number": null,
@@ -655,8 +1407,583 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      ".claude/agents/approver.md",
+      ".claude/agents/readiness.md",
+      ".claude/agents/spec-writer.md",
+      "delivery/COORDINATOR-HANDOFF.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-02/decision.md",
+      "delivery/features/F-02/feature.json",
+      "delivery/features/F-06/feature.json",
+      "delivery/features/F-08/feature.json",
+      "delivery/features/F-09/feature.json",
+      "delivery/features/F-09/fidelity-exceptions.json",
+      "delivery/features/F-09/round-1/build.md",
+      "delivery/features/F-09/round-1/checks.md",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-sow-signed-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-sow-signed-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-success-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-success-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-validation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-validation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-sow-signed-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-sow-signed-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-success-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-success-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-validation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-validation-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/board-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/board.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-mobile-awaiting-reconciliation-390/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-mobile-waiting-390/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-1440/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-sow-signed-1440/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-sow-signed-1440/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-sow-signed-1440/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-sow-signed-1440/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-sow-signed-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-sow-signed-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-success-1440/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-success-1440/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-success-1440/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-success-1440/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-success-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-success-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-validation-1440/board-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-validation-1440/board.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-validation-1440/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-validation-1440/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-validation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-desktop-validation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-390/board-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-390/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-390/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-390/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-390/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-390/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/board-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/board.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-sow-signed-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-success-390/board-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-success-390/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-success-390/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-success-390/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-success-390/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-success-390/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-success-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/board-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/board.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/diff.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/page-marked.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/page.png",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/report.html",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity/SCR-16-mobile-validation-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity/exception-requests.json",
+      "delivery/features/F-09/round-1/fidelity/scores.txt",
+      "delivery/features/F-09/round-1/review-security.md",
+      "delivery/features/F-09/round-1/review-technical.md",
+      "delivery/features/F-09/round-1/review-ui.md",
+      "delivery/features/F-09/round-1/review-ux.md",
+      "delivery/features/F-09/round-2/acceptance-pmo.md",
+      "delivery/features/F-09/round-2/acceptance-product.md",
+      "delivery/features/F-09/round-2/build.md",
+      "delivery/features/F-09/round-2/checks.md",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-sow-signed-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-sow-signed-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-success-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-success-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-validation-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-desktop-validation-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-390/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-sow-signed-390/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-sow-signed-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-success-390/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-success-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-validation-390/report.json",
+      "delivery/features/F-09/round-2/fidelity-review/SCR-16-mobile-validation-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-sow-signed-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-success-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-desktop-validation-1440/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-sow-signed-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-success-390/side-by-side.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/board-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/board.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/board.rendered.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/diff.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/page-marked.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/page.png",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/report.html",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/report.json",
+      "delivery/features/F-09/round-2/fidelity/SCR-16-mobile-validation-390/side-by-side.png",
+      "delivery/features/F-09/round-2/qa-evidence/j10-409-1440.png",
+      "delivery/features/F-09/round-2/qa-evidence/j12-uncertain-reloadfail-1440.png",
+      "delivery/features/F-09/round-2/qa-evidence/j15-401-1440.png",
+      "delivery/features/F-09/round-2/qa-evidence/j17-upload-403-1440.png",
+      "delivery/features/F-09/round-2/qa-evidence/j19-reconcile-phone-nochoice-390.png",
+      "delivery/features/F-09/round-2/qa-evidence/j20-phone-success-390.png",
+      "delivery/features/F-09/round-2/review-qa.md",
+      "delivery/features/F-09/round-2/review-security.md",
+      "delivery/features/F-09/round-2/review-technical.md",
+      "delivery/features/F-09/round-2/review-ui.md",
+      "delivery/features/F-09/round-2/review-ux.md",
+      "delivery/features/F-10/feature.json",
+      "delivery/features/F-11/decision.md",
+      "delivery/features/F-11/feature.json",
+      "delivery/features/F-11/fidelity-exceptions.json",
+      "delivery/features/F-11/round-3/acceptance-pmo.md",
+      "delivery/features/F-11/round-3/acceptance-product.md",
+      "delivery/features/F-11/round-3/build.md",
+      "delivery/features/F-11/round-3/checks.md",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/exception-requests.json",
+      "delivery/features/F-11/round-3/fidelity/results.txt",
+      "delivery/features/F-11/round-3/qa-evidence/phone-finance-bar-390.png",
+      "delivery/features/F-11/round-3/qa-evidence/rules-after-show-more-1440.png",
+      "delivery/features/F-11/round-3/review-qa.md",
+      "delivery/features/F-11/round-3/review-security.md",
+      "delivery/features/F-11/round-3/review-technical.md",
+      "delivery/features/F-11/round-3/review-ui.md",
+      "delivery/features/F-11/round-3/review-ux.md",
+      "delivery/features/F-12/feature.json",
+      "delivery/features/F-13/feature.json",
+      "delivery/features/F-14/feature.json",
+      "delivery/features/F-14/fidelity-exceptions.json",
+      "delivery/features/F-14/round-1/build.md",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-cancelled-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-cancelled-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-effect-uncertain-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-effect-uncertain-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-history-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-history-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-issue-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-issue-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-owner-needed-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-owner-needed-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-permission-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-permission-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-processing-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-processing-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-ready-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-ready-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-setup-needed-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-setup-needed-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-verified-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-cancelled-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-cancelled-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-effect-uncertain-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-effect-uncertain-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-history-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-history-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-issue-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-issue-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-owner-needed-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-owner-needed-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-permission-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-permission-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-processing-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-processing-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-ready-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-ready-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-setup-needed-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-setup-needed-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-verified-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_driver/act-wait.mjs",
+      "delivery/features/F-14/round-1/fidelity/_driver/exceptions.py",
+      "delivery/features/F-14/round-1/fidelity/_driver/fid.sh",
+      "delivery/features/F-14/round-1/fidelity/_driver/measure.mjs",
+      "delivery/features/F-14/round-1/fidelity/_driver/missing.py",
+      "delivery/features/F-14/round-1/fidelity/_driver/prod.sh",
+      "delivery/features/F-14/round-1/fidelity/_driver/runall.sh",
+      "delivery/features/F-14/round-1/fidelity/scores.txt",
+      "delivery/features/F-14/round-2/build.md",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-cancelled-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-cancelled-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-effect-uncertain-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-effect-uncertain-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-history-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-history-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-issue-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-issue-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-owner-needed-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-owner-needed-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-permission-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-permission-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-processing-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-processing-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-ready-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-ready-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-setup-needed-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-setup-needed-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-verified-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-cancelled-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-cancelled-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-effect-uncertain-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-effect-uncertain-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-history-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-history-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-issue-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-issue-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-owner-needed-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-owner-needed-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-permission-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-permission-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-processing-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-processing-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-ready-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-ready-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-setup-needed-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-setup-needed-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-verified-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-14/round-2/fidelity-review/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity-review/scores.txt",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-cancelled-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-cancelled-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-effect-uncertain-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-effect-uncertain-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-history-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-history-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-issue-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-issue-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-owner-needed-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-owner-needed-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-permission-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-permission-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-processing-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-processing-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-ready-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-ready-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-setup-needed-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-setup-needed-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-verified-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-cancelled-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-cancelled-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-effect-uncertain-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-effect-uncertain-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-history-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-history-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-issue-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-issue-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-owner-needed-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-owner-needed-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-permission-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-permission-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-processing-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-processing-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-ready-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-ready-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-setup-needed-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-setup-needed-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-verified-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-14/round-2/fidelity/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-14/round-2/fidelity/scores.txt",
+      "delivery/features/F-14/round-2/review-technical.md",
+      "delivery/features/F-14/round-2/review-ui.md",
+      "delivery/features/F-14/round-2/review-ux.md",
+      "delivery/features/F-14/spec.md",
+      "delivery/frame-phone-note/review-technical.md",
+      "frontend/e2e/alerts.spec.ts",
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/e2e/finance-month-end.spec.ts",
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/e2e/overview.spec.ts",
+      "frontend/e2e/response.spec.ts",
+      "frontend/e2e/setup.spec.ts",
       "frontend/e2e/work-item-board.spec.ts",
       "frontend/e2e/work-item.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/evidence.mjs",
+      "frontend/mock/exceptions.mjs",
+      "frontend/mock/finance.mjs",
+      "frontend/mock/fixtures/E-ALERT-PREFS-READ.json",
+      "frontend/mock/fixtures/E-ALERT-PREFS.json",
+      "frontend/mock/fixtures/E-EVIDENCE-UPLOAD.json",
+      "frontend/mock/fixtures/E-EXCEPTIONS.board.json",
+      "frontend/mock/fixtures/E-EXCEPTIONS.json",
+      "frontend/mock/fixtures/E-MONTH-END.json",
+      "frontend/mock/fixtures/E-NOTIFICATION-READ.json",
+      "frontend/mock/fixtures/E-NOTIFICATIONS.json",
+      "frontend/mock/fixtures/E-OVERVIEW.json",
+      "frontend/mock/fixtures/E-SETUP-RULE-SAVE.json",
+      "frontend/mock/fixtures/E-SETUP-RULES.json",
+      "frontend/mock/fixtures/E-WORK-LIST.board.json",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/alerts/notifications.empty.json",
+      "frontend/mock/fixtures/alerts/notifications.many.json",
+      "frontend/mock/fixtures/alerts/notifications.none.json",
+      "frontend/mock/fixtures/alerts/notifications.pm.json",
+      "frontend/mock/fixtures/alerts/prefs.invalid.json",
+      "frontend/mock/fixtures/alerts/prefs.locked.json",
+      "frontend/mock/fixtures/alerts/prefs.none.json",
+      "frontend/mock/fixtures/alerts/prefs.phone.json",
+      "frontend/mock/fixtures/alerts/prefs.pm.json",
+      "frontend/mock/fixtures/finance/month-end.board-phone.json",
+      "frontend/mock/fixtures/finance/month-end.empty.json",
+      "frontend/mock/fixtures/finance/month-end.known.json",
+      "frontend/mock/fixtures/finance/month-end.unknown.json",
+      "frontend/mock/fixtures/me.admin.json",
+      "frontend/mock/fixtures/overview/changed.json",
+      "frontend/mock/fixtures/overview/empty.json",
+      "frontend/mock/fixtures/overview/status.json",
+      "frontend/mock/fixtures/overview/zero.json",
+      "frontend/mock/fixtures/response/W-1601.recorded.json",
+      "frontend/mock/fixtures/response/W-1602.recorded.json",
+      "frontend/mock/fixtures/response/W-1603.delivered.json",
+      "frontend/mock/fixtures/response/W-1603.not_delivered.json",
+      "frontend/mock/fixtures/response/W-1603.unknown.json",
+      "frontend/mock/fixtures/response/W-1605.recorded.json",
+      "frontend/mock/fixtures/response/W-1606.recorded.json",
+      "frontend/mock/fixtures/response/work/W-1601.json",
+      "frontend/mock/fixtures/response/work/W-1602.json",
+      "frontend/mock/fixtures/response/work/W-1603.json",
+      "frontend/mock/fixtures/response/work/W-1604.json",
+      "frontend/mock/fixtures/response/work/W-1605.json",
+      "frontend/mock/fixtures/response/work/W-1606.json",
+      "frontend/mock/fixtures/response/work/W-1607.json",
+      "frontend/mock/fixtures/response/work/W-1608.json",
+      "frontend/mock/fixtures/response/work/W-1609.json",
+      "frontend/mock/fixtures/setup/delivery.desktop.json",
+      "frontend/mock/fixtures/setup/delivery.mobile.json",
+      "frontend/mock/fixtures/setup/finance.desktop.json",
+      "frontend/mock/fixtures/setup/finance.mobile.json",
+      "frontend/mock/fixtures/setup/rules.desktop.json",
+      "frontend/mock/fixtures/setup/rules.mobile.json",
+      "frontend/mock/fixtures/work/W-1501.json",
+      "frontend/mock/fixtures/work/W-1502.json",
+      "frontend/mock/fixtures/work/W-1503.json",
+      "frontend/mock/fixtures/work/W-1504.json",
+      "frontend/mock/fixtures/work/W-1505.json",
+      "frontend/mock/fixtures/work/W-1506.json",
+      "frontend/mock/fixtures/work/W-1507.json",
+      "frontend/mock/fixtures/work/W-1508.json",
+      "frontend/mock/fixtures/work/W-1509.json",
+      "frontend/mock/fixtures/work/W-1510.json",
+      "frontend/mock/fixtures/work/W-1511.json",
+      "frontend/mock/fixtures/work/W-1512.json",
+      "frontend/mock/fixtures/work/W-1513.json",
+      "frontend/mock/fixtures/work/W-1514.json",
+      "frontend/mock/fixtures/work/W-1515.json",
+      "frontend/mock/fixtures/work/W-1516.json",
+      "frontend/mock/fixtures/work/W-1517.json",
+      "frontend/mock/fixtures/work/W-1518.json",
+      "frontend/mock/fixtures/work/W-1519.json",
+      "frontend/mock/fixtures/work/W-1520.json",
+      "frontend/mock/fixtures/work/W-1521.json",
+      "frontend/mock/fixtures/work/W-1522.json",
+      "frontend/mock/fixtures/work/W-1523.json",
+      "frontend/mock/fixtures/work/W-1524.json",
+      "frontend/mock/fixtures/work/W-1525.json",
+      "frontend/mock/fixtures/work/W-1526.json",
+      "frontend/mock/fixtures/work/W-1527.json",
+      "frontend/mock/fixtures/work/W-1528.json",
       "frontend/mock/fixtures/work/W-1701.json",
       "frontend/mock/fixtures/work/W-1702.json",
       "frontend/mock/fixtures/work/W-1703.json",
@@ -669,8 +1996,101 @@
       "frontend/mock/fixtures/work/W-1709.json",
       "frontend/mock/fixtures/work/W-1710.json",
       "frontend/mock/fixtures/work/W-1711.json",
+      "frontend/mock/overview.mjs",
+      "frontend/mock/proposals/setup.json",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/setup.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/package-lock.json",
+      "frontend/package.json",
       "frontend/public/agents/chidi-working.png",
       "frontend/public/agents/tola-waiting.png",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/schema.d.ts",
+      "frontend/src/app/exceptions/page.tsx",
+      "frontend/src/app/finance/month-end/page.tsx",
+      "frontend/src/app/notifications/page.tsx",
+      "frontend/src/app/overview/page.tsx",
+      "frontend/src/app/settings/alerts/page.tsx",
+      "frontend/src/app/setup/costing-rule/page.tsx",
+      "frontend/src/app/setup/delegation/page.tsx",
+      "frontend/src/app/setup/page.tsx",
+      "frontend/src/app/setup/payroll-visibility/page.tsx",
+      "frontend/src/app/setup/roles/page.tsx",
+      "frontend/src/app/setup/rules/delivery/page.tsx",
+      "frontend/src/app/setup/rules/finance/page.tsx",
+      "frontend/src/app/setup/rules/page.tsx",
+      "frontend/src/app/setup/staff/page.tsx",
+      "frontend/src/app/setup/templates/page.tsx",
+      "frontend/src/app/work/[id]/respond/page.tsx",
+      "frontend/src/features/alerts/AlertSettingsPage.tsx",
+      "frontend/src/features/alerts/AlertSwitch.tsx",
+      "frontend/src/features/alerts/AlertsFilterPanel.tsx",
+      "frontend/src/features/alerts/NotificationsPage.tsx",
+      "frontend/src/features/alerts/alerts.css",
+      "frontend/src/features/alerts/model.ts",
+      "frontend/src/features/alerts/types.ts",
+      "frontend/src/features/alerts/useIsPhone.ts",
+      "frontend/src/features/exceptions/ExceptionsFilter.tsx",
+      "frontend/src/features/exceptions/ExceptionsList.tsx",
+      "frontend/src/features/exceptions/ExceptionsPage.tsx",
+      "frontend/src/features/exceptions/exceptions.css",
+      "frontend/src/features/exceptions/index.ts",
+      "frontend/src/features/exceptions/labels.ts",
+      "frontend/src/features/exceptions/types.ts",
+      "frontend/src/features/exceptions/useExceptions.ts",
+      "frontend/src/features/finance/month-end/MonthEndStates.tsx",
+      "frontend/src/features/finance/month-end/MonthEndView.tsx",
+      "frontend/src/features/finance/month-end/model.ts",
+      "frontend/src/features/finance/month-end/month-end.css",
+      "frontend/src/features/finance/month-end/proposal.ts",
+      "frontend/src/features/finance/month-end/useMonthEnd.ts",
+      "frontend/src/features/floor/Floor3D.tsx",
+      "frontend/src/features/floor/floor.css",
+      "frontend/src/features/floor/scene.ts",
+      "frontend/src/features/floor/support.ts",
+      "frontend/src/features/my-work/CaughtUp.tsx",
+      "frontend/src/features/my-work/FilterPanel.tsx",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/overview/OverviewPage.tsx",
+      "frontend/src/features/overview/lines.ts",
+      "frontend/src/features/overview/overview.css",
+      "frontend/src/features/overview/types.ts",
+      "frontend/src/features/overview/useMedia.ts",
+      "frontend/src/features/overview/useOverview.ts",
+      "frontend/src/features/response/ProofField.tsx",
+      "frontend/src/features/response/ReconcilePanel.tsx",
+      "frontend/src/features/response/ResponseEntryLink.tsx",
+      "frontend/src/features/response/ResponseForm.tsx",
+      "frontend/src/features/response/ResponseView.tsx",
+      "frontend/src/features/response/api.ts",
+      "frontend/src/features/response/contract.ts",
+      "frontend/src/features/response/icons.tsx",
+      "frontend/src/features/response/index.ts",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/response/reload.ts",
+      "frontend/src/features/response/response.css",
+      "frontend/src/features/response/useEvidenceUpload.ts",
+      "frontend/src/features/response/usePhone.ts",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/setup/DeliveryRulesView.tsx",
+      "frontend/src/features/setup/FinanceRulesView.tsx",
+      "frontend/src/features/setup/ProofField.tsx",
+      "frontend/src/features/setup/ReservedTab.tsx",
+      "frontend/src/features/setup/RulesView.tsx",
+      "frontend/src/features/setup/SetRulePanel.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/setup/api.ts",
+      "frontend/src/features/setup/contract-proposal.ts",
+      "frontend/src/features/setup/format.ts",
+      "frontend/src/features/setup/icons.tsx",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/setup/useRuleSave.ts",
+      "frontend/src/features/setup/useSetupRules.ts",
       "frontend/src/features/work-item/InfoIcon.tsx",
       "frontend/src/features/work-item/WorkItemHistory.tsx",
       "frontend/src/features/work-item/WorkItemOverview.tsx",
@@ -680,7 +2100,36 @@
       "frontend/src/features/work-item/presentation.ts",
       "frontend/src/features/work-item/usePhone.ts",
       "frontend/src/features/work-item/work-item.css",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/alerts-mock.test.ts",
+      "frontend/tests/alerts-model.test.ts",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/api-schema-drift.test.ts",
+      "frontend/tests/exceptions-mock.test.ts",
+      "frontend/tests/exceptions.test.tsx",
+      "frontend/tests/finance-month-end-mock.test.ts",
+      "frontend/tests/finance-month-end.test.tsx",
+      "frontend/tests/floor-support.test.ts",
+      "frontend/tests/floor.test.ts",
       "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-decide.test.ts",
+      "frontend/tests/mock-overview.test.ts",
+      "frontend/tests/mock-work-list.test.ts",
+      "frontend/tests/my-work-model.test.ts",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/overview-floor-reject.test.tsx",
+      "frontend/tests/overview-floor.test.tsx",
+      "frontend/tests/overview-imports.test.ts",
+      "frontend/tests/overview.test.tsx",
+      "frontend/tests/response-mock.test.ts",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/setup-mock.test.ts",
+      "frontend/tests/setup-proposal.test.ts",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/shell.test.tsx",
       "frontend/tests/work-item-board.test.tsx",
       "frontend/tests/work-item.test.tsx"
     ]
@@ -716,7 +2165,7 @@
     }
   },
   "created_at": "2026-11-14T07:46:48Z",
-  "round": 3,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -782,6 +2231,54 @@
       "round": 3,
       "head": "5b9605a81d197187056995c793c626b1b3c2c55d",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T15:09:46Z",
+      "round": 3,
+      "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T15:19:00Z",
+      "round": 3,
+      "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T15:19:00Z",
+      "round": 4,
+      "head": "16016b6b0cf0feba24cf514be1a59fff4453fd2c",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T15:56:37Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T16:04:57Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T16:20:11Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
     }
   ],
   "routing": {
@@ -797,10 +2294,10 @@
     ]
   },
   "gate": {
-    "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 4,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
   },
   "blocked": null
 }

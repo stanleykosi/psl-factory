@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c
+COMMIT: 4e8a8c7d75957adbc9de381887453e0e5e11ecf4
 BUILDER: builder
 LANE: full
 
@@ -95,3 +95,20 @@ Left as is:
 
 ## Blocked
 Not blocked.
+
+## Extra round (D-47)
+- Merged `origin/dlv-00-delivery-setup` (conflicts in `mock/server.mjs` and `tests/mock-contract.test.ts` resolved keeping both sides). `model.ts` now aliases the generated v7 types (`@/api/schema`); the local proposal types, `ProjectsRequest` and the contract-body stripping for projects in `mock-contract.test.ts` are gone.
+- UI-3-1: Tola's avatar on SCR-07 is the mascot image (`/agents/tola.png`, `alt=""`, `aria-hidden`, on the bundle's tinted avatar circle). It is the only agent avatar in F-07.
+- FID-1: phone sub-pages use the frame `usePhoneBack({ label: 'Projects', href: '/projects' })`; the in-page back link is removed. Page and list titles take the board's line-height 1.08, the project title the board's 36px, the eyebrow `line-height: normal`, which removes the 4-6px downward drift. "1 PROJECTS" was already fixed in round 3 (v7 `total`).
+- Exceptions: one added in `fidelity-exceptions.json` for the phone back link, whose accessible name in the frame is "Back to Projects" (board: "← Projects"). Awaiting the design engineer's confirmation.
+- checks.sh passes (875 vitest tests, lint, typecheck, build).
+
+| Board | Page | Coverage | Visual | Result |
+|---|---|---|---|---|
+| SCR-22-desktop 1440 | `/projects?status=all` | 95.7% (100% with exceptions) | 93.1 | PASS |
+| SCR-22-mobile 390 | `/projects` | 88.9% (100% with exceptions) | 91.6 | PASS |
+| SCR-07-desktop 1440 | `/projects/P-0101` | 95.7% (100% with exceptions) | 91.1 | PASS |
+| SCR-07-mobile 390 | `/projects/P-0101` | 88.9% (100% with the new exception) | 78.8 (was 68) | FAIL on visual |
+
+- SCR-07-mobile stays under 90: the board's title wraps onto two lines (Archivo at font-stretch 112%, which the frame font does not reproduce), which shifts the whole page 24px, and the required "What is next" row adds length. Needs a frame font fix or a design engineer decision.
+- Reports: `round-3/fidelity-extra/<board>-<width>/report.json` and `side-by-side.png`. Ports 4701/4702 stopped; `test-results` deleted.

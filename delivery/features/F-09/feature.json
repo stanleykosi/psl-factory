@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-09",
   "outcome": "Record a client response or SOW signature with proof, and confirm what happened to an uncertain send",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-M2B-RESPONSE"
   ],
@@ -757,9 +757,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -777,7 +777,7 @@
     "pr_number": 21,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "approved",
     "merge_status": "merged",
     "merge_sha": "a7f6d55182d0e28825a4b29be2ef357840bd575f",
@@ -1657,9 +1657,16 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "surface 'security' always needs a human",
+      "851 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1738,6 +1745,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-14T09:07:39Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T15:05:16Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T15:05:16Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T15:05:16Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T15:05:16Z",
       "round": 2,
       "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
       "reason": null

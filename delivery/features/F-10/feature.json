@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -499,9 +499,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -519,7 +519,7 @@
     "pr_number": 16,
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "approved",
     "merge_status": "merged",
     "merge_sha": "f305c1aeecae865401ac5c96bb2ea25d278729a3",
@@ -567,9 +567,16 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'payments' always needs a human",
+      "surface 'security' always needs a human",
+      "19 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -648,6 +655,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-14T07:20:36Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T15:04:14Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T15:04:14Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T15:04:14Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T15:04:14Z",
       "round": 2,
       "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
       "reason": null

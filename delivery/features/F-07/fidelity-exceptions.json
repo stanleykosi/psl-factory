@@ -4,25 +4,38 @@
       "role": "link",
       "name": "Start work",
       "reason": "Frame item, built by F-05 (CMP-23 Start work)",
-      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-08)"
     },
     {
       "role": "link",
       "name": "More ways to start",
       "reason": "Frame item, built by F-05 (CMP-23 split button)",
-      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-08)"
     },
     {
       "role": "link",
-      "name": "\u2190 Home",
+      "name": "← Home",
       "reason": "Frame phone bar (F-01 PhoneBar) draws menu and brand, not a back link",
-      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-08)"
     },
     {
       "role": "text",
-      "name": "Tunde Bello \u00b7 PMO",
+      "name": "Tunde Bello · PMO",
       "reason": "Frame who-line; the fidelity tool sets the persona cookie with path /projects for /projects/P-0101, so /api/v1/me answers the default persona (Ada Okafor)",
-      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-08)"
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-08)"
+    },
+    {
+      "role": "link",
+      "name": "← Projects",
+      "reason": "Frame phone bar back link (usePhoneBack) draws the arrow as an icon, so its accessible name is 'Back to Projects'; same place and wording as the board",
+      "approved_by": "builder proposal, extra round D-47 (design engineer to confirm)"
+    }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-07-mobile",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-50",
+      "reason": "The board draws the phone title in Archivo at font-stretch 112%, so it wraps to two lines and moves the page down 24px; the app's frame title font is narrower. The spec-required 'What is next' row also adds height. Everything else matches; approved as an exception on this board."
     }
   ]
 }
