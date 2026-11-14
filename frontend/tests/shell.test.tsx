@@ -307,6 +307,31 @@ describe('phone back link', () => {
     expect(within(phoneBar()).getByText('PSL FACTORY')).toBeTruthy();
   });
 
+  it('an optional note shows at the right of the bar and goes with the link', async () => {
+    function NotePage() {
+      usePhoneBack({ label: 'Setup', href: '/setup/roles', note: 'RULES' });
+      return <h1 className="shell-title">Finance rules</h1>;
+    }
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/setup/rules/finance';
+    const { rerender } = render(
+      <AppShell>
+        <NotePage />
+      </AppShell>,
+    );
+    await loaded();
+    await waitFor(() => expect(backLink()?.textContent).toBe('← Setup'));
+    expect(phoneBar().children[1].textContent).toBe('RULES');
+    expect(phoneBar().children[1].className).toBe('shell-phonenote');
+    rerender(
+      <AppShell>
+        <SubPage />
+      </AppShell>,
+    );
+    await waitFor(() => expect(backLink()?.textContent).toBe('← Queue'));
+    expect(phoneBar().querySelector('.shell-phonenote')).toBeNull();
+  });
+
   it('swapping to a different sub-page never commits the old link for the new page', async () => {
     function ProjectPage() {
       usePhoneBack({ label: 'Projects', href: '/projects' });

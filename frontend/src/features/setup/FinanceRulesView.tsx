@@ -11,7 +11,7 @@ import { WarningIcon } from '@/shell/icons';
 import type { RuleRow } from './contract-proposal';
 import { groupButtonLabel, isEditable, valueText } from './format';
 import { type Notice, OutcomeNotice, SetRulePanel } from './SetRulePanel';
-import { PhoneBack, RulesEmpty, RulesReadState, SetupGate, ShowMore } from './SetupFrame';
+import { RulesEmpty, RulesReadState, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
 const OTHER = 'Other Finance rules';
@@ -67,6 +67,7 @@ export function FinancePageView() {
 
 function FinanceRulesView() {
   const { state, retry, refresh, loadMore, signOut } = useSetupRules('finance');
+  useSetupPhoneBack('RULES');
   const [open, setOpen] = useState<string | null>(null);
   // A save outcome whose group panel closed because the re-read left that group no editable rule (QA-1-1).
   const [closedNotice, setClosedNotice] = useState<Notice | null>(null);
@@ -129,7 +130,15 @@ function FinanceRulesView() {
                       )}
                       {editable.length > 0 && (
                         <div id={panelId} hidden={!isOpen}>
-                          {isOpen && <SetRulePanel rows={editable} refresh={refresh} signOut={signOut} onEditorGone={setClosedNotice} />}
+                          {isOpen && (
+                            <SetRulePanel
+                              rows={editable}
+                              refresh={refresh}
+                              signOut={signOut}
+                              staysOpen={(next) => groupRows(next.items).some((g) => g.key === group.key && g.rows.some(isEditable))}
+                              onEditorGone={setClosedNotice}
+                            />
+                          )}
                         </div>
                       )}
                     </div>
@@ -143,7 +152,6 @@ function FinanceRulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PhoneBack label="RULES" />
         <h1 className="setup-phone-title setup-phone-title--area">Finance rules</h1>
         {empty ? (
           <RulesEmpty />

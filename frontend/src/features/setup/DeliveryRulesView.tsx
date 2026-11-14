@@ -5,7 +5,7 @@
 import { InfoIcon } from './icons';
 import { AreaCrumb, RuleList } from './FinanceRulesView';
 import { valueText } from './format';
-import { PhoneBack, RulesEmpty, RulesReadState, SetupGate, ShowMore } from './SetupFrame';
+import { RulesEmpty, RulesReadState, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
 export function DeliveryPageView() {
@@ -18,6 +18,7 @@ export function DeliveryPageView() {
 
 function DeliveryRulesView() {
   const { state, retry, loadMore } = useSetupRules('delivery');
+  useSetupPhoneBack('RULES');
   if (state.status !== 'ready') return <RulesReadState state={state} retry={() => void retry()} />;
 
   const { items } = state;
@@ -85,7 +86,6 @@ function DeliveryRulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PhoneBack label="RULES" />
         <h1 className="setup-phone-title setup-phone-title--area">Delivery rules</h1>
         {empty ? (
           <RulesEmpty />

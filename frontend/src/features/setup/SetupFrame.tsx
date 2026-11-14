@@ -1,13 +1,13 @@
 'use client';
 
 // The Setup frame (SCR-13-desktop-rules): SETUP eyebrow, title and the seven-tab bar, plus the pieces every Setup
-// view shares (the destination gate, the read states, the phone back link). Tabs are route links with
+// view shares (the destination gate, the read states, the phone bar's back link). Tabs are route links with
 // aria-current (Assumption A-7); badges show only the counts the API sends.
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-import { useMe } from '@/shell/AppShell';
+import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
@@ -69,16 +69,9 @@ export function RulesReadState({ state, retry }: { state: RulesState; retry: () 
   return <WorkErrorCard message="We couldn’t load the rules. Your work is safe; nothing was changed." error={error} onRetry={retry} />;
 }
 
-/** "← Setup" under the phone bar (D-08: the app frame owns the bar), with the board's mono label. */
-export function PhoneBack({ label }: { label?: string }) {
-  return (
-    <div className="setup-back">
-      <Link href="/setup/roles">
-        <span aria-hidden="true">←</span> Setup
-      </Link>
-      {label && <span className="setup-back__label">{label}</span>}
-    </div>
-  );
+/** "← Setup" in the phone bar, back to the phone Setup home (SCR-13-mobile), with the board's mono note. */
+export function useSetupPhoneBack(note?: string) {
+  usePhoneBack({ label: 'Setup', href: '/setup/roles', note });
 }
 
 export function RulesEmpty() {

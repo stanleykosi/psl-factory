@@ -344,7 +344,10 @@ test.describe('phone', () => {
 
   test('rules, finance and delivery as drawn, read-only, no side scroll, one h1, axe clean (AC 18, 24)', async ({ page, context }) => {
     await openAs(page, context, '/setup/rules', { psl_mock_setup: 'mobile' });
-    await expect(page.getByRole('link', { name: 'Setup', exact: true })).toHaveAttribute('href', '/setup/roles');
+    const bar = page.locator('header.psl-phonebar');
+    await expect(bar.getByRole('link', { name: 'Back to Setup' })).toHaveAttribute('href', '/setup/roles');
+    await expect(bar.getByRole('button', { name: 'Menu' })).toHaveCount(0);
+    await expect(page.locator('.setup-phone').getByRole('link', { name: /Setup/ })).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Rules · 6 not set']);
     await expect(page.locator('.setup-card')).toHaveCount(6);
     await expect(page.locator('.setup-card').first()).toContainText('Not set · Pre-sale');
@@ -359,6 +362,8 @@ test.describe('phone', () => {
     await expect(page.getByText('25 values Not set.')).toBeVisible();
     await expect(page.locator('.setup-phone .setup-card')).toHaveCount(3);
     await expect(page.getByText('+ 4 MORE LINES · OPEN ON DESKTOP')).toBeVisible();
+    await expect(bar.getByRole('link', { name: 'Back to Setup' })).toBeVisible();
+    await expect(bar.locator('.shell-phonenote')).toHaveText('RULES');
     expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
 
@@ -366,6 +371,7 @@ test.describe('phone', () => {
     await loaded(page);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Delivery rules']);
     await expect(page.locator('.setup-phone li')).toHaveCount(4);
+    await expect(bar.locator('.shell-phonenote')).toHaveText('RULES');
     expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
 

@@ -90,6 +90,7 @@ async function open(view: React.ReactNode = <RulesPageView />) {
 }
 const desktop = () => within(document.querySelector('.setup-desktop') as HTMLElement);
 const phone = () => within(document.querySelector('.setup-phone') as HTMLElement);
+const phoneBar = () => document.querySelector('header.psl-phonebar') as HTMLElement;
 const panel = () => within(screen.getByRole('region', { name: 'Set a rule' }));
 const saveButton = () => panel().getByRole('button', { name: /Save as version|Saving…/ }) as HTMLButtonElement;
 const rowCells = (name: string) =>
@@ -121,7 +122,11 @@ describe('rules list (AC 2, 3, 4)', () => {
     expect(desktop().getByText(/^8 rules aren’t set yet\. Work that needs them waits as “Setup needed”/)).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1, name: 'Roles, rules and delegation' })).toBeTruthy();
     expect(phone().getByRole('heading', { level: 1 }).textContent).toBe('Rules · 8 not set');
-    expect(phone().getByRole('link', { name: 'Setup' }).getAttribute('href')).toBe('/setup/roles');
+    const back = await within(phoneBar()).findByRole('link', { name: 'Back to Setup' });
+    expect(back.textContent).toBe('← Setup');
+    expect(back.getAttribute('href')).toBe('/setup/roles');
+    expect(phoneBar().querySelector('.shell-phonenote')).toBeNull();
+    expect(phone().queryByRole('link', { name: /Setup/ })).toBeNull();
     expect(document.body.textContent).not.toContain('SAMPLE DATA');
   });
 
@@ -439,6 +444,61 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     expect(desktop().queryByRole('alert')).toBeNull();
   });
 
+  it('a server error whose re-read leaves every rule read-only says the panel closed but never "Nothing … saved" (SEC-2-1)', async () => {
+    let page = fixture('rules.desktop');
+    answers.rules = () => json(200, page);
+    answers.save = () => {
+      page = withPage(page, (rows) => rows.map((r) => ({ ...r, can_change: false })));
+      return json(500, { code: 'server_error', message: 'Something went wrong.' });
+    };
+    await open();
+    await fillFirstSave({ why: 'Mine', file: false });
+    fireEvent.click(saveButton());
+    await waitFor(() => expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull());
+    const alert = desktop().getByRole('alert');
+    expect(alert.textContent).toContain(EDITOR_GONE);
+    expect(alert.textContent).not.toContain(NOT_SAVED);
+    expect(saves()).toHaveLength(1);
+    expect(reads()).toHaveLength(2);
+  });
+
+  it('a re-read that makes a different rule editable keeps the panel and its outcome inside it, with no page callout (TECH-2-1)', async () => {
+    const others = ['documents.client_reviewer', 'presale.rfp_outcome_recorder', 'presale.costing_adjuster'];
+    let page = withPage(fixture('rules.desktop'), (rows) => rows.map((r) => (others.includes(r.component) ? { ...r, can_change: false } : r)));
+    answers.rules = () => json(200, page);
+    answers.save = () => {
+      page = withPage(page, (rows) =>
+        rows.map((r) => (r.component === 'presale.rfp_assigner' ? { ...r, can_change: false } : r.component === 'documents.client_reviewer' ? { ...r, can_change: true } : r)),
+      );
+      return json(403, FORBIDDEN);
+    };
+    await open();
+    fireEvent.click(saveButton());
+    await waitFor(() => expect(panel().getByRole('alert').textContent).toBe(FORBIDDEN.message));
+    expect(desktop().getAllByRole('alert')).toHaveLength(1);
+    expect(document.body.textContent).not.toContain(EDITOR_GONE);
+    expect((panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement).value).toBe('documents.client_reviewer');
+  });
+
+  it('rules: a Show more that brings the panel back drops the stale "panel has closed" callout (TECH-2-1)', async () => {
+    const first = fixture('rules.desktop');
+    let firstPage = withPage(first, (rows) => rows.map((r) => (r.component === 'presale.rfp_assigner' ? r : { ...r, can_change: false })), { next_cursor: 'o:10' });
+    const more = { items: [{ ...first.items[1], component: 'later.reviewer', name: 'A later rule' }], as_of: first.as_of };
+    answers.rules = (_, c) => (c.query.includes('cursor=') ? json(200, more) : json(200, firstPage));
+    answers.save = () => {
+      firstPage = savedRow(firstPage, 'presale.rfp_assigner', { can_change: false });
+      return json(403, FORBIDDEN);
+    };
+    await open();
+    fireEvent.click(saveButton());
+    await waitFor(() => expect(desktop().getByRole('alert').textContent).toContain(EDITOR_GONE));
+    expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull();
+    fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
+    await waitFor(() => expect(screen.getByRole('region', { name: 'Set a rule' })).toBeTruthy());
+    expect(document.body.textContent).not.toContain(EDITOR_GONE);
+    expect((panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement).value).toBe('later.reviewer');
+  });
+
   it('network error, revision unchanged: re-reads once, keeps the edits, never resends', async () => {
     answers.save = () => Promise.reject(new TypeError('Failed to fetch'));
     await open();
@@ -638,6 +698,8 @@ describe('finance and delivery views (AC 16, 17)', () => {
 
     expect(phone().getByText('25 values Not set.')).toBeTruthy();
     expect(phone().getByText('+ 4 MORE LINES · OPEN ON DESKTOP')).toBeTruthy();
+    expect(within(phoneBar()).getByRole('link', { name: 'Back to Setup' }).getAttribute('href')).toBe('/setup/roles');
+    expect(phoneBar().querySelector('.shell-phonenote')?.textContent).toBe('RULES');
   });
 
   it('finance read-only: no Set buttons; rows without group go last; count absent leaves one sentence', async () => {

@@ -11,7 +11,7 @@ import { WarningIcon } from '@/shell/icons';
 import type { RuleRow } from './contract-proposal';
 import { areaHref, isEditable, linkHref, valueText, versionText } from './format';
 import { type Notice, OutcomeNotice, SetRulePanel } from './SetRulePanel';
-import { PhoneBack, RulesEmpty, RulesReadState, SetupFrame, SetupGate, ShowMore } from './SetupFrame';
+import { RulesEmpty, RulesReadState, SetupFrame, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
 export function RulesPageView() {
@@ -49,7 +49,9 @@ function VersionCell({ row }: { row: RuleRow }) {
 
 function RulesView() {
   const { state, retry, refresh, loadMore, signOut } = useSetupRules();
-  // A save outcome whose panel closed because the re-read left no editable rule (QA-1-1).
+  useSetupPhoneBack();
+  // A save outcome whose panel closed because the re-read left no editable rule (QA-1-1); shown only while the panel
+  // stays closed, so a later Show more that brings the panel back never keeps a stale "has closed" (TECH-2-1).
   const [closedNotice, setClosedNotice] = useState<Notice | null>(null);
   if (state.status !== 'ready') return <RulesReadState state={state} retry={() => void retry()} />;
 
@@ -72,7 +74,7 @@ function RulesView() {
                 <span>{notSetBanner(notSet)}</span>
               </div>
             )}
-            {closedNotice && <OutcomeNotice notice={closedNotice} />}
+            {closedNotice && editable.length === 0 && <OutcomeNotice notice={closedNotice} />}
             <div className="setup-columns">
               <section className="setup-main" aria-label="Rules">
                 <div className="psl-tablewrap">
@@ -109,7 +111,13 @@ function RulesView() {
               </section>
               {editable.length > 0 && (
                 <aside className="setup-aside" aria-label="Set a rule">
-                  <SetRulePanel rows={editable} refresh={refresh} signOut={signOut} onEditorGone={setClosedNotice} />
+                  <SetRulePanel
+                    rows={editable}
+                    refresh={refresh}
+                    signOut={signOut}
+                    staysOpen={(next) => next.items.some(isEditable)}
+                    onEditorGone={setClosedNotice}
+                  />
                 </aside>
               )}
             </div>
@@ -118,7 +126,6 @@ function RulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PhoneBack />
         <h1 className="setup-phone-title">{notSet === undefined ? 'Rules' : `Rules · ${notSet} not set`}</h1>
         {empty ? (
           <RulesEmpty />

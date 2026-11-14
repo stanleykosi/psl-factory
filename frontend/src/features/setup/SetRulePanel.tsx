@@ -4,8 +4,8 @@
 // version. Only rows the API marks editable reach this panel (format.isEditable); /me roles are never consulted.
 // Outcomes: 200 re-reads and rebuilds from the new row; 409 shows the message and clears every edit (never
 // re-applied); 422 keeps the edits and marks the named fields; a network or server error re-reads once and
-// never resends. When the re-read leaves none of the panel's rules editable (the right was withdrawn), the view closes
-// the panel, so the outcome goes to onEditorGone and the view shows it above the list instead.
+// never resends. When the view will not show the panel after the re-read (the right was withdrawn), the outcome goes
+// to onEditorGone and the view shows it above the list instead.
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
@@ -13,7 +13,7 @@ import { WarningIcon } from '@/shell/icons';
 
 import { uploadEvidence } from './api';
 import type { RulesPage, RuleRow, SaveBody } from './contract-proposal';
-import { fieldsFromMessage, isEditable, lagosToday, type RuleField } from './format';
+import { fieldsFromMessage, lagosToday, type RuleField } from './format';
 import { TickIcon } from './icons';
 import { ProofField, type ProofState } from './ProofField';
 import { useRuleSave } from './useRuleSave';
@@ -34,7 +34,9 @@ type Props = {
   rows: RuleRow[];
   refresh: () => Promise<RulesPage | ApiError>;
   signOut: (error: ApiError) => void;
-  /** The re-read left none of these rules editable, so the view is about to close the panel. */
+  /** Whether the view still shows this panel once a re-read returns this page; the view decides, from its own rows. */
+  staysOpen: (page: RulesPage) => boolean;
+  /** The re-read closes the panel, so the view shows the outcome above the list. */
   onEditorGone: (notice: Notice) => void;
 };
 
@@ -53,7 +55,7 @@ export function OutcomeNotice({ notice }: { notice: Notice }) {
   );
 }
 
-export function SetRulePanel({ rows, refresh, signOut, onEditorGone }: Props) {
+export function SetRulePanel({ rows, refresh, signOut, staysOpen, onEditorGone }: Props) {
   const id = useId();
   const [selected, setSelected] = useState(rows[0].component);
   const row = rows.find((r) => r.component === selected) ?? rows[0];
@@ -75,8 +77,7 @@ export function SetRulePanel({ rows, refresh, signOut, onEditorGone }: Props) {
   const reloadedRow = (page: RulesPage | ApiError) => (page instanceof ApiError ? undefined : page.items.find((r) => r.component === row.component));
   // Shows the outcome in the panel, or hands it to the view when the re-read closes the panel.
   const announce = (page: RulesPage | ApiError, next: Notice, rejected = false) => {
-    const mine = new Set(rows.map((r) => r.component));
-    if (!(page instanceof ApiError) && !page.items.some((r) => mine.has(r.component) && isEditable(r))) {
+    if (!(page instanceof ApiError) && !staysOpen(page)) {
       onEditorGone({ ...next, text: [next.text, EDITOR_GONE, rejected ? NOT_SAVED : ''].join(' ').trim() });
       return;
     }
