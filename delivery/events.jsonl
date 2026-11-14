@@ -258,3 +258,7 @@
 {"at":"2026-11-14T02:39:01Z","feature":"F-04","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"d15e2931950d378a61086a3ec92a18955b27fe11"}}
 {"at":"2026-11-14T02:39:01Z","feature":"F-04","round":2,"kind":"transition","head":"3c93fe030ff5","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-14T02:39:02Z","feature":"F-04","round":2,"kind":"transition","head":"3c93fe030ff5","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T02:46:08Z","feature":"F-05","round":0,"kind":"created","tasks":["FE-M2A"]}
+{"at":"2026-11-14T02:46:08Z","feature":"F-06","round":0,"kind":"created","tasks":["FE-M2B"]}
+{"at":"2026-11-14T02:46:08Z","feature":"F-07","round":0,"kind":"created","tasks":["FE-M3-PROJECTS"]}
+{"at":"2026-11-14T02:46:08Z","feature":"F-08","round":0,"kind":"created","tasks":["FE-M3-OVERVIEW"]}
