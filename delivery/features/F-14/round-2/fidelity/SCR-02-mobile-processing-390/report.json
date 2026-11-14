@@ -1,0 +1,681 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T11:36:32.328Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-processing.dc.html",
+  "boardName": "SCR-02-mobile-processing.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1703",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 93.4 meets 90.",
+    "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 90,
+    "coverageWithExceptions": 100,
+    "visual": 93.4
+  },
+  "visual": {
+    "score": 93.4,
+    "allCellsScore": 95.1,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 863,
+    "cell": 12,
+    "contentCells": 1737,
+    "mismatchedCells": 114
+  },
+  "coverage": {
+    "total": 20,
+    "found": 18,
+    "coverage": 90,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412",
+        "pageName": "INV-0412",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "pageName": "Lagoon Health · Milestone 2 invoice",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 319,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 172,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "In progress",
+        "pageName": "In progress",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 186,
+          "w": 79,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 186,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 172,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 186,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 173,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 172,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 186,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 222,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 236,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 222,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 236,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 223,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 222,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 236,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafting the invoice",
+        "pageName": "Drafting the invoice",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 74,
+          "y": 289,
+          "w": 179,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 72,
+          "y": 287,
+          "w": 179,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent · step 3 of 4",
+        "pageName": "Chidi · Finance agent · step 3 of 4",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 74,
+          "y": 307,
+          "w": 179,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 72,
+          "y": 308,
+          "w": 179,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WORKING",
+        "pageName": "WORKING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 272,
+          "y": 295,
+          "w": 86,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 286,
+          "y": 294,
+          "w": 74,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started 10:41",
+        "pageName": "Started 10:41",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 18,
+          "y": 523,
+          "w": 354,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 540,
+          "w": 81,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AGENT WORKING",
+        "key": "text: AGENT WORKING",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 130,
+          "w": 116,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Board-only wording; the tag shows STATE_TAGS.processing (\"Processing\").",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Drafting the invoice\"",
+        "kind": "Text",
+        "name": "Drafting the invoice",
+        "boardBox": {
+          "x": 74,
+          "y": 289,
+          "w": 179,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 72,
+          "y": 287,
+          "w": 179,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Text \"WORKING\"",
+        "kind": "Text",
+        "name": "WORKING",
+        "boardBox": {
+          "x": 272,
+          "y": 295,
+          "w": 86,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 286,
+          "y": 294,
+          "w": 74,
+          "h": 23
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Text \"Chidi · Finance agent · step 3 of 4\"",
+        "kind": "Text",
+        "name": "Chidi · Finance agent · step 3 of 4",
+        "boardBox": {
+          "x": 74,
+          "y": 307,
+          "w": 179,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 72,
+          "y": 308,
+          "w": 179,
+          "h": 16
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Text \"Started 10:41\"",
+        "kind": "Text",
+        "name": "Started 10:41",
+        "boardBox": {
+          "x": 18,
+          "y": 523,
+          "w": 354,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 540,
+          "w": 81,
+          "h": 20
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROCESSING",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 94,
+          "h": 23
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 161,
+          "w": 358,
+          "h": 102
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Drafting the invoice",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 275,
+          "w": 358,
+          "h": 296
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "01",
+        "container": "main",
+        "pageBox": {
+          "x": 30,
+          "y": 592,
+          "w": 30,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone evidence",
+        "container": "main",
+        "pageBox": {
+          "x": 68,
+          "y": 592,
+          "w": 256,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Done",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 592,
+          "w": 28,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "02",
+        "container": "main",
+        "pageBox": {
+          "x": 30,
+          "y": 625,
+          "w": 30,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Contract amount",
+        "container": "main",
+        "pageBox": {
+          "x": 68,
+          "y": 625,
+          "w": 256,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Done",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 625,
+          "w": 28,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

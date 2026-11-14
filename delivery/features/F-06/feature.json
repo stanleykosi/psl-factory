@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-06",
   "outcome": "A Lead sees every exception they may see on one read-only list at /exceptions",
-  "state": "AWAITING_USER_APPROVAL",
+  "state": "DONE",
   "task_ids": [
     "FE-M2B"
   ],
@@ -740,9 +740,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -761,9 +761,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "43511df7a53aa7be3c3e0988f2547f2ceb3da48d",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/exceptions.spec.ts",
@@ -946,6 +946,30 @@
       "from": "PR_OPEN",
       "to": "AWAITING_USER_APPROVAL",
       "at": "2026-11-14T05:34:23Z",
+      "round": 2,
+      "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T11:41:07Z",
+      "round": 2,
+      "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T11:41:07Z",
+      "round": 2,
+      "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T11:41:07Z",
       "round": 2,
       "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
       "reason": null

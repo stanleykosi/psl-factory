@@ -1,0 +1,28 @@
+# F-14 round 2, production build on 4501 (mock 4502), exceptions delivery/features/F-14/fidelity-exceptions.json
+# board width exit pass {coverage, coverageWithExceptions, visual}
+SCR-02-desktop 1440 exit=0 True {'coverage': 70.7, 'coverageWithExceptions': 100, 'visual': 91.6}
+SCR-02-mobile 390 exit=0 True {'coverage': 80, 'coverageWithExceptions': 100, 'visual': 97.9}
+SCR-02-desktop-ready 1440 exit=0 True {'coverage': 90, 'coverageWithExceptions': 100, 'visual': 97.1}
+SCR-02-mobile-ready 390 exit=0 True {'coverage': 88.9, 'coverageWithExceptions': 100, 'visual': 98.6}
+SCR-02-desktop-processing 1440 exit=0 True {'coverage': 87.1, 'coverageWithExceptions': 100, 'visual': 94.4}
+SCR-02-mobile-processing 390 exit=0 True {'coverage': 90, 'coverageWithExceptions': 100, 'visual': 93.4}
+SCR-02-desktop-waiting 1440 exit=0 True {'coverage': 84.4, 'coverageWithExceptions': 100, 'visual': 94}
+SCR-02-mobile-waiting 390 exit=0 True {'coverage': 78.9, 'coverageWithExceptions': 100, 'visual': 91.7}
+SCR-02-desktop-verified 1440 exit=0 True {'coverage': 94.5, 'coverageWithExceptions': 100, 'visual': 93.8}
+SCR-02-mobile-verified 390 exit=0 True {'coverage': 94.1, 'coverageWithExceptions': 100, 'visual': 92.4}
+SCR-02-desktop-history 1440 exit=0 True {'coverage': 78.6, 'coverageWithExceptions': 100, 'visual': 95.6}
+SCR-02-mobile-history 390 exit=0 True {'coverage': 95.5, 'coverageWithExceptions': 100, 'visual': 97.2}
+SCR-02-desktop-issue 1440 exit=0 True {'coverage': 90.2, 'coverageWithExceptions': 100, 'visual': 90.4}
+SCR-02-mobile-issue 390 exit=0 True {'coverage': 87, 'coverageWithExceptions': 100, 'visual': 91.1}
+SCR-02-desktop-cancelled 1440 exit=0 True {'coverage': 93.8, 'coverageWithExceptions': 100, 'visual': 95.2}
+SCR-02-mobile-cancelled 390 exit=0 True {'coverage': 94.4, 'coverageWithExceptions': 100, 'visual': 97.9}
+SCR-02-desktop-owner-needed 1440 exit=0 True {'coverage': 94.5, 'coverageWithExceptions': 100, 'visual': 92.1}
+SCR-02-mobile-owner-needed 390 exit=0 True {'coverage': 95, 'coverageWithExceptions': 100, 'visual': 99.5}
+SCR-02-desktop-setup-needed 1440 exit=0 True {'coverage': 90, 'coverageWithExceptions': 100, 'visual': 91.7}
+SCR-02-mobile-setup-needed 390 exit=0 True {'coverage': 88.9, 'coverageWithExceptions': 100, 'visual': 97.8}
+SCR-02-desktop-permission 1440 exit=0 True {'coverage': 70.6, 'coverageWithExceptions': 100, 'visual': 95.5}
+SCR-02-mobile-permission 390 exit=0 True {'coverage': 71.4, 'coverageWithExceptions': 100, 'visual': 98.8}
+SCR-02-desktop-effect-uncertain 1440 exit=0 True {'coverage': 93.5, 'coverageWithExceptions': 100, 'visual': 94.1}
+SCR-02-mobile-effect-uncertain 390 exit=0 True {'coverage': 94.4, 'coverageWithExceptions': 100, 'visual': 98.1}
+SCR-02-desktop-awaiting-reconciliation 1440 exit=1 False {'coverage': 70.6, 'coverageWithExceptions': 100, 'visual': 87.7}
+SCR-02-mobile-awaiting-reconciliation 390 exit=1 False {'coverage': 59.3, 'coverageWithExceptions': 100, 'visual': 80}

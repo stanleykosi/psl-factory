@@ -1,0 +1,860 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T11:36:52.056Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-desktop-history.dc.html",
+  "boardName": "SCR-02-desktop-history.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1705/history",
+  "viewport": {
+    "width": 1440,
+    "height": 1040
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 95.6 meets 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 78.6,
+    "coverageWithExceptions": 100,
+    "visual": 95.6
+  },
+  "visual": {
+    "score": 95.6,
+    "allCellsScore": 97.4,
+    "width": 1440,
+    "height": 1040,
+    "boardHeight": 1040,
+    "pageHeight": 1040,
+    "cell": 12,
+    "contentCells": 6182,
+    "mismatchedCells": 271
+  },
+  "coverage": {
+    "total": 28,
+    "found": 22,
+    "coverage": 78.6,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 912
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 934
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MY WORK / INVOICE · INV-0412",
+        "pageName": "MY WORK / INVOICE · INV-0412",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 215,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "MY WORK",
+        "pageName": "MY WORK",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "pageName": "Lagoon Health · Milestone 2 invoice",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 702,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 117,
+          "w": 787,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1281,
+          "y": 119,
+          "w": 71,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1279,
+          "y": 117,
+          "w": 73,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 94,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 175,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "History 7",
+        "pageName": "History 7",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 317,
+          "y": 176,
+          "w": 106,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 184,
+          "y": 175,
+          "w": 106,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WHEN",
+        "pageName": "WHEN",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "note": "a columnheader on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#1F2427), none on the board"
+        ],
+        "boardBox": {
+          "x": 104,
+          "y": 310,
+          "w": 120,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 305,
+          "w": 120,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WHAT HAPPENED",
+        "pageName": "WHAT HAPPENED",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "note": "a columnheader on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#1F2427), none on the board"
+        ],
+        "boardBox": {
+          "x": 238,
+          "y": 310,
+          "w": 702,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 210,
+          "y": 305,
+          "w": 739,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERSION",
+        "pageName": "Version: —",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "capitals on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 954,
+          "y": 310,
+          "w": 60,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 949,
+          "y": 662,
+          "w": 79,
+          "h": 85
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "About history",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1052,
+          "y": 242,
+          "w": 300,
+          "h": 359
+        },
+        "pageBox": {
+          "x": 1052,
+          "y": 245,
+          "w": 300,
+          "h": 394
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ABOUT HISTORY",
+        "pageName": "ABOUT HISTORY",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1054,
+          "y": 244,
+          "w": 296,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 1054,
+          "y": 247,
+          "w": 296,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Every decision, agent step, piece of evidence and send is recorded here as it happens. Nothing can be edited or deleted; a correction is a new entry that points to the one it corrects.",
+        "pageName": "Every decision, agent step, piece of evidence and send is recorded here as it happens. Nothing can be edited or deleted; a correction is a new entry that points to the one it corrects.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1068,
+          "y": 295,
+          "w": 268,
+          "h": 108
+        },
+        "pageBox": {
+          "x": 1068,
+          "y": 304,
+          "w": 268,
+          "h": 105
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Times are WAT. You see only entries on records you may open; restricted entries show as \"Restricted\" with who and when.",
+        "pageName": "Times are WAT. You see only entries on records you may open; restricted entries show as “Restricted” with who and when.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1092,
+          "y": 443,
+          "w": 248,
+          "h": 84
+        },
+        "pageBox": {
+          "x": 1092,
+          "y": 451,
+          "w": 248,
+          "h": 84
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Top-bar Start work belongs to F-05 (src/shell); not merged on the base. As D-17.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Split part of the F-05 Start work button in the top bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Work item",
+        "key": "tablist: Work item",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 335,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Only the history board draws tabs, as a tablist; the overview boards draw none. The page keeps F-03's Overview / History links in a \"Work item\" navigation (they change page, so links).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 2",
+        "key": "tab: Documents 2",
+        "container": "tablist",
+        "boardBox": {
+          "x": 184,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "exception": {
+          "reason": "No Documents tab or page in scope.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "lagoon-uat-signoff.pdf",
+        "key": "link: lagoon-uat-signoff.pdf",
+        "container": "main",
+        "boardBox": {
+          "x": 238,
+          "y": 711,
+          "w": 130,
+          "h": 17
+        },
+        "exception": {
+          "reason": "No document page in scope; the file name shows as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Download history (CSV)",
+        "key": "link: Download history (CSV)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1052,
+          "y": 551,
+          "w": 280,
+          "h": 50
+        },
+        "exception": {
+          "reason": "No export operation in scope (F-03 also asserts no CSV control).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"MY WORK / INVOICE · INV-0412\"",
+        "kind": "Text",
+        "name": "MY WORK / INVOICE · INV-0412",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 215,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Link \"MY WORK\"",
+        "kind": "Link",
+        "name": "MY WORK",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 54,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Overview\"",
+        "kind": "Tab",
+        "name": "Overview",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 94,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 175,
+          "w": 94,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"History 7\"",
+        "kind": "Tab",
+        "name": "History 7",
+        "boardBox": {
+          "x": 317,
+          "y": 176,
+          "w": 106,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 184,
+          "y": 175,
+          "w": 106,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"WHEN\"",
+        "kind": "Text",
+        "name": "WHEN",
+        "boardBox": {
+          "x": 104,
+          "y": 310,
+          "w": 120,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 305,
+          "w": 120,
+          "h": 38
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"WHAT HAPPENED\"",
+        "kind": "Text",
+        "name": "WHAT HAPPENED",
+        "boardBox": {
+          "x": 238,
+          "y": 310,
+          "w": 702,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 210,
+          "y": 305,
+          "w": 739,
+          "h": 38
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"VERSION\"",
+        "kind": "Text",
+        "name": "VERSION",
+        "boardBox": {
+          "x": 954,
+          "y": 310,
+          "w": 60,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 949,
+          "y": 662,
+          "w": 79,
+          "h": 85
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"WHAT HAPPENED\"; on the page it comes after Main area \"\"",
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 215,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 173,
+          "w": 202,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "History, newest first",
+        "container": "table",
+        "pageBox": {
+          "x": 90,
+          "y": 305,
+          "w": 938,
+          "h": 612
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "VERSION",
+        "container": "table",
+        "pageBox": {
+          "x": 949,
+          "y": 305,
+          "w": 79,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "combobox",
+        "name": "Rows per page",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1146,
+          "y": 561,
+          "w": 60,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 12 Nov 16:45",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1052,
+          "y": 621,
+          "w": 300,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -1,0 +1,517 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T11:37:19.332Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-owner-needed.dc.html",
+  "boardName": "SCR-02-mobile-owner-needed.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1708",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 99.5 meets 90."
+  ],
+  "scores": {
+    "coverage": 95,
+    "coverageWithExceptions": 100,
+    "visual": 99.5
+  },
+  "visual": {
+    "score": 99.5,
+    "allCellsScore": 99.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2205,
+    "mismatchedCells": 10
+  },
+  "coverage": {
+    "total": 20,
+    "found": 19,
+    "coverage": 95,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0419",
+        "pageName": "INV-0419",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · M3 invoice",
+        "pageName": "Lagoon Health · M3 invoice",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 236,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OWNER NEEDED",
+        "pageName": "OWNER NEEDED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 130,
+          "w": 109,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 112,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 172,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v1",
+        "pageName": "v1",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 186,
+          "w": 17,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 186,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 172,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Held",
+        "pageName": "Held",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 186,
+          "w": 33,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 186,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 173,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 172,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 186,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 222,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 236,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 222,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 236,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 223,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 222,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 236,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent I drafted v1, but nobody holds the Finance Lead role for this project, so no one can approve it. Other work keeps moving.",
+        "pageName": "Chidi · Finance agent I drafted v1, but nobody holds the Finance Lead role for this project, so no one can approve it. Other work keeps moving. Cannot approve, send or pay.",
+        "pageRole": "text",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 76,
+          "y": 289,
+          "w": 284,
+          "h": 81
+        },
+        "pageBox": {
+          "x": 76,
+          "y": 287,
+          "w": 284,
+          "h": 82
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "pageName": "Chidi",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 76,
+          "y": 290,
+          "w": 33,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 76,
+          "y": 288,
+          "w": 33,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Fix it in Setup",
+        "pageName": "Fix it in Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 751,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 749,
+          "w": 358,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only an admin or Finance Lead can assign Finance roles.",
+        "pageName": "Only an admin or Finance Lead can assign Finance roles.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 809,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 807,
+          "w": 358,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 161,
+          "w": 358,
+          "h": 102
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "· Finance agent",
+        "container": "main",
+        "pageBox": {
+          "x": 109,
+          "y": 289,
+          "w": 94,
+          "h": 17
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

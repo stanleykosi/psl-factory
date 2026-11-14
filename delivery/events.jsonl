@@ -744,3 +744,12 @@
 {"at":"2026-11-14T09:18:52Z","feature":"F-14","round":1,"kind":"transition","head":"6eaac8c628c2","from":"IMPLEMENTING","to":"IN_REVIEW"}
 {"at":"2026-11-14T09:18:53Z","feature":"F-14","round":1,"kind":"transition","head":"6eaac8c628c2","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-14T09:18:53Z","feature":"F-14","round":2,"kind":"transition","head":"6eaac8c628c2","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-14T11:41:03Z","feature":"F-13","round":1,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"4a48bfb99f8fd54a1e7e94318b3d377bfb1cbb9a"}}
+{"at":"2026-11-14T11:41:07Z","feature":"F-06","round":2,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"43511df7a53aa7be3c3e0988f2547f2ceb3da48d"}}
+{"at":"2026-11-14T11:41:07Z","feature":"F-06","round":2,"kind":"transition","head":"c4d0b05e5e25","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T11:41:07Z","feature":"F-06","round":2,"kind":"transition","head":"c4d0b05e5e25","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T11:41:07Z","feature":"F-06","round":2,"kind":"transition","head":"c4d0b05e5e25","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T11:41:15Z","feature":"F-12","round":1,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"537607ea51f692ca919bf24525202183a00e8297"}}
+{"at":"2026-11-14T11:41:18Z","feature":"F-08","round":2,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"4ba6863bbf8064aed7b4358953bf2f41f88ba4d7"}}
+{"at":"2026-11-14T11:41:21Z","feature":"F-10","round":2,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"f305c1aeecae865401ac5c96bb2ea25d278729a3"}}
+{"at":"2026-11-14T11:41:24Z","feature":"F-11","round":3,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"622819d847b0a5edad9d6098eff8e440b0710a52"}}
