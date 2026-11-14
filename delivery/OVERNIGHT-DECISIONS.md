@@ -22,7 +22,6 @@ Each entry: what was decided, why, and how to revert.
 
 ## Waiting for you
 - **F-11 Setup rules:** product acceptance (provisional by me) and D-33; high risk.
-- **F-09 Recording responses:** D-32, the phone fields the boards don't draw (timestamp and Note).
 - **F-12 Alerts (PR #18):** product acceptance and D-24 exceptions; merges after F-13.
 - **Merge Exceptions (F-06)?** PR #11 is ready and passes every check, review, QA and the design check, but it is **not merged**: merging would settle the D-04 design exceptions and rely on search/Filter fields that are only proposed in v7 (`q`, `what`, `open_count`, `ref`). Look at /exceptions and say "merge F-06", or what to change. If the backend may not adopt those fields, the safe option is to show search and Filter only when the backend sends the count.
 
@@ -76,3 +75,4 @@ Each entry: what was decided, why, and how to revert.
 - **D-38 · F-09 round 2: reopened-task heading is inferred.** The API gives no 'station before recording', so the success view on reopen infers it (the finished station just before the current one, else the current one). Engineering inference, labelled in build.md; the backend should be asked for a `recorded.station` field.
 - **D-39 · Cost policy (you approved, 15 Nov).** Builders: Opus only for a screen's first build, Sonnet for every fix round and small change. Readiness, spec writer and approver now Sonnet (.claude/agents frontmatter). Design review and QA stay Opus; technical/UX/PMO Sonnet; security Opus only for high risk. Two to three builders at a time. Revert: set `model: opus` back in .claude/agents/{readiness,spec-writer,approver}.md.
 - **D-40 · You approved all remaining PRs (15 Nov).** Merging in order #13 F-13 → #11 F-06 → #14 F-08 → #18 F-12 → #16 F-10 → #20 F-11, each after merging dlv-00 into its branch and re-running checks.sh; F-12 drops its local v7 overlay after F-13; F-11 takes PR #19's shell line. Any conflict needing a product or design call is stopped and reported. Also: the 'Generated with Claude Code' footer is removed from every PR body and banned from commits and PRs (global rule).
+- **D-32 settled (15 Nov) — you approved the phone fields as exceptions.** 'When they responded', the Note and the SOW attestation stay on the phone form; SCR-16-mobile, -validation and -sow-signed carry a visual waiver signed by you in delivery/features/F-09/fidelity-exceptions.json.
