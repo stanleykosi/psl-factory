@@ -1,0 +1,186 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "← Decisions",
+      "category": "frame item",
+      "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Decisions\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link (Conflicts 5, as F-14).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "← Queue",
+      "category": "frame item",
+      "reason": "As \"← Decisions\": the frame names the phone back link \"Back to Queue\" (Conflicts 5).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Bisi Adeyemi · Finance",
+      "category": "frame item",
+      "reason": "The not-yours board is drawn signed in as Bisi Adeyemi; the frame shows the signed-in persona (finance_lead, Ada Okafor). Eligibility comes from the fixture's you_can_act and cannot_act_reason, never from the persona (Conflicts 22).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Bisi Ade · Finance",
+      "category": "frame item",
+      "reason": "The own board (Finance canvas) is drawn signed in as Bisi Ade; the frame shows the signed-in persona (Conflicts 22).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Preview: a newer version arrives",
+      "category": "dead control or prototype affordance",
+      "reason": "Prototype jump to the stale board; the real stale view comes only from a 409 on decide (Conflicts 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Preview: what happens if a newer version arrives",
+      "category": "dead control or prototype affordance",
+      "reason": "The phone board's wording of the same prototype jump (Conflicts 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "See sources",
+      "category": "disagreement between boards",
+      "reason": "The desktop board names the agent link \"See his steps\", the phone board \"See sources\"; one link to /work/{id} serves both widths and takes decide_presentation.agent.link_label (Conflicts 8).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "This decision needs a Finance Lead. You hold Finance on this project, so you can read it and add a comment, but you can't approve, return or reject it.",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The copy is keyed on cannot_act_reason only (\"You can read it, but you can’t approve, return or reject it.\"); the board sentence reads the viewer's roles, which the page may not do (Conflicts 12, D-55).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "This needs a Finance Lead. You can read it and comment, but not decide. Ada Okafor was alerted at 10:42.",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The phone board's shorter not-yours sentence; the page keeps the cannot_act_reason copy and the alert line from task.asked at both widths (Conflicts 12, D-55).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "You prepared this invoice. Ada Okafor has been asked to review it.",
+      "category": "disagreement between boards",
+      "reason": "The own phone board's sentence differs from the desktop board's; the page keeps \"You prepared Invoice v2, so someone else must review it.\" (cannot_act_reason) and the asked line from task.asked (Conflicts 15).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "FINANCE / INVOICES / INV-0412",
+      "category": "disagreement between boards",
+      "reason": "The own board (Finance canvas) draws a Finance trail; the not-yours board draws \"DECISION · INV-0412\" for the same read-only view, which the page uses for every cannot-act reason (Conflicts 1).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "WAITING · FINANCE REVIEWER",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The card head names the role the contract requires (task.required_role, \"Finance Lead\"): \"Waiting · Finance Lead\". The board's \"Finance reviewer\" is not a contract value.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "₦4,250,000.00",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The amount is drawn by AmountValue (a span inside the row's dd, F-14 seam, criterion 19); the check does not read text nested in a dd, though the value shows in the same place. The read-only boxes draw it as plain text and match.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "PO number, as you asked",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "DecisionRows lists the changes as list items (F-14 seam output, criterion 19); the check reads them as a list, not the board's plain dd text. The value shows in the same place.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Changed",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "DecisionRows labels the row \"Changed since Invoice v1\" from changes.previous_label (F-14 seam output); the desktop board's \"Changed since v1\" matches, the phone board shortens it.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "RECEIPT RECORDED is unknown in the contract fixture, so it reads \"Unknown\", never a dash (INV-UNKNOWN). On the not-yours phone boxes the dash also carries \"Not yet\" for screen readers.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "RECEIPT",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The not-yours phone box carries the contract name for screen readers (\"RECEIPT RECORDED\", as F-14's facts strip).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Chidi will issue it and send it to Lagoon Health by email. You'll see SENT once the delivery receipt comes back.",
+      "category": "disagreement between boards",
+      "reason": "The done next step is the reloaded item's next_step, worded as the desktop board; the phone board words it differently (Conflicts 17).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "status",
+      "name": "A newer version arrived while you were reading. Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The stale notice keeps F-04's role=\"alert\" (the version the person was deciding is gone) and the time from version.drafted_at (\"12 Nov 10:46\"); the reason for the redraft is not a contract field.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "status",
+      "name": "A newer version arrived while you were reading Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "As the desktop notice: role=\"alert\" and the drafted time from the contract.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "table",
+      "name": "",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The replaced and current versions stay two labelled regions (\"VERSION 2 · REPLACED\", \"VERSION 3 · CURRENT\"), as A-STALE's tests read them; at desktop they are drawn as the board's table.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "columnheader",
+      "name": "VERSION 2 · REPLACED",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The column heading is the replaced region's heading (h3), not a table header; same words, same place.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "columnheader",
+      "name": "VERSION 3 · CURRENT",
+      "category": "contract words and eligibility rules kept from F-04",
+      "reason": "The column heading is the current region's heading (h3), not a table header; same words, same place.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Invoice v2 · ₦4,250,000.00",
+      "category": "disagreement between boards",
+      "reason": "The phone stale board draws the replaced version as one line; the page keeps the replaced region with its rows at both widths, as the desktop board's table does (Conflicts 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "REPLACED",
+      "category": "disagreement between boards",
+      "reason": "As above: the phone stale board's one-line card; the page's replaced region heading reads \"VERSION 2 · REPLACED\" (Conflicts 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "To",
+      "category": "disagreement between boards",
+      "reason": "The phone stale board labels the recipient \"To\"; the desktop board and the page say \"Send to\" (Conflicts 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ]
+}
