@@ -644,12 +644,19 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-02/decision.md"
+    ],
+    "script_decision": "BLOCKED",
+    "script_reasons": [
+      "technical review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "integrated_qa review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "ux review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "ui review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'"
+    ],
+    "decided_for_head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,

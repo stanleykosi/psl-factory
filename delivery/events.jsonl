@@ -170,3 +170,5 @@
 {"at":"2026-11-14T00:35:51Z","feature":"F-02","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/5","git.pr_number":5}}
 {"at":"2026-11-14T00:35:51Z","feature":"F-02","round":2,"kind":"transition","head":"eab6dffa85a3","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-14T00:36:25Z","feature":"F-02","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-14T00:38:17Z","feature":"F-02","round":2,"kind":"decision","decision":"BLOCKED","head":"eab6dffa85a3","reasons":["technical review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'","integrated_qa review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'","ux review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'","ui review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'"]}
+{"at":"2026-11-14T00:38:17Z","feature":"F-02","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"AUTO_MERGE"}}
