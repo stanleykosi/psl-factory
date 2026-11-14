@@ -99,6 +99,64 @@ test('at 390px the stations are a vertical list with the status on the right', a
   }
 });
 
+for (const width of [760, 900, 1079]) {
+  test(`at ${width}px the stations are a vertical list with nothing clipped`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/work/W-1005');
+    await loaded(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    const region = page.getByRole('region', { name: 'Stations' });
+    const track = await region.evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth, right: el.getBoundingClientRect().right }));
+    expect(track.scroll).toBeLessThanOrEqual(track.client);
+    const rows = await region.getByRole('listitem').evaluateAll((items) => items.map((li) => li.getBoundingClientRect().toJSON()));
+    expect(rows).toHaveLength(7);
+    for (const [i, row] of rows.entries()) {
+      if (i > 0) expect(row.top).toBeGreaterThanOrEqual(rows[i - 1].bottom - 1);
+      expect(row.left).toBe(rows[0].left);
+      expect(row.right).toBeLessThanOrEqual(track.right);
+    }
+  });
+}
+
+for (const width of [1080, 1440]) {
+  test(`at ${width}px the stations are a row with all 7 visible`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/work/W-1005');
+    await loaded(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    const region = page.getByRole('region', { name: 'Stations' });
+    const track = await region.evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      return { scroll: el.scrollWidth, client: el.clientWidth, left: box.left, right: box.right };
+    });
+    expect(track.scroll).toBeLessThanOrEqual(track.client);
+    const rows = await region.getByRole('listitem').evaluateAll((items) => items.map((li) => li.getBoundingClientRect().toJSON()));
+    expect(rows).toHaveLength(7);
+    for (const [i, row] of rows.entries()) {
+      if (i > 0) expect(row.left).toBeGreaterThan(rows[i - 1].left);
+      expect(row.top).toBe(rows[0].top);
+      expect(row.left).toBeGreaterThanOrEqual(track.left);
+      expect(row.right).toBeLessThanOrEqual(track.right);
+    }
+  });
+}
+
+for (const [width, background, color] of [
+  [1440, 'rgb(138, 90, 0)', 'rgb(255, 255, 255)'],
+  [1080, 'rgb(138, 90, 0)', 'rgb(255, 255, 255)'],
+  [1079, 'rgb(255, 241, 214)', 'rgb(110, 71, 0)'],
+  [390, 'rgb(255, 241, 214)', 'rgb(110, 71, 0)'],
+] as const) {
+  test(`at ${width}px the effect-uncertain station is ${width >= 1080 ? 'solid amber with white text' : 'a pale amber row'}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/work/W-1005');
+    await loaded(page);
+    const deliver = page.getByRole('region', { name: 'Stations' }).locator('li[aria-current="step"]');
+    await expect(deliver).toContainText('Deliver');
+    expect(await deliver.evaluate((el) => [getComputedStyle(el).backgroundColor, getComputedStyle(el).color])).toEqual([background, color]);
+  });
+}
+
 test.describe('agent step motion', () => {
   test.use({ viewport: DESKTOP });
 

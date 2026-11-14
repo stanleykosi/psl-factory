@@ -169,6 +169,23 @@ describe('overview', () => {
     expect(stations.map((li) => li.getAttribute('aria-current'))).toEqual([null, null, 'step', null, null, null, null]);
   });
 
+  it('only the current station of an effect-uncertain item is marked uncertain', () => {
+    const stations = [
+      { name: 'Issue', status: 'done' },
+      { name: 'Deliver', status: 'waiting' },
+      { name: 'Verify', status: 'not_started' },
+    ] as const;
+    const { unmount } = render(<StationTrack stations={[...stations]} state="effect_uncertain" />);
+    const marked = () =>
+      within(screen.getByRole('region', { name: 'Stations' }))
+        .getAllByRole('listitem')
+        .map((li) => li.classList.contains('work-station--uncertain'));
+    expect(marked()).toEqual([false, true, false]);
+    unmount();
+    render(<StationTrack stations={[...stations]} state="waiting" />);
+    expect(marked()).toEqual([false, false, false]);
+  });
+
   it('W-1003: the working agent shows its steps and sources and offers no decision', async () => {
     serve(() => json(200, item('W-1003')));
     await open('W-1003');
@@ -228,7 +245,7 @@ describe('overview', () => {
     expect(screen.queryAllByRole('button')).toEqual([]);
     const stations = within(screen.getByRole('region', { name: 'Stations' })).getAllByRole('listitem');
     expect(stations[5].getAttribute('aria-current')).toBe('step');
-    expect(stations[5].className).toBe('psl-station psl-station--waiting');
+    expect(stations[5].className).toBe('psl-station psl-station--waiting work-station--uncertain');
   });
 
   it.each([

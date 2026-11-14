@@ -66,17 +66,19 @@ export function FactsStrip({ facts }: { facts: WorkItem['facts'] }) {
   );
 }
 
-export function StationTrack({ stations }: { stations: WorkItem['stations'] }) {
+export function StationTrack({ stations, state }: { stations: WorkItem['stations']; state?: WorkItem['state'] }) {
   const current = currentStationIndex(stations);
   return (
-    // From 720px a narrow column can scroll the row sideways inside this focusable region; below 720px it is a list.
+    // A row of boxes from 1080px (bp-desktop), a vertical list below; the region stays focusable for keyboard scrolling.
     // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <section className="work-track" aria-label="Stations" tabIndex={0}>
       <ol className="psl-track">
         {stations.map((station, i) => {
           const { text, modifier } = STATIONS[station.status];
+          // the station whose effect is uncertain is a solid amber block in the row (design owner, 14 Nov 2026)
+          const uncertain = i === current && state === 'effect_uncertain' ? ' work-station--uncertain' : '';
           return (
-            <li key={i} className={`psl-station psl-station--${modifier}`} aria-current={i === current ? 'step' : undefined}>
+            <li key={i} className={`psl-station psl-station--${modifier}${uncertain}`} aria-current={i === current ? 'step' : undefined}>
               <b>{String(i + 1).padStart(2, '0')}</b>
               <strong>{station.name}</strong>
               <span>{text}</span>
@@ -173,7 +175,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
   return (
     <>
       <FactsStrip facts={item.facts} />
-      <StationTrack stations={item.stations} />
+      <StationTrack stations={item.stations} state={item.state} />
       <div className="work-columns">
         <div className="work-column">
           <AgentCard agent={item.agent} />

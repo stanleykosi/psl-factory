@@ -20,7 +20,7 @@
 .psl .work-tabs .psl-tab[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
 .work-tabs .psl-tab[aria-current="page"]:focus-visible { outline-color: var(--focus-on-strong); }
 
-/* facts strip (a list) and station track (an ordered list; a row of boxes from 720px, a vertical list below) */
+/* facts strip (a list) and station track (an ordered list; a row of boxes from bp-desktop, a vertical list below) */
 .work-facts ul.psl-facts { margin: 0; padding: 0; list-style: none; }
 .work-track { overflow-x: auto; }
 .work-track ol.psl-track { margin: 0; padding: 0; list-style: none; overflow: visible; }
@@ -69,8 +69,12 @@
   .work-history .work-what { margin-top: 4px; }
   .work-history .work-version { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
   .work-filter { width: 100%; }
-  /* stations as a vertical list with the status on the right (approved SCR-02 mobile boards); the
-     current station keeps its status tint, the agent one stays blue (design owner, 14 Nov 2026) */
+}
+
+/* below bp-desktop the stations are a vertical list with the status on the right (approved SCR-02
+   mobile boards; design owner, 14 Nov 2026): the current station keeps its status tint, the agent one
+   stays blue */
+@media (max-width: 1079.98px) {
   .work-track { overflow-x: visible; background: var(--surface); border: 2px solid var(--ink); }
   .work-track ol.psl-track { display: block; }
   .work-track .psl-station { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: var(--space-2);
@@ -83,4 +87,9 @@
   .work-track .psl-station--stopped { color: var(--signal-ink); }
   .work-track .psl-station--todo { color: var(--ink-muted); }
   .work-track .psl-station--verified { background: var(--verified-tint); color: var(--verified-ink); }
+}
+
+/* in the row the effect-uncertain station is solid amber with white text (SCR-02-desktop-effect-uncertain) */
+@media (min-width: 1080px) {
+  .work-track .psl-station--waiting.work-station--uncertain { background: var(--waiting); border-color: var(--waiting); color: var(--on-strong); }
 }
