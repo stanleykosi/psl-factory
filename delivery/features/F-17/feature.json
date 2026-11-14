@@ -3,26 +3,70 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-17",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Unchanged without a workspace.** W-2010 (and W-1701, W-1901) render exactly as before. \u2014 verify: `tests/work-item.test.tsx`, `work-item-board.test.tsx`, `decide.test.tsx`, `response.test.tsx` pass unchanged; a new test asserts no workspace element on W-2010.",
+    "**Header from data.** On W-2001 the page shows the returned `subtitle`, status tag word, `byline`, `version.label`, crumbs and `agent_note` lines; each absent field on W-2005 draws nothing. There is exactly one `h1` (the work item title); `workspace.title` is an `h2` only when different. \u2014 verify: component test on W-2001 and W-2005; e2e counts `h1`.",
+    "**Nine section kinds.** W-2001 to W-2004 draw each of facts, table, checklist, findings, suggestions, recipients, figures, text, timeline with the elements in the Contract table, in returned order. Table cells render by column kind; a cell `link` becomes an anchor only for an app path. \u2014 verify: `tests/workspace.test.tsx`, one test per kind; `<a>` count for a crafted `link` of `https://x.example` is zero.",
+    "**Item vocab as words.** Every item `status`, `receipt` and `severity` value on W-2003 and W-2001 appears as a word in text (not colour alone); `receipt: uncertain` never reads \"Received\". An unknown enum value renders raw. \u2014 verify: component tests; axe in criterion 11.",
+    "**INV-UNKNOWN.** On W-2004 an unknown amount, `due.unknown`, and an unknown date read \"Unknown\"; the page contains no \"0\", \"\u20a60\", \"-\" or empty cell in their place. \u2014 verify: component test over the DOM text of those cells.",
+    "**INV-RESTRICTED.** On W-2004 a `restricted` section shows only `restricted_label` and no row text, no `cites`, no `money`, even though the fixture also carries data for those rows (the fixture includes it deliberately, to prove it is not drawn). A restricted cell reads \"Restricted\". \u2014 verify: component test that none of the fixture's hidden strings appears in `document.body.textContent`.",
+    "**as_of, coverage, sample.** As_of (WAT), `coverage` text and the sample label show on W-2004; absent elsewhere. \u2014 verify: component test.",
+    "**Empty.** W-2005 shows \"Nothing here yet.\" for an empty section and nothing else for a workspace with no sections or steps; no exception is thrown. \u2014 verify: component test.",
+    "**Paging and filters inert.** W-2002 shows filters, total and \"Show more\" disabled with \"More rows aren\u2019t available yet.\"; activating them sends no request. \u2014 verify: component test with a recording `fetch` (only the GET E-WORK-ITEM calls).",
+    "**Fixtures valid, old untouched.** Every `W-20xx` fixture validates against the generated schema; `git diff --stat` shows no edit to any existing fixture. \u2014 verify: `tests/mock-contract.test.ts`; `git diff --stat`.",
+    "**Accessibility and layout (Part A).** For W-2001 to W-2005 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways scroll (`scrollWidth <= viewport`), visible focus rings, 44px targets, tables scroll inside their own container at 390, no animation under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/workspace.spec.ts`.",
+    "**Steps only as returned.** Controls appear only for steps in `workspace.steps`; none when `workspace.revision` is absent; none are derived from `/me` (a persona with any role sees the same controls for the same fixture). `disabled_reason` shows as text, the control is `aria-disabled`, and activating it sends nothing. \u2014 verify: component tests with a recording `fetch`.",
+    "**Scopes.** `workspace` steps in the row; `item` steps on the right items only (`steps[]` contains the key); an `items` step is disabled with zero checked, and sends `item_ids` = the checked ids in item order. \u2014 verify: component test reading the recorded body (W-2002).",
+    "**Form from descriptors.** On W-2006 every field kind renders through `IntakeField`, `display` is shown and never sent, `required`, `help`, `depends_on` behave as in Start work, and only descriptor checks run client-side. A step with `confirm` shows its text above the submit. `restricted` field draws no value. \u2014 verify: component test; `git diff --stat` shows no behavioural edit in `features/start-work/**`.",
+    "**Write request shape.** Submitting a W-2006 step sends exactly one POST `/api/v1/work/W-2006/steps` with the CSRF header, `expected_revision` equal to `workspace.revision`, `step`, `inputs` shaped per kind, `idempotency_key` (a UUID), `evidence_ids` only if an evidence field was filled, `note` only if a `note` field exists and is non-blank; a `note` over 2000 characters is refused before any request. The body validates against the generated request schema. \u2014 verify: `tests/workspace-step.test.tsx` and `workspace-mock.test.ts`.",
+    "**One key per attempt; no double send.** A double click sends one request; while pending the button is disabled and reads \"<label>\u2026\". Opening the form twice gives two different keys; a manual \"Try again\" after a network failure on a non-`sends` step reuses the first key; a key is renewed after `done`, 409 and 422. Under React StrictMode no request is sent twice. \u2014 verify: component tests; e2e reads `GET /__mock/workspace-log` (the mock's send count for that key is 1). This is mock evidence only, not proof of backend idempotency.",
+    "**No automatic retry.** For 500, network failure, 409 and `effect_uncertain` the count of POSTs to the steps URL stays 1 until the person presses again, after waiting beyond any plausible timer (fake timers advanced by 60s). \u2014 verify: component tests.",
+    "**done and queued.** `done` reloads once and shows the live \"Done\" line with the new revision; `queued` shows \"Waiting: \u2026\" and reloads once; neither resends. \u2014 verify: tests on W-2001 and W-2007.",
+    "**effect_uncertain (INV-RESEND).** On W-2008 `effect_uncertain` shows the uncertain callout with the returned `message`; every step control on the page is off; after the reload `ReconcilePanel` is shown and its answer goes to E-WORK-ACTION (one POST to `/actions`, none to `/steps`); no new key or resend is possible. When the reloaded item has no `reconcile`, the page says \"We are checking what happened. Nothing was sent again.\" and offers a reload only. \u2014 verify: component test and e2e with the recorded requests.",
+    "**409.** On W-2007 a 409 keeps the typed inputs, reloads once, shows \"This changed while you were working. Showing version 5.\", re-bases `expected_revision` to 5, and sends nothing until the next deliberate press, with a new key. \u2014 verify: component test and e2e.",
+    "**422.** On W-2006 a 422 with `fields[]` puts each message under its input (`aria-invalid`, `aria-describedby`), focuses the first, keeps all inputs, shows an unnamed message at the top, and renews the key. \u2014 verify: component test.",
+    "**Other errors.** 401 shows the signed-out callout with `next` = this page. 403 reloads and shows \"You can\u2019t take that step.\". 404 shows `NoAccessState` with no id or title. A 500 on a `sends` step offers no resubmit; on a non-`sends` step a manual Try again with the same key. \u2014 verify: component tests.",
+    "**Decision steps.** The `task_id` step on W-2009 is a link to `/work/W-2009/decide?task=T-2009`; following it opens the F-16 page; the workspace itself sends no request to `/steps`, `/claim` or `/decision`. \u2014 verify: component test with a recording `fetch`; e2e navigates and sees the decision page.",
+    "**Part B accessibility.** For W-2006 to W-2009 at 1440 and 390: axe clean, no sideways scroll, focus moves to the form heading on open and back to the step control on close or Escape, errors are announced (`role=\"alert\"` or an associated live region), live regions for done, waiting and uncertain, 44px targets, reduced motion respected. \u2014 verify: `e2e/workspace.spec.ts`.",
+    "**Region-level design check.** After the design engineer signs Conflicts 1: every region in `regions.json` passes at 1440 and 390 with structure and text coverage 100% after exceptions and visual >= 85, via `region-check.mjs`. `fidelity-exceptions.json` entries each carry `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed), and none covers a value the data can supply. \u2014 verify: `round-<N>/fidelity/region-scores.txt` and per-region reports; build.md maps exceptions to categories.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/workspace/*.css` returns nothing. \u2014 verify: the command.",
+    "**Contract is not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**` or `design/**`; every field the renderer wanted but the schema lacks is listed in build.md as a contract proposal. \u2014 verify: `git diff --stat` and build.md.",
+    "**No real send, no overclaim.** Every request in the e2e run goes to the mock (4702); the PR description and build.md state D-LINE-WORKSPACE limits and do not claim idempotency or a real backend. \u2014 verify: build.md content and the recorded requests.",
+    "**Existing tests not weakened.** `tests/work-item*.test.tsx`, `decide*.test.tsx`, `response*.test.tsx`, `start-work*.test.*`, `shell.test.tsx`, `e2e/work-item*.spec.ts`, `e2e/decide*.spec.ts`, `e2e/response.spec.ts`, `e2e/start-work.spec.ts` pass; no assertion removed or loosened. \u2014 verify: `delivery/checks.sh`; `git diff` on those test files shows none.",
+    "**New tests exist and run in checks.** `workspace.test.tsx`, `workspace-step.test.tsx`, `workspace-mock.test.ts` and `e2e/workspace.spec.ts` exist and run in `delivery/checks.sh`. \u2014 verify: file presence and the run output in build.md."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The frame is a shared renderer on `features/work-item/**` (also touched by F-09, F-14, F-16) and defines the one write that every later line uses, including steps that send to clients (`sends`, `effect_uncertain`, INV-RESEND), so a wrong duplicate-submit, retry or restricted-section rule here is copied into about 25 screens. It stays at medium and not high because it is mock-only, the write is unimplemented in the backend, and nothing is released. SURFACES: `ui` (the renderer), `api` (new write and request shape), `contract-change` (it consumes a still-proposed v7 block that the backend developer may change) and `external-messaging` (steps that send and uncertain-effect handling). Money appears only as displayed values (unknown never 0); payment decisions are out of scope, so `payments` is not listed."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-17/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +89,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +103,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": false,
+      "assessment_reason": "delivery/features/F-17/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +154,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-WORKSPACE-FRAME",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
+    "task_branch": "fe-workspace-frame-the-work-item-page-renders-a-line-worksp",
+    "head_sha": "79f25e57c411711efe9d0376a1f123251292c737",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-17",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +168,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +201,41 @@
     }
   },
   "created_at": "2026-11-14T21:38:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T21:59:34Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T22:00:12Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-17/readiness.md",
+      "delivery/features/F-17/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

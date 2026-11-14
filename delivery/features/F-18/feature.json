@@ -3,26 +3,65 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-18",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M2B-RFP"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop fidelity.** The nine desktop boards `design/canvas/project/SCR-16-desktop-{team-input,rfp-outcome,rfp-outcome-lost,rfp-outcome-pending,rfp-outcome-unknown,rfp-won,rfp-lost,rfp-pending,rfp-unknown}` each pass at `--width 1440`: `report.json` has `pass: true`, `scores.coverageWithExceptions` = 100, `scores.visual` >= 90. \u2014 verify: the command per board, exit 0.",
+    "**Phone fidelity.** The nine `SCR-16-mobile-*` boards of the same names pass at `--width 390`. `round-<N>/fidelity/scores.txt` lists all 18 with coverage, visual and pass. \u2014 verify: same command shape; rows in `scores.txt`.",
+    "**Form variants are scored on the real UI.** `delivery/features/F-18/round-<N>/fidelity/drive-states.mjs` resets the mock (`POST /__mock/reset`), opens `/work/W-2103/outcome` with the persona cookie, chooses the result through the real controls, types the board's values, uploads a file with the board's proof file name, copies each input's current value into its attribute, removes scripts, adds `<base href=\"http://localhost:4621/\">`, and saves `frozen/<variant>-<width>.html`; a static server on 4623 serves them and `--page` points at it. No mock or product code is changed for this. build.md names the frozen pages. \u2014 verify: file content, and re-run of the driver.",
+    "**Exceptions are limited and explained.** Each entry of `fidelity-exceptions.json` has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed) and falls under a Conflicts item below. No entry covers a value the contract can supply. \u2014 verify: file content; build.md maps entries to Conflicts numbers.",
+    "**Titles and the phone bar.** Desktop: one `h1` (`.shell-title`, computed 40px at 1440). Phone: one `h1` (26px at 390), no frame, `usePhoneBack` link named \"RFP\" to `/work/{id}` with the note from Contract 2; `main` has no back link of its own. The 403/404 page has one `h1`. \u2014 verify: e2e reading `getComputedStyle` and the bar link on each of the 18 pages' states.",
+    "**Frame from the data only.** On W-2101 the frame shows `TL-RFP-2026-014`, the title, the status tag text from `rfp.status.label`, \"PM Tunde Bello\", and the five tabs with \"64\" and \"2/4\" and no other counts; on W-2110 (only reference and status) it shows reference and status tag only, no tabs, no PM, no counts, no empty placeholders. The Requirements, Pricing and Submission tabs are plain text: not links, not focusable, not buttons; Team input links to `/work/W-2101`; the current tab has `aria-current=\"page\"`. Outcome links to `/work/{id}/outcome` only on an item with `rfp_outcome`. \u2014 verify: component tests on W-2101, W-2103, W-2110; e2e Tab-order check that the unbuilt tabs are skipped.",
+    "**Team input: options and request.** Teams, estimate need and responders come only from the response block (a team not returned is never shown). On W-2101 choosing Security shows the Estimate field; choosing QA hides it. Record input is off until team, what they gave, a proof file, the received time, the confirmation and (for Security) the estimate are present, with the neutral hint then the alert as F-09 does. The POST body has `team`, `estimate_person_days` (number) only for a team that needs it, `what`, `action`, `who`, `attested: true`, `responded_at` with `+01:00`, `case_revision`, and one claim runs first with `expected_revision` = the task revision when `claim_required`. \u2014 verify: component tests recording every `fetch`; request body asserted.",
+    "**Team input: guards.** `you_can_act: false` (W-2102), no `response` block or a missing grant shows the not-open state with no form and no write. A double press on Record sends one claim and one E-RESPONSE. A 409 reloads and keeps every entry; a 422 shows the server's message and keeps entries; a 403 reloads and shows read-only/not-open; a 401 shows the signed-out callout; a network or 5xx reloads once and sends no second E-RESPONSE; if that reload fails Record stays off and \"Try again\" only reads. \u2014 verify: component tests with `answers` stubs as `tests/response.test.tsx` does (including `record-then-fail` in `tests/rfp-mock.test.ts`).",
+    "**Entry links.** On a work item with a `team_input` task you can act on, the waiting panel shows \"Record team input\" linking to `/work/{id}/respond?task=<id>`; without the grant, no link. On a work item with `rfp_outcome`, \"Record the outcome\" links to `/work/{id}/outcome`; on one without, no link. \u2014 verify: component test on `WorkItemOverview` with W-2101, W-2102, W-2103, W-2109; `tests/work-item*.test.tsx` pass unchanged.",
+    "**Outcome form: options and gating.** Result choices, reasons and \"You are recording as\" options come only from `rfp_outcome` (W-2104 shows Won and Lost only; one `record_as` option is chosen without a select). No form (not-open state) on W-2109, on an item without `record_as`, or with empty `results`; persona `none` gets 403 on the write. No result is preselected; Record is off until a result, a time, proof and (when asked) `record_as` are chosen. Fields appear per result as in Contract 4 and nothing else. \u2014 verify: component tests on W-2103, W-2104, W-2109; mock test for 403.",
+    "**Outcome request.** For each result the POST body has exactly `expected_revision` (item `revision`), `case_revision`, `submission_id`, `result`, `learned_at` (WAT `+01:00`), `record_as`, `evidence_id` and only that result's optional fields; fields typed under another result before switching are not sent. Note over 2000 characters is refused before any request. \u2014 verify: component test asserting the body for won, lost, pending and unknown.",
+    "**Unknown stays unknown.** Won with the amount blank sends no `awarded_amount`; with \"Amount not known\" sends `{currency:'NGN', unknown:true}` and no `amount`; with \"40,951,000\" sends `amount: \"40951000.00\"`; \"abc\" or \"1.234\" sends nothing and shows a message. A recorded won with no amount shows no amount line, and nothing anywhere shows \u20a60 for a missing value. \u2014 verify: component tests; `grep -rn \"0\\.00\" frontend/src/features/rfp` shows no default.",
+    "**Outcome guards.** 409 keeps all entries and uploaded proof and reloads (the next press carries the reloaded `revision` and `case_revision`); 422 shows the server message and keeps entries; 403 reloads and removes the form; 401/404 as above; a network or 5xx error reloads once and never resends; a second press while busy sends nothing; a double press makes one request. A 200 reloads the item once and shows the recorded state; if that reload fails the page shows \"Outcome recorded.\" with the returned result and no invented rows. \u2014 verify: component tests with a recording `fetch`; counts asserted.",
+    "**Recorded states.** W-2105 shows heading \"Won\", the rows, \"Engagement EN-0042 created\" and \"Open engagement EN-0042\" to `/work/{engagement.work_id}`; W-2106 shows the three lessons with PRICE, TIMELINE and STRENGTH tags, the debrief proof, \"Archived as ARC-0117\" and \"Back to projects\"; W-2107 shows \"Decision pending\", the rows, \"Reminder for Tunde Bello\" with day and time and \"Record the outcome\"; W-2108 shows \"Outcome unknown\", the rows, the reminder and the follow-up card. On W-2110 only the result heading renders. Nothing from a board that the fixture does not carry (Conflicts 12, 13) is present. \u2014 verify: component tests on W-2105 to W-2108 and W-2110; text absent from the DOM.",
+    "**Follow-up display.** On W-2108 the card shows the agent (Tola), the `checks` marks, `To` exactly as returned (`procurement@tamarindloans.example`), the draft body, the note line. \"Send follow-up\" and \"Edit\" show only with `can_send`/`can_edit` (W-2113 shows neither). On W-2114 (`effect_uncertain`) there is the uncertain callout, \"Check again\", and no Send or Edit. On `sent` there are no buttons. \u2014 verify: component tests on W-2108, W-2113, W-2114, W-2108.sent.",
+    "**Follow-up is a person's action.** Loading the page, reloads, timers and focus never call E-RFP-FOLLOWUP; only a click on Send does (a test advances fake timers 10 minutes and asserts zero follow-up requests). The Send button is disabled while a request is in flight and a double click makes one request; the request body has `expected_revision`, `version`, `idempotency_key`, and `body` only when the text was edited and differs. \u2014 verify: component tests with a recording `fetch`; mock test for a repeated key.",
+    "**Follow-up uncertain and stale.** On W-2111 the reply `effect_uncertain` shows the uncertain callout and no Send, with one reload and no second POST. A network error or 502 (`record-then-fail`) shows the uncertain notice, reloads once, and sends nothing; a later deliberate press, if the reload still shows `drafted` and `can_send`, reuses the same key (asserted). W-2112's 409 reloads, shows \"Current draft (v3)\" under the edited text, nothing resends, and a new press uses version 3 and a new key. 403 removes Send; 422 keeps the text. \u2014 verify: component tests, `tests/rfp-mock.test.ts`.",
+    "**Tenant and permission.** A 403/404 on any of the three reads shows `NoAccessState` with no reference, title or client in the document, tab title or phone bar; a user without the grant (persona `none`) gets 403 on each write on the mock; a write without the CSRF header gets 403 and the page shows the server message. \u2014 verify: component tests, `tests/rfp-mock.test.ts` cases for each operation.",
+    "**The mock matches v7.** `tests/rfp-mock.test.ts` checks, for E-RFP-OUTCOME and E-RFP-FOLLOWUP and the team-input E-RESPONSE: 200 replies validate against the v7 schema; 401/403/404/409/422 shapes; the check order; the repeat-key behaviour; `effect_uncertain`; every new fixture validates against the generated schema; W-2110 has every optional r2 field absent. \u2014 verify: `cd frontend && npx vitest run tests/rfp-mock.test.ts tests/response-mock.test.ts`.",
+    "**Accessibility at both widths.** `e2e/rfp.spec.ts` shows no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 390 and 1440 on team input (W-2101), each of the four outcome forms (W-2103 with the result chosen), the four recorded states (W-2105 to W-2108), the follow-up uncertain state (W-2114) and the not-open state (W-2109); no sideways scroll; visible focus rings with logical Tab order (Team, fields, Proof, Record); 44px targets and a pinned phone Record button of the same size as F-09's; the follow-up Edit/Send reachable by keyboard; no animation under `reducedMotion: 'reduce'`. \u2014 verify: `cd frontend && E2E_PORT=4621 MOCK_PORT=4622 npx playwright test e2e/rfp.spec.ts e2e/response.spec.ts` with `timezoneId: 'Africa/Lagos'`; output in build.md.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/rfp/rfp.css frontend/src/features/response/response.css` returns nothing new. \u2014 verify: the command.",
+    "**Existing behaviour is not weakened.** `tests/response.test.tsx`, `tests/response-mock.test.ts`, `tests/work-item*.test.tsx`, `e2e/response.spec.ts` and `e2e/work-item.spec.ts` pass. The only changed assertion is the one at `response.test.tsx:689-694`; build.md lists it with its reason. No removed `expect`, no loosened matcher. `git diff --stat` shows no edit to `frontend/src/shell/**`, `frontend/src/api/**`, `architecture/**`, `package.json`, the lock file, or `server.mjs`. \u2014 verify: `delivery/checks.sh` and the diff.",
+    "**No new dependency; no hard-coded options.** No new npm package. `grep -rn \"Relationship owner\\|Scope fit\\|Engineering\" frontend/src` finds no option text outside tests and fixtures. \u2014 verify: the two commands.",
+    "**build.md evidence.** build.md contains `scores.txt` for the 18 boards, `side-by-side.png` paths, frozen pages used, the exception-to-Conflicts map, the changed assertion, every contract question for the backend developer (fields the page needed that the schema lacks), and for each board under 90 the measured gap and cause. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. E-RFP-OUTCOME stores an uneditable business fact (won, lost, an awarded amount that can be unknown, lessons) that later creates an engagement. E-RFP-FOLLOWUP sends an external email to the client's procurement address, and a repeat or uncertain send is the main failure to guard against (INV-RESEND, INV-AGENT). Surfaces: - `ui` and `api`. - `security`: CSRF on the writes, and showing the form and send only when the backend grants them. - `external-messaging`: the follow-up. - `contract-change`: the work runs on a proposed decision, D-RFP-OUTCOME r2, under the recorded exception. `payments` is excluded because no money moves, and the awarded amount is only recorded as returned. Product acceptance is required: this is a new flow with new copy that the client must see. Coordinator action before the spec: run `design.py check`, and confirm that the 18 boards still match the approved hash 9fad8d2d...."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-18/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +84,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +98,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-18/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +149,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-M2B-RFP",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
+    "task_branch": "fe-m2b-rfp-team-input-and-the-rfp-outcome-are-recor",
+    "head_sha": "79f25e57c411711efe9d0376a1f123251292c737",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-18",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +163,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +196,41 @@
     }
   },
   "created_at": "2026-11-14T21:38:06Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T21:59:36Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T22:00:32Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-18/readiness.md",
+      "delivery/features/F-18/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
