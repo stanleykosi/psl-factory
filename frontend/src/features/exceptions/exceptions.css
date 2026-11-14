@@ -1,0 +1,39 @@
+/* SCR-10 All exceptions. Token variables only; bundle classes are composed, and only list resets, the
+   empty-state h2 and the phone cards are added. Rows are a table from 720px (bp-phone), cards below. */
+
+.exc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.exc-page { display: flex; flex-direction: column; gap: var(--space-4); }
+.exc-header { display: flex; flex-direction: column; gap: var(--space-2); }
+.exc-intro { margin: 0; max-width: 72ch; color: var(--ink-muted); }
+.exc-list { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+
+/* toolbar: rows loaded (never a total) and rows per page */
+.exc-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.exc-count { font-size: 12px; color: var(--ink-muted); }
+.exc-limit { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; font-size: 13px; }
+.exc-limit select { width: auto; }
+
+/* rows */
+.exc-what { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.exc-since { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
+.exc-title { font-weight: 600; overflow-wrap: anywhere; }
+.exc-table td:first-child { white-space: nowrap; }
+.exc-table .exc-what { flex-wrap: nowrap; }
+.exc-cards { margin: 0; padding: 0; list-style: none; }
+.exc-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); padding: var(--space-3) 14px; border-bottom: 1px solid var(--rule-soft); }
+.exc-card:last-child { border-bottom: none; }
+.exc-doing { font-size: 14px; }
+.exc-who { font-size: 12px; color: var(--ink-muted); }
+.exc-cards + .exc-showmore { border-top: 2px solid var(--ink); }
+
+/* empty and no-access: the STATES board's empty card with this page's h2 */
+.exc-empty h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 18px; font-stretch: 112%; }
+.exc-note, .exc-seeall { margin: 0; font-size: 12px; color: var(--ink-muted); }
+.exc-seeall { font-size: 14px; }
+.exc-footer { margin: 0; font-size: 13px; color: var(--ink-muted); }
+
+@media (max-width: 719.98px) {
+  .exc-showmore { flex-wrap: wrap; gap: var(--space-3); }
+  .exc-showmore > * { flex: 1 1 100%; }
+  .exc-showmore .psl-btn { width: 100%; }
+}
