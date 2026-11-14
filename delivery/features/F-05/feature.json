@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-05",
   "outcome": "Start work: pick a line, fill its intake in a drawer, land on the new work item",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2A"
   ],
@@ -118,11 +118,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA reviewer",
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+      "evidence_refs": [
+        "delivery/features/F-05/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -3212,6 +3214,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T15:59:11Z",
+      "round": 3,
+      "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T16:08:28Z",
       "round": 3,
       "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
       "reason": null
