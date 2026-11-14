@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-03",
   "outcome": "Open one work item and read its history",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -115,11 +115,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (UI against the contract mock only)",
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -485,6 +487,52 @@
           "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
         }
       ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock persona cookie does not change the item payload. `pm` on W-1001 still shows \"You are Finance Lead.\" and \"Open the decision\", because the mock fixture returns `you_can_act: true`. The page is right to render what the API says. This is a mock limit, so real wrong-user behaviour must be retested against the backend (W-1002 covers the `you_can_act: false` rendering).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-14T00:22:36Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The history fallback is generic. `/work/W-1002 | W-1003 | W-1005/history` all show the default invoice history (\"Drafted invoice\", \"Started the line\"), which does not match a weekly client update (W-1003). The spec allows this fallback. Add per-id history fixtures before anyone demos those pages.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-14T00:22:36Z",
+          "head": "3f684410f771cf53c1103d40aaa7977b09c084b3"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -766,6 +814,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T00:16:54Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T00:22:36Z",
       "round": 3,
       "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
       "reason": null
