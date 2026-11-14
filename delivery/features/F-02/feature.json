@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -124,20 +124,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; not client/product acceptance, merge or release)",
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-02/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "coordinator, provisional for the design engineer (hunchoweb)",
+      "authority": "the design engineer's overnight instruction, 14 Nov 2026; recorded in delivery/OVERNIGHT-DECISIONS.md",
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -733,6 +737,98 @@
           "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
         }
       ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `operation_ids` is still `[]` while the spec and readiness name E-WORK-LIST. This restates PMO-2-1 and PMO-2-5, which are still OPEN. Record E-WORK-LIST so the coverage check can see it. Task FE-MYWORK is covered and nothing else in scope is missing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:53:42Z",
+          "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`spec.md` is stale against what shipped. It still says no Project or Waiting-on filter, no avatar, no \"records you can see\" total, no \"While you're free\", and the neutral empty copy. Round 3 ships all of these, on the design engineer's boards, using fields that are not in the contract (`suggestions`, `project`, `waiting_on`, `line_key`, `agent`, `filters.lines`). Only `suggestions` is outside v4/v6/v7. `build.md` lists it as a contract proposal and the technical review confirms it is typed locally, hidden when absent, and served only with the board cookie. Before FE-CONNECT-1, the architecture owner must adopt or drop `suggestions` (including the \"Not now\" endpoint, QA-3-2) and settle the \"records you can see\" derivation (TECH-3-4). Until then it must not be described as a contract field. The design engineer should confirm this when checking product acceptance. Update the spec's expectations at the next revision.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:53:42Z",
+          "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The three boards under 90 and the D-17 exceptions rest on the coordinator's overnight authority (OVERNIGHT-DECISIONS.md D-17, D-20, D-21), which is provisional and marked for the design engineer's check. That is a named authority, so I do not block on it. The design engineer's confirmation is still needed. It should also cover UI-3-1 (Tola's full-body pose, listed as non-blocking; they may make it blocking) and the 4 extra suggestion/copy differences on the empty view: WhatsApp body text instead of the spec's neutral line (D-21), and a third suggestion on the phone.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:53:42Z",
+          "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-1-1 and PMO-2-2 (the `server.mjs` conflict with F-03) are still OPEN. The round-3 change is the single `dataset: cookies.psl_mock_worklist` pass-through on a fresh base, so the earlier conflict is likely moot, but nobody has recorded the check. The integration owner should rerun `tests/mock-work-list.test.ts`, `tests/mock-contract.test.ts` and `tests/mock-row-item-match.test.ts` after merge into the delivery branch. The other open items are non-blocking and carried: TECH-1-3, PMO-2-3 and PMO-2-4 (the old head's screenshots; superseded by this round's side-by-sides in `round-3/fidelity/`), PMO-2-6, QA-2-3 (restated as QA-3-1), UX-3-1, UX-3-2, UI-3-1, QA-3-1, QA-3-2, and TECH-3-1 to TECH-3-5. None breaks a criterion.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:53:42Z",
+          "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -877,14 +973,14 @@
     "task_branch": "fe-mywork-fidelity",
     "head_sha": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
-    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/5",
-    "pr_number": 5,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/15",
+    "pr_number": 15,
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "approved",
-    "merge_status": "merged",
-    "merge_sha": "e78038f318c0c50e15e08baf23606a39a1b7f40d",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/my-work.spec.ts",
@@ -1052,6 +1148,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-14T06:52:32Z",
+      "round": 3,
+      "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T06:53:42Z",
       "round": 3,
       "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
       "reason": null

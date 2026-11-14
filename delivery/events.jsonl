@@ -563,3 +563,11 @@
 {"at":"2026-11-14T06:52:31Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"QA-3-1","by":"reviewer-qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-14T06:52:31Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"QA-3-2","by":"reviewer-qa","severity":"low","owner":"product","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-14T06:52:32Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/15","git.pr_number":15,"git.human_approval":"pending","git.merge_status":"not_merged","git.merge_sha":null}}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"02d59d8bb221","findings":{"PMO-3-1":"low","PMO-3-2":"medium","PMO-3-3":"medium","PMO-3-4":"low"},"written_at":"2026-11-14T06:53:16Z"}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"coordinator, provisional for the design engineer (hunchoweb)","commit":"02d59d8bb221","written_at":"2026-11-14T06:53:38Z"}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
