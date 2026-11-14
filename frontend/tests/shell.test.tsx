@@ -4,6 +4,8 @@ import { join } from 'node:path';
 
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import axe from 'axe-core';
+import { flushSync } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Destination } from '@/api/types';
@@ -305,32 +307,49 @@ describe('phone back link', () => {
     expect(within(phoneBar()).getByText('PSL FACTORY')).toBeTruthy();
   });
 
-  it('swapping to a different sub-page shows only the new link, and the old one never returns', async () => {
+  it('swapping to a different sub-page never commits the old link for the new page', async () => {
     function ProjectPage() {
       usePhoneBack({ label: 'Projects', href: '/projects' });
       return <h1 className="shell-title">Lagoon Health</h1>;
     }
     fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
     nav.pathname = '/exceptions';
-    const { rerender } = render(
-      <AppShell>
-        <SubPage />
-      </AppShell>,
-    );
-    await loaded();
-    expect(backLink()?.textContent).toBe('← Queue');
-    nav.pathname = '/projects/lagoon';
-    rerender(
-      <AppShell>
-        <ProjectPage />
-      </AppShell>,
-    );
-    // Synchronously after the commit: the layout effect has already swapped the link.
-    expect(within(phoneBar()).getAllByRole('link').map((a) => a.textContent)).toEqual(['← Projects']);
-    expect(backLink()?.getAttribute('href')).toBe('/projects');
-    await act(async () => {});
-    expect(within(phoneBar()).queryByText('← Queue')).toBeNull();
-    expect(within(phoneBar()).queryByRole('button', { name: 'Menu' })).toBeNull();
+    // A bare root with no act(): act would flush passive effects and hide the difference. flushSync returns
+    // right after the commit, so the bar is read before any passive effect has had a chance to run.
+    const reactEnv = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean };
+    const wasActEnv = reactEnv.IS_REACT_ACT_ENVIRONMENT;
+    reactEnv.IS_REACT_ACT_ENVIRONMENT = false;
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    try {
+      flushSync(() =>
+        root.render(
+          <AppShell>
+            <SubPage />
+          </AppShell>,
+        ),
+      );
+      await loaded();
+      expect(backLink()?.textContent).toBe('← Queue');
+      nav.pathname = '/projects/lagoon';
+      flushSync(() =>
+        root.render(
+          <AppShell>
+            <ProjectPage />
+          </AppShell>,
+        ),
+      );
+      // Read straight after the swap commit, before passive effects: the layout effect has already replaced
+      // the link, so the bar never shows "← Queue" for the new page (a passive-effect hook still would).
+      expect(within(phoneBar()).getAllByRole('link').map((a) => a.textContent)).toEqual(['← Projects']);
+      expect(backLink()?.getAttribute('href')).toBe('/projects');
+      expect(within(phoneBar()).queryByRole('button', { name: 'Menu' })).toBeNull();
+    } finally {
+      flushSync(() => root.unmount());
+      container.remove();
+      reactEnv.IS_REACT_ACT_ENVIRONMENT = wasActEnv;
+    }
   });
 
   it('pages that do not set it keep the menu bar', async () => {
