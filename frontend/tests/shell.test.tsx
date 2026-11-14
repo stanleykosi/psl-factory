@@ -28,7 +28,10 @@ beforeEach(() => {
   fetchStub = vi.fn<(request: Request) => Promise<Response>>();
   vi.stubGlobal('fetch', fetchStub);
 });
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
 
 const routeOf: Record<string, Destination> = {
   '/my-work': 'my_work',
@@ -140,7 +143,7 @@ describe('frame states', () => {
     expect(screen.queryAllByRole('link').map((a) => a.textContent)).toEqual(['Skip to main content']);
     expect(document.body.textContent).not.toContain('Ada Okafor');
     expect(screen.queryByRole('button', { name: 'Menu' })).toBeNull();
-    expect(screen.getAllByText('SAMPLE DATA')).toHaveLength(2);
+    expect(screen.queryAllByText('SAMPLE DATA')).toHaveLength(0);
     await act(async () => resolve(json(200, fixture('finance_lead'))));
     await loaded();
   });
@@ -188,10 +191,19 @@ describe('frame states', () => {
     expect(fetchStub).toHaveBeenCalledTimes(2);
   });
 
-  it.each(['loaded', '401', '404'])('SAMPLE DATA shows in both bars (%s)', async (kind) => {
+  it.each(['loaded', '401', '404'])('no SAMPLE DATA tag in either bar by default (%s)', async (kind) => {
     fetchStub.mockResolvedValue(
       kind === 'loaded' ? json(200, fixture('pm')) : json(Number(kind), { code: 'x', message: 'y' }),
     );
+    renderAt('/my-work');
+    await loaded();
+    expect(document.querySelector('.psl-sample')).toBeNull();
+    expect(document.body.textContent).not.toContain('SAMPLE DATA');
+  });
+
+  it('NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 brings SAMPLE DATA back in both bars', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
+    fetchStub.mockResolvedValue(json(200, fixture('pm')));
     renderAt('/my-work');
     await loaded();
     expect(topNav().querySelector('.psl-sample')?.textContent).toBe('SAMPLE DATA');

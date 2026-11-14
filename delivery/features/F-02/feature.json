@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -97,7 +97,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead)",
-      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "evidence_refs": [
         "delivery/features/F-02/round-2/review-technical.md"
       ]
@@ -112,20 +112,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; not client/product acceptance, merge or release)",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-02/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "product/design owner for the frontend (design engineer, as recorded in design/review.json and architecture/sources/decisions-2026-11-13*.md)",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -317,6 +321,144 @@
           "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, but the spec and readiness name E-WORK-LIST as this feature's endpoint. Record E-WORK-LIST so the coverage check can see it. Scope landed matches: `changed_paths` are all inside the spec's ownership (my-work app and feature folders, mock handler, rows fixture, `server.mjs` branch, tests); nothing in `src/shell`, `src/api`, openapi.json, package files or `apps/` changed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "TECH-1-1 stays OPEN: the textual conflict with F-03 in `frontend/mock/server.mjs`. It must be resolved at merge (keep both branches), and `tests/mock-work-list.test.ts` and `tests/mock-contract.test.ts` rerun, with W-1001 to W-1006 checked against F-03's fixtures. Owner named (integration owner); not a blocker for this slice but a condition of merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The product-acceptance screenshots in round-1 build.md (criterion 22) were taken at head b6b4e25, before the round-2 phone-card change (kind tag above the title). Round 2 build.md does not refresh them. Give the design engineer the current build or fresh 390px screenshots so they judge the shipped head.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-2-1 (open, non-blocking): the mock accepts an empty `q=` although the contract says minLength 1. The UI never sends it. Also open and non-blocking: TECH-1-3 (two navigations in one tick). Neither affects acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:29:34Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `operation_ids` is still `[]` while spec and readiness name E-WORK-LIST (this restates PMO-2-1, which stays OPEN). Record E-WORK-LIST so the coverage check can see it. Nothing else in scope is missing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:35:09Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Review and product-acceptance records point at 55e8194 (`snapshot_ref`), while the head is now eab6dff. This is correct for what each reviewer saw, and the carry-forward basis is below. The merge sync record (`merge_decision.pre_merge_sync`) is still `checks_rerun: not_run`; the coordinator's integration run above is the evidence to record there.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:35:09Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -398,23 +540,70 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "37aa53ea379d155892bb84ab665d4ae310fdbf9c",
     "task_branch": "fe-mywork-my-work-shows-a-person-s-queues-with-sea",
-    "head_sha": "55e81940bdf715f222ebd7f15f26a9150d981915",
+    "head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/5",
+    "pr_number": 5,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "e78038f318c0c50e15e08baf23606a39a1b7f40d",
     "merge_policy": "not_configured",
     "changed_paths": [
+      "delivery/events.jsonl",
+      "delivery/features/F-02/feature.json",
+      "delivery/features/F-02/round-1/build.md",
+      "delivery/features/F-02/round-1/checks.md",
+      "delivery/features/F-02/round-1/review-technical.md",
+      "delivery/features/F-02/round-1/review-ui.md",
+      "delivery/features/F-02/round-1/review-ux.md",
+      "delivery/features/F-02/round-2/acceptance-pmo.md",
+      "delivery/features/F-02/round-2/build.md",
+      "delivery/features/F-02/round-2/checks.md",
+      "delivery/features/F-02/round-2/review-qa.md",
+      "delivery/features/F-02/round-2/review-technical.md",
+      "delivery/features/F-02/round-2/review-ui.md",
+      "delivery/features/F-02/round-2/review-ux.md",
+      "delivery/features/F-03/decision.md",
+      "delivery/features/F-03/feature.json",
+      "delivery/features/F-03/round-1/build.md",
+      "delivery/features/F-03/round-1/checks.md",
+      "delivery/features/F-03/round-1/review-technical.md",
+      "delivery/features/F-03/round-1/review-ui.md",
+      "delivery/features/F-03/round-1/review-ux.md",
+      "delivery/features/F-03/round-2/build.md",
+      "delivery/features/F-03/round-2/checks.md",
+      "delivery/features/F-03/round-2/review-technical.md",
+      "delivery/features/F-03/round-2/review-ui.md",
+      "delivery/features/F-03/round-2/review-ux.md",
+      "delivery/features/F-03/round-3/acceptance-pmo.md",
+      "delivery/features/F-03/round-3/build.md",
+      "delivery/features/F-03/round-3/checks.md",
+      "delivery/features/F-03/round-3/review-qa.md",
+      "delivery/features/F-03/round-3/review-technical.md",
+      "delivery/features/F-03/round-3/review-ui.md",
+      "delivery/features/F-03/round-3/review-ux.md",
+      "delivery/features/F-03/spec.md",
+      "delivery/features/F-04/feature.json",
+      "delivery/features/F-04/readiness.md",
+      "delivery/features/F-04/spec.md",
       "frontend/e2e/my-work.spec.ts",
+      "frontend/e2e/work-item.spec.ts",
       "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/work/W-1001.history.json",
+      "frontend/mock/fixtures/work/W-1002.json",
+      "frontend/mock/fixtures/work/W-1003.json",
+      "frontend/mock/fixtures/work/W-1004.history.json",
+      "frontend/mock/fixtures/work/W-1004.json",
+      "frontend/mock/fixtures/work/W-1005.json",
+      "frontend/mock/fixtures/work/W-1006.json",
       "frontend/mock/server.mjs",
       "frontend/mock/work-list.mjs",
       "frontend/src/app/my-work/page.tsx",
+      "frontend/src/app/work/[id]/history/page.tsx",
+      "frontend/src/app/work/[id]/page.tsx",
       "frontend/src/features/my-work/FilterPanel.tsx",
       "frontend/src/features/my-work/MyWork.tsx",
       "frontend/src/features/my-work/MyWorkPage.tsx",
@@ -422,9 +611,19 @@
       "frontend/src/features/my-work/icons.tsx",
       "frontend/src/features/my-work/model.ts",
       "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/work-item/WorkItemHistory.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemStates.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/labels.ts",
+      "frontend/src/features/work-item/useWorkHistory.ts",
+      "frontend/src/features/work-item/useWorkItem.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/tests/mock-contract.test.ts",
       "frontend/tests/mock-work-list.test.ts",
       "frontend/tests/my-work-model.test.ts",
-      "frontend/tests/my-work.test.tsx"
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/work-item.test.tsx"
     ]
   },
   "parallel_execution": {
@@ -445,12 +644,19 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-02/decision.md"
+    ],
+    "script_decision": "BLOCKED",
+    "script_reasons": [
+      "technical review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "integrated_qa review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "ux review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
+      "ui review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'"
+    ],
+    "decided_for_head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -523,6 +729,14 @@
       "at": "2026-11-14T00:10:43Z",
       "round": 2,
       "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T00:35:51Z",
+      "round": 2,
+      "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "reason": null
     }
   ],
