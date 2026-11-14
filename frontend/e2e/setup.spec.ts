@@ -61,6 +61,7 @@ const today = () => {
   return `${parts.day} ${parts.month}`;
 };
 
+const WITHDRAWN = 'Your role does not allow this. You can no longer change these rules, so the Set a rule panel has closed. Nothing you entered was saved.';
 const panel = (page: Page) => page.getByRole('region', { name: 'Set a rule' });
 const table = (page: Page) => page.locator('.setup-desktop table');
 const row = (page: Page, name: string) => table(page).locator('tr', { hasText: name });
@@ -173,6 +174,36 @@ test.describe('desktop rules', () => {
       data: { expected_revision: 0, value: { roles: ['pmo_lead'] } },
     });
     expect(forced.status()).toBe(403);
+  });
+
+  test('right withdrawn after load: the 403 message stays above the list with focus once the panel closes (QA-1-1)', async ({ page, context }) => {
+    const seen = setupRequests(page);
+    await openAs(page, context, '/setup/rules');
+    await panel(page).getByRole('checkbox', { name: 'PMO Lead' }).check();
+    await panel(page).getByLabel('Why').fill('Mine');
+    await setCookies(context, { psl_mock_setup: 'readonly' });
+    await panel(page).getByRole('button', { name: 'Save as version 1' }).click();
+    const alert = page.locator('.setup-desktop').getByRole('alert');
+    await expect(alert).toHaveText(WITHDRAWN);
+    await expect(alert).toBeFocused();
+    await expect(panel(page)).toHaveCount(0);
+    await expect(table(page).locator('tbody tr')).toHaveCount(10);
+    expect(seen.filter((r) => r.method === 'PUT')).toHaveLength(1);
+    await expectNoAxeViolations(page);
+  });
+
+  test('finance: a group losing its only editable rule after load keeps the 403 message with focus (QA-1-1)', async ({ page, context }) => {
+    await setCookies(context, { psl_mock_persona: 'finance_lead' });
+    await page.goto('/setup/rules/finance');
+    await loaded(page);
+    const view = page.locator('.setup-desktop');
+    await view.getByRole('button', { name: 'Set BU totals rules' }).click();
+    await setCookies(context, { psl_mock_setup: 'readonly' });
+    await panel(page).getByRole('button', { name: 'Save as version 1' }).click();
+    await expect(view.getByRole('alert')).toHaveText(WITHDRAWN);
+    await expect(view.getByRole('alert')).toBeFocused();
+    await expect(panel(page)).toHaveCount(0);
+    await expect(view.getByRole('button', { name: /^Set / })).toHaveCount(0);
   });
 
   test('keyboard reaches each tab, the panel controls in order and Save, with the 2px focus ring (AC 24)', async ({ page, context }) => {

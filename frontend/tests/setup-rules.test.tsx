@@ -15,6 +15,7 @@ import { FinancePageView } from '@/features/setup/FinanceRulesView';
 import { fieldsFromMessage, formatSize, groupButtonLabel, isEditable, versionText } from '@/features/setup/format';
 import { ReservedTab } from '@/features/setup/ReservedTab';
 import { RulesPageView } from '@/features/setup/RulesView';
+import { EDITOR_GONE, NOT_SAVED } from '@/features/setup/SetRulePanel';
 import { AppShell } from '@/shell/AppShell';
 
 const pathname = { value: '/setup/rules' };
@@ -396,6 +397,46 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await waitFor(() => expect(panel().getByRole('alert').textContent).toBe(FORBIDDEN.message));
     expect(reads()).toHaveLength(2);
     expect(Array.from((panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement).options).map((o) => o.value)).not.toContain('presale.rfp_assigner');
+  });
+
+  it('403 that leaves no editable row: the panel closes and the message stays above the list with focus (QA-1-1)', async () => {
+    let page = fixture('rules.desktop');
+    answers.rules = () => json(200, page);
+    answers.save = () => {
+      page = withPage(page, (rows) => rows.map((r) => ({ ...r, can_change: false })));
+      return json(403, FORBIDDEN);
+    };
+    await open();
+    await fillFirstSave({ why: 'Mine', file: false });
+    fireEvent.click(saveButton());
+    const text = `${FORBIDDEN.message} ${EDITOR_GONE} ${NOT_SAVED}`;
+    await waitFor(() => expect(desktop().getByRole('alert').textContent).toBe(text));
+    expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull();
+    expect(document.activeElement).toBe(desktop().getByRole('alert'));
+    expect(saves()).toHaveLength(1);
+    expect(reads()).toHaveLength(2);
+    expect(desktop().getAllByRole('alert')).toHaveLength(1);
+  });
+
+  it('finance: a group whose only editable row loses its right keeps the 403 message above the groups with focus (QA-1-1)', async () => {
+    pathname.value = '/setup/rules/finance';
+    let page = fixture('finance.desktop');
+    answers.rules = () => json(200, page);
+    answers.save = () => {
+      page = savedRow(page, 'finance.bu_totals.reviewer', { can_change: false });
+      return json(403, FORBIDDEN);
+    };
+    await open(<FinancePageView />);
+    fireEvent.click(desktop().getByRole('button', { name: 'Set BU totals rules' }));
+    fireEvent.click(saveButton());
+    const text = `${FORBIDDEN.message} ${EDITOR_GONE} ${NOT_SAVED}`;
+    await waitFor(() => expect(desktop().getByRole('alert').textContent).toBe(text));
+    expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull();
+    expect(desktop().queryByRole('button', { name: 'Set BU totals rules' })).toBeNull();
+    expect(document.activeElement).toBe(desktop().getByRole('alert'));
+    // Opening another group clears the old outcome.
+    fireEvent.click(desktop().getByRole('button', { name: 'Set payroll rules' }));
+    expect(desktop().queryByRole('alert')).toBeNull();
   });
 
   it('network error, revision unchanged: re-reads once, keeps the edits, never resends', async () => {

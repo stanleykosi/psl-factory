@@ -4,12 +4,13 @@
 // set is false, counts only from the count fields, editing only where the row allows it. Both layouts render and
 // CSS shows one; the phone is read-only as drawn (D-15).
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { WarningIcon } from '@/shell/icons';
 
 import type { RuleRow } from './contract-proposal';
 import { areaHref, isEditable, linkHref, valueText, versionText } from './format';
-import { SetRulePanel } from './SetRulePanel';
+import { type Notice, OutcomeNotice, SetRulePanel } from './SetRulePanel';
 import { PhoneBack, RulesEmpty, RulesReadState, SetupFrame, SetupGate, ShowMore } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
@@ -48,6 +49,8 @@ function VersionCell({ row }: { row: RuleRow }) {
 
 function RulesView() {
   const { state, retry, refresh, loadMore, signOut } = useSetupRules();
+  // A save outcome whose panel closed because the re-read left no editable rule (QA-1-1).
+  const [closedNotice, setClosedNotice] = useState<Notice | null>(null);
   if (state.status !== 'ready') return <RulesReadState state={state} retry={() => void retry()} />;
 
   const { page, items } = state;
@@ -69,6 +72,7 @@ function RulesView() {
                 <span>{notSetBanner(notSet)}</span>
               </div>
             )}
+            {closedNotice && <OutcomeNotice notice={closedNotice} />}
             <div className="setup-columns">
               <section className="setup-main" aria-label="Rules">
                 <div className="psl-tablewrap">
@@ -105,7 +109,7 @@ function RulesView() {
               </section>
               {editable.length > 0 && (
                 <aside className="setup-aside" aria-label="Set a rule">
-                  <SetRulePanel rows={editable} refresh={refresh} signOut={signOut} />
+                  <SetRulePanel rows={editable} refresh={refresh} signOut={signOut} onEditorGone={setClosedNotice} />
                 </aside>
               )}
             </div>

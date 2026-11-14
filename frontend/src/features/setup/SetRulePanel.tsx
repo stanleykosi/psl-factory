@@ -4,7 +4,8 @@
 // version. Only rows the API marks editable reach this panel (format.isEditable); /me roles are never consulted.
 // Outcomes: 200 re-reads and rebuilds from the new row; 409 shows the message and clears every edit (never
 // re-applied); 422 keeps the edits and marks the named fields; a network or server error re-reads once and
-// never resends.
+// never resends. When the re-read leaves none of the panel's rules editable (the right was withdrawn), the view closes
+// the panel, so the outcome goes to onEditorGone and the view shows it above the list instead.
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
@@ -12,14 +13,14 @@ import { WarningIcon } from '@/shell/icons';
 
 import { uploadEvidence } from './api';
 import type { RulesPage, RuleRow, SaveBody } from './contract-proposal';
-import { fieldsFromMessage, lagosToday, type RuleField } from './format';
+import { fieldsFromMessage, isEditable, lagosToday, type RuleField } from './format';
 import { TickIcon } from './icons';
 import { ProofField, type ProofState } from './ProofField';
 import { useRuleSave } from './useRuleSave';
 import { asApiError } from './useSetupRules';
 
 type Edits = { component: string; roles: string[]; starts: string; why: string; proof: ProofState; caseRevision?: number };
-type Notice = { tone: 'success' | 'problem' | 'warning'; text: string };
+export type Notice = { tone: 'success' | 'problem' | 'warning'; text: string };
 
 const startEdits = (row: RuleRow): Edits => ({
   component: row.component,
@@ -33,9 +34,26 @@ type Props = {
   rows: RuleRow[];
   refresh: () => Promise<RulesPage | ApiError>;
   signOut: (error: ApiError) => void;
+  /** The re-read left none of these rules editable, so the view is about to close the panel. */
+  onEditorGone: (notice: Notice) => void;
 };
 
-export function SetRulePanel({ rows, refresh, signOut }: Props) {
+export const EDITOR_GONE = 'You can no longer change these rules, so the Set a rule panel has closed.';
+export const NOT_SAVED = 'Nothing you entered was saved.';
+
+/** A save outcome callout; it takes focus when shown. The views also use it above the list once the panel has closed. */
+export function OutcomeNotice({ notice }: { notice: Notice }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => ref.current?.focus(), [notice]);
+  return (
+    <div ref={ref} tabIndex={-1} role={notice.tone === 'success' ? 'status' : 'alert'} className={`psl-callout psl-callout--${notice.tone} setup-notice`}>
+      {notice.tone === 'success' ? <TickIcon /> : <WarningIcon />}
+      <span>{notice.text}</span>
+    </div>
+  );
+}
+
+export function SetRulePanel({ rows, refresh, signOut, onEditorGone }: Props) {
   const id = useId();
   const [selected, setSelected] = useState(rows[0].component);
   const row = rows.find((r) => r.component === selected) ?? rows[0];
@@ -44,15 +62,10 @@ export function SetRulePanel({ rows, refresh, signOut }: Props) {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [invalid, setInvalid] = useState<Set<RuleField>>(new Set());
   const [locked, setLocked] = useState(false);
-  const noticeRef = useRef<HTMLDivElement>(null);
   // Bumped whenever the edits are thrown away, so an upload that finishes later cannot attach to the new edit.
   const generation = useRef(0);
   const { busy, save } = useRuleSave(refresh);
   const options = row.editor?.options ?? [];
-
-  useEffect(() => {
-    if (notice) noticeRef.current?.focus();
-  }, [notice]);
 
   const patch = (change: Partial<Edits>) => setEdits((e) => ({ ...(e.component === row.component ? e : startEdits(row)), ...change }));
   const resetTo = (next: RuleRow) => {
@@ -60,6 +73,15 @@ export function SetRulePanel({ rows, refresh, signOut }: Props) {
     setEdits(startEdits(next));
   };
   const reloadedRow = (page: RulesPage | ApiError) => (page instanceof ApiError ? undefined : page.items.find((r) => r.component === row.component));
+  // Shows the outcome in the panel, or hands it to the view when the re-read closes the panel.
+  const announce = (page: RulesPage | ApiError, next: Notice, rejected = false) => {
+    const mine = new Set(rows.map((r) => r.component));
+    if (!(page instanceof ApiError) && !page.items.some((r) => mine.has(r.component) && isEditable(r))) {
+      onEditorGone({ ...next, text: [next.text, EDITOR_GONE, rejected ? NOT_SAVED : ''].join(' ').trim() });
+      return;
+    }
+    setNotice(next);
+  };
 
   const pickRule = (component: string) => {
     generation.current += 1;
@@ -132,14 +154,14 @@ export function SetRulePanel({ rows, refresh, signOut }: Props) {
       case 'saved':
         resetTo(reloadedRow(outcome.page) ?? row);
         setInvalid(new Set());
-        setNotice({ tone: 'success', text: `Saved as version ${outcome.revision}.` });
+        announce(outcome.page, { tone: 'success', text: `Saved as version ${outcome.revision}.` });
         return;
       case 'rejected':
         if (outcome.error.kind === 'stale') {
           resetTo(reloadedRow(outcome.page) ?? row);
           setInvalid(new Set());
         }
-        setNotice({ tone: 'problem', text: outcome.error.message });
+        announce(outcome.page, { tone: 'problem', text: outcome.error.message }, true);
         return;
       case 'invalid':
         setInvalid(fieldsFromMessage(outcome.message));
@@ -151,11 +173,11 @@ export function SetRulePanel({ rows, refresh, signOut }: Props) {
       case 'unconfirmed': {
         const fresh = reloadedRow(outcome.page);
         if (fresh && fresh.revision === sentRevision) {
-          setNotice({ tone: 'warning', text: 'We couldn’t confirm the save. Nothing new is shown for this rule, so you can save again.' });
+          announce(outcome.page, { tone: 'warning', text: 'We couldn’t confirm the save. Nothing new is shown for this rule, so you can save again.' });
         } else {
           resetTo(fresh ?? row);
           setInvalid(new Set());
-          setNotice({ tone: 'warning', text: 'This rule changed. Check the version shown before saving again.' });
+          announce(outcome.page, { tone: 'warning', text: 'This rule changed. Check the version shown before saving again.' });
         }
         return;
       }
@@ -173,17 +195,7 @@ export function SetRulePanel({ rows, refresh, signOut }: Props) {
         Set a rule
       </h2>
       <div className="psl-panel__body">
-        {notice && (
-          <div
-            ref={noticeRef}
-            tabIndex={-1}
-            role={notice.tone === 'success' ? 'status' : 'alert'}
-            className={`psl-callout psl-callout--${notice.tone} setup-notice`}
-          >
-            {notice.tone === 'success' ? <TickIcon /> : <WarningIcon />}
-            <span>{notice.text}</span>
-          </div>
-        )}
+        {notice && <OutcomeNotice notice={notice} />}
         <div className="psl-field">
           <label className="psl-label" htmlFor={`${id}-rule`}>
             Rule

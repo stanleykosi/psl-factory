@@ -10,7 +10,7 @@ import { WarningIcon } from '@/shell/icons';
 
 import type { RuleRow } from './contract-proposal';
 import { groupButtonLabel, isEditable, valueText } from './format';
-import { SetRulePanel } from './SetRulePanel';
+import { type Notice, OutcomeNotice, SetRulePanel } from './SetRulePanel';
 import { PhoneBack, RulesEmpty, RulesReadState, SetupGate, ShowMore } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
@@ -68,6 +68,8 @@ export function FinancePageView() {
 function FinanceRulesView() {
   const { state, retry, refresh, loadMore, signOut } = useSetupRules('finance');
   const [open, setOpen] = useState<string | null>(null);
+  // A save outcome whose group panel closed because the re-read left that group no editable rule (QA-1-1).
+  const [closedNotice, setClosedNotice] = useState<Notice | null>(null);
   if (state.status !== 'ready') return <RulesReadState state={state} retry={() => void retry()} />;
 
   const { page, items } = state;
@@ -96,6 +98,7 @@ function FinanceRulesView() {
               <WarningIcon />
               <span>{countText}Real reviewers and approvers come from PSL; none are invented here.</span>
             </div>
+            {closedNotice && <OutcomeNotice notice={closedNotice} />}
             <div className="setup-groups">
               {groups.map((group, index) => {
                 const editable = group.rows.filter(isEditable);
@@ -115,7 +118,10 @@ function FinanceRulesView() {
                             className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block"
                             aria-expanded={isOpen}
                             aria-controls={panelId}
-                            onClick={() => setOpen(isOpen ? null : group.key)}
+                            onClick={() => {
+                              setClosedNotice(null);
+                              setOpen(isOpen ? null : group.key);
+                            }}
                           >
                             {groupButtonLabel(group.label)}
                           </button>
@@ -123,7 +129,7 @@ function FinanceRulesView() {
                       )}
                       {editable.length > 0 && (
                         <div id={panelId} hidden={!isOpen}>
-                          {isOpen && <SetRulePanel rows={editable} refresh={refresh} signOut={signOut} />}
+                          {isOpen && <SetRulePanel rows={editable} refresh={refresh} signOut={signOut} onEditorGone={setClosedNotice} />}
                         </div>
                       )}
                     </div>
