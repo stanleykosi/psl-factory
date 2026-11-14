@@ -31,13 +31,14 @@ export const STATE_TAGS: Record<WorkState, { text: string; tone: Tone }> = {
   followup_needed: { text: 'Stopped: invoice follow-up needed', tone: 'person' },
 };
 
-/** The six facts in contract order (INV-FACTS: never merged into one status). */
-export const FACTS: readonly { name: FactName; label: string }[] = [
+/** The six facts in contract order (INV-FACTS: never merged into one status). The boards label the receipt fact
+ *  RECEIPT; `more` completes the contract name for screen readers ("RECEIPT RECORDED"). */
+export const FACTS: readonly { name: FactName; label: string; more?: string }[] = [
   { name: 'drafted', label: 'DRAFTED' },
   { name: 'reviewed', label: 'REVIEWED' },
   { name: 'approved', label: 'APPROVED' },
   { name: 'sent', label: 'SENT' },
-  { name: 'receipt_recorded', label: 'RECEIPT RECORDED' },
+  { name: 'receipt_recorded', label: 'RECEIPT', more: ' RECORDED' },
   { name: 'verified', label: 'VERIFIED' },
 ];
 
@@ -91,6 +92,12 @@ export function avatarClass(name: string | undefined): string {
   return key && AVATARS.has(key) ? `psl-avatar psl-avatar--${key}` : 'psl-avatar';
 }
 
+/** The agent's mascot (public/agents, as on My work); undefined for an agent without one. */
+export function agentImage(name: string | undefined): string | undefined {
+  const key = name?.toLowerCase();
+  return key && AVATARS.has(key) ? `/agents/${key}.png` : undefined;
+}
+
 const WARNING_STATES = new Set<WorkState>([
   'effect_uncertain',
   'awaiting_reconciliation',
@@ -136,4 +143,21 @@ const WAT = new Intl.DateTimeFormat('en-GB', {
 export function formatWat(value: string | Date): string {
   const parts = Object.fromEntries(WAT.formatToParts(new Date(value)).map((p) => [p.type, p.value]));
   return `${parts.day} ${MONTHS[Number(parts.month) - 1]} ${parts.hour}:${parts.minute}`;
+}
+
+const WEEKDAY = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', weekday: 'short' });
+
+/** "Mon 10 Nov 14:05" in Africa/Lagos, for the header's started line. */
+export function formatWatDay(value: string): string {
+  return `${WEEKDAY.format(new Date(value))} ${formatWat(value)}`;
+}
+
+/** The header's started line from the contract: "Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2";
+ *  "revision N" alone when the item does not say who started it. */
+export function startedLine(item: WorkItem): string {
+  if (!item.started_by) return `revision ${item.revision}`;
+  const { name, role } = item.started_by;
+  const parts = [`Started by ${role ? `${name} (${role})` : name}`];
+  if (item.started_at) parts.push(formatWatDay(item.started_at));
+  return [...parts, `revision ${item.revision}`].join(' · ');
 }
