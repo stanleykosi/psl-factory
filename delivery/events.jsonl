@@ -157,3 +157,4 @@
 {"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"2c3a09b8745640ae0d22a8270b99a501b00ac630"}}
 {"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T00:26:50Z","feature":"F-04","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
