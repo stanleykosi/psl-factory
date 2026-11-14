@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-15",
   "outcome": "Alert bell in the top bar, with a drawer of \"Needs you\" and \"For your information\"",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-ALERTS-MENU"
   ],
@@ -116,11 +116,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "evidence_refs": [
+        "delivery/features/F-15/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -146,18 +148,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "evidence_refs": [
+        "delivery/features/F-15/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (visual consistency against concept 3 of design/concepts/alerts-bell-concepts.html as decided in D-53/D-54, SCR-15 row styling, CMP-01 bars and tokens, at desktop and phone width)",
+      "snapshot_ref": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "evidence_refs": [
+        "delivery/features/F-15/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -174,7 +180,7 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -191,10 +197,24 @@
           ],
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T20:45:44Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
+        "abf4b7a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
         "abf4b7a"
       ]
     },
@@ -211,7 +231,7 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -228,11 +248,25 @@
           ],
           "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T20:45:45Z",
+          "refs": [
+            "`readIds` re-applies read to a late list and subtracts the stale unread from `unread_count` (floored at 0; undefined stays undefined). The new test holds the GET, clicks Open, then releases it and expects badge 3 and \"2 need you\"; old code gave 4."
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "abf4b7a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`readIds` re-applies read to a late list and subtracts the stale unread from `unread_count` (floored at 0; undefined stays undefined). The new test holds the GET, clicks Open, then releases it and expects badge 3 and \"2 need you\"; old code gave 4."
       ]
     },
     {
@@ -248,7 +282,7 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -265,11 +299,25 @@
           ],
           "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T20:45:45Z",
+          "refs": [
+            "`useOpenAlert` passes an `ApiError` to `onError`; `feed.stop` sets `stopped` only for `unauthenticated`. The 401 test expects 2 lists after the second bell click; old code would send a third."
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "abf4b7a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`useOpenAlert` passes an `ApiError` to `onError`; `feed.stop` sets `stopped` only for `unauthenticated`. The 401 test expects 2 lists after the second bell click; old code would send a third."
       ]
     },
     {
@@ -285,7 +333,7 @@
         "delivery/features/F-15/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -302,11 +350,25 @@
           ],
           "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T20:45:45Z",
+          "refs": [
+            "the offset is its own layout effect keyed on `phone`; the scroll-lock effect is separate and still runs once. The test flips `matchMedia` while open and expects 56px then 0px; old code stays 56px."
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "abf4b7a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "the offset is its own layout effect keyed on `phone`; the scroll-lock effect is separate and still runs once. The test flips `matchMedia` while open and expects 56px then 0px; old code stays 56px."
       ]
     },
     {
@@ -322,7 +384,7 @@
         "delivery/features/F-15/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -339,10 +401,24 @@
           ],
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:45:44Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
+        "abf4b7a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
         "abf4b7a"
       ]
     },
@@ -359,7 +435,7 @@
         "delivery/features/F-15/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -376,11 +452,48 @@
           ],
           "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:45:44Z",
+          "refs": [
+            "abf4b7a"
+          ],
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "abf4b7a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "abf4b7a"
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`leaving.current` in `AppShell.tsx` is set by Open or a footer link and cleared only by a path change or the next bell open. If the target equals the current path (an alert whose work link is the page already shown, or \"See all alerts\" on /notifications), the flag stays true and the next unrelated navigation moves focus to the bell. Clear it in the close effect when the path did not change, or compare against the path at leave time.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T20:45:45Z",
+          "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c"
+        }
       ]
     }
   ],
@@ -632,6 +745,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T20:32:13Z",
+      "round": 2,
+      "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T20:45:45Z",
       "round": 2,
       "head": "abf4b7a0660a481a3b97648b400f86fe8bdcce4c",
       "reason": null
