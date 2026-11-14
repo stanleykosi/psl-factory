@@ -166,8 +166,11 @@ test('success at 390 shows the way back to the work item and the queue', async (
   await openForm(page);
   await fill(page);
   await record(page);
-  await expect(page.getByRole('link', { name: '← Work item' })).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Back' }).getByText('REL-0077')).toBeVisible();
+  const back = page.locator('.psl-phonebar').getByRole('link', { name: 'Back to Work item' });
+  await expect(back).toHaveText('← Work item');
+  await expect(back).toHaveAttribute('href', '/work/W-1601');
+  await expect(page.getByRole('button', { name: 'Menu' })).toHaveCount(0);
+  await expect(page.locator('.resp-phoneref')).toHaveText('REL-0077');
   await expect(page.getByRole('link', { name: 'Back to my queue' })).toBeInViewport();
 });
 

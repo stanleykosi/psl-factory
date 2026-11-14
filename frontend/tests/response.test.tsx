@@ -92,6 +92,15 @@ async function open(id = 'W-1601', taskId: string | undefined = 'T-1601') {
   );
   await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
+/** The frame's phone bar holds the only way back (usePhoneBack); the page draws none of its own. */
+async function expectPhoneBack(label: string, href: string) {
+  const back = await screen.findByRole('link', { name: `Back to ${label}` });
+  expect(back.textContent).toBe(`← ${label}`);
+  expect(back.getAttribute('href')).toBe(href);
+  expect(back.closest('.psl-phonebar')).toBeTruthy();
+  expect(screen.getAllByText(/^← /)).toHaveLength(1);
+  expect(screen.queryByRole('button', { name: 'Menu' })).toBeNull();
+}
 async function openWork(id: string) {
   render(
     <AppShell>
@@ -429,8 +438,8 @@ describe('success (SCR-16-desktop-success)', () => {
     tick();
     fireEvent.click(recordButton('Record response'));
     await screen.findByRole('status');
-    expect(screen.getByRole('link', { name: '← Work item' }).getAttribute('href')).toBe('/work/W-1601');
-    expect(within(screen.getByRole('navigation', { name: 'Back' })).getByText('REL-0077')).toBeTruthy();
+    await expectPhoneBack('Work item', '/work/W-1601');
+    expect(screen.getByText('REL-0077').className).toContain('resp-phoneref');
     expect(screen.getByRole('link', { name: 'Back to my queue' }).getAttribute('href')).toBe('/my-work');
   });
 
@@ -512,16 +521,15 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
     phone();
     await open('W-1602', 'T-1602');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('SOW signature');
-    const back = screen.getByRole('link', { name: '← SOW' });
-    expect(back.getAttribute('href')).toBe('/work/W-1602');
-    expect(within(screen.getByRole('navigation', { name: 'Back' })).getByText('SOW-0207')).toBeTruthy();
+    await expectPhoneBack('SOW', '/work/W-1602');
+    expect(screen.getByText('SOW-0207').className).toContain('resp-phoneref');
     expect(screen.queryByRole('complementary')).toBeNull();
   });
 
   it('on the phone the client form collapses the single options into one line', async () => {
     phone();
     await open();
-    expect(screen.getByRole('link', { name: '← Queue' }).getAttribute('href')).toBe('/my-work');
+    await expectPhoneBack('Queue', '/my-work');
     expect(text()).toContain('Lagoon Health · Patient app · build 2.4.0 · Dr Amaka Obi');
     expect(screen.queryByLabelText('Who responded')).toBeNull();
     expect(screen.getByLabelText('When they responded')).toBeTruthy();

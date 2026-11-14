@@ -6,6 +6,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
 import { currentStationIndex } from '@/features/work-item/labels';
@@ -23,14 +24,9 @@ import './response.css';
 
 const work = (id: string) => `/work/${encodeURIComponent(id)}`;
 
-/** Under the frame's phone bar (D-08): the way back and, on the right, the reference. */
-function BackBar({ href, text, reference }: { href: string; text: string; reference?: string }) {
-  return (
-    <nav className="resp-backbar" aria-label="Back">
-      <Link href={href}>{text}</Link>
-      {reference && <span className="psl-mono">{reference}</span>}
-    </nav>
-  );
+/** On the phone the boards draw the reference at the right of the bar; the frame's bar holds only the back link. */
+function PhoneReference({ reference }: { reference?: string }) {
+  return reference ? <span className="psl-mono resp-phoneref">{reference}</span> : null;
 }
 
 function Crumb({ item, response }: { item: ResponseWorkItem; response: TaskResponse }) {
@@ -151,12 +147,11 @@ function SuccessView({ id, before, task, recorded, next, responderId, phone }: {
   const heading = current >= 0 ? before.stations[current].name : (task?.title ?? before.title);
   return (
     <>
-      {phone ? (
-        <BackBar href={work(id)} text="← Work item" reference={before.reference} />
-      ) : (
-        <p className="resp-eyebrow">{[before.reference, organisation].filter(Boolean).join(' · ').toUpperCase()}</p>
-      )}
-      <h1 className="shell-title resp-title resp-title--tight">{heading}</h1>
+      {!phone && <p className="resp-eyebrow">{[before.reference, organisation].filter(Boolean).join(' · ').toUpperCase()}</p>}
+      <div className="resp-titlerow">
+        <h1 className="shell-title resp-title resp-title--tight">{heading}</h1>
+        {phone && <PhoneReference reference={before.reference} />}
+      </div>
       <div className="resp-success">
         <div className="psl-callout psl-callout--success" role="status">
           <CheckIcon />
@@ -197,6 +192,14 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
   const phone = useIsPhone();
   const { view, notice } = flow;
   const pathname = `${work(id)}/respond${taskId ? `?task=${encodeURIComponent(taskId)}` : ''}`;
+  const open = view.kind === 'form' && flow.task?.you_can_act === true && !!flow.response && RECORDABLE.has(flow.response.variant);
+  // The phone bar's way back, as the SCR-16 phone boards draw it: the form goes back to the queue, the SOW form
+  // to its document and the success view (and anything else) to the work item.
+  usePhoneBack(
+    open && flow.response?.variant === 'client_response'
+      ? { label: 'Queue', href: '/my-work' }
+      : { label: (open && flow.response?.context?.document?.label) || 'Work item', href: work(id) },
+  );
 
   if (view.kind === 'loading') return <LoadingState />;
   if (view.kind === 'error') {
@@ -260,15 +263,12 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
 
   return (
     <div className={phone ? 'resp-page resp-page--phone' : 'resp-page'}>
-      {phone &&
-        (sow ? (
-          <BackBar href={work(id)} text={`← ${document?.label ?? 'Work item'}`} reference={document?.reference} />
-        ) : (
-          <BackBar href="/my-work" text="← Queue" />
-        ))}
       <header className="resp-header">
         {!phone && <Crumb item={item} response={response} />}
-        <h1 className={sow ? 'shell-title resp-title resp-title--tight' : 'shell-title resp-title'}>{phone && sow && current >= 0 ? item.stations[current].name : task.title}</h1>
+        <div className="resp-titlerow">
+          <h1 className={sow ? 'shell-title resp-title resp-title--tight' : 'shell-title resp-title'}>{phone && sow && current >= 0 ? item.stations[current].name : task.title}</h1>
+          {phone && sow && <PhoneReference reference={document?.reference} />}
+        </div>
         {!phone && !sow && response.intro && <p className="resp-intro">{response.intro}</p>}
       </header>
       <PageNotice notice={notice} onRecheck={recheck} />
