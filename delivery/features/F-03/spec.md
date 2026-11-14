@@ -119,7 +119,7 @@
      - not_started: "Not started"
      - verified: "Verified"
 
-     Classes map to `psl-station--done|person|agent|waiting|stopped|todo|verified`. The current station has `aria-current="step"`. Below 720px the stations show as a vertical list with the status on the right, as on the approved mobile boards (design engineer, 14 Nov 2026); the page does not scroll sideways.
+     Classes map to `psl-station--done|person|agent|waiting|stopped|todo|verified`. The current station has `aria-current="step"`. Below 1080px (bp-desktop) the stations show as a vertical list with the status on the right, as on the approved mobile boards; the row of boxes appears only from 1080px (design engineer, 14 Nov 2026). On the row, an effect-uncertain station is a solid amber block with white text; in the list it is a pale amber row. The page does not scroll sideways.
   6. **Agent at work** (CMP-09/18), shown when `agent.status` is not `none`:
      - Avatar: `psl-avatar--chidi|tola|zainab` by lower-cased name, otherwise a neutral initial avatar. Name (or "Agent" if absent) and the line "Cannot approve, send or pay."
      - Status tag: WORKING (agent class), DONE (done class), WAITING (waiting class) or STOPPED (person class).
