@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-09",
   "outcome": "Record a client response or SOW signature with proof, and confirm what happened to an uncertain send",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-M2B-RESPONSE"
   ],
@@ -773,8 +773,8 @@
     "task_branch": "fe-m2b-response-record-a-client-response-or-sow-signatur",
     "head_sha": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-09",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/21",
+    "pr_number": 21,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
@@ -1730,6 +1730,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-14T08:59:44Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T09:07:39Z",
       "round": 2,
       "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
       "reason": null
