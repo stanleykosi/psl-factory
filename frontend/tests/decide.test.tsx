@@ -10,6 +10,7 @@ import type { TaskDecision, WorkItem } from '@/api/types';
 import { DecideView } from '@/features/decide/DecideView';
 import { formatAmount } from '@/features/decide/format';
 import { AppShell } from '@/shell/AppShell';
+import { bellFeed, isBellFeed } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-1201/decide',
@@ -47,6 +48,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
+      if (isBellFeed(request)) return bellFeed();
       const url = new URL(request.url);
       const text = request.method === 'GET' ? '' : await request.clone().text();
       const c: Call = { method: request.method, path: url.pathname, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };

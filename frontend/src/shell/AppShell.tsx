@@ -1,11 +1,16 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
 import { api, call, setCsrfToken } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import type { Me } from '@/api/types';
+import { AlertsDrawer } from '@/features/alerts/AlertsDrawer';
+import type { BellProps } from '@/features/alerts/AlertsBell';
+import { needsYou, needsYouKnown } from '@/features/alerts/model';
+import { useAlertsFeed } from '@/features/alerts/useAlertsFeed';
+import { useIsPhone } from '@/features/alerts/useIsPhone';
 
 import { destinationForPath, visibleDestinations } from './destinations';
 import { ForbiddenState, LoadErrorState, LoadingState, NoSectionsState, SignedOutState } from './FrameStates';
@@ -67,6 +72,54 @@ export function AppShell({ children }: { children: ReactNode }) {
   const destinations = me ? visibleDestinations(me.destinations) : [];
   const current = destinations.find((d) => d.key === destinationForPath(pathname)?.key);
 
+  // The alert bell (F-15): one feed and one drawer for both bars. The drawer is open on the path it was opened on,
+  // so any route change closes it; on every close focus goes back to the bell that opened it.
+  const ready = destinations.length > 0;
+  const feed = useAlertsFeed(ready);
+  const phone = useIsPhone();
+  const [alertsAt, setAlertsAt] = useState<string | null>(null);
+  const alertsOpen = ready && alertsAt === pathname;
+  // Which bar's bell opened it: the phone bar remounts on a route change, so the bell is looked up again on close.
+  const opener = useRef('.shell-topbar .shell-bell');
+  const wasOpen = useRef(false);
+  const leaving = useRef(false);
+  const closeAlerts = useCallback(() => setAlertsAt(null), []);
+  // Open and the footer links close the drawer and then change the page; the bar there is the one to take focus.
+  const leaveAlerts = useCallback(() => {
+    leaving.current = true;
+    setAlertsAt(null);
+  }, []);
+  useEffect(() => {
+    if (!leaving.current) return;
+    leaving.current = false;
+    document.querySelector<HTMLElement>(opener.current)?.focus();
+  }, [pathname]);
+  useEffect(() => {
+    if (alertsOpen) wasOpen.current = true;
+    else if (wasOpen.current) {
+      wasOpen.current = false;
+      document.querySelector<HTMLElement>(opener.current)?.focus();
+    }
+  }, [alertsOpen]);
+
+  let bell: BellProps | undefined;
+  if (ready) {
+    const ok = feed.data && !feed.error;
+    const items = ok ? feed.data!.items : [];
+    bell = {
+      unread: ok ? feed.data!.unreadCount : undefined,
+      need: needsYouKnown(items) ? items.filter((alert) => needsYou(alert) && alert.read === false).length : 0,
+      open: alertsOpen,
+      onOpen: (button) => {
+        if (alertsOpen) return closeAlerts();
+        leaving.current = false;
+        opener.current = button.closest('.shell-phone') ? '.shell-phone .shell-bell' : '.shell-topbar .shell-bell';
+        setAlertsAt(pathname);
+        void feed.refresh();
+      },
+    };
+  }
+
   let main: ReactNode;
   if (state.status === 'loading') main = <LoadingState />;
   else if (state.status === 'error') {
@@ -84,18 +137,19 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <a className="shell-skip" href="#main">
+      <a className="shell-skip" href="#main" inert={alertsOpen}>
         Skip to main content
       </a>
       <div className="shell-topbar">
-        <TopNav me={me} destinations={destinations} current={current} />
+        <TopNav me={me} destinations={destinations} current={current} bell={bell} />
       </div>
-      <div className="shell-phone">
-        <PhoneBar key={pathname} me={me} destinations={destinations} current={current} back={phoneBack} />
+      <div className="shell-phone" inert={alertsOpen}>
+        <PhoneBar key={pathname} me={me} destinations={destinations} current={current} back={phoneBack} bell={bell} />
       </div>
-      <main id="main" tabIndex={-1} className="shell-main">
+      <main id="main" tabIndex={-1} className="shell-main" inert={alertsOpen}>
         {main}
       </main>
+      {alertsOpen && <AlertsDrawer feed={feed} phone={phone} pathname={pathname} onClose={closeAlerts} onLeave={leaveAlerts} />}
     </>
   );
 }

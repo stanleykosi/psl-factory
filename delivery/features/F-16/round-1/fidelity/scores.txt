@@ -1,0 +1,11 @@
+board                          width  coverage  with-exceptions  visual  pass  page
+SCR-03-desktop                 1440   91.3      100              91.1    true  /work/W-1901/decide?task=T-1901
+SCR-03-mobile                  390    70        100              85      false /work/W-1901/decide?task=T-1901
+SCR-03-desktop-done            1440   96.4      100              93.6    true  /frozen/done-1440.html
+SCR-03-mobile-done             390    89.5      100              92      true  /frozen/done-390.html
+SCR-03-desktop-stale           1440   82.1      100              88.2    false /frozen/stale-1440.html
+SCR-03-mobile-stale            390    58.3      100              79.3    false /frozen/stale-390.html
+SCR-03-desktop-not-yours       1440   90.9      100              91.4    true  /work/W-1903/decide?task=T-1903
+SCR-03-mobile-not-yours        390    66.7      100              84.7    false /work/W-1903/decide?task=T-1903
+SCR-03-desktop-own             1440   81.3      100              91.6    true  /work/W-1904/decide?task=T-1904
+SCR-03-mobile-own              390    50        100              77.8    false /work/W-1904/decide?task=T-1904

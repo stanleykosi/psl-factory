@@ -2,8 +2,9 @@
 // shaped by the v7 contract. Sample data only; nothing is sent anywhere.
 //
 // Scenario: cookie psl_mock_alerts, else env MOCK_ALERTS_SCENARIO, else board
-// (board | phone | empty | many | bare | stale | invalid | locked). State is in memory per persona:scenario;
-// reset() clears it. bare drops every proposal field and answers 404 to the two v7-only operations. Dates are moved by whole days so that each fixture's as_of falls on today in Africa/Lagos.
+// (board | phone | empty | many | bare | stale | invalid | locked | needs-you). State is in memory per persona:scenario;
+// reset() clears it. needs-you (F-15) serves the PROPOSAL overlay proposals/alerts-needs-you.json,
+// whose items carry needs_you (not in v7). bare drops every proposal field and answers 404 to the two v7-only operations. Dates are moved by whole days so that each fixture's as_of falls on today in Africa/Lagos.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +16,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const read = (path) => JSON.parse(readFileSync(join(here, 'fixtures', path), 'utf8'));
 
 export const ALERT_OPERATIONS = ['E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS'];
-export const ALERT_SCENARIOS = ['board', 'phone', 'empty', 'many', 'bare', 'stale', 'invalid', 'locked'];
+export const ALERT_SCENARIOS = ['board', 'phone', 'empty', 'many', 'bare', 'stale', 'invalid', 'locked', 'needs-you'];
 const AGENTS = ['tola', 'chidi', 'zainab'];
 const LIMITS = [10, 20, 50];
 const DAY_MS = 86_400_000;
@@ -56,6 +57,10 @@ function initialState(persona, scenario) {
   let list = own ? read(`alerts/notifications.${who}.json`) : read('E-NOTIFICATIONS.json');
   if (scenario === 'empty') list = read('alerts/notifications.empty.json');
   else if (scenario === 'many' && !own) list = read('alerts/notifications.many.json');
+  else if (scenario === 'needs-you' && !own) {
+    list = JSON.parse(readFileSync(join(here, 'proposals', 'alerts-needs-you.json'), 'utf8'));
+    delete list.$comment;
+  }
   const prefsFile = { phone: 'phone', locked: 'locked', invalid: 'invalid' }[scenario];
   const prefs = own ? read(`alerts/prefs.${who}.json`) : prefsFile ? read(`alerts/prefs.${prefsFile}.json`) : read('E-ALERT-PREFS-READ.json');
   return { list: shifted(list), prefs, staleDone: false };

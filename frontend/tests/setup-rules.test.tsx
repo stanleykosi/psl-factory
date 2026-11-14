@@ -17,6 +17,7 @@ import { ReservedTab } from '@/features/setup/ReservedTab';
 import { RulesPageView } from '@/features/setup/RulesView';
 import { EDITOR_GONE, NOT_SAVED } from '@/features/setup/SetRulePanel';
 import { AppShell } from '@/shell/AppShell';
+import { bellFeed, isBellFeed } from './bell-feed';
 
 const pathname = { value: '/setup/rules' };
 vi.mock('next/navigation', () => ({
@@ -63,6 +64,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
+      if (isBellFeed(request)) return bellFeed();
       const url = new URL(request.url);
       const text = request.method === 'GET' ? '' : await request.clone().text();
       const c: Call = { method: request.method, path: url.pathname, query: url.search, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };
@@ -729,7 +731,7 @@ describe('finance and delivery views (AC 16, 17)', () => {
     expect(rowCells('Hypercare window')).toEqual(['Hypercare window', 'NOT SET', 'Hypercare']);
     expect(desktop().getByText(/^These are PSL’s decisions\. Until a rule is set/)).toBeTruthy();
     expect(desktop().getByText('Each rule is versioned. Changing one doesn’t change work already finished.')).toBeTruthy();
-    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton)')).toHaveLength(0);
+    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton):not(.shell-bell)')).toHaveLength(0);
   });
 });
 

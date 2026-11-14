@@ -128,7 +128,7 @@ test.describe('desktop 1440', () => {
     await page.goto('/overview');
     await loaded(page);
     const tones = await rows(page).locator('.psl-tag').evaluateAll((tags) => tags.map((t) => t.className.replace('psl-tag ', '')));
-    expect(tones).toEqual(['psl-tag--waiting', 'psl-tag--person', 'psl-tag--person', 'psl-tag--done', 'psl-tag--waiting', 'psl-tag--done', 'psl-tag--done', 'psl-tag--person']);
+    expect(tones).toEqual(['psl-tag--neutral', 'psl-tag--person', 'psl-tag--person', 'psl-tag--done', 'psl-tag--neutral', 'psl-tag--done', 'psl-tag--done', 'psl-tag--person']);
     await expectNoAxeViolations(page);
   });
 

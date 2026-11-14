@@ -1,0 +1,76 @@
+# F-16 r2 QA journeys (head df180ca, build :4631, mock :4632, Playwright project f-16-qa)
+QA axe default W-1901 @1440: violations=0; scrollWidth=1440
+QA done @1440: focus=H1 "Invoice v2 for Lagoon Health is approved"
+QA done @1440: Next decision href=/work/W-1201/decide?task=T-1201; Open the work item=1; Back to my work=1
+QA done @1440: "Paid is tracked separately" visible count=1
+QA decide W-1901 @1440: claims=1 decides=1 body={"expected_revision":2,"verdict":"approve"} csrf=match
+QA axe done W-1901 @1440: violations=0; scrollWidth=1440
+QA stale @1440: decides=1 reloads after 409=1; replaced shown=1
+QA stale @1440: focus=H2
+QA axe stale W-1902 @1440: violations=0; scrollWidth=1440
+QA stale review @1440: claims={"expected_revision":4},{"expected_revision":5}; decides still=1
+QA own @1440: writes=0; text has "you prepared"=true; first line="MY WORK / PREPARE AN INVOICE / INV-0412 |  | DECISION · INV-0412 | "
+QA axe own W-1904 @1440: violations=0; scrollWidth=1440
+QA axe default W-1901 @390: violations=0; scrollWidth=390
+QA done @390: focus=H1 "Invoice v2 for Lagoon Health is approved"
+QA done @390: Next decision href=/work/W-1201/decide?task=T-1201; Open the work item=1; Back to my work=1
+QA done @390: "Paid is tracked separately" visible count=2
+QA decide W-1901 @390: claims=1 decides=1 body={"expected_revision":2,"verdict":"approve"} csrf=match
+QA axe done W-1901 @390: violations=0; scrollWidth=390
+QA stale @390: decides=1 reloads after 409=1; replaced shown=1
+QA stale @390: focus=H2
+QA axe stale W-1902 @390: violations=0; scrollWidth=390
+QA stale review @390: claims={"expected_revision":4},{"expected_revision":5}; decides still=1
+QA own @390: writes=0; text has "you prepared"=true; first line="MY WORK / PREPARE AN INVOICE / INV-0412 |  | Approve invoice v2 | "
+QA axe own W-1904 @390: violations=0; scrollWidth=390
+QA approve+note W-1201: {"expected_revision":2,"verdict":"approve","note":"PO number checked"}
+QA return W-1201: focus after missing note=TEXTAREA; decides=[{"expected_revision":2,"verdict":"return","note":"Wrong PO"}]; h1="Invoice v2 was returned"; success banner count=0
+QA reject W-1201: focus after missing note=TEXTAREA; decides=[{"expected_revision":2,"verdict":"reject","note":"Wrong PO"}]; h1="Invoice v2 was rejected"; success banner count=0
+QA note maxlength=2000
+QA note value length after 2005 chars=2000; counter="2000 / 2000"
+QA 422 decide: decides=1; alerts=["Check the highlighted fields and try again.",""]; note kept=keep me
+QA uncertain(recorded): decides=1; reloads=1; approve buttons=0; text="MY WORK / PREPARE AN INVOICE / INV-0412 | DECISION · INV-0412 | Approve invoice v2 | Lagoon Health · Milestone 2 invoice | We couldn’t confirm your decision. We’ve reloaded this item so you can see whether it was recorded. | AMOUNT | ₦4,250,000.00 | BASIS | Co"
+QA uncertain(network): decides=1; reloads=1
+QA unconfirmed: controls disabled=true,true,true; decides=1
+QA unknown W-1202: Unknown | Amount | Unknown; has ₦0=false
+QA unknown W-1901: Unknown present=true; ₦0=false; ₦4,250,000 present=false
+QA 403 @1440: h1=""; leaks INV-0412=false Lagoon=false; writes=0
+QA axe 403 @1440: violations=0; scrollWidth=1440
+QA 404 @1440: h1=""; leaks INV-0412=false Lagoon=false; writes=0
+QA axe 404 @1440: violations=0; scrollWidth=1440
+QA 401 @1440: h1 count=0; text="You’re signed out. Sign in"; links=/accounts/login/?next=%2Fwork%2FW-1901%2Fdecide
+QA axe 401 @1440: violations=0; scrollWidth=1440
+QA 500 @1440: h1="Decision"; claims=0
+QA axe 500 @1440: violations=0; scrollWidth=1440
+QA 500 retry @1440: claims=1 decides=0
+QA 403 @390: h1=""; leaks INV-0412=false Lagoon=false; writes=0
+QA axe 403 @390: violations=0; scrollWidth=390
+QA 404 @390: h1=""; leaks INV-0412=false Lagoon=false; writes=0
+QA axe 404 @390: violations=0; scrollWidth=390
+QA 401 @390: h1 count=0; text="You’re signed out. Sign in"; links=/accounts/login/?next=%2Fwork%2FW-1901%2Fdecide
+QA axe 401 @390: violations=0; scrollWidth=390
+QA 500 @390: h1="Decision"; claims=0
+QA axe 500 @390: violations=0; scrollWidth=390
+QA 500 retry @390: claims=1 decides=0
+QA persona: ceo W-1901 approve buttons=1; pm W-1903 approve buttons=0
+QA direct API: not-yours T-1903 decide=403 {"code":"forbidden","message":"Your role does not allow this."}; no CSRF=403; wrong revision=409
+QA work item W-1201 @1440: decide links=/work/W-1201/decide?task=T-1201; has ₦4,250,000.00=true; writes=0
+QA axe work item W-1201 @1440: violations=0; scrollWidth=1440
+QA work item W-1201 @390: decide links=/work/W-1201/decide?task=T-1201; has ₦4,250,000.00=true; writes=0
+QA axe work item W-1201 @390: violations=0; scrollWidth=390
+    Error: expect(locator).toBeVisible() failed
+    Error: expect(locator).toBeVisible() failed
+  2 failed
+  25 passed (44.8s)
+
+# Full e2e suite against :4631
+  ✘  118 e2e/frame.spec.ts:260:3 › phone 390 › a sub-page back link replaces Menu in the bar as the boards draw it; Menu is one tap back (5.7s)
+  ✘  153 e2e/overview.spec.ts:126:3 › desktop 1440 › a line status (proposed field, mock variant) gives the board tag tones (539ms)
+  ✘  172 e2e/projects.spec.ts:152:5 › phone 390 › journey default: P-0101 as drawn, every line in order with its tag (5.6s)
+  ✘  174 e2e/projects.spec.ts:199:5 › phone 390 › journey no access: P-0099 names nothing (420ms)
+  ✘  188 e2e/projects.spec.ts:421:3 › phone 390 card focus › card links and the back link show the focus ring (30.1s)
+    Error: expect(locator).toBeVisible() failed
+    Error: expect(locator).toBeVisible() failed
+    Error: expect(locator).toHaveAttribute(expected) failed
+  5 failed
+  288 passed (8.9m)

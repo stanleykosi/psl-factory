@@ -273,7 +273,8 @@ describe('states', () => {
         <NotificationsPage />
       </AppShell>,
     );
-    await until(() => expect(calls.length).toBe(1));
+    // The page's list and the shell's alert bell (F-15), both held at the gate.
+    await until(() => expect(calls.length).toBe(2));
     expect(screen.getByRole('status').textContent).toBe('Loading…');
     expect(rows()).toHaveLength(0);
     release();
@@ -347,6 +348,7 @@ describe('absent proposal fields are never invented (bare)', () => {
     await open('?q=pay&agent=chidi');
     await until(() => expect(rows()).toHaveLength(4));
     expect(nav.router.replace).toHaveBeenCalledWith('/notifications', { scroll: false });
-    expect(lists().map((c) => c.url.search)).toEqual(['?q=pay&agent=chidi', '']);
+    // The page's two reads, with the shell's alert bell (F-15) reading the default page between them.
+    expect(lists().map((c) => c.url.search)).toEqual(['?q=pay&agent=chidi', '', '']);
   });
 });
