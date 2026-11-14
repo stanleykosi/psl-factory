@@ -43,6 +43,9 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
   const [outcome, setOutcome] = useState<ReconcileOutcome | null>(null);
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [accessError, setAccessError] = useState<ApiError | null>(null);
+  // Phone: the pinned button is pressable before a choice; a press then asks for one and shows the options.
+  const [asked, setAsked] = useState(false);
+  const options = useRef<HTMLDivElement>(null);
   // One write at a time, checked synchronously so a double click cannot send two answers.
   const writing = useRef(false);
 
@@ -73,6 +76,14 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
   const locked = status.kind === 'busy' || status.kind === 'done' || status.kind === 'stale' || status.kind === 'uncertain';
   const needsProof = outcome === 'delivered';
   const ready = outcome !== null && !locked && !proof.uploading && (!needsProof || proof.evidenceIds.length > 0);
+  // The phone bar is pinned while the options may still be below the fold, so it does not look disabled there.
+  const askFirst = phone && outcome === null && !locked;
+
+  const ask = () => {
+    setAsked(true);
+    options.current?.scrollIntoView({ block: 'center' });
+    options.current?.querySelector('input')?.focus({ preventScroll: true });
+  };
 
   const submit = async () => {
     if (writing.current || !ready || !outcome) return;
@@ -126,7 +137,7 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
               twice.
             </p>
           )}
-          <div role="radiogroup" aria-label="Confirm what happened" className="resp-options">
+          <div ref={options} role="radiogroup" aria-label="Confirm what happened" className="resp-options">
             {reconcile.outcomes.map((value) => {
               const words = outcomeWords(value, reconcile);
               return (
@@ -148,6 +159,11 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
             })}
           </div>
           {needsProof && <ProofField proof={proof} />}
+          {askFirst && asked && (
+            <div role="alert" className="resp-alert">
+              Choose what happened to continue.
+            </div>
+          )}
           {status.kind === 'problem' && (
             <div className="psl-callout psl-callout--problem" role="alert">
               <WarningIcon />
@@ -173,7 +189,12 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
             </p>
           )}
           <div className="psl-actionbar resp-actionbar">
-            <button type="button" className="psl-btn psl-btn--lg psl-btn--block" disabled={!ready} onClick={() => void submit()}>
+            <button
+              type="button"
+              className="psl-btn psl-btn--lg psl-btn--block"
+              disabled={!ready && !askFirst}
+              onClick={askFirst ? ask : () => void submit()}
+            >
               {status.kind === 'busy' ? RESPONSE_LABELS.busy : 'Record and continue'}
             </button>
           </div>

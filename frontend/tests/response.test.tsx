@@ -733,6 +733,23 @@ describe('uncertain effect: re-read, never resend', () => {
 });
 
 describe('reconcile panel (A-RECONCILE)', () => {
+  it('on the phone the pinned button is pressable before a choice: a press asks for one and sends nothing', async () => {
+    phone();
+    answers.me = 'finance_lead';
+    await openWork('W-1603');
+    const go = screen.getByRole('button', { name: 'Record and continue' }) as HTMLButtonElement;
+    expect(go.disabled).toBe(false);
+    expect(screen.queryByText('Choose what happened to continue.')).toBeNull();
+    fireEvent.click(go);
+    expect(screen.getByRole('alert').textContent).toBe('Choose what happened to continue.');
+    expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]);
+    expect(writes()).toHaveLength(0);
+    fireEvent.click(screen.getByRole('radio', { name: /It didn’t arrive/ }));
+    expect(screen.queryByText('Choose what happened to continue.')).toBeNull();
+    fireEvent.click(go);
+    await waitFor(() => expect(posts('/actions')).toHaveLength(1));
+  });
+
   it('W-1603 shows the checks, the three outcomes with the API’s notes and the button', async () => {
     answers.me = 'finance_lead';
     await openWork('W-1603');
