@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { SampleLabel } from '@/shell/SampleLabel';
+
 import { formatAge, KINDS, miniSegments, stateTag, stationText, type WorkItem } from './model';
 
 function KindTag({ kind }: { kind: WorkItem['kind'] }) {
@@ -23,10 +25,6 @@ function MiniBar({ item, phone = false }: { item: WorkItem; phone?: boolean }) {
       {!phone && <span className="psl-mini__text">{stationText(item.station, item.state)}</span>}
     </span>
   );
-}
-
-function Sample({ item }: { item: WorkItem }) {
-  return item.sample ? <span className="psl-sample">SAMPLE DATA</span> : null;
 }
 
 /** Desktop (SCR-01-desktop): Work, Where on its line, State, Age. */
@@ -53,7 +51,7 @@ export function WorkTable({ items }: { items: WorkItem[] }) {
                   </Link>
                 </div>
                 <div className="my-work__meta">
-                  {item.line} · <span className="psl-mono">{item.reference}</span> <Sample item={item} />
+                  {item.line} · <span className="psl-mono">{item.reference}</span> <SampleLabel show={item.sample} />
                 </div>
               </td>
               <td>
@@ -92,7 +90,7 @@ export function WorkCards({ items }: { items: WorkItem[] }) {
               <span className="psl-mini__text">{stationText(item.station, item.state)}</span>
             </span>
             <span className="my-work__waiting">{item.waiting_on}</span>
-            <Sample item={item} />
+            <SampleLabel show={item.sample} />
           </Link>
         </li>
       ))}

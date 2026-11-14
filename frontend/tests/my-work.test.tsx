@@ -225,7 +225,7 @@ describe('rows', () => {
     expect(tags.map((t) => [t.textContent, t.className])).toEqual(states.map(([, [words, family]]) => [words, `psl-tag psl-tag--${family}`]));
   });
 
-  it('station bar, age, waiting on, sample label and row links', async () => {
+  it('station bar, age, waiting on, no sample tag and row links', async () => {
     work = () => json(200, crafted);
     await open();
     const first = rows()[0];
@@ -235,8 +235,8 @@ describe('rows', () => {
     expect(first.querySelector('.psl-mini__text')!.textContent).toBe('Station 4 of 7 · Finance review');
     expect([...rows()].map((r) => r.querySelectorAll('td')[3].textContent)).toEqual(['2h', '1m', '1d', '10m']);
     expect(first.querySelectorAll('td')[2].textContent).toBe('WaitingFinance Lead');
-    expect(panel().querySelectorAll('.psl-sample')).toHaveLength(crafted.items.filter((i) => i.sample).length);
-    expect(rows()[1].querySelector('.psl-sample')).toBeNull();
+    expect(crafted.items.some((i) => i.sample)).toBe(true);
+    expect(panel().querySelectorAll('.psl-sample')).toHaveLength(0);
     expect(within(panel()).getByRole('link', { name: 'Decide row' }).getAttribute('href')).toBe('/work/W-1001');
     expect(screen.getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['WORK', 'WHERE ON ITS LINE', 'STATE', 'AGE']);
   });

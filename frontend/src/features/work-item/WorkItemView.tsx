@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
+import { SampleLabel } from '@/shell/SampleLabel';
 
 import { formatWat, STATE_TAGS, type WorkItem } from './labels';
 import { useWorkItem } from './useWorkItem';
@@ -32,8 +33,8 @@ function WorkItemHeader({ item }: { item: WorkItem }) {
       </div>
       <p className="work-sub">
         <span>revision {item.revision}</span>
-        {/* INV-SAMPLE: the record says it is sample data, whatever the build's API mode. */}
-        {item.sample && <span className="psl-sample">SAMPLE DATA</span>}
+        {/* INV-SAMPLE: the record says it is sample data, whatever the build's API mode (tag shown only when switched on). */}
+        <SampleLabel show={item.sample} />
       </p>
     </header>
   );

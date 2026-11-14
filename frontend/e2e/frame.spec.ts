@@ -93,7 +93,7 @@ test.describe('desktop 1440', () => {
     });
     expect(current).toEqual({ border: 'rgb(200, 64, 28)', width: '3px' });
     await expect(bar.getByText('PSL FACTORY')).toBeVisible();
-    await expect(bar.locator('.psl-sample')).toHaveText('SAMPLE DATA');
+    await expect(bar.locator('.psl-sample')).toHaveCount(0);
     await expect(bar.getByText('Ada Okafor · Finance Lead')).toBeVisible();
     await page.goto('/my-work');
     await loaded(page);
@@ -143,7 +143,7 @@ test.describe('desktop 1440', () => {
     await expect(page.getByText('You’re signed out.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fmy-work');
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link')).toHaveCount(0);
-    await expect(page.locator('.psl-sample').first()).toBeVisible();
+    await expect(page.locator('.psl-sample')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });
 
@@ -151,13 +151,13 @@ test.describe('desktop 1440', () => {
     await setCookies(context, { psl_mock_scenario: '403' });
     await page.goto('/my-work');
     await expect(page.getByText('Your account can’t use PSL Factory.')).toBeVisible();
-    await expect(page.locator('.psl-sample').first()).toBeVisible();
+    await expect(page.locator('.psl-sample')).toHaveCount(0);
     await context.clearCookies();
     await setCookies(context, { psl_mock_persona: 'none' });
     await page.goto('/my-work');
     await expect(page.getByText('No sections are open to your role yet.')).toBeVisible();
     await expect(page.getByText('Sample Person · Staff')).toBeVisible();
-    await expect(page.locator('.psl-sample').first()).toBeVisible();
+    await expect(page.locator('.psl-sample')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });
 
@@ -165,7 +165,7 @@ test.describe('desktop 1440', () => {
     await setCookies(context, { psl_mock_scenario: '404' });
     await page.goto('/my-work');
     await expectErrorCard(page);
-    await expect(page.locator('.psl-sample').first()).toBeVisible();
+    await expect(page.locator('.psl-sample')).toHaveCount(0);
     await expectNoAxeViolations(page);
     await context.clearCookies();
     await page.getByRole('button', { name: 'Try again' }).click();
@@ -183,7 +183,7 @@ test.describe('desktop 1440', () => {
     await page.goto('/my-work');
     await expect(page.getByRole('status')).toHaveText('Loading…');
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link')).toHaveCount(0);
-    await expect(page.locator('.psl-sample').first()).toBeVisible();
+    await expect(page.locator('.psl-sample')).toHaveCount(0);
     expect(await motion(page)).toEqual({ transitions: [], running: 0 });
     release();
     await loaded(page);
@@ -211,7 +211,7 @@ test.describe('phone 390', () => {
     const menu = header.getByRole('button', { name: 'Menu' });
     await expect(menu).toBeVisible();
     await expect(header.getByText('PSL FACTORY')).toBeVisible();
-    await expect(header.locator('.psl-sample')).toHaveText('SAMPLE DATA');
+    await expect(header.locator('.psl-sample')).toHaveCount(0);
     expect(await noHorizontalScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
 
@@ -274,7 +274,7 @@ test.describe('phone 390', () => {
     await setCookies(context, { psl_mock_scenario: '401' });
     await page.goto('/my-work');
     await expect(page.getByText('You’re signed out.')).toBeVisible();
-    await expect(page.locator('header.psl-phonebar .psl-sample')).toBeVisible();
+    await expect(page.locator('header.psl-phonebar .psl-sample')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });
 });
@@ -287,8 +287,7 @@ test('no horizontal scroll at 768px', async ({ page }) => {
   expect(await noHorizontalScroll(page)).toBe(true);
   const bar = await page.locator('.psl-nav__in').evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
   expect(bar.scroll).toBeLessThanOrEqual(bar.client);
-  await expect(page.locator('.psl-nav .psl-sample')).toHaveText('SAMPLE DATA');
-  expect(await page.locator('.psl-nav .psl-sample').evaluate((el) => el.getBoundingClientRect().height)).toBeLessThan(24);
+  await expect(page.locator('.psl-nav .psl-sample')).toHaveCount(0);
 });
 
 // Design owner, 13 Nov 2026: from 720px up to bp-desktop (1080px) the bar shows the name only, on one line;
