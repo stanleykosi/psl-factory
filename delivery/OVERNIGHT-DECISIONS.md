@@ -24,6 +24,6 @@ Each entry: what was decided, why, and how to revert.
 (updated as the night goes on)
 
 ## Decisions taken
-- **D-01 · 3D floor concept.** You asked me to pick by my recommendation. Recorded when the four concepts are ready (see below).
+- **D-01 · 3D floor concept: 3, the tilted swimlane board.** Four live concepts: https://claude.ai/artifact/Mc4ouUKmHtRsyJk8xkALKw (copy in `design/concepts/floor-3d-concepts.html`). I picked 3 because it is your approved flat board leaned back like a drafting table: same reading order, every label readable, closest to the design you drew, and the lightest to run. 1 (isometric conveyor) was the runner-up; 2 (city) and 4 (amphitheatre) look striking but hide labels and read worse at a glance. Built into the Overview's "3D floor" option in F-08. Revert: reply with another concept number and F-08 gets a round to swap it.
 - **D-02 · Phone Start work forms** use a bottom sheet for every line (your answer, 14 Nov).
 - **D-03 · Round limit raised from 3 to 5** in `delivery/config.json`, so fidelity rounds can finish unattended. Revert: set `max_rounds` back to 3.
