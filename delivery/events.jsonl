@@ -234,3 +234,8 @@
 {"at":"2026-11-14T01:56:23Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"UX-2-2","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
 {"at":"2026-11-14T01:56:23Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"UI-2-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-14T01:56:23Z","feature":"F-04","round":2,"kind":"transition","head":"3c93fe030ff5","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-14T02:04:04Z","feature":"F-04","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"3c93fe030ff5","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-14T02:04:03Z"}
+{"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"reviewer-qa","severity":"medium","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"reviewer-qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"reviewer-qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"transition","head":"3c93fe030ff5","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

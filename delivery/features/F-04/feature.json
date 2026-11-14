@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-04",
   "outcome": "Decide one exact version: approve, return or reject, with stale and cannot-act views",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -106,11 +106,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA reviewer",
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -878,6 +880,75 @@
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "A session that has already expired when someone opens a decision link loses the task. When `/me` answers 401, the shell (F-01) renders `SignedOutState` with `usePathname()` only (`frontend/src/shell/AppShell.tsx:27,56`), so the sign-in link is `/accounts/login/?next=%2Fwork%2FW-1201%2Fdecide`, without `?task=T-1201`. After signing in, the person lands on \"This decision isn't open here\". This is the likely path from an alert link. Repro: cookie `psl_mock_scenario=401`, open `/work/W-1201/decide?task=T-1201`. F-04's own 401 handling is correct: a 401 on the item alone, on the claim and on the decide each gives `next=%2Fwork%2FW-1201%2Fdecide%3Ftask%3DT-1201`. Expected: the shell keeps the query string. The fix belongs to the shell lane (read-only for F-04).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T02:04:35Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a keyboard decision (focus on \"Approve v2\", Enter), the done view replaces the panel and focus falls to `<body>`. No focus move or live announcement tells a screen-reader user \"Invoice v2 is approved\". The done view has no `role=\"status\"` or `role=\"alert\"` and no heading focus (`frontend/src/features/decide/DecideStates.tsx` DoneView). Expected: move focus to the done heading, or announce it. The spec does not require this, so it is not blocking.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T02:04:35Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In mock data, no My work row leads to an actionable decision. Every My work row links to W-1001 to W-11xx, and the only one with a decide task, W-1001/T-2001, has no `decision`, so it lands on \"isn't open here\" as specified. As a result, the full My work \u2192 decision \u2192 result journey cannot be demonstrated end to end from My work. It was exercised from the work item page instead. A W-12xx row in `E-WORK-LIST.rows.json` (F-02's file) would close the demo gap.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T02:04:35Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1130,6 +1201,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T01:56:23Z",
+      "round": 2,
+      "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T02:04:35Z",
       "round": 2,
       "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
       "reason": null
