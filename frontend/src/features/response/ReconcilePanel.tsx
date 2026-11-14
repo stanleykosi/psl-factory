@@ -81,8 +81,8 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
 
   const ask = () => {
     setAsked(true);
-    options.current?.scrollIntoView({ block: 'center' });
-    options.current?.querySelector('input')?.focus({ preventScroll: true });
+    // Focus scrolls the first option into view.
+    options.current?.querySelector('input')?.focus();
   };
 
   const submit = async () => {
