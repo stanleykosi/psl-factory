@@ -10,6 +10,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/server.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody } from '../mock/exceptions.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -30,6 +32,10 @@ const BODY: Record<string, unknown> = {
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
 };
+// Operations a persona may not use answer the declared status instead of 200 (E-EXCEPTIONS is Leads only).
+const PERSONA_STATUS: Record<string, Record<string, number>> = { 'E-EXCEPTIONS': { pm: 403 } };
+// Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06).
+const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = { 'E-EXCEPTIONS': contractBody };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
@@ -61,17 +67,18 @@ function expectValid(id: string, status: number, body: unknown) {
   const declared = byId(id).op.responses[String(status)];
   const schema = declared ? declared.content['application/json'].schema : errorSchema;
   const validate = ajv.compile(schema);
-  const valid = validate(body);
+  const valid = validate(CONTRACT_BODY[id]?.(body) ?? body);
   expect(valid, `${id} ${status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
 }
 
 describe('mock server matches openapi.json', () => {
   for (const id of M1_OPERATIONS as string[]) {
     for (const persona of PERSONAS as string[]) {
-      it(`${id} succeeds for persona ${persona} with a schema-valid body`, async () => {
+      const expected = PERSONA_STATUS[id]?.[persona] ?? 200;
+      it(`${id} answers ${expected} for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
-        expect(status).toBe(200);
-        expectValid(id, 200, body);
+        expect(status).toBe(expected);
+        expectValid(id, expected, body);
       });
     }
 

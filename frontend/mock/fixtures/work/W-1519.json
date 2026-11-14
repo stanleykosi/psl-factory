@@ -1,0 +1,62 @@
+{
+  "id": "W-1519",
+  "title": "Lagoon Health · Receipt for INV-0390",
+  "line": "Record a receipt",
+  "reference": "RCP-0604",
+  "state": "action_needed",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Bank statement",
+      "status": "done"
+    },
+    {
+      "name": "Match receipt",
+      "status": "stopped"
+    },
+    {
+      "name": "Allocate",
+      "status": "not_started"
+    },
+    {
+      "name": "Confirm",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "Two bank receipts point to the same invoice. A Finance Officer decides which one matches.",
+  "sample": true
+}

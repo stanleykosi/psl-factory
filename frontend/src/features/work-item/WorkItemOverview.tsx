@@ -161,11 +161,25 @@ export function TaskPanels({ id, tasks }: { id: string; tasks: WorkItem['tasks']
   ));
 }
 
+const EXCEPTION_STATES = new Set<WorkItem['state']>([
+  'effect_uncertain',
+  'awaiting_reconciliation',
+  'owner_needed',
+  'setup_needed',
+  'followup_needed',
+]);
+
 export function NextStep({ item }: { item: WorkItem }) {
   return (
     <p className={`psl-callout psl-callout--${nextStepKind(item.state)} work-next`}>
       <span>
         <strong>Next step.</strong> {item.next_step}
+        {EXCEPTION_STATES.has(item.state) && (
+          <>
+            {' '}
+            <Link href="/exceptions">See all exceptions</Link>
+          </>
+        )}
       </span>
     </p>
   );
