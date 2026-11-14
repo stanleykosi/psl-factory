@@ -695,3 +695,6 @@
 {"at":"2026-11-14T08:26:17Z","feature":"F-11","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"medium","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T08:26:17Z","feature":"F-11","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T08:26:17Z","feature":"F-11","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T08:26:51Z","feature":"F-11","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/20","git.pr_number":20}}
+{"at":"2026-11-14T08:26:51Z","feature":"F-11","round":3,"kind":"transition","head":"604e1b0a0f8f","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T08:26:53Z","feature":"F-11","round":3,"kind":"fields","fields":{"git.ci_status":"passed"}}
