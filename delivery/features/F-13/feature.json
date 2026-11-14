@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-13",
   "outcome": "The frontend builds, type-checks and mocks against the v7 contract",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONTRACT-V7"
   ],
@@ -69,7 +69,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -85,7 +85,7 @@
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-13/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -111,13 +111,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-CONTRACT-V7",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "abd0b3e6a6ab9e856a829a8bfcd0556dc62a2f91",
+    "task_branch": "fe-contract-v7-the-frontend-builds-type-checks-and-mock",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-13",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -160,14 +160,22 @@
     }
   },
   "created_at": "2026-11-14T05:32:53Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-14T05:39:48Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T05:40:06Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -183,7 +191,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
