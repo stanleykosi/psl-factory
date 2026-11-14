@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-05",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Start work: pick a line, fill its intake in a drawer, land on the new work item",
+  "state": "READY",
   "task_ids": [
     "FE-M2A"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "The contract is v6. Verify: `cd frontend && grep -n \"packages/v6\" mock/server.mjs package.json tests/api-schema-drift.test.ts src/api/client.ts` shows all four files. `npx vitest run tests/api-schema-drift.test.ts tests/mock-contract.test.ts` passes. `git show --stat <repoint commit>` lists exactly the 5 repoint files.",
+    "The button shows only when `startable_lines` is not empty. Verify: `tests/shell.test.tsx` renders pm, finance_lead and ceo and finds the \"Start work\" button and the \"More ways to start\" chevron in the top bar, and \"Start work\" (+ Start) in the phone bar. For `none` neither is present, and the only button is \"Menu\". A test with `roles: [\"CEO\"]` and `startable_lines: []` shows no button.",
+    "pm's main button opens the invoice drawer directly. Verify: `start-work.test.tsx` shows that pressing \"Start work\" with the pm E-LINES fixture shows the dialog titled \"Invoice preparation and delivery\", with no chooser step and no \"change line\".",
+    "The CEO's main button opens the chooser. Verify: with the ceo fixture (no `default_line`), pressing \"Start work\" shows \"Choose a line\" and \"LINES YOU CAN START \u00b7 8\". At http://localhost:3501/my-work with cookie `psl_mock_persona=ceo` the same is seen.",
+    "The chooser groups, searches and offers only returned lines. Verify: a test shows group headings \"Client delivery\", \"Issues and changes\" and \"Reporting\", and subtitles under titles. Typing \"minutes\" leaves one line, and \"zzz\" shows `No line matches \"zzz\".`. A line key in `startable_lines` but missing from E-LINES is not offered. The finance_lead chooser shows exactly 1 line. \"Describe it to Tola\" has `href=\"/assistant\"`.",
+    "Chooser states. Verify: tests show:",
+    "Fields render by kind, in order. Verify: `start-work.test.tsx` renders a synthetic line with one field of each kind (text, long_text, date, date_range, period, datetime, integer, choice, record, records, display) and finds them in that order:",
+    "Record options come from E-LINE-OPTIONS, narrowed by parent. Verify:",
+    "Search and paging. Verify: with the ceo persona, the project picker lists 20 and then \"Show more\". Pressing it requests `cursor=o:20` and shows 26. Typing \"harm\" sends `q=harm` and shows only Harmattan.",
+    "The case comes from the chosen project or the fixed line. Verify: an invoice start sends `case_id: \"C-0101\", case_revision: 6` after choosing Lagoon. A leadership start sends `case_id: \"C-PMO-REPORTING\", case_revision: 4` with no project field. Choosing \"Ojo Foods \u00b7 ordering app\" (no `case_id`) disables start and shows \"This project can't be started on from here.\". No request is ever sent with a case taken from anywhere else.",
+    "A valid start goes to the work item. Verify:",
+    "A missing field shows the 422 inline. Verify: pressing \"Start the invoice\" with no milestone shows \"Completed milestone is required.\" under the milestone control, with `aria-invalid=\"true\"`, the callout \"1 things to fix before Chidi can start.\" and focus on the callout. With Harmattan and its milestone, the 422 also lists the billing contact message in the callout, because it matches no field. The next press sends a new `idempotency_key`.",
+    "Double press and uncertain result never start twice. Verify:",
+    "A 409 keeps what was typed and reloads the revision. Verify:",
+    "Wrong user, wrong record, no permission. Verify, in `start-work-mock.test.ts` and in a component test that shows the 403 in the drawer with the typed values kept:",
+    "Out-of-scope kinds are not invented. Verify: a component test with an optional `money` field and an optional `evidence` field renders neither and sends neither. A line with a required `evidence` field, or with `start_via: \"finance_import\"`, shows \"You can't start this line from here yet.\" with a Tola link and no start button.",
+    "All 8 drawers match their boards, minus proof. Verify: with the pm persona, each line opens with the labels in the fixture table and the primary label from `labels.ts`, at 1440px and 390px, compared with SCR-04-desktop-<state> and SCR-04-mobile-<state>. Minutes and change show no Proof field.",
+    "Accessibility at 390px and 1440px. Verify: `cd frontend && E2E_PORT=3501 MOCK_PORT=3502 npx playwright test e2e/start-work.spec.ts` passes. It runs axe with 0 violations (WCAG 2.2 AA tags) on the chooser, the invoice drawer, the invoice validation state and the ceo chooser, at both widths. It also checks: Esc closes and focus returns to the opening button; Tab stays inside the dialog; at 390px the sheet is full width and \"+ Start\" is in the phone bar.",
+    "Mock fixtures match v6. Verify: `start-work-mock.test.ts` validates every E-LINES (per persona), E-LINE-OPTIONS (every line, field and persona, both pages) and E-WORK-START 201, 403, 404, 409 and 422 response against the v6 schemas with Ajv. It also validates every W-1401\u2026W-1408 against E-WORK-ITEM, and checks each persona's `startable_lines` equals its E-LINES keys.",
+    "Nothing protected or unowned changes. Verify: `git diff --name-only <base>...HEAD` shows no path under `delivery/` (other than this feature's round files), `architecture/`, `apps/`, `frontend/src/styles/`, `frontend/src/features/work-item/`, the existing `fixtures/work/W-1[0-2]*`, or the E-PROJECT*, exceptions or overview files. `package.json` dependencies are unchanged."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it high: - E-WORK-START is the write that creates a work item and starts agents (JR-01). It is CSRF-bound and carries an idempotency key and a case revision (INV-REVISION, handoff.md:3915-3947). A duplicate start, or a start on the wrong case, is hard to undo. - The case now comes from a chosen option or a fixed line (D-START-INTAKE r1), so wrong case resolution is a real failure mode. - The feature also edits the shared shell (`src/shell/TopNav.tsx`, `PhoneBar.tsx`) and repoints the shared contract types for every lane. Surfaces: - `ui`: SCR-04 and CMP-23 on both bars. - `api`: E-LINES, E-LINE-OPTIONS and E-WORK-START. - `security`: CSRF, never offering a line or option the API did not return, and nothing derived from roles. - `contract-change`: the consumer side of the D-START-INTAKE proposal and the v4 to v6 repoint. Excluded surfaces: - `payments`: money fields and payroll are out. - `auth`: the feature uses the existing session. - `dependency`: no packages are added. Product acceptance is required: - this is a new flow for the client; - minutes and change are built without their approved proof field; - the \"can't start here yet\" copy (PMO-0-6) has no board."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-05/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +93,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-05/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +193,29 @@
   "created_at": "2026-11-14T02:46:08Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T03:11:15Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-05/readiness.md",
+      "delivery/features/F-05/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
