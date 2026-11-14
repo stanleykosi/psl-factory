@@ -127,11 +127,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance (delivery acceptance only; product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+      "evidence_refs": [
+        "delivery/features/F-05/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -1332,14 +1334,42 @@
         "delivery/features/F-05/round-2/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-security",
           "at": "2026-11-14T06:05:31Z",
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T16:13:10Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-14T16:13:10Z",
+          "refs": [
+            "0758d3e"
+          ],
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0758d3e"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "0758d3e"
       ]
     },
     {
@@ -1442,6 +1472,98 @@
       "verified_by": "reviewer-security",
       "verification_refs": [
         "0758d3e"
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The recorded gate (round-3/checks.md, feature.json `checks`) is at 230edd6, not at head 0758d3e (merge of the base plus the safePath fix). The builder reports `checks.sh` exit 0 with 907 tests at the head (round-3/build.md, Extra round > Validation), and QA served a fresh build of the head. But the tool did not record a gate on the head, and so did not record the protected-path check for the merged diff. Expected: a recorded gate PASS on 0758d3e with no protected paths changed. Actual: not recorded. Run the gate on the head before merge. I did not re-run it (read-only role).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:12:56Z",
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec text is stale in two places that QA found. Criterion 3 says pm's direct open shows no \"change line\"; the build shows it on purpose (round 2, UI-1-5, to match the boards). Criterion 12 says \"1 things to fix\"; the build says \"1 thing to fix\" (UX-1-2, verified). Both are accepted behaviour, not defects. Update spec.md or tell product acceptance so the checklist is not read literally.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:12:56Z",
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is empty although the readiness lists E-LINES, E-LINE-OPTIONS, E-WORK-START and E-ME. Coverage is evidenced instead by QA's API journeys (all three plus `startable_lines`), `start-work-mock.test.ts` (v6/v7 schema checks for every response) and the component tests. Record the IDs on the feature so the dashboard does not show them as uncovered.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:12:56Z",
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "0758d3e3f8568c084ed88b1c37a05f0641d62510",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Desktop visual scores fell 7 points in the extra round (SCR-04 desktop 92.7 to 85.0, lines 92.9 to 85.1, change 94.6 to 87.0). The builder and D-49 say the cause is the page behind the drawer: the SCR-04 boards draw the old My work, which F-02 replaced. The UI review accepted this at this head, with coverage with exceptions at 100. This is provisional per D-49. The design engineer should either redraw the SCR-04 backdrops or confirm the exception, so a later fidelity gate does not read 85 as a regression.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T16:12:56Z",
+          "head": "0758d3e3f8568c084ed88b1c37a05f0641d62510"
+        }
       ]
     }
   ],

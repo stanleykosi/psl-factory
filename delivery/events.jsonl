@@ -901,3 +901,10 @@
 {"at":"2026-11-14T16:08:28Z","feature":"F-05","round":3,"kind":"transition","head":"0758d3e3f856","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
 {"at":"2026-11-14T16:09:01Z","feature":"F-07","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"4e8a8c7d7595","findings":{"UX-3-1":"low"},"written_at":"2026-11-14T16:06:46Z"}
 {"at":"2026-11-14T16:09:01Z","feature":"F-07","round":3,"kind":"transition","head":"4e8a8c7d7595","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-14T16:12:56Z","feature":"F-05","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"0758d3e3f856","findings":{"PMO-3-1":"medium","PMO-3-2":"low","PMO-3-3":"low","PMO-3-4":"medium"},"written_at":"2026-11-14T16:09:35Z"}
+{"at":"2026-11-14T16:12:56Z","feature":"F-05","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"medium","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T16:12:56Z","feature":"F-05","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T16:12:56Z","feature":"F-05","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T16:12:56Z","feature":"F-05","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T16:13:10Z","feature":"F-05","round":3,"kind":"finding","action":"fix","finding":"SEC-2-1","by":"builder"}
+{"at":"2026-11-14T16:13:10Z","feature":"F-05","round":3,"kind":"finding","action":"verify","finding":"SEC-2-1","by":"reviewer-security"}
