@@ -1,0 +1,75 @@
+/* CMP-23 Start work layout. Token variables only; bundle classes are composed, never restyled. From 720px the
+   drawer is a right-hand panel over the scrim; below, a full-width bottom sheet with its footer kept in view. */
+
+/* button in the bars. From 720px up to bp-desktop (1080px) the main part reads "+ Start" so the bar still fits
+   at 720px, as the who-line drops the role there; " work" stays in the accessible name. On the phone, "+ Start"
+   follows the menu in the DOM and is drawn at the bar's right end; the bar keeps room for it. */
+.sw-split { margin-right: var(--space-3); }
+.sw-split .psl-btn--start { color: var(--on-strong); }
+.sw-phonestart { min-height: var(--control-md); }
+.sw-phonebar { padding-right: 112px; }
+.sw-phoneslot { position: absolute; top: 0; right: var(--space-4); height: 56px; display: flex; align-items: center; }
+@media (min-width: 720px) and (max-width: 1079.98px) {
+  .sw-split { margin-right: 0; }
+  .sw-split > .psl-btn:first-child { padding: 0 10px; }
+  .sw-word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+/* layer, scrim and panel */
+.sw-layer { position: fixed; inset: 0; z-index: 40; display: flex; justify-content: flex-end; }
+.sw-layer--sheet { align-items: flex-end; }
+.sw-scrim { position: absolute; inset: 0; }
+.sw-panel { position: relative; outline: none; }
+.sw-layer--drawer .sw-panel { height: 100%; }
+.sw-layer--sheet .sw-panel { width: 100%; max-height: 92vh; }
+.sw-layer--sheet .sw-body { overflow: auto; flex: 1 1 auto; }
+.sw-foot { flex: none; align-items: center; }
+.sw-layer--sheet .sw-foot { align-items: stretch; }
+.sw-primary { margin-left: auto; }
+.sw-layer--sheet .sw-primary { margin-left: 0; order: -1; }
+.sw-foothint { flex: 1; }
+
+/* head */
+.sw-head { align-items: flex-start; }
+.sw-headtext { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sw-headtext .psl-drawer__title { overflow-wrap: anywhere; }
+.sw-change { min-height: 0; padding: 0; vertical-align: baseline; }
+.sw-close { flex: none; margin: -8px -8px 0 0; }
+
+/* chooser */
+.sw-plain { margin: 0; }
+.sw-loading { display: flex; flex-direction: column; gap: 10px; }
+.sw-retry { align-self: flex-start; }
+.sw-lines { display: flex; flex-direction: column; gap: var(--space-2); }
+.sw-group { display: flex; flex-direction: column; }
+.sw-group .psl-optgroup { padding-left: 0; }
+.sw-line { padding: 8px 0; }
+.sw-line strong { font-weight: 600; }
+.sw-tola { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-md); }
+
+/* fields */
+.sw-field { margin: 0; padding: 0; border: none; }
+.sw-field legend { padding: 0; margin-bottom: 6px; }
+.sw-range { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.sw-display { overflow-wrap: anywhere; }
+.sw-seg { align-self: flex-start; }
+.sw-picker { position: relative; }
+.sw-picker > .psl-select { width: 100%; display: flex; align-items: center; gap: var(--space-2); font: inherit; color: inherit; }
+.sw-picker .psl-chev { flex: none; }
+.sw-picker__value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
+.sw-picker__pop { margin-top: var(--space-1); display: flex; flex-direction: column; }
+.sw-picker__pop > .psl-search { margin: var(--space-2); }
+.sw-picker__pop > .psl-loading, .sw-picker__empty, .sw-picker__error { margin: 0; padding: var(--space-2) 12px; }
+.sw-list { margin: var(--space-1) 0 0; padding-left: 18px; }
+
+/* what happens next */
+.sw-next { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; background: var(--surface-subtle); }
+.sw-agent { display: inline-flex; align-items: center; gap: var(--space-2); }
+.sw-journey { align-self: flex-start; }
+
+/* phone: 44px targets */
+@media (max-width: 719.98px) {
+  .sw-layer--sheet .psl-btn, .sw-line, .sw-layer--sheet .psl-option, .sw-layer--sheet .psl-seg__opt { min-height: var(--control-md); }
+  .sw-change { min-height: var(--control-md); }
+  .sw-range { grid-template-columns: 1fr; }
+}
