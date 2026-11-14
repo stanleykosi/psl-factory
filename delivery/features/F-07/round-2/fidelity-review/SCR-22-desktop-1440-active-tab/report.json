@@ -1,0 +1,1056 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T05:31:19.341Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-22-desktop.dc.html",
+  "boardName": "SCR-22-desktop.dc.html",
+  "pageUrl": "http://localhost:3711/projects",
+  "viewport": {
+    "width": 1440,
+    "height": 760
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-07/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "4 board item(s) are missing from the page and are not approved exceptions (coverage 91.5% with exceptions, needs 100%).",
+    "Visual match 89.1 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 87.2,
+    "coverageWithExceptions": 91.5,
+    "visual": 89.1
+  },
+  "visual": {
+    "score": 89.1,
+    "allCellsScore": 95.1,
+    "width": 1440,
+    "height": 760,
+    "boardHeight": 760,
+    "pageHeight": 760,
+    "cell": 12,
+    "contentCells": 3435,
+    "mismatchedCells": 374
+  },
+  "coverage": {
+    "total": 47,
+    "found": 41,
+    "coverage": 87.2,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 80,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1254,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 586
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 615
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS",
+        "pageName": "PROJECTS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 40px on the board, 36px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 207,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 123,
+          "w": 1264,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "",
+        "pageName": "Projects",
+        "pageRole": "tablist",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 182,
+          "w": 341,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 182,
+          "w": 353,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Active4",
+        "pageName": "Active 4",
+        "pageRole": "tab",
+        "similarity": 88,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 184,
+          "w": 97,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 184,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Closed1",
+        "pageName": "Closed 1",
+        "pageRole": "tab",
+        "similarity": 88,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 187,
+          "y": 184,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 193,
+          "y": 184,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "All I can see5",
+        "pageName": "All I can see 5",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 290,
+          "y": 184,
+          "w": 137,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 300,
+          "y": 184,
+          "w": 141,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 250,
+          "w": 1264,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 250,
+          "w": 460,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 460,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 558,
+          "y": 250,
+          "w": 88,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 558,
+          "y": 250,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "5 PROJECTS",
+        "pageName": "4 PROJECTS",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1280,
+          "y": 265,
+          "w": 72,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1280,
+          "y": 263,
+          "w": 72,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 316,
+          "w": 1260,
+          "h": 231
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 316,
+          "w": 1260,
+          "h": 195
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "PROJECT",
+        "pageName": "PROJECT",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 316,
+          "w": 345,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 316,
+          "w": 350,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "PM",
+        "pageName": "PM",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 435,
+          "y": 316,
+          "w": 153,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 440,
+          "y": 316,
+          "w": 138,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHERE IT IS",
+        "pageName": "WHERE IT IS",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 588,
+          "y": 316,
+          "w": 251,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 316,
+          "w": 255,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "columnheader",
+        "name": "NEXT MILESTONE",
+        "pageName": "NEXT MILESTONE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 839,
+          "y": 316,
+          "w": 242,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 832,
+          "y": 316,
+          "w": 245,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "NEEDS A PERSON",
+        "pageName": "NEEDS A PERSON",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1081,
+          "y": 316,
+          "w": 167,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1078,
+          "y": 316,
+          "w": 169,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STOPPED",
+        "pageName": "STOPPED",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1248,
+          "y": 316,
+          "w": 102,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1247,
+          "y": 316,
+          "w": 103,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Lagoon Health · patient app",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 362,
+          "w": 179,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 364,
+          "w": 179,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello",
+        "pageName": "Tunde Bello",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 435,
+          "y": 351,
+          "w": 153,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 440,
+          "y": 353,
+          "w": 138,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Release · UAT with client",
+        "pageName": "Release · UAT with client",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 588,
+          "y": 351,
+          "w": 251,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 353,
+          "w": 255,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "UAT sign-off · due 14 Nov",
+        "pageName": "UAT sign-off · due 14 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 839,
+          "y": 351,
+          "w": 242,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 832,
+          "y": 353,
+          "w": 245,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Harmattan Bank · mobile onboarding",
+        "pageName": "Harmattan Bank · mobile onboarding",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 401,
+          "w": 240,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 403,
+          "w": 240,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kunle Ade",
+        "pageName": "Kunle Ade",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 435,
+          "y": 391,
+          "w": 153,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 440,
+          "y": 393,
+          "w": 138,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Go-live · report sent",
+        "pageName": "Go-live · report sent",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 588,
+          "y": 391,
+          "w": 251,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 393,
+          "w": 255,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Go-live acceptance",
+        "pageName": "Go-live acceptance",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 839,
+          "y": 391,
+          "w": 242,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 832,
+          "y": 393,
+          "w": 245,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Kora Logistics · fleet tracker",
+        "pageName": "Kora Logistics · fleet tracker",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 440,
+          "w": 181,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 442,
+          "w": 181,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello",
+        "pageName": "Tunde Bello",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 435,
+          "y": 430,
+          "w": 153,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 440,
+          "y": 432,
+          "w": 138,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale · costing approval",
+        "pageName": "Pre-sale · costing approval",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 588,
+          "y": 430,
+          "w": 251,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 432,
+          "w": 255,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SOW signed",
+        "pageName": "SOW signed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 839,
+          "y": 430,
+          "w": 242,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 832,
+          "y": 432,
+          "w": 245,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ojo Foods · ordering app",
+        "pageName": "Ojo Foods · ordering app",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 479,
+          "w": 158,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 481,
+          "w": 158,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sola Martins",
+        "pageName": "Sola Martins",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 435,
+          "y": 469,
+          "w": 153,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 440,
+          "y": 471,
+          "w": 138,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning · held",
+        "pageName": "Planning · held",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 588,
+          "y": 469,
+          "w": 251,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 471,
+          "w": 255,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning exit",
+        "pageName": "Planning exit",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 839,
+          "y": 469,
+          "w": 242,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 832,
+          "y": 471,
+          "w": 245,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You see projects your roles cover. Open one for its journey, documents, money and registers.",
+        "pageName": "You see projects your roles cover. Open one for its journey, documents, money and registers.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 569,
+          "w": 1264,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 596,
+          "w": 1264,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Frame item, built by F-05 (CMP-23 Start work)",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-08)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Frame item, built by F-05 (CMP-23 split button)",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-08)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Sabi Market · web store",
+        "key": "link: Sabi Market · web store",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 518,
+          "w": 153,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo",
+        "key": "text: Kemi Adebayo",
+        "container": "table",
+        "boardBox": {
+          "x": 435,
+          "y": 508,
+          "w": 153,
+          "h": 39
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Closed 09 Nov",
+        "key": "text: Closed 09 Nov",
+        "container": "table",
+        "boardBox": {
+          "x": 588,
+          "y": 508,
+          "w": 251,
+          "h": 39
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "table",
+        "boardBox": {
+          "x": 839,
+          "y": 508,
+          "w": 242,
+          "h": 39
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 90,
+          "y": 316,
+          "w": 1260,
+          "h": 231
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 316,
+          "w": 1260,
+          "h": 195
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Go-live acceptance\"; on the page it comes after Text \"UAT sign-off · due 14 Nov\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Active4",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 314,
+          "w": 1264,
+          "h": 302
+        }
+      }
+    ],
+    "unexcepted": 4
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

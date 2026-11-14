@@ -1,0 +1,227 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-09",
+  "outcome": "Record a client response or SOW signature with proof, and confirm what happened to an uncertain send",
+  "state": "READY",
+  "task_ids": [
+    "FE-M2B-RESPONSE"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Entry button.** /work/W-1601 shows the link \"Record the client's response\" to `/work/W-1601/respond?task=T-1601`, and no \"Open the decision\" in that panel. W-1608 shows neither link. W-1201 still shows \"Open the decision\". \u2014 verify: component test on `WorkItemOverview` with the three fixtures.",
+    "**Default form shows only returned options (A-RESPONSE).** /work/W-1601/respond?task=T-1601 (persona pm) shows, in board order:",
+    "**Validation (SCR-16-desktop-validation).** With everything filled but no proof and no tick, Record is disabled and `role=\"alert\"` reads \"Add the proof and confirm it's genuine to record this.\" Clicking Record sends no request. With proof but no tick, the alert is the same. With proof and the tick, Record is enabled and the alert is gone. \u2014 verify: component test counting fetch calls.",
+    "**Proof uploads first, and its case revision is carried.** Choosing a file sends one `POST /api/v1/cases/C-1601/evidence` with `{\"kind\":\"client_response_proof\",\"filename\":\u2026,\"content_base64\":\u2026,\"case_revision\":4}` and `X-CSRFToken: mock-csrf-pm`. A second file is sent with the first upload's returned `case_revision` (5). Recording then sends `evidence_id` = the first id, `evidence_ids` = [the second id] and `case_revision` 6. \u2014 verify: component test inspecting the stubbed fetch bodies, in order.",
+    "**Record body.** After filling W-1601 with Approved, 11 Nov 2026 16:20, one file and the tick, Record sends exactly one `POST /api/v1/tasks/T-1601/response` with the CSRF header and this body: `{\"expected_revision\":2,\"who\":\"P-AO\",\"action\":\"approved\",\"responded_at\":\"2026-11-11T16:20:00+01:00\",\"evidence_id\":\"EV-\u2026\",\"attested\":true,\"case_revision\":5,\"version_id\":\"V-240\",\"received_via\":\"email\"}`. There is no `note`, `team`, `what` or `estimate_person_days` key. Typing a note \"Signed on paper\" adds `\"note\":\"Signed on paper\"`. \u2014 verify: component test.",
+    "**Claim first when required.** On W-1605, Record sends `POST /api/v1/tasks/T-1605/claim` `{\"expected_revision\":3}` and only after its 200 sends E-RESPONSE, with `expected_revision` = the claim's `revision`. On W-1601 no claim request is sent. A claim answering 409 sends no E-RESPONSE. \u2014 verify: component test asserting the call order.",
+    "**One record on a double press.** A double click on an enabled Record, with a deferred fetch, sends one E-RESPONSE. While it is pending the button reads \"Recording\u2026\", is disabled, and the form has `aria-busy=\"true\"`. \u2014 verify: component test.",
+    "**Success (SCR-16-desktop-success).** After a 200 on W-1601 the page shows:",
+    "**Absent fields are left out, with no fallback copy (W-1606).**",
+    "**SOW signature (SCR-16-desktop/-mobile-sow-signed).** /work/W-1602/respond?task=T-1602 shows:",
+    "**Errors on record (wrong user, invalid input, provider failure).**",
+    "**Uncertain effect is re-read, never resent.** E-RESPONSE network error, with a reload returning `W-1601.recorded.json` \u2192 the warning plus the success view, and exactly one POST in total. With a reload still showing the open task \u2192 the warning, and Record is enabled again with no automatic POST. With the reload also failing \u2192 \"\u2026couldn't reload to check. Record stays off\u2026\", and Try again sends only a GET. In e2e, `X-Mock-Scenario: record-then-fail` set on the E-RESPONSE request shows the success view after the reload. \u2014 verify: component tests; e2e.",
+    "**Reconcile panel (A-RECONCILE, frontend half).** /work/W-1603 (persona finance_lead) at 1440 shows, as the right-hand aside:",
+    "**Reconcile only with the grant.** W-1604 (no `allowed_actions`) and W-1601 render no \"Confirm what happened\" and send no POST. `grep -rn \"roles\\|destinations\" frontend/src/features/response` finds no branch that controls what is offered. \u2014 verify: component test and grep.",
+    "**Reconcile write.**",
+    "**Mock against v7.** `frontend/tests/response-mock.test.ts` runs a fresh `startMockServer({port:0})` and checks:",
+    "**The base's v4 checks are unchanged.** `M1_OPERATIONS` and `OPENAPI_PATH` are unchanged. No `fixtures/work/W-16*` file has v7 fields. `tests/mock-contract.test.ts`, `api-schema-drift.test.ts` and `mock-decide.test.ts` pass with no edits. `git diff <base> -- architecture frontend/src/api frontend/src/shell` is empty. `grep -rn \" as unknown as\\| as Response\" frontend/src/features/response` matches only `api.ts`. \u2014 verify: `cd frontend && npx vitest run tests/mock-contract.test.ts tests/api-schema-drift.test.ts tests/mock-decide.test.ts`, the diff and the grep.",
+    "**Accessibility and layout (A-ACCESSIBILITY).** axe reports no WCAG 2.2 AA violations at 390x844 and 1440x900 for these states, with `/__mock/reset` in `beforeEach`:",
+    "**Design fidelity.** The coordinator's fidelity driver passes at 1440 (desktop boards) and 390 (mobile boards): 100% element coverage after approved exceptions and visual score at least 90. The pages are:",
+    "**Gate:** `delivery/checks.sh` passes, including new component tests in `frontend/tests/response.test.tsx`. \u2014 verify: the gate run."
+  ],
+  "risk": {
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "The rating is high: - E-RESPONSE stores a record that a staff member swears to: an outside party's UAT approval or SOW signature, backed by proof. It \"can't be edited later\" (SCR-16-desktop.dc.html:40; INV-AUDIT). - E-RESPONSE has no idempotency key in v7 (openapi.json:4623-4984), so a double or retried submit is the main failure to guard against. - A reconcile answer of `not_delivered` authorises a resend of an invoice to a client (D-WORK-ACTIONS-VIEW, INV-RESEND). The surfaces: - `security`: the attestation, CSRF on four writes, and offering only what the API grants (`allowed_actions`, `responders`, `actions`, `channels`). - `external-messaging`: the resend authority. - `contract-change`: the work runs on two r2 proposals with local typing before the v7 repoint. - `api` and `ui`. `payments` is excluded, because no money moves and no amount is recorded. `product-decision` is dropped now that v7 carries the copy as backend fields. Product acceptance is required: this is a new flow and new copy for the client."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-09/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "not_run",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-09/readiness.md",
+      "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-M2B-RESPONSE",
+    "base_branch": null,
+    "base_sha": null,
+    "task_branch": null,
+    "head_sha": null,
+    "worktree": null,
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": null
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-14T04:55:45Z",
+  "round": 0,
+  "round_limit": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T05:58:36Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-09/readiness.md",
+      "delivery/features/F-09/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 0,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}
