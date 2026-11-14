@@ -45,14 +45,14 @@ None.
 - UI scrim note | verified | Closing by clicking the scrim works on desktop and on phone. The token colour is covered by the passing `alerts-bell.spec.ts` assertion `rgba(31, 36, 39, 0.45)`.
 
 ## Notes
-- Journeys and their numbers are in `round-2/qa-evidence/qa-journeys.log`. Highlights:
+- Journeys and their numbers are in `round-2/qa-evidence/qa-journeys.txt`. Highlights:
   - Mark-read requests: `[{"path":"/api/v1/notifications/n1/read","csrf":"mock-csrf-finance_lead"}]`.
   - A double-click on Open sends 1 POST.
   - 401: the Sign in link is `/accounts/login/?next=%2Fprojects`.
   - 500: the card reads "ERROR · COULDN'T LOAD We couldn't load your alerts. Your work is safe; nothing was changed. Reference server_error for support. Try again". Try again sends 1 read and shows 6 rows with badge 4.
   - The none persona gets 0 bells and 0 reads.
   - pm gets "Alerts, 1 unread", a single "For your information" group with 2 rows, and 0 tabs on phone.
-- Screenshots: `qa-evidence/desktop-1440-drawer.png`, `phone-320-sheet.png` and `phone-390-sheet.png`. The full-suite failure summary and its cause are in `qa-evidence/full-e2e-summary.log`.
+- Screenshots: `qa-evidence/desktop-1440-drawer.png`, `phone-320-sheet.png` and `phone-390-sheet.png`. The full-suite failure summary and its cause are in `qa-evidence/full-e2e-summary.txt`.
 - TECH-2-1 (non-blocking, already open) reproduces on the build:
   - Steps: on /notifications, choose "See all alerts", which leads to the same path. Then click the "Projects" link in the top bar.
   - Result: focus lands on the bell, not where the navigation would leave it.

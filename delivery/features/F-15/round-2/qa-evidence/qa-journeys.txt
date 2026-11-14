@@ -1,0 +1,98 @@
+# QA journeys, head abf4b7a, build :4811, mock :4812 (run 1 all tests; A, B/C, L re-run after fixing two QA helper false positives)
+QA| A 1440 /my-work: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /exceptions: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /projects: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /work/W-1004: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /setup: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /overview: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /assistant: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /notifications: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /settings/alerts: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 1440 /finance/month-end: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /my-work: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /exceptions: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /projects: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /work/W-1004: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| D desktop close by Escape: closed, focus on bell
+QA| D desktop close by scrim: closed, focus on bell
+QA| D desktop close by Close: closed, focus on bell
+QA| D Tab x14 and Shift+Tab x4 stay inside the dialog
+QA| D main is inert while open
+QA| E desktop Open n1: posts=[{"path":"/api/v1/notifications/n1/read","csrf":"mock-csrf-finance_lead"}] url=/work/w-inv-lh-002 focus=bell badge=3
+QA| E back: badge 3, chip "2 need you"
+QA| E Open on read n5: no POST, navigated
+QA| E footer See all alerts: navigated, closed, focus on bell
+QA| E footer Alert settings: navigated, closed, focus on bell
+QA| E2 dblclick posts=1
+QA| E2 POST 500: navigated to w-plan-kl-01, posts=2
+QA| E2 POST network drop: navigated to w-pay-oct, posts=3
+QA| G load=1, +70s=1, open=2, +6min idle=2
+QA| G visibilitychange after 6 min: lists=3 (spec allows one)
+QA| G second visibilitychange right after: lists=3
+QA| G open-close-open quickly: +2 reads
+QA| G after Open (mark-read): extra reads=0
+QA| H 401 list: signed-out text, Sign in href=/accounts/login/?next=%2Fprojects, lists after 2 opens=1, badge none
+QA| H 401 on POST: navigated; reads before Open=1, after re-open +0
+QA| H 403: "Your account can’t use PSL Factory. Your role has no alerts."
+QA| I empty: name="Alerts", no badge/chip, "No alerts yet." + footer
+QA| I 500: card="ERROR · COULDN’T LOAD We couldn’t load your alerts. Your work is safe; nothing was changed. Reference server_error for support. Try again"; Try again reads=1; list 6 rows, badge 4
+QA| J persona none: bells=0, reads=0, body="No sections are open to your role yet. Ask a Lead or Admin to check your roles."
+QA| K pm desktop: name="Alerts, 1 unread", groups=["FOR YOUR INFORMATION\n,\n2"], rows=2
+QA| K pm phone: tabs=0
+QA| L 320 phone bar: Menu:8-52x44 4:182-226x44 Start:230-312x44
+QA| L 320: sheet top=538 h=808, tabs click+arrows ok, hscroll-ok=true, axe=[]
+QA| L 320: Escape, scrim and Close return focus to phone bell
+QA| L 320: after Open and Alert settings focus on new phone bell; posts=1
+QA| L 360 phone bar: Menu:8-52x44 4:222-266x44 Start:270-352x44
+QA| L 360: sheet top=633 h=808, tabs click+arrows ok, hscroll-ok=true, axe=[]
+QA| L 360: Escape, scrim and Close return focus to phone bell
+QA| L 360: after Open and Alert settings focus on new phone bell; posts=1
+QA| L 390 phone bar: Menu:16-60x44 4:240-284x44 Start:292-374x44
+QA| L 390: sheet top=450 h=808, tabs click+arrows ok, hscroll-ok=true, axe=[]
+QA| L 390: Escape, scrim and Close return focus to phone bell
+QA| L 390: after Open and Alert settings focus on new phone bell; posts=1
+QA| M axe 1440 open: []
+QA| O finance_lead rows=6; pm rows=2 first="Open: The project plan for Kestrel Logistics needs your sign-off"
+QA| P after same-path See all alerts focus=Alerts, 4 unread, 3 need you; after clicking Projects link focus=Alerts, 4 unread, 3 need you
+QA| Q /work/W-1004: Back to Queue[16-73 h44] | Alerts, 4 unread, 3 ne[240-284 h44] | Start work[292-374 h44]
+QA| Q /setup/rules: Back to Setup[16-69 h44] | Alerts, 4 unread, 3 ne[240-284 h44] | Start work[292-374 h44]
+QA| Q /projects/P-0001: Back to Projects[16-83 h44] | Alerts, 4 unread, 3 ne[240-284 h44] | Start work[292-374 h44]
+QA| C 720 /my-work: links 188,467 bell 473,505 chip hidden name 513,578 start 582,652 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 720 /exceptions: links 188,466 bell 473,505 chip hidden name 513,578 start 582,652 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 720 /projects: links 188,467 bell 473,505 chip hidden name 513,578 start 582,652 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 720 /work/W-1004: links 188,466 bell 473,505 chip hidden name 513,578 start 582,652 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 720 /setup: links 188,466 bell 473,505 chip hidden name 513,578 start 582,652 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 760 /my-work: links 192,491 bell 505,541 chip hidden name 549,614 start 622,692 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 760 /exceptions: links 192,490 bell 505,541 chip hidden name 549,614 start 622,692 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 760 /projects: links 192,491 bell 505,541 chip hidden name 549,614 start 622,692 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 760 /work/W-1004: links 192,490 bell 505,541 chip hidden name 549,614 start 622,692 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 760 /setup: links 192,490 bell 505,541 chip hidden name 549,614 start 622,692 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 900 /my-work: links 192,491 bell 645,681 chip hidden name 689,754 start 762,832 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 900 /exceptions: links 192,490 bell 645,681 chip hidden name 689,754 start 762,832 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 900 /projects: links 192,491 bell 645,681 chip hidden name 689,754 start 762,832 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 900 /work/W-1004: links 192,490 bell 645,681 chip hidden name 689,754 start 762,832 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 900 /setup: links 192,490 bell 645,681 chip hidden name 689,754 start 762,832 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1079 /my-work: links 192,491 bell 824,860 chip hidden name 868,933 start 941,1011 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1079 /exceptions: links 192,490 bell 824,860 chip hidden name 868,933 start 941,1011 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1079 /projects: links 192,491 bell 824,860 chip hidden name 868,933 start 941,1011 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1079 /work/W-1004: links 192,490 bell 824,860 chip hidden name 868,933 start 941,1011 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1079 /setup: links 192,490 bell 824,860 chip hidden name 868,933 start 941,1011 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1080 /my-work: links 208,567 bell 605,641 chip 641,717 name 729,882 start 894,1012 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1080 /exceptions: links 208,566 bell 605,641 chip 641,717 name 729,882 start 894,1012 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1080 /projects: links 208,567 bell 605,641 chip 641,717 name 729,882 start 894,1012 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1080 /work/W-1004: links 208,566 bell 605,641 chip 641,717 name 729,882 start 894,1012 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1080 /setup: links 208,566 bell 605,641 chip 641,717 name 729,882 start 894,1012 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1440 /my-work: links 268,667 bell 905,941 chip 941,1017 name 1029,1182 start 1194,1312 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1440 /exceptions: links 268,666 bell 905,941 chip 941,1017 name 1029,1182 start 1194,1312 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1440 /projects: links 268,667 bell 905,941 chip 941,1017 name 1029,1182 start 1194,1312 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1440 /work/W-1004: links 268,666 bell 905,941 chip 941,1017 name 1029,1182 start 1194,1312 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| C 1440 /setup: links 268,666 bell 905,941 chip 941,1017 name 1029,1182 start 1194,1312 last2=["Start work","More ways to start"] cut=false overlap=false wrapped=false lastOk=true hs=true ok=true
+QA| L 320: sheet top=36 h=808, tabs click+arrows ok, hscroll-ok=true, axe=[]
+QA| L 360: sheet top=36 h=808, tabs click+arrows ok, hscroll-ok=true, axe=[]
+QA| L 390: sheet top=36 h=808, tabs click+arrows ok, hscroll-ok=true, axe=[]
+QA| A 390 /setup: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /overview: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /assistant: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /notifications: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /settings/alerts: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
+QA| A 390 /finance/month-end: bell visible, badge 4, name="Alerts, 4 unread, 3 need you" hscroll-ok=true
