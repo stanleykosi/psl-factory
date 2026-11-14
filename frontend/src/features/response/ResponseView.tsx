@@ -132,19 +132,20 @@ function recordedSentence(recorded: Recorded, response: TaskResponse | undefined
   return `${tail.charAt(0).toUpperCase()}${tail.slice(1)}${proof}.`;
 }
 
-function SuccessView({ id, before, task, recorded, next, responderId, phone }: {
+function SuccessView({ id, before, task, recorded, next, responderId, station, phone }: {
   id: string;
   before: ResponseWorkItem;
   task: ResponseTask | undefined;
   recorded: Recorded | undefined;
   next: string[] | undefined;
   responderId: string | undefined;
+  station: string | undefined;
   phone: boolean;
 }) {
   const response = task?.response;
   const organisation = response?.responders.find((r) => r.id === responderId)?.organisation;
   const current = currentStationIndex(before.stations);
-  const heading = current >= 0 ? before.stations[current].name : (task?.title ?? before.title);
+  const heading = station ?? (current >= 0 ? before.stations[current].name : (task?.title ?? before.title));
   return (
     <>
       {!phone && <p className="resp-eyebrow">{[before.reference, organisation].filter(Boolean).join(' · ').toUpperCase()}</p>}
@@ -227,6 +228,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
           recorded={view.recorded}
           next={view.next}
           responderId={view.responderId}
+          station={view.station}
           phone={phone}
         />
       </div>

@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { WorkItem } from '@/api/types';
@@ -447,6 +447,20 @@ describe('success (SCR-16-desktop-success)', () => {
     answers.item = () => json(200, item('W-1601.recorded'));
     await open();
     expect(screen.getByRole('status').textContent).toMatch(/^Response recorded\. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at \d\d:\d\d with 1 proof file\.$/);
+    // The same eyebrow and heading as the view right after Record.
+    expect(text()).toContain('REL-0077 · LAGOON HEALTH');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Client UAT response');
+  });
+
+  it('reopened with two responders it leaves the organisation out; the SOW keeps its station', async () => {
+    answers.item = () => json(200, item('W-1605.recorded'));
+    await open('W-1605', 'T-1605');
+    expect(document.querySelector('.resp-eyebrow')!.textContent).toBe(item('W-1605').reference.toUpperCase());
+    cleanup();
+    answers.item = () => json(200, item('W-1602.recorded'));
+    await open('W-1602', 'T-1602');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('SOW signature');
+    expect(text()).toContain('SOW-0207 · TAMARIND LOANS');
   });
 });
 

@@ -9,6 +9,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError, networkError } from '@/api/errors';
 
+import { currentStationIndex } from '@/features/work-item/labels';
+
 import { claimTask, getWorkItem, recordResponse } from './api';
 import type { Recorded, ResponseBody, ResponseTask, ResponseWorkItem, TaskResponse } from './contract';
 import { listWords, NOTE_MAX, watIso } from './labels';
@@ -20,8 +22,11 @@ export type ResponseView =
   | { kind: 'loading' }
   | { kind: 'error'; error: ApiError }
   | { kind: 'form'; item: ResponseWorkItem }
-  /** before: the item as it was when Record was pressed (its current station names the success heading). */
-  | { kind: 'done'; before: ResponseWorkItem; recorded?: Recorded; next?: string[]; responderId?: string };
+  /**
+   * before: the item as it was when Record was pressed (its current station names the success heading). A task
+   * opened already recorded has no such item: station then names the heading instead.
+   */
+  | { kind: 'done'; before: ResponseWorkItem; recorded?: Recorded; next?: string[]; responderId?: string; station?: string };
 
 export type Notice =
   | { kind: 'stale' }
@@ -70,6 +75,16 @@ export function missingLine(e: Entries, response: TaskResponse, proofCount: numb
   return null;
 }
 
+/**
+ * The station a response recorded earlier was made at, read from the item after the move: the done station just
+ * before the current one (the API names no recorded station). Undefined when the item does not show that shape.
+ */
+export function recordedStation(item: ResponseWorkItem): string | undefined {
+  const current = currentStationIndex(item.stations);
+  const previous = current > 0 ? item.stations[current - 1] : undefined;
+  return previous?.status === 'done' ? previous.name : undefined;
+}
+
 export function useResponse(id: string, taskId: string | undefined) {
   const [view, setView] = useState<ResponseView>({ kind: 'loading' });
   const [entries, setEntries] = useState<Entries>(EMPTY);
@@ -82,8 +97,11 @@ export function useResponse(id: string, taskId: string | undefined) {
     setView({ kind: 'loading' });
     try {
       const item = await getWorkItem(id);
-      const recorded = findTask(item, taskId)?.response?.recorded;
-      setView(recorded ? { kind: 'done', before: item, recorded, next: findTask(item, taskId)?.response?.next } : { kind: 'form', item });
+      const response = findTask(item, taskId)?.response;
+      if (!response?.recorded) return setView({ kind: 'form', item });
+      // Opened already recorded: the organisation comes from the responder when the task names exactly one.
+      const responderId = response.responders.length === 1 ? response.responders[0].id : undefined;
+      setView({ kind: 'done', before: item, recorded: response.recorded, next: response.next, responderId, station: recordedStation(item) });
     } catch (error) {
       setView({ kind: 'error', error: asApiError(error) });
     }
