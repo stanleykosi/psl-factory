@@ -131,11 +131,13 @@
       ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-ui.md"
+      ]
     },
     "security": {
       "status": "passed",
