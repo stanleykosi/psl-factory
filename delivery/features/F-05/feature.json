@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-05",
   "outcome": "Start work: pick a line, fill its intake in a drawer, land on the new work item",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2A"
   ],
@@ -93,6 +93,18 @@
       "at": "2026-11-14T05:57:18Z",
       "seconds": 311.5,
       "evidence_ref": "delivery/features/F-05/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T06:41:44Z",
+      "seconds": 184.0,
+      "evidence_ref": "delivery/features/F-05/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -948,14 +960,28 @@
         "delivery/features/F-05/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T06:05:31Z",
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:41:44Z",
+          "refs": [
+            "230edd6"
+          ],
+          "head": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "230edd6"
       ]
     },
     {
@@ -971,14 +997,28 @@
         "delivery/features/F-05/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T06:05:31Z",
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:41:44Z",
+          "refs": [
+            "230edd6"
+          ],
+          "head": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "230edd6"
       ]
     },
     {
@@ -1017,14 +1057,28 @@
         "delivery/features/F-05/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T06:05:31Z",
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:41:44Z",
+          "refs": [
+            "230edd6"
+          ],
+          "head": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "230edd6"
       ]
     },
     {
@@ -1199,9 +1253,9 @@
     "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M2A",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "bc48a913b366a5104bd77f3b92e751072e12193b",
+    "base_sha": "334a08cb499a02fcbb9785a4bed455b7dec297a0",
     "task_branch": "fe-m2a-start-work-pick-a-line-fill-its-intake-i",
-    "head_sha": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+    "head_sha": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-05",
     "pr_url": null,
     "pr_number": null,
@@ -1358,6 +1412,14 @@
       "round": 3,
       "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T06:42:31Z",
+      "round": 3,
+      "head": "230edd60f366ea64a1a138dc66f2084bd447ebd1",
+      "reason": null
     }
   ],
   "routing": {
@@ -1375,9 +1437,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "230edd60f366ea64a1a138dc66f2084bd447ebd1"
   },
   "blocked": null
 }
