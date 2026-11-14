@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-08",
   "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
@@ -97,11 +97,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -127,18 +129,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design system and approved SCR-06 artboards)",
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -222,14 +228,42 @@
       "reproduction": null,
       "evidence_refs": [],
       "raised_by": "design engineer (hunchoweb)",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "design engineer (hunchoweb)",
           "at": "2026-11-14T04:27:55Z",
           "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:25:50Z",
+          "refs": [
+            "delivery/features/F-08/round-2/build.md"
+          ],
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+          "reason": "Rebuilt against SCR-06 boards in round 2 (568c0a4)"
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T06:25:51Z",
+          "refs": [
+            "delivery/features/F-08/round-2/review-ui.md"
+          ],
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+          "reason": "Desktop 100%/94.1; phone 100%/89.8 accepted under D-18"
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-08/round-2/build.md"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-08/round-2/review-ui.md"
       ]
     },
     {
@@ -298,6 +332,144 @@
           "by": "pmo-acceptance",
           "at": "2026-11-14T04:27:55Z",
           "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/overview/lines.ts` `tagTone()`: a `status` value outside the five-value enum gives `STATUS_TAG[status]` of `undefined`, so the class becomes `psl-tag undefined`. The type is only a proposed contract field, so a future or unexpected server value would render an unstyled tag. Expected: fall back to the needs_person rule with `STATUS_TAG[line.status] ?? <fallback>`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:25:50Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "No test asserts scene disposal. `grep dispose | forceContextLoss` finds nothing under `frontend/tests/`, and the e2e only checks that returning to Flat removes the canvas. The builder lists disposal as a feature of the 3D scene. A small unit test with a stubbed `FloorScene`, or an e2e check that the context is lost on unmount, would pin it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:25:50Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"See all exceptions\" (href /exceptions, no prefetch) opens a 404 page (\"Go to My work\" is offered, so it is not a trap) while F-06 is unmerged. Merge F-06 with or before F-08, or hide the link until then. Seen at frontend/src/features/overview/OverviewPage.tsx.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:25:50Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "3D floor: in the Invoices lane the \"1 Approve PERSON\" chip overlaps its neighbours \"1 Check\" and \"0 Send\" by a few pixels in the default view. These are the only 2 of the 1128 label pairs that overlap. Concept 3 shows the same tightness, and all three chips stay legible. Expected: chips sit clear of each other. Actual: overlapping boxes at 1440 (see `round-2/fidelity-review/floor-3d/f08-3d-full.png`). The chips are placed in `frontend/src/features/floor/scene.ts`, and `.floor__chip` is in `floor.css:9`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T06:25:50Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The legend says \"The 3D floor shows the same lines with work moving between stations\". The 3D floor draws no agents and nothing moves between stations, by design (build.md Notes, D-01 interpretation). Only tiles rise or fade when a count changes. Expected: wording that matches what is shown, for example \"...shows the same lines and counts as a tilted board.\" Actual: `frontend/src/features/overview/OverviewPage.tsx:292`. This is copy, so the UX lens may own the final wording.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T06:25:50Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "With the default fixture (no `status` field, so the contract as it is today), tag tones fall back to the round-1 rule. WAITING tags show in red (person tint) instead of the board's amber, and ON TRACK shows grey instead of green. Only the `status` cookie variant matches the board. D-18 accepts this until the backend confirms `lines[].status`. Once the field is in E-OVERVIEW, the default page will match without any frontend change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T06:25:50Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
         }
       ]
     }
@@ -521,6 +693,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T06:15:52Z",
+      "round": 2,
+      "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T06:26:11Z",
       "round": 2,
       "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
       "reason": null

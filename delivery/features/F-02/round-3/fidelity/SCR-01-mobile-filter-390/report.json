@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:58:23.552Z",
+  "generatedAt": "2026-11-14T06:23:02.974Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-mobile-filter.dc.html",
   "boardName": "SCR-01-mobile-filter.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -16,27 +16,27 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "4 board item(s) are missing from the page and are not approved exceptions (coverage 86.7% with exceptions, needs 100%).",
-    "Visual match 87.4 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 95.1 meets 90.",
     "14 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 83.3,
-    "coverageWithExceptions": 86.7,
-    "visual": 87.4
+    "coverageWithExceptions": 100,
+    "visual": 95.1
   },
   "visual": {
-    "score": 87.4,
-    "allCellsScore": 91.6,
+    "score": 95.1,
+    "allCellsScore": 96.8,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1561,
-    "mismatchedCells": 196
+    "contentCells": 1519,
+    "mismatchedCells": 75
   },
   "coverage": {
     "total": 30,
@@ -326,13 +326,10 @@
         "kind": "Filter",
         "role": "text",
         "name": "FILTER",
-        "pageName": "Filter",
+        "pageName": "FILTER",
         "pageRole": "text",
         "similarity": 100,
-        "looks": [
-          "font Archivo on the board, IBM Plex Sans on the page",
-          "capitals on the board, not on the page"
-        ],
+        "looks": [],
         "boardBox": {
           "x": 16,
           "y": 260,
@@ -341,8 +338,8 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 248,
-          "w": 34,
+          "y": 254,
+          "w": 51,
           "h": 21
         }
       },
@@ -363,7 +360,7 @@
         },
         "pageBox": {
           "x": 341,
-          "y": 248,
+          "y": 254,
           "w": 33,
           "h": 21
         }
@@ -384,7 +381,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 297,
+          "y": 303,
           "w": 27,
           "h": 21
         }
@@ -409,7 +406,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 330,
+          "y": 336,
           "w": 20,
           "h": 20
         }
@@ -434,7 +431,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 366,
+          "y": 372,
           "w": 20,
           "h": 20
         }
@@ -459,7 +456,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 402,
+          "y": 408,
           "w": 20,
           "h": 20
         }
@@ -484,7 +481,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 438,
+          "y": 444,
           "w": 20,
           "h": 20
         }
@@ -506,7 +503,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 470,
+          "y": 476,
           "w": 57,
           "h": 20
         }
@@ -527,7 +524,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 503,
+          "y": 507,
           "w": 358,
           "h": 21
         }
@@ -548,7 +545,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 588,
+          "y": 590,
           "w": 358,
           "h": 21
         }
@@ -628,7 +625,10 @@
           "w": 93,
           "h": 17
         },
-        "exception": null
+        "exception": {
+          "reason": "State chip: \"Needs a person\" is not a contract state.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -642,7 +642,10 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Built as a native select showing \"Any project\" with the board's small arrow; the check cannot read a select's shown value.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -656,7 +659,10 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "\"Needs a person\" is not a contract state (the State filter offers the 11 E-WORK-LIST states); native select value is also unreadable to the check.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       },
       {
         "kind": "Text",
@@ -670,7 +676,10 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Native select (Waiting on); the check cannot read a select's shown value.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       }
     ],
     "misplaced": [
@@ -728,8 +737,8 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 248,
-          "w": 34,
+          "y": 254,
+          "w": 51,
           "h": 21
         },
         "reasons": [
@@ -748,7 +757,7 @@
         },
         "pageBox": {
           "x": 341,
-          "y": 248,
+          "y": 254,
           "w": 33,
           "h": 21
         },
@@ -768,7 +777,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 297,
+          "y": 303,
           "w": 27,
           "h": 21
         },
@@ -788,7 +797,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 330,
+          "y": 336,
           "w": 20,
           "h": 20
         },
@@ -808,7 +817,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 366,
+          "y": 372,
           "w": 20,
           "h": 20
         },
@@ -828,7 +837,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 402,
+          "y": 408,
           "w": 20,
           "h": 20
         },
@@ -848,7 +857,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 438,
+          "y": 444,
           "w": 20,
           "h": 20
         },
@@ -868,7 +877,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 470,
+          "y": 476,
           "w": 57,
           "h": 20
         },
@@ -888,7 +897,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 503,
+          "y": 507,
           "w": 358,
           "h": 21
         },
@@ -908,7 +917,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 588,
+          "y": 590,
           "w": 358,
           "h": 21
         },
@@ -991,7 +1000,7 @@
           "x": 16,
           "y": 322,
           "w": 358,
-          "h": 219
+          "h": 216
         }
       },
       {
@@ -1003,7 +1012,7 @@
           "x": 16,
           "y": 322,
           "w": 358,
-          "h": 109
+          "h": 106
         }
       },
       {
@@ -1013,13 +1022,13 @@
         "container": "main",
         "pageBox": {
           "x": 32,
-          "y": 453,
+          "y": 450,
           "w": 326,
           "h": 18
         }
       }
     ],
-    "unexcepted": 4
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

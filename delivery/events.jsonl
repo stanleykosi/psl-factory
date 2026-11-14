@@ -493,3 +493,13 @@
 {"at":"2026-11-14T06:22:07Z","feature":"F-13","round":1,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/13","git.pr_number":13}}
 {"at":"2026-11-14T06:22:09Z","feature":"F-13","round":1,"kind":"finding","action":"add","finding":"PMO-1-1","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T06:22:09Z","feature":"F-13","round":1,"kind":"transition","head":"fe657c6cc1bb","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"568c0a407f78","findings":{"UI-2-1":"low","UI-2-2":"low","UI-2-3":"low"},"written_at":"2026-11-14T06:25:32Z"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"finding","action":"add","finding":"TECH-2-1","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"finding","action":"add","finding":"TECH-2-2","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"finding","action":"add","finding":"UX-2-1","by":"reviewer-ux","severity":"low","owner":"product","blocking":false,"role":"ux"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"finding","action":"add","finding":"UI-2-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"finding","action":"add","finding":"UI-2-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"finding","action":"add","finding":"UI-2-3","by":"reviewer-ui","severity":"low","owner":"product","blocking":false,"role":"ui"}
+{"at":"2026-11-14T06:25:50Z","feature":"F-08","round":2,"kind":"finding","action":"fix","finding":"FID-1","by":"builder"}
+{"at":"2026-11-14T06:25:51Z","feature":"F-08","round":2,"kind":"finding","action":"verify","finding":"FID-1","by":"reviewer-ui"}
+{"at":"2026-11-14T06:26:11Z","feature":"F-08","round":2,"kind":"transition","head":"568c0a407f78","from":"IN_REVIEW","to":"INTEGRATED_QA"}
