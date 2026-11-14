@@ -1047,3 +1047,5 @@
 {"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
 {"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T21:38:05Z","feature":"F-17","round":0,"kind":"created","tasks":["FE-WORKSPACE-FRAME"]}
+{"at":"2026-11-14T21:38:06Z","feature":"F-18","round":0,"kind":"created","tasks":["FE-M2B-RFP"]}
