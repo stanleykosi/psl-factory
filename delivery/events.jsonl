@@ -262,3 +262,5 @@
 {"at":"2026-11-14T02:46:08Z","feature":"F-06","round":0,"kind":"created","tasks":["FE-M2B"]}
 {"at":"2026-11-14T02:46:08Z","feature":"F-07","round":0,"kind":"created","tasks":["FE-M3-PROJECTS"]}
 {"at":"2026-11-14T02:46:08Z","feature":"F-08","round":0,"kind":"created","tasks":["FE-M3-OVERVIEW"]}
+{"at":"2026-11-14T02:56:12Z","feature":"F-07","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-14T02:56:12Z","feature":"F-07","round":0,"kind":"transition","from":"PLANNED","to":"READY"}

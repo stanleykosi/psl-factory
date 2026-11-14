@@ -3,26 +3,55 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-07",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
+  "state": "READY",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**List reads E-PROJECTS (JR-08 \"open project\").**",
+    "**Only contract fields render.**",
+    "**Search.**",
+    "**Paging (D-PAGING r2).**",
+    "**Journey reads E-PROJECT and keeps order (JR-08 \"see every line and what is next\").**",
+    "**State tags come from the enum.**",
+    "**Journey empty.**",
+    "**No grant: 404 reveals nothing (JR-08 failure, INV-ACCESS).**",
+    "**Wrong user, no section.**",
+    "**Signed out and refusals.**",
+    "**Load failures (provider failure).**",
+    "**Loading and stale responses.**",
+    "**Sample label rule (INV-SAMPLE, 14 Nov decision).**",
+    "**Mock honours the query and stays on contract.**",
+    "**Accessibility (A-ACCESSIBILITY).**",
+    "**Frame tests stay green.**",
+    "**Product acceptance items are visible.**"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it medium. The feature is read-only and shows no amounts. It does consume two new endpoints (E-PROJECTS, E-PROJECT), and the frontend must honour INV-ACCESS through \"no grant: 404\" without leaking the project title. It also changes the shared contract mock (`frontend/mock/server.mjs:24`, 226-234) while F-05, F-06 and F-08 change the same file (PMO-0-3), and it replaces a route that the frame tests assert on (PMO-0-4). Surfaces: - `ui`: SCR-22 and SCR-07. - `api`: the first reads of E-PROJECTS and E-PROJECT through the generated client and the mock. Excluded surfaces: - `payments`: the Money and Milestones tabs are split out. - `contract-change`: no repoint and no openapi edit. - `security` and `auth`: the page only renders 401, 403 and 404 through the existing mapping. - `product-decision`: the omitted elements are recorded for product acceptance, not decided here."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-07/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +88,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-07/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +181,28 @@
   "created_at": "2026-11-14T02:46:08Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T02:56:12Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-07/readiness.md",
+      "delivery/features/F-07/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
