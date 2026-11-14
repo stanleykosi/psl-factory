@@ -1,0 +1,1149 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "F-12 proposal overlay: the v7 alert path items, copied verbatim (removed when F-13 repoints the mock to v7)",
+    "version": "0a4f10a08cfe"
+  },
+  "paths": {
+    "/api/v1/notifications": {
+      "get": {
+        "operationId": "E-NOTIFICATIONS",
+        "summary": "Notification centre",
+        "description": "Own notifications only.\nRecovery: Read-only; 404 hides records the person may not see.",
+        "security": [
+          {
+            "Session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                10,
+                20,
+                50
+              ],
+              "description": "Rows per page chosen by the person; default 20"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "PROPOSAL (D-ALERT-PREFS-VIEW): search over the alert text and reference"
+            }
+          },
+          {
+            "name": "agent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "enum": [
+                "tola",
+                "chidi",
+                "zainab"
+              ]
+            }
+          },
+          {
+            "name": "unread",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification centre",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "work_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "agent": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "at": {
+                            "type": "string",
+                            "minLength": 1,
+                            "format": "date-time"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "reference": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "delivered_via": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "enum": [
+                                "whatsapp",
+                                "email",
+                                "in_app"
+                              ]
+                            }
+                          },
+                          "delivered_at": {
+                            "type": "string",
+                            "minLength": 1,
+                            "format": "date-time"
+                          },
+                          "digest_at": {
+                            "type": "string",
+                            "minLength": 1,
+                            "format": "date-time"
+                          },
+                          "in_app_reason": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "e.g. \"you are not HR\": why this alert was shown in the app only"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "work_id",
+                          "agent",
+                          "text",
+                          "at",
+                          "read"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": "string"
+                    },
+                    "as_of": {
+                      "type": "string",
+                      "minLength": 1,
+                      "format": "date-time"
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "unread_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "as_of"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No grant for this record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found or not visible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "unimplemented",
+        "x-architecture-refs": [
+          "A-ALERTS",
+          "A-NOTIFICATIONS",
+          "D-ALERT-PREFS-VIEW",
+          "D-NOTIFY-MODEL",
+          "D-PAGING",
+          "I-ALERTS",
+          "INV-ACCESS",
+          "R-ALERTS",
+          "REC-NOTIFICATION",
+          "S-BACKEND",
+          "S-DECISIONS-V6",
+          "S-SCREENS",
+          "T-ALERTS"
+        ]
+      }
+    },
+    "/api/v1/notifications/{notification_id}/read": {
+      "post": {
+        "operationId": "E-NOTIFICATION-READ",
+        "summary": "Mark an alert read",
+        "description": "Own notifications only.\nRecovery: 409 on stale revision: the client reloads and shows the newer version; 422 names the fields; nothing is partially written.",
+        "security": [
+          {
+            "Session": [],
+            "Csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "notification_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mark an alert read",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "read": {
+                      "type": "boolean"
+                    },
+                    "unread_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "read",
+                    "unread_count"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No grant for this record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found or not visible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision: the record changed; reload and act on the current version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed; fields named in message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "unimplemented",
+        "x-architecture-refs": [
+          "A-NOTIFICATIONS",
+          "D-ALERT-PREFS-VIEW",
+          "D-NOTIFY-MODEL",
+          "INV-ACCESS",
+          "INV-AUDIT",
+          "R-ALERTS",
+          "REC-AUDIT",
+          "REC-NOTIFICATION",
+          "S-BACKEND",
+          "S-DECISIONS-V6",
+          "S-SCREENS",
+          "T-ALERTS"
+        ]
+      }
+    },
+    "/api/v1/me/alert-preferences": {
+      "put": {
+        "operationId": "E-ALERT-PREFS",
+        "summary": "My alert preferences",
+        "description": "Own preferences only.\nRecovery: 409 on stale revision: the client reloads and shows the newer version; 422 names the fields; nothing is partially written.",
+        "security": [
+          {
+            "Session": [],
+            "Csrf": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "My alert preferences",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "frequency": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "whatsapp": {
+                            "type": "boolean"
+                          },
+                          "email": {
+                            "type": "boolean"
+                          },
+                          "timing": {
+                            "type": "string",
+                            "minLength": 1,
+                            "enum": [
+                              "immediate",
+                              "daily_digest"
+                            ]
+                          },
+                          "timing_label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "locked_reason": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "label",
+                          "whatsapp",
+                          "email"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "digest_at": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[0-2][0-9]:[0-5][0-9]$"
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "label": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "value",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "options"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "quiet_hours": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "label": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "value",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "options"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "whatsapp": {
+                      "type": "object",
+                      "properties": {
+                        "masked_number": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "e.g. \"+234 803 *** 4412\"; never unmasked"
+                        },
+                        "verified": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "verified"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "note": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "e.g. \"Alerts never include amounts or client details beyond the name.\""
+                    }
+                  },
+                  "required": [
+                    "channel",
+                    "frequency"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No grant for this record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found or not visible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision: the record changed; reload and act on the current version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed; fields named in message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "unimplemented",
+        "x-architecture-refs": [
+          "A-ALERT-PREFS",
+          "A-ALERTS",
+          "D-ALERT-PREFS-VIEW",
+          "D-ALERT-PROVIDERS",
+          "D-NOTIFY-MODEL",
+          "INV-ACCESS",
+          "INV-AUDIT",
+          "R-ALERTS",
+          "REC-ALERT-PREF",
+          "REC-AUDIT",
+          "S-BACKEND",
+          "S-DECISIONS-V6",
+          "S-SCREENS",
+          "T-ALERTS"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "minLength": 1,
+                    "enum": [
+                      "whatsapp",
+                      "email",
+                      "both",
+                      "none"
+                    ],
+                    "description": "v6 summary field, kept: the backend derives per-event values from it only when events is absent"
+                  },
+                  "frequency": {
+                    "type": "string",
+                    "minLength": 1,
+                    "enum": [
+                      "immediate",
+                      "daily"
+                    ]
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "events": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "whatsapp": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "digest_at": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[0-2][0-9]:[0-5][0-9]$"
+                  },
+                  "quiet_hours": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "channel",
+                  "frequency"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "E-ALERT-PREFS-READ",
+        "summary": "Read my alert preferences",
+        "description": "Own preferences only.\nRecovery: Read-only; 404 hides records the person may not see.",
+        "security": [
+          {
+            "Session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Read my alert preferences",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "frequency": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "whatsapp": {
+                            "type": "boolean"
+                          },
+                          "email": {
+                            "type": "boolean"
+                          },
+                          "timing": {
+                            "type": "string",
+                            "minLength": 1,
+                            "enum": [
+                              "immediate",
+                              "daily_digest"
+                            ]
+                          },
+                          "timing_label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "locked_reason": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "label",
+                          "whatsapp",
+                          "email"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "digest_at": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[0-2][0-9]:[0-5][0-9]$"
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "label": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "value",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "options"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "quiet_hours": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "label": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "value",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "options"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "whatsapp": {
+                      "type": "object",
+                      "properties": {
+                        "masked_number": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "e.g. \"+234 803 *** 4412\"; never unmasked"
+                        },
+                        "verified": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "verified"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "note": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "e.g. \"Alerts never include amounts or client details beyond the name.\""
+                    }
+                  },
+                  "required": [
+                    "channel",
+                    "frequency",
+                    "revision",
+                    "events"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No grant for this record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found or not visible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "unimplemented",
+        "x-architecture-refs": [
+          "A-ALERT-PREFS",
+          "D-ALERT-PREFS-VIEW",
+          "D-NOTIFY-MODEL",
+          "INV-ACCESS",
+          "R-ALERTS",
+          "REC-ALERT-PREF",
+          "S-BACKEND",
+          "S-DECISIONS-V6",
+          "S-SCREENS",
+          "T-ALERTS"
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "Session": {
+        "type": "apiKey",
+        "name": "sessionid",
+        "in": "cookie",
+        "description": "Django session cookie from the existing sign-in (D-AUTH, proposed)."
+      },
+      "Csrf": {
+        "type": "apiKey",
+        "name": "X-CSRFToken",
+        "in": "header",
+        "description": "Django CSRF token, required on every write together with the session."
+      }
+    }
+  }
+}

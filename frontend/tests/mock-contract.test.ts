@@ -13,11 +13,13 @@ import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
+// F-12: the alert operations are checked against the v7 overlay (listed first, so it wins) until F-13 repoints to v7.
+const overlay = JSON.parse(readFileSync(join(__dirname, '../mock/proposals/alerts.json'), 'utf8')) as typeof openapi;
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 
-const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
+const operations = [...Object.entries(overlay.paths), ...Object.entries(openapi.paths)].flatMap(([path, ops]) =>
   Object.entries(ops)
     .filter(([, op]) => op && typeof op === 'object' && 'operationId' in op)
     .map(([method, op]) => ({ path, method: method.toUpperCase(), op })),
@@ -25,8 +27,10 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', none: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all' };
 const BODY: Record<string, unknown> = {
+  'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
 };
@@ -43,7 +47,9 @@ afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
 async function request(id: string, init: { persona?: string; scenario?: string; csrf?: string | null } = {}) {
   const { path, method } = byId(id);
-  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => PATH_VALUES[name] ?? 'X-1') + (QUERY[id] ?? '');
+  const persona = init.persona ?? 'finance_lead';
+  const value = (name: string) => (name === 'notification_id' ? NOTIFICATION_IDS[persona] : PATH_VALUES[name]);
+  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => value(name) ?? 'X-1') + (QUERY[id] ?? '');
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'finance_lead'}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
   if (method !== 'GET' && init.csrf !== null) headers['X-CSRFToken'] = init.csrf ?? `mock-csrf-${init.persona ?? 'finance_lead'}`;
