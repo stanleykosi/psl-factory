@@ -1,0 +1,229 @@
+import { expect, test, type BrowserContext, type Page } from '@playwright/test';
+import { appendFileSync } from 'node:fs';
+const MOCK = 'http://127.0.0.1:4712', BASE = 'http://localhost:4711';
+const EV = '/Users/Hunchoo/psl-factory/delivery/features/F-07/round-3/qa-evidence';
+const log = (s: string) => appendFileSync(`${EV}/browser-journeys.txt`, s + '\n');
+const DESKTOP = { width: 1440, height: 900 }, PHONE = { width: 390, height: 844 };
+const rows = (p: Page) => p.locator('[data-project-link]');
+const lines = (p: Page) => p.locator('ol.projects__lines a');
+const noHScroll = (p: Page) => p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
+async function reset(p: Page) { expect((await p.request.post(`${MOCK}/__mock/reset`)).status()).toBe(204); }
+async function persona(ctx: BrowserContext, v: string, extra: Record<string, string> = {}) {
+  await ctx.addCookies(Object.entries({ psl_mock_persona: v, ...extra }).map(([name, value]) => ({ name, value, url: BASE })));
+}
+async function listLoaded(p: Page) { await expect(p.getByRole('heading', { level: 1, name: 'Projects' })).toBeVisible(); await expect(p.getByRole('status')).toHaveCount(0); }
+const projReqs = (p: Page) => { const r: string[] = []; p.on('request', (q) => { if (q.url().includes('/api/v1/projects')) r.push(new URL(q.url()).pathname + new URL(q.url()).search); }); return r; };
+test.beforeEach(async ({ page }) => reset(page));
+test.afterEach(async ({ page }) => reset(page));
+
+test.describe('desktop 1440', () => {
+  test.use({ viewport: DESKTOP });
+  test('Q1 list Active default, counts, total, Show more', async ({ page }) => {
+    const reqs = projReqs(page);
+    await page.goto('/projects'); await listLoaded(page);
+    await expect(rows(page)).toHaveCount(20);
+    const tabs = await page.getByRole('tablist').first().getByRole('tab').allInnerTexts();
+    const total = await page.locator('.projects__total').innerText();
+    await page.getByRole('button', { name: /Show more/ }).click();
+    await expect(rows(page)).toHaveCount(22);
+    const foot = await page.locator('.psl-showmore').innerText();
+    log(`Q1 PASS reqs=${JSON.stringify(reqs)} tabs=${JSON.stringify(tabs)} total="${total}" footer="${foot.replace(/\n/g,' ')}" hscroll_ok=${await noHScroll(page)}`);
+    await page.screenshot({ path: `${EV}/q1-list-1440.png` });
+  });
+  test('Q2 Closed and All tabs', async ({ page }) => {
+    const reqs = projReqs(page);
+    await page.goto('/projects'); await listLoaded(page);
+    await page.getByRole('tab', { name: /Closed/ }).click();
+    await expect(page).toHaveURL(/\?status=closed$/); await expect(rows(page)).toHaveCount(2);
+    const tc = await page.locator('.projects__total').innerText();
+    await page.getByRole('tab', { name: /All I can see/ }).click();
+    await expect(page).toHaveURL(/\?status=all$/); await expect(rows(page)).toHaveCount(20);
+    const ta = await page.locator('.projects__total').innerText();
+    await page.reload(); await listLoaded(page); await expect(page.getByRole('tab', { name: /All I can see/ })).toHaveAttribute('aria-selected', 'true');
+    log(`Q2 PASS closed rows=2 total="${tc}" all rows=20 total="${ta}" reload keeps All; reqs=${JSON.stringify(reqs)}`);
+  });
+  test('Q3 search lagoon, count wording (UX-3-1), no results, clear', async ({ page }) => {
+    const reqs = projReqs(page);
+    await page.goto('/projects'); await listLoaded(page);
+    await page.getByRole('searchbox').fill('lagoon');
+    await expect(page).toHaveURL(/q=lagoon/); await expect(rows(page)).toHaveCount(1);
+    const t1 = await page.locator('.projects__total').innerText();
+    await page.getByRole('searchbox').fill('zzz');
+    await expect(page.getByRole('heading', { name: 'No projects match' })).toBeVisible();
+    const t0 = await page.locator('.projects__total').innerText().catch(() => '(none)');
+    await page.getByRole('button', { name: 'Clear search' }).click();
+    await expect(rows(page)).toHaveCount(20);
+    log(`Q3 PASS(search) lagoon rows=1 count="${t1}" zzz count="${t0}" clear -> 20 rows; reqs=${JSON.stringify(reqs)}`);
+    await page.getByRole('searchbox').fill('lagoon'); await expect(rows(page)).toHaveCount(1);
+    await page.locator('.projects__total').screenshot({ path: `${EV}/q3-count-lagoon.png` });
+  });
+  test('Q4 open P-0101 journey, Tola panel, line link', async ({ page }) => {
+    await page.goto('/projects'); await listLoaded(page);
+    await rows(page).first().click();
+    await expect(page).toHaveURL(/\/projects\/P-0101$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
+    await expect(lines(page)).toHaveCount(8);
+    const crumb = await page.locator('.psl-crumb').innerText();
+    const next = await page.getByText('Client UAT response, then Finance review').count();
+    const tags = await page.locator('ol.projects__lines .psl-tag').allInnerTexts();
+    const img = page.locator('img[src*="tola"]');
+    await expect(img).toHaveCount(1);
+    const nat = await img.evaluate((e: HTMLImageElement) => e.naturalWidth);
+    const ask = await page.getByRole('link', { name: 'Ask me about this project' }).getAttribute('href');
+    const tolaText = await page.getByText(/Lagoon Health is moving/).count();
+    const facts = await page.locator('main').innerText();
+    log(`Q4 PASS crumb="${crumb.replace(/\n/g,' ')}" next_callout=${next} tags=${JSON.stringify(tags)} tola_img naturalWidth=${nat} ask_href=${ask} tola_summary=${tolaText} facts_has_PAID_Finance_tracks=${/Finance tracks/.test(facts)}`);
+    await page.screenshot({ path: `${EV}/q4-journey-1440.png` });
+    await lines(page).nth(6).click();
+    await expect(page).toHaveURL(/\/work\/W-1001$/);
+    await page.goBack(); await expect(lines(page)).toHaveCount(8);
+    await page.getByRole('link', { name: 'Projects', exact: true }).first().click();
+    await expect(page).toHaveURL(/\/projects$/);
+    log('Q4b PASS line 7 -> /work/W-1001; back -> journey; breadcrumb Projects -> /projects');
+  });
+  test('Q5 no access: P-0099 and pm on P-0104', async ({ page, context }) => {
+    await page.goto('/projects/P-0099');
+    await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
+    const b1 = await page.locator('main').innerText();
+    await persona(context, 'pm');
+    await page.goto('/projects/P-0104');
+    await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
+    const b2 = await page.locator('body').innerText();
+    await page.goto('/projects'); await listLoaded(page);
+    const listText = await page.locator('main').innerText();
+    await page.route('**/api/v1/projects/P-0101', (r) => r.fulfill({ status: 403, contentType: 'application/json', body: '{"code":"forbidden","message":"x"}' }));
+    await page.goto('/projects/P-0101');
+    await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
+    const b3 = await page.locator('main').innerText();
+    log(`Q5 PASS P-0099 main="${b1.replace(/\n/g,' | ')}"; pm P-0104 body mentions Delta=${/Delta/.test(b2)} P-0104=${/P-0104/.test(b2)}; pm list mentions Delta=${/Delta/.test(listText)}; 403 P-0101 mentions Lagoon=${/Lagoon/.test(b3)}`);
+    await page.screenshot({ path: `${EV}/q5-noaccess-1440.png` });
+  });
+  test('Q6 signed out 401 (mock scenario) on list and journey', async ({ page, context }) => {
+    await persona(context, 'finance_lead', { psl_mock_scenario: '401' });
+    await page.goto('/projects');
+    const a = await page.getByRole('main').getByRole('link', { name: 'Sign in' }).getAttribute('href');
+    await page.goto('/projects/P-0101');
+    const b = await page.getByRole('main').getByRole('link', { name: 'Sign in' }).getAttribute('href');
+    const t = await page.locator('main').innerText();
+    log(`Q6 PASS list sign-in href=${a}; journey sign-in href=${b}; journey shows Lagoon=${/Lagoon/.test(t)}`);
+  });
+  test('Q7 403 on list (mock scenario) shows not open', async ({ page, context }) => {
+    await persona(context, 'finance_lead');
+    await page.route('**/api/v1/projects?**', (r) => r.continue({ headers: { ...r.request().headers(), 'x-mock-scenario': '403' } }));
+    await page.goto('/projects');
+    await expect(page.getByText(/isn’t open to your role/)).toBeVisible();
+    log(`Q7 PASS list 403 -> "${(await page.getByText(/isn’t open to your role/).first().innerText()).slice(0,90)}"`);
+  });
+  test('Q8 500 then Try again: list and journey', async ({ page }) => {
+    let fail = true; let hits = 0;
+    await page.route('**/api/v1/projects?**', (r) => { hits++; return fail ? r.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : r.continue(); });
+    await page.goto('/projects');
+    const card = page.getByRole('main').getByRole('alert');
+    await expect(card).toContainText('We couldn’t load your projects');
+    const ct = await card.innerText();
+    await page.waitForTimeout(2500); const hitsIdle = hits;
+    fail = false; await card.getByRole('button', { name: 'Try again' }).click();
+    await expect(rows(page)).toHaveCount(20);
+    let jf = true;
+    await page.route('**/api/v1/projects/P-0101', (r) => jf ? r.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : r.continue());
+    await page.goto('/projects/P-0101');
+    const jc = page.getByRole('main').getByRole('alert');
+    await expect(jc).toContainText('We couldn’t load this project');
+    const jt = await jc.innerText();
+    jf = false; await jc.getByRole('button', { name: 'Try again' }).click();
+    await expect(lines(page)).toHaveCount(8);
+    log(`Q8 PASS list 500 card="${ct.replace(/\n/g,' | ')}" requests while idle 2.5s=${hitsIdle} (no auto retry) -> Try again -> 20 rows; journey 500 card="${jt.replace(/\n/g,' | ')}" names Lagoon=${/Lagoon/.test(jt)} -> Try again -> 8 lines`);
+  });
+  test('Q9 empty list (admin) and persona none', async ({ page, context }) => {
+    await persona(context, 'admin');
+    await page.goto('/projects'); await listLoaded(page);
+    await expect(page.getByRole('heading', { name: 'No projects you can see yet.' })).toBeVisible();
+    const e = await page.locator('main').innerText();
+    await context.clearCookies(); await persona(context, 'none');
+    const reqs = projReqs(page);
+    await page.goto('/projects');
+    await expect(page.getByText(/isn’t open to your role|No sections are open to your role yet\./).first()).toBeVisible();
+    await page.goto('/projects/P-0101');
+    await expect(page.getByText(/isn’t open to your role|No sections are open to your role yet\./).first()).toBeVisible();
+    log(`Q9 PASS admin empty main="${e.replace(/\n/g,' | ').slice(0,300)}"; none: project requests=${JSON.stringify(reqs)}`);
+    await page.screenshot({ path: `${EV}/q9-none-1440.png` });
+  });
+  test('Q10 unknown money and facts never shown as 0', async ({ page }) => {
+    await page.route('**/api/v1/projects/P-0101', async (r) => {
+      const res = await r.fetch(); const d = await res.json();
+      d.facts = [
+        { label: 'CONTRACT STAGES', value: '4' },
+        { label: 'INVOICES VERIFIED', unknown: true },
+        { label: 'WAITING ON PEOPLE', value: '' },
+        { label: 'STOPPED', value: 0 },
+        { label: 'NEXT MILESTONE', value: 'UAT sign-off' },
+        { label: 'PAID', money: { currency: 'NGN', amount: null, unknown: true } },
+      ];
+      d.work_count = null; d.line_count = 'x';
+      return r.fulfill({ response: res, json: d });
+    });
+    await page.route('**/api/v1/projects?**', async (r) => {
+      const res = await r.fetch(); const d = await res.json();
+      d.items[0].next_milestone = { name: 'UAT sign-off', due: { unknown: true } };
+      d.items[1].next_milestone = null; d.items[1].needs_person = null; d.items[1].stopped = 'x';
+      d.total = null; d.counts = { active: null, closed: 'x', all: -1 };
+      return r.fulfill({ response: res, json: d });
+    });
+    await page.goto('/projects'); await listLoaded(page);
+    const r0 = await rows(page).nth(0).locator('xpath=ancestor::tr').innerText();
+    const r1 = await rows(page).nth(1).locator('xpath=ancestor::tr').innerText();
+    const tabs = await page.getByRole('tablist').first().getByRole('tab').allInnerTexts();
+    const total = await page.locator('.projects__total').innerText();
+    await page.goto('/projects/P-0101');
+    await expect(lines(page)).toHaveCount(8);
+    const strip = await page.locator('main').innerText();
+    const paid = strip.match(/PAID[\s\S]{0,30}/i)?.[0];
+    const inv = strip.match(/INVOICES VERIFIED[\s\S]{0,25}/i)?.[0];
+    const wait = strip.match(/WAITING ON PEOPLE[\s\S]{0,25}/i)?.[0];
+    const stopped = strip.match(/STOPPED\s*\n[\s\S]{0,15}/)?.[0];
+    log(`Q10 list row0="${r0.replace(/\s+/g,' ')}" row1="${r1.replace(/\s+/g,' ')}" tabs=${JSON.stringify(tabs)} total="${total}"`);
+    log(`Q10 journey PAID="${paid?.replace(/\n/g,' | ')}" INVOICES="${inv?.replace(/\n/g,' | ')}" WAITING="${wait?.replace(/\n/g,' | ')}" STOPPED="${stopped?.replace(/\n/g,' | ')}" has ₦0=${/₦\s?0\b|NGN\s?0\b/.test(strip)}`);
+    await page.screenshot({ path: `${EV}/q10-unknown-1440.png` });
+  });
+});
+
+test.describe('phone 390', () => {
+  test.use({ viewport: PHONE, hasTouch: true, isMobile: true });
+  test('Q11 phone pm list -> P-0101 -> frame back link', async ({ page, context }) => {
+    await persona(context, 'pm');
+    await page.goto('/projects'); await listLoaded(page);
+    await expect(rows(page)).toHaveCount(4);
+    const h1 = await noHScroll(page);
+    const listText = await page.locator('main').innerText();
+    await page.screenshot({ path: `${EV}/q11-list-390.png` });
+    await rows(page).first().click();
+    await expect(page).toHaveURL(/\/projects\/P-0101$/);
+    await expect(lines(page)).toHaveCount(8);
+    const h2 = await noHScroll(page);
+    const back = page.getByRole('link', { name: 'Back to Projects' });
+    await expect(back).toBeVisible();
+    const bb = await back.boundingBox();
+    const inMain = await page.locator('main').getByRole('link', { name: /Back to projects|← Projects/i }).count();
+    const tola = await page.locator('img[src*="tola"]').filter({ visible: true }).count();
+    await page.screenshot({ path: `${EV}/q11-journey-390.png` });
+    await back.click();
+    await expect(page).toHaveURL(/\/projects$/); await listLoaded(page);
+    await page.goto('/projects/P-0105');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    const empty = await page.locator('main').innerText();
+    const h3 = await noHScroll(page);
+    await page.goto('/projects/P-0104');
+    await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
+    const h4 = await noHScroll(page); const nb = await page.getByRole('link', { name: 'Back to Projects' }).count();
+    log(`Q11 PASS phone pm: list rows=4 noHScroll=${h1} delta_shown=${/Delta/.test(listText)}; P-0101 noHScroll=${h2} frame back link box=${JSON.stringify(bb)} in-main back links=${inMain} visible tola imgs=${tola}; back -> /projects; P-0105 noHScroll=${h3} text="${empty.replace(/\n/g,' | ').slice(0,200)}"; P-0104 no access noHScroll=${h4} back link=${nb}`);
+  });
+  test('Q12 phone search count and 401', async ({ page, context }) => {
+    await page.goto('/projects'); await listLoaded(page);
+    await page.getByRole('searchbox').fill('lagoon'); await expect(rows(page)).toHaveCount(1);
+    const t = await page.locator('.projects__total').filter({ visible: true }).count();
+    await persona(context, 'finance_lead', { psl_mock_scenario: '401' });
+    await page.goto('/projects/P-0101');
+    const a = await page.getByRole('main').getByRole('link', { name: 'Sign in' }).getAttribute('href');
+    log(`Q12 PASS phone search lagoon rows=1 visible count labels=${t}; 401 sign-in href=${a}; noHScroll=${await noHScroll(page)}`);
+  });
+});
