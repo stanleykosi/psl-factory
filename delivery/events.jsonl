@@ -1031,3 +1031,19 @@
 {"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T21:15:05Z","feature":"F-15","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"abf4b7a0660a","written_at":"2026-11-14T21:15:05Z"}
 {"at":"2026-11-14T21:15:05Z","feature":"F-16","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"df180ca0716d","written_at":"2026-11-14T21:15:05Z"}
+{"at":"2026-11-14T21:25:06Z","feature":"F-15","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/26","git.pr_number":26,"git.ci_status":"passed"}}
+{"at":"2026-11-14T21:25:06Z","feature":"F-15","round":2,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"67fc85eea713053df81d0970628cc1a3f31eb432"}}
+{"at":"2026-11-14T21:25:08Z","feature":"F-16","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/27","git.pr_number":27,"git.ci_status":"passed"}}
+{"at":"2026-11-14T21:25:09Z","feature":"F-16","round":2,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"ff5959832ec346906a02d7d421efbb705c7fd6da"}}
+{"at":"2026-11-14T21:25:53Z","feature":"F-15","round":2,"kind":"transition","head":"abf4b7a0660a","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T21:25:53Z","feature":"F-15","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"abf4b7a0660a","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","77 changed files exceed the auto-merge limit of 15","approver recommendation is None, not 'AUTO_MERGE'"]}
+{"at":"2026-11-14T21:25:53Z","feature":"F-15","round":2,"kind":"transition","head":"abf4b7a0660a","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T21:25:53Z","feature":"F-15","round":2,"kind":"transition","head":"abf4b7a0660a","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T21:25:54Z","feature":"F-15","round":2,"kind":"transition","head":"abf4b7a0660a","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T21:25:54Z","feature":"F-15","round":2,"kind":"transition","head":"abf4b7a0660a","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T21:25:54Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T21:25:54Z","feature":"F-16","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"df180ca0716d","reasons":["risk 'high' is not auto-mergeable","surface 'payments' always needs a human","surface 'security' always needs a human","17 changed files exceed the auto-merge limit of 15","approver recommendation is None, not 'AUTO_MERGE'"]}
+{"at":"2026-11-14T21:25:54Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"MERGED","to":"DONE"}

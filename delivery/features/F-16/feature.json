@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-16",
   "outcome": "The decision page matches the SCR-03 boards at 1440 and 390, and every decide rule stays as it is",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -619,9 +619,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -635,14 +635,14 @@
     "task_branch": "fe-decide-the-decision-page-matches-the-scr-03-boards",
     "head_sha": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-16",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/27",
+    "pr_number": 27,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "ff5959832ec346906a02d7d421efbb705c7fd6da",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/decide-board.spec.ts",
@@ -685,9 +685,15 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'payments' always needs a human",
+      "surface 'security' always needs a human",
+      "17 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -758,6 +764,46 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-14T21:07:50Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T21:25:54Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T21:25:54Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T21:25:55Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T21:25:55Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T21:25:55Z",
       "round": 2,
       "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
       "reason": null
