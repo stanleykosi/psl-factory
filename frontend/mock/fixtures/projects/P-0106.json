@@ -1,6 +1,6 @@
 {
   "case_id": "P-0106",
-  "title": "Ojo Foods · ordering kiosk",
+  "title": "Ojo Foods · ordering app",
   "lines": [
     {
       "line": "RFP response",
@@ -13,5 +13,13 @@
       "work_id": "W-1721"
     }
   ],
-  "next": "Planning · held: the PM Sola Martins confirms the next step."
+  "next": "Planning · held: the PM Sola Martins confirms the next step.",
+  "client": "Ojo Foods",
+  "pm": "Sola Martins",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

@@ -13,5 +13,13 @@
       "work_id": "W-1735"
     }
   ],
-  "next": "Pre-sale · costing approval: the PM Kemi Adebayo confirms the next step."
+  "next": "Pre-sale · costing approval: the PM Kemi Adebayo confirms the next step.",
+  "client": "Gidi Realty",
+  "pm": "Kemi Adebayo",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

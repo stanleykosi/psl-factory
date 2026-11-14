@@ -1,0 +1,97 @@
+{
+  "case_id": "P-0101",
+  "title": "Lagoon Health · patient app",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1701",
+      "title": "RFP response",
+      "reference": "RFP-0031",
+      "detail": "Won 02 Jun"
+    },
+    {
+      "line": "Log an engagement",
+      "state": "verified",
+      "work_id": "W-1712",
+      "title": "Log an engagement",
+      "reference": "ENG-0102",
+      "detail": "Route A · PM Tunde Bello"
+    },
+    {
+      "line": "Commercial submission",
+      "state": "verified",
+      "work_id": "W-1702",
+      "title": "Commercial submission",
+      "reference": "COM-0198",
+      "detail": "SOW v2 signed 30 Jun"
+    },
+    {
+      "line": "Plan a project",
+      "state": "verified",
+      "work_id": "W-1704",
+      "title": "Plan a project",
+      "reference": "PLN-0140",
+      "detail": "Planning exit approved"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "verified",
+      "work_id": "W-1713",
+      "title": "Invoice · Milestone 1",
+      "reference": "INV-0398",
+      "detail": "Delivered 03 Nov"
+    },
+    {
+      "line": "Prepare for release",
+      "state": "waiting",
+      "work_id": "W-1703",
+      "title": "Prepare for release",
+      "reference": "REL-0077",
+      "detail": "Station 2 of 5 · client UAT"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "waiting",
+      "work_id": "W-1001",
+      "title": "Invoice · Milestone 2",
+      "reference": "INV-0412",
+      "detail": "Station 4 of 7 · Finance review"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "owner_needed",
+      "work_id": "W-1714",
+      "title": "Invoice · Milestone 3",
+      "reference": "INV-0419",
+      "detail": "Held · no Finance Lead"
+    }
+  ],
+  "next": "Client UAT response, then Finance review of the milestone 2 invoice.",
+  "revision": 7,
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 6,
+    "registers": 6,
+    "actions": 9
+  },
+  "client": "Lagoon Health",
+  "pm": "Tunde Bello",
+  "route": "Route A from RFP-0031",
+  "facts": {
+    "contract_stages": 4,
+    "invoices_verified": 1,
+    "waiting_on_people": 2,
+    "stopped": 1,
+    "next_milestone": "UAT sign-off",
+    "paid": "Finance tracks"
+  },
+  "summary": {
+    "agent": "Tola",
+    "role": "PMO agent",
+    "paragraphs": [
+      "Lagoon Health is moving. Two things wait on people: the client's UAT response and Finance review of the milestone 2 invoice.",
+      "Milestone 3's invoice is held because nobody holds the Finance Lead role for this project."
+    ]
+  }
+}

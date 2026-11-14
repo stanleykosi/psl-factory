@@ -2,5 +2,13 @@
   "case_id": "P-0105",
   "title": "Sabi Market · web store",
   "lines": [],
-  "next": "The RFP response starts when a person picks it up."
+  "next": "The RFP response starts when a person picks it up.",
+  "client": "Sabi Market",
+  "pm": "Kemi Adebayo",
+  "tab_counts": {
+    "milestones": 2,
+    "documents": 1,
+    "registers": 0,
+    "actions": 0
+  }
 }

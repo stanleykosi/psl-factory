@@ -13,5 +13,13 @@
       "work_id": "W-1005"
     }
   ],
-  "next": "Finance confirms whether the milestone 1 invoice reached the client."
+  "next": "Finance confirms whether the milestone 1 invoice reached the client.",
+  "client": "Kora Logistics",
+  "pm": "Tunde Bello",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

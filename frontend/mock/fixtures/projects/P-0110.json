@@ -13,5 +13,13 @@
       "work_id": "W-1729"
     }
   ],
-  "next": "Release · UAT with client: the PM Kemi Adebayo confirms the next step."
+  "next": "Release · UAT with client: the PM Kemi Adebayo confirms the next step.",
+  "client": "Dune Energy",
+  "pm": "Kemi Adebayo",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

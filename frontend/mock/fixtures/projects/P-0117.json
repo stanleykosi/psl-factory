@@ -13,5 +13,13 @@
       "work_id": "W-1743"
     }
   ],
-  "next": "Release · release checklist: the PM Kunle Ade confirms the next step."
+  "next": "Release · release checklist: the PM Kunle Ade confirms the next step.",
+  "client": "Kano Agro",
+  "pm": "Kunle Ade",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

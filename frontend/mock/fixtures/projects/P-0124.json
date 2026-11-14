@@ -13,5 +13,13 @@
       "work_id": "W-1757"
     }
   ],
-  "next": "Archive · records kept: the PM Sola Martins confirms the next step."
+  "next": "Archive · records kept: the PM Sola Martins confirms the next step.",
+  "client": "Rivers Media",
+  "pm": "Sola Martins",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

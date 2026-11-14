@@ -6,24 +6,16 @@
         "finance_lead",
         "pm"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0101",
         "title": "Lagoon Health · patient app",
         "pm": "Tunde Bello",
         "stage": "Release · UAT with client",
-        "sample": true
-      }
-    },
-    {
-      "personas": [
-        "finance_lead"
-      ],
-      "item": {
-        "case_id": "P-0102",
-        "title": "Harbour Bank · mobile onboarding",
-        "pm": "Kunle Ade",
-        "stage": "Go-live · report sent",
-        "sample": true
+        "sample": true,
+        "next_milestone": "UAT sign-off · due 14 Nov",
+        "needs_person": 2,
+        "stopped": 1
       }
     },
     {
@@ -31,12 +23,33 @@
         "finance_lead",
         "pm"
       ],
+      "status": "active",
+      "item": {
+        "case_id": "P-0102",
+        "title": "Harmattan Bank · mobile onboarding",
+        "pm": "Kunle Ade",
+        "stage": "Go-live · report sent",
+        "sample": true,
+        "next_milestone": "Go-live acceptance",
+        "needs_person": 1,
+        "stopped": 1
+      }
+    },
+    {
+      "personas": [
+        "finance_lead",
+        "pm"
+      ],
+      "status": "active",
       "item": {
         "case_id": "P-0103",
         "title": "Kora Logistics · fleet tracker",
         "pm": "Tunde Bello",
         "stage": "Pre-sale · costing approval",
-        "sample": true
+        "sample": true,
+        "next_milestone": "SOW signed",
+        "needs_person": 1,
+        "stopped": 0
       }
     },
     {
@@ -44,12 +57,16 @@
         "finance_lead",
         "pm"
       ],
+      "status": "active",
       "item": {
-        "case_id": "P-0104",
-        "title": "Delta Foods · ordering app",
-        "pm": "Tunde Bello",
-        "stage": "Delivery · sprint 4 of 6",
-        "sample": true
+        "case_id": "P-0106",
+        "title": "Ojo Foods · ordering app",
+        "pm": "Sola Martins",
+        "stage": "Planning · held",
+        "sample": true,
+        "next_milestone": "Planning exit",
+        "needs_person": 0,
+        "stopped": 1
       }
     },
     {
@@ -57,240 +74,318 @@
         "finance_lead",
         "pm"
       ],
+      "status": "closed",
       "item": {
         "case_id": "P-0105",
         "title": "Sabi Market · web store",
-        "pm": "Tunde Bello",
-        "stage": "Pre-sale · RFP received",
-        "sample": true
+        "pm": "Kemi Adebayo",
+        "stage": "Closed 09 Nov",
+        "sample": true,
+        "needs_person": 0,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
-        "case_id": "P-0106",
-        "title": "Ojo Foods · ordering kiosk",
-        "pm": "Sola Martins",
-        "stage": "Planning · held",
-        "sample": true
+        "case_id": "P-0104",
+        "title": "Delta Foods · ordering app",
+        "pm": "Kemi Adebayo",
+        "stage": "Delivery · sprint 4 of 6",
+        "sample": true,
+        "next_milestone": "Handover sign-off",
+        "needs_person": 2,
+        "stopped": 1
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0107",
         "title": "Atlas Insurance · claims portal",
         "pm": "Kemi Adebayo",
         "stage": "Delivery · sprint 2 of 5",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Planning exit",
+        "needs_person": 0,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0108",
         "title": "Brightpath Schools · parent app",
         "pm": "Kunle Ade",
         "stage": "Planning · costing review",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Plan approved",
+        "needs_person": 1,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0109",
         "title": "Cedar Pharmacy · stock tracker",
         "pm": "Sola Martins",
         "stage": "Hypercare · week 2",
-        "sample": true
+        "sample": true,
+        "next_milestone": "SOW signed",
+        "needs_person": 2,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0110",
         "title": "Dune Energy · meter readings",
         "pm": "Kemi Adebayo",
         "stage": "Release · UAT with client",
-        "sample": true
+        "sample": true,
+        "next_milestone": "UAT sign-off",
+        "needs_person": 0,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0111",
         "title": "Eko Transit · ticketing",
         "pm": "Kunle Ade",
         "stage": "Delivery · sprint 5 of 8",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Go-live acceptance",
+        "needs_person": 1,
+        "stopped": 1
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0112",
         "title": "Fola Fashion · online shop",
         "pm": "Sola Martins",
         "stage": "Go-live · report sent",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Sprint review",
+        "needs_person": 2,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0113",
         "title": "Gidi Realty · listings site",
         "pm": "Kemi Adebayo",
         "stage": "Pre-sale · costing approval",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Handover sign-off",
+        "needs_person": 0,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0114",
         "title": "Hilltop Clinic · bookings",
         "pm": "Kunle Ade",
         "stage": "Closure · retrospective",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Planning exit",
+        "needs_person": 1,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0115",
         "title": "Iroko Bank · card controls",
         "pm": "Sola Martins",
         "stage": "Delivery · sprint 1 of 6",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Plan approved",
+        "needs_person": 2,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0116",
         "title": "Jade Telecom · self-service",
         "pm": "Kemi Adebayo",
         "stage": "Planning · plan approval",
-        "sample": true
+        "sample": true,
+        "next_milestone": "SOW signed",
+        "needs_person": 0,
+        "stopped": 1
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0117",
         "title": "Kano Agro · farmer payments",
         "pm": "Kunle Ade",
         "stage": "Release · release checklist",
-        "sample": true
+        "sample": true,
+        "next_milestone": "UAT sign-off",
+        "needs_person": 1,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0118",
         "title": "Lekki Hotels · guest app",
         "pm": "Sola Martins",
         "stage": "Handover · support handover",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Go-live acceptance",
+        "needs_person": 2,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0119",
         "title": "Mainland Courier · tracking",
         "pm": "Kemi Adebayo",
         "stage": "Delivery · sprint 3 of 4",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Sprint review",
+        "needs_person": 0,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0120",
         "title": "Niger Delta Water · billing",
         "pm": "Kunle Ade",
         "stage": "Pre-sale · RFP response",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Handover sign-off",
+        "needs_person": 1,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0121",
         "title": "Owerri Motors · service desk",
         "pm": "Sola Martins",
         "stage": "Hypercare · week 1",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Planning exit",
+        "needs_person": 2,
+        "stopped": 1
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0122",
         "title": "Palm Credit · loan origination",
         "pm": "Kemi Adebayo",
         "stage": "Delivery · sprint 6 of 6",
-        "sample": true
+        "sample": true,
+        "next_milestone": "Plan approved",
+        "needs_person": 0,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "active",
       "item": {
         "case_id": "P-0123",
         "title": "Quarry Build · site reports",
         "pm": "Kunle Ade",
         "stage": "Planning · held",
-        "sample": true
+        "sample": true,
+        "next_milestone": "SOW signed",
+        "needs_person": 1,
+        "stopped": 0
       }
     },
     {
       "personas": [
         "finance_lead"
       ],
+      "status": "closed",
       "item": {
         "case_id": "P-0124",
         "title": "Rivers Media · content hub",
         "pm": "Sola Martins",
         "stage": "Archive · records kept",
-        "sample": true
+        "sample": true,
+        "needs_person": 0,
+        "stopped": 0
       }
     }
   ]

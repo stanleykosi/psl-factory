@@ -13,5 +13,13 @@
       "work_id": "W-1745"
     }
   ],
-  "next": "Handover · support handover: the PM Sola Martins confirms the next step."
+  "next": "Handover · support handover: the PM Sola Martins confirms the next step.",
+  "client": "Lekki Hotels",
+  "pm": "Sola Martins",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

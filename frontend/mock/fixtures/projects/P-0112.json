@@ -13,5 +13,13 @@
       "work_id": "W-1733"
     }
   ],
-  "next": "Go-live · report sent: the PM Sola Martins confirms the next step."
+  "next": "Go-live · report sent: the PM Sola Martins confirms the next step.",
+  "client": "Fola Fashion",
+  "pm": "Sola Martins",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

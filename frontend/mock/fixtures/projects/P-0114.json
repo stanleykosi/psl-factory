@@ -13,5 +13,13 @@
       "work_id": "W-1737"
     }
   ],
-  "next": "Closure · retrospective: the PM Kunle Ade confirms the next step."
+  "next": "Closure · retrospective: the PM Kunle Ade confirms the next step.",
+  "client": "Hilltop Clinic",
+  "pm": "Kunle Ade",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }

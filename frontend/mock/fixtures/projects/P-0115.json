@@ -13,5 +13,13 @@
       "work_id": "W-1739"
     }
   ],
-  "next": "Delivery · sprint 1 of 6: the PM Sola Martins confirms the next step."
+  "next": "Delivery · sprint 1 of 6: the PM Sola Martins confirms the next step.",
+  "client": "Iroko Bank",
+  "pm": "Sola Martins",
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
 }
