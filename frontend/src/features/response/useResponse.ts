@@ -113,7 +113,11 @@ export function useResponse(id: string, taskId: string | undefined) {
     onAccessError,
   });
 
-  /** After a reload: a recorded task (or one gone from the item) is done; otherwise the form shows the new item. */
+  const { sync } = proof;
+  /**
+   * After a reload: a recorded task (or one gone from the item) is done; otherwise the form shows the new item and
+   * the next press carries its case_revision (the proof already uploaded stays valid: evidence is append-only).
+   */
   const settle = useCallback(
     (before: ResponseWorkItem, item: ResponseWorkItem, responderId: string, keepForm: Notice | null) => {
       const now = findTask(item, taskId);
@@ -121,10 +125,11 @@ export function useResponse(id: string, taskId: string | undefined) {
         setView({ kind: 'done', before, recorded: now.response.recorded, next: now.response.next, responderId });
         return;
       }
+      sync(item.case_revision);
       setView({ kind: 'form', item });
       setNotice(keepForm);
     },
-    [taskId],
+    [taskId, sync],
   );
 
   /** Re-read the item after a failed write; the error when the read failed (access loss replaces the page). */

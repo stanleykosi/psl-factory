@@ -151,6 +151,11 @@ export function useEvidenceUpload({ caseId, caseRevision, kind, reloadCaseRevisi
     setFiles((fs) => fs.filter((f) => f.key !== key));
   }, []);
 
+  /** After the owner reloads the item: carry the reloaded case_revision from now on. */
+  const sync = useCallback((reloaded: number | undefined) => {
+    revision.current = reloaded;
+  }, []);
+
   const evidenceIds = files.flatMap((f) => (f.status === 'uploaded' && f.evidenceId ? [f.evidenceId] : []));
 
   return {
@@ -160,6 +165,7 @@ export function useEvidenceUpload({ caseId, caseRevision, kind, reloadCaseRevisi
     evidenceIds,
     /** The case_revision to send with the write that follows: the last upload's, else the item's. */
     caseRevision: () => revision.current ?? caseRevision,
+    sync,
     add,
     retry,
     remove,

@@ -567,6 +567,21 @@ describe('errors on record', () => {
     expect(posts('/response')).toHaveLength(1);
   });
 
+  it('after a 409 the next press carries the reloaded item’s case revision, not the last upload’s', async () => {
+    const moved = { ...item('W-1601'), case_revision: 7 };
+    answers.item = (n) => json(200, n === 0 ? item('W-1601') : moved);
+    answers.respond = (n, c) => (n === 0 ? json(409, STALE) : json(200, recordedReply(c.body!)));
+    await open();
+    await fillW1601();
+    fireEvent.click(recordButton('Record response'));
+    await screen.findByText(/This changed while you were recording/);
+    expect(posts('/response')[0].body!.case_revision).toBe(5);
+    fireEvent.click(recordButton('Record response'));
+    await screen.findByRole('status');
+    expect(posts('/response')).toHaveLength(2);
+    expect(posts('/response')[1].body).toMatchObject({ evidence_id: 'EV-C-1601-1', case_revision: 7 });
+  });
+
   it('409 clears a choice the reloaded task no longer offers', async () => {
     const changed = item('W-1601');
     changed.tasks[0].response!.actions = changed.tasks[0].response!.actions.filter((a) => a.value !== 'approved');
