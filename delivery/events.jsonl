@@ -274,3 +274,5 @@
 {"at":"2026-11-14T03:11:13Z","feature":"F-05","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-14T03:11:15Z","feature":"F-05","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-14T03:11:36Z","feature":"F-05","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-14T03:15:24Z","feature":"F-06","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":124.0,"commit":"808e022dd99e"}
+{"at":"2026-11-14T03:15:25Z","feature":"F-06","round":1,"kind":"transition","head":"808e022dd99e","from":"IMPLEMENTING","to":"IN_REVIEW"}

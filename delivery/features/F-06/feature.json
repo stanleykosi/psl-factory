@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-06",
   "outcome": "A Lead sees every exception they may see on one read-only list at /exceptions",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2B"
   ],
@@ -68,7 +68,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T03:15:24Z",
+      "seconds": 124.0,
+      "evidence_ref": "delivery/features/F-06/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -139,7 +152,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "435f1585dab1462b9a73f335883ff5fe71c87c43",
     "task_branch": "fe-m2b-a-lead-sees-every-exception-they-may-see",
-    "head_sha": null,
+    "head_sha": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-06",
     "pr_url": null,
     "pr_number": null,
@@ -150,7 +163,48 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/mock/exceptions.mjs",
+      "frontend/mock/fixtures/E-EXCEPTIONS.json",
+      "frontend/mock/fixtures/work/W-1501.json",
+      "frontend/mock/fixtures/work/W-1502.json",
+      "frontend/mock/fixtures/work/W-1503.json",
+      "frontend/mock/fixtures/work/W-1504.json",
+      "frontend/mock/fixtures/work/W-1505.json",
+      "frontend/mock/fixtures/work/W-1506.json",
+      "frontend/mock/fixtures/work/W-1507.json",
+      "frontend/mock/fixtures/work/W-1508.json",
+      "frontend/mock/fixtures/work/W-1509.json",
+      "frontend/mock/fixtures/work/W-1510.json",
+      "frontend/mock/fixtures/work/W-1511.json",
+      "frontend/mock/fixtures/work/W-1512.json",
+      "frontend/mock/fixtures/work/W-1513.json",
+      "frontend/mock/fixtures/work/W-1514.json",
+      "frontend/mock/fixtures/work/W-1515.json",
+      "frontend/mock/fixtures/work/W-1516.json",
+      "frontend/mock/fixtures/work/W-1517.json",
+      "frontend/mock/fixtures/work/W-1518.json",
+      "frontend/mock/fixtures/work/W-1519.json",
+      "frontend/mock/fixtures/work/W-1520.json",
+      "frontend/mock/fixtures/work/W-1521.json",
+      "frontend/mock/fixtures/work/W-1522.json",
+      "frontend/mock/fixtures/work/W-1523.json",
+      "frontend/mock/fixtures/work/W-1524.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/exceptions/page.tsx",
+      "frontend/src/features/exceptions/ExceptionsList.tsx",
+      "frontend/src/features/exceptions/ExceptionsPage.tsx",
+      "frontend/src/features/exceptions/exceptions.css",
+      "frontend/src/features/exceptions/index.ts",
+      "frontend/src/features/exceptions/labels.ts",
+      "frontend/src/features/exceptions/types.ts",
+      "frontend/src/features/exceptions/useExceptions.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/tests/exceptions-mock.test.ts",
+      "frontend/tests/exceptions.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -201,6 +255,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T03:15:25Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
     }
   ],
   "routing": {
@@ -217,9 +279,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
   },
   "blocked": null
 }
