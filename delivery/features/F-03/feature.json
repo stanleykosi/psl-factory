@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-03",
   "outcome": "Open one work item and read its history",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -726,9 +726,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -747,9 +747,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "2c3a09b8745640ae0d22a8270b99a501b00ac630",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/work-item.spec.ts",
@@ -793,12 +793,17 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-03/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "21 changed files exceed the auto-merge limit of 15"
+    ],
+    "decided_for_head_sha": "3f684410f771cf53c1103d40aaa7977b09c084b3",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -901,6 +906,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-14T00:23:50Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T00:25:58Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T00:26:11Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T00:26:32Z",
+      "round": 3,
+      "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T00:26:32Z",
       "round": 3,
       "head": "3f684410f771cf53c1103d40aaa7977b09c084b3",
       "reason": null

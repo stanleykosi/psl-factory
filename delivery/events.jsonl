@@ -149,3 +149,11 @@
 {"at":"2026-11-14T00:23:49Z","feature":"F-03","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/4","git.pr_number":4}}
 {"at":"2026-11-14T00:23:50Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-14T00:24:19Z","feature":"F-03","round":3,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-14T00:25:58Z","feature":"F-03","round":3,"kind":"decision","decision":"HUMAN_APPROVAL","head":"3f684410f771","reasons":["risk 'medium' is not auto-mergeable","21 changed files exceed the auto-merge limit of 15"]}
+{"at":"2026-11-14T00:25:58Z","feature":"F-03","round":3,"kind":"fields","fields":{"merge_decision.approver_recommendation":"AUTO_MERGE"}}
+{"at":"2026-11-14T00:25:58Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-14T00:26:11Z","feature":"F-03","round":3,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-14T00:26:11Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"2c3a09b8745640ae0d22a8270b99a501b00ac630"}}
+{"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-14T00:26:32Z","feature":"F-03","round":3,"kind":"transition","head":"3f684410f771","from":"MERGED","to":"DONE"}
