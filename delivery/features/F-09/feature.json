@@ -778,9 +778,9 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "a7f6d55182d0e28825a4b29be2ef357840bd575f",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/OVERNIGHT-DECISIONS.md",

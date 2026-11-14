@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -82,15 +82,29 @@
       "at": "2026-11-14T09:18:49Z",
       "seconds": 153.0,
       "evidence_ref": "delivery/features/F-14/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T11:43:22Z",
+      "seconds": 59.2,
+      "evidence_ref": "delivery/features/F-14/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -116,18 +130,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design fidelity gate, D-41 board-is-spec)",
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -142,13 +160,363 @@
       "reproduction": "round-1/build.md fidelity table; rule visual >= 90 at 1440 and 390",
       "evidence_refs": [],
       "raised_by": "coordinator",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "coordinator",
           "at": "2026-11-14T09:18:50Z",
           "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T11:42:23Z",
+          "refs": [
+            "5b9605a"
+          ],
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "refs": [
+            "Re-ran fidelity at head 5b9605a on 4511/4512 with the same exceptions file. 24 of 26 boards are at visual 90 or more, with the same scores as build.md to one decimal (lowest passing: desktop-issue 90.4). Awaiting-reconciliation is 87.7 / 80.0, and part of that gap is UI-2-1, not only F-09's panel."
+          ],
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5b9605a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Re-ran fidelity at head 5b9605a on 4511/4512 with the same exceptions file. 24 of 26 boards are at visual 90 or more, with the same scores as build.md to one decimal (lowest passing: desktop-issue 90.4). Awaiting-reconciliation is 87.7 / 80.0, and part of that gap is UI-2-1, not only F-09's panel."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "On phones, items with no `presentation` (every live item) render the Overview/History tabs after the page content instead of under the header as F-03 did. `WorkItemView.tsx:161` (`{phone && !(tab === 'history' && view) && tabs}`) puts the tabs at the bottom, so History is reached by scrolling to the end of the overview, and Overview on the history tab sits below the list. Expected: tabs stay under the header for items without a board, and move only on board pages.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "On the phone history board (`counts` present) the \"Rows per page\" control is not rendered at all, and neither are \"Showing N\" and \"As of\" (`WorkItemHistory.tsx:195,234`: `!board && !side`). The spec says the rows-per-page control and Show more stay as F-03 requires. Only fixtures carry `history_counts`, so live pages are unaffected. Putting the select in `work-sr` would leave a focusable invisible control, so the board owner should decide where it goes (for example a visible small control) and record an exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-3",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phones `presentation.phone.title` replaces the contract `title` in the h1, and the header sub-line shows \"ref \u00b7 revision N\" instead of the contract started line (`WorkItemView.tsx:34,45-52`), so `started_by` and `started_at` are absent on phones even for screen readers. Rule 1 says contract fields come first. Only fixtures are affected. Keep the contract title and started line in a `work-sr` span, or record both as exceptions.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-4",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Note for F-06: `NextStep` sits inside a `work-sr` wrapper (`WorkItemOverview.tsx:707-709`). A \"See all exceptions\" link added there would be focusable but invisible. F-06 must either draw it visibly or keep it out of that wrapper. Not a defect today (no control inside).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "product",
+      "severity": "high",
+      "blocking": false,
+      "summary": "History has no entry point from any overview. D-41 removed the Overview/History tabs because the overview boards do not draw them, and the only `/history` link left in `frontend/src/features/work-item/WorkItemView.tsx:100` is the tab on the history page itself. Walked W-1701, W-1705 and W-1710 at both widths. The links on those pages are the shell, \"MY WORK\", the panel links and the decision link, and none go to History. A reviewer or Finance Lead cannot reach the audit trail from the item. Expected: the design engineer picks where the link goes (for example a line in the started-by row or in the state panel), and the owner of that placement draws it. F-06's next-step link slot is not a substitute.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "On the phone awaiting-reconciliation page (W-1711 at 390) the pinned bar room (`bar_slot`) shows as an empty white strip across the foot of the screen, with no control. Until F-09 mounts \"Record and continue\" it looks like a rendering fault, and the item has no action. Hide the room until the slot has content, or keep it only once F-09 is merged. Desktop W-1711 shows no right column for the same reason, so a Finance Lead can read that a person must confirm but cannot do it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-3",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The station list is a focusable scroll region (\"01 Milestone evidence ...\" takes a Tab stop on phone, and the Stations section does at 1440). It has no accessible name, so a keyboard user gets an unlabelled stop. Give it `aria-label=\"Stations\"` or remove the tab stop if nothing scrolls.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Fact boxes lose the board's attention tint when the presentation gives a detail for a `not_yet` fact. Expected (boards): SCR-02-desktop/mobile-awaiting-reconciliation tint RECEIPT \"Not found\" amber (#6E4700 on the amber fill, like SENT \"Unknown\"). SCR-02-desktop/mobile-issue tint SENT \"Not yet\" red (#9A2F10 on the red fill, like REVIEWED \"Waiting\" on the default board). Actual: plain white box with grey #626B6F text (reports list these as \"text colour #6E4700/#9A2F10 on the board, #626B6F on the page\"). Cause: `factClass` keys only on status, and `not_yet` maps to bare `psl-fact` (frontend/src/features/work-item/WorkItemOverview.tsx:70-76). Fixtures W-1711.json:83 and W-1706.json:84 set the detail but no tone. Fix: an optional per-fact tone in `presentation.facts` (PROPOSAL), mapped to the existing `psl-fact--current` / attention classes. This is also part of the awaiting-reconciliation gap that D-31 says must be F-09's panel only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The processing desktop board draws the next-step line \"No person needs to act yet. An agent drafting is not a review or an approval.\" in small text under the columns (board y\u2248827). The page hides it (`work-sr`). D-41 removes the next-step block only where a board does not draw it. Exception 20 (\"NextStep markup may not change\") no longer applies: round 2 already wraps NextStep in `work-sr`. Expected: render that line visibly as the board places it, as plain small print (12px, `--ink-muted`, like `.work-note`). Path: WorkItemOverview.tsx (NextStep wrapper); board SCR-02-desktop-processing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "\"See all exceptions\": the effect-uncertain desktop board draws it as a full-width secondary button in the AWAITING RECONCILIATION panel, between the facts and the small print. The page has no such button. The round-2 \"F-06 slot\" sits inside `NextStep`, which is now inside `work-sr`. F-06 is merged on the base (D-43), so once this branch takes dlv-00 the link will be invisible but still focusable: a hidden tab stop, and the board's button still missing. Expected per D-41: the link shows where the board draws it (panel links, `psl-btn psl-btn--secondary psl-btn--lg`), and no focusable control sits inside visually hidden text. Merge dlv-00, place F-06's link visibly, and re-score effect-uncertain at both widths. Exception 19 then becomes unused.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-4",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone history filter bar: the page draws four segments (All 7 \u00b7 Decisions 2 \u00b7 Agent work 2 \u00b7 Evidence 1) in 358px. The labels are crammed against their borders: \"Agent work\" touches the Decisions divider, and the count chips nearly meet. SCR-02-mobile-history draws three equal segments: All 7 \u00b7 Decisions 2 \u00b7 Agents 2. Build.md says the phone uses the phone boards' wording, but this control does not. Expected: the phone board's three segments and the label \"Agents\" below 720px. The Evidence filter stays on desktop, or else it scrolls or wraps without crowding. Path: frontend/src/features/work-item/WorkItemHistory.tsx (filter tabs); side-by-side in fidelity-review/SCR-02-mobile-history-390.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-5",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Owner-needed desktop: SCR-02-desktop-owner-needed draws the held station (04 Finance review \u00b7 \"Held \u00b7 no reviewer\") as a filled red (#C8401C) box with white text, the same fill the default board uses for the current station. The page draws it as a white box with red #9A2F10 text (report: \"text colour #FFFFFF on the board, #9A2F10 on the page\" for \"04\", \"Finance review\", \"Held \u00b7 no reviewer\"). Expected: the held station takes the same filled current-station class on this board. Path: StationTrack (WorkItemOverview.tsx ~line 100) / fixture W-1708 presentation.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-6",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Ten exception entries match nothing on any board now: #22 complementary '', #36 phone callout, #47\u2013#51 REF \u00b7 CLIENT eyebrows, #55 owner-needed phone small print, #56 \"Started 10:41\", #57 \"+ 2 EARLIER ENTRIES\". Remove them so the file lists only live gaps. Path: delivery/features/F-14/fidelity-exceptions.json.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-7",
+      "round": 2,
+      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "History event \"Supplied evidence\" loses the board's colon: the boards show \"Supplied evidence: client UAT sign-off\" at both widths, the page shows \"Supplied evidence client UAT sign-off\". Path: WorkItemHistory.tsx event/detail join, or fixture W-1705.history.json:53.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T14:38:26Z",
+          "head": "5b9605a81d197187056995c793c626b1b3c2c55d"
         }
       ]
     }
@@ -226,7 +594,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b7f7166781cd81326c03669da4ae88f092c4cf33",
     "task_branch": "fe-workitem-the-work-item-page-and-its-history-match",
-    "head_sha": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+    "head_sha": "5b9605a81d197187056995c793c626b1b3c2c55d",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-14",
     "pr_url": null,
     "pr_number": null,
@@ -252,6 +620,8 @@
       "frontend/mock/fixtures/work/W-1709.json",
       "frontend/mock/fixtures/work/W-1710.json",
       "frontend/mock/fixtures/work/W-1711.json",
+      "frontend/public/agents/chidi-working.png",
+      "frontend/public/agents/tola-waiting.png",
       "frontend/src/features/work-item/InfoIcon.tsx",
       "frontend/src/features/work-item/WorkItemHistory.tsx",
       "frontend/src/features/work-item/WorkItemOverview.tsx",
@@ -339,6 +709,14 @@
       "round": 2,
       "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T11:43:24Z",
+      "round": 2,
+      "head": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "reason": null
     }
   ],
   "routing": {
@@ -355,9 +733,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "5b9605a81d197187056995c793c626b1b3c2c55d"
   },
   "blocked": null
 }
