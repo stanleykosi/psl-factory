@@ -9,6 +9,9 @@ export type Counts = NonNullable<WorkList['counts']>;
 export type Queue = WorkQuery['queue'];
 export type WorkState = WorkItem['state'];
 export type Limit = NonNullable<WorkQuery['limit']>;
+export type WaitingOn = NonNullable<WorkQuery['waiting_on']>;
+export type LineOption = { key: string; title: string };
+export type Agent = NonNullable<WorkItem['agent']>;
 
 export const QUEUES: { key: Queue; label: string; empty: string }[] = [
   { key: 'needs_me', label: 'Needs me', empty: 'Nothing needs you right now' },
@@ -49,7 +52,19 @@ export const KINDS: Record<WorkItem['kind'], { words: string; family: Family }> 
   started: { words: 'STARTED', family: 'neutral' },
 };
 
-export type View = { queue: Queue; q?: string; line?: string; state?: WorkState; limit: Limit };
+/** Waiting-on filter words (D-WORKLIST-FILTERS proposal; the categories are an engineering proposal). */
+export const WAITING_ON: Record<WaitingOn, string> = {
+  me: 'Me',
+  someone_else: 'Someone else',
+  agent: 'An agent',
+  outside_party: 'Someone outside PSL',
+  no_owner: 'No owner yet',
+};
+export const WAITING_KEYS = Object.keys(WAITING_ON) as WaitingOn[];
+
+export const AGENTS: Record<Agent, string> = { tola: 'Tola', chidi: 'Chidi', zainab: 'Zainab' };
+
+export type View = { queue: Queue; q?: string; line?: string; project?: string; state?: WorkState; waiting?: WaitingOn; limit: Limit };
 
 /** Reads the view from the URL; invalid values fall back to the defaults. */
 export function parseView(params: URLSearchParams): View {
@@ -58,8 +73,11 @@ export function parseView(params: URLSearchParams): View {
   const line = params.get('line') || undefined;
   const rawState = params.get('state');
   const state = rawState && Object.hasOwn(STATES, rawState) ? (rawState as WorkState) : undefined;
+  const project = params.get('project') || undefined;
+  const rawWaiting = params.get('waiting_on');
+  const waiting = rawWaiting && Object.hasOwn(WAITING_ON, rawWaiting) ? (rawWaiting as WaitingOn) : undefined;
   const limit = LIMITS.find((n) => String(n) === params.get('limit')) ?? DEFAULT_LIMIT;
-  return { queue, q, line, state, limit };
+  return { queue, q, line, project, state, waiting, limit };
 }
 
 /** The URL search for a view; defaults are left out. Cursors are never written. */
@@ -68,7 +86,9 @@ export function viewSearch(view: View): string {
   if (view.queue !== 'needs_me') params.set('queue', view.queue);
   if (view.q) params.set('q', view.q);
   if (view.line) params.set('line', view.line);
+  if (view.project) params.set('project', view.project);
   if (view.state) params.set('state', view.state);
+  if (view.waiting) params.set('waiting_on', view.waiting);
   if (view.limit !== DEFAULT_LIMIT) params.set('limit', String(view.limit));
   const search = params.toString();
   return search ? `?${search}` : '';
@@ -79,12 +99,24 @@ export function buildWorkQuery(view: View, cursor?: string): WorkQuery {
   const q = view.q?.trim();
   if (q) query.q = q;
   if (view.line) query.line = view.line;
+  if (view.project) query.project = view.project;
   if (view.state) query.state = view.state;
+  if (view.waiting) query.waiting_on = view.waiting;
   if (cursor) query.cursor = cursor;
   return query;
 }
 
-export const isNarrowed = (view: View) => Boolean(view.q || view.line || view.state);
+export const isNarrowed = (view: View) => Boolean(view.q || view.line || view.project || view.state || view.waiting);
+
+/** Applied filters (search not counted), for the Filter badge. */
+export const filterCount = (view: View) => [view.line, view.project, view.state, view.waiting].filter(Boolean).length;
+
+/** "34 records you can see": the person's queue totals added up. Unknown when there are no counts. */
+export function recordsText(counts: Counts | null | undefined): string | undefined {
+  if (!counts) return undefined;
+  const total = counts.needs_me + counts.waiting_on_others + counts.done + (counts.unassigned ?? 0);
+  return `${total} ${total === 1 ? 'record' : 'records'} you can see`;
+}
 
 export function formatAge(seconds: number): string {
   if (seconds < 3600) return `${Math.max(1, Math.floor(seconds / 60))}m`;
@@ -114,11 +146,16 @@ export function stationText(station: WorkItem['station'], state: string): string
   return state === 'verified' ? `All ${station.count} stations done` : `Station ${station.index} of ${station.count} · ${station.name}`;
 }
 
-/** Line options: the distinct lines loaded for this view plus the applied one, A–Z. */
-export function lineOptions(items: WorkItem[], applied?: string): string[] {
-  const lines = new Set(items.map((i) => i.line));
-  if (applied) lines.add(applied);
-  return [...lines].sort((a, b) => a.localeCompare(b));
+/**
+ * Line options by key: the response's filters.lines (lines the person has work on), else the lines on the
+ * loaded rows. The applied key stays listed even when no row carries it.
+ */
+export function lineOptions(filters: WorkList['filters'], items: WorkItem[], applied?: string): LineOption[] {
+  const lines = new Map<string, string>();
+  if (filters) for (const l of filters.lines) lines.set(l.key, l.title);
+  else for (const i of [...items].sort((a, b) => a.line.localeCompare(b.line))) lines.set(i.line_key ?? i.line, i.line);
+  if (applied && !lines.has(applied)) lines.set(applied, applied);
+  return [...lines].map(([key, title]) => ({ key, title }));
 }
 
 /** CMP-22 result count, uppercase mono. */

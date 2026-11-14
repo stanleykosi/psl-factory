@@ -8,23 +8,27 @@ import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import { SignedOutState } from '@/shell/FrameStates';
 
-import { FilterPanel, type Filters } from './FilterPanel';
+import { CaughtUp } from './CaughtUp';
+import { FilterPanel, type Filters, type Preview } from './FilterPanel';
 import { FilterIcon, SearchIcon } from './icons';
 import {
   appendPage,
   buildWorkQuery,
+  filterCount as countFilters,
   isNarrowed,
   LIMITS,
   lineOptions,
   mergeRefresh,
   parseView,
   QUEUES,
+  recordsText,
   resultCount,
   shownText,
   showMoreLabel,
   stateTag,
   formatTime,
   viewSearch,
+  WAITING_ON,
   type Counts,
   type Limit,
   type Queue,
@@ -32,7 +36,7 @@ import {
   type WorkItem,
   type WorkList,
 } from './model';
-import { WorkCards, WorkTable } from './WorkRows';
+import { StartedCards, WorkCards, WorkTable } from './WorkRows';
 
 export const POLL_MS = 15_000;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -69,6 +73,7 @@ export function MyWork() {
   const [list, setList] = useState<ListState>({ status: 'loading' });
   const [counts, setCounts] = useState<Counts | null | undefined>(undefined);
   const [asOf, setAsOf] = useState<string>();
+  const [lineFilters, setLineFilters] = useState<WorkList['filters']>();
   const [refreshFailed, setRefreshFailed] = useState(false);
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
@@ -100,6 +105,7 @@ export function MyWork() {
   const took = useCallback((data: WorkList) => {
     setCounts(data.counts ?? null);
     setAsOf(data.as_of);
+    setLineFilters(data.filters);
     setRefreshFailed(false);
     lastSuccess.current = Date.now();
   }, []);
@@ -246,8 +252,13 @@ export function MyWork() {
   }, []);
   const applyFilters = (filters: Filters) => {
     closeFilter();
-    navigate({ line: filters.line, state: filters.state });
+    navigate({ line: filters.line, project: filters.project, state: filters.state, waiting: filters.waiting });
   };
+  // "Show N items" in the filter panel: the same list request with the draft filters, one page of 50.
+  const preview = useCallback(async (filters: Filters): Promise<Preview> => {
+    const data = await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...viewRef.current, ...filters, limit: 50 }) } }));
+    return { count: data.items.length, more: Boolean(data.next_cursor) };
+  }, []);
   const removeFilter = (filters: Filters) => {
     navigate(filters);
     filterButton.current?.focus();
@@ -259,8 +270,13 @@ export function MyWork() {
   const tabs = QUEUES.filter((x) => x.key !== 'unassigned' || counts?.unassigned !== undefined);
   const current = QUEUES.find((x) => x.key === view.queue)!;
   const selectedShown = tabs.some((x) => x.key === view.queue);
-  const filterCount = (view.line ? 1 : 0) + (view.state ? 1 : 0);
+  const filterCount = countFilters(view);
   const narrowed = isNarrowed(view);
+  const lines = lineOptions(lineFilters, ready?.items ?? [], view.line);
+  const lineTitle = lines.find((l) => l.key === view.line)?.title ?? view.line;
+  // SCR-01-*-empty: an empty Needs me shows the caught-up view without the search bar.
+  const caughtUp = ready !== null && ready.items.length === 0 && !narrowed && view.queue === 'needs_me';
+  const records = recordsText(counts);
 
   const onTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const last = tabs.length - 1;
@@ -280,7 +296,8 @@ export function MyWork() {
     navigate({ limit: next });
   };
 
-  const filterBadge = filterCount > 0 && <span className="psl-badge psl-badge--signal">{filterCount}</span>;
+  // SCR-01-*-filter: while the panel is open the Filter button is dark and its count badge light.
+  const filterBadge = filterCount > 0 && <span className={filterOpen ? 'psl-badge my-work__badge-open' : 'psl-badge psl-badge--signal'}>{filterCount}</span>;
   const filterProps = {
     ref: filterButton,
     type: 'button' as const,
@@ -291,9 +308,10 @@ export function MyWork() {
   const filterPanel = filterOpen && (
     <FilterPanel
       phone={phone}
-      lines={lineOptions(ready?.items ?? [], view.line)}
-      applied={{ line: view.line, state: view.state }}
+      lines={lines}
+      applied={{ line: view.line, project: view.project, state: view.state, waiting: view.waiting }}
       anchor={filterButton}
+      preview={preview}
       onApply={applyFilters}
       onClose={closeFilter}
     />
@@ -350,27 +368,34 @@ export function MyWork() {
       <div className="psl-empty">
         <h3>No work matches</h3>
         <p>Nothing in {current.label} matches your search and filters.</p>
-        <button type="button" className="psl-link my-work__linkbutton" onClick={() => navigate({ q: undefined, line: undefined, state: undefined })}>
+        <button
+          type="button"
+          className="psl-link my-work__linkbutton"
+          onClick={() => navigate({ q: undefined, line: undefined, project: undefined, state: undefined, waiting: undefined })}
+        >
           Clear filters
         </button>
       </div>
     );
+  } else if (caughtUp) {
+    body = <CaughtUp counts={counts} phone={phone} onSeeStarted={() => navigate({ queue: 'waiting_on_others' })} />;
   } else if (list.items.length === 0) {
     body = (
       <div className="psl-empty">
         <h3>{current.empty}</h3>
         <p>New work will appear here.</p>
-        {view.queue === 'needs_me' && (counts?.waiting_on_others ?? 0) > 0 && (
-          <button type="button" className="psl-btn psl-btn--secondary" onClick={() => navigate({ queue: 'waiting_on_others' })}>
-            See what&rsquo;s waiting on others
-          </button>
-        )}
       </div>
     );
   } else {
     body = (
       <>
-        {phone ? <WorkCards items={list.items} /> : <WorkTable items={list.items} />}
+        {!phone ? (
+          <WorkTable items={list.items} />
+        ) : view.queue === 'waiting_on_others' ? (
+          <StartedCards items={list.items} />
+        ) : (
+          <WorkCards items={list.items} />
+        )}
         <div className="my-work__foot">
           <div className="psl-showmore my-work__showmore">
             <span>{shownText(view, counts, list.items.length, Boolean(list.nextCursor))}</span>
@@ -427,15 +452,15 @@ export function MyWork() {
         {asOf &&
           (refreshFailed ? (
             <p className="my-work__updated" role="status">
-              Couldn&rsquo;t refresh · updated {formatTime(asOf)}
+              {records && `${records} · `}Couldn&rsquo;t refresh · updated {formatTime(asOf)}
             </p>
           ) : (
-            <p className="my-work__updated">Updated {formatTime(asOf)}</p>
+            <p className="my-work__updated">{records ? `${records} · updated ${formatTime(asOf)}` : `Updated ${formatTime(asOf)}`}</p>
           ))}
       </div>
 
       <div className="my-work__tabs">
-        <div role="tablist" aria-label="Queues" className="psl-tabs">
+        <div role="tablist" aria-label="My work" className="psl-tabs">
           {tabs.map((tab, i) => {
             const selected = tab.key === view.queue;
             const count = counts?.[tab.key];
@@ -461,7 +486,7 @@ export function MyWork() {
         {counts === null && <span className="my-work__nocount">Count unavailable</span>}
       </div>
 
-      <div className="my-work__toolbar">
+      <div className="my-work__toolbar" hidden={caughtUp}>
         <form role="search" className="psl-toolbar" onSubmit={onSearchSubmit}>
           <div className="psl-search my-work__search">
             <SearchIcon />
@@ -479,12 +504,12 @@ export function MyWork() {
           </div>
           <div className="my-work__filter">
             {phone ? (
-              <button {...filterProps} className="psl-iconbtn my-work__iconbtn" aria-label="Filter">
+              <button {...filterProps} className="psl-iconbtn my-work__iconbtn" aria-label={filterCount ? `Filter, ${filterCount} on` : 'Filter'}>
                 <FilterIcon />
                 {filterBadge}
               </button>
             ) : (
-              <button {...filterProps} className="psl-btn psl-btn--secondary">
+              <button {...filterProps} className={filterOpen ? 'psl-btn psl-btn--dark' : 'psl-btn psl-btn--secondary'}>
                 <FilterIcon />
                 Filter
                 {filterBadge}
@@ -499,8 +524,17 @@ export function MyWork() {
             {view.line && (
               <span className="psl-chip">
                 <span>Line</span>
-                <strong>{view.line}</strong>
+                <strong>{lineTitle}</strong>
                 <button type="button" aria-label="Remove Line filter" onClick={() => removeFilter({ line: undefined })}>
+                  ×
+                </button>
+              </span>
+            )}
+            {view.project && (
+              <span className="psl-chip">
+                <span>Project</span>
+                <strong>{view.project}</strong>
+                <button type="button" aria-label="Remove Project filter" onClick={() => removeFilter({ project: undefined })}>
                   ×
                 </button>
               </span>
@@ -514,7 +548,20 @@ export function MyWork() {
                 </button>
               </span>
             )}
-            <button type="button" className="psl-btn psl-btn--text" onClick={() => removeFilter({ line: undefined, state: undefined })}>
+            {view.waiting && (
+              <span className="psl-chip">
+                <span>Waiting on</span>
+                <strong>{WAITING_ON[view.waiting]}</strong>
+                <button type="button" aria-label="Remove Waiting on filter" onClick={() => removeFilter({ waiting: undefined })}>
+                  ×
+                </button>
+              </span>
+            )}
+            <button
+              type="button"
+              className="psl-btn psl-btn--text"
+              onClick={() => removeFilter({ line: undefined, project: undefined, state: undefined, waiting: undefined })}
+            >
               Clear all
             </button>
           </div>
