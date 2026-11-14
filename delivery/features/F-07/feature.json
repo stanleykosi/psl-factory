@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -76,6 +76,18 @@
       "at": "2026-11-14T03:32:40Z",
       "seconds": 64.8,
       "evidence_ref": "delivery/features/F-07/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T05:28:52Z",
+      "seconds": 227.9,
+      "evidence_ref": "delivery/features/F-07/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -138,14 +150,28 @@
         "delivery/features/F-07/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T03:38:29Z",
           "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:28:53Z",
+          "refs": [
+            "f6e7943"
+          ],
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f6e7943"
       ]
     },
     {
@@ -161,14 +187,28 @@
         "delivery/features/F-07/round-1/review-qa.md"
       ],
       "raised_by": "reviewer-qa",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-qa",
           "at": "2026-11-14T03:41:55Z",
           "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T05:28:53Z",
+          "refs": [
+            "f6e7943"
+          ],
+          "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f6e7943"
       ]
     },
     {
@@ -343,9 +383,9 @@
     "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M3-PROJECTS",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "9d49977ac92e0387b435caf26e196b8545bec728",
+    "base_sha": "b071612854e4666cdea15a5717ccbe2dfb07d4a4",
     "task_branch": "fe-m3-projects-projects-shows-the-projects-a-person-can",
-    "head_sha": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+    "head_sha": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-07",
     "pr_url": null,
     "pr_number": null,
@@ -357,48 +397,10 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
-      "architecture/build_model.py",
-      "architecture/model.json",
-      "architecture/packages/v6/delivery.md",
-      "architecture/packages/v6/endpoints.csv",
-      "architecture/packages/v6/handoff.md",
-      "architecture/packages/v6/impact.json",
-      "architecture/packages/v6/index.html",
-      "architecture/packages/v6/integrations.csv",
-      "architecture/packages/v6/manifest.json",
-      "architecture/packages/v6/manifest.sha256",
-      "architecture/packages/v6/model.json",
-      "architecture/packages/v6/openapi.json",
-      "architecture/packages/v6/reviews.json",
-      "architecture/packages/v6/tasks.csv",
-      "architecture/packages/v6/traceability.csv",
-      "architecture/packages/v6/validation.json",
-      "architecture/sources/decisions-2026-11-14-v2.md",
-      "delivery/events.jsonl",
-      "delivery/features/F-05/.lock",
-      "delivery/features/F-05/feature.json",
-      "delivery/features/F-05/readiness-v5-not-ready.md",
-      "delivery/features/F-05/readiness.md",
-      "delivery/features/F-05/spec.md",
-      "delivery/features/F-06/.lock",
-      "delivery/features/F-06/feature.json",
-      "delivery/features/F-06/round-1/acceptance-pmo.md",
-      "delivery/features/F-06/round-1/build.md",
-      "delivery/features/F-06/round-1/checks.md",
-      "delivery/features/F-06/round-1/e2e-coordinator.md",
-      "delivery/features/F-06/round-1/review-qa.md",
-      "delivery/features/F-06/round-1/review-technical.md",
-      "delivery/features/F-06/round-1/review-ui.md",
-      "delivery/features/F-06/round-1/review-ux.md",
-      "delivery/features/F-06/spec.md",
-      "delivery/features/F-07/feature.json",
-      "delivery/features/F-08/.lock",
-      "delivery/features/F-08/feature.json",
-      "delivery/features/F-08/spec.md",
-      "frontend/e2e/decide.spec.ts",
       "frontend/e2e/projects.spec.ts",
       "frontend/mock/fixtures/E-PROJECT.json",
       "frontend/mock/fixtures/E-PROJECTS.json",
+      "frontend/mock/fixtures/projects/P-0101.json",
       "frontend/mock/fixtures/projects/P-0102.json",
       "frontend/mock/fixtures/projects/P-0103.json",
       "frontend/mock/fixtures/projects/P-0104.json",
@@ -425,6 +427,7 @@
       "frontend/mock/fixtures/projects/list.json",
       "frontend/mock/projects.mjs",
       "frontend/mock/server.mjs",
+      "frontend/src/app/projects/[caseId]/[tab]/page.tsx",
       "frontend/src/app/projects/[caseId]/page.tsx",
       "frontend/src/app/projects/page.tsx",
       "frontend/src/features/projects/ProjectJourney.tsx",
@@ -435,6 +438,7 @@
       "frontend/src/features/projects/model.ts",
       "frontend/src/features/projects/projects.css",
       "frontend/src/features/projects/useProject.ts",
+      "frontend/tests/mock-contract.test.ts",
       "frontend/tests/mock-projects.test.ts",
       "frontend/tests/projects-journey.test.tsx",
       "frontend/tests/projects-model.test.ts",
@@ -530,6 +534,14 @@
       "round": 2,
       "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T05:28:56Z",
+      "round": 2,
+      "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+      "reason": null
     }
   ],
   "routing": {
@@ -546,9 +558,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
   },
   "blocked": null
 }

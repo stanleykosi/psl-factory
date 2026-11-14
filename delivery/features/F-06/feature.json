@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-06",
   "outcome": "A Lead sees every exception they may see on one read-only list at /exceptions",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2B"
   ],
@@ -119,11 +119,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA, round 2 (UI against the contract mock only; no real backend)",
+      "snapshot_ref": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "evidence_refs": [
+        "delivery/features/F-06/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -479,6 +481,75 @@
           "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Keyboard focus is lost after a rows-per-page change or \"Clear search and filter\". `ExceptionsList.tsx:172` and `:249`: a radio change calls `setLimit`, and the hook (`useExceptions.ts:42`) sets `loading`. That replaces the body, including the paging bar, with `LoadingState`, so the focused radio is removed. Expected: focus stays on the chosen radio, so the arrow keys keep working (ARIA radiogroup pattern). Actual: after one ArrowLeft from \"20\", `document.activeElement` is BODY, a second ArrowLeft does nothing, and the next Tab lands on the first row link. A click on \"10\" and \"Clear search and filter\" (`:210`) also leave focus on BODY. My work (`/my-work`) behaves the same way, so this is a shared pattern and not new here. Fix both screens together: keep the loaded rows and bar mounted during a reload, or move focus back to the checked radio and the search box.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T05:29:09Z",
+          "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Search and Filter are not kept when the person goes back. I searched \"Northwind\" (3 rows), opened /work/W-1503, then used browser Back. /exceptions showed 20 unfiltered rows and an empty search box. The spec does not require this, so it is a UX note: a Lead working through a narrowed list loses it after each row.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T05:29:09Z",
+          "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The search box disappears while the list shows an error. `ExceptionsList.tsx:293` sets `searchable = state.status !== 'error'`. I searched \"kora\" and stubbed a 503: the error card appeared and the search box was gone, so the person cannot see or clear the search that failed. Try again reloads with the hidden \"kora\" and brings the box back with its text. Also, when a kind is chosen the Filter button's accessible name becomes \"Filter 1\" (the badge text). A visually hidden \"kind selected\" label would read better.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T05:29:09Z",
+          "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -726,6 +797,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T05:20:06Z",
+      "round": 2,
+      "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T05:29:09Z",
       "round": 2,
       "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
       "reason": null
