@@ -5,7 +5,7 @@
     {
       "line": "RFP response",
       "state": "verified",
-      "work_id": "W-1701",
+      "work_id": "W-1801",
       "title": "RFP response",
       "reference": "RFP-0031",
       "detail": "Won 02 Jun"
@@ -21,7 +21,7 @@
     {
       "line": "Commercial submission",
       "state": "verified",
-      "work_id": "W-1702",
+      "work_id": "W-1802",
       "title": "Commercial submission",
       "reference": "COM-0198",
       "detail": "SOW v2 signed 30 Jun"
@@ -29,7 +29,7 @@
     {
       "line": "Plan a project",
       "state": "verified",
-      "work_id": "W-1704",
+      "work_id": "W-1804",
       "title": "Plan a project",
       "reference": "PLN-0140",
       "detail": "Planning exit approved"
@@ -45,7 +45,7 @@
     {
       "line": "Prepare for release",
       "state": "waiting",
-      "work_id": "W-1703",
+      "work_id": "W-1803",
       "title": "Prepare for release",
       "reference": "REL-0077",
       "detail": "Station 2 of 5 · client UAT"
