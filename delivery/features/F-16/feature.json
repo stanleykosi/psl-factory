@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-16",
   "outcome": "The decision page matches the SCR-03 boards at 1440 and 390, and every decide rule stays as it is",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -73,62 +73,544 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T19:53:07Z",
+      "seconds": 185.4,
+      "evidence_ref": "delivery/features/F-16/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T19:59:14Z",
+      "seconds": 251.7,
+      "evidence_ref": "delivery/features/F-16/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T20:38:57Z",
+      "seconds": 116.4,
+      "evidence_ref": "delivery/features/F-16/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
+      "status": "passed",
+      "reviewer": "technical",
       "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-16/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "the design engineer's message on 15 Nov 2026: \"merge F-15 and F-16\"",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (fidelity gate)",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`tests/mock-contract.test.ts`: the crafted-href test (\"a crafted next-decision href ... fails the block schema\") uses pattern `^/(?!/)`. That is weaker than `isAppPath`, which also rejects whitespace and backslashes, so `/\\x.example` passes the schema. The runtime is safe because `nextDecision` uses `isAppPath`, and `decide-board.test.tsx` covers `/\\` and a leading space. Optionally align the pattern with `isAppPath`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T20:12:19Z",
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`DecideView.tsx` (layout map): when `layout` is `decide` but `claim` is null, the render falls to the read-only branch while the phone back link says \"Decisions\". The state is transient and has no behaviour effect. Optionally derive `layout` from the same condition as the render.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T20:12:19Z",
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "After Approve (Enter on the focused button) focus falls to `BODY` and the done view has no live region (`role=status`/`aria-live` absent; the stale view does have `role=alert`). A keyboard or screen-reader user is not told the approval was recorded and loses their place. Expected: move focus to the done heading or announce the banner. Not checked against the base build, so it may predate F-16. `frontend/src/features/decide/DecideStates.tsx` (DoneView).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T20:12:19Z",
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:01Z",
+          "refs": [
+            "040b5e7"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T20:51:44Z",
+          "refs": [
+            "Done: focus on H1 and role=status \"Your decision was recorded.\" at 1440 and 390. Stale: focus on the alert's H2 with role=alert text, at both widths."
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "040b5e7"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Done: focus on H1 and role=status \"Your decision was recorded.\" at 1440 and 390. Stale: focus on the alert's H2 with role=alert text, at both widths."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The 5xx error card and the 401 signed-out view render no `h1` (the title is absent), unlike no-access, stale and done, which have one. Criterion 6 only names those three, so this is a gap in the same intent. `DecideView.tsx` error branch.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T20:12:19Z",
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:01Z",
+          "refs": [
+            "040b5e7"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T20:51:44Z",
+          "refs": [
+            "500 and 401 (intercepted item request) each render one h1 \"Decision\" at 1440 and 390; the 500 card keeps its alert."
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "040b5e7"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "500 and 401 (intercepted item request) each render one h1 \"Decision\" at 1440 and 390; the 500 card keeps its alert."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 the not-yours board pins a permanently disabled \"Add comment\" bar to the bottom of a read-only page, so it reads as a primary action that never works and takes a strip of screen. It follows the board and the visible explanation sits above it; consider an inline button on the phone when the box is disabled.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T20:12:19Z",
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Done view next-step card does not match SCR-03-desktop-done and SCR-03-mobile-done. Expected: the boards draw the card on the blue agent surface (`--action-tint`, the same surface as the agent card elsewhere on this page) with Chidi's finance \"done\" pose, thumbs up (`/_blob/27e20cde\u2026` = finance.done in design/mascots/canvas-assets.json; the asset is in design/mascots/transparent/finance-done.png). Actual: the card is a green `psl-callout--success` with the \"working\" pose. On phones the text is `--action-ink` blue on that green surface, a token pair the boards never use (frontend/src/features/decide/DecideStates.tsx:402 and :421; decide.css:291). The score still passes because the shape matches, but the colour and the mascot are visibly off at both widths and no conflict or waiver records this. Fix: use the info/action-tint surface and a local done pose in features/decide (do not edit work-item/labels.ts; that is the F-14 seam). See fidelity-review/SCR-03-desktop-done-1440/side-by-side.png and SCR-03-mobile-done-390/side-by-side.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:12:19Z",
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:00Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:51:11Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "df180ca"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "df180ca"
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-03-mobile-stale: part of the gap is outside the D-56 waiver, which covers only the two stacked version panels and the stale content the tests check. (a) The board draws the agent note inside the current version card, below a 2px ink rule. The page draws a separate card with a 2px `--action` border (decide.css:78). The phone default already does the inside-the-card version (decide.css:212). (b) The board draws the current card's Amount in the mono display figure (the same style as the phone default's Amount row). The page shows plain body text. (c) The board puts the \"changed\" and \"unchanged\" marks in small muted type under or after the value. The page uses an inline \"\u00b7 changed\" in bold red. No test requires any of these three, and none is in Conflicts 16. Expected: match the board inside the kept two-panel layout, or have the design engineer extend the waiver. See fidelity-review/SCR-03-mobile-stale-390/side-by-side.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:12:19Z",
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T20:37:01Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:51:11Z",
+          "refs": [
+            "df180ca"
+          ],
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "df180ca"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "df180ca"
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phone done, \"Paid is tracked separately by Finance\" now reads twice. It is the last sentence of the next-step card, and it is also the separate line under the card. The SCR-03-mobile-done card text ends at \"...once the delivery receipt comes back.\" and the Paid sentence appears only as the line below. Round 2 removed the same duplication on desktop only (DecideStates.tsx DoneView). Expected: on phones, drop the Paid sentence from the card text and keep the line. See round-2/fidelity-review/SCR-03-mobile-done-390/side-by-side.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T20:51:44Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` still has `pre_merge_sync` as not run and the head is not on the current base (base has the F-15 shell, PR #25 and bookkeeping). Before merge: merge the current base, re-run `delivery/checks.sh`, and re-run the 390 e2e and axe for `decide.spec.ts` and `decide-board.spec.ts` to check that the phone back link still shows after the F-15 bell lands (spec criterion 21). Start the review server with `FRAME_FIXTURES=1` so that `frame.spec.ts:260` can run.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:08:39Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec criterion 2 asks for a `round-<N>/fidelity/scores.txt` listing all 10 boards. Round 2 has the per-board `report.json` and `side-by-side.png`, and build.md has the table with the same numbers. `scores.txt` exists only in round 1. The evidence is complete, so this is bookkeeping, and no action is needed unless the integration owner wants the file.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:08:39Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Hand-off for the follow-up that carries UI-2-1 (the Paid sentence shows twice on the phone done view), TECH-1-1 and TECH-1-2. Also carry the security notes: validate `decide_presentation` fields when they enter the contract, and bind `serve-frozen.mjs` to 127.0.0.1. The contract proposals (pager, next decision, waiting, agent summary, comment box) have no endpoint, are inert and are marked PROPOSAL in the build. They need a backend decision before they go live.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:08:39Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "evidence_refs": [
+            "delivery/features/F-16/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-16/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "evidence_refs": [
+            "delivery/features/F-16/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (fidelity gate)",
+          "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "evidence_refs": [
+            "delivery/features/F-16/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+          "evidence_refs": [
+            "delivery/features/F-16/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -151,7 +633,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "6282bb20df21412e21905a3f2540f8847a2b40a3",
     "task_branch": "fe-decide-the-decision-page-matches-the-scr-03-boards",
-    "head_sha": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+    "head_sha": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-16",
     "pr_url": null,
     "pr_number": null,
@@ -170,6 +652,7 @@
       "frontend/mock/fixtures/work/W-1902.next.json",
       "frontend/mock/fixtures/work/W-1903.json",
       "frontend/mock/fixtures/work/W-1904.json",
+      "frontend/public/agents/chidi-done.png",
       "frontend/src/features/decide/DecidePanel.tsx",
       "frontend/src/features/decide/DecideStates.tsx",
       "frontend/src/features/decide/DecideView.tsx",
@@ -212,7 +695,7 @@
     }
   },
   "created_at": "2026-11-14T17:45:04Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -230,6 +713,54 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T19:59:15Z",
+      "round": 1,
+      "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T20:12:20Z",
+      "round": 1,
+      "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T20:12:20Z",
+      "round": 2,
+      "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T20:38:58Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T20:51:45Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T21:07:50Z",
+      "round": 2,
+      "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "reason": null
     }
   ],
   "routing": {
@@ -246,10 +777,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
   },
   "blocked": null
 }

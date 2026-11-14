@@ -1,0 +1,21 @@
+# Full Playwright suite, head abf4b7a, against :4811/:4812, config without webServer
+  ✘   30 e2e/alerts-bell.spec.ts:393:3 › phone 390 › on a sub-page with a back link: ← label, bell, + Start (6.8s)
+  ✘  143 e2e/frame.spec.ts:260:3 › phone 390 › a sub-page back link replaces Menu in the bar as the boards draw it; Menu is one tap back (5.4s)
+  1) e2e/alerts-bell.spec.ts:393:3 › phone 390 › on a sub-page with a back link: ← label, bell, + Start 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('header.psl-phonebar').getByRole('link', { name: 'Back to Queue' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+  2 failed
+    e2e/alerts-bell.spec.ts:393:3 › phone 390 › on a sub-page with a back link: ← label, bell, + Start 
+    e2e/frame.spec.ts:260:3 › phone 390 › a sub-page back link replaces Menu in the bar as the boards draw it; Menu is one tap back 
+  316 passed (9.5m)
+# Cause: both tests open /frame-fixtures/phone-back, which calls notFound() unless the server runs with FRAME_FIXTURES=1.
+# The shared :4811 server (pid 85274) was started without it: curl of the page returns the "This page doesn't exist." view,
+# and the error snapshot shows that page with Menu, PSL FACTORY, the bell and Start. Environment only.
+# The same layout on real back-link pages (/work/W-1004, /setup/rules, /projects/P-0001 at 390) is in qa-journeys.txt (Q lines).
