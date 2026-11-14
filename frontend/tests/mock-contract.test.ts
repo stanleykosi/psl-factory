@@ -10,6 +10,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/server.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody } from '../mock/finance.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -25,11 +27,15 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001' };
-const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all' };
+const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
 };
+// Operations a persona may not use answer the declared status instead of 200 (E-MONTH-END is Finance only).
+const PERSONA_STATUS: Record<string, Record<string, number>> = { 'E-MONTH-END': { pm: 403, none: 403 } };
+// Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-10).
+const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = { 'E-MONTH-END': contractBody };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
@@ -61,17 +67,18 @@ function expectValid(id: string, status: number, body: unknown) {
   const declared = byId(id).op.responses[String(status)];
   const schema = declared ? declared.content['application/json'].schema : errorSchema;
   const validate = ajv.compile(schema);
-  const valid = validate(body);
+  const valid = validate(CONTRACT_BODY[id]?.(body) ?? body);
   expect(valid, `${id} ${status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
 }
 
 describe('mock server matches openapi.json', () => {
   for (const id of M1_OPERATIONS as string[]) {
     for (const persona of PERSONAS as string[]) {
-      it(`${id} succeeds for persona ${persona} with a schema-valid body`, async () => {
+      const expected = PERSONA_STATUS[id]?.[persona] ?? 200;
+      it(`${id} answers ${expected} for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
-        expect(status).toBe(200);
-        expectValid(id, 200, body);
+        expect(status).toBe(expected);
+        expectValid(id, expected, body);
       });
     }
 

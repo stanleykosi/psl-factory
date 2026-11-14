@@ -1,0 +1,91 @@
+{
+  "period": "2026-10",
+  "as_of": "2026-11-14T09:42:00Z",
+  "coverage": "FROM RECORDS YOU CAN SEE",
+  "summary": {
+    "done": 2,
+    "waiting": 3,
+    "in_progress": 2,
+    "total": 7
+  },
+  "cash_received": {
+    "currency": "NGN",
+    "unknown": true
+  },
+  "cash_received_detail": {
+    "known": {
+      "amount": "4712500.00",
+      "currency": "NGN",
+      "unknown": false
+    },
+    "has_unknown": true,
+    "unknown_note": "One Access Bank statement is not imported."
+  },
+  "tasks": [
+    {
+      "line": "Bank statements",
+      "title": "Bank statements",
+      "detail": "Access Bank statement missing",
+      "where": "2 of 3 accounts imported",
+      "state": "waiting",
+      "status_label": "WAITING",
+      "work_id": "W-1601"
+    },
+    {
+      "line": "Management accounts",
+      "title": "Management accounts",
+      "detail": "Accounting preparation and reviewed reports",
+      "where": "In review · Finance reviewer",
+      "state": "action_needed",
+      "status_label": "NEEDS FINANCE DECISION",
+      "tone": "person",
+      "work_id": "W-1602"
+    },
+    {
+      "line": "Income detail and schedules",
+      "title": "Income detail and schedules",
+      "detail": "Income detail and schedule inventory",
+      "where": "Verified 05 Nov",
+      "state": "verified",
+      "status_label": "DONE",
+      "tone": "verified",
+      "work_id": "W-1603"
+    },
+    {
+      "line": "Fixed asset schedule",
+      "title": "Fixed asset schedule",
+      "detail": "Asset schedule and reviewed accounting note",
+      "where": "Waiting for register review",
+      "state": "waiting",
+      "status_label": "WAITING",
+      "work_id": "W-1604"
+    },
+    {
+      "line": "Cash forecast",
+      "title": "Cash forecast",
+      "detail": "Reviewed cash forecast and actual follow-up",
+      "where": "Published 06 Nov",
+      "state": "verified",
+      "status_label": "DONE",
+      "tone": "verified",
+      "work_id": "W-1605"
+    },
+    {
+      "line": "Business-unit totals",
+      "title": "Business-unit totals",
+      "detail": "Reviewed BU exception and event aggregates",
+      "where": "Waiting for payroll matching",
+      "state": "waiting",
+      "status_label": "WAITING",
+      "work_id": "W-1606"
+    }
+  ],
+  "agent_note": {
+    "agent": "chidi",
+    "text": "One Access Bank statement isn't imported, so October's cash received for that account is Unknown, not 0. Import it to complete the month."
+  },
+  "next_action": {
+    "label": "Import the missing statement",
+    "work_id": "W-1601"
+  }
+}
