@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-08",
   "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
@@ -79,7 +79,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -95,7 +95,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-08/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -135,13 +135,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M3-OVERVIEW",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "d8e454f0fa0716ca9ee237f7f42364f78e807fde",
+    "task_branch": "fe-m3-overview-a-lead-opens-overview-and-sees-every-lin",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-08",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -184,14 +184,22 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 3,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-14T02:59:44Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T02:59:48Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -209,7 +217,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
