@@ -1,0 +1,30 @@
+VERDICT: PASS
+COMMIT: 02d59d8bb2216a7242a02454b957d4a0b0fdde49
+REVIEWER: pmo-acceptance
+AUTHORITY: PMO delivery acceptance (delivery only; not client/product acceptance, merge or release)
+
+## Summary
+- Delivery is accepted on head 02d59d8. The gate, technical, UX, UI and QA all pass on this head. No blocking finding is open: FID-1 and QA-2-2 are VERIFIED, and QA-2-1 is VERIFIED.
+- Every acceptance criterion in `build.md` carries evidence. QA's browser run confirms the main journeys at 390 and 1440, and the e2e suite passed (83 in the builder's run, 15 in QA's `my-work.spec.ts` run). Fidelity: coverage 100% on 9 of 9 boards, visual at or above 90 on 6 of 9.
+- Three boards stay under 90 visual: desktop-filter 83.6, phone and phone-lead 81.1, and phone-empty (73.0 builder, 75.1 UI reviewer). They are covered by the coordinator's provisional D-20 and D-17 entries, not by the design engineer. Their causes are the approved rows-per-page footer, the frame's phone top bar and the boards' own sample rows. Phone-empty also has the Tola pose difference (UI-3-1, logged as D-21).
+- Scope held: all changed paths are in F-02's ownership (my-work feature, mock handler and fixtures, one `server.mjs` pass-through, tests). Nothing landed in `src/shell`, `src/api`, openapi.json, packages or `apps/`.
+- Product acceptance for this round is still pending; it is provisional overnight. My PASS is delivery acceptance only. Product acceptance, merge into `dlv-00-delivery-setup` and release keep their own authorities.
+
+## Findings
+- PMO-3-1 | non-blocking | low | pmo | `feature.json` `operation_ids` is still `[]` while the spec and readiness name E-WORK-LIST. This restates PMO-2-1 and PMO-2-5, which are still OPEN. Record E-WORK-LIST so the coverage check can see it. Task FE-MYWORK is covered and nothing else in scope is missing.
+- PMO-3-2 | non-blocking | medium | product | `spec.md` is stale against what shipped. It still says no Project or Waiting-on filter, no avatar, no "records you can see" total, no "While you're free", and the neutral empty copy. Round 3 ships all of these, on the design engineer's boards, using fields that are not in the contract (`suggestions`, `project`, `waiting_on`, `line_key`, `agent`, `filters.lines`). Only `suggestions` is outside v4/v6/v7. `build.md` lists it as a contract proposal and the technical review confirms it is typed locally, hidden when absent, and served only with the board cookie. Before FE-CONNECT-1, the architecture owner must adopt or drop `suggestions` (including the "Not now" endpoint, QA-3-2) and settle the "records you can see" derivation (TECH-3-4). Until then it must not be described as a contract field. The design engineer should confirm this when checking product acceptance. Update the spec's expectations at the next revision.
+- PMO-3-3 | non-blocking | medium | product | The three boards under 90 and the D-17 exceptions rest on the coordinator's overnight authority (OVERNIGHT-DECISIONS.md D-17, D-20, D-21), which is provisional and marked for the design engineer's check. That is a named authority, so I do not block on it. The design engineer's confirmation is still needed. It should also cover UI-3-1 (Tola's full-body pose, listed as non-blocking; they may make it blocking) and the 4 extra suggestion/copy differences on the empty view: WhatsApp body text instead of the spec's neutral line (D-21), and a third suggestion on the phone.
+- PMO-3-4 | non-blocking | low | integration | TECH-1-1 and PMO-2-2 (the `server.mjs` conflict with F-03) are still OPEN. The round-3 change is the single `dataset: cookies.psl_mock_worklist` pass-through on a fresh base, so the earlier conflict is likely moot, but nobody has recorded the check. The integration owner should rerun `tests/mock-work-list.test.ts`, `tests/mock-contract.test.ts` and `tests/mock-row-item-match.test.ts` after merge into the delivery branch. The other open items are non-blocking and carried: TECH-1-3, PMO-2-3 and PMO-2-4 (the old head's screenshots; superseded by this round's side-by-sides in `round-3/fidelity/`), PMO-2-6, QA-2-3 (restated as QA-3-1), UX-3-1, UX-3-2, UI-3-1, QA-3-1, QA-3-2, and TECH-3-1 to TECH-3-5. None breaks a criterion.
+
+## Verified
+- FID-1 | verified | State VERIFIED in `feature.json` by reviewer-ui. I checked the fidelity scores in `round-3/fidelity/scores.txt` and the UI review: coverage 100 on 9 boards; 6 of 9 at 90 or more; the rest under D-20.
+- QA-2-2 | verified | State VERIFIED. Reviewer-technical checks the guard test; reviewer-qa opened W-1001 to W-1006 in the browser and found each row matches its item page.
+- QA-2-1 | verified | State VERIFIED. QA confirms the mock answers 404 `invalid_query` for an empty `q`, `line`, `waiting_on`, an unknown `waiting_on`, `limit=7` and `cursor=zz`, and the page never sends them.
+- PMO-2-1 | reopen | `operation_ids` still `[]` (see PMO-3-1).
+- PMO-2-2 | reopen | Integration check after merge is still not recorded (see PMO-3-4).
+
+## Checks against the brief
+- **Acceptance criteria:** all 22 are marked done in `build.md` with named tests. Examples are the criterion 20 mock honouring the query and the criterion 21 accessibility run (axe at both widths, every state). QA re-ran the e2e file and drove the journeys by hand, with no failures. Not proved, and recorded by QA: real permissions, real cursors, the payroll exclusion and E-PROJECTS (the mock returns 501), because the work is UI-only against the mock.
+- **Tasks and operations:** FE-MYWORK is covered. E-WORK-LIST is exercised through the mock only. E-PROJECTS is read for the Project select and degrades to "Any project". No other task or endpoint landed.
+- **Docs and handoff:** `build.md` has the contract proposal, the fidelity table with reasons and the open items, and the validation commands. The fidelity reports and the driver are filed under `round-3/fidelity/`.
+- **Parent package claims:** the work claims only the frontend half of A-MYWORK and A-ACCESSIBILITY against the mock. It makes no claim about backend, FE-CONNECT-1, release or the contract; `suggestions` is stated as a proposal.

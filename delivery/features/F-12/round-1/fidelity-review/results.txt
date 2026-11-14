@@ -1,0 +1,4 @@
+SCR-15-desktop-1440 exit=0 report: /Users/Hunchoo/psl-factory/delivery/features/F-12/round-1/fidelity-review/SCR-15-desktop-1440/report.html
+SCR-15-mobile-390 exit=0 report: /Users/Hunchoo/psl-factory/delivery/features/F-12/round-1/fidelity-review/SCR-15-mobile-390/report.html
+SCR-15-desktop-settings-1440 exit=0 report: /Users/Hunchoo/psl-factory/delivery/features/F-12/round-1/fidelity-review/SCR-15-desktop-settings-1440/report.html
+SCR-15-mobile-settings-390 exit=0 report: /Users/Hunchoo/psl-factory/delivery/features/F-12/round-1/fidelity-review/SCR-15-mobile-settings-390/report.html

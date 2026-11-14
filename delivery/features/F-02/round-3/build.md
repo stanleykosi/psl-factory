@@ -1,121 +1,131 @@
 STATUS: READY
-COMMIT: 3424065fa2c036c9edcba789c42db364a282bab6
+COMMIT: 02d59d8bb2216a7242a02454b957d4a0b0fdde49
 BUILDER: builder
 LANE: frontend
 
 ## Summary
-- My work is rebuilt against the SCR-01 boards (FID-1). The table, phone cards, filter panel and sheet, Filter button and empty Needs me now follow the boards' structure, order, wording and styling. Approved departures stay: the 10/20/50 rows-per-page control, sentence-case state tags, and "Nothing needs you right now".
-- Where v3 lacked a field, the page now uses the D-WORKLIST-FILTERS proposal fields that the v4 mock already validates. The filter panel has Line (checkboxes by `line_key`, from `filters.lines`, with "Show all N lines"), Project (from E-PROJECTS), State and Waiting on (`waiting_on`), and "Show N items". Rows show the agent avatar (`agent`). The header reads "N records you can see · updated HH:MM". Empty Needs me shows the caught-up panel and, on desktop, "Where your work is", grouped by `waiting_on`.
-- Fidelity: with board-like sample data, the desktop and desktop-my-work boards reach visual 91.9 and 90.8 and miss only one item each. No board passes yet. Every remaining missing item falls into one of two groups: items the design engineer has approved, and 23 items listed for their decision in `round-3/fidelity/proposed-exceptions.json`. If all are approved, coverage reaches 100% on all 9 boards. Visual stays below 90 on 7 boards (see Blocked/open below).
-- Agent avatars use the mascot images in `frontend/public/agents/` (tola, chidi, zainab, 192px), merged from the base (PR #12, per the coordinator; no own copies). Each has alt text ("Chidi · Finance agent"), shown beside rows that carry `agent` and in the "{Agent} is drafting" group. The caught-up panel shows Tola, with alt "Tola, the PMO agent".
-- QA-2-2 stays fixed (row/item guard test passes). QA-2-1 is closed: the mock answers an empty `q=` (or any empty optional parameter, or an unknown `waiting_on`) with 404 invalid_query.
+- My work is rebuilt to the SCR-01 boards (FID-1) using the D-WORKLIST-FILTERS proposal fields: Line, Project, State and Waiting on filters, "Show N items", agent mascot avatars, "N records you can see · updated", the caught-up empty view with "Where your work is", board table and phone cards.
+- This round also adds "While you're free" (coordinator decision 2), built as the boards draw it. It reads a new optional `suggestions` block, which the mock serves only with the board sample. The block is typed locally and the panel is hidden when the field is absent. This is a field proposal for the architecture (see Contract proposal).
+- Fidelity uses the D-17 provisionally approved exceptions file. Coverage is 100% on all 9 boards, and 6 of 9 boards pass with visual ≥ 90. Three are below 90: SCR-01-desktop-filter 83.6, SCR-01-mobile and SCR-01-mobile-lead 81.1, and SCR-01-mobile-empty 73.0. The reasons are given per board below.
+- QA-2-2 stays fixed (the row-to-item guard test passes). QA-2-1 is closed: the mock answers `q=` and any other empty optional parameter with 404 invalid_query.
 
 ## Changes
-- `frontend/src/features/my-work/WorkRows.tsx`: board table cells. The kind tag sits over a block title in ink (not underlined) over line · reference. The bar has 18×6 segments over the station text. The state tag has the agent avatar and `waiting_on` under it. Age is mono and centred. Phone cards are bordered white cards: kind and title on the left, age on the right, a full-width bar, then the state tag and `waiting_on`. New `StartedCards` for Waiting on others on phones (SCR-01-mobile-my-work): title link plus a "Waiting on {who}" or state tag.
-- `frontend/src/features/my-work/FilterPanel.tsx`: rewritten to the filter boards.
-  - Line uses checkboxes. One line is kept at a time, because the contract's `line` takes one key. Four show, then "Show all N lines" ("All N lines" on phones).
-  - Project, State and Waiting on are labelled native selects drawn with the board's small arrow.
-  - "Show N items" or "Show N+ items" comes from one debounced E-WORK-LIST request with the draft and limit 50.
-  - Desktop footer has Clear and Show. On the phone sheet, Clear sits in the head and the close button is gone; Esc and the scrim still close it.
-- `frontend/src/features/my-work/CaughtUp.tsx` (new): empty Needs me (SCR-01-*-empty).
-  - "Nothing needs you right now", then "{n} things you started are moving. We'll alert you on WhatsApp when one needs you." and "See what you started".
-  - On desktop it adds "Where your work is", built from three E-WORK-LIST requests with `waiting_on=agent|outside_party|someone_else`. The groups are "{Agent} is drafting", "Waiting on the client" and "Other people are reviewing", with counts, items (title, reference, waiting_on) and "See all N".
-  - If those requests fail, the panel shows a one-line problem note and never shows zero.
+- `frontend/src/features/my-work/WorkRows.tsx`: the board table, and phone cards with the state and `waiting_on`. `StartedCards` covers phone Waiting on others; it is a role=list of title links with a "Waiting on {who}" or state tag. `AgentAvatar` shows the mascot image from `public/agents/` with alt text.
+- `frontend/src/features/my-work/FilterPanel.tsx`: the filter boards' panel.
+  - Line uses checkboxes by key from `filters.lines`, keeps one line at a time, and has "Show all N lines".
+  - Project (from E-PROJECTS), State and Waiting on are native selects with the board's arrow.
+  - The button reads "Show N items", counted by one debounced list request.
+  - On phones the sheet head is "FILTER" plus Clear, with no grab handle and no close button. Esc and the scrim close it.
+- `frontend/src/features/my-work/CaughtUp.tsx`: empty Needs me.
+  - Tola's image sits beside "Nothing needs you right now", the moving count with the WhatsApp line, and "See what you started".
+  - On desktop, "Where your work is" is grouped by `waiting_on`.
+  - New `WhileYoureFree` aside: an agent avatar, "While you're free / {Agent} can get these ready. You check each one before it goes anywhere.", and per suggestion the title, detail, an action link and "Not now". "Not now" only hides the suggestion on screen; there is no endpoint.
+  - Layout follows the board: two columns on desktop, stacked and centred on phones.
 - `frontend/src/features/my-work/MyWork.tsx`:
-  - The header line reads "{sum of counts} records you can see · updated HH:MM"; with no counts it reads "Updated HH:MM".
-  - The tablist is named "My work".
-  - Project and Waiting on are in the URL, the query, the badge and the chips. Line chips show the line title from `filters.lines`.
-  - The toolbar is hidden on the caught-up view. The Filter button turns dark with a light badge while the panel is open, and on phones it is labelled "Filter, N on".
-- Merge of `origin/dlv-00-delivery-setup` (fc1d213), bringing `frontend/public/agents/*.png` (PR #12). `AGENT_AVATAR` in model.ts points at those files; `AgentAvatar` and `CaughtUp` render them with `next/image` and alt text (3424065).
-- `frontend/src/features/my-work/model.ts`: `project` and `waiting` (waiting_on) added to the view, URL and query. Added `WAITING_ON` words (engineering proposal), `AGENTS`, `filterCount` and `recordsText`. `lineOptions` now returns `{key,title}`: from `filters.lines` in response order, else from the loaded rows.
-- `frontend/src/features/my-work/my-work.css`: board sizes and spacing for all of the above. Token variables only. Phones hide the records line and the result count, as the phone boards do.
-- `frontend/mock/work-list.mjs`:
-  - Filters by `line` (now the line key), `project` and `waiting_on`.
-  - Returns `filters.lines`.
-  - Rejects empty optional params and an unknown `waiting_on` (QA-2-1).
-  - With the cookie `psl_mock_worklist=board`, serves `fixtures/E-WORK-LIST.board.json`: the boards' own sample rows, counts, lines and drawn order, for the fidelity check only.
-- `frontend/mock/server.mjs`: the existing E-WORK-LIST branch passes `dataset: cookies.psl_mock_worklist`. It is a one-argument change.
-- `frontend/mock/fixtures/E-WORK-LIST.rows.json`: every item gains `line_key`; processing rows gain `agent`; rows gain mock-only `project` and `waiting`. Ids, titles, states and counts are unchanged.
+  - Keeps `suggestions` from the latest response and passes it to `CaughtUp`.
+  - Adds the records line, the "My work" tablist name, and the four filters in the URL, query, badge and chips.
+  - Hides the toolbar on the caught-up view.
+  - Makes the Filter button dark while the panel is open.
+- `frontend/src/features/my-work/model.ts`: `project` and `waiting` in the view. Adds `WAITING_ON`, `AGENTS`, `AGENT_AVATAR` (the base's `public/agents/*.png`), `filterCount`, `recordsText` and `lineOptions` by key. Adds `Suggestion` and `WorkListWithSuggestions`, typed locally and marked PROPOSAL.
+- `frontend/src/features/my-work/my-work.css`: board sizes and spacing, token variables only. This round adds:
+  - the caught-up two-column layout and the "While you're free" panel;
+  - the phone caught-up layout, centred, with a 150px mascot and 48px buttons;
+  - the phone sheet title and spacing, and a desktop chip row as tall as a chip;
+  - phone cards at 15px.
+- `frontend/mock/work-list.mjs`: filters by `line` key, `project` and `waiting_on`; returns `filters.lines`; rejects empty optional params and unknown `waiting_on` (QA-2-1). With cookie `psl_mock_worklist=board` it serves `E-WORK-LIST.board.json`, which is the boards' rows, counts, lines and drawn order; for pm this includes `suggestions`.
+- `frontend/mock/server.mjs`: the E-WORK-LIST branch passes `dataset: cookies.psl_mock_worklist`.
+- `frontend/mock/fixtures/E-WORK-LIST.rows.json`: `line_key`, `agent`, and mock-only `project` and `waiting` keys. Ids, titles, states and counts are unchanged. `E-WORK-LIST.board.json` is new; its ids are W-14xx.
 - Tests:
-  - `tests/mock-work-list.test.ts` now validates against v4, the package the mock serves. It adds cases for line-by-key, project, waiting_on, `filters.lines`, the board dataset and the empty-param 404s.
-  - `tests/my-work-model.test.ts`, `tests/my-work.test.tsx` and `e2e/my-work.spec.ts` are updated for the rebuilt screens: four filters with "Show N items", the caught-up view with its groups, phone cards, the tablist name and the header line.
-- Factory files written at the coordinator's request:
-  - `delivery/features/F-02/fidelity-exceptions.json` holds only approved items.
-  - `delivery/features/F-02/round-3/fidelity/` holds each board's report.json and side-by-side.png, plus `scores.txt`, `proposed-exceptions.json` and the `_driver/` used.
+  - `tests/mock-work-list.test.ts` validates against v4. `suggestions` is checked separately as the proposal and must be absent outside the board sample.
+  - `tests/my-work-model.test.ts`, `tests/my-work.test.tsx` (38 tests: suggestions shown, Not now, absent means no panel, mascot images, the four filters, the caught-up groups) and `e2e/my-work.spec.ts` are updated.
+- Factory files:
+  - `delivery/features/F-02/round-3/fidelity/` holds each board's report.json and side-by-side.png, `scores.txt`, and `_driver/` (the driver, actions, `runall.sh`, and `prod.sh` for production-build scoring).
+  - The earlier `proposed-exceptions.json` is superseded by the coordinator's D-17 file.
+
+## Contract proposal (for the architecture)
+E-WORK-LIST 200 gains an optional top-level `suggestions`:
+
+```
+suggestions?: Array<{ id: string; agent: 'tola'|'chidi'|'zainab'; title: string; detail: string; action: string; href: string }>
+```
+
+These are agent suggestions for a person with nothing in Needs me ("While you're free", SCR-01-*-empty). The person checks each draft before it goes anywhere. A "Not now" dismissal would need its own endpoint; it is not built.
+
+The field is not in v4 or v6. The mock sends it only with `psl_mock_worklist=board`, and the frontend types it locally in `model.ts` (`WorkListWithSuggestions`).
 
 ## Fixes
-- FID-1 | c5a9264, b5873de | My work rebuilt to the SCR-01 boards using the v4/v6 proposal fields. The fidelity scores below show it is not yet passing. The remaining items need the design engineer.
-- Coordinator note (agent avatars) | 3424065 | Mascot images with alt text in place of tinted circles, using the base's public/agents files.
-- QA-2-1 | b5873de | The mock answers `q=` (and any empty optional parameter or unknown `waiting_on`) with 404 invalid_query. Test: `tests/mock-work-list.test.ts` "a malformed query gets 404".
+- FID-1 | b5873de, c5a9264, 3424065, 27f8cd8, 02d59d8 | My work rebuilt to the SCR-01 boards. This round adds "While you're free" and closes the spacing and typography differences on the empty, filter and phone views. Scores are below.
+- Coordinator note (agent avatars) | fc1d213, 3424065 | The base's `public/agents/*.png` (PR #12) is merged and used with alt text; I kept no copies of my own.
+- Coordinator decision 2 ("While you're free") | 27f8cd8, 02d59d8 | Built from the proposed `suggestions` field on the board sample; hidden when the field is absent.
+- QA-2-1 | b5873de | The mock answers `q=`, any other empty optional parameter, and an unknown `waiting_on` with 404 invalid_query.
 
 ## Acceptance criteria
-1. [x] Tabs and counts: the component test reads the tab names, order and badges from `counts` (24/12/6/2 for finance_lead). The e2e default test passes at 390 and 1440.
-2. [x] Unassigned only when present: component test, and the e2e pm empty test shows 3 tabs. The tablist scrolls sideways at 390 (e2e).
-3. [x] Each tab requests its queue; arrow, Home and End keys work: component tests are unchanged and pass.
-4. [x] Kinds come from the API: component and mock tests pass. The kind tag gains a layout class `my-work__kind`.
-5. [x] State words and families: table-driven unit test (sentence case, as approved).
-6. [x] Station bar and age: unit tests. The desktop bar is now 18×6 segments above the station text (board).
-7. [x] Sample labels: component test. The visible tag stays off by default; `NEXT_PUBLIC_SHOW_SAMPLE_LABEL` is unchanged.
-8. [x] Row links to `/work/{id}`: component test (desktop titles, phone cards, started cards).
-9. [x] Search: fake-timer test. "zzz" shows No work matches (e2e). The mock now refuses `q=`.
-10. [x] Filters: changed by FID-1. Line uses checkboxes by key, plus Project, State and Waiting on, chips for each, "Show N items", Esc and scrim close. Evidence: component test "applies Line (by key), Project, State and Waiting on…", "restores project and waiting_on from the URL", and e2e filter test at 390 and 1440 (`line=invoice&state=action_needed`, "Show 2 items", axe clean).
-11. [x] Paging, 10/20/50 and Show more: component and e2e tests pass unchanged.
-12. [x] URL restore and no browser storage: component test. Project and waiting_on are added.
+1. [x] Tabs and counts: component test (24/12/6/2 in `.psl-badge`); e2e default at 390 and 1440.
+2. [x] Unassigned only when present: component test; e2e pm shows 3 tabs; the tablist scrolls at 390.
+3. [x] Each tab requests its queue; keyboard works: component tests.
+4. [x] Kinds come from the API: component and mock tests.
+5. [x] State words and families: unit test (sentence case, approved).
+6. [x] Station bar and age: unit tests.
+7. [x] Sample labels: component test. The tag stays off unless `NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1`.
+8. [x] Row links: component tests for table, cards and started cards.
+9. [x] Search: fake-timer test; e2e no-results. The mock refuses `q=`.
+10. [x] Filters (FID-1: Line by key with checkboxes, Project, State, Waiting on, "Show N items", chips, Esc/scrim): component tests and e2e at 390 and 1440 (`line=invoice&state=action_needed`, "Show 2 items", axe clean).
+11. [x] Paging and 10/20/50: component and e2e tests.
+12. [x] URL restore and no browser storage: component tests, including project and waiting_on.
 13. [x] Polling: fake-timer test.
-14. [x] A refresh keeps loaded rows: component test (header now "45 records you can see · updated 10:57").
-15. [x] A failed refresh keeps the screen: component tests (status "44 records you can see · Couldn't refresh · updated 10:42"; 401 → signed out).
-16. [x] Empty for pm: changed by FID-1 to the caught-up view. "Nothing needs you right now" with "3 things you started are moving…", no search bar, "Where your work is" groups on desktop (component test and e2e at 1440), none on phones (e2e at 390), and "See what you started" goes to Waiting on others.
-17. [x] Wrong role: e2e and mock test pass unchanged.
-18. [x] Load failures: component tests and the e2e 500 route test.
+14. [x] A refresh keeps rows: component test.
+15. [x] A failed refresh keeps the screen: component tests.
+16. [x] Empty for pm (FID-1: the caught-up view): component and e2e tests. "While you're free" appears when suggestions are present (component test, and the fidelity runs on the board sample). With no suggestions the panel is absent (component test).
+17. [x] Wrong role: e2e and mock tests.
+18. [x] Load failures: component tests and e2e.
 19. [x] Loading: component test and e2e (reduced motion, axe).
-20. [x] The mock honours the query and stays on contract: `tests/mock-work-list.test.ts` (v4 schema, every persona × queue × limit), and `mock-contract.test.ts` is unchanged and passes.
-21. [x] Accessibility: `E2E_PORT=3301 MOCK_PORT=3302 npm run test:e2e` passed all 95 tests. Axe passed at 390 and 1440 for default, filter open, empty, no results, loading, error and wrong role. The focus-ring and reduced-motion tests pass.
-22. [x] Product acceptance items are visible. Screenshots at 390 and 1440:
-    - Rows-per-page footer: `round-3/fidelity/SCR-01-desktop-1440/side-by-side.png`, `SCR-01-mobile-390/side-by-side.png`.
-    - Filter panel, now Line, Project, State and Waiting on per FID-1: `SCR-01-desktop-filter-1440/side-by-side.png`, `SCR-01-mobile-filter-390/side-by-side.png`.
+20. [x] The mock honours the query and stays on contract (v4), apart from the proposed `suggestions` on the board sample: `tests/mock-work-list.test.ts`; `mock-contract.test.ts` is unchanged and passes.
+21. [x] Accessibility: e2e suite, 83 passed, 0 failed, with axe at 390 and 1440 for every state.
+22. [x] Product acceptance items: rows-per-page footer in `round-3/fidelity/SCR-01-desktop-1440/side-by-side.png` and `SCR-01-mobile-390/side-by-side.png`; filter panel in `SCR-01-desktop-filter-1440` and `SCR-01-mobile-filter-390`.
 
-FID-1 fidelity check. Exceptions file is `fidelity-exceptions.json` (approved only). Page uses the mock cookie `psl_mock_worklist=board`, plus `psl_mock_persona=pm` for the empty boards. The filter boards apply Line and State, then reopen the panel through `_driver/act-filter.mjs`.
+### Fidelity (final)
+Settings: exceptions are `delivery/features/F-02/fidelity-exceptions.json` (D-17). The page is a production build (`next build` + `next start`, so no dev overlay) on 3301 with the mock on 3302 and the cookie `psl_mock_worklist=board`. The empty boards add `psl_mock_persona=pm`. The filter boards apply Line "Invoice preparation and delivery" and State "Waiting", then reopen the panel.
 
-| board | width | coverage (approved exceptions) | visual | unapproved missing → after proposals |
+| board | width | coverage (after exceptions) | visual | pass |
 |---|---|---|---|---|
-| SCR-01-desktop | 1440 | 96.4 | 92.0 | 1 → 0 |
-| SCR-01-desktop-my-work | 1440 | 96.4 | 90.8 | 1 → 0 |
-| SCR-01-desktop-empty | 1440 | 68.1 | 78.4 | 15 → 0 |
-| SCR-01-desktop-filter | 1440 | 87.0 | 82.1 | 7 → 0 |
-| SCR-01-mobile | 390 | 92.3 | 78.3 | 1 → 0 |
-| SCR-01-mobile-my-work | 390 | 95.0 | 82.6 | 1 → 0 |
-| SCR-01-mobile-empty | 390 | 50.0 | 69.1 | 11 → 0 |
-| SCR-01-mobile-filter | 390 | 86.7 | 87.4 | 4 → 0 |
-| SCR-01-mobile-lead | 390 | 92.9 | 78.3 | 1 → 0 |
+| SCR-01-desktop | 1440 | 100 | 92.2 | yes |
+| SCR-01-desktop-my-work | 1440 | 100 | 91.0 | yes |
+| SCR-01-desktop-empty | 1440 | 100 | 91.0 | yes |
+| SCR-01-desktop-filter | 1440 | 100 | 83.6 | no |
+| SCR-01-mobile | 390 | 100 | 81.1 | no |
+| SCR-01-mobile-my-work | 390 | 100 | 90.1 | yes |
+| SCR-01-mobile-empty | 390 | 100 | 73.0 | no |
+| SCR-01-mobile-filter | 390 | 100 | 95.1 | yes |
+| SCR-01-mobile-lead | 390 | 100 | 81.1 | no |
 
-These figures come from the head 3424065, after the merge. The matching reports are in `round-3/fidelity/<board>-<width>/` and `scores.txt`.
+The phone top bar is a frame item on every 390 board: the page has a menu button and no orange Start, and its "My work" title sits about 4px lower than the board's. It costs a band of squares at the top of each phone score. On desktop, the missing top-bar Start work (F-05) is excepted, but it still counts in the visual score.
+
+Boards still under 90, and why:
+- **SCR-01-desktop-filter (83.6).**
+  - The board's table draws two static invoice rows with no kind tag and no footer. With Line "invoice" and State "Waiting", the board sample has one matching row, which shows its kind tag and the approved rows-per-page footer. Adding the board's second row back would push the passing desktop and phone boards' row counts off their boards.
+  - The page title from the frame sits about 4px lower than the board's.
+  - The remaining panel geometry matches to within a few pixels.
+- **SCR-01-mobile and SCR-01-mobile-lead (81.1).**
+  - The approved rows-per-page footer is a 100px block where the boards are empty, which alone accounts for most of the gap.
+  - Then the frame's phone top bar.
+  - Card size, order and type now match the boards. The cards, tabs and search line up within about 6px, and that offset comes from the frame.
+- **SCR-01-mobile-empty (73.0).**
+  - The approved heading "Nothing needs you right now" wraps to two lines at 22px where "You're all caught up" fits on one.
+  - The excepted orange Start work button is absent.
+  - The board's Tola image is a design-canvas blob that does not render locally, so the board shows an empty pink area where the page shows the mascot.
+  - The page lists the third suggestion where the phone board draws two.
+  - The frame's phone top bar.
 
 ## Validation
-- `cd /Users/Hunchoo/psl-factory-worktrees/f-02 && bash /Users/Hunchoo/psl-factory/delivery/checks.sh` exit 0 on the final tree (after the base merge and the avatar change). Django check is clean; lint, typecheck and vitest pass (13 files, 326 tests); `next build` passes.
-- `cd frontend && E2E_PORT=3301 MOCK_PORT=3302 npm run test:e2e` exit 0 on the same tree: 83 passed, 0 failed. This includes `e2e/my-work.spec.ts` at 390 and 1440 with axe and Africa/Lagos time. One earlier run's log also printed a "95 passed" line; the final run reports 83 with no failures.
-- Fidelity:
-  - Command: `delivery/features/F-02/round-3/fidelity/_driver/runall.sh`. It runs `fid-driver.mjs`, the F-05 reviewer's copy of the tool that imports the tool's modules unchanged and adds an `--actions` hook to wait for the list and open the filter state.
-  - The servers were my own `npm run dev -- -p 3301` with the mock on 3302. They were stopped afterwards, and `frontend/test-results` was deleted.
-  - Mock data: the main fixture shows the spec's 24/12/6/2 data and order. The board-sample dataset exists so that board sample text, order and counts match. Without it, every data-bearing item differs: tab counts, card texts and row order.
-  - Disk was 10 GB free at the end, and no server is left on 3301 or 3302.
+- `cd /Users/Hunchoo/psl-factory-worktrees/f-02 && bash /Users/Hunchoo/psl-factory/delivery/checks.sh`: exit 0 on 02d59d8. Django check is clean; lint, typecheck, vitest (13 files, 328 tests) and `next build` pass.
+- `cd frontend && E2E_PORT=3301 MOCK_PORT=3302 npm run test:e2e`: exit 0, 83 passed, 0 failed, on the same tree.
+- Fidelity: `round-3/fidelity/_driver/prod.sh` then `runall.sh`; scores are in `round-3/fidelity/scores.txt`. I started my own production servers on 3301 and 3302 and stopped them afterwards. `frontend/test-results` is deleted, and disk had 10 GB free at the end.
 
 ## Blocked
-Not blocked. These items remain open, and each needs the design engineer, not more builder work:
-- **The 23 proposed exceptions** in `round-3/fidelity/proposed-exceptions.json` (not approved). These are:
-  - "While you're free" agent suggestions: no endpoint in architecture v4 or v6.
-  - The tablist name: "Queues" on 2 boards, "My work" on 7.
-  - Native select values the tool cannot read.
-  - "Needs a person" and "Awaiting Finance decision": not contract states.
-  - Board-to-board sample-data contradictions: "46 RECORDS YOU CAN SEE" without the time, a second invoice row, and "M2" versus "Milestone 2".
-  - "Checking delivery" as a processing tag.
-- **Visual below 90 on 7 boards**, which the exceptions file cannot excuse. The main causes:
-  - the missing "While you're free" panel on both empty boards;
-  - the approved rows-per-page footer, which the boards do not draw;
-  - the shell's phone top bar (menu button, no Start; owned by F-01 and F-05);
-  - the open filter panel's position and the boards' differing sample rows.
-- **"Start work" in the empty boards' caught-up panel.** I excepted it under the coordinator's F-05 frame item, because it opens the same F-05 start flow and F-05 is not merged. Please confirm that this extension is acceptable.
-- **The board-sample mock dataset** (cookie `psl_mock_worklist=board`) is a new mock behaviour for the fidelity check. The spec's personas and scenarios are unchanged.
-- **Line filter is single-select.** It is drawn as checkboxes but keeps one line, because `line` takes one key. A multi-line filter needs a contract change (D-WORKLIST-FILTERS, backend).
-- **Project options.** They come from E-PROJECTS, which the current mock does not serve (F-07), so the Project select offers only "Any project" until F-07's mock lands.
-- **The caught-up panel shows Tola's avatar image**, not the board's thumbs-up pose, because only the avatars are in public/agents.
-- **"records you can see"** is the sum of the queue counts. This is an engineering derivation, because no contract field exists.
+Not blocked. These items are open for the design engineer or architecture:
+- The 3 boards under 90 visual, for the reasons above. Most of the gap is approved or frame-owned: the rows-per-page footer, the phone top bar and Start work, the heading wording, and the board image that does not render locally.
+- The D-17 exceptions are provisional, so the design engineer's confirmation is still needed.
+- The `suggestions` field needs architecture adoption (see Contract proposal), and "Not now" needs an endpoint to persist.
+- The Line filter keeps one line at a time because the contract's `line` takes one key.
+- The Project select offers only "Any project" until F-07's mock serves E-PROJECTS.
+- "Records you can see" is the sum of the queue counts, an engineering derivation.
