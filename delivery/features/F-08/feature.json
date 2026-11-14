@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-08",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
+  "state": "READY",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "The totals render exactly as returned, never summed. Verify: `tests/overview.test.tsx` renders the default fixture and finds dt/dd pairs \"IN PROGRESS\"/18, \"NEED A PERSON\"/5, \"STOPPED\"/3 and \"VERIFIED THIS MONTH\"/28, although the station counts sum to a different number. A second fixture with totals `{0,0,0,0}` but non-zero stations shows four 0s.",
+    "Every returned line and station is shown in order, with an exact count. Verify: in the component test, the \"Lines\" section has 8 `<li>` rows in fixture order. Each `<ol aria-label=\"<line> stations\">` has as many items as the fixture's stations, and each item's text includes \"<name>: <count> item(s)\", which proves singular and plural.",
+    "Square state follows `count` and `needs_person`, and the tag tone follows `needs_person` only. Verify: in the component test, a station with `needs_person: true, count: 0` has the needs-person class and \", needs a person\" in its text; `count: 3, needs_person: false` has the work class and a visible \"3\"; `count: 0, needs_person: false` has the empty class and no numeral. Pre-sale's tag reads exactly \"1 WAITING\" with `psl-tag--person`, and Closing's reads \"ON TRACK\" with `psl-tag--neutral`. A fixture `note` of \"all good\" renders as \"all good\", unparsed and not re-cased.",
+    "The coverage time shows. Verify: the component test finds \"FACTORY FLOOR \u00b7 UPDATED 14 Nov 16:40 WAT\" and a `<time dateTime=\"2026-11-14T15:40:00Z\">`.",
+    "Empty lines. Verify: with cookie `psl_mock_overview=empty`, e2e at 1440 shows four 0 tiles, \"No lines to show yet.\", no `radiogroup` \"View\" and the \"See all exceptions\" link. The component test covers the same with `lines: []`.",
+    "All-zero lines. Verify: with `psl_mock_overview=zero` (e2e) or `zero.json` (component), all squares are empty-styled, no numerals are shown and tags appear verbatim.",
+    "Wrong user: a person without `overview` never fetches E-OVERVIEW. Verify: a component test with the `me.pm.json` fixture shows \"This section isn't open to your role.\" with a link to `/my-work`, and `fetch` was never called with `/api/v1/overview`. `e2e/frame.spec.ts:108` still passes unchanged.",
+    "401, 403 and 404 from E-OVERVIEW. Verify: in the component test, 401 renders \"You're signed out.\" with a sign-in link whose `next` is `/overview`. 403 and 404 each render \"The factory floor isn't open to your role.\" plus the server message and no tiles. After each, advancing fake timers 30 s makes no further overview request. In e2e, `page.route('**/api/v1/overview', \u2026)` fulfils 403 with the mock's 403 body (a scenario cookie would also hit `/me`). The page shows the not-open text with no axe violations.",
+    "Provider failure, no stale figures. Verify: in the component test, the first load succeeds, then the 15 s poll gets a 500 (or a rejected fetch). The page shows `role=\"alert\"` with \"We couldn't load the factory floor. Your work is safe; nothing was changed.\", \"Last loaded 14 Nov 16:40 WAT.\" and \"Reference <code> for support.\", and **no** totals `<dl>` or Lines section. Try again with a 200 restores the figures.",
+    "Polling follows visibility. Verify: with fake timers in the component test, there is a second request at 15 000 ms and none before. With `document.visibilityState` stubbed to `hidden` and `visibilitychange` dispatched, no request happens over 60 s. Back to `visible` after more than 15 s triggers one immediate request. There is never more than one request in flight: a slow response plus a tick gives one request.",
+    "Out-of-order responses never win. Verify: in the component test, poll A is slow and poll B fast with a later `as_of`. After both resolve, B's figures and time show.",
+    "The 3D option follows reduced motion, WebGL and width. Verify: in the component test, with `@/features/floor/support` mocked:",
+    "three.js is not loaded until 3D is chosen. Verify:",
+    "The 3D floor shows the same figures, renders on demand and moves only on change. Verify:",
+    "The no-WebGL fallback still shows every line and count. Verify: in e2e, `addInitScript` makes `HTMLCanvasElement.prototype.getContext` return null for `webgl`/`webgl2`. `/overview` shows no \"View\" switch, the \"can't show the 3D floor\" hint, 8 line rows, and station items whose sr text includes each count. There are no axe violations.",
+    "A runtime failure in 3D falls back to flat. Verify: in the component test, the mocked `Floor3D` calls `onFailure()`, or the mocked import rejects. The page shows the warning \"We couldn't show the 3D floor, so it's shown flat.\", \"Flat\" content returns and the radiogroup is gone.",
+    "Reduced motion (SCR-06 reduced-motion state). Verify: in e2e, `page.emulateMedia({ reducedMotion: 'reduce' })` at 1440 shows the flat view with the reduced-motion hint and no \"3D floor\" option. There are no axe violations, and a screenshot is saved.",
+    "Exceptions place. Verify: the component test finds h2 \"All exceptions \u00b7 everyone's\", a link named \"See all exceptions\" with `href=\"/exceptions\"`, and the text \"Your own exceptions also appear in My work \u00b7 Needs me, marked Fix.\" No request to `/api/v1/exceptions` is made. Tests do not navigate the link. `grep -rn \"features/exceptions\" frontend/src/features/overview frontend/src/app/overview` prints nothing.",
+    "Layouts and accessibility at 390px and 1440px (A-ACCESSIBILITY). Verify: e2e at 1440 \u00d7 900 and 390 \u00d7 844 for the default flat view, and at 1440 for 3D. Each has axe with WCAG 2.2 AA tags (the `my-work.spec.ts` helper pattern) and zero violations, `document.documentElement.scrollWidth <= innerWidth`, and screenshots `overview-1440.png` and `overview-390.png`. At 390 there is no \"View\" radiogroup, the totals form 2 columns, and every line name and tag is visible. Keyboard: Tab reaches \"Flat\" and \"3D floor\", arrow keys move the selection, and the focus outline is 2px solid. The \"See all exceptions\" link is reachable.",
+    "Mock contract. Verify:",
+    "Dependency pinned. Verify: `node -e \"const p=require('./frontend/package.json');console.log(p.dependencies.three,p.devDependencies['@types/three'])\"` prints `0.187.0 0.187.0`. `git diff main -- frontend/package.json` shows only those two lines added. `npm ci` in `frontend/` succeeds, and `delivery/checks.sh` passes (lint, typecheck, vitest, `next build`).",
+    "The mock seam stays small. Verify: `git diff main -- frontend/mock/server.mjs` shows only the import, the `M1_OPERATIONS` entry, the dispatch line and at most one header-comment line."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "dependency"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it medium: - The page is read-only and shows no money or identity data. - It adds the first runtime npm dependency since the app frame: `three`, pinned exactly, with `@types/three` as a devDependency, in frontend/package.json and the lockfile. That needs a client-only dynamic import, a WebGL and reduced-motion fallback, and care with bundle weight. That is the `dependency` surface. - It shares the `M1_OPERATIONS` seam (server.mjs:24, tests/mock-contract.test.ts:69-76) with three parallel lanes. - It shows factory-wide counts. These must come from E-OVERVIEW as returned (INV-ACCESS), never be computed in the browser, and always show their `as_of` time. Surfaces are `ui` (SCR-06 on desktop and phone) and `dependency` (three). Moving SCR-12 out removes `payments`. There is no `api` or `contract-change`, because it reads one existing GET and changes nothing in schema.d.ts or openapi.json. There is no `security` or `auth`, because gating comes from `/me` destinations and the backend."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-08/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +93,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-08/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +186,28 @@
   "created_at": "2026-11-14T02:46:08Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T02:59:44Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-08/readiness.md",
+      "delivery/features/F-08/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
