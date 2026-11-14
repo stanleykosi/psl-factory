@@ -239,3 +239,4 @@
 {"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"reviewer-qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"reviewer-qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"transition","head":"3c93fe030ff5","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-14T02:05:31Z","feature":"F-04","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"3c93fe030ff5","findings":{"PMO-2-1":"medium","PMO-2-2":"medium","PMO-2-3":"low","PMO-2-4":"low","PMO-2-5":"low","PMO-2-6":"low"},"written_at":"2026-11-14T02:05:29Z"}
