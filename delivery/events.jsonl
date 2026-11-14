@@ -471,3 +471,4 @@
 {"at":"2026-11-14T06:07:32Z","feature":"F-07","round":3,"kind":"finding","action":"fix","finding":"UI-2-1","by":"builder"}
 {"at":"2026-11-14T06:07:32Z","feature":"F-07","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":118.6,"commit":"2892f009b88a"}
 {"at":"2026-11-14T06:07:33Z","feature":"F-07","round":3,"kind":"transition","head":"2892f009b88a","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-14T06:09:27Z","feature":"F-13","round":1,"kind":"transition","head":"fe657c6cc1bb","from":"IN_REVIEW","to":"INTEGRATED_QA"}

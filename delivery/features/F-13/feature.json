@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-13",
   "outcome": "The frontend builds, type-checks and mocks against the v7 contract",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONTRACT-V7"
   ],
@@ -206,6 +206,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T06:03:45Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T06:09:27Z",
       "round": 1,
       "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
       "reason": null
