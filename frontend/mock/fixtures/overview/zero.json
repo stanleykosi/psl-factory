@@ -1,0 +1,259 @@
+{
+  "as_of": "2026-11-14T15:40:00Z",
+  "totals": {
+    "in_progress": 0,
+    "need_a_person": 0,
+    "stopped": 0,
+    "verified_this_month": 0
+  },
+  "lines": [
+    {
+      "line": "Pre-sale",
+      "stations": [
+        {
+          "name": "Brief",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Qualify",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Proposal",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Review",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Submit",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "1 WAITING"
+    },
+    {
+      "line": "Planning",
+      "stations": [
+        {
+          "name": "Scope",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Plan",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Costing",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Approval",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "SOW",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "1 STOPPED"
+    },
+    {
+      "line": "Release",
+      "stations": [
+        {
+          "name": "Build",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Test",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Gates",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Go-live",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Report",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "1 UNCERTAIN"
+    },
+    {
+      "line": "Closing",
+      "stations": [
+        {
+          "name": "Handover",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Sign-off",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Review",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Close",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "ON TRACK"
+    },
+    {
+      "line": "Invoices",
+      "stations": [
+        {
+          "name": "Milestone",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Draft",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Check",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Approve",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Send",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Receipt",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Match",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "2 WAITING"
+    },
+    {
+      "line": "Month-end",
+      "stations": [
+        {
+          "name": "Collect",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Reconcile",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Accrue",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Review",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Close",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "ON TRACK"
+    },
+    {
+      "line": "Cash and BU",
+      "stations": [
+        {
+          "name": "Receipts",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Allocate",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Report",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Close",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "ON TRACK"
+    },
+    {
+      "line": "Payroll",
+      "stations": [
+        {
+          "name": "Inputs",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Calculate",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Approve",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "Pay",
+          "count": 0,
+          "needs_person": false
+        },
+        {
+          "name": "File",
+          "count": 0,
+          "needs_person": false
+        }
+      ],
+      "note": "2 PROBLEMS"
+    }
+  ]
+}
