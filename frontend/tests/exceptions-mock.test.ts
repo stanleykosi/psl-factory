@@ -9,14 +9,17 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody } from '../mock/exceptions.mjs';
 
 // E-EXCEPTIONS in the contract mock (F-06): personas, paging, the empty cookie and the row/item match.
-type Row = { work_id: string; what: string; title: string; since: string };
-type Page = { items: Row[]; next_cursor?: string; as_of: string };
+type Row = { work_id: string; what: string; title: string; ref?: string; doing: string; since: string };
+type Page = { items: Row[]; next_cursor?: string; as_of: string; open_count?: number };
 
 const fixtures = join(__dirname, '..', 'mock', 'fixtures');
 const read = (name: string) => JSON.parse(readFileSync(join(fixtures, name), 'utf8'));
 const fixture = read('E-EXCEPTIONS.json') as Page;
+const boardFixture = read('E-EXCEPTIONS.board.json') as Page;
 
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'));
 const responses = openapi.paths['/api/v1/exceptions'].get.responses;
@@ -24,6 +27,8 @@ const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 const validate200 = ajv.compile(responses['200'].content['application/json'].schema);
 const validate403 = ajv.compile(responses['403'].content['application/json'].schema);
+/** Valid against the contract once the proposal fields (open_count, row ref) are removed. */
+const valid200 = (body: unknown) => validate200(contractBody(body));
 
 let server: Server;
 let base: string;
@@ -40,7 +45,7 @@ async function get(query = '', cookie = 'psl_mock_persona=finance_lead') {
 
 describe('mock E-EXCEPTIONS', () => {
   it('the fixture is a valid 200 body with 25 rows, newest first, covering every kind', () => {
-    expect(validate200(fixture), ajv.errorsText(validate200.errors)).toBe(true);
+    expect(valid200(fixture), ajv.errorsText(validate200.errors)).toBe(true);
     expect(fixture.items).toHaveLength(25);
     expect(fixture.items[0]).toMatchObject({ work_id: 'W-1005', what: 'effect_uncertain', title: 'Kora Logistics · Milestone 1 invoice' });
     expect(fixture.items.slice(1).map((r) => r.work_id)).toEqual(Array.from({ length: 24 }, (_, i) => `W-${1501 + i}`));
@@ -60,7 +65,8 @@ describe('mock E-EXCEPTIONS', () => {
     expect(page.body.next_cursor).toBe('o:10');
     for (;;) {
       expect(page.status).toBe(200);
-      expect(validate200(page.body), ajv.errorsText(validate200.errors)).toBe(true);
+      expect(valid200(page.body), ajv.errorsText(validate200.errors)).toBe(true);
+      expect(page.body.open_count).toBe(25);
       seen.push(...page.body.items.map((r) => r.work_id));
       if (!page.body.next_cursor) break;
       page = await get(`?limit=10&cursor=${encodeURIComponent(page.body.next_cursor)}`);
@@ -86,10 +92,37 @@ describe('mock E-EXCEPTIONS', () => {
     expect(pm).toEqual({ status: 403, body: { code: 'forbidden', message: 'Only Leads can see all exceptions.' } });
     expect(validate403(pm.body)).toBe(true);
     const none = await get('', 'psl_mock_persona=none');
-    expect(none).toEqual({ status: 200, body: { items: [], as_of: fixture.as_of } });
+    expect(none).toEqual({ status: 200, body: { items: [], as_of: fixture.as_of, open_count: 0 } });
     const empty = await get('', 'psl_mock_persona=finance_lead; psl_mock_exceptions=empty');
-    expect(empty).toEqual({ status: 200, body: { items: [], as_of: fixture.as_of } });
-    expect(validate200(empty.body)).toBe(true);
+    expect(empty).toEqual({ status: 200, body: { items: [], as_of: fixture.as_of, open_count: 0 } });
+    expect(valid200(empty.body)).toBe(true);
+  });
+
+  it('proposal: q searches title, reference, doing and who acts; what keeps one kind; open_count counts every match', async () => {
+    const kora = await get('?q=kora');
+    const koraRows = fixture.items.filter((r) => r.title.toLowerCase().includes('kora') || r.doing.toLowerCase().includes('kora'));
+    expect(kora.body.items.map((r) => r.work_id)).toEqual(koraRows.map((r) => r.work_id));
+    expect(kora.body.open_count).toBe(koraRows.length);
+    expect((await get('?q=INV-0405')).body.items.map((r) => r.work_id)).toEqual(['W-1005']);
+    const blocked = await get('?limit=10&what=blocked');
+    expect(blocked.body.items.every((r) => r.what === 'blocked')).toBe(true);
+    expect(blocked.body.open_count).toBe(fixture.items.filter((r) => r.what === 'blocked').length);
+    const paged = await get('?limit=10&what=followup_needed');
+    expect(paged.body.open_count).toBe(fixture.items.filter((r) => r.what === 'followup_needed').length);
+    expect((await get('?what=nonsense')).body.items).toHaveLength(20);
+    expect(valid200(blocked.body)).toBe(true);
+  });
+
+  it('the board cookie serves the four rows drawn on the SCR-10 phone board', async () => {
+    const board = await get('', 'psl_mock_persona=finance_lead; psl_mock_exceptions=board');
+    expect(board.body).toEqual({ ...boardFixture, open_count: 4 });
+    expect(board.body.items.map((r) => r.title)).toEqual([
+      'Lagoon Health · M2 invoice',
+      'Harmattan Bank · go-live report',
+      'Lagoon Health · M3 invoice',
+      'Ojo Foods · ordering app plan',
+    ]);
+    expect(valid200(board.body)).toBe(true);
   });
 
   it('rows match their work items', () => {
@@ -100,11 +133,12 @@ describe('mock E-EXCEPTIONS', () => {
       effect_uncertain: ['effect_uncertain', 'awaiting_reconciliation'],
       blocked: ['action_needed'],
     };
-    for (const row of fixture.items) {
+    for (const row of [...fixture.items, ...boardFixture.items]) {
       const file = join('work', `${row.work_id}.json`);
       expect(existsSync(join(fixtures, file)), file).toBe(true);
-      const item = read(file) as { title: string; state: string; sample: boolean; tasks: { you_can_act: boolean }[] };
+      const item = read(file) as { title: string; reference: string; state: string; sample: boolean; tasks: { you_can_act: boolean }[] };
       expect(item.title, row.work_id).toBe(row.title);
+      expect(row.ref, row.work_id).toBe(item.reference);
       expect(states[row.what], row.work_id).toContain(item.state);
       expect(item.tasks.some((t) => t.you_can_act), row.work_id).toBe(false);
     }
