@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -79,6 +79,18 @@
       "at": "2026-11-14T06:31:13Z",
       "seconds": 150.8,
       "evidence_ref": "delivery/features/F-10/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T07:01:34Z",
+      "seconds": 90.2,
+      "evidence_ref": "delivery/features/F-10/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -217,14 +229,28 @@
         "delivery/features/F-10/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T06:42:30Z",
           "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T07:01:34Z",
+          "refs": [
+            "752ab93"
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "752ab93"
       ]
     },
     {
@@ -240,14 +266,28 @@
         "delivery/features/F-10/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T06:42:30Z",
           "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T07:01:34Z",
+          "refs": [
+            "752ab93"
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "752ab93"
       ]
     },
     {
@@ -362,7 +402,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b91ca6a7c8c4016ac7b11bccd76e87c1265fb765",
     "task_branch": "fe-m3-finance-a-finance-lead-opens-month-end-for-octob",
-    "head_sha": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+    "head_sha": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-10",
     "pr_url": null,
     "pr_number": null,
@@ -468,6 +508,14 @@
       "round": 2,
       "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T07:01:35Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
     }
   ],
   "routing": {
@@ -485,9 +533,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
   },
   "blocked": null
 }

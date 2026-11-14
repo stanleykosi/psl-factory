@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T06:52:58.359Z",
+  "generatedAt": "2026-11-14T06:54:31.038Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-10/design/canvas/finance/project/SCR-36-desktop.dc.html",
   "boardName": "SCR-36-desktop.dc.html",
   "pageUrl": "http://localhost:4001/finance/month-end?period=2026-10",
@@ -16,15 +16,15 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory-worktrees/f-10/delivery/features/F-10/fidelity-exceptions.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "6 board item(s) are missing from the page and are not approved exceptions (coverage 86% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 97.8 meets 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 81.4,
-    "coverageWithExceptions": 86,
+    "coverage": 95.3,
+    "coverageWithExceptions": 100,
     "visual": 97.8
   },
   "visual": {
@@ -40,8 +40,8 @@
   },
   "coverage": {
     "total": 43,
-    "found": 35,
-    "coverage": 81.4,
+    "found": 41,
+    "coverage": 95.3,
     "matched": [
       {
         "kind": "Navigation area",
@@ -569,6 +569,27 @@
         }
       },
       {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 316,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 317,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
         "kind": "Text",
         "role": "text",
         "name": "In review · Finance reviewer",
@@ -587,6 +608,27 @@
           "y": 354,
           "w": 250,
           "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 373,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 374,
+          "w": 34,
+          "h": 18
         }
       },
       {
@@ -611,6 +653,27 @@
         }
       },
       {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 430,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 431,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
         "kind": "Text",
         "role": "text",
         "name": "Waiting for register review",
@@ -629,6 +692,27 @@
           "y": 468,
           "w": 250,
           "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 487,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 488,
+          "w": 34,
+          "h": 18
         }
       },
       {
@@ -653,6 +737,27 @@
         }
       },
       {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 544,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 545,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
         "kind": "Text",
         "role": "text",
         "name": "Waiting for payroll matching",
@@ -671,6 +776,27 @@
           "y": 582,
           "w": 250,
           "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 601,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 602,
+          "w": 34,
+          "h": 18
         }
       },
       {
@@ -814,90 +940,6 @@
           "reason": "App frame item: part of F-05's Start work control.",
           "approved_by": "coordinator (overnight, provisional — D-04(a))"
         }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Open",
-        "key": "link: Open",
-        "container": "table",
-        "boardBox": {
-          "x": 932,
-          "y": 316,
-          "w": 34,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Open",
-        "key": "link: Open",
-        "container": "table",
-        "boardBox": {
-          "x": 932,
-          "y": 373,
-          "w": 34,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Open",
-        "key": "link: Open",
-        "container": "table",
-        "boardBox": {
-          "x": 932,
-          "y": 430,
-          "w": 34,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Open",
-        "key": "link: Open",
-        "container": "table",
-        "boardBox": {
-          "x": 932,
-          "y": 487,
-          "w": 34,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Open",
-        "key": "link: Open",
-        "container": "table",
-        "boardBox": {
-          "x": 932,
-          "y": 544,
-          "w": 34,
-          "h": 18
-        },
-        "exception": null
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Open",
-        "key": "link: Open",
-        "container": "table",
-        "boardBox": {
-          "x": 932,
-          "y": 601,
-          "w": 34,
-          "h": 18
-        },
-        "exception": null
       }
     ],
     "misplaced": [
@@ -923,7 +965,7 @@
       }
     ],
     "extra": [],
-    "unexcepted": 6
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-10/design/mascots/canvas-assets.json (19 mapped).",

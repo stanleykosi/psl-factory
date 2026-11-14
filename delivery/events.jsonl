@@ -571,3 +571,7 @@
 {"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T06:53:42Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T07:01:34Z","feature":"F-10","round":2,"kind":"finding","action":"fix","finding":"UX-1-1","by":"builder"}
+{"at":"2026-11-14T07:01:34Z","feature":"F-10","round":2,"kind":"finding","action":"fix","finding":"UI-1-1","by":"builder"}
+{"at":"2026-11-14T07:01:34Z","feature":"F-10","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":90.2,"commit":"752ab93e4edc"}
+{"at":"2026-11-14T07:01:35Z","feature":"F-10","round":2,"kind":"transition","head":"752ab93e4edc","from":"IMPLEMENTING","to":"IN_REVIEW"}
