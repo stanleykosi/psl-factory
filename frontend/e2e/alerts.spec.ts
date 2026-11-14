@@ -23,6 +23,12 @@ async function expectNoAxeViolations(page: Page) {
   expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([]);
 }
 
+async function expectClearOfSaveBar(page: Page) {
+  const callout = await page.locator('main').getByRole('alert').boundingBox();
+  const bar = await page.locator('.alerts-footer').boundingBox();
+  expect(callout!.y + callout!.height).toBeLessThanOrEqual(bar!.y);
+}
+
 const rows = (page: Page) => page.getByRole('list', { name: 'Alerts' }).locator(':scope > li');
 const shot = (page: Page, name: string) => page.screenshot({ path: test.info().outputPath(`${name}.png`), fullPage: true });
 const noHorizontalScroll = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
@@ -497,9 +503,21 @@ test.describe('settings at 390 (SCR-15-mobile-settings)', () => {
       await settingsLoaded(page);
       await page.getByRole('button', { name: 'Save settings' }).click();
       await expect(page.locator('main').getByRole('alert')).toBeFocused();
+      await expectClearOfSaveBar(page);
       await expectNoAxeViolations(page);
     });
   }
+
+  test('a failed save at 390 shows the whole message above the pinned Save bar', async ({ page }) => {
+    await page.goto('/settings/alerts');
+    await settingsLoaded(page);
+    await page.route('**/api/v1/me/alert-preferences', (route) =>
+      route.request().method() === 'PUT' ? route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ code: 'server_error', message: 'Try again in a moment.' }) }) : route.fallback(),
+    );
+    await page.getByRole('button', { name: 'Save settings' }).click();
+    await expect(page.locator('main').getByRole('alert')).toContainText('We couldn’t save your settings. Nothing was changed.');
+    await expectClearOfSaveBar(page);
+  });
 });
 
 test('direct loads render the headings (message targets, PMO-0-3)', async ({ page }) => {
