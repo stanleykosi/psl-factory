@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -113,11 +113,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA reviewer (round 3 extra round, D-47)",
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -687,6 +689,29 @@
       "verified_by": "reviewer-ui",
       "verification_refs": [
         "4e8a8c7"
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UX-3-1 is still open. To reproduce, open `/projects` as finance_lead at 1440 or 390 and search \"lagoon\". Expected \"1 PROJECT\" (singular when the total is 1). Actual \"1 PROJECTS\" (`qa-evidence/q3-count-lagoon.png`, browser-journeys Q3). The string is built at `frontend/src/features/projects/ProjectsList.tsx:472` (`${total} PROJECTS`). \"0 PROJECTS\" for no results is grammatical. This is the same issue as UX-3-1, not a new defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T16:14:54Z",
+          "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4"
+        }
       ]
     }
   ],
@@ -2708,6 +2733,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T16:09:01Z",
+      "round": 3,
+      "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T16:14:54Z",
       "round": 3,
       "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
       "reason": null
