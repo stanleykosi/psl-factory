@@ -6,6 +6,7 @@ import { setImmediate as realImmediate } from 'node:timers';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { nextMilestoneText, type NextMilestone } from '@/features/projects/model';
 import { ProjectsPage } from '@/features/projects/ProjectsPage';
 import { AppShell } from '@/shell/AppShell';
 
@@ -41,8 +42,8 @@ vi.mock('next/navigation', async () => {
   };
 });
 
-type Item = { case_id: string; title: string; pm: string; stage: string; sample: boolean; next_milestone?: string; needs_person?: number; stopped?: number };
-type Body = { items: Item[]; next_cursor?: string; as_of: string; counts?: Record<string, number> };
+type Item = { case_id: string; title: string; pm: string; stage: string; sample: boolean; next_milestone?: NextMilestone; needs_person?: number; stopped?: number };
+type Body = { items: Item[]; next_cursor?: string; as_of: string; counts?: Record<string, number>; total?: number };
 const me = (persona: string) => JSON.parse(readFileSync(join(__dirname, `../mock/fixtures/me.${persona}.json`), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const fromMock = (url: URL, persona = 'finance_lead') => projects({ operationId: 'E-PROJECTS', url, persona }) as { status: number; body: Body };
@@ -115,15 +116,15 @@ async function open(search = '') {
   return result;
 }
 
-const ACTIVE_20 = 'http://x/api/v1/projects?limit=20&status=active';
-const cellsOf = (i: Item) => [i.title, i.pm, i.stage, i.next_milestone ?? '—', String(i.needs_person ?? '—'), String(i.stopped ?? '—')];
+const ACTIVE_20 = 'http://x/api/v1/projects?limit=20';
+const cellsOf = (i: Item) => [i.title, i.pm, i.stage, nextMilestoneText(i.next_milestone) ?? '—', String(i.needs_person ?? '—'), String(i.stopped ?? '—')];
 
 describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
   it('finance_lead: one GET for the Active tab, the eyebrow, tabs with counts, six columns, rows in response order', async () => {
     await open();
     expect(calls).toHaveLength(1);
     expect(calls[0].pathname).toBe('/api/v1/projects');
-    expect(calls[0].search).toBe('?limit=20&status=active');
+    expect(calls[0].search).toBe('?limit=20');
     expect(document.querySelector('.projects__eyebrow')!.textContent).toBe('PROJECTS');
     expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeTruthy();
     expect(tabs().map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
@@ -160,7 +161,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('4 PROJECTS');
   });
 
-  it('Closed and All I can see send status=closed and no status, write ?status=, and arrow keys move between tabs', async () => {
+  it('Active sends no status, Closed and All I can see send status=closed and status=all, write ?status=, and arrow keys move between tabs', async () => {
     persona = 'pm';
     await open();
     fireEvent.click(tabs()[1]);
@@ -172,7 +173,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     tabs()[1].focus();
     fireEvent.keyDown(tabs()[1], { key: 'ArrowRight' });
     await until(() => expect(rows()).toHaveLength(5));
-    expect(query(lastCall())).toEqual({ limit: '20' });
+    expect(query(lastCall())).toEqual({ limit: '20', status: 'all' });
     expect(window.location.search).toBe('?status=all');
     expect(document.activeElement).toBe(tabs()[2]);
     expect(tabs().map((t) => t.tabIndex)).toEqual([-1, -1, 0]);
@@ -229,6 +230,28 @@ describe('a body without the PROPOSAL fields', () => {
   });
 });
 
+describe('PROPOSAL fields in another shape (TECH-2-1)', () => {
+  it('degrade to dashes and N shown instead of throwing; a search without total does not show the tab count', async () => {
+    respond = () =>
+      json(200, {
+        items: [
+          { case_id: 'P-1', title: 'Alpha works', pm: 'Ada Okafor', stage: 'Planning', sample: true, next_milestone: 'Plan approved', needs_person: '2', stopped: -1 },
+          { case_id: 'P-2', title: 'Beta works', pm: 'Kunle Ade', stage: 'Go-live', sample: true, next_milestone: { name: 'Go-live', due: { unknown: true } }, needs_person: 1, stopped: 0 },
+        ],
+        as_of: '2026-11-14T09:00:00Z',
+        counts: { active: 'many', closed: 3 },
+        total: '2',
+      });
+    await open('?q=works');
+    expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual([
+      ['Alpha works', 'Ada Okafor', 'Planning', '—', '—', '—'],
+      ['Beta works', 'Kunle Ade', 'Go-live', 'Go-live · due not known', '1', '0'],
+    ]);
+    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed3', 'All I can see']);
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 shown');
+  });
+});
+
 describe('search', () => {
   it('sends one q=lagoon&limit=20 request 300 ms after the last keystroke; clearing drops q', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
@@ -244,9 +267,11 @@ describe('search', () => {
     expect(calls).toHaveLength(1);
     await act(() => vi.advanceTimersByTimeAsync(1));
     await until(() => expect(calls).toHaveLength(2));
-    expect(calls[1].search).toBe('?limit=20&status=active&q=lagoon');
+    expect(calls[1].search).toBe('?limit=20&q=lagoon');
     expect(window.location.search).toBe('?q=lagoon');
     await until(() => expect(titles()).toEqual(['Lagoon Health · patient app']));
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECTS');
+    expect(tabs()[0].textContent).toBe('Active22');
 
     fireEvent.change(box, { target: { value: '' } });
     await act(() => vi.advanceTimersByTimeAsync(300));
@@ -258,7 +283,7 @@ describe('search', () => {
 
   it('no match shows No projects match; Clear search restores the full list', async () => {
     await open('?q=zzz');
-    expect(query(calls[0])).toEqual({ limit: '20', status: 'active', q: 'zzz' });
+    expect(query(calls[0])).toEqual({ limit: '20', q: 'zzz' });
     expect(screen.getByRole('heading', { name: 'No projects match' })).toBeTruthy();
     expect(document.querySelector('.psl-showmore')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Clear search' }));
@@ -281,8 +306,8 @@ describe('paging (D-PAGING r2)', () => {
     await open();
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await until(() => expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull());
-    expect(query(lastCall())).toEqual({ limit: '20', status: 'active', cursor: 'o20' });
-    const all = fromMock(new URL('http://x/api/v1/projects?limit=50&status=active')).body.items;
+    expect(query(lastCall())).toEqual({ limit: '20', cursor: 'o20' });
+    const all = fromMock(new URL('http://x/api/v1/projects?limit=50')).body.items;
     expect(titles()).toEqual(all.map((i) => i.title));
     expect(screen.getByText(`All ${all.length} showing`)).toBeTruthy();
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe(`${all.length} PROJECTS`);
@@ -298,18 +323,18 @@ describe('paging (D-PAGING r2)', () => {
     ]);
     fireEvent.click(radios()[0]);
     await until(() => expect(rows()).toHaveLength(10));
-    expect(query(lastCall())).toEqual({ limit: '10', status: 'active' });
+    expect(query(lastCall())).toEqual({ limit: '10' });
     expect(window.location.search).toBe('?limit=10');
   });
 
   it('?limit=10 loads 10; ?limit=7 falls back to 20', async () => {
     const first = await open('?limit=10');
-    expect(query(calls[0])).toEqual({ limit: '10', status: 'active' });
+    expect(query(calls[0])).toEqual({ limit: '10' });
     expect(rows()).toHaveLength(10);
     first.unmount();
     calls = [];
     await open('?limit=7');
-    expect(query(calls[0])).toEqual({ limit: '20', status: 'active' });
+    expect(query(calls[0])).toEqual({ limit: '20' });
   });
 
   it('arrow keys move the radiogroup selection with a roving tabindex', async () => {
@@ -320,11 +345,11 @@ describe('paging (D-PAGING r2)', () => {
     expect(radios()[2].getAttribute('aria-checked')).toBe('true');
     expect(document.activeElement).toBe(radios()[2]);
     expect(radios().map((r) => r.tabIndex)).toEqual([-1, -1, 0]);
-    expect(query(lastCall())).toEqual({ limit: '50', status: 'active' });
+    expect(query(lastCall())).toEqual({ limit: '50' });
     fireEvent.keyDown(radios()[2], { key: 'ArrowRight' });
-    await until(() => expect(query(lastCall())).toEqual({ limit: '10', status: 'active' }));
+    await until(() => expect(query(lastCall())).toEqual({ limit: '10' }));
     fireEvent.keyDown(radios()[0], { key: 'ArrowLeft' });
-    await until(() => expect(query(lastCall())).toEqual({ limit: '50', status: 'active' }));
+    await until(() => expect(query(lastCall())).toEqual({ limit: '50' }));
   });
 
   it('a failed Show more keeps the loaded rows and shows the inline problem; Try again recovers', async () => {
@@ -400,7 +425,7 @@ describe('access and failures', () => {
     respond = (url) => mockResponse(url);
     fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
     await until(() => expect(rows()).toHaveLength(20));
-    expect(query(lastCall())).toEqual({ limit: '20', status: 'active' });
+    expect(query(lastCall())).toEqual({ limit: '20' });
   });
 
   it('loading shows status with no old rows; a late response for an earlier q is ignored', async () => {

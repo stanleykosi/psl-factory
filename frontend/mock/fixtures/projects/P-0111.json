@@ -14,8 +14,10 @@
     }
   ],
   "next": "Delivery · sprint 5 of 8: the PM Kunle Ade confirms the next step.",
-  "client": "Eko Transit",
-  "pm": "Kunle Ade",
+  "pm": {
+    "name": "Kunle Ade",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

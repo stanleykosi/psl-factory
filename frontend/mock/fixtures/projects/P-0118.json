@@ -14,8 +14,10 @@
     }
   ],
   "next": "Handover · support handover: the PM Sola Martins confirms the next step.",
-  "client": "Lekki Hotels",
-  "pm": "Sola Martins",
+  "pm": {
+    "name": "Sola Martins",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

@@ -14,8 +14,10 @@
     }
   ],
   "next": "Finance confirms whether the milestone 1 invoice reached the client.",
-  "client": "Kora Logistics",
-  "pm": "Tunde Bello",
+  "pm": {
+    "name": "Tunde Bello",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

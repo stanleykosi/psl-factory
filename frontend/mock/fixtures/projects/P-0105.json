@@ -3,8 +3,10 @@
   "title": "Sabi Market · web store",
   "lines": [],
   "next": "The RFP response starts when a person picks it up.",
-  "client": "Sabi Market",
-  "pm": "Kemi Adebayo",
+  "pm": {
+    "name": "Kemi Adebayo",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 2,
     "documents": 1,

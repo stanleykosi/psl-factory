@@ -14,8 +14,10 @@
     }
   ],
   "next": "Planning · costing review: the PM Kunle Ade confirms the next step.",
-  "client": "Brightpath Schools",
-  "pm": "Kunle Ade",
+  "pm": {
+    "name": "Kunle Ade",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

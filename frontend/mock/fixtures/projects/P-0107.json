@@ -14,8 +14,10 @@
     }
   ],
   "next": "Delivery · sprint 2 of 5: the PM Kemi Adebayo confirms the next step.",
-  "client": "Atlas Insurance",
-  "pm": "Kemi Adebayo",
+  "pm": {
+    "name": "Kemi Adebayo",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

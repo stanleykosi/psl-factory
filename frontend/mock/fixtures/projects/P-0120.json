@@ -14,8 +14,10 @@
     }
   ],
   "next": "Pre-sale · RFP response: the PM Kunle Ade confirms the next step.",
-  "client": "Niger Delta Water",
-  "pm": "Kunle Ade",
+  "pm": {
+    "name": "Kunle Ade",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

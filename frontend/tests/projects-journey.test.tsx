@@ -19,7 +19,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 type Line = { line: string; state: keyof typeof STATE_TAGS; work_id: string; title?: string; reference?: string; detail?: string };
-type Journey = { case_id: string; title: string; lines: Line[]; next: string; summary?: { paragraphs: string[] } };
+type Journey = { case_id: string; title: string; lines: Line[]; next: string; agent_summary?: { agent: string; text: string } };
 const me = (persona: string) => JSON.parse(readFileSync(join(__dirname, `../mock/fixtures/me.${persona}.json`), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const fromMock = (url: URL, persona = 'finance_lead') => projects({ operationId: 'E-PROJECT', url, persona }) as { status: number; body: Journey };
@@ -136,7 +136,9 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(document.querySelector('.projects__next')!.textContent).toBe(`What is next ${body.next}`);
     const tola = screen.getByRole('complementary', { name: "Tola's summary" });
     expect(tola.textContent).toContain('Tola · PMO agent');
-    for (const text of body.summary!.paragraphs) expect(tola.textContent).toContain(text);
+    const paragraphs = body.agent_summary!.text.split('\n\n');
+    expect(paragraphs).toHaveLength(2);
+    expect([...tola.querySelectorAll('.projects__agentbody p')].slice(0, 2).map((p) => p.textContent)).toEqual(paragraphs);
     expect(within(tola).getByRole('link', { name: 'Ask me about this project' }).getAttribute('href')).toBe('/assistant');
   });
 
@@ -164,6 +166,61 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(lineItems()[0].querySelector('.projects__linename')!.textContent).toBe('RFP response');
     expect(screen.getByRole('complementary').textContent).toContain('Tola has not summarised this project yet.');
     expect(document.querySelector('main')!.textContent).not.toContain('undefined');
+  });
+
+  it('PROPOSAL fields in another shape degrade to Not known instead of throwing; a line station stands in for detail (TECH-2-1)', async () => {
+    respond = () =>
+      json(200, {
+        case_id: 'P-7',
+        title: 'Kora Logistics · fleet tracker',
+        lines: [
+          { line: 'Prepare an invoice', state: 'waiting', work_id: 'W-9', title: { text: 'x' }, reference: 7, station: { index: 4, count: 7, name: 'Finance review' } },
+        ],
+        next: 'Next.',
+        pm: 'Tunde Bello',
+        route: { name: 'Route A' },
+        facts: { contract_stages: 4 },
+        agent_summary: { agent: 'Tola', paragraphs: ['Old shape.'] },
+        tab_counts: { milestones: '4', documents: 2 },
+      });
+    await open('P-7');
+    expect(document.querySelector('.projects__route')!.textContent).toBe('1 piece of work across 1 line');
+    expect(facts().map(([, value]) => value)).toEqual(Array(6).fill('Not known'));
+    expect(lineItems()[0].textContent).toBe('Prepare an invoiceStation 4 of 7 · Finance reviewWaiting');
+    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents2', 'Money', 'Registers', 'Actions']);
+    expect(screen.getByRole('complementary').textContent).toContain('Tola has not summarised this project yet.');
+    expect(document.querySelector('main')!.textContent).not.toMatch(/undefined|object Object/);
+  });
+
+  it('v7 PROPOSAL shapes: PM object, work and line counts, money and unknown facts, a Chidi summary', async () => {
+    respond = () =>
+      json(200, {
+        case_id: 'P-8',
+        title: 'Kora Logistics · fleet tracker',
+        lines: [],
+        next: 'Next.',
+        pm: { name: 'Kunle Ade', is_you: false },
+        work_count: 12,
+        line_count: 5,
+        facts: [
+          { label: 'Paid', money: { amount: '4250000.00', currency: 'NGN', unknown: false } },
+          { label: 'Invoiced', money: { currency: 'NGN', unknown: true } },
+          { label: 'Stopped', value: '0' },
+          { label: '' },
+        ],
+        agent_summary: { agent: 'chidi', text: 'One paragraph.' },
+      });
+    await open('P-8');
+    expect(document.querySelector('.projects__route')!.textContent).toBe('PM Kunle Ade · 12 pieces of work across 5 lines');
+    expect(document.querySelector('.projects__phoneline')!.textContent).toBe('12 pieces of work · 0 stopped');
+    expect(facts()).toEqual([
+      ['Paid', '₦4,250,000.00', 'psl-fact'],
+      ['Invoiced', 'Not known', 'psl-fact psl-fact--unknown'],
+      ['Stopped', '0', 'psl-fact'],
+    ]);
+    const chidi = screen.getByRole('complementary', { name: "Chidi's summary" });
+    expect(chidi.textContent).toContain('Chidi · Finance agent');
+    expect(chidi.textContent).toContain('One paragraph.');
   });
 
   it('arrow keys move focus along the project tabs; the other tabs open a coming-next panel', async () => {

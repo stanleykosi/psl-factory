@@ -14,8 +14,10 @@
     }
   ],
   "next": "Go-live · report sent: the PM Sola Martins confirms the next step.",
-  "client": "Fola Fashion",
-  "pm": "Sola Martins",
+  "pm": {
+    "name": "Sola Martins",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

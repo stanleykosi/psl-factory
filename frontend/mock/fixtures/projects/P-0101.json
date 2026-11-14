@@ -75,23 +75,39 @@
     "registers": 6,
     "actions": 9
   },
-  "client": "Lagoon Health",
-  "pm": "Tunde Bello",
-  "route": "Route A from RFP-0031",
-  "facts": {
-    "contract_stages": 4,
-    "invoices_verified": 1,
-    "waiting_on_people": 2,
-    "stopped": 1,
-    "next_milestone": "UAT sign-off",
-    "paid": "Finance tracks"
+  "pm": {
+    "name": "Tunde Bello",
+    "role": "Project manager"
   },
-  "summary": {
-    "agent": "Tola",
-    "role": "PMO agent",
-    "paragraphs": [
-      "Lagoon Health is moving. Two things wait on people: the client's UAT response and Finance review of the milestone 2 invoice.",
-      "Milestone 3's invoice is held because nobody holds the Finance Lead role for this project."
-    ]
+  "route": "Route A from RFP-0031",
+  "facts": [
+    {
+      "label": "CONTRACT STAGES",
+      "value": "4"
+    },
+    {
+      "label": "INVOICES VERIFIED",
+      "value": "1"
+    },
+    {
+      "label": "WAITING ON PEOPLE",
+      "value": "2"
+    },
+    {
+      "label": "STOPPED",
+      "value": "1"
+    },
+    {
+      "label": "NEXT MILESTONE",
+      "value": "UAT sign-off"
+    },
+    {
+      "label": "PAID",
+      "value": "Finance tracks"
+    }
+  ],
+  "agent_summary": {
+    "agent": "tola",
+    "text": "Lagoon Health is moving. Two things wait on people: the client's UAT response and Finance review of the milestone 2 invoice.\n\nMilestone 3's invoice is held because nobody holds the Finance Lead role for this project."
   }
 }

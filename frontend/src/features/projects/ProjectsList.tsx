@@ -16,9 +16,11 @@ import { SampleLabel } from '@/shell/SampleLabel';
 import {
   allShowingText,
   buildProjectsQuery,
+  countOf,
   isProjectList,
   LIMITS,
   LIST_TABS,
+  nextMilestoneText,
   parseProjectsView,
   projectsSearch,
   shownText,
@@ -34,7 +36,7 @@ const PHONE_QUERY = '(max-width: 719.98px)';
 
 type ListState =
   | { status: 'loading' }
-  | { status: 'ready'; items: ProjectRowView[]; nextCursor?: string; counts?: ProjectListView['counts'] }
+  | { status: 'ready'; items: ProjectRowView[]; nextCursor?: string; counts?: ProjectListView['counts']; total?: number }
   | { status: 'error'; error: ApiError };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
@@ -54,7 +56,8 @@ function useIsPhone() {
 }
 
 /** A person-needed or stopped count (PROPOSAL); a count the response does not carry shows a dash, never 0. */
-function Count({ value }: { value?: number }) {
+function Count({ value: sent }: { value: unknown }) {
+  const value = countOf(sent);
   if (value === undefined) return <span className="projects__none">—</span>;
   return <span className={value > 0 ? 'projects__count' : 'projects__zero'}>{value}</span>;
 }
@@ -87,7 +90,7 @@ function ProjectTable({ items }: { items: ProjectRowView[] }) {
               </td>
               <td>{item.pm}</td>
               <td>{item.stage}</td>
-              <td>{item.next_milestone ?? '—'}</td>
+              <td>{nextMilestoneText(item.next_milestone) ?? '—'}</td>
               <td>
                 <Count value={item.needs_person} />
               </td>
@@ -105,8 +108,10 @@ function ProjectTable({ items }: { items: ProjectRowView[] }) {
 /** The phone card's red line: "2 need a person · 1 stopped"; nothing when both are 0 or not carried. */
 function attentionText(item: ProjectRowView) {
   const parts = [];
-  if (item.needs_person) parts.push(`${item.needs_person} need a person`);
-  if (item.stopped) parts.push(`${item.stopped} stopped`);
+  const needsPerson = countOf(item.needs_person);
+  const stopped = countOf(item.stopped);
+  if (needsPerson) parts.push(`${needsPerson} need a person`);
+  if (stopped) parts.push(`${stopped} stopped`);
   return parts.join(' · ');
 }
 
@@ -209,7 +214,7 @@ export function ProjectsList() {
       try {
         const data = await fetchPage(v);
         if (mine !== seq.current) return;
-        setList({ status: 'ready', items: data.items, nextCursor: data.next_cursor, counts: data.counts });
+        setList({ status: 'ready', items: data.items, nextCursor: data.next_cursor, counts: data.counts, total: countOf(data.total) });
       } catch (error) {
         if (mine !== seq.current) return;
         const e = asApiError(error);
@@ -397,7 +402,9 @@ export function ProjectsList() {
   }
 
   const counts = list.status === 'ready' ? list.counts : undefined;
-  const total = counts?.[view.tab];
+  // The count beside the search is the result's (UX-2-1): `total` matches the tab and the search; without it, the
+  // tab's count stands in only when no search is active.
+  const total = list.status !== 'ready' ? undefined : (list.total ?? (view.q ? undefined : countOf(counts?.[view.tab])));
   const filterProps = {
     ref: filterButton,
     type: 'button' as const,
@@ -413,7 +420,7 @@ export function ProjectsList() {
       <div role="tablist" aria-label="Projects" className="psl-tabs projects__listtabs">
         {LIST_TABS.map((tab, i) => {
           const selected = tab.key === view.tab;
-          const count = counts?.[tab.key];
+          const count = countOf(counts?.[tab.key]);
           return (
             <button
               key={tab.key}

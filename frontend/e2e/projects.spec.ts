@@ -247,9 +247,10 @@ test.describe('desktop 1440 details', () => {
     await listLoaded(page);
     const request = page.waitForRequest((r) => r.url().includes('/api/v1/projects?') && r.url().includes('q=lagoon'));
     await page.getByRole('searchbox', { name: 'Search' }).fill('lagoon');
-    expect(new URL((await request).url()).search).toBe('?limit=20&status=active&q=lagoon');
+    expect(new URL((await request).url()).search).toBe('?limit=20&q=lagoon');
     await expect(page).toHaveURL(/\/projects\?q=lagoon$/);
     await expect(projectLinks(page)).toHaveText(['Lagoon Health · patient app']);
+    await expect(page.locator('.psl-resultcount')).toHaveText('1 PROJECTS');
     await page.getByRole('searchbox', { name: 'Search' }).fill('zzz');
     await expect(page.getByRole('heading', { name: 'No projects match' })).toBeVisible();
     await page.getByRole('button', { name: 'Clear search' }).click();
@@ -261,7 +262,7 @@ test.describe('desktop 1440 details', () => {
     await listLoaded(page);
     const more = page.waitForRequest((r) => r.url().includes('cursor='));
     await page.getByRole('button', { name: 'Show more' }).click();
-    expect(new URL((await more).url()).search).toBe('?limit=20&status=active&cursor=o20');
+    expect(new URL((await more).url()).search).toBe('?limit=20&cursor=o20');
     await expect(projectLinks(page)).toHaveCount(22);
     await expect(projectLinks(page).nth(20)).toBeFocused();
     await expect(page.locator('.psl-showmore')).toContainText('All 22 showing');

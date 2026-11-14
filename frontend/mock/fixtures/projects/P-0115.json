@@ -14,8 +14,10 @@
     }
   ],
   "next": "Delivery · sprint 1 of 6: the PM Sola Martins confirms the next step.",
-  "client": "Iroko Bank",
-  "pm": "Sola Martins",
+  "pm": {
+    "name": "Sola Martins",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

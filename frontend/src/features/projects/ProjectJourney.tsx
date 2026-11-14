@@ -12,12 +12,19 @@ import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 
 import {
+  agentSummaryOf,
   clientOf,
+  factsOf,
+  factText,
+  findFact,
+  lineDetail,
   linesText,
+  pmNameOf,
   piecesText,
   PROJECT_TABS,
+  textOf,
   workCounts,
-  type JourneyFacts,
+  type JourneyFact,
   type JourneyLineView,
   type JourneyView,
   type ProjectTab,
@@ -31,25 +38,25 @@ import './projects.css';
 /** CMP-05 tag for a line; a state outside the enum (only if the contract changes) shows its raw value as neutral. */
 const tagFor = (state: JourneyLineView['state']) => (Object.hasOwn(STATE_TAGS, state) ? STATE_TAGS[state] : { text: state, tone: 'neutral' });
 
-const FACTS: readonly { key: keyof JourneyFacts; label: string; tone?: (value: number) => string | undefined }[] = [
-  { key: 'contract_stages', label: 'CONTRACT STAGES' },
-  { key: 'invoices_verified', label: 'INVOICES VERIFIED', tone: () => 'psl-fact--earned' },
-  { key: 'waiting_on_people', label: 'WAITING ON PEOPLE', tone: (n) => (n > 0 ? 'psl-fact--current' : undefined) },
-  { key: 'stopped', label: 'STOPPED', tone: (n) => (n > 0 ? 'psl-fact--current' : undefined) },
-  { key: 'next_milestone', label: 'NEXT MILESTONE' },
-  { key: 'paid', label: 'PAID' },
-];
+// The six facts SCR-07 draws, shown "Not known" when the response sends no facts. Their tones are presentation only.
+const BOARD_FACTS = ['CONTRACT STAGES', 'INVOICES VERIFIED', 'WAITING ON PEOPLE', 'STOPPED', 'NEXT MILESTONE', 'PAID'];
+const FACT_TONES: Record<string, (value: string) => string | undefined> = {
+  'invoices verified': () => 'psl-fact--earned',
+  'waiting on people': (v) => (v !== '0' ? 'psl-fact--current' : undefined),
+  stopped: (v) => (v !== '0' ? 'psl-fact--current' : undefined),
+};
 
-/** The six facts as drawn; a value the response does not carry reads "Not known", never 0. */
-function FactsStrip({ facts }: { facts?: JourneyFacts }) {
+/** The facts in the response's order; a value it does not know reads "Not known", never 0. */
+function FactsStrip({ facts }: { facts?: JourneyFact[] }) {
+  const shown = facts ?? BOARD_FACTS.map((label) => ({ label, unknown: true }));
   return (
     <section aria-label="Facts earned" className="psl-facts projects__facts">
-      {FACTS.map((f) => {
-        const value = facts?.[f.key];
-        const tone = value === undefined ? 'psl-fact--unknown' : typeof value === 'number' ? f.tone?.(value) : undefined;
+      {shown.map((fact, i) => {
+        const value = factText(fact);
+        const tone = value === undefined ? 'psl-fact--unknown' : FACT_TONES[fact.label.toLowerCase()]?.(value);
         return (
-          <div key={f.key} className={tone ? `psl-fact ${tone}` : 'psl-fact'}>
-            <b>{f.label}</b>
+          <div key={`${fact.label}-${i}`} className={tone ? `psl-fact ${tone}` : 'psl-fact'}>
+            <b>{fact.label}</b>
             <strong>{value ?? 'Not known'}</strong>
           </div>
         );
@@ -59,7 +66,7 @@ function FactsStrip({ facts }: { facts?: JourneyFacts }) {
 }
 
 function JourneyLines({ lines }: { lines: JourneyLineView[] }) {
-  const names = lines.map((l) => l.title ?? l.line);
+  const names = lines.map((l) => textOf(l.title) ?? l.line);
   return (
     <ol className="projects__lines">
       {lines.map((line, i) => {
@@ -67,16 +74,18 @@ function JourneyLines({ lines }: { lines: JourneyLineView[] }) {
         const name = names[i];
         // Two lines with the same name get their reference or state in the link name (UX-1-1).
         const repeated = names.indexOf(name) !== names.lastIndexOf(name);
+        const reference = textOf(line.reference);
+        const detail = lineDetail(line);
         return (
           <li key={`${line.work_id}-${i}`} className="projects__line">
             <span aria-hidden="true" className={`projects__dot projects__dot--${tag.tone}`} />
             <span className="projects__linemain">
               <Link href={`/work/${encodeURIComponent(line.work_id)}`} className="projects__linename">
                 {name}
-                {repeated && <span className="projects__sr">, {line.reference ?? tag.text}</span>}
+                {repeated && <span className="projects__sr">, {reference ?? tag.text}</span>}
               </Link>
-              {line.reference && <span className="projects__ref"> {line.reference}</span>}
-              {line.detail && <span className="projects__detail">{line.detail}</span>}
+              {reference && <span className="projects__ref"> {reference}</span>}
+              {detail && <span className="projects__detail">{detail}</span>}
             </span>
             <span className={`psl-tag psl-tag--${tag.tone} projects__state`}>{tag.text}</span>
           </li>
@@ -86,12 +95,13 @@ function JourneyLines({ lines }: { lines: JourneyLineView[] }) {
   );
 }
 
-/** Tola's summary of the project (PROPOSAL `summary`); without one the panel says so. */
+/** Tola's summary of the project (PROPOSAL `agent_summary`); without one the panel says so. */
 function AgentSummary({ journey }: { journey: JourneyView }) {
   const me = useMe();
-  const agent = journey.summary?.agent ?? 'Tola';
-  const role = journey.summary?.role ?? 'PMO agent';
-  const paragraphs = journey.summary?.paragraphs ?? [];
+  const summary = agentSummaryOf(journey.agent_summary);
+  const agent = summary?.name ?? 'Tola';
+  const role = summary ? summary.role : 'PMO agent';
+  const paragraphs = summary?.paragraphs ?? [];
   return (
     <aside className="projects__agent" aria-label={`${agent}'s summary`}>
       <div className="projects__agenthead">
@@ -99,7 +109,7 @@ function AgentSummary({ journey }: { journey: JourneyView }) {
           {agent.charAt(0).toUpperCase()}
         </span>
         <span className="projects__agentname">
-          {agent} <span className="projects__agentrole">· {role}</span>
+          {agent} {role && <span className="projects__agentrole">· {role}</span>}
         </span>
       </div>
       <div className="projects__agentbody">
@@ -118,14 +128,13 @@ function AgentSummary({ journey }: { journey: JourneyView }) {
 }
 
 function JourneyTab({ journey }: { journey: JourneyView }) {
-  const counts = workCounts(journey.lines);
-  const facts = journey.facts;
-  const route = [journey.pm && `PM ${journey.pm}`, journey.route, `${piecesText(counts.pieces)} across ${linesText(counts.lines)}`];
-  const phoneLine = [
-    piecesText(counts.pieces),
-    facts?.waiting_on_people !== undefined && `${facts.waiting_on_people} waiting on people`,
-    facts?.stopped !== undefined && `${facts.stopped} stopped`,
-  ];
+  const counts = workCounts(journey);
+  const facts = factsOf(journey.facts);
+  const pm = pmNameOf(journey.pm);
+  const waiting = factText(findFact(facts, 'waiting on people'));
+  const stopped = factText(findFact(facts, 'stopped'));
+  const route = [pm && `PM ${pm}`, textOf(journey.route), `${piecesText(counts.pieces)} across ${linesText(counts.lines)}`];
+  const phoneLine = [piecesText(counts.pieces), waiting && `${waiting} waiting on people`, stopped && `${stopped} stopped`];
   return (
     <>
       <p className="projects__route">{route.filter(Boolean).join(' · ')}</p>

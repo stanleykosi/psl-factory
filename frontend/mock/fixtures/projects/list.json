@@ -13,7 +13,13 @@
         "pm": "Tunde Bello",
         "stage": "Release · UAT with client",
         "sample": true,
-        "next_milestone": "UAT sign-off · due 14 Nov",
+        "next_milestone": {
+          "name": "UAT sign-off",
+          "due": {
+            "date": "2026-11-14",
+            "unknown": false
+          }
+        },
         "needs_person": 2,
         "stopped": 1
       }
@@ -30,7 +36,9 @@
         "pm": "Kunle Ade",
         "stage": "Go-live · report sent",
         "sample": true,
-        "next_milestone": "Go-live acceptance",
+        "next_milestone": {
+          "name": "Go-live acceptance"
+        },
         "needs_person": 1,
         "stopped": 1
       }
@@ -47,7 +55,9 @@
         "pm": "Tunde Bello",
         "stage": "Pre-sale · costing approval",
         "sample": true,
-        "next_milestone": "SOW signed",
+        "next_milestone": {
+          "name": "SOW signed"
+        },
         "needs_person": 1,
         "stopped": 0
       }
@@ -64,7 +74,9 @@
         "pm": "Sola Martins",
         "stage": "Planning · held",
         "sample": true,
-        "next_milestone": "Planning exit",
+        "next_milestone": {
+          "name": "Planning exit"
+        },
         "needs_person": 0,
         "stopped": 1
       }
@@ -96,7 +108,9 @@
         "pm": "Kemi Adebayo",
         "stage": "Delivery · sprint 4 of 6",
         "sample": true,
-        "next_milestone": "Handover sign-off",
+        "next_milestone": {
+          "name": "Handover sign-off"
+        },
         "needs_person": 2,
         "stopped": 1
       }
@@ -112,7 +126,9 @@
         "pm": "Kemi Adebayo",
         "stage": "Delivery · sprint 2 of 5",
         "sample": true,
-        "next_milestone": "Planning exit",
+        "next_milestone": {
+          "name": "Planning exit"
+        },
         "needs_person": 0,
         "stopped": 0
       }
@@ -128,7 +144,9 @@
         "pm": "Kunle Ade",
         "stage": "Planning · costing review",
         "sample": true,
-        "next_milestone": "Plan approved",
+        "next_milestone": {
+          "name": "Plan approved"
+        },
         "needs_person": 1,
         "stopped": 0
       }
@@ -144,7 +162,9 @@
         "pm": "Sola Martins",
         "stage": "Hypercare · week 2",
         "sample": true,
-        "next_milestone": "SOW signed",
+        "next_milestone": {
+          "name": "SOW signed"
+        },
         "needs_person": 2,
         "stopped": 0
       }
@@ -160,7 +180,9 @@
         "pm": "Kemi Adebayo",
         "stage": "Release · UAT with client",
         "sample": true,
-        "next_milestone": "UAT sign-off",
+        "next_milestone": {
+          "name": "UAT sign-off"
+        },
         "needs_person": 0,
         "stopped": 0
       }
@@ -176,7 +198,9 @@
         "pm": "Kunle Ade",
         "stage": "Delivery · sprint 5 of 8",
         "sample": true,
-        "next_milestone": "Go-live acceptance",
+        "next_milestone": {
+          "name": "Go-live acceptance"
+        },
         "needs_person": 1,
         "stopped": 1
       }
@@ -192,7 +216,9 @@
         "pm": "Sola Martins",
         "stage": "Go-live · report sent",
         "sample": true,
-        "next_milestone": "Sprint review",
+        "next_milestone": {
+          "name": "Sprint review"
+        },
         "needs_person": 2,
         "stopped": 0
       }
@@ -208,7 +234,9 @@
         "pm": "Kemi Adebayo",
         "stage": "Pre-sale · costing approval",
         "sample": true,
-        "next_milestone": "Handover sign-off",
+        "next_milestone": {
+          "name": "Handover sign-off"
+        },
         "needs_person": 0,
         "stopped": 0
       }
@@ -224,7 +252,9 @@
         "pm": "Kunle Ade",
         "stage": "Closure · retrospective",
         "sample": true,
-        "next_milestone": "Planning exit",
+        "next_milestone": {
+          "name": "Planning exit"
+        },
         "needs_person": 1,
         "stopped": 0
       }
@@ -240,7 +270,9 @@
         "pm": "Sola Martins",
         "stage": "Delivery · sprint 1 of 6",
         "sample": true,
-        "next_milestone": "Plan approved",
+        "next_milestone": {
+          "name": "Plan approved"
+        },
         "needs_person": 2,
         "stopped": 0
       }
@@ -256,7 +288,9 @@
         "pm": "Kemi Adebayo",
         "stage": "Planning · plan approval",
         "sample": true,
-        "next_milestone": "SOW signed",
+        "next_milestone": {
+          "name": "SOW signed"
+        },
         "needs_person": 0,
         "stopped": 1
       }
@@ -272,7 +306,9 @@
         "pm": "Kunle Ade",
         "stage": "Release · release checklist",
         "sample": true,
-        "next_milestone": "UAT sign-off",
+        "next_milestone": {
+          "name": "UAT sign-off"
+        },
         "needs_person": 1,
         "stopped": 0
       }
@@ -288,7 +324,9 @@
         "pm": "Sola Martins",
         "stage": "Handover · support handover",
         "sample": true,
-        "next_milestone": "Go-live acceptance",
+        "next_milestone": {
+          "name": "Go-live acceptance"
+        },
         "needs_person": 2,
         "stopped": 0
       }
@@ -304,7 +342,9 @@
         "pm": "Kemi Adebayo",
         "stage": "Delivery · sprint 3 of 4",
         "sample": true,
-        "next_milestone": "Sprint review",
+        "next_milestone": {
+          "name": "Sprint review"
+        },
         "needs_person": 0,
         "stopped": 0
       }
@@ -320,7 +360,9 @@
         "pm": "Kunle Ade",
         "stage": "Pre-sale · RFP response",
         "sample": true,
-        "next_milestone": "Handover sign-off",
+        "next_milestone": {
+          "name": "Handover sign-off"
+        },
         "needs_person": 1,
         "stopped": 0
       }
@@ -336,7 +378,9 @@
         "pm": "Sola Martins",
         "stage": "Hypercare · week 1",
         "sample": true,
-        "next_milestone": "Planning exit",
+        "next_milestone": {
+          "name": "Planning exit"
+        },
         "needs_person": 2,
         "stopped": 1
       }
@@ -352,7 +396,9 @@
         "pm": "Kemi Adebayo",
         "stage": "Delivery · sprint 6 of 6",
         "sample": true,
-        "next_milestone": "Plan approved",
+        "next_milestone": {
+          "name": "Plan approved"
+        },
         "needs_person": 0,
         "stopped": 0
       }
@@ -368,7 +414,9 @@
         "pm": "Kunle Ade",
         "stage": "Planning · held",
         "sample": true,
-        "next_milestone": "SOW signed",
+        "next_milestone": {
+          "name": "SOW signed"
+        },
         "needs_person": 1,
         "stopped": 0
       }

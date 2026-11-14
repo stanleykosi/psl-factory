@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import type { KeyboardEvent } from 'react';
 
-import { PROJECT_TABS, type JourneyView, type ProjectTab } from './model';
+import { countOf, PROJECT_TABS, type JourneyView, type ProjectTab } from './model';
 
 export const tabId = (key: ProjectTab) => `project-tab-${key}`;
 export const PANEL_ID = 'project-tabpanel';
@@ -22,7 +22,7 @@ export function ProjectTabs({ base, current, counts }: { base: string; current: 
     <div role="tablist" aria-label="Project" className="psl-tabs projects__tabs">
       {PROJECT_TABS.map((t, i) => {
         const selected = t.key === current;
-        const count = t.count ? counts?.[t.count] : undefined;
+        const count = t.count ? countOf(counts?.[t.count]) : undefined;
         return (
           <Link
             key={t.key}

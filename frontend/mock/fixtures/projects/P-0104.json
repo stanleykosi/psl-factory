@@ -14,8 +14,10 @@
     }
   ],
   "next": "The weekly client update goes to the PM for review.",
-  "client": "Delta Foods",
-  "pm": "Kemi Adebayo",
+  "pm": {
+    "name": "Kemi Adebayo",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,

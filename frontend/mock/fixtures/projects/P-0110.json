@@ -14,8 +14,10 @@
     }
   ],
   "next": "Release · UAT with client: the PM Kemi Adebayo confirms the next step.",
-  "client": "Dune Energy",
-  "pm": "Kemi Adebayo",
+  "pm": {
+    "name": "Kemi Adebayo",
+    "role": "Project manager"
+  },
   "tab_counts": {
     "milestones": 4,
     "documents": 3,
