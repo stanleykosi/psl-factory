@@ -1,0 +1,585 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T08:22:03.984Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile.dc.html",
+  "boardName": "SCR-02-mobile.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1701",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "15 board item(s) are missing from the page and are not approved exceptions (coverage 25% with exceptions, needs 100%).",
+    "Visual match 64.1 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 25,
+    "coverageWithExceptions": 25,
+    "visual": 64.1
+  },
+  "visual": {
+    "score": 64.1,
+    "allCellsScore": 65.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1236,
+    "cell": 12,
+    "contentCells": 2262,
+    "mismatchedCells": 812
+  },
+  "coverage": {
+    "total": 20,
+    "found": 5,
+    "coverage": 25,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412",
+        "pageName": "INV-0412",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 130,
+          "w": 58,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "pageName": "Lagoon Health · Milestone 2 invoice",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 24px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 53
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting",
+        "pageName": "WAITING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text size 15px on the board, 12px on the page",
+          "capitals on the page, not on the board",
+          "background none on the board, #FFF1D6 on the page"
+        ],
+        "boardBox": {
+          "x": 144,
+          "y": 185,
+          "w": 53,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 128,
+          "w": 71,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See his steps",
+        "pageName": "See his steps",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 265,
+          "y": 544,
+          "w": 77,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 194,
+          "y": 741,
+          "w": 83,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [
+      {
+        "kind": "Repeated rows",
+        "role": "pattern",
+        "name": "Repeated list items with 3 text field(s) each",
+        "boardCount": 7,
+        "boardBox": {
+          "x": 18,
+          "y": 278,
+          "w": 354,
+          "h": 231
+        },
+        "matched": true,
+        "pageName": "Repeated list items with 3 text field(s) each",
+        "pageCount": 7,
+        "pageBox": {
+          "x": 18,
+          "y": 442,
+          "w": 354,
+          "h": 231
+        },
+        "notes": []
+      }
+    ],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AWAITING FINANCE DECISION",
+        "key": "text: AWAITING FINANCE DECISION",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 193,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "key": "text: DRAFTED",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 172,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "key": "text: v2",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 185,
+          "w": 17,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "key": "text: REVIEWED",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 172,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "key": "text: APPROVED",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 172,
+          "w": 102,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 185,
+          "w": 12,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "key": "text: SENT",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 222,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 235,
+          "w": 12,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "key": "text: RECEIPT",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 222,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 235,
+          "w": 12,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "key": "text: VERIFIED",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 222,
+          "w": 102,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 235,
+          "w": 12,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi drafted v2 from 3 sources. See his steps",
+        "key": "text: Chidi drafted v2 from 3 sources. See his steps",
+        "container": "page",
+        "boardBox": {
+          "x": 76,
+          "y": 544,
+          "w": 266,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Review and decide",
+        "key": "link: Review and decide",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 774,
+          "w": 358,
+          "h": 52
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"INV-0412\"",
+        "kind": "Text",
+        "name": "INV-0412",
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 130,
+          "w": 58,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Text \"Waiting\""
+        ]
+      },
+      {
+        "label": "Text \"Waiting\"",
+        "kind": "Text",
+        "name": "Waiting",
+        "boardBox": {
+          "x": 144,
+          "y": 185,
+          "w": 53,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 128,
+          "w": 71,
+          "h": 23
+        },
+        "reasons": [
+          "across the page: middle on the board (44% across), left on the page (13% across)"
+        ]
+      },
+      {
+        "label": "Link \"See his steps\"",
+        "kind": "Link",
+        "name": "See his steps",
+        "boardBox": {
+          "x": 265,
+          "y": 544,
+          "w": 77,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 194,
+          "y": 741,
+          "w": 83,
+          "h": 20
+        },
+        "reasons": [
+          "across the page: right on the board (78% across), middle on the page (60% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 214,
+          "w": 176,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 18,
+          "y": 216,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 112,
+          "y": 216,
+          "w": 80,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Paid is a separate Finance fact and is not part of this line.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 410,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent Chidi drafted v2 from 3 sources. Cannot approve, send or pay. See his steps",
+        "container": "main",
+        "pageBox": {
+          "x": 76,
+          "y": 700,
+          "w": 284,
+          "h": 61
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "STATION 4 · FINANCE REVIEW",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 787,
+          "w": 354,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only a Finance Lead can decide.",
+        "container": "main",
+        "pageBox": {
+          "x": 34,
+          "y": 853,
+          "w": 322,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You are Finance Lead.",
+        "container": "main",
+        "pageBox": {
+          "x": 34,
+          "y": 886,
+          "w": 322,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the decision",
+        "container": "main",
+        "pageBox": {
+          "x": 34,
+          "y": 1042,
+          "w": 322,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approving earns APPROVED only. SENT is earned at station 6.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1128,
+          "w": 358,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 15
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
