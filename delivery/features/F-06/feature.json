@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-06",
   "outcome": "A Lead sees every exception they may see on one read-only list at /exceptions",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2B"
   ],
@@ -93,11 +93,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (UI against the contract mock only; no real backend)",
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -367,6 +369,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T03:18:43Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:20:27Z",
       "round": 1,
       "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
       "reason": null
