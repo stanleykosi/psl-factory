@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import { DestinationPage } from '@/shell/DestinationPage';
+import { MyWorkPage } from '@/features/my-work/MyWorkPage';
 
 export const metadata: Metadata = { title: 'My work · PSL Factory' };
 
-export default function MyWorkPage() {
-  return <DestinationPage destination="my_work" />;
+export default function Page() {
+  return <MyWorkPage />;
 }

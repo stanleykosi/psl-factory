@@ -11,6 +11,8 @@ import http from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { workList } from './work-list.mjs';
+
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v2-reviewed', 'openapi.json');
 
@@ -133,6 +135,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         return send(res, 403, CSRF_FAILED);
       }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
+      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         return send(res, ...workResponse(route.operationId, url, fixtures, work));
       }
