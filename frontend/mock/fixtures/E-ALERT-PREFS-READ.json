@@ -1,0 +1,86 @@
+{
+  "channel": "both",
+  "frequency": "immediate",
+  "revision": 3,
+  "events": [
+    {
+      "key": "decision_waiting",
+      "label": "A decision is waiting for me",
+      "whatsapp": true,
+      "email": true,
+      "timing": "immediate",
+      "timing_label": "Straight away"
+    },
+    {
+      "key": "info_requested",
+      "label": "Information is requested from me",
+      "whatsapp": true,
+      "email": true,
+      "timing": "immediate",
+      "timing_label": "Straight away"
+    },
+    {
+      "key": "work_stuck",
+      "label": "Work I started is stuck",
+      "whatsapp": true,
+      "email": true,
+      "timing": "immediate",
+      "timing_label": "Straight away"
+    },
+    {
+      "key": "work_verified",
+      "label": "Work I started is verified",
+      "whatsapp": false,
+      "email": true,
+      "timing": "daily_digest",
+      "timing_label": "In the daily digest"
+    },
+    {
+      "key": "everything_else",
+      "label": "Everything else",
+      "whatsapp": false,
+      "email": true,
+      "timing": "daily_digest",
+      "timing_label": "In the daily digest"
+    }
+  ],
+  "digest_at": {
+    "value": "08:00",
+    "options": [
+      {
+        "value": "07:00",
+        "label": "07:00"
+      },
+      {
+        "value": "08:00",
+        "label": "08:00"
+      },
+      {
+        "value": "09:00",
+        "label": "09:00"
+      }
+    ]
+  },
+  "quiet_hours": {
+    "value": "20-07-weekends",
+    "options": [
+      {
+        "value": "20-07-weekends",
+        "label": "20:00 to 07:00, and weekends"
+      },
+      {
+        "value": "20-07",
+        "label": "20:00 to 07:00"
+      },
+      {
+        "value": "none",
+        "label": "No quiet hours"
+      }
+    ]
+  },
+  "whatsapp": {
+    "masked_number": "+234 803 *** 4412",
+    "verified": true
+  },
+  "note": "Alerts never include amounts or client details beyond the name."
+}

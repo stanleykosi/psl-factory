@@ -13,6 +13,10 @@ import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/
 // @ts-expect-error plain ESM module without type declarations
 import { contractEvidence } from '../mock/evidence.mjs';
 // @ts-expect-error plain ESM module without type declarations
+import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody as monthEndBody } from '../mock/finance.mjs';
+// @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
@@ -29,21 +33,27 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1' };
-const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', none: 'N-0201' };
+const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
+  'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
   'E-SETUP-RULE-SAVE': { expected_revision: 2, value: { roles: ['pmo_lead'] } },
   'E-EVIDENCE-UPLOAD': { kind: 'rule_proof', filename: 'minutes.pdf', content_base64: 'JVBERi0xLjQK', case_revision: 1 },
 };
-// Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin).
+// Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only; E-MONTH-END Finance only).
 const PERSONA_STATUS: Record<string, Record<string, number>> = {
+  'E-EXCEPTIONS': { pm: 403 },
+  'E-MONTH-END': { pm: 403, none: 403 },
   'E-SETUP-RULES': { pm: 403, none: 403 },
   'E-SETUP-RULE-SAVE': { pm: 403, none: 403 },
   'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
 };
-// Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-11).
+// Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10, F-11).
 const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
+  'E-EXCEPTIONS': exceptionsBody,
+  'E-MONTH-END': monthEndBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
 };
@@ -60,7 +70,9 @@ afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
 async function request(id: string, init: { persona?: string; scenario?: string; csrf?: string | null } = {}) {
   const { path, method } = byId(id);
-  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => PATH_VALUES[name] ?? 'X-1') + (QUERY[id] ?? '');
+  const persona = init.persona ?? 'finance_lead';
+  const value = (name: string) => (name === 'notification_id' ? NOTIFICATION_IDS[persona] : PATH_VALUES[name]);
+  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => value(name) ?? 'X-1') + (QUERY[id] ?? '');
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'finance_lead'}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
   if (method !== 'GET' && init.csrf !== null) headers['X-CSRFToken'] = init.csrf ?? `mock-csrf-${init.persona ?? 'finance_lead'}`;

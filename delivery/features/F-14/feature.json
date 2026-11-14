@@ -3,26 +3,61 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-14",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKITEM"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop fidelity.** Each of the 13 desktop boards passes at 1440: report.json has `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` \u2265 90. The boards are SCR-02-desktop and SCR-02-desktop-{ready, processing, waiting, verified, issue, cancelled, owner-needed, setup-needed, permission, effect-uncertain, awaiting-reconciliation, history}, each with the URL and cookie from the fixture table. \u2014 verify, per board:",
+    "**Phone fidelity.** The same holds for the 13 `SCR-02-mobile*` boards at `--width 390`, with `--out \u2026/SCR-02-mobile-<state>-390`. \u2014 verify: the same command shape, exit 0, and the rows in `scores.txt`.",
+    "**Exceptions are limited and explained.** Every entry in `delivery/features/F-14/fidelity-exceptions.json` has `role`, `name`, `reason` and `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed). Each falls into one of these categories:",
+    "**Phone back link in the frame slot.** At 390, /work/W-1701, /work/W-1099 and the loading state show the phone bar link \"\u2190 Queue\" to /my-work in place of Menu. /work/W-1705/history shows \"\u2190 Invoice\" to /work/W-1705. A history page with no `back_label` shows \"\u2190 Work item\". `main` contains no back link of its own. At 1440 the phone bar is not shown. \u2014 verify: e2e at both widths, plus a component test rendered inside `AppShell`.",
+    "**Titles.** The item `h1` uses `.shell-title`, with a computed `font-size` of 40px at 1440 and the board's phone size at 390. There is one `h1` per page, including no access. \u2014 verify: e2e reading `getComputedStyle`.",
+    "**The six facts (A-WORKITEM) still hold.** The F-03 facts tests pass unchanged on W-1004: six boxes, Earned with times, Sent \"Not yet\", Receipt recorded \"Unknown\", Verified \"Not yet\", the Paid note, and never blank or 0. On W-1705 the visible fact details are the board's (\"v2\", \"Ada\", \"10:47\", \u2026), and each box's accessible text still contains its contract status word. \u2014 verify: existing and new component tests.",
+    "**Unknown wins over presentation.** A fixture whose `sent` is `unknown` but whose `presentation.facts.sent` is \"Delivered\" shows \"Unknown\" for Sent. W-1710's Sent reads \"Unknown\". \u2014 verify: component test with a crafted fixture.",
+    "**Stations.**",
+    "**Header from the contract.** W-1701 shows the breadcrumb (My work / Prepare an invoice / INV-0412), the title, the state tag `STATE_TAGS.waiting`, and \"Started by Tunde Bello (PMO) \u00b7 Mon 10 Nov 14:05 \u00b7 revision 2\", all from `started_by`, `started_at` and `revision`. A fixture without `started_by` shows only \"revision N\". \u2014 verify: component test.",
+    "**Decision summary, right person only.**",
+    "**The agent card never offers a decision.**",
+    "**State panels.** Each state fixture shows its board's panel heading and body:",
+    "**Navigation links only, and safe.**",
+    "**Read only, no effects.**",
+    "**No role guesses.** W-1708 and W-1709 render identically for the stubbed personas finance_lead and pm. Their text comes from the record, not from `me.roles`. \u2014 verify: a component test comparing `container.innerHTML` under both E-ME stubs.",
+    "**No access, signed out and error states (F-03 AC 10 to 12 hold).**",
+    "**Mock fixtures are valid and proposals are contained.**",
+    "**History (A-HISTORY) on the boards.**",
+    "**Updates (D-UPDATES) unchanged.** W-1703 (agent working) re-reads every 5 s while visible and stops when hidden. The other W-17xx items never poll. \u2014 verify: the existing polling tests, plus one fake-timer test on W-1703.",
+    "**Accessibility at both widths.** Every W-17xx URL, /work/W-1099 and /work/W-1705/history has:",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/work-item/work-item.css` returns nothing. Colours, font families, radii and spacing come from `var(--\u2026)` tokens. \u2014 verify: the command.",
+    "**F-09 seams.**",
+    "**Existing suites pass.** `tests/work-item.test.tsx`, `tests/decide*.test.tsx`, `tests/my-work*.test.tsx`, `tests/shell.test.tsx`, `e2e/work-item.spec.ts` and `e2e/decide.spec.ts` pass. Every changed assertion in the F-03 tests is listed in build.md with its reason; only the visible wording and wrappers move, not the behaviour. The F-03 acceptance criteria in `delivery/features/F-03/feature.json` still hold. \u2014 verify: `delivery/checks.sh` and build.md.",
+    "**build.md evidence.** build.md contains:"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Many states and two viewports on a page that F-03, F-04, F-06 and F-09 build on, so a regression would be visible but is easy to verify with the fidelity tool, the existing tests and axe. Surfaces are `ui` only: no API, auth, security, data or payment change, and the existing role and permission states (permission, owner-needed) must keep rendering from `allowed_actions` and the API, not from role guesses. Precedent F-02 round 3 (delivery/features/F-02/round-3/build.md) shows the pattern and its limits: frame-owned differences (phone top bar) can hold scores under 90, and those need design-engineer exceptions rather than hacks."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-14/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,7 +70,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T09:18:49Z",
+      "seconds": 153.0,
+      "evidence_ref": "delivery/features/F-14/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -45,7 +93,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,17 +107,103 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": false,
+      "assessment_reason": "delivery/features/F-14/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "FID-1-1",
+      "round": 1,
+      "snapshot_ref": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "20 of 26 SCR-02 boards under visual 90 (round-1/fidelity/scores.txt)",
+      "reproduction": "round-1/build.md fidelity table; rule visual >= 90 at 1440 and 390",
+      "evidence_refs": [],
+      "raised_by": "coordinator",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "coordinator",
+          "at": "2026-11-14T09:18:50Z",
+          "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-14/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +223,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-WORKITEM",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "b7f7166781cd81326c03669da4ae88f092c4cf33",
+    "task_branch": "fe-workitem-the-work-item-page-and-its-history-match",
+    "head_sha": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-14",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +237,34 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/work-item-board.spec.ts",
+      "frontend/e2e/work-item.spec.ts",
+      "frontend/mock/fixtures/work/W-1701.json",
+      "frontend/mock/fixtures/work/W-1702.json",
+      "frontend/mock/fixtures/work/W-1703.json",
+      "frontend/mock/fixtures/work/W-1704.json",
+      "frontend/mock/fixtures/work/W-1705.history.json",
+      "frontend/mock/fixtures/work/W-1705.json",
+      "frontend/mock/fixtures/work/W-1706.json",
+      "frontend/mock/fixtures/work/W-1707.json",
+      "frontend/mock/fixtures/work/W-1708.json",
+      "frontend/mock/fixtures/work/W-1709.json",
+      "frontend/mock/fixtures/work/W-1710.json",
+      "frontend/mock/fixtures/work/W-1711.json",
+      "frontend/src/features/work-item/InfoIcon.tsx",
+      "frontend/src/features/work-item/WorkItemHistory.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemStates.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/labels.ts",
+      "frontend/src/features/work-item/presentation.ts",
+      "frontend/src/features/work-item/usePhone.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/work-item-board.test.tsx",
+      "frontend/tests/work-item.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +297,64 @@
     }
   },
   "created_at": "2026-11-14T07:46:48Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T07:56:58Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T07:57:26Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T09:18:52Z",
+      "round": 1,
+      "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T09:18:53Z",
+      "round": 1,
+      "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T09:18:53Z",
+      "round": 2,
+      "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-14/readiness.md",
+      "delivery/features/F-14/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

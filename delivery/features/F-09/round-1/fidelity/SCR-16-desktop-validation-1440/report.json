@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:18:16.137Z",
+  "generatedAt": "2026-11-14T07:54:53.001Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-desktop-validation.dc.html",
   "boardName": "SCR-16-desktop-validation.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601/respond?task=T-1601",
@@ -35,8 +35,8 @@
     "boardHeight": 1000,
     "pageHeight": 1000,
     "cell": 12,
-    "contentCells": 4762,
-    "mismatchedCells": 181
+    "contentCells": 4759,
+    "mismatchedCells": 179
   },
   "coverage": {
     "total": 35,
@@ -252,7 +252,7 @@
         "pageBox": {
           "x": 88,
           "y": 106,
-          "w": 1264,
+          "w": 626,
           "h": 37
         }
       },

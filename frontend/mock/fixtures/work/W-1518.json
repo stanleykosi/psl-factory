@@ -1,0 +1,63 @@
+{
+  "id": "W-1518",
+  "title": "Kora Logistics · Weekly client update",
+  "line": "Weekly client update",
+  "reference": "UPD-0603",
+  "state": "setup_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Gather progress",
+      "status": "done"
+    },
+    {
+      "name": "Draft update",
+      "status": "done"
+    },
+    {
+      "name": "PM review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "current_person"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "No client contact is set up to receive this update. The PMO Lead adds one; sending resumes from here.",
+  "sample": true
+}

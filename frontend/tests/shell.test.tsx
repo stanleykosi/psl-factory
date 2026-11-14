@@ -332,6 +332,31 @@ describe('phone back link', () => {
     expect(phoneBar().querySelector('.shell-phonenote')).toBeNull();
   });
 
+<<<<<<< HEAD
+=======
+  it('the note stays at the right edge of the bar when the SAMPLE DATA tag follows it (TECH-3-2)', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
+    function NotePage() {
+      usePhoneBack({ label: 'Setup', href: '/setup/roles', note: 'RULES' });
+      return <h1 className="shell-title">Finance rules</h1>;
+    }
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/setup/rules/finance';
+    render(
+      <AppShell>
+        <NotePage />
+      </AppShell>,
+    );
+    await loaded();
+    await waitFor(() => expect(backLink()?.textContent).toBe('← Setup'));
+    const kids = Array.from(phoneBar().children);
+    expect(kids.map((k) => k.className)).toEqual([kids[0].className, 'shell-phonenote', 'psl-sample']);
+    // the bar spreads its children with space-between; the auto margin is what holds the note at the right
+    const css = readFileSync(join(__dirname, '../src/styles/shell.css'), 'utf8');
+    expect(css).toMatch(/\.shell-phonenote\s*\{[^}]*margin-left:\s*auto/);
+  });
+
+>>>>>>> origin/dlv-00-delivery-setup
   it('swapping to a different sub-page never commits the old link for the new page', async () => {
     function ProjectPage() {
       usePhoneBack({ label: 'Projects', href: '/projects' });
