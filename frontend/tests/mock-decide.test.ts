@@ -203,7 +203,7 @@ describe('F-04 fixtures', () => {
     );
   });
 
-  it.each(files)('%s is valid against v4 E-WORK-ITEM, sample, and gives a reason only when you cannot act', (name) => {
+  it.each(files)('%s is valid against v7 E-WORK-ITEM, sample, and gives a reason only when you cannot act', (name) => {
     const body = readJson(name);
     expectValid('E-WORK-ITEM', 200, body);
     expect(body.sample).toBe(true);

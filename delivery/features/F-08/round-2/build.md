@@ -1,22 +1,27 @@
 STATUS: READY
-COMMIT: 1a6ff66150da556f286b9280c9dcd3c300fea2f9
+COMMIT: 568c0a407f78b39a3cb7cf33f0030cc3b0a6028c
 BUILDER: builder
 LANE: full
 
 ## Summary
-- The flat Overview now follows the SCR-06 boards in structure, order, wording and styling. Each line has its agent avatar (tinted Tola, Chidi or Zainab circle) and the board subtitle. Tag tones come from an optional per-line `status`: ON TRACK green, WAITING amber, STOPPED/UNCERTAIN/PROBLEMS red. The order is lines, then the exceptions section with "See all exceptions" on the right, then the legend. The phone view uses the board's line cards, 18px squares and the "18 in progress · 5 need a person" summary.
+- The flat Overview now follows the SCR-06 boards in structure, order, wording and styling. Each line has its agent's mascot avatar (Tola, Chidi or Zainab, from the base branch's `public/agents/`) and the board subtitle. Tag tones come from an optional per-line `status`: ON TRACK green, WAITING amber, STOPPED/UNCERTAIN/PROBLEMS red. The order is lines, then the exceptions section with "See all exceptions" on the right, then the legend. The phone view uses the board's line cards, 18px squares and the "18 in progress · 5 need a person" summary.
 - WebGL detection is fixed. It tries `webgl2` and then `webgl`, each on a fresh canvas with `failIfMajorPerformanceCaveat: false`, and returns false only when both fail or throw. A new unit test covers this, and the default e2e checks that a normal Chromium shows the 3D option with no "can't show" hint.
 - The 3D floor is now concept 3, the "tilted swimlane board" (D-01), ported to three 0.187.0 inside the lazily loaded `features/floor/`. Stations are cards in the flat reading order with stacked tiles. Each card has a count label, and the readout reads "Line · Station · N items · needs a person" on hover or focus. The card you point at lifts, the board leans toward the pointer, and there is a Reset view button. It renders on demand only and draws no agents.
 - The console 404 was ours: the "See all exceptions" link prefetched `/exceptions`, which does not exist on this branch, and the pending request also stopped the page from ever settling. The link now has `prefetch={false}`. A production build plus next start served every CSS chunk with 200.
-- Fidelity (flat view): the desktop run passes with coverage 100% (with exceptions) and visual 94. The phone run reaches coverage 100% but visual 89.9, 0.1 under the bar; the cause is set out below. The reports are in `round-2/fidelity/`.
+- Fidelity (flat view):
+  - Desktop 1440 passes with coverage 100% (with exceptions) and visual 94.1 (94.2 with the status cookie).
+  - Phone 390 reaches coverage 100% but visual 89.8 with and without the cookie, 0.2 under the bar.
+  - By region, the F-08 content area of the phone (y 56–696) scores 97.1. The rest of the gap is the frame header (20) and the bottom band where the board shows F-06's exceptions preview while the page must show lines 7 and 8 (63.4).
+  - The reports are in `round-2/fidelity/`.
 
 ## Changes
 - `frontend/src/features/overview/OverviewPage.tsx`:
   - Line rows are now `div role="list"`/`role="listitem"`. With the old `<li>` rows the fidelity extractor dropped every name, subtitle and tag (text inside an `li` ancestor counts as "owned"). The ARIA semantics are the same.
-  - Added the avatar, name and subtitle column, the tag tone from `tagTone()`, and `aria-label` on the Flat/3D floor radios (same as their text; the extractor reads radio names only from labels).
+  - Added the avatar, name and subtitle column. The avatar is a `next/image` with `unoptimized`, so the static file is served as is: 32px, 24px on phones, `object-fit: cover`, round on the agent's tint; the tag tone from `tagTone()`, and `aria-label` on the Flat/3D floor radios (same as their text; the extractor reads radio names only from labels).
   - Phone: h1, then the summary line, then the line cards, then the coverage line, then the exceptions section, with no legend. Desktop: eyebrow, then h1 with the View switch, then hint, totals, lines, exceptions and legend, as on the board.
   - The legend now reuses the board's sentences. The count sentence is kept at the end (Assumption 2).
 - `frontend/src/features/overview/lines.ts` (new):
+  - `AGENT_AVATAR` maps each agent to its file in `public/agents/` (tola.png, chidi.png, zainab.png: 192px, added on the base by PR #12; no copies of my own), with alt text "Tola · PMO agent", "Chidi · Finance agent" and "Zainab · HR agent".
   - `LINE_IDENTITY` holds the board avatar agent and subtitle per line name. This is design copy, not business data, and an unknown line gets neither.
   - `tagTone(line)` uses `status` when present. Otherwise it uses the round-1 rule (person when any station needs a person, else neutral). It never reads `note`.
 - `frontend/src/features/overview/types.ts`: adds `LineStatus` and the optional `status` on `OverviewLine`.
@@ -47,6 +52,7 @@ LANE: full
 
 ## Fixes
 - FID-1 (flat Overview to board) | 7d82f38 | Avatars, subtitles, status-driven tag colours, board order (exceptions before legend), board legend wording, header-row exceptions link, 40px h1, board tile metrics, phone cards and summary line, 18px phone squares. Fidelity: desktop PASS (100% with exceptions, visual 94); phone 100% with exceptions, visual 89.9.
+- Coordinator: mascot avatars | 568c0a4 | The initial-letter circles are replaced by the mascot images from the base's `public/agents/` (merged at cdab2be), with alt text. My own 96px copies were dropped in favour of the base files. Unit test checks src and alt; e2e checks the Tola image loads at its natural 192px. Exception request 4 is withdrawn.
 - Coordinator: 3D detection | e2419c1 | `webglAvailable()` tries webgl2 then webgl with `failIfMajorPerformanceCaveat: false`; false only on real failure; unit test plus e2e assertion.
 - Coordinator: production 404 | 7d82f38 | The 404 was the RSC prefetch of `/exceptions` from our link. It now uses `prefetch={false}`, and the e2e asserts no 4xx response on load. No CSS chunk 404 reproduced on our build.
 - Coordinator update D-01: 3D concept 3 | 1a6ff66 | Head-on scene replaced by the tilted swimlane board, with labels, readout, lift, lean, reset and dispose, plus tests.
@@ -88,20 +94,30 @@ LANE: full
 22. [x] `server.mjs` untouched this round.
 
 ## Validation
-- `df -h /System/Volumes/Data`: 12–14 GiB free throughout.
-- `git merge origin/dlv-00-delivery-setup`: merged first (ccee28e), no conflicts.
-- `cd worktree && bash /Users/Hunchoo/psl-factory/delivery/checks.sh`: exit 0 on the final content (Django check; npm ci, eslint 0 warnings, tsc, vitest, next build). A separate `npx vitest run` on the same content gave 20 files and 385 tests passed.
-- `cd frontend && E2E_PORT=3801 MOCK_PORT=3802 npm run test:e2e`: exit 0 on the final content. The suite has 95 tests in 5 files and includes the 12 in `overview.spec.ts`.
-- Fidelity: `node .../fidelity.mjs --playwright frontend/node_modules/playwright/index.mjs --board design/canvas/project/SCR-06-{desktop,mobile}.dc.html --page http://localhost:3801/overview --width 1440|390 --exceptions round-2/fidelity/exceptions.json [--cookies psl_mock_overview=status]`. Results:
-  - SCR-06-desktop at 1440, default and status: PASS. Coverage 70.8% raw, 100% with exceptions; visual 94. One cold first run scored 87.6 and the rerun scored 94; that file is not kept.
-  - SCR-06-mobile at 390, default and status: FAIL on visual 89.9 (bar 90). Coverage 77.8% raw, 100% with exceptions.
-  - What causes the phone gap (see `diff.png`):
-    - The frame header: the shell draws a Menu button and the PSL FACTORY mark where the board has "← Home".
-    - The board renders the h1 with fallback fonts, because Google Fonts is unreachable here.
-    - The board clips after 6 lines and shows F-06's exceptions preview in that space, while the page must show all 8 lines there.
-    - None of these is in the F-08 lane. I did not remove the avatar initials or the counts to gain 0.1.
-  - Each folder `round-2/fidelity/SCR-06-{desktop-1440,mobile-390}{,-status}/` holds report.json, side-by-side.png and diff.png. `round-2/fidelity/exceptions.json` lists the exceptions used.
-- No server left on 3801 or 3802. `frontend/test-results` deleted. `git status --porcelain` is empty after the push. Pushed head 1a6ff66 matches origin.
+- `df -h /System/Volumes/Data`: 10–14 GiB free throughout.
+- `git merge origin/dlv-00-delivery-setup`: merged at the start (ccee28e) and again for the avatars (cdab2be). No conflicts.
+- `cd worktree && bash /Users/Hunchoo/psl-factory/delivery/checks.sh`: exit 0 after the final merge and avatar change (Django check; npm ci, eslint 0 warnings, tsc, vitest 20 files / 385 tests, next build).
+  - The only later edit is a 60 s timeout on one e2e test, which was linted.
+  - An earlier gate run on the avatar change failed 3 tests in `overview-floor.test.tsx`: their unnamed `getByRole('img')` now also matched the avatars. Those queries now ask for the "3D factory floor" name.
+- `cd frontend && E2E_PORT=3801 MOCK_PORT=3802 npm run test:e2e`: exit 0, 95 passed, on the final content (568c0a4).
+  - An earlier full run on the same code had 2 timeouts while other agents loaded the machine: the 3D board test (axe over 40 buttons hit the 30 s limit) and my-work's filter test, which is not in F-08's lane.
+  - The 3D board test now has a 60 s limit. Re-running `overview.spec.ts` with `my-work.spec.ts` gave 27/27, then the full suite passed.
+- Fidelity: `node .../fidelity.mjs --playwright frontend/node_modules/playwright/index.mjs --board design/canvas/project/SCR-06-{desktop,mobile}.dc.html --page http://localhost:3801/overview --width 1440|390 --exceptions round-2/fidelity/exceptions.json [--cookies psl_mock_overview=status]`. It ran against my own build (API_ORIGIN mock 3802, next start 3801).
+  - SCR-06-desktop at 1440: PASS. Coverage 70.8% raw, 100% with exceptions; visual 94.1, or 94.2 with the status cookie.
+  - SCR-06-mobile at 390: FAIL on visual 89.8, both with and without the cookie (bar 90). Coverage 77.8% raw, 100% with exceptions.
+- Phone visual by region (`round-2/fidelity/phone-visual-by-region.mjs`, the tool's own `visualInBrowser` on crops of its board.png and page.png):
+
+  | Region | Score | Mismatched / content cells | What is there |
+  |---|---|---|---|
+  | y 0–56 | 20 | 28/35 | Frame header: the board has "← Home", the shell draws Menu and the PSL FACTORY mark (shell/F-05) |
+  | y 56–696 | 97.1 | 38/1327 | F-08 content |
+  | y 696–844 | 63.4 | 122/333 | The board shows F-06's "All exceptions · 4" preview after clipping at 6 lines; the page must show lines 7 and 8 there |
+  | whole | 89.8 | 181/1775 | |
+
+  - Two more differences sit in the content region. The board's avatar `<img>` points at `/_blob/...` URLs the tool cannot load, so the board side draws broken-image icons where the page shows the real mascots. The shell's phone padding is 16px where the board has 14px.
+  - I did not hide the counts or initials, change the shell, or alter the board to close the 0.2. Reaching 90 needs the frame header (F-05/shell) and F-06's preview in place (follow-up (a)), or the design engineer accepting the gap.
+- Each folder `round-2/fidelity/SCR-06-{desktop-1440,mobile-390}{,-status}/` holds report.json, side-by-side.png and diff.png from the final runs.
+- No server left on 3801 or 3802. `frontend/test-results` deleted. `git status --porcelain` is empty, and the pushed head 568c0a4 matches origin.
 
 ## Notes
 - **Proposed contract field for the architecture, needed for tag tone:** `lines[].status` (optional), enum `on_track | waiting | stopped | uncertain | problems`.
@@ -112,7 +128,7 @@ LANE: full
   1. Eyebrow "FACTORY FLOOR · LIVE" is shown as "FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT". Polling every 15 s is not live, and AGENTS.md requires an explicit timestamp.
   2. "See all 4" reads "See all exceptions". The count needs E-EXCEPTIONS (follow-up (a) after F-06).
   3. The exceptions table on desktop (columns WHAT HAPPENED / WORK / WHAT'S BEING DONE / WHO ACTS and its rows), and on the phone "All exceptions · 4" with its two preview cards. These are F-06's component, for follow-up (a).
-  4. Line avatars use the mascot tint circle with the agent initial (the app's existing avatar idiom), not the mascot image. No production avatar asset exists in `frontend/` yet (README § Mascots: 2x exports pending).
+  4. (Withdrawn: the line avatars now use the mascot images.)
   5. Station squares keep their count numerals (spec Assumption 2), which the board does not draw.
   6. On the phone, the coverage time sits under the lines. The board shows none, but AGENTS.md requires it.
   - Frame items owned by F-05/the shell are listed as frame exceptions, not requests: Start work, More ways to start, the signed-in name, and the phone "← Home".

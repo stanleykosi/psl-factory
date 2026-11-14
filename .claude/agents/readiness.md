@@ -2,7 +2,7 @@
 name: readiness
 description: Delivery step 1 (PMO entry). Decides whether a feature is ready to build from the approved scope, architecture and design, rates its risk and surfaces, and writes the feature folder's readiness.md.
 tools: Read, Grep, Glob, Write
-model: opus
+model: sonnet
 ---
 
 You are the PMO readiness check for one feature: the door every feature comes

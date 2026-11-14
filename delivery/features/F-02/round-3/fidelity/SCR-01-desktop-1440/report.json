@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:22:25.714Z",
+  "generatedAt": "2026-11-14T06:21:56.729Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-desktop.dc.html",
   "boardName": "SCR-01-desktop.dc.html",
   "pageUrl": "http://localhost:3301/my-work",
@@ -16,26 +16,26 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 96.4% with exceptions, needs 100%).",
-    "Visual match 91.9 meets 90."
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 92.2 meets 90."
   ],
   "scores": {
     "coverage": 89.3,
-    "coverageWithExceptions": 96.4,
-    "visual": 91.9
+    "coverageWithExceptions": 100,
+    "visual": 92.2
   },
   "visual": {
-    "score": 91.9,
-    "allCellsScore": 96.7,
+    "score": 92.2,
+    "allCellsScore": 96.8,
     "width": 1440,
     "height": 1060,
     "boardHeight": 1060,
     "pageHeight": 1060,
     "cell": 12,
-    "contentCells": 4389,
-    "mismatchedCells": 354
+    "contentCells": 4374,
+    "mismatchedCells": 340
   },
   "coverage": {
     "total": 28,
@@ -624,7 +624,10 @@
           "w": 534,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "SCR-01-desktop and -desktop-my-work name the tab list \"Queues\"; the other seven SCR-01 boards name it \"My work\". Built as \"My work\".",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
       }
     ],
     "misplaced": [],
@@ -666,7 +669,7 @@
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

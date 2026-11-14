@@ -1,0 +1,63 @@
+{
+  "id": "W-1516",
+  "title": "Atlas Energy · Project costing",
+  "line": "Prepare a costing",
+  "reference": "CST-0602",
+  "state": "action_needed",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Scope",
+      "status": "done"
+    },
+    {
+      "name": "Estimate",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "stopped"
+    },
+    {
+      "name": "Approve",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "The rate card used for this estimate has expired. The PMO Lead confirms the current rates.",
+  "sample": true
+}

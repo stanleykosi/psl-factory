@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "IMPLEMENTING",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -67,62 +67,430 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T06:31:13Z",
+      "seconds": 150.8,
+      "evidence_ref": "delivery/features/F-10/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T07:01:34Z",
+      "seconds": 90.2,
+      "evidence_ref": "delivery/features/F-10/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (round 2, UI-only feature against the contract mock)",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (round 2). Delivery acceptance only. Product acceptance, merge and release keep their own authorities.",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-10/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "coordinator, provisional for the design engineer (hunchoweb)",
+      "authority": "the design engineer's overnight instruction, 14 Nov 2026; recorded in delivery/OVERNIGHT-DECISIONS.md",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (round 2, design-fidelity gate)",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC12 asks for a test that \"an answer that arrives after a retry has started is ignored\". The unit test at `frontend/tests/finance-month-end.test.tsx` (\"an answer to a superseded read is ignored\") covers only a superseded period. The same request counter guards retries (`useMonthEnd.ts:17-25`), and the UI offers no Try again while a read is pending, so the risk is low. A retry-specific case (first read pending, `retry()` called, first answer resolves late) would cover the criterion literally.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:42:30Z",
+          "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Out-of-contract values crash the page instead of degrading. `taskTag` reads `STATE_TAGS[task.state].text` (model.ts:111-114), `AgentNote` reads `AGENT_NAMES[note.agent].name` (MonthEndView.tsx:143) and `formatClock` throws a RangeError on an invalid `as_of`. A tone outside the enum yields `psl-tag--undefined`. Both v4 and v7 close these enums and v7 types `as_of` as date-time, so a conforming backend never triggers this. When T-FINANCE lands, a defensive fallback (neutral tag, no note, no as-of) would be cheap.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:42:30Z",
+          "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The full cash value is exposed only through `aria-describedby` on a plain `<span>` (MonthEndView.tsx:63-68). The spec mandates this, so it is not a build defect. However, screen readers often don't announce descriptions on non-focusable static text, so the \"full value for screen readers\" goal may not be reached in practice. I am flagging it for the UX/accessibility review to confirm with a screen reader. An alternative is a visually hidden text sibling.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:42:30Z",
+          "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Six identical \"Open\" links in the desktop table have no row-specific accessible name, so a screen-reader link list is ambiguous. The board draws \"Open\", so keep the visible text and add a visually hidden suffix or aria-label such as \"Open Bank statements\". frontend/src/features/finance/month-end/MonthEndView.tsx",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:42:30Z",
+          "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T07:01:34Z",
+          "refs": [
+            "752ab93"
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T07:08:55Z",
+          "refs": [
+            "On the shared build (4011), the six Open links resolve to \"Bank statements\", \"Management accounts\", \"Income detail and schedules\", \"Fixed asset schedule\", \"Cash forecast\" and \"Business-unit totals\". The code is in MonthEndView.tsx, lines 81 and 107."
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "752ab93"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "On the shared build (4011), the six Open links resolve to \"Bank statements\", \"Management accounts\", \"Income detail and schedules\", \"Fixed asset schedule\", \"Cash forecast\" and \"Business-unit totals\". The code is in MonthEndView.tsx, lines 81 and 107."
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "On a phone with no tasks (`psl_mock_month_end=empty`, 390 x 844), the \"No month-end tasks you can see for October 2026.\" panel is a 690px-tall white box running from under the summary line to the bottom of the screen. Expected: a panel sized to its text, as on desktop and on the other empty states in the app. Cause: on phones `.monthend-row` is `display: contents`, so `.monthend-empty` becomes a direct child of the `.monthend` column, which has a full-screen `min-height`. The empty panel's desktop sizing `flex: 999 1 600px` then makes it grow to fill that height (computed height 690.25px, flex `999 1 600px`). Fix: inside the phone media query give `.monthend-empty` `flex: none` (or restrict the 999 rule to the desktop row). `frontend/src/features/finance/month-end/month-end.css:23`; see round-1/fidelity-review/states/empty-390.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T06:42:30Z",
+          "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T07:01:34Z",
+          "refs": [
+            "752ab93"
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T07:08:55Z",
+          "refs": [
+            "I opened the shared build at 390 x 844 with `psl_mock_month_end=empty` set on path `/`. `.monthend-empty` has computed flex `0 0 auto` and is 84px tall (it was 690px in round 1). The page shows the strip and summary \"0 of 0 done \u00b7 0 waiting\", then a text-sized panel, with no table, cards, note or action. At 1440 the panel is 64px. Screenshots: `round-2/fidelity-review/states/empty-390.png` and `empty-1440.png`."
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "752ab93"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "I opened the shared build at 390 x 844 with `psl_mock_month_end=empty` set on path `/`. `.monthend-empty` has computed flex `0 0 auto` and is 84px tall (it was 690px in round 1). The page shows the strip and summary \"0 of 0 done \u00b7 0 waiting\", then a text-sized panel, with no table, cards, note or action. At 1440 the panel is 64px. Screenshots: `round-2/fidelity-review/states/empty-390.png` and `empty-1440.png`."
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Enum values from the response are used as lookup keys without a guard. If a backend sends an `agent_note.agent` outside tola/chidi/zainab, `AGENT_NAMES[note.agent]` is undefined and `agent.name` throws, so the whole page falls to the error boundary. That is also where the agent string is put into the `/agents/{agent}.png` src. In the same way, an unknown `state` makes `STATE_TAGS[task.state].text` throw, and an unknown `tone` gives the class `psl-tag--undefined`. All of these fail closed: no data is exposed, and the image path stays same-origin. Expected: skip the note, or fall back to a neutral tag, when a value is not in the known set. Paths: frontend/src/features/finance/month-end/MonthEndView.tsx:153-156, frontend/src/features/finance/month-end/model.ts:110-114.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T06:42:30Z",
+          "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, although E-MONTH-END is in scope (spec Summary, readiness \"Endpoints\"). The record cannot show operation coverage for this feature. Expected: `E-MONTH-END` listed. Actual: empty list. The coverage itself is evidenced in the spec, QA and the mock tests (`finance-month-end-mock.test.ts`, `mock-contract.test.ts`). Fix the record when the feature is closed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:20:36Z",
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The reported phone fidelity scores disagree. build.md says 97.3 and review-ui.md says 97.8 (the coordinator brief also says 97.8). Both are above the 90 gate and the cause is probably different run timing. The reviewer's run is the gate number, so I rely on 97.8. The reports are under `round-2/fidelity/` and `round-2/fidelity-review/`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:20:36Z",
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec's fidelity exceptions list also names the link targets, \"\u2190 Finance\" placement and the avatar swap, but `delivery/features/F-10/fidelity-exceptions.json` (as the UI reviewer read it) holds only \"Start work\" and \"More ways to start\". The gate still passes at 100% coverage. The back link now sits top right (D-19), not under the phone bar as spec criterion 3 and D-08 described. D-19 records it as interim until the frame's back-link slot (D-23). The design engineer should confirm this when giving product acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:20:36Z",
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+          "evidence_refs": [
+            "delivery/features/F-10/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-10/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+          "evidence_refs": [
+            "delivery/features/F-10/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (round 1, design-fidelity gate)",
+          "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+          "evidence_refs": [
+            "delivery/features/F-10/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+          "evidence_refs": [
+            "delivery/features/F-10/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -145,18 +513,38 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b91ca6a7c8c4016ac7b11bccd76e87c1265fb765",
     "task_branch": "fe-m3-finance-a-finance-lead-opens-month-end-for-octob",
-    "head_sha": null,
+    "head_sha": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-10",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/16",
+    "pr_number": 16,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
     "ci_status": "not_run",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/features/F-10/fidelity-exceptions.json",
+      "frontend/e2e/finance-month-end.spec.ts",
+      "frontend/mock/finance.mjs",
+      "frontend/mock/fixtures/E-MONTH-END.json",
+      "frontend/mock/fixtures/finance/month-end.board-phone.json",
+      "frontend/mock/fixtures/finance/month-end.empty.json",
+      "frontend/mock/fixtures/finance/month-end.known.json",
+      "frontend/mock/fixtures/finance/month-end.unknown.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/finance/month-end/page.tsx",
+      "frontend/src/features/finance/month-end/MonthEndStates.tsx",
+      "frontend/src/features/finance/month-end/MonthEndView.tsx",
+      "frontend/src/features/finance/month-end/model.ts",
+      "frontend/src/features/finance/month-end/month-end.css",
+      "frontend/src/features/finance/month-end/proposal.ts",
+      "frontend/src/features/finance/month-end/useMonthEnd.ts",
+      "frontend/tests/finance-month-end-mock.test.ts",
+      "frontend/tests/finance-month-end.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -189,7 +577,7 @@
     }
   },
   "created_at": "2026-11-14T04:55:45Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -207,6 +595,62 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T06:31:25Z",
+      "round": 1,
+      "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T06:42:30Z",
+      "round": 1,
+      "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T06:42:31Z",
+      "round": 2,
+      "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T07:01:35Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T07:08:56Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T07:16:43Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T07:20:36Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
     }
   ],
   "routing": {
@@ -223,10 +667,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
   },
   "blocked": null
 }

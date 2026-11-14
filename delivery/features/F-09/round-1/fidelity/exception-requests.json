@@ -1,0 +1,409 @@
+{
+  "note": "Exception REQUESTS from the F-09 builder (round 1). Not approved: the design engineer or the coordinator approves or refuses each one.",
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "Frame item (app top bar, src/shell, F-05's Start work split button); not on this base and outside F-09's lane.",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-16-desktop",
+        "SCR-16-desktop-sow-signed",
+        "SCR-16-desktop-success",
+        "SCR-16-desktop-validation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "Frame item (app top bar, src/shell, F-05's Start work split button); not on this base and outside F-09's lane.",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-16-desktop",
+        "SCR-16-desktop-sow-signed",
+        "SCR-16-desktop-success",
+        "SCR-16-desktop-validation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "INV-0412 · LAGOON HEALTH",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "DRAFTED",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "v2",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-mobile-awaiting-reconciliation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "REVIEWED",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Ada Okafor",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-mobile-awaiting-reconciliation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "APPROVED",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "SENT",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-mobile-awaiting-reconciliation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "RECEIPT",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Not found",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-mobile-awaiting-reconciliation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "VERIFIED",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-awaiting-reconciliation",
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "REL-0077 · LAGOON HEALTH",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "WAITING ON CLIENT",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "v1",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "PMO Lead",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "To client 06 Nov",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Delivered",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Tola has done the agent's part and is waiting on Lagoon Health.",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "The UAT pack was delivered on 06 Nov. Tola will remind the client on 13 Nov. When they reply, a PM records it with the proof.",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "complementary",
+      "name": "",
+      "reason": "The SCR-02 waiting board's side panel (\"Waiting on the client\") is F-03's; F-09 places only its \"Record the client's response\" button (readiness PMO-0-6, PMO-0-7).",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "WAITING ON THE CLIENT",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Lagoon Health has had the UAT pack since 06 Nov. Their response is due 14 Nov (from the release plan).",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Tola will send a reminder from your mailbox on 13 Nov if nothing arrives. When the client replies, record it here with the proof.",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "link",
+      "name": "Change the reminder",
+      "reason": "Out of scope for F-09 (readiness PMO-0-7: \"Change the reminder\" stays out); the waiting panel's copy is F-03's.",
+      "boards": [
+        "SCR-02-desktop-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "link",
+      "name": "← Queue",
+      "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Queue\" in the board's place, but the frame names it \"Back to Queue\" for screen readers, and the tool matches on that name. The page draws no back link of its own. On SCR-02 phone boards the page is F-03's (D-25/D-26).",
+      "boards": [
+        "SCR-16-mobile",
+        "SCR-16-mobile-validation",
+        "SCR-02-mobile-awaiting-reconciliation",
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1 (updated after the frame slot merge)",
+      "approved_by": null
+    },
+    {
+      "role": "link",
+      "name": "← Work item",
+      "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Work item\" in the board's place, but the frame names it \"Back to Work item\" for screen readers, and the tool matches on that name. The page draws no back link of its own.",
+      "boards": [
+        "SCR-16-mobile-success"
+      ],
+      "requested_by": "F-09 builder, round 1 (after the frame slot merge)",
+      "approved_by": null
+    },
+    {
+      "role": "link",
+      "name": "← SOW",
+      "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← SOW\" in the board's place, but the frame names it \"Back to SOW\" for screen readers, and the tool matches on that name. The page draws no back link of its own.",
+      "boards": [
+        "SCR-16-mobile-sow-signed"
+      ],
+      "requested_by": "F-09 builder, round 1 (after the frame slot merge)",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "INV-0412",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-mobile-awaiting-reconciliation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "REL-0077",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Tola is waiting on Lagoon Health. UAT response due 14 Nov; Tola reminds them on 13 Nov.",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Tola is waiting on Lagoon Health.",
+      "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+      "boards": [
+        "SCR-02-mobile-waiting"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "20 Dec 2026, 14:10",
+      "reason": "The board draws When as fixed text; the page has the required datetime-local input (responded_at is sworn and never defaulted). The design check cannot read a value inside a form field (same tool limit as D-16).",
+      "boards": [
+        "SCR-16-desktop-sow-signed",
+        "SCR-16-mobile-sow-signed"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    },
+    {
+      "role": "text",
+      "name": "Add the proof and confirm it's genuine to record this.",
+      "reason": "On the page the line is role=\"alert\" (spec: announced beside the disabled Record, as on the desktop validation board); the phone board draws a plain div, so the tool counts it as a different role. Same words.",
+      "boards": [
+        "SCR-16-mobile-validation"
+      ],
+      "requested_by": "F-09 builder, round 1",
+      "approved_by": null
+    }
+  ]
+}

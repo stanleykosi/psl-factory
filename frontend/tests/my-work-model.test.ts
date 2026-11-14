@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import {
   buildWorkQuery,
   formatAge,
+  filterCount,
+  isNarrowed,
   lineOptions,
+  recordsText,
   mergeRefresh,
   miniSegments,
   parseView,
@@ -113,6 +116,14 @@ describe('view and query', () => {
     });
   });
 
+  it('reads, sends and writes project and waiting_on (D-WORKLIST-FILTERS); an unknown waiting_on is ignored', () => {
+    expect(parseView(new URLSearchParams('project=C-OJO&waiting_on=agent'))).toEqual(view({ project: 'C-OJO', waiting: 'agent' }));
+    expect(parseView(new URLSearchParams('waiting_on=everyone'))).toEqual(view());
+    expect(buildWorkQuery(view({ project: 'C-OJO', waiting: 'agent' }))).toEqual({ queue: 'needs_me', limit: 20, project: 'C-OJO', waiting_on: 'agent' });
+    expect(viewSearch(view({ project: 'C-OJO', waiting: 'me' }))).toBe('?project=C-OJO&waiting_on=me');
+    expect(isNarrowed(view({ waiting: 'me' }))).toBe(true);
+  });
+
   it('writes the URL without defaults', () => {
     expect(viewSearch(view())).toBe('');
     expect(viewSearch(view({ queue: 'done', limit: 10, line: 'Prepare an invoice' }))).toBe('?queue=done&line=Prepare+an+invoice&limit=10');
@@ -139,8 +150,31 @@ describe('counts, footer and merging', () => {
     expect(showMoreLabel(view({ q: 'x' }), counts, 10)).toBe('Show more');
   });
 
-  it('line options are distinct, include the applied line and sort A–Z', () => {
-    expect(lineOptions([item('a', { line: 'B' }), item('b', { line: 'A' }), item('c', { line: 'B' })], 'C')).toEqual(['A', 'B', 'C']);
+  it('line options come from filters.lines by key, in response order, keeping the applied key', () => {
+    const filters = { lines: [{ key: 'inv', title: 'Invoice preparation and delivery' }, { key: 'plan', title: 'Planning and delivery handoff' }] };
+    expect(lineOptions(filters, [item('a', { line: 'Other' })], 'plan')).toEqual(filters.lines);
+    expect(lineOptions(filters, [], 'gone')).toEqual([...filters.lines, { key: 'gone', title: 'gone' }]);
+  });
+
+  it('without filters.lines, line options are the loaded rows\' lines, distinct and A–Z', () => {
+    const rows = [item('a', { line: 'B', line_key: 'b' }), item('b', { line: 'A', line_key: 'a' }), item('c', { line: 'B', line_key: 'b' })];
+    expect(lineOptions(undefined, rows, 'c')).toEqual([
+      { key: 'a', title: 'A' },
+      { key: 'b', title: 'B' },
+      { key: 'c', title: 'c' },
+    ]);
+  });
+
+  it('records you can see adds up the queue totals; unknown without counts', () => {
+    expect(recordsText({ needs_me: 24, waiting_on_others: 12, done: 6, unassigned: 2 })).toBe('44 records you can see');
+    expect(recordsText({ needs_me: 1, waiting_on_others: 0, done: 0 })).toBe('1 record you can see');
+    expect(recordsText(null)).toBeUndefined();
+    expect(recordsText(undefined)).toBeUndefined();
+  });
+
+  it('the Filter badge counts line, project, state and waiting on, not search', () => {
+    expect(filterCount(view({ q: 'x' }))).toBe(0);
+    expect(filterCount(view({ line: 'a', project: 'C-1', state: 'waiting', waiting: 'me' }))).toBe(4);
   });
 
   it('a refresh replaces page 1 and keeps later rows not now on page 1', () => {

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-13",
   "outcome": "The frontend builds, type-checks and mocks against the v7 contract",
-  "state": "IMPLEMENTING",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONTRACT-V7"
   ],
@@ -59,28 +59,47 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T06:03:43Z",
+      "seconds": 267.7,
+      "evidence_ref": "delivery/features/F-13/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "evidence_refs": [
+        "delivery/features/F-13/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "reviewer-qa",
+      "snapshot_ref": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "evidence_refs": [
+        "delivery/features/F-13/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery acceptance only; merge and release keep their own authorities)",
+      "snapshot_ref": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "evidence_refs": [
+        "delivery/features/F-13/round-1/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -92,7 +111,54 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "build.md Validation and AC9 report \"vitest (419 passed)\" and \"17 files, 419 tests\". On this head, `npx vitest run` gives 13 files and 320 tests, and the gate's checks.log shows the same 13 and 320. The builder's count probably came from a different tree. The result is still a pass, but the recorded evidence should match the head (delivery/features/F-13/round-1/build.md, Acceptance criteria 9 and Validation).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-13/round-1/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T06:20:52Z",
+          "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-1-1 stays open. The handoff evidence in build.md (Acceptance criteria 9 and Validation) states 17 files and 419 tests, but the head and the gate checks.log show 13 files and 320 tests. Correct the figures when build.md is next touched. It does not change the result.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-13/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:22:09Z",
+          "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -116,18 +182,26 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "abd0b3e6a6ab9e856a829a8bfcd0556dc62a2f91",
     "task_branch": "fe-contract-v7-the-frontend-builds-type-checks-and-mock",
-    "head_sha": null,
+    "head_sha": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-13",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/13",
+    "pr_number": 13,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
     "ci_status": "not_run",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/mock/server.mjs",
+      "frontend/package.json",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/schema.d.ts",
+      "frontend/tests/api-schema-drift.test.ts",
+      "frontend/tests/mock-decide.test.ts",
+      "frontend/tests/mock-work-list.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -178,6 +252,38 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T06:03:45Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T06:09:27Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T06:20:52Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T06:22:09Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
     }
   ],
   "routing": {
@@ -192,9 +298,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "fe657c6cc1bbe552e569ab0305047dd63e9297ba"
   },
   "blocked": null
 }

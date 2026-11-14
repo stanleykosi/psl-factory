@@ -1,0 +1,160 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "Start work and More ways to start belong to F-05 (D-04), which has not merged at this base; the top bar is the shell's (src/shell, not touched).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "As Start work (F-05, D-04).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Admin · sample",
+      "reason": "The shell prints /me as name · roles (A-14). The fidelity tool scopes --cookies to the page folder (/setup/rules/), so the mock answers the default persona and the bar reads 'Ada Okafor · Finance Lead'; under the admin cookie it reads 'Ada Okafor · Admin'.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Ada Okafor · Admin",
+      "reason": "As 'Admin · sample': the persona text comes from /me (A-14).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "tablist",
+      "name": "Setup",
+      "reason": "Assumption A-7: the tabs change routes, so they are a nav of links with aria-current (same look), not ARIA tabs; the tool reads them as a navigation area.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Rule",
+      "reason": "The board draws the Rule label as a span; the page uses a real <label> for its <select>, which the tool lists as the field's label, not as text.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Who may assign an RFP to a PM",
+      "reason": "The board draws the Rule picker as a text box; the page draws a native <select> (listed as Drop-down 'Rule') holding the same rule.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "checkbox",
+      "name": "PMO Lead",
+      "reason": "The board shows PMO Lead twice (leftover of the 13 Nov Head of PMO merge, PMO-0-4); options come from the API, so one PMO Lead checkbox is on the page.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Starts",
+      "reason": "A real <label> for the date input (see Rule).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Today, 12 Nov 2026",
+      "reason": "Assumption A-11: a native date input prefilled with today in Africa/Lagos; the board's text format is not reproduced.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Why",
+      "reason": "A real <label> for the Why input (see Rule).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Agreed at the PSL leadership meeting, 12 Nov",
+      "reason": "A-14: the tool cannot fill the form; Why starts empty (nothing is prefilled).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "leadership-minutes-12nov.pdf",
+      "reason": "A-14: Proof starts empty ('Choose a file'); after an upload the same box shows the file name and 'Uploaded · size' (unit and e2e tests).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Uploaded · 120 KB",
+      "reason": "As the file name: shown after an upload (A-14).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Who may assign an RFP to a PM",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Not set · Pre-sale",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Who reviews client documents",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "PMO Lead · All lines",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Costing rule",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Rate card v4 · Pre-sale",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Short payments (e.g. tax deducted)",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Not set · Finance",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Hypercare criteria",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Not set · Delivery",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "text",
+      "name": "Archive storage and retention",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+    },
+    {
+      "role": "link",
+      "name": "← Setup",
+      "reason": "The phone back link is now the frame's slot (usePhoneBack, PR #17, D-23/D-28). It shows exactly '← Setup' in the board's place (visual 99+), but the frame gives every back link the accessible name 'Back to <label>' (frame-phone-back build note and technical review, WCAG 2.5.3 holds), so the tool lists it as link 'Back to Setup'. Same link, same href (/setup/roles); the name belongs to the shared frame, not this feature.",
+      "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-33)"
+    }
+  ]
+}

@@ -147,15 +147,15 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
     expect(tag(3).className).toBe('psl-tag psl-tag--neutral');
   });
 
-  it('a line status sets the board tag tones: on track green, waiting amber, stopped, uncertain and problems red', async () => {
+  it('a line status tone sets the board tag: verified green, neutral grey, stopped, uncertain and person red', async () => {
     settle(STATUS);
     await open();
     expect(rows().map((li) => [li.querySelector('.psl-tag')!.textContent, li.querySelector('.psl-tag')!.className])).toEqual([
-      ['1 WAITING', 'psl-tag psl-tag--waiting'],
+      ['1 WAITING', 'psl-tag psl-tag--neutral'],
       ['1 STOPPED', 'psl-tag psl-tag--person'],
       ['1 UNCERTAIN', 'psl-tag psl-tag--person'],
       ['ON TRACK', 'psl-tag psl-tag--done'],
-      ['2 WAITING', 'psl-tag psl-tag--waiting'],
+      ['2 WAITING', 'psl-tag psl-tag--neutral'],
       ['ON TRACK', 'psl-tag psl-tag--done'],
       ['ON TRACK', 'psl-tag psl-tag--done'],
       ['2 PROBLEMS', 'psl-tag psl-tag--person'],
@@ -163,7 +163,7 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
   });
 
   it('the tone never comes from the note text', async () => {
-    settle({ ...DEFAULT, lines: [{ ...DEFAULT.lines[0], note: 'ON TRACK', status: 'stopped' }, { ...DEFAULT.lines[3], note: '1 STOPPED' }] });
+    settle({ ...DEFAULT, lines: [{ ...DEFAULT.lines[0], note: 'ON TRACK', status: { label: 'Stopped', tone: 'stopped' } }, { ...DEFAULT.lines[3], note: '1 STOPPED' }] });
     await open();
     expect(rows().map((li) => li.querySelector('.psl-tag')!.className)).toEqual(['psl-tag psl-tag--person', 'psl-tag psl-tag--neutral']);
   });
