@@ -3,26 +3,79 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-15",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Alert bell in the top bar, with a drawer of \"Needs you\" and \"For your information\"",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-ALERTS-MENU"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "At 1440 wide, a signed-in person sees a bell button in the top bar, left of their name and right of the page links, with a red badge `4` at its top-right (about -2px top, -3px right, min 17px tall) \u2014 verify: open `/` in the mock, screenshot beside concept 3's desktop mock-up; badge position, colour and order bell, chip, name, Start work match.",
+    "A red chip reading `3 need you` (24px tall, white 12px text, touching the bell) sits right of the bell at 1440 and 1080, and is absent at 1079, 900 and 720 where only the badge shows \u2014 verify: resize in the browser or `e2e/alerts-bell.spec.ts` at those widths.",
+    "The bell's accessible name is `Alerts, 4 unread, 3 need you` in `needs-you`, `Alerts, 4 unread` in a scenario with no `needs_you`, and `Alerts` with no counts when the list failed \u2014 verify: `getByRole('button', { name })` in the e2e and vitest tests.",
+    "With no `needs_you` anywhere (scenario `board`), the chip is absent, the drawer shows only a \"For your information\" group, and there is no \"Needs you\" header or tab \u2014 verify: open the drawer in `board`.",
+    "With `needs_you` present but every needs-you alert read, the chip is absent and the Needs you group still shows its rows and the count of items \u2014 verify: vitest with a fixture where n1 to n3 are read.",
+    "When the response has no `unread_count`, the badge is absent (not `0`) \u2014 verify: vitest with a response missing `unread_count`.",
+    "Counts above 99 show `99+` \u2014 verify: vitest with `unread_count: 120`.",
+    "While `/me` is loading, errored, or signed out, no bell renders and no notifications request is made \u2014 verify: vitest and e2e intercept; request count is zero.",
+    "On phone (390 wide) the phone bar shows Menu, PSL FACTORY, bell (44x44px), then `+ Start`; on a sub-page with a back link it shows `\u2190 label`, bell, `+ Start` \u2014 verify: e2e at 390 on `/` and on a page that sets `usePhoneBack`, element boxes measured \u2265 44x44.",
+    "Clicking the bell opens a dialog named \"Alerts\" fixed to the right edge, 420px wide (\u00b11px), starting at the bottom edge of the top bar and reaching the viewport bottom, with a dimmed scrim over the rest of the page \u2014 verify: e2e bounding boxes at 1440x900; compare with concept 3.",
+    "Inside, top to bottom: header \"Alerts\" with `Close`; \"Needs you\" group header (signal-tint background) with count `3`; rows n1 to n3; \"For your information\" header with count `3`; rows n4 to n6; footer with \"See all alerts\" at the left and \"Alert settings\" at the right \u2014 verify: e2e reads the order; screenshot beside the concept.",
+    "Each row shows avatar, alert text, a meta line like `Chidi \u00b7 WhatsApp \u00b7 09:42` (from `metaLine`), and one `Open` link; Needs you Open links are filled blue, For your information Open links are outlined; unread rows are tinted with bold text and there is no NEW tag \u2014 verify: screenshot, and `getByRole('link', { name: /^Open:/ })` count equals 6.",
+    "The bell shows an open state while the dialog is open (white 2px border, darker fill) and `aria-expanded=\"true\"`; it returns to `false` on close \u2014 verify: e2e assertion.",
+    "The footer links go to `/notifications` and `/settings/alerts` and close the drawer \u2014 verify: click each; URL and absence of the dialog.",
+    "Clicking Open on an unread alert sends exactly one `POST /api/v1/notifications/n1/read` with a non-empty `X-CSRFToken` header, then navigates to `/work/w-inv-lh-002`, and the drawer is closed there \u2014 verify: Playwright request listener (count 1, header present) and `page.url()`.",
+    "Clicking Open on a read alert sends no POST and navigates to the work \u2014 verify: request listener count 0 for n5.",
+    "If the mark-read POST fails (500) or the network drops, the person still arrives at the work and nothing is retried (one request) \u2014 verify: e2e with a route override returning 500.",
+    "Double-clicking Open sends one POST \u2014 verify: listener count 1.",
+    "After marking n1 read and returning to the page (browser back), the badge reads `3` and the chip `2 need you` \u2014 verify: e2e; the mock keeps state per persona.",
+    "Open with a modifier key (Ctrl/Cmd/Shift click, middle click) behaves as a normal link and sends no POST, as on `/notifications` \u2014 verify: vitest.",
+    "On open, focus is on `Close`; Tab and Shift+Tab never leave the dialog (cycle Close, six Open links, See all alerts, Alert settings); the page behind cannot be tabbed to or scrolled \u2014 verify: e2e presses Tab 12 times and checks `document.activeElement` is inside the dialog.",
+    "Escape closes the drawer and focus returns to the bell (desktop) or to the phone bell (phone); clicking the scrim or `Close` does the same \u2014 verify: e2e `toBeFocused()` on the trigger.",
+    "Tab order in the bar is page links, bell, Start work, with Start work last; on phone it is Menu, bell, `+ Start` \u2014 verify: e2e Tab sequence at 1440 and 390 for a person with startable lines.",
+    "With `prefers-reduced-motion: reduce` the drawer and sheet appear without any CSS transition or animation; otherwise the slide is about 200ms \u2014 verify: e2e `emulateMedia({ reducedMotion: 'reduce' })` and computed `transition-duration` is `0s` (or none).",
+    "axe (WCAG 2.2 AA tags as in `e2e/alerts.spec.ts`) reports no violations with the drawer open at 1440 and 390 \u2014 verify: `expectNoAxeViolations` in the new spec.",
+    "At 390 wide the sheet starts about 36px from the top of the viewport and reaches the bottom, with a grab bar, header \"Alerts\", `Close` at least 44x44px, then two tabs of at least 44px height: `Needs you` with a count pill `3` and `For your information` \u2014 verify: e2e boxes; screenshot beside concept 3's phone mock-up.",
+    "The sheet opens on \"Needs you\" and shows n1 to n3 with filled `Open` buttons of at least 44px height and 60px width; selecting the other tab (click or arrow keys) shows n4 to n6; with no needs-you data there are no tabs \u2014 verify: e2e on `needs-you` and `board`.",
+    "Page has no horizontal scroll at 390 with the sheet open \u2014 verify: `scrollWidth <= innerWidth`.",
+    "A page load issues one notifications request; opening the drawer issues one more; no further requests occur over 70 seconds idle, and after marking read there is no refetch \u2014 verify: e2e request counter with a fake clock (`page.clock`) advancing 70s.",
+    "Opening the drawer twice quickly leaves at most one request in flight \u2014 verify: vitest with a deferred response.",
+    "While the first request is pending the drawer shows the loading skeleton with \"Loading\u2026\" and the bell shows no badge \u2014 verify: vitest/e2e with a delayed route.",
+    "With the `empty` scenario the drawer shows \"No alerts yet.\" and the footer links; no badge or chip \u2014 verify: e2e.",
+    "With `needs-you` where Needs you has none, its header shows \"Nothing needs you right now.\"; where For your information has none it shows \"No other alerts.\" \u2014 verify: vitest.",
+    "On a 500 or network failure the drawer shows the error card with \"We couldn't load your alerts. Your work is safe; nothing was changed.\" and `Try again`; clicking it sends one request and on success shows the list \u2014 verify: e2e route override.",
+    "On a 401 the drawer shows \"You're signed out.\" with a `Sign in` link whose `next` is the current path, and no further notifications requests are made; a 403 shows \"Your account can't use PSL Factory.\" \u2014 verify: e2e route overrides.",
+    "A person only ever sees their own alerts: the drawer renders exactly the items the server returns for them and never filters or fetches by another user; switching mock persona (cookie) changes the list and the counts \u2014 verify: e2e with two personas.",
+    "Text in an alert (even if it says \"needs you\" or looks like a script/HTML) is rendered as plain text and does not change which group it is in \u2014 verify: vitest with an item whose text is `<b>needs you</b>` and `needs_you: false`; it sits under For your information as literal text.",
+    "`frontend/src/api/schema.d.ts` is byte-identical to before the change; `needs_you` appears only in a local type marked `PROPOSAL` \u2014 verify: `git diff --stat -- frontend/src/api/schema.d.ts` is empty and `grep -rn \"needs_you\" frontend/src` shows the local type, the mock and tests.",
+    "`/notifications` behaves exactly as before (rows, mark-read on open, filters, states) \u2014 verify: existing `tests/alerts.test.tsx` and `e2e/alerts.spec.ts` pass unchanged.",
+    "Every other page keeps its layout: the top bar still fits at 720px with the badge and no chip, with no overlap or wrapping between links, bell, name and Start work, and no horizontal scroll \u2014 verify: e2e at 720 and 1080 on `/`, `/projects`, `/notifications`.",
+    "No sign-out or account menu control is added \u2014 verify: grep and screenshot show none."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The change is in the shared shell (`AppShell.tsx`, `TopNav` and `PhoneBar`), which wraps every page. It adds a cross-layer contract proposal (`needs_you`) and a new responsive interaction (drawer and sheet, with focus management). It reads and marks alerts as read through existing endpoints. It moves no money, identity or data migrations, and the optional field makes it safe to ship before the backend. SURFACES are ui and contract-change. Note for the reviewers: `design/review.json` records client approval of the canvas (SCR-15 among its screens). The bell concepts page is outside that approval and rests on the design engineer's decision. Product acceptance is therefore required so the client sees the bell and drawer."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-15/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,7 +88,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T18:59:57Z",
+      "seconds": 167.0,
+      "evidence_ref": "delivery/features/F-15/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -45,7 +111,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,17 +125,226 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-15/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Focus does not return to the trigger after a route change on phone. Spec: \"On any close focus returns to the trigger that opened it\" and \"Opening an alert ... or any route change closes the drawer\". `AppShell.tsx` renders `<PhoneBar key={pathname} ...>`, so the phone bell button that `opener.current` holds is unmounted when Open navigates. The close effect then calls `.focus()` on a detached element, which does nothing, and focus drops to `body`. Desktop is fine because `TopNav` is not keyed. Neither `tests/alerts-bell.test.tsx` (phone case, line 458, uses Escape) nor the e2e covers Open or a footer link on phone. Expected: remember which bar opened it (not the element) and focus the bell that exists after the change, e.g. look it up by a `data-` hook or `aria-controls` match in the visible bar; add a phone test for Open and for \"Alert settings\" that checks `document.activeElement` is the new bell.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Stale read state can overwrite a mark-read. `AppShell` calls `feed.refresh()` on open. If the person clicks Open on an unread alert before that read returns, the POST succeeds and `markRead` updates local state, then the earlier response (read:false, old `unread_count`) replaces it, so the badge is too high until the next open. Cheap guard: drop or re-apply a response that arrives after a local mark-read (keep a set of ids marked this session and re-apply it in `refresh`). `useAlertsFeed.ts:33-47`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"A 401 anywhere stops further requests\" is met only for the GET. A 401 on the mark-read POST in `useOpenAlert` (`AlertParts.tsx`) is swallowed, so the next open still sends a GET. Pass the error to the feed (an `onError` or a shared `stopped` flag) so it stops there too.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`AlertsDrawer` sets `--alerts-top` once on mount from `.shell-topbar`. If the viewport crosses 720px while open (rotate, resize), `phone` flips but the offset stays stale (0 when the bar is hidden). Rare; recompute on resize or set the offset in CSS only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The phone bar overlaps below about 366px. The bell sits in `.sw-phoneslot` beside \"+ Start\", but the wordmark keeps its place, so the two collide on narrow phones. Measured on `/my-work` with the wordmark ending at x=216: at 375 the bell box starts at 225 (9px gap), at 360 it starts at 210 (6px overlap), and at 320 it starts at 170 (46px overlap). At 320 the bell icon and the red \"4\" badge are drawn over \"FACTORY\". Before F-15, the same bar at 320 had the wordmark at 60\u2013216 and Start at 222, so it fitted. 360 is a common Android width, and 320 is the WCAG reflow width. Expected: no overlap down to 320. Options are to let the wordmark shrink or ellipsize, or to tighten the bar's side padding, Menu and \"+ Start\" spacing below about 370px, using tokens. Paths: `frontend/src/styles/shell.css` section (g), the `.psl-phonebar.shell-phonebar--bell` and `.sw-phonebar.shell-phonebar--bell` padding rules. See `round-1/visual-review/phone-bar-narrow.png` (before and after at 390, 375, 360 and 320).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The 720\u20131079px bar is crowded across its whole range, but the tightening is only needed near 720.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-15/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T19:47:51Z",
+          "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "evidence_refs": [
+            "delivery/features/F-15/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-15/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "evidence_refs": [
+            "delivery/features/F-15/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (visual consistency against concept 3 of design/concepts/alerts-bell-concepts.html as decided in D-53/D-54, SCR-15 row styling, CMP-01 bars and tokens, at desktop and phone width)",
+          "snapshot_ref": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+          "evidence_refs": [
+            "delivery/features/F-15/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +364,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-ALERTS-MENU",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "d97b99b3881b7a523715c75c0268d34bfe637964",
+    "task_branch": "fe-alerts-menu-bell-and-drawer",
+    "head_sha": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-15",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +378,36 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/alerts-bell.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/proposals/alerts-needs-you.json",
+      "frontend/src/features/alerts/AlertParts.tsx",
+      "frontend/src/features/alerts/AlertsBell.tsx",
+      "frontend/src/features/alerts/AlertsDrawer.tsx",
+      "frontend/src/features/alerts/NotificationsPage.tsx",
+      "frontend/src/features/alerts/alerts.css",
+      "frontend/src/features/alerts/model.ts",
+      "frontend/src/features/alerts/types.ts",
+      "frontend/src/features/alerts/useAlertsFeed.ts",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/bell-feed.ts",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/work-item-board.test.tsx",
+      "frontend/tests/work-item.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +440,64 @@
     }
   },
   "created_at": "2026-11-14T17:42:20Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T17:48:33Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T17:48:39Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T18:59:58Z",
+      "round": 1,
+      "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T19:49:12Z",
+      "round": 1,
+      "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T19:49:12Z",
+      "round": 2,
+      "head": "07d078ef95aed97f36a412c6214ee8bc778ab9d0",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-15/readiness.md",
+      "delivery/features/F-15/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

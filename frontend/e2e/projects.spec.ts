@@ -164,14 +164,14 @@ for (const [label, viewport] of [
       await expect(lineLinks(page).nth(6)).toHaveAttribute('href', '/work/W-1001');
       if (phone) {
         await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toBeHidden();
-        await expect(page.getByRole('link', { name: '← Projects' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Back to Projects', exact: true })).toBeVisible();
         await expect(page.locator('.projects__phoneline')).toHaveText('8 pieces of work · 2 waiting on people · 1 stopped');
         await expect(page.getByRole('complementary')).toBeHidden();
         // Each line's link covers its whole row.
-        await expectTouchTargets([page.getByRole('link', { name: '← Projects' }), tabs.first(), ...(await page.locator('ol.projects__lines > li').all())]);
+        await expectTouchTargets([page.getByRole('link', { name: 'Back to Projects', exact: true }), tabs.first(), ...(await page.locator('ol.projects__lines > li').all())]);
       } else {
         await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText('Projects / Lagoon Health');
-        await expect(page.getByRole('link', { name: '← Projects' })).toBeHidden();
+        await expect(page.getByRole('link', { name: 'Back to Projects', exact: true })).toBeHidden();
         await expect(page.locator('.projects__route')).toHaveText('PM Tunde Bello · Route A from RFP-0031 · 8 pieces of work across 6 lines');
         await expect(page.getByRole('region', { name: 'Facts earned' })).toBeVisible();
         await expect(page.getByRole('complementary', { name: "Tola's summary" })).toContainText('Lagoon Health is moving.');
@@ -199,14 +199,14 @@ for (const [label, viewport] of [
     test('journey no access: P-0099 names nothing', async ({ page }) => {
       await page.goto('/projects/P-0099');
       await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
-      await expect(page.getByRole('link', { name: 'Back to projects' })).toHaveAttribute('href', '/projects');
+      await expect(page.getByRole('link', { name: 'Back to projects', exact: true })).toHaveAttribute('href', '/projects');
       await expect(page.getByRole('tablist', { name: 'Project' })).toHaveCount(0);
       expect(await page.title()).toBe('Project · PSL Factory');
       const text = await page.locator('body').innerText();
       expect(text).not.toContain('P-0099');
       expect(text).not.toContain('We could not find that record.');
       expect(await noHorizontalScroll(page)).toBe(true);
-      if (phone) await expectTouchTargets([page.getByRole('link', { name: 'Back to projects' })]);
+      if (phone) await expectTouchTargets([page.getByRole('link', { name: 'Back to projects', exact: true })]);
       await shot(page, `project-no-access-${w}`);
       await expectNoAxeViolations(page);
     });
@@ -424,6 +424,6 @@ test.describe('phone 390 card focus', () => {
     expect(await keyboardRing(page, projectLinks(page).first())).toEqual({ style: 'solid', width: '2px' });
     await page.goto('/projects/P-0101');
     await journeyLoaded(page);
-    expect(await keyboardRing(page, page.getByRole('link', { name: '← Projects' }))).toEqual({ style: 'solid', width: '2px' });
+    expect(await keyboardRing(page, page.getByRole('link', { name: 'Back to Projects', exact: true }))).toEqual({ style: 'solid', width: '2px' });
   });
 });

@@ -1,0 +1,857 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T18:58:06.557Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-03-desktop-stale.dc.html",
+  "boardName": "SCR-03-desktop-stale.dc.html",
+  "pageUrl": "http://localhost:4603/frozen/stale-1440.html",
+  "viewport": {
+    "width": 1440,
+    "height": 820
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-16/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 88.2 is below 90.",
+    "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 82.1,
+    "coverageWithExceptions": 100,
+    "visual": 88.2
+  },
+  "visual": {
+    "score": 88.2,
+    "allCellsScore": 95.2,
+    "width": 1440,
+    "height": 820,
+    "boardHeight": 820,
+    "pageHeight": 820,
+    "cell": 12,
+    "contentCells": 3329,
+    "mismatchedCells": 394
+  },
+  "coverage": {
+    "total": 28,
+    "found": 23,
+    "coverage": 82.1,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1005,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1124,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 555
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 561
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECISIONS / 1 OF 3 / FINANCE REVIEW · INV-0412",
+        "pageName": "DECISIONS / 1 OF 3 / FINANCE REVIEW · INV-0412",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECISIONS",
+        "pageName": "DECISIONS",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 65,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 65,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Invoice for · Lagoon Health, milestone 2",
+        "pageName": "Approve invoice v3 · Lagoon Health, milestone 2",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Invoice for · Lagoon Health, milestone 2\" on the board, \"Approve invoice v3 · Lagoon Health, milestone 2\" on the page",
+        "looks": [
+          "text size 34px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 114,
+          "w": 1062,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Amount",
+        "pageName": "Amount",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 283,
+          "w": 162,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 284,
+          "w": 160,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00 · unchanged",
+        "pageName": "₦4,250,000.00 · unchanged",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 746,
+          "y": 283,
+          "w": 604,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 738,
+          "y": 284,
+          "w": 372,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Send to",
+        "pageName": "Send to",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFF1D6 on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 322,
+          "w": 162,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 312,
+          "w": 160,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "accounts@lagoonhealth.example",
+        "pageName": "accounts@lagoonhealth.example",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFF1D6 on the page"
+        ],
+        "boardBox": {
+          "x": 252,
+          "y": 322,
+          "w": 494,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 250,
+          "y": 312,
+          "w": 488,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "billing@lagoonhealth.example · changed",
+        "pageName": "billing@lagoonhealth.example · changed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFF1D6 on the page"
+        ],
+        "boardBox": {
+          "x": 746,
+          "y": 322,
+          "w": 604,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 738,
+          "y": 312,
+          "w": 372,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent Redrafted it from the updated client record. Nothing else changed.",
+        "pageName": "Redrafted it from the updated client record. Nothing else changed.",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 148,
+          "y": 396,
+          "w": 415,
+          "h": 41
+        },
+        "pageBox": {
+          "x": 148,
+          "y": 421,
+          "w": 415,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "pageName": "Chidi",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 148,
+          "y": 397,
+          "w": 33,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 148,
+          "y": 401,
+          "w": 33,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Review version 3",
+        "pageName": "Review version 3",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 468,
+          "w": 360,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 473,
+          "w": 360,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Decisions always apply to one exact version, so an approval can never land on the wrong one.",
+        "pageName": "Decisions always apply to one exact version, so an approval can never land on the wrong one.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 538,
+          "w": 1264,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 543,
+          "w": 1264,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Status message",
+        "role": "status",
+        "name": "A newer version arrived while you were reading. Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+        "key": "status: A newer version arrived while you were reading. Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 176,
+          "w": 1264,
+          "h": 50
+        },
+        "exception": {
+          "reason": "The stale notice keeps F-04's role=\"alert\" (the version the person was deciding is gone) and the time from version.drafted_at (\"12 Nov 10:46\"); the reason for the redraft is not a contract field.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "(table)",
+        "key": "table:",
+        "container": "table",
+        "boardBox": {
+          "x": 90,
+          "y": 248,
+          "w": 1260,
+          "h": 114
+        },
+        "exception": {
+          "reason": "The replaced and current versions stay two labelled regions (\"VERSION 2 · REPLACED\", \"VERSION 3 · CURRENT\"), as A-STALE's tests read them; at desktop they are drawn as the board's table.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "VERSION 2 · REPLACED",
+        "key": "columnheader: VERSION 2 · REPLACED",
+        "container": "table",
+        "boardBox": {
+          "x": 252,
+          "y": 248,
+          "w": 494,
+          "h": 35
+        },
+        "exception": {
+          "reason": "The column heading is the replaced region's heading (h3), not a table header; same words, same place.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "VERSION 3 · CURRENT",
+        "key": "columnheader: VERSION 3 · CURRENT",
+        "container": "table",
+        "boardBox": {
+          "x": 746,
+          "y": 248,
+          "w": 604,
+          "h": 35
+        },
+        "exception": {
+          "reason": "The column heading is the current region's heading (h3), not a table header; same words, same place.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00",
+        "key": "text: ₦4,250,000.00",
+        "container": "table",
+        "boardBox": {
+          "x": 252,
+          "y": 283,
+          "w": 494,
+          "h": 40
+        },
+        "exception": {
+          "reason": "The amount is drawn by AmountValue (a span inside the row's dd, F-14 seam, criterion 19); the check does not read text nested in a dd, though the value shows in the same place. The read-only boxes draw it as plain text and match.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Amount\"",
+        "kind": "Text",
+        "name": "Amount",
+        "boardBox": {
+          "x": 90,
+          "y": 283,
+          "w": 162,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 284,
+          "w": 160,
+          "h": 27
+        },
+        "reasons": [
+          "inside the table frame on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"₦4,250,000.00 · unchanged\"",
+        "kind": "Text",
+        "name": "₦4,250,000.00 · unchanged",
+        "boardBox": {
+          "x": 746,
+          "y": 283,
+          "w": 604,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 738,
+          "y": 284,
+          "w": 372,
+          "h": 27
+        },
+        "reasons": [
+          "inside the table frame on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 555
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 561
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"₦4,250,000.00 · unchanged\"; on the page it comes after Text \"billing@lagoonhealth.example · changed\""
+        ]
+      },
+      {
+        "label": "Text \"Send to\"",
+        "kind": "Text",
+        "name": "Send to",
+        "boardBox": {
+          "x": 90,
+          "y": 322,
+          "w": 162,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 312,
+          "w": 160,
+          "h": 27
+        },
+        "reasons": [
+          "inside the table frame on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"accounts@lagoonhealth.example\"",
+        "kind": "Text",
+        "name": "accounts@lagoonhealth.example",
+        "boardBox": {
+          "x": 252,
+          "y": 322,
+          "w": 494,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 250,
+          "y": 312,
+          "w": 488,
+          "h": 27
+        },
+        "reasons": [
+          "inside the table frame on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"billing@lagoonhealth.example · changed\"",
+        "kind": "Text",
+        "name": "billing@lagoonhealth.example · changed",
+        "boardBox": {
+          "x": 746,
+          "y": 322,
+          "w": 604,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 738,
+          "y": 312,
+          "w": 372,
+          "h": 27
+        },
+        "reasons": [
+          "inside the table frame on the board, inside the main area on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "alert",
+        "role": "alert",
+        "name": "A newer version arrived while you were reading. Version 3 was drafted at 12 Nov 10:46. Version 2 can no longer be approved.",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 177,
+          "w": 1264,
+          "h": 53
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "A newer version arrived while you were reading.",
+        "container": "main",
+        "pageBox": {
+          "x": 106,
+          "y": 194,
+          "w": 311,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "VERSION 2 · REPLACED",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 252,
+          "w": 648,
+          "h": 32
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "VERSION 3 · CURRENT",
+        "container": "main",
+        "pageBox": {
+          "x": 738,
+          "y": 252,
+          "w": 612,
+          "h": 32
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Changed since Invoice v2:",
+        "container": "main",
+        "pageBox": {
+          "x": 1125,
+          "y": 287,
+          "w": 157,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Billing contact changed",
+        "container": "main",
+        "pageBox": {
+          "x": 1125,
+          "y": 287,
+          "w": 196,
+          "h": 34
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent",
+        "container": "main",
+        "pageBox": {
+          "x": 148,
+          "y": 401,
+          "w": 133,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
