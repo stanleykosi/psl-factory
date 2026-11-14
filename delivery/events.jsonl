@@ -531,3 +531,13 @@
 {"at":"2026-11-14T06:42:31Z","feature":"F-10","round":2,"kind":"transition","head":"02db3e841a47","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
 {"at":"2026-11-14T06:42:31Z","feature":"F-05","round":3,"kind":"transition","head":"230edd60f366","from":"IMPLEMENTING","to":"IN_REVIEW"}
 {"at":"2026-11-14T06:42:31Z","feature":"F-08","round":2,"kind":"transition","head":"568c0a407f78","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-14T06:43:25Z","feature":"F-02","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"02d59d8bb221","findings":{"UI-3-1":"medium"},"written_at":"2026-11-14T06:43:03Z"}
+{"at":"2026-11-14T06:43:25Z","feature":"F-02","round":3,"kind":"finding","action":"verify","finding":"QA-2-1","by":"reviewer-technical"}
+{"at":"2026-11-14T06:43:25Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"UX-3-1","by":"reviewer-ux","severity":"medium","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-14T06:43:25Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"UX-3-2","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-14T06:43:25Z","feature":"F-02","round":3,"kind":"finding","action":"add","finding":"UI-3-1","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-14T06:43:25Z","feature":"F-02","round":3,"kind":"finding","action":"fix","finding":"FID-1","by":"builder"}
+{"at":"2026-11-14T06:43:25Z","feature":"F-02","round":3,"kind":"finding","action":"verify","finding":"FID-1","by":"reviewer-ui"}
+{"at":"2026-11-14T06:43:33Z","feature":"F-02","round":3,"kind":"finding","action":"fix","finding":"QA-2-2","by":"coordinator"}
+{"at":"2026-11-14T06:43:33Z","feature":"F-02","round":3,"kind":"finding","action":"verify","finding":"QA-2-2","by":"reviewer-technical"}
+{"at":"2026-11-14T06:43:47Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"IN_REVIEW","to":"INTEGRATED_QA"}
