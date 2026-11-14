@@ -124,13 +124,44 @@ describe('navigation follows /me', () => {
     await waitFor(() => expect(nav.replace).toHaveBeenCalledWith('/my-work'));
   });
 
-  it('has no Start work, bell, account menu or sign-out', async () => {
-    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+  it.each(['pm', 'finance_lead', 'ceo'])('%s, with startable lines, sees Start work in both bars', async (persona) => {
+    fetchStub.mockResolvedValue(json(200, fixture(persona)));
+    renderAt('/my-work');
+    await loaded();
+    expect(within(topNav()).getByRole('button', { name: 'Start work' }).textContent).toBe('Start work');
+    expect(within(topNav()).getByRole('button', { name: 'More ways to start' }).getAttribute('aria-haspopup')).toBe('dialog');
+    // "+ Start" follows the phone menu in the DOM (Tab: Menu, its links, then Start) and is drawn in the bar.
+    const phoneStart = within(document.querySelector('.shell-phone') as HTMLElement).getByRole('button', { name: 'Start work' });
+    expect(phoneStart.textContent).toBe('Start');
+    expect(phoneStart.closest('.sw-phoneslot')).toBeTruthy();
+    // The bars read nothing else: E-LINES is fetched only when a button is pressed.
+    expect(fetchStub).toHaveBeenCalledTimes(1);
+  });
+
+  it('persona none (no startable lines) has no Start work, bell, account menu or sign-out', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('none')));
     renderAt('/my-work');
     await loaded();
     fireEvent.click(menuButton());
     expect(document.body.textContent).not.toMatch(/Start|Sign out|Notifications/);
     expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Menu']);
+  });
+
+  it('roles never decide it: a CEO with no startable lines sees no Start work', async () => {
+    fetchStub.mockResolvedValue(json(200, { ...fixture('ceo'), startable_lines: [] }));
+    renderAt('/my-work');
+    await loaded();
+    expect(screen.queryByRole('button', { name: 'Start work' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'More ways to start' })).toBeNull();
+    expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Menu']);
+  });
+
+  it('finance_lead has no bell, account menu or sign-out', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    renderAt('/my-work');
+    await loaded();
+    fireEvent.click(menuButton());
+    expect(document.body.textContent).not.toMatch(/Sign out|Notifications/);
   });
 });
 
