@@ -224,7 +224,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         return send(res, 403, CSRF_FAILED);
       }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
-      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
       }
