@@ -117,7 +117,8 @@ function ProblemBox({ problem }: { problem: FieldProblem }) {
 }
 
 /** A same-origin link only, as its path; anything else is not linked. The URL parser drops tabs and newlines and
- *  reads a backslash as "/", so a value holding a control character or a backslash is refused before it is resolved. */
+ *  reads a backslash as "/", so a value holding a control character or a backslash is refused before it is resolved.
+ *  A resolved path that starts "//" (dot segments can leave one) would read as another site, so it is refused too. */
 export function safePath(url: string | undefined, origin = window.location.origin): string | undefined {
   if (!url || /[\u0000-\u001f\u007f\\]/.test(url)) return undefined;
   let resolved: URL;
@@ -126,7 +127,8 @@ export function safePath(url: string | undefined, origin = window.location.origi
   } catch {
     return undefined;
   }
-  return resolved.origin === origin ? resolved.pathname + resolved.search + resolved.hash : undefined;
+  if (resolved.origin !== origin || resolved.pathname.startsWith('//')) return undefined;
+  return resolved.pathname + resolved.search + resolved.hash;
 }
 
 /** The decision in the line's words, e.g. "a Finance Lead decides", drawn in the deciding red. */

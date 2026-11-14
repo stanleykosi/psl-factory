@@ -104,11 +104,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -134,18 +136,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (round 3, design-fidelity gate)",
+      "snapshot_ref": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -340,7 +346,7 @@
         "delivery/features/F-07/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -357,11 +363,25 @@
           ],
           "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:17:37Z",
+          "refs": [
+            "The v7 `openapi.json` schemas for `/projects` and `/projects/{case_id}` match the names and shapes in `model.ts`. Guard tests in `projects-model.test.ts` and `projects.test.tsx` pass."
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2892f00"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The v7 `openapi.json` schemas for `/projects` and `/projects/{case_id}` match the names and shapes in `model.ts`. Guard tests in `projects-model.test.ts` and `projects.test.tsx` pass."
       ]
     },
     {
@@ -377,7 +397,7 @@
         "delivery/features/F-07/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -394,11 +414,29 @@
           ],
           "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:17:37Z",
+          "refs": [
+            "`buildProjectsQuery` omits `status` for Active, and the v7 `status` parameter enum is `active",
+            "closed",
+            "all`. Tests pass."
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2892f00"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`buildProjectsQuery` omits `status` for Active, and the v7 `status` parameter enum is `active",
+        "closed",
+        "all`. Tests pass."
       ]
     },
     {
@@ -414,7 +452,7 @@
         "delivery/features/F-07/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -431,11 +469,25 @@
           ],
           "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:17:37Z",
+          "refs": [
+            "Count follows the search at 1440."
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2892f00"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Count follows the search at 1440."
       ]
     },
     {
@@ -474,7 +526,7 @@
         "delivery/features/F-07/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -491,11 +543,25 @@
           ],
           "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T06:17:37Z",
+          "refs": [
+            "Probed the shared build on :3711 at head at 390 wide on /projects and /projects?status=closed. `.projects__iconbtn` has computed border `0px none`, box-shadow `rgb(31,36,39) 0 0 0 2px inset`, and is 44x44. In `round-3/fidelity-review/SCR-22-mobile-390/side-by-side.png` the button frame matches the board and the search box."
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "e830045"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Probed the shared build on :3711 at head at 390 wide on /projects and /projects?status=closed. `.projects__iconbtn` has computed border `0px none`, box-shadow `rgb(31,36,39) 0 0 0 2px inset`, and is 44x44. In `round-3/fidelity-review/SCR-22-mobile-390/side-by-side.png` the button frame matches the board and the search box."
       ]
     },
     {
@@ -518,6 +584,52 @@
           "by": "reviewer-ui",
           "at": "2026-11-14T05:37:03Z",
           "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-1",
+      "round": 3,
+      "snapshot_ref": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The count label is not pluralised: it reads \"1 PROJECTS\". Consider \"1 PROJECT\" when the total is 1 (the board label is upper case, so \"1 PROJECT\").",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:17:37Z",
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Tola's avatar on the SCR-07 project page is an initial letter, not her mascot. Expected: the Tola mascot image, as drawn on SCR-07-desktop and as D-14 requires (\"Agent avatars use your mascot images everywhere, not initials\"). Actual: `ProjectJourney.tsx:108` renders `<span className={avatarClass(agent) + ' projects__avatar'}>` with the letter \"T\" on `--mascot-tola-tint`, and there is no `<img>` on the page. F-02, F-08 and F-10 already use `frontend/public/agents/{tola,chidi,zainab}.png`, the 96px exports of `design/mascots/transparent/{pmo,finance,hr}-avatar.png` (see F-10 spec.md:43). Copy them byte-identical so the lanes merge cleanly, and keep `aria-hidden` / `alt=\"\"` because the name \"Tola\" is printed beside the avatar. Evidence: `round-3/fidelity-review/SCR-07-desktop-1440/side-by-side.png`, Tola panel.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T06:17:37Z",
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c"
         }
       ]
     }

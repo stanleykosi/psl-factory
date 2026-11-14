@@ -677,7 +677,21 @@ describe('server answers', () => {
 
 describe('safePath: journey_url is linked only as a same-origin path', () => {
   const origin = 'http://localhost:3501';
-  it.each(['/\t/evil.example', '/\n/evil.example', '//evil', '/\\evil', 'https://evil', 'javascript:alert(1)', ''])('%j is refused', (url) => {
+  it.each([
+    '/\t/evil.example',
+    '/\n/evil.example',
+    '//evil',
+    '/\\evil',
+    'https://evil',
+    'javascript:alert(1)',
+    '',
+    '/.//evil.example',
+    '/..//evil.example',
+    '/a/..//evil.example',
+    '/%2e//evil.example',
+    '/%2e%2e//evil.example',
+    `${origin}//evil.example`,
+  ])('%j is refused', (url) => {
     expect(safePath(url, origin)).toBeUndefined();
   });
   it('a same-origin path is kept, with its query and hash', () => {

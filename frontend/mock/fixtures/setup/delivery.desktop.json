@@ -1,0 +1,91 @@
+{
+  "items": [
+    {
+      "component": "delivery.hypercare_window",
+      "name": "Hypercare window",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Hypercare"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.hypercare_criteria",
+      "name": "What hypercare must meet",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Hypercare"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.closure_finance_confirmer",
+      "name": "Who confirms Finance before closure",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Closure"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.handover_review",
+      "name": "When a handover needs review",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Handover"
+      ],
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.archive_storage",
+      "name": "Archive storage rule",
+      "set": true,
+      "revision": 1,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "used_by": [
+        "Archive"
+      ],
+      "holds_work": false,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      },
+      "value": {
+        "policy": "keep"
+      },
+      "display_value": "Keep, never purge",
+      "effective_from": "2026-10-01T00:00:00+01:00"
+    }
+  ],
+  "as_of": "2026-11-12T10:40:00+01:00",
+  "not_set_count": 4
+}

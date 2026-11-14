@@ -1,0 +1,478 @@
+{
+  "items": [
+    {
+      "component": "finance.management_accounts.statement_contract",
+      "name": "Statement contract",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "management_accounts",
+      "group_label": "Management accounts",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.management_accounts.bu_metrics",
+      "name": "BU metrics",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "management_accounts",
+      "group_label": "Management accounts",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.management_accounts.report_template",
+      "name": "Report template and audience",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "management_accounts",
+      "group_label": "Management accounts",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.income_schedules.income_detail",
+      "name": "Income detail rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "income_schedules",
+      "group_label": "Income schedules",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.income_schedules.inventory",
+      "name": "Inventory rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "income_schedules",
+      "group_label": "Income schedules",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.income_schedules.reviewer",
+      "name": "Who reviews schedules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "income_schedules",
+      "group_label": "Income schedules",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "finance",
+            "label": "Finance"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "finance.asset_schedule.register",
+      "name": "Register rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "asset_schedule",
+      "group_label": "Asset schedule",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.asset_schedule.calculation",
+      "name": "Calculation rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "asset_schedule",
+      "group_label": "Asset schedule",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.asset_schedule.reviewer",
+      "name": "Who reviews assets",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "asset_schedule",
+      "group_label": "Asset schedule",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "finance",
+            "label": "Finance"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "finance.cash_forecast.preparer",
+      "name": "Forecast preparer",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "cash_forecast",
+      "group_label": "Cash forecast",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "finance",
+            "label": "Finance"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "finance.cash_forecast.inclusion",
+      "name": "Inclusion rule",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "cash_forecast",
+      "group_label": "Cash forecast",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.cash_forecast.group_reviewer",
+      "name": "Group reviewer",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "cash_forecast",
+      "group_label": "Cash forecast",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "finance",
+            "label": "Finance"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "finance.bu_totals.staff_allocation",
+      "name": "Staff allocation rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "bu_totals",
+      "group_label": "BU totals",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.bu_totals.event_source",
+      "name": "Event source and attribution rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "bu_totals",
+      "group_label": "BU totals",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.bu_totals.reviewer",
+      "name": "Who reviews BU totals",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "bu_totals",
+      "group_label": "BU totals",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "finance",
+            "label": "Finance"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "finance.bu_totals.disclosure",
+      "name": "Disclosure rules and recipients",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "bu_totals",
+      "group_label": "BU totals",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.ledger_sources.verification",
+      "name": "Verification rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "ledger_sources",
+      "group_label": "Ledger sources",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.ledger_sources.conflict",
+      "name": "Conflict rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "ledger_sources",
+      "group_label": "Ledger sources",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.ledger_sources.reviewer",
+      "name": "Who reviews ledger sources",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "ledger_sources",
+      "group_label": "Ledger sources",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "finance",
+            "label": "Finance"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "finance.payroll.input_readers",
+      "name": "Who may read inputs",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "payroll",
+      "group_label": "Payroll",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "hr_lead",
+            "label": "HR Lead"
+          },
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "finance.payroll.merge",
+      "name": "Merge rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "payroll",
+      "group_label": "Payroll",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.payroll.match",
+      "name": "Match rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "payroll",
+      "group_label": "Payroll",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.payroll.reporting",
+      "name": "Reporting rules",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "payroll",
+      "group_label": "Payroll",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.payroll.reviewer",
+      "name": "Who reviews payroll",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "group": "payroll",
+      "group_label": "Payroll",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "finance_lead",
+            "label": "Finance Lead"
+          },
+          {
+            "role": "finance",
+            "label": "Finance"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          }
+        ]
+      }
+    }
+  ],
+  "as_of": "2026-11-12T10:40:00+01:00",
+  "not_set_count": 25
+}

@@ -1,0 +1,92 @@
+{
+  "id": "W-1603",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "processing",
+  "revision": 7,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "done"
+    },
+    {
+      "name": "Deliver",
+      "status": "current_agent"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-12T09:40:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-12T09:47:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "unknown"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Issued invoice INV-0412 v2",
+        "status": "done",
+        "source": "INV-0412 v2"
+      },
+      {
+        "text": "Emailed it to the billing contact",
+        "status": "done",
+        "source": "accounts@lagoonhealth.example"
+      },
+      {
+        "text": "Checked 6 times for a delivery receipt; none found",
+        "status": "waiting"
+      }
+    ]
+  },
+  "next_step": "Chidi may resend the same version once; the invoice number stays the same.",
+  "sample": true,
+  "case_id": "C-1603",
+  "case_revision": 5
+}

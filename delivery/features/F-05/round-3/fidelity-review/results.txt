@@ -1,0 +1,6 @@
+SCR-04-desktop-lines-1440 PASS  coverage 71.8% (28/39; 100% with exceptions)  visual 92.9  missing 11  moved 1  extra 25
+SCR-04-desktop-change-1440 PASS  coverage 63.2% (24/38; 100% with exceptions)  visual 94.6  missing 14  moved 2  extra 8
+SCR-04-mobile-lines-390 FAIL  coverage 71.4% (10/14; 100% with exceptions)  visual 76.6  missing 4  moved 0  extra 18
+SCR-04-mobile-change-390 FAIL  coverage 50% (6/12; 100% with exceptions)  visual 78.9  missing 6  moved 5  extra 15
+SCR-04-desktop-1440 PASS  coverage 67.5% (27/40; 100% with exceptions)  visual 92.7  missing 13  moved 2  extra 8
+SCR-04-mobile-weekly-390 FAIL  coverage 72.7% (8/11; 100% with exceptions)  visual 85.3  missing 3  moved 7  extra 15

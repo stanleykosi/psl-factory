@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import { DestinationPage } from '@/shell/DestinationPage';
+import { OverviewPage } from '@/features/overview/OverviewPage';
 
 export const metadata: Metadata = { title: 'Overview · PSL Factory' };
 
-export default function OverviewPage() {
-  return <DestinationPage destination="overview" />;
+export default function Page() {
+  return <OverviewPage />;
 }

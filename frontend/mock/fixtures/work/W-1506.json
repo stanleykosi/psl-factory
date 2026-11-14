@@ -1,0 +1,63 @@
+{
+  "id": "W-1506",
+  "title": "Sable Foods · Project costing",
+  "line": "Prepare a costing",
+  "reference": "CST-0601",
+  "state": "owner_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Scope",
+      "status": "done"
+    },
+    {
+      "name": "Estimate",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "current_person"
+    },
+    {
+      "name": "Approve",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "The costing has no PMO owner. The PMO Lead assigns one; the estimate resumes from here.",
+  "sample": true
+}

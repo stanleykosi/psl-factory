@@ -1,0 +1,50 @@
+{
+  "note": "The SCR-01 boards' own sample rows, served when the cookie psl_mock_worklist=board is set, so the design-fidelity check compares the page with the data the boards draw. Counts are the boards' numbers. pm also carries `suggestions`, the agent suggestions the empty boards draw (\"While you're free\"): a mock-only field outside the v4 contract, proposed for the architecture. Ids W-14xx have no work item fixture, so their links open the default sample item.",
+  "as_of": "2026-11-10T09:42:00Z",
+  "personas": {
+    "finance_lead": {
+      "counts": {"needs_me": 3, "waiting_on_others": 5, "done": 28, "unassigned": 1},
+      "lines": [
+        {"key": "invoice", "title": "Invoice preparation and delivery"},
+        {"key": "planning", "title": "Planning and delivery handoff"},
+        {"key": "go_live", "title": "Go-live acceptance"},
+        {"key": "closure", "title": "Project closure"},
+        {"key": "commercial", "title": "Commercial submission"},
+        {"key": "forecast", "title": "Cash forecast"}
+      ],
+      "rows": [
+        {"queue": "needs_me", "project": "C-LAGOON-HEALTH", "waiting": "me", "item": {"id":"W-1401","title":"Lagoon Health · Milestone 2 invoice","line":"Prepare an invoice","line_key":"invoice","reference":"INV-0412","kind":"decide","state":"waiting","station":{"index":4,"count":7,"name":"Finance review"},"waiting_on":"You · Finance Lead (Chidi drafted v2)","age_seconds":7200,"sample":true,"agent":"chidi"}},
+        {"queue": "needs_me", "project": "C-HARMATTAN-BANK", "waiting": "me", "item": {"id":"W-1403","title":"Harmattan Bank · go-live report","line":"Obtain go-live acceptance","line_key":"go_live","reference":"GLV-0087","kind":"fix","state":"effect_uncertain","station":{"index":4,"count":5,"name":"Deliver report"},"waiting_on":"Checking delivery before any resend","age_seconds":2400,"sample":true}},
+        {"queue": "needs_me", "project": "C-OJO-FOODS", "waiting": "me", "item": {"id":"W-1404","title":"Ojo Foods · ordering app plan","line":"Plan a project","line_key":"planning","reference":"PLN-0151","kind":"fix","state":"owner_needed","station":{"index":3,"count":6,"name":"Design sign-off"},"waiting_on":"No Design Lead role set up","age_seconds":259200,"sample":true}},
+        {"queue": "waiting_on_others", "project": "C-LAGOON-HEALTH", "waiting": "someone_else", "item": {"id":"W-1421","title":"Lagoon Health · M2 invoice","line":"Prepare an invoice","line_key":"invoice","reference":"INV-0412","kind":"started","state":"waiting","station":{"index":4,"count":7,"name":"Finance review"},"waiting_on":"Finance Lead","age_seconds":7200,"sample":true}},
+        {"queue": "waiting_on_others", "project": "C-HARMATTAN-BANK", "waiting": "agent", "item": {"id":"W-1422","title":"Harmattan Bank · go-live report","line":"Obtain go-live acceptance","line_key":"go_live","reference":"GLV-0087","kind":"started","state":"processing","station":{"index":4,"count":5,"name":"Deliver report"},"waiting_on":"Checking delivery","age_seconds":2400,"sample":true,"agent":"tola"}},
+        {"queue": "waiting_on_others", "project": "C-KORA-LOGISTICS", "waiting": "someone_else", "item": {"id":"W-1423","title":"Kora Logistics · SOW v3","line":"Commercial submission","line_key":"commercial","reference":"COM-0233","kind":"started","state":"waiting","station":{"index":5,"count":6,"name":"CEO approval"},"waiting_on":"CEO","age_seconds":86400,"sample":true}},
+        {"queue": "waiting_on_others", "project": "C-OJO-FOODS", "waiting": "someone_else", "item": {"id":"W-1424","title":"Ojo Foods · plan","line":"Plan a project","line_key":"planning","reference":"PLN-0151","kind":"started","state":"setup_needed","station":{"index":3,"count":6,"name":"Design sign-off"},"waiting_on":"Design Lead role to set up","age_seconds":259200,"sample":true}},
+        {"queue": "waiting_on_others", "project": "C-SABI-MARKET", "waiting": "someone_else", "item": {"id":"W-1425","title":"Sabi Market · closure","line":"Close a project","line_key":"closure","reference":"CLS-0044","kind":"started","state":"verified","station":{"index":4,"count":4,"name":"Archive"},"waiting_on":"Archived 09:12","age_seconds":1800,"sample":true}},
+        {"queue": "done", "project": "C-SABI-MARKET", "item": {"id":"W-1407","title":"Sabi Market · web store closure","line":"Close a project","line_key":"closure","reference":"CLS-0044","kind":"started","state":"verified","station":{"index":4,"count":4,"name":"Archive"},"waiting_on":"Archived 09:12","age_seconds":1800,"sample":true}},
+        {"queue": "unassigned", "project": "C-IKEJA-RETAIL", "waiting": "no_owner", "item": {"id":"W-1408","title":"Ikeja Retail · Receipt for INV-0416","line":"Record a receipt","line_key":"receipt","reference":"RCP-0122","kind":"fix","state":"owner_needed","station":{"index":2,"count":5,"name":"Match receipt"},"waiting_on":"No owner yet","age_seconds":3600,"sample":true}}
+      ]
+    },
+    "pm": {
+      "counts": {"needs_me": 0, "waiting_on_others": 9, "done": 28},
+      "suggestions": [
+        {"id": "S-1", "agent": "tola", "title": "Draft the Harmattan Bank weekly report", "detail": "Due Friday · from this week's activity", "action": "Draft it", "href": "/assistant"},
+        {"id": "S-2", "agent": "tola", "title": "Write up yesterday's Ojo Foods call", "detail": "Recording note added 11 Nov · minutes not started", "action": "Draft minutes", "href": "/assistant"},
+        {"id": "S-3", "agent": "tola", "title": "Remind Lagoon Health about UAT", "detail": "Due 14 Nov · you send it", "action": "Draft reminder", "href": "/assistant"}
+      ],
+      "lines": [
+        {"key": "invoice", "title": "Invoice preparation and delivery"},
+        {"key": "planning", "title": "Planning and delivery handoff"},
+        {"key": "release", "title": "Release and UAT"},
+        {"key": "commercial", "title": "Commercial submission"}
+      ],
+      "rows": [
+        {"queue": "waiting_on_others", "project": "C-HARMATTAN-BANK", "waiting": "agent", "item": {"id":"W-1411","title":"Harmattan Bank · M2 invoice","line":"Prepare an invoice","line_key":"invoice","reference":"INV-0415","kind":"started","state":"processing","station":{"index":2,"count":7,"name":"Draft invoice"},"waiting_on":"Draft v1 in progress","age_seconds":600,"sample":true,"agent":"chidi"}},
+        {"queue": "waiting_on_others", "project": "C-LAGOON-HEALTH", "waiting": "outside_party", "item": {"id":"W-1412","title":"Lagoon Health · UAT response","line":"Release and UAT","line_key":"release","reference":"REL-0077","kind":"started","state":"waiting","station":{"index":3,"count":5,"name":"Client UAT"},"waiting_on":"Due 14 Nov","age_seconds":172800,"sample":true}},
+        {"queue": "waiting_on_others", "project": "C-KORA-LOGISTICS", "waiting": "outside_party", "item": {"id":"W-1413","title":"Kora Logistics · SOW signature","line":"Commercial submission","line_key":"commercial","reference":"COM-0233","kind":"started","state":"waiting","station":{"index":6,"count":6,"name":"Client signature"},"waiting_on":"Sent 08 Nov","age_seconds":172800,"sample":true}},
+        {"queue": "waiting_on_others", "project": "C-KORA-LOGISTICS", "waiting": "someone_else", "item": {"id":"W-1414","title":"Kora Logistics · costing","line":"Commercial submission","line_key":"commercial","reference":"COM-0240","kind":"started","state":"waiting","station":{"index":5,"count":6,"name":"CEO approval"},"waiting_on":"CEO · step 3 of 3","age_seconds":86400,"sample":true}},
+        {"queue": "waiting_on_others", "project": "C-OJO-FOODS", "waiting": "someone_else", "item": {"id":"W-1415","title":"Ojo Foods · plan","line":"Plan a project","line_key":"planning","reference":"PLN-0151","kind":"started","state":"owner_needed","station":{"index":3,"count":6,"name":"Design sign-off"},"waiting_on":"Held · Design Lead role missing","age_seconds":259200,"sample":true}}
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+VERDICT: PASS
+COMMIT: 604e1b0a0f8fb3ac2cee49124f70370b1343e6de
+REVIEWER: reviewer-technical
+AUTHORITY: technical review (lead)
+
+## Summary
+- Round 3 (`edc4763..604e1b0`) is one feature commit with 12 files, plus merge 2c8d98c of origin/dlv-00-delivery-setup. The merge resolved no conflicts (`git show --remerge-diff 2c8d98c` is empty), so the only code to judge is in 604e1b0. No API contract, request shape or authority check changed.
+- Shell change: `PhoneBack` gains an optional `note`. `usePhoneBack` passes it through and lists it as a layout-effect dependency, and `PhoneBar` draws `.shell-phonenote` only when `back?.note` is set. This is additive. The one other caller (`frame-fixtures/phone-back/PhoneBackFixture.tsx`) and every page without the hook render as before, and desktop is unaffected. A shell test checks that the note renders and is cleared when the page changes.
+- FID-2-1: the three Setup views call `useSetupPhoneBack` inside `SetupGate` and before their early return, so the hook order is stable. The bar also shows "← Setup" during loading and error, which the old page-local link did not, and that is an improvement. A Setup page the caller cannot open keeps the Menu bar. The unused `.setup-back*` CSS is removed.
+- TECH-2-1: `staysOpen` uses the same predicate as each view's render condition. On Rules that is `items.some(isEditable)` against `editable.length > 0`. On Finance it is the same `groupRows` and `group.key` with any editable row. Because `refresh` replaces state with the re-read page, the panel's decision and the view's render cannot diverge.
+- Tests: 3 new unit tests (SEC-2-1 and two for TECH-2-1, which the builder confirmed fail on round-2 code), updated phone assertions in unit and e2e, and a shell note test. No existing test was weakened. Gate PASS on this head (419 unit tests).
+
+## Findings
+- TECH-3-1 | non-blocking | low | frontend | Rules hides a stale `closedNotice` rather than clearing it (`RulesView.tsx:77`, `closedNotice && editable.length === 0`). If editable rows come back (Show more), the notice stays in state. If editable later drops to 0 through a path that bypasses `announce`, the old message reappears and `OutcomeNotice` takes focus again. For example: the panel's save, then a re-read that hits ACCESS_LOST and moves to the error state, then Retry, then a first page with no editable row. The path is very unlikely and writes nothing. Expected: clear the notice when the panel returns (for example, `setClosedNotice(null)` in the Show more handler, or a key on the notice), as Finance does on a disclosure toggle.
+- TECH-3-2 | non-blocking | low | frontend | `.psl-phonebar` is `justify-content: space-between`. When the SAMPLE DATA tag is on (`NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1`), the bar has three children: link, note and tag. The note then sits in the middle of the bar rather than at the right (`PhoneBar.tsx:65`, `shell.css:25`). The tag is off by default, so the fidelity runs and the boards are unaffected. Expected, if the tag is ever turned on: `margin-left: auto` on `.shell-phonenote`, or group the note with the tag.
+
+## Verified
+- TECH-2-1 | verified | `SetRulePanel.announce` now calls `staysOpen(page)`, which each view supplies from its own render condition (`RulesView.tsx:118`, `FinanceRulesView.tsx:138`). New unit tests: "a re-read that makes a different rule editable keeps the panel…" (one alert inside the panel, no EDITOR_GONE, the panel falls back to `documents.client_reviewer`), and "a Show more that brings the panel back drops the stale callout". See TECH-3-1 for the hide-not-clear residue.
+- SEC-2-1 | verified | Unit test "a server error whose re-read leaves every rule read-only…": a 500 response with every row `can_change: false`. The panel region is gone, the page alert has EDITOR_GONE and not NOT_SAVED, and there is 1 PUT and 2 reads. The code adds NOT_SAVED only when `rejected` is set (403/404/409 callers).
+- FID-2-1 | verified (technical) | Bar link `aria-label="Back to Setup"`, href `/setup/roles`, no Menu, no page-local Setup link, and the RULES note on finance and delivery only. Checked in `tests/setup-rules.test.tsx`, `tests/shell.test.tsx` and `e2e/setup.spec.ts`. Visual fidelity is left to the UI review. The requested "Back to Setup" exception is for the coordinator.
+
+## Notes
+- Earlier rounds: QA-1-1 and QA-1-2 hold. The closed-panel path is only re-wired through `staysOpen` and keeps the same text, role and focus behaviour. TECH-1-1 to TECH-1-4 (round 1, non-blocking) remain open follow-ups. TECH-1-1, the first-page-only re-read, still makes a group loaded through Show more look "withdrawn" after a save, and the panel and view now agree on that consistently.

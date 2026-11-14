@@ -1,0 +1,74 @@
+{
+  "id": "W-1524",
+  "title": "Atlas Energy · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0613",
+  "state": "followup_needed",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "done"
+    },
+    {
+      "name": "Deliver",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "current_person"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-02T09:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-03T09:00:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-04T09:00:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "No payment is recorded after two reminders. The Finance Lead reviews the final reminder.",
+  "sample": true
+}

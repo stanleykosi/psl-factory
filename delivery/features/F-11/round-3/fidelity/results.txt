@@ -1,0 +1,8 @@
+SCR-13-desktop-delivery-rules-1440: PASS  coverage 93.9% (31/33; 100% with exceptions)  visual 97.9  missing 2  moved 2  extra 3
+SCR-13-desktop-finance-rules-1440: PASS  coverage 93.1% (27/29; 100% with exceptions)  visual 96.2  missing 2  moved 1  extra 3
+SCR-13-desktop-rules-1440: PASS  coverage 77.6% (45/58; 100% with exceptions)  visual 93.4  missing 13  moved 11  extra 4
+SCR-13-mobile-delivery-rules-390: PASS  coverage 66.7% (2/3; 100% with exceptions)  visual 99.7  missing 1  moved 1  extra 1
+SCR-13-mobile-finance-rules-390: PASS  coverage 87.5% (7/8; 100% with exceptions)  visual 99.1  missing 1  moved 1  extra 1
+SCR-13-mobile-rules-390: PASS  coverage 7.1% (1/14; 100% with exceptions)  visual 99.8  missing 13  moved 0  extra 1
+
+Run: production next start on 4601, mock on 4602, head 604e1b0; --exceptions round-3/fidelity/exception-requests.json (the approved F-11 list plus one requested entry: link "← Setup", the frame names it "Back to Setup"). Cookies as round 2. Without the requested entry the three phone boards read 92.9%/87.5%/66.7% coverage with exceptions; visual is unchanged.
