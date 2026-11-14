@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-08",
   "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
@@ -94,11 +94,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (UI against the contract mock only; no backend exists for E-OVERVIEW in this lane)",
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -370,6 +372,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T03:39:54Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:44:52Z",
       "round": 1,
       "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
       "reason": null
