@@ -9,6 +9,7 @@
 // Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
 // the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
+// Projects: E-PROJECTS and E-PROJECT answer from projects.mjs (persona rows, q, paging; P-0099 is the no-access id).
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -16,12 +17,13 @@ import { fileURLToPath } from 'node:url';
 
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { projects } from './projects.mjs';
 import { workList } from './work-list.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v4', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-PROJECTS', 'E-PROJECT'];
 export const PERSONAS = ['finance_lead', 'pm', 'none'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -225,6 +227,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
       }

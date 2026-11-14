@@ -1,0 +1,33 @@
+{
+  "items": [
+    {
+      "case_id": "P-0101",
+      "title": "Lagoon Health · patient app",
+      "pm": "Tunde Bello",
+      "stage": "Release · UAT with client",
+      "sample": true
+    },
+    {
+      "case_id": "P-0103",
+      "title": "Kora Logistics · fleet tracker",
+      "pm": "Tunde Bello",
+      "stage": "Pre-sale · costing approval",
+      "sample": true
+    },
+    {
+      "case_id": "P-0104",
+      "title": "Delta Foods · ordering app",
+      "pm": "Tunde Bello",
+      "stage": "Delivery · sprint 4 of 6",
+      "sample": true
+    },
+    {
+      "case_id": "P-0105",
+      "title": "Sabi Market · web store",
+      "pm": "Tunde Bello",
+      "stage": "Pre-sale · RFP received",
+      "sample": true
+    }
+  ],
+  "as_of": "2026-11-14T09:00:00Z"
+}

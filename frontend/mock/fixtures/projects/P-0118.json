@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0118",
+  "title": "Lekki Hotels · guest app",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1744"
+    },
+    {
+      "line": "Raise an issue",
+      "state": "ready",
+      "work_id": "W-1745"
+    }
+  ],
+  "next": "Handover · support handover: the PM Sola Martins confirms the next step."
+}

@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0117",
+  "title": "Kano Agro · farmer payments",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1742"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "processing",
+      "work_id": "W-1743"
+    }
+  ],
+  "next": "Release · release checklist: the PM Kunle Ade confirms the next step."
+}

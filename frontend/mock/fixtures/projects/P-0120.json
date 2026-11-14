@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0120",
+  "title": "Niger Delta Water · billing",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1748"
+    },
+    {
+      "line": "Record a receipt",
+      "state": "action_needed",
+      "work_id": "W-1749"
+    }
+  ],
+  "next": "Pre-sale · RFP response: the PM Kunle Ade confirms the next step."
+}

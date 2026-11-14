@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0110",
+  "title": "Dune Energy · meter readings",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1728"
+    },
+    {
+      "line": "Record a receipt",
+      "state": "action_needed",
+      "work_id": "W-1729"
+    }
+  ],
+  "next": "Release · UAT with client: the PM Kemi Adebayo confirms the next step."
+}

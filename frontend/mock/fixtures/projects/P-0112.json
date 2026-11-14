@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0112",
+  "title": "Fola Fashion · online shop",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1732"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "processing",
+      "work_id": "W-1733"
+    }
+  ],
+  "next": "Go-live · report sent: the PM Sola Martins confirms the next step."
+}

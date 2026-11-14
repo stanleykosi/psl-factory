@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0109",
+  "title": "Cedar Pharmacy · stock tracker",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1726"
+    },
+    {
+      "line": "Plan a project",
+      "state": "verified",
+      "work_id": "W-1727"
+    }
+  ],
+  "next": "Hypercare · week 2: the PM Sola Martins confirms the next step."
+}

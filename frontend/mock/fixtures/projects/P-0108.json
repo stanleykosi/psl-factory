@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0108",
+  "title": "Brightpath Schools · parent app",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1724"
+    },
+    {
+      "line": "Raise an issue",
+      "state": "ready",
+      "work_id": "W-1725"
+    }
+  ],
+  "next": "Planning · costing review: the PM Kunle Ade confirms the next step."
+}

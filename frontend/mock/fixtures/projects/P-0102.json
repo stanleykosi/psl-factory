@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0102",
+  "title": "Harbour Bank · mobile onboarding",
+  "lines": [
+    {
+      "line": "Prepare a costing",
+      "state": "waiting",
+      "work_id": "W-1206"
+    },
+    {
+      "line": "Record a receipt",
+      "state": "action_needed",
+      "work_id": "W-1002"
+    }
+  ],
+  "next": "Finance records the receipt for INV-0398."
+}

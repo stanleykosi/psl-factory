@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0124",
+  "title": "Rivers Media · content hub",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1756"
+    },
+    {
+      "line": "Plan a project",
+      "state": "verified",
+      "work_id": "W-1757"
+    }
+  ],
+  "next": "Archive · records kept: the PM Sola Martins confirms the next step."
+}

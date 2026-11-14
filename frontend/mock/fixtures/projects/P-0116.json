@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0116",
+  "title": "Jade Telecom · self-service",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1740"
+    },
+    {
+      "line": "Weekly client update",
+      "state": "waiting",
+      "work_id": "W-1741"
+    }
+  ],
+  "next": "Planning · plan approval: the PM Kemi Adebayo confirms the next step."
+}

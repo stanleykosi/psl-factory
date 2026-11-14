@@ -1,0 +1,17 @@
+{
+  "case_id": "P-0103",
+  "title": "Kora Logistics · fleet tracker",
+  "lines": [
+    {
+      "line": "Prepare a costing",
+      "state": "processing",
+      "work_id": "W-1711"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "effect_uncertain",
+      "work_id": "W-1005"
+    }
+  ],
+  "next": "Finance confirms whether the milestone 1 invoice reached the client."
+}
