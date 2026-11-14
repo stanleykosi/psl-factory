@@ -440,8 +440,8 @@ function StatePanel({ panel, children }: { panel: NonNullable<WorkItemPresentati
             ))}
           </dl>
         )}
-        {children}
         {panel.links && <PanelLinks links={panel.links} tone={tone} />}
+        {children}
         {panel.note && <p className="work-statepanel__note">{panel.note}</p>}
       </div>
     </aside>

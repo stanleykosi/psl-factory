@@ -243,6 +243,16 @@ describe('E-WORK-ACTION', () => {
     expect((await action('W-1603', { expected_revision: 6, action: 'reconcile', outcome: 'unknown' }, lead)).body).toMatchObject({ state: 'awaiting_reconciliation', revision: 7 });
   });
 
+  it('the SCR-02 board item W-1711 can be walked to each recorded answer', async () => {
+    const { evidence_id, case_revision } = await uploaded('C-1711', 5, 'finance_lead', 'delivery_receipt');
+    const delivered = await action('W-1711', { expected_revision: 5, action: 'reconcile', outcome: 'delivered', evidence_id, case_revision }, lead);
+    expect(delivered).toEqual({ status: 200, body: { work_id: 'W-1711', state: 'ready', revision: 6 } });
+    await fetch(`${base}/__mock/reset`, { method: 'POST' });
+    expect((await action('W-1711', { expected_revision: 5, action: 'reconcile', outcome: 'not_delivered' }, lead)).body).toMatchObject({ state: 'processing', revision: 6 });
+    await fetch(`${base}/__mock/reset`, { method: 'POST' });
+    expect((await action('W-1711', { expected_revision: 5, action: 'reconcile', outcome: 'unknown' }, lead)).body).toMatchObject({ state: 'awaiting_reconciliation', revision: 6 });
+  });
+
   it('refuses without the grant, the outcome or the proof, and does not mock resume', async () => {
     expect((await action('W-1604', { expected_revision: 6, action: 'reconcile', outcome: 'not_delivered' }, lead)).status).toBe(403);
     expect(fields(await action('W-1603', { expected_revision: 6, action: 'reconcile' }, lead))).toBe('Check these fields: outcome.');
