@@ -2,7 +2,7 @@
 // Presentation only: a proposal field the API does not return is never defaulted, and nothing here decides access.
 import { AGENT_NAMES, formatClock } from '@/features/decide/format';
 
-import type { Alert, AlertAgent, AlertPrefs, AlertQuery, PrefsBody } from './types';
+import type { Alert, AlertAgent, AlertPrefs, AlertQuery, AlertWithNeed, PrefsBody } from './types';
 
 export const AGENTS: readonly AlertAgent[] = ['tola', 'chidi', 'zainab'];
 
@@ -50,6 +50,29 @@ export function metaLine(alert: Alert, now: number): string {
 export function countLine(total: number | undefined): string | undefined {
   if (typeof total !== 'number') return undefined;
   return `${total} ${total === 1 ? 'ALERT' : 'ALERTS'}`;
+}
+
+/** The work an alert points to: /work/<work_id>. */
+export const workHref = (alert: Alert) => `/work/${encodeURIComponent(alert.work_id)}`;
+
+/** Only `needs_you === true` waits on the person; false, absent or any other value is for information. */
+export const needsYou = (alert: AlertWithNeed) => alert.needs_you === true;
+
+/** Needs-you is known when at least one loaded alert carries a boolean `needs_you`; otherwise it is not supplied. */
+export const needsYouKnown = (items: readonly AlertWithNeed[]) => items.some((alert) => typeof alert.needs_you === 'boolean');
+
+/** The bell badge: the unread count when it is a number above zero, "99+" above 99; otherwise none (unknown is not zero). */
+export function badgeText(unread: number | undefined): string | undefined {
+  if (typeof unread !== 'number' || unread <= 0) return undefined;
+  return unread > 99 ? '99+' : String(unread);
+}
+
+/** The bell's accessible name: "Alerts", "Alerts, 3 unread", "Alerts, 3 unread, 2 need you". */
+export function bellName(unread: number | undefined, need: number): string {
+  const parts = ['Alerts'];
+  if (typeof unread === 'number' && unread > 0) parts.push(`${unread} unread`);
+  if (need > 0) parts.push(`${need} need you`);
+  return parts.join(', ');
 }
 
 /** The list view held in the URL: /notifications?q=<text>&agent=<key>&unread=1. */

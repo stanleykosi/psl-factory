@@ -12,6 +12,7 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { projects } from '../mock/projects.mjs';
+import { bellFeed, isBellFeed } from './bell-feed';
 
 // next/navigation: the search params live in a small store that router.replace updates, like the app router.
 const nav = vi.hoisted(() => {
@@ -65,6 +66,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
+      if (isBellFeed(request)) return bellFeed();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me(persona));
       calls.push(url);
@@ -371,6 +373,7 @@ describe('access and failures', () => {
     persona = 'pm';
     const pm = me('pm');
     vi.mocked(fetch).mockImplementation(async (request) => {
+      if (isBellFeed(request as Request)) return bellFeed();
       const url = new URL((request as Request).url);
       if (url.pathname === '/api/v1/me') return json(200, { ...pm, destinations: ['my_work', 'assistant'] });
       calls.push(url);

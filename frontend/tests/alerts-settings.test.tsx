@@ -13,6 +13,7 @@ import { AppShell } from '@/shell/AppShell';
 import { createAlertsMock } from '../mock/alerts.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { OPENAPI_PATH } from '../mock/server.mjs';
+import { bellFeed, isBellFeed } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/settings/alerts',
@@ -46,6 +47,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
+      if (isBellFeed(request)) return bellFeed();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me);
       const call = { method: request.method, csrf: request.headers.get('X-CSRFToken'), raw: request.method === 'PUT' ? await request.text() : '' };

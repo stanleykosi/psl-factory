@@ -12,6 +12,7 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { projects } from '../mock/projects.mjs';
+import { bellFeed, isBellFeed } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/projects/P-0101',
@@ -42,6 +43,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
+      if (isBellFeed(request)) return bellFeed();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, { ...me(persona), ...(destinations ? { destinations } : {}) });
       calls.push(url);

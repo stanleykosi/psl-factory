@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextStepKind, STATE_TAGS, type HistoryEntry, type WorkHistory, type WorkItem } from '@/features/work-item/labels';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { AppShell } from '@/shell/AppShell';
+import { withoutBellFeed } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-1701',
@@ -48,7 +49,7 @@ function phone() {
 
 beforeEach(() => {
   fetchStub = vi.fn<(request: Request) => Promise<Response>>();
-  vi.stubGlobal('fetch', fetchStub);
+  vi.stubGlobal('fetch', withoutBellFeed(fetchStub));
   me = read('me.finance_lead.json');
 });
 afterEach(() => {
