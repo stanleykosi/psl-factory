@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-05",
   "outcome": "Start work: pick a line, fill its intake in a drawer, land on the new work item",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M2A"
   ],
@@ -277,7 +277,7 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -294,11 +294,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:05:31Z",
+          "refs": [
+            "enabled primary computed background rgb(200,64,28) on all 8 lines at 1440 and 390."
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "enabled primary computed background rgb(200,64,28) on all 8 lines at 1440 and 390."
       ]
     },
     {
@@ -314,7 +328,7 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -331,11 +345,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:05:31Z",
+          "refs": [
+            "copy now reads \"1 thing to fix\" (eyebrow and callout)."
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "copy now reads \"1 thing to fix\" (eyebrow and callout)."
       ]
     },
     {
@@ -351,7 +379,7 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -368,11 +396,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:05:31Z",
+          "refs": [
+            "after the 422 the primary is disabled until a field changes, as on the validation board."
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "after the 422 the primary is disabled until a field changes, as on the validation board."
       ]
     },
     {
@@ -411,7 +453,7 @@
         "delivery/features/F-05/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -428,11 +470,25 @@
           ],
           "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T06:05:31Z",
+          "refs": [
+            "the phone sheet footer shows only the full-width primary, as on the mobile boards."
+          ],
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cc3e185"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "the phone sheet footer shows only the full-width primary, as on the mobile boards."
       ]
     },
     {
@@ -878,6 +934,121 @@
       "fix_refs": [
         "cc3e185"
       ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The same-origin check on `journey_url` can be bypassed. `safePath` (`frontend/src/features/start-work/LineForm.tsx:120-122`) checks the raw string with `startsWith('/')` and rejects `//` and `/\\`. Browsers' URL parsers strip ASCII tab and newline before resolving, so `\"/\\t/evil.example\"` and `\"/\\n/evil.example\"` pass the check but resolve to `http://evil.example/`. I confirmed this with `new URL(\"/\\t/evil.example\", \"http://localhost:3511\").href`. Next's `Link` treats a non-local URL as external, so the click goes off-site. The value comes from our own E-LINES (v6 types it only as `string, minLength 1`), so the risk is a bad or compromised server value. But round 2 claims and tests this rule, and the coordinator named it as high-risk. Expected: resolve before comparing, e.g. `const u = new URL(url, window.location.origin); return u.origin === window.location.origin ? u.pathname + u.search + u.hash : undefined`, or reject any control character. Also add `'/\\t/elsewhere.example'` and `'/\\n/elsewhere.example'` to the `it.each` at `tests/start-work.test.tsx:646`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:05:31Z",
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The greyed-after-422 button (UX-1-3) has no test. The 422 tests at `tests/start-work.test.tsx:469-502` never check that the start button is disabled after the 422, or enabled again after a change. The e2e \"1 thing to fix\" cases don't check it either. Expected: one component assertion with `disabled === true` after the 422 and `false` after `pick(...)`. A related point to note: when the only problem is one the person can't fix in the form (the billing-contact 422), the button stays grey until they change some unrelated value. That matches the board, but it is an odd retry path.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:05:31Z",
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-3",
+      "round": 2,
+      "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"What happens next\" now depends on a separator the contract doesn't define. `WhatHappensNext` (`LineForm.tsx:136-152`) splits `next.summary` on `\" \u00b7 \"` and inserts the decision after the first part. The phone line takes the first two words when the first word is the agent's name. To make the board render, the fixtures' summary changed from the spec's `\"...signed SOW; issue, delivery...\"` (spec.md:188) to `\" \u00b7 \"`. A backend that sends the spec's text gets the decision after the whole sentence, which reads fine but is not what the board shows. Expected: record in D-START-INTAKE, or the backend handoff, that `summary` parts are joined by `\" \u00b7 \"` (or carry the parts as an array). Until then, treat it as a presentation convention only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:05:31Z",
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-4",
+      "round": 2,
+      "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`ProblemBox` is keyed by `problem.name` (`LineForm.tsx:282`). If a 422 names the same unrendered field twice, React gets duplicate keys. Also, a 422 for the disabled `proof` field would be drawn inline under a control the person can't use, and the button would stay grey. Expected: key by index or name plus index, and treat a problem for a disabled evidence field like an unmatched one, or accept that for now.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T06:05:31Z",
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        }
+      ]
+    },
+    {
+      "id": "SEC-2-1",
+      "round": 2,
+      "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`safePath` (frontend/src/features/start-work/LineForm.tsx:120-122) lets through a path whose second character is a tab, CR or LF. Example: `\"/\\t/evil.example\"` or `\"/\\n\\\\evil.example\"`. Browsers strip those characters while parsing the URL, so the link resolves off-site. `node -e 'new URL(\"/\\t/evil.example\",\"http://localhost:3511/\").href'` prints `http://evil.example/`. Expected: link only when `new URL(url, window.location.origin).origin === window.location.origin`, or accept only `^/(?![/\\\\])` with no ASCII control characters or whitespace anywhere. Add that case to the \"not a same-origin path\" test at tests/start-work.test.tsx:646. This can only be reached through a bad or compromised E-LINES value, so it is low risk.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-2/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T06:05:31Z",
+          "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -941,6 +1112,68 @@
           "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
           "evidence_refs": [
             "delivery/features/F-05/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "evidence_refs": [
+            "delivery/features/F-05/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-05/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "evidence_refs": [
+            "delivery/features/F-05/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+          "evidence_refs": [
+            "delivery/features/F-05/round-2/review-security.md"
           ]
         }
       }
@@ -1059,7 +1292,7 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 3,
   "history": [
     {
@@ -1109,6 +1342,22 @@
       "round": 2,
       "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T06:05:32Z",
+      "round": 2,
+      "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T06:05:33Z",
+      "round": 3,
+      "head": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8",
+      "reason": null
     }
   ],
   "routing": {
@@ -1125,10 +1374,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "cc3e185dd1ead6fc3079f9e15ef4f969b8b97fc8"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

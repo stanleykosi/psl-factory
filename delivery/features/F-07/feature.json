@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -88,6 +88,18 @@
       "at": "2026-11-14T05:28:52Z",
       "seconds": 227.9,
       "evidence_ref": "delivery/features/F-07/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T06:07:32Z",
+      "seconds": 118.6,
+      "evidence_ref": "delivery/features/F-07/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -328,14 +340,28 @@
         "delivery/features/F-07/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T05:37:03Z",
           "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:07:32Z",
+          "refs": [
+            "2892f00"
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2892f00"
       ]
     },
     {
@@ -351,14 +377,28 @@
         "delivery/features/F-07/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T05:37:03Z",
           "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:07:32Z",
+          "refs": [
+            "2892f00"
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2892f00"
       ]
     },
     {
@@ -374,14 +414,28 @@
         "delivery/features/F-07/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T05:37:03Z",
           "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:07:32Z",
+          "refs": [
+            "2892f00"
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2892f00"
       ]
     },
     {
@@ -420,14 +474,28 @@
         "delivery/features/F-07/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T05:37:03Z",
           "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:07:32Z",
+          "refs": [
+            "e830045"
+          ],
+          "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "e830045"
       ]
     },
     {
@@ -590,9 +658,9 @@
     "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M3-PROJECTS",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "b071612854e4666cdea15a5717ccbe2dfb07d4a4",
+    "base_sha": "2006419a4490cc97d478ab0e66675b5c33f0a57d",
     "task_branch": "fe-m3-projects-projects-shows-the-projects-a-person-can",
-    "head_sha": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
+    "head_sha": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-07",
     "pr_url": null,
     "pr_number": null,
@@ -765,6 +833,14 @@
       "round": 3,
       "head": "ab641e93900ddddcaeaa19d323f33fa9045ef9d0",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T06:07:33Z",
+      "round": 3,
+      "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "reason": null
     }
   ],
   "routing": {
@@ -781,9 +857,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c"
   },
   "blocked": null
 }
