@@ -94,7 +94,7 @@
   .projects__page, .projects__panel { gap: var(--space-3); }
   .projects__eyebrow, .projects__listtabs, .projects__total, .projects__note { display: none; }
   .projects__search { flex: 1 1 0; min-width: 0; max-width: none; }
-  .projects__iconbtn { width: var(--control-md); height: var(--control-md); border: 2px solid var(--ink); background: var(--surface); }
+  .projects__iconbtn { width: var(--control-md); height: var(--control-md); background: var(--surface); }
   .projects__filterpop { left: auto; right: 0; width: min(300px, calc(100vw - 2 * var(--space-4))); }
   .projects__foot { margin-top: 0; border-top: 2px solid var(--ink); }
   .projects__showmore { flex-wrap: wrap; gap: var(--space-3); }
