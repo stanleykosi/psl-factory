@@ -1,0 +1,60 @@
+/* Projects (SCR-22 list, SCR-07 journey). Token variables only; layout switches at 720px (bp-phone). No bundle or
+   shell class is restyled: the projects__ classes sit beside them. */
+
+.projects__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.projects__plain { margin: 0; }
+.projects__linkbutton { align-self: flex-start; padding: 0; border: none; background: none; font: inherit; }
+
+/* list: search, then the table (desktop) or cards (phone), the footer and the closing note */
+.projects__search { flex: 1 1 320px; max-width: 460px; }
+.projects__panel { display: flex; flex-direction: column; min-width: 0; }
+.projects__titlecell { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.projects__title { font-weight: 600; }
+.projects__note { margin: var(--space-3) 0 0; font-size: 13px; color: var(--ink-muted); }
+.projects__cards > li + li { border-top: 1px solid var(--rule-soft); }
+.projects__cards .projects__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-height: var(--control-md); padding: var(--space-3) 14px; color: var(--ink); text-decoration: none; }
+.projects__meta { font-size: 13px; color: var(--ink-muted); }
+
+/* footer: shown text, rows per page, Show more (D-PAGING) */
+.projects__foot { margin-top: -2px; border: 2px solid var(--ink); border-top: none; display: flex; flex-direction: column; }
+.projects__morefail { align-items: center; flex-wrap: wrap; }
+.projects__rows { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; margin-right: var(--space-3); }
+.projects__rowslabel { letter-spacing: .06em; }
+
+/* journey: breadcrumb on desktop, a back link on phones */
+.projects__header { display: flex; flex-direction: column; gap: var(--space-2); }
+.projects__header .shell-title { overflow-wrap: anywhere; }
+/* the board underlines the way back; a colour-only link inside the crumb text fails WCAG 1.4.1 */
+.projects__crumb .psl-crumb a { text-decoration: underline; text-underline-offset: 2px; }
+.projects__back { display: none; }
+
+/* tabs are links; the current page takes the selected look */
+.projects__tabs { align-self: flex-start; }
+.psl .projects__tabs .psl-tab[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
+.projects__tabs .psl-tab[aria-current="page"]:focus-visible { outline-color: var(--focus-on-strong); }
+
+.projects__next > span { display: flex; flex-direction: column; gap: var(--space-1); }
+.projects__journey { display: flex; flex-direction: column; gap: var(--space-3); }
+.projects__h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 18px; }
+.projects__lines > li + li { border-top: 1px solid var(--rule-soft); }
+.projects__lines .projects__line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: var(--control-md); padding: var(--space-3) 14px; color: var(--ink); text-decoration: none; }
+.projects__lines .projects__line:hover { background: var(--surface-subtle); }
+.projects__lines .projects__line:focus-visible { outline-offset: -3px; }
+.projects__linename { font-weight: 600; color: var(--action); text-decoration: underline; text-underline-offset: 2px; min-width: 0; overflow-wrap: anywhere; }
+.projects__state { flex: none; white-space: nowrap; }
+
+.projects__noaccess { max-width: 720px; }
+.projects__noaccess .shell-title { margin: 0; }
+.projects__noaccesstag { align-self: flex-start; }
+
+@media (max-width: 719.98px) {
+  .projects__search { flex: 1 1 0; min-width: 0; max-width: none; }
+  .projects__showmore { flex-wrap: wrap; gap: var(--space-3); }
+  .projects__showmore > * { flex: 1 1 100%; }
+  .projects__showmore > span:empty { display: none; }
+  .projects__rows { margin: 0; justify-content: space-between; }
+  .projects__more { min-height: var(--control-md); width: 100%; }
+  .projects__crumb { display: none; }
+  .projects__back { display: inline-flex; align-items: center; align-self: flex-start; min-height: var(--control-md); }
+  .projects__lines .projects__line { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+}
