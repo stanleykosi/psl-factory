@@ -1,0 +1,118 @@
+{
+  "id": "W-1703",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "current_agent"
+    },
+    {
+      "name": "Finance review",
+      "status": "not_started"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "started_at": "2026-11-12T09:41:00Z",
+    "steps": [
+      {
+        "text": "Read milestone 2 completion and UAT proof",
+        "status": "done",
+        "source": "Milestone HB-M2 · UAT sign-off"
+      },
+      {
+        "text": "Read stage 2 terms in the signed SOW",
+        "status": "done",
+        "source": "SOW v2 · stage 2"
+      },
+      {
+        "text": "Filling the invoice template",
+        "status": "working",
+        "source": "Test template v1"
+      },
+      {
+        "text": "Hand the draft to Finance review",
+        "status": "next"
+      }
+    ]
+  },
+  "next_step": "No person needs to act yet. An agent drafting is not a review or an approval.",
+  "sample": true,
+  "presentation": {
+    "stations": [
+      null,
+      null,
+      "Chidi · working",
+      "Next",
+      "—",
+      "—",
+      "—"
+    ],
+    "agent": {
+      "role": "Finance agent"
+    },
+    "panel": {
+      "title": "Drafting the invoice",
+      "body": [],
+      "note": "you'll be alerted when it's ready",
+      "links": [
+        {
+          "label": "Ask Chidi",
+          "href": "/assistant"
+        }
+      ]
+    }
+  }
+}

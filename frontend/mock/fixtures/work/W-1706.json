@@ -1,0 +1,140 @@
+{
+  "id": "W-1706",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "ready",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "current_person"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:38:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-12T10:05:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-12T10:20:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done"
+  },
+  "next_step": "Next, a Finance Officer issues invoice v2 and sends it to Lagoon Health. Sending earns SENT.",
+  "sample": true,
+  "amount": {
+    "amount": "4250000.00",
+    "currency": "NGN",
+    "unknown": false
+  },
+  "presentation": {
+    "facts": {
+      "drafted": "v2",
+      "reviewed": "Bisi Adeyemi",
+      "approved": "Ada Okafor",
+      "sent": "Not yet"
+    },
+    "agent": {
+      "role": "Finance agent",
+      "summary": "Chidi drafted v2; Finance approved it.",
+      "message": [
+        "I drafted invoice v2 from the signed SOW. Finance reviewed and approved it; I can't send it."
+      ]
+    },
+    "panel": {
+      "title": "Issue and send · Finance",
+      "tone": "signal",
+      "body": [
+        "Approved by Ada Okafor (Finance Lead) at 11:20. Sending issues this exact version, v2, to the client's billing contact."
+      ],
+      "rows": [
+        {
+          "label": "To",
+          "value": "finance@lagoonhealth.example"
+        },
+        {
+          "label": "Copy",
+          "value": "Tunde Bello (PMO)"
+        },
+        {
+          "label": "Version",
+          "value": "v2 · approved"
+        }
+      ],
+      "note": "After sending, the factory looks for a delivery receipt. If it can't confirm delivery, it won't resend on its own.",
+      "summary": {
+        "text": "To finance@lagoonhealth.example · copy Tunde Bello"
+      }
+    },
+    "preview": {
+      "template_label": "TEST TEMPLATE · NOT PSL'S REAL INVOICE",
+      "brand": "PSL PRODUCT STUDIO",
+      "bill_to": {
+        "name": "Lagoon Health Ltd",
+        "email": "finance@lagoonhealth.example"
+      },
+      "number": "INV-0412",
+      "issue_note": "Issued on sending · due per SOW terms",
+      "lines": [
+        {
+          "description": "Patient app · Stage 2 of 4 · UAT sign-off",
+          "detail": "Signed SOW-0198 v2, stage table row 2",
+          "amount": "₦4,250,000.00"
+        }
+      ],
+      "tax": "Set by PSL's tax rule",
+      "footer": "Bank details and terms come from PSL's invoice template when PSL supplies it.",
+      "version": "v2",
+      "basis": "Stage 2 of 4 · from signed SOW-0198 v2"
+    }
+  }
+}

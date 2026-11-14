@@ -1,0 +1,96 @@
+{
+  "id": "W-1709",
+  "title": "Ojo Foods · ordering app plan",
+  "line": "Plan a project",
+  "reference": "PLN-0151",
+  "state": "setup_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Engineering estimate",
+      "status": "done"
+    },
+    {
+      "name": "Design sign-off",
+      "status": "stopped"
+    },
+    {
+      "name": "Technical sign-off",
+      "status": "not_started"
+    },
+    {
+      "name": "Planning exit",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-11T11:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "The plan resumes at design sign-off once Setup has the role and rule.",
+  "sample": true,
+  "presentation": {
+    "facts": {
+      "drafted": "v1",
+      "reviewed": "Held"
+    },
+    "stations": [
+      null,
+      null,
+      "Held · no rule",
+      "—",
+      "—"
+    ],
+    "panel": {
+      "title": "Setup needed",
+      "tone": "signal",
+      "body": [
+        "This plan needs a design sign-off, but PSL hasn't set up who gives it: there is no Design Lead role and no rule saying which role signs off UI design.",
+        "Nothing is lost. The plan resumes at this station as soon as the role and rule exist."
+      ],
+      "note": "This is a business decision for PSL, not something the factory guesses.",
+      "links": [
+        {
+          "label": "Open Setup",
+          "href": "/setup",
+          "primary": true
+        }
+      ],
+      "summary": {
+        "text": "Held at design sign-off: PSL hasn't set up who gives it. It resumes as soon as Setup has the role and rule.",
+        "kind": "problem"
+      }
+    }
+  }
+}

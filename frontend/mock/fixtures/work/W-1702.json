@@ -1,0 +1,92 @@
+{
+  "id": "W-1702",
+  "title": "Kora Logistics · phase 2 plan",
+  "line": "Plan a project",
+  "reference": "PLN-0160",
+  "state": "ready",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Gather requirements",
+      "status": "current_agent"
+    },
+    {
+      "name": "Design sign-off",
+      "status": "not_started"
+    },
+    {
+      "name": "Technical sign-off",
+      "status": "not_started"
+    },
+    {
+      "name": "Test plan",
+      "status": "not_started"
+    },
+    {
+      "name": "Planning exit",
+      "status": "not_started"
+    },
+    {
+      "name": "Handoff",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "Tola starts gathering requirements. Nothing is needed from you yet.",
+  "sample": true,
+  "presentation": {
+    "stations": [
+      "Next · Tola",
+      "—",
+      "—",
+      "—",
+      "—",
+      "—"
+    ],
+    "agent": {
+      "role": "PMO agent",
+      "summary": "Starting in a few minutes. Nothing needed from you yet.",
+      "message": [
+        "I'll start with the minutes from 06 Nov and the signed SOW."
+      ]
+    },
+    "panel": {
+      "title": "Ready to begin",
+      "tone": "dark",
+      "body": [
+        "Started by Tunde Bello at 09:14. Tola picks it up within a few minutes and starts gathering requirements from the engagement record.",
+        "Nothing is needed from you yet."
+      ]
+    }
+  }
+}

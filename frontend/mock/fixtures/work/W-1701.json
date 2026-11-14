@@ -1,0 +1,166 @@
+{
+  "id": "W-1701",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "waiting",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "current_person"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:38:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-1701",
+      "kind": "decide",
+      "title": "Station 4 · Finance review",
+      "required_role": "Finance Lead",
+      "you_can_act": true,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "v2 · changed: PO number",
+          "number": 2
+        },
+        "amount": {
+          "amount": "4250000.00",
+          "currency": "NGN",
+          "unknown": false
+        },
+        "basis": "Contract stage 2 of 4 · terms v1",
+        "recipient": "accounts@lagoonhealth.example",
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Finance Lead",
+              "status": "current",
+              "is_you": true
+            }
+          ],
+          "your_step": 1,
+          "step_count": 1
+        }
+      }
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the milestone completion record",
+        "status": "done",
+        "source": "PM record v1",
+        "at": "2026-11-12T09:31:00Z"
+      },
+      {
+        "text": "Read stage 2 terms of the signed SOW",
+        "status": "done",
+        "source": "Signed SOW v3",
+        "at": "2026-11-12T09:33:00Z"
+      },
+      {
+        "text": "Matched the billing contact",
+        "status": "done",
+        "source": "Client register",
+        "at": "2026-11-12T09:35:00Z"
+      },
+      {
+        "text": "Drafted v2 with the corrected PO number",
+        "status": "done",
+        "source": "Return note, 09:55",
+        "at": "2026-11-12T09:38:00Z"
+      }
+    ]
+  },
+  "next_step": "A Finance Lead decides invoice v2. Approving earns APPROVED only.",
+  "sample": true,
+  "amount": {
+    "amount": "4250000.00",
+    "currency": "NGN",
+    "unknown": false
+  },
+  "started_by": {
+    "name": "Tunde Bello",
+    "role": "PMO",
+    "is_you": false
+  },
+  "started_at": "2025-11-10T13:05:00Z",
+  "presentation": {
+    "facts": {
+      "drafted": "v2",
+      "reviewed": "Waiting"
+    },
+    "stations": [
+      "Done · Mon 14:05",
+      "Done · Mon 14:06",
+      "Done · 10:38",
+      "Waiting 2h · you",
+      "Next",
+      "Email + receipt",
+      "Last"
+    ],
+    "agent": {
+      "role": "Finance agent",
+      "summary": "Chidi drafted v2 from 3 sources.",
+      "message": [
+        "Chidi drafted invoice v2. It is marked DRAFTED, not REVIEWED, until a Finance Lead decides."
+      ]
+    },
+    "task_note": "Approving earns APPROVED only. SENT is earned at station 6."
+  }
+}

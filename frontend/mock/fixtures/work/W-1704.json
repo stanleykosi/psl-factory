@@ -1,0 +1,100 @@
+{
+  "id": "W-1704",
+  "title": "Lagoon Health · release to UAT",
+  "line": "Release to UAT",
+  "reference": "REL-0077",
+  "state": "waiting",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Prepare UAT pack",
+      "status": "done"
+    },
+    {
+      "name": "Send to client",
+      "status": "done"
+    },
+    {
+      "name": "Client UAT response",
+      "status": "waiting"
+    },
+    {
+      "name": "Go-live readiness",
+      "status": "not_started"
+    },
+    {
+      "name": "Go-live",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-05T10:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-05T15:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-05T16:00:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-06T09:00:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-06T09:05:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "Waiting on Lagoon Health's UAT response, due 14 Nov.",
+  "sample": true,
+  "presentation": {
+    "facts": {
+      "drafted": "v1",
+      "reviewed": "PMO Lead",
+      "approved": "PMO Lead",
+      "sent": "To client 06 Nov",
+      "receipt_recorded": "Delivered"
+    },
+    "stations": [
+      null,
+      null,
+      "Waiting · 4 days",
+      "—",
+      "—"
+    ],
+    "agent": {
+      "role": "PMO agent",
+      "headline": "Tola has done the agent's part and is waiting on Lagoon Health.",
+      "message": [
+        "The UAT pack was delivered on 06 Nov. Tola will remind the client on 13 Nov. When they reply, a PM records it with the proof."
+      ],
+      "summary": "Tola is waiting on Lagoon Health. UAT response due 14 Nov; Tola reminds them on 13 Nov."
+    },
+    "panel": {
+      "title": "Waiting on the client",
+      "tone": "waiting",
+      "body": [
+        "Lagoon Health has had the UAT pack since 06 Nov. Their response is due 14 Nov (from the release plan).",
+        "Tola will send a reminder from your mailbox on 13 Nov if nothing arrives. When the client replies, record it here with the proof."
+      ]
+    }
+  }
+}

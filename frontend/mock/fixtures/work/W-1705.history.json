@@ -1,0 +1,86 @@
+{
+  "items": [
+    {
+      "at": "2026-11-12T15:40:00Z",
+      "actor_kind": "person",
+      "actor": "Ada Okafor · Finance Lead",
+      "event": "Approved invoice v2",
+      "version": "v2",
+      "detail": "for ₦4,250,000.00",
+      "restricted": false,
+      "lines": [
+        "Note: \"Matches SOW-0198 stage 2.\""
+      ],
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-12T15:12:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Sent v2 for review",
+      "version": "v2",
+      "restricted": false
+    },
+    {
+      "at": "2026-11-12T14:58:00Z",
+      "actor_kind": "agent",
+      "actor": "Chidi · Finance agent",
+      "event": "Drafted invoice v2",
+      "version": "v2",
+      "detail": "with the PO number added",
+      "restricted": false,
+      "lines": [
+        "Used: SOW-0198 · client details (PO-7781)"
+      ],
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-12T10:04:00Z",
+      "actor_kind": "person",
+      "actor": "Ada Okafor · Finance Lead",
+      "event": "Returned v1",
+      "version": "v1",
+      "restricted": false,
+      "lines": [
+        "Reason: \"PO number missing.\""
+      ],
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-11T16:30:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PMO",
+      "event": "Supplied evidence",
+      "detail": "client UAT sign-off",
+      "restricted": false,
+      "lines": [
+        "lagoon-uat-signoff.pdf"
+      ],
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-11T16:05:00Z",
+      "actor_kind": "agent",
+      "actor": "Chidi · Finance agent",
+      "event": "Asked for evidence",
+      "detail": "from Tunde Bello",
+      "restricted": false,
+      "lines": [
+        "UAT sign-off not attached to milestone 2"
+      ],
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-11T16:02:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "detail": "from the milestone 2 completion handoff",
+      "restricted": false,
+      "lines": [
+        "Station 1 of 7"
+      ]
+    }
+  ],
+  "as_of": "2026-11-12T15:45:00Z"
+}

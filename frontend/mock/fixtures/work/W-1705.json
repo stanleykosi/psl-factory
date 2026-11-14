@@ -1,0 +1,132 @@
+{
+  "id": "W-1705",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "verified",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "done"
+    },
+    {
+      "name": "Deliver",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:38:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-12T09:45:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-12T09:47:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-12T10:02:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-12T10:09:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-12T10:12:00Z"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done"
+  },
+  "next_step": "Verified. Payment is tracked separately by Finance.",
+  "sample": true,
+  "amount": {
+    "amount": "4250000.00",
+    "currency": "NGN",
+    "unknown": false
+  },
+  "presentation": {
+    "back_label": "Invoice",
+    "facts": {
+      "drafted": "v2",
+      "reviewed": "Ada",
+      "approved": "10:47",
+      "sent": "11:02",
+      "receipt_recorded": "11:09",
+      "verified": "11:12"
+    },
+    "stations": [
+      null,
+      null,
+      null,
+      "Approved 10:47",
+      "Issued 10:52",
+      "Receipt 11:09",
+      "Verified 11:12"
+    ],
+    "agent": {
+      "role": "Finance agent",
+      "message": [
+        "Found the delivery receipt at 11:09: Lagoon Health's mail server accepted the invoice. I checked it against the approved version 2 and the issue record, and everything matches."
+      ]
+    },
+    "panel": {
+      "title": "Verified",
+      "tone": "verified",
+      "lead": "Every fact on this line is earned and checked.",
+      "body": [
+        "Payment is tracked separately by Finance. Verified doesn't mean paid."
+      ],
+      "links": [
+        {
+          "label": "See in Verified outputs",
+          "href": "/my-work?queue=done",
+          "primary": true
+        }
+      ],
+      "summary": {
+        "text": "Verified doesn't mean paid; payment is tracked by Finance."
+      }
+    },
+    "history_counts": {
+      "all": 7,
+      "decisions": 2,
+      "agent_work": 2,
+      "evidence": 1
+    }
+  }
+}

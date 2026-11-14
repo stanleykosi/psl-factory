@@ -1,0 +1,111 @@
+{
+  "id": "W-1708",
+  "title": "Lagoon Health · Milestone 3 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0419",
+  "state": "owner_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "stopped"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:20:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done"
+  },
+  "next_step": "Finance review waits until someone holds the Finance Lead role for Lagoon Health.",
+  "sample": true,
+  "presentation": {
+    "facts": {
+      "drafted": "v1",
+      "reviewed": "Held"
+    },
+    "stations": [
+      null,
+      null,
+      null,
+      "Held · no reviewer",
+      "Waits",
+      "Waits",
+      "Waits"
+    ],
+    "agent": {
+      "role": "Finance agent",
+      "summary": "I drafted v1, but nobody holds the Finance Lead role for this project, so no one can approve it. Other work keeps moving.",
+      "message": [
+        "I drafted invoice v1 from stage 3 of the signed SOW. It can't go to review yet: no one holds the Finance Lead role for this project, so there is nobody allowed to approve it.",
+        "Nothing else is affected. Other work on this project keeps moving."
+      ]
+    },
+    "panel": {
+      "title": "Stopped · owner needed",
+      "tone": "signal",
+      "lead": "Finance review has no one to decide it.",
+      "body": [
+        "Rule needed: Finance Lead · Lagoon Health. An admin or the Finance Lead can set it up."
+      ],
+      "links": [
+        {
+          "label": "Fix it in Setup",
+          "href": "/setup",
+          "primary": true
+        }
+      ],
+      "note": "You can't fix this yourself: PMO can't assign Finance roles. We've told the admin."
+    }
+  }
+}

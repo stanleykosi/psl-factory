@@ -1,0 +1,105 @@
+{
+  "id": "W-1707",
+  "title": "Lagoon Health · Milestone 2 invoice (duplicate)",
+  "line": "Prepare an invoice",
+  "reference": "INV-0410",
+  "state": "cancelled",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "not_started"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-10T14:10:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "Nothing more happens on this item. Milestone 2 is billed on INV-0412.",
+  "sample": true,
+  "presentation": {
+    "facts": {
+      "drafted": "v1",
+      "sent": "Never"
+    },
+    "stations": [
+      null,
+      null,
+      null,
+      "Cancelled",
+      "—",
+      "—",
+      "—"
+    ],
+    "panel": {
+      "title": "Cancelled",
+      "tone": "dark",
+      "body": [
+        "Cancelled by Ada Okafor (Finance Lead) on 10 Nov at 16:30.",
+        "It was never sent, so there is nothing to recall from the client. The draft and its history stay for the audit trail."
+      ],
+      "quote": "Duplicate. Milestone 2 is billed on INV-0412.",
+      "links": [
+        {
+          "label": "Open INV-0412",
+          "href": "/work/W-1701"
+        }
+      ],
+      "summary": {
+        "text": "Cancelled by Ada Okafor on 10 Nov. Reason: \"Duplicate. Billed on INV-0412.\" Never sent.",
+        "kind": "info"
+      }
+    }
+  }
+}
