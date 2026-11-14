@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -64,21 +64,38 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T03:32:40Z",
+      "seconds": 64.8,
+      "evidence_ref": "delivery/features/F-07/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (UI against the contract mock only)",
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -97,21 +114,72 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (round 1)",
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-ui.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Journey lines can share a name (two \"Prepare an invoice\", two \"Record a receipt\" on P-0101). The link text is identical and only the state tag tells them apart, so a screen-reader link list is ambiguous. Consider an aria-label or visually hidden suffix of \"line text, state\". Not caused by the contract, since the tag is in the same link.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T03:38:29Z",
+          "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "An opaque `case_id` containing reserved characters is encoded twice. `/projects/P%2F..%3Cb%3E` sent `GET /api/v1/projects/P%252F..%253Cb%253E`, because Next hands the route param already encoded and openapi-fetch encodes it again. Expected: one level of encoding, so the backend sees the same id the URL carried. Actual: the id the server decodes is `P%2F..%3Cb%3E`. Real ids are uuids (REC-CASE), so there is no impact today, and the mock falls back to the default journey for unknown ids. The fix is to decodeURIComponent the segment before the client call, in `frontend/src/features/projects/useProject.ts` or the route page. Check this when FE-CONNECT-1 meets the real API.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T03:41:55Z",
+          "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -135,7 +203,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9d49977ac92e0387b435caf26e196b8545bec728",
     "task_branch": "fe-m3-projects-projects-shows-the-projects-a-person-can",
-    "head_sha": null,
+    "head_sha": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-07",
     "pr_url": null,
     "pr_number": null,
@@ -146,7 +214,90 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "architecture/build_model.py",
+      "architecture/model.json",
+      "architecture/packages/v6/delivery.md",
+      "architecture/packages/v6/endpoints.csv",
+      "architecture/packages/v6/handoff.md",
+      "architecture/packages/v6/impact.json",
+      "architecture/packages/v6/index.html",
+      "architecture/packages/v6/integrations.csv",
+      "architecture/packages/v6/manifest.json",
+      "architecture/packages/v6/manifest.sha256",
+      "architecture/packages/v6/model.json",
+      "architecture/packages/v6/openapi.json",
+      "architecture/packages/v6/reviews.json",
+      "architecture/packages/v6/tasks.csv",
+      "architecture/packages/v6/traceability.csv",
+      "architecture/packages/v6/validation.json",
+      "architecture/sources/decisions-2026-11-14-v2.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-05/.lock",
+      "delivery/features/F-05/feature.json",
+      "delivery/features/F-05/readiness-v5-not-ready.md",
+      "delivery/features/F-05/readiness.md",
+      "delivery/features/F-05/spec.md",
+      "delivery/features/F-06/.lock",
+      "delivery/features/F-06/feature.json",
+      "delivery/features/F-06/round-1/acceptance-pmo.md",
+      "delivery/features/F-06/round-1/build.md",
+      "delivery/features/F-06/round-1/checks.md",
+      "delivery/features/F-06/round-1/e2e-coordinator.md",
+      "delivery/features/F-06/round-1/review-qa.md",
+      "delivery/features/F-06/round-1/review-technical.md",
+      "delivery/features/F-06/round-1/review-ui.md",
+      "delivery/features/F-06/round-1/review-ux.md",
+      "delivery/features/F-06/spec.md",
+      "delivery/features/F-07/feature.json",
+      "delivery/features/F-08/.lock",
+      "delivery/features/F-08/feature.json",
+      "delivery/features/F-08/spec.md",
+      "frontend/e2e/decide.spec.ts",
+      "frontend/e2e/projects.spec.ts",
+      "frontend/mock/fixtures/E-PROJECT.json",
+      "frontend/mock/fixtures/E-PROJECTS.json",
+      "frontend/mock/fixtures/projects/P-0102.json",
+      "frontend/mock/fixtures/projects/P-0103.json",
+      "frontend/mock/fixtures/projects/P-0104.json",
+      "frontend/mock/fixtures/projects/P-0105.json",
+      "frontend/mock/fixtures/projects/P-0106.json",
+      "frontend/mock/fixtures/projects/P-0107.json",
+      "frontend/mock/fixtures/projects/P-0108.json",
+      "frontend/mock/fixtures/projects/P-0109.json",
+      "frontend/mock/fixtures/projects/P-0110.json",
+      "frontend/mock/fixtures/projects/P-0111.json",
+      "frontend/mock/fixtures/projects/P-0112.json",
+      "frontend/mock/fixtures/projects/P-0113.json",
+      "frontend/mock/fixtures/projects/P-0114.json",
+      "frontend/mock/fixtures/projects/P-0115.json",
+      "frontend/mock/fixtures/projects/P-0116.json",
+      "frontend/mock/fixtures/projects/P-0117.json",
+      "frontend/mock/fixtures/projects/P-0118.json",
+      "frontend/mock/fixtures/projects/P-0119.json",
+      "frontend/mock/fixtures/projects/P-0120.json",
+      "frontend/mock/fixtures/projects/P-0121.json",
+      "frontend/mock/fixtures/projects/P-0122.json",
+      "frontend/mock/fixtures/projects/P-0123.json",
+      "frontend/mock/fixtures/projects/P-0124.json",
+      "frontend/mock/fixtures/projects/list.json",
+      "frontend/mock/projects.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/projects/[caseId]/page.tsx",
+      "frontend/src/app/projects/page.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectStates.tsx",
+      "frontend/src/features/projects/ProjectTabs.tsx",
+      "frontend/src/features/projects/ProjectsList.tsx",
+      "frontend/src/features/projects/ProjectsPage.tsx",
+      "frontend/src/features/projects/model.ts",
+      "frontend/src/features/projects/projects.css",
+      "frontend/src/features/projects/useProject.ts",
+      "frontend/tests/mock-projects.test.ts",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects-model.test.ts",
+      "frontend/tests/projects.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -197,6 +348,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T03:32:41Z",
+      "round": 1,
+      "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T03:38:29Z",
+      "round": 1,
+      "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:41:55Z",
+      "round": 1,
+      "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "reason": null
     }
   ],
   "routing": {
@@ -213,9 +388,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
   },
   "blocked": null
 }
