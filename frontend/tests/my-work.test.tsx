@@ -119,12 +119,12 @@ describe('queue tabs (A-MYWORK)', () => {
       ['Done', '6'],
       ['Unassigned', '2'],
     ]);
-    expect(screen.getByRole('tablist').getAttribute('aria-label')).toBe('Queues');
+    expect(screen.getByRole('tablist').getAttribute('aria-label')).toBe('My work');
     expect(tabs()[0].getAttribute('aria-selected')).toBe('true');
     expect(tabs()[0].getAttribute('aria-controls')).toBe('my-work-panel');
     expect(panel().getAttribute('role')).toBe('tabpanel');
     expect(panel().getAttribute('aria-labelledby')).toBe(tabs()[0].id);
-    expect(screen.getByText('Updated 10:42')).toBeTruthy();
+    expect(screen.getByText('44 records you can see · updated 10:42')).toBeTruthy();
   });
 
   it('without counts.unassigned there are three tabs and zero reads 0', async () => {
@@ -190,10 +190,10 @@ describe('rows', () => {
     await open();
     const kinds = [...rows()].map((r) => r.querySelector('td .psl-tag')!);
     expect(kinds.map((t) => [t.textContent, t.className])).toEqual([
-      ['DECIDE', 'psl-tag psl-tag--person'],
-      ['DO', 'psl-tag psl-tag--person'],
-      ['FIX', 'psl-tag psl-tag--person'],
-      ['STARTED', 'psl-tag psl-tag--neutral'],
+      ['DECIDE', 'psl-tag psl-tag--person my-work__kind'],
+      ['DO', 'psl-tag psl-tag--person my-work__kind'],
+      ['FIX', 'psl-tag psl-tag--person my-work__kind'],
+      ['STARTED', 'psl-tag psl-tag--neutral my-work__kind'],
     ]);
     const state = rows()[3].querySelectorAll('td')[2].querySelector('.psl-tag')!;
     expect([state.textContent, state.className]).toEqual(['Action needed', 'psl-tag psl-tag--person']);
@@ -241,13 +241,14 @@ describe('rows', () => {
     expect(screen.getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['WORK', 'WHERE ON ITS LINE', 'STATE', 'AGE']);
   });
 
-  it('on a phone each card is one link with the mini bar at full width', async () => {
+  it('on a phone each card is one link with the mini bar, state and who it waits on (SCR-01-mobile)', async () => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: true, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
     work = () => json(200, crafted);
     await open();
     const cards = panel().querySelectorAll('ul > li > a');
     expect([...cards].map((a) => a.getAttribute('href'))).toEqual(['/work/W-1001', '/work/W-2', '/work/W-3', '/work/W-4']);
-    expect(cards[0].textContent).toContain('Station 4 of 7 · Finance review');
+    expect(cards[0].querySelectorAll('.psl-mini__bar > i')).toHaveLength(7);
+    expect(cards[0].textContent).toContain('Waiting');
     expect(cards[0].textContent).toContain('Finance Lead');
     expect(screen.getByRole('button', { name: 'Filter' }).className).toContain('psl-iconbtn');
     expect(document.querySelector('.psl-seg--phone')).toBeTruthy();
@@ -295,37 +296,45 @@ describe('search', () => {
   });
 });
 
-describe('filters (CMP-22)', () => {
-  it('applies Line and State from the panel, shows the badge and chips, and removes them', async () => {
+describe('filters (CMP-22, SCR-01-*-filter)', () => {
+  it('applies Line (by key), Project, State and Waiting on from the panel, shows the badge and chips, and removes them', async () => {
     await open();
     const filter = screen.getByRole('button', { name: /^Filter/ });
     expect(filter.getAttribute('aria-haspopup')).toBe('dialog');
     fireEvent.click(filter);
     expect(filter.getAttribute('aria-expanded')).toBe('true');
+    expect(filter.className).toContain('psl-btn--dark');
     const dialog = screen.getByRole('dialog', { name: 'Filter' });
     expect(dialog.className).toContain('psl-pop');
-    expect(document.activeElement).toBe(within(dialog).getByRole('radio', { name: 'Any line' }));
-    expect(within(dialog).queryByText(/Project|Waiting on/)).toBeNull();
-    expect(within(dialog).getAllByRole('radio').map((r) => r.parentElement!.textContent)).toEqual([
-      'Any line',
-      'Approve a payment exception',
-      'Plan a project',
-      'Prepare an invoice',
-      'Reconcile a bank statement',
-      'Record a receipt',
-    ]);
-    const select = within(dialog).getByRole('combobox', { name: 'State' }) as HTMLSelectElement;
-    expect([...select.options].map((o) => o.textContent)[0]).toBe('Any state');
-    expect(select.options).toHaveLength(12);
-    fireEvent.click(within(dialog).getByRole('radio', { name: 'Prepare an invoice' }));
-    fireEvent.change(select, { target: { value: 'action_needed' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Show results' }));
-    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', line: 'Prepare an invoice', state: 'action_needed' }));
-    expect(lastCall().search).toContain('line=Prepare%20an%20invoice&state=action_needed');
+    // Lines come from the response's filters.lines (A–Z in the mock); four show until "Show all 6 lines".
+    const lines = () => within(dialog).getAllByRole('checkbox').map((r) => r.parentElement!.textContent);
+    expect(document.activeElement).toBe(within(dialog).getAllByRole('checkbox')[0]);
+    expect(lines()).toEqual(['Approve a payment exception', 'Plan a project', 'Prepare an invoice', 'Reconcile a bank statement']);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Show all 6 lines' }));
+    expect(lines()).toHaveLength(6);
+    expect(within(dialog).getByRole('combobox', { name: 'Project' })).toBeTruthy();
+    const state = within(dialog).getByRole('combobox', { name: 'State' }) as HTMLSelectElement;
+    expect([...state.options].map((o) => o.textContent)[0]).toBe('Any state');
+    expect(state.options).toHaveLength(12);
+    const waiting = within(dialog).getByRole('combobox', { name: 'Waiting on' }) as HTMLSelectElement;
+    expect([...waiting.options].map((o) => o.value)).toEqual(['', 'me', 'someone_else', 'agent', 'outside_party', 'no_owner']);
+
+    fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Prepare an invoice' }));
+    fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Record a receipt' }));
+    // One line key at a time: the contract's line parameter takes one value.
+    expect(within(dialog).getAllByRole('checkbox', { checked: true }).map((c) => c.parentElement!.textContent)).toEqual(['Record a receipt']);
+    fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Prepare an invoice' }));
+    fireEvent.change(state, { target: { value: 'action_needed' } });
+    // "Show N items" counts the draft with the same list request.
+    const show = await within(dialog).findByRole('button', { name: /^Show \d+ items?$/ });
+    const preview = calls.find((c) => c.searchParams.get('line') === 'invoice' && c.searchParams.get('limit') === '50');
+    expect(query(preview!)).toEqual({ queue: 'needs_me', limit: '50', line: 'invoice', state: 'action_needed' });
+    fireEvent.click(show);
+    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', line: 'invoice', state: 'action_needed' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
     expect(filter.querySelector('.psl-badge--signal')!.textContent).toBe('2');
-    expect(new URLSearchParams(window.location.search).get('line')).toBe('Prepare an invoice');
+    expect(new URLSearchParams(window.location.search).get('line')).toBe('invoice');
     expect(new URLSearchParams(window.location.search).get('state')).toBe('action_needed');
     const chips = [...document.querySelectorAll('.psl-chip')].map((c) => c.textContent);
     expect(chips).toEqual(['LinePrepare an invoice×', 'StateAction needed×']);
@@ -339,23 +348,30 @@ describe('filters (CMP-22)', () => {
     expect(document.querySelector('.psl-chip')).toBeNull();
   });
 
+  it('restores project and waiting_on from the URL as chips', async () => {
+    await open('?project=C-LAGOON-HEALTH&waiting_on=me');
+    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', project: 'C-LAGOON-HEALTH', waiting_on: 'me' });
+    expect([...document.querySelectorAll('.psl-chip')].map((c) => c.textContent)).toEqual(['ProjectC-LAGOON-HEALTH×', 'Waiting onMe×']);
+    expect(rows()).toHaveLength(2);
+  });
+
   it('Esc discards the draft and returns focus to Filter', async () => {
     await open();
     const filter = screen.getByRole('button', { name: /^Filter/ });
     fireEvent.click(filter);
-    fireEvent.click(screen.getByRole('radio', { name: 'Record a receipt' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Plan a project' }));
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
     expect(filter.getAttribute('aria-expanded')).toBe('false');
-    expect(calls).toHaveLength(1);
+    expect(calls.filter((c) => c.pathname === '/api/v1/work' && c.searchParams.get('limit') === '20')).toHaveLength(1);
     fireEvent.click(filter);
-    expect((screen.getByRole('radio', { name: 'Any line' }) as HTMLInputElement).checked).toBe(true);
+    expect(screen.queryAllByRole('checkbox', { checked: true })).toHaveLength(0);
     fireEvent.mouseDown(document.body);
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('on a phone the panel is a bottom sheet with a close button', async () => {
+  it('on a phone the panel is a bottom sheet with Clear in its head; the scrim closes it', async () => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: true, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
     await open();
     const filter = screen.getByRole('button', { name: 'Filter' });
@@ -363,8 +379,10 @@ describe('filters (CMP-22)', () => {
     const sheet = screen.getByRole('dialog', { name: 'Filter' });
     expect(sheet.className).toContain('psl-sheet');
     expect(sheet.querySelector('.psl-sheet__grab')).toBeTruthy();
-    expect(within(sheet).getByRole('button', { name: 'Show results' }).className).toContain('psl-btn--xl psl-btn--block');
-    fireEvent.click(within(sheet).getByRole('button', { name: 'Close' }));
+    expect(within(sheet.querySelector('.psl-sheet__head') as HTMLElement).getByRole('button', { name: 'Clear' })).toBeTruthy();
+    expect(within(sheet).getByRole('button', { name: /^Show / }).className).toContain('psl-btn--xl psl-btn--block');
+    expect(within(sheet).getByRole('button', { name: 'All 6 lines' })).toBeTruthy();
+    fireEvent.mouseDown(sheet.parentElement!);
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
   });
@@ -481,7 +499,7 @@ describe('staying current (D-UPDATES r2)', () => {
       return json(status, body);
     };
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(screen.getByText('Updated 10:57')).toBeTruthy());
+    await until(() => expect(screen.getByText('45 records you can see · updated 10:57')).toBeTruthy());
     expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20' });
     expect(rows()).toHaveLength(24);
     expect(rows()[0].querySelector('a')!.getAttribute('href')).toBe(firstId);
@@ -499,12 +517,12 @@ describe('staying current (D-UPDATES r2)', () => {
     await open();
     work = fail as () => Promise<Response>;
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(screen.getByRole('status').textContent).toBe('Couldn’t refresh · updated 10:42'));
+    await until(() => expect(screen.getByRole('status').textContent).toBe('44 records you can see · Couldn’t refresh · updated 10:42'));
     expect(rows()).toHaveLength(20);
     expect(screen.queryByRole('alert')).toBeNull();
     work = (url) => mockResponse(url);
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(screen.getByText('Updated 10:42')).toBeTruthy());
+    await until(() => expect(screen.getByText('44 records you can see · updated 10:42')).toBeTruthy());
     expect(screen.queryByRole('status')).toBeNull();
   });
 
@@ -519,13 +537,20 @@ describe('staying current (D-UPDATES r2)', () => {
 });
 
 describe('screen states', () => {
-  it('pm Needs me is empty and offers what is waiting on others', async () => {
+  it('pm Needs me is empty (SCR-01-desktop-empty): caught up, where the started work is, no search bar', async () => {
     persona = 'pm';
     await open();
     expect(screen.getByRole('heading', { name: 'Nothing needs you right now' })).toBeTruthy();
-    expect(screen.getByText('New work will appear here.')).toBeTruthy();
+    expect(screen.getByText('3 things you started are moving. We’ll alert you on WhatsApp when one needs you.')).toBeTruthy();
     expect(document.querySelector('.psl-showmore')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'See what’s waiting on others' }));
+    expect(screen.queryByRole('searchbox')).toBeNull();
+    // Grouped by who the work waits on, one E-WORK-LIST request per group.
+    const where = await screen.findByRole('region', { name: 'Where your work is' });
+    await until(() => expect(where.querySelectorAll('.my-work__group')).toHaveLength(2));
+    expect([...where.querySelectorAll('.my-work__grouphead')].map((g) => g.textContent)).toEqual(['Tola is drafting1', 'Other people are reviewing2']);
+    expect(within(where).getByRole('link', { name: 'See all 3' }).getAttribute('href')).toBe('/my-work?queue=waiting_on_others');
+    expect(calls.filter((c) => c.searchParams.has('waiting_on')).map((c) => c.searchParams.get('waiting_on'))).toEqual(['agent', 'outside_party', 'someone_else']);
+    fireEvent.click(screen.getByRole('button', { name: 'See what you started' }));
     await until(() => expect(tabs()[1].getAttribute('aria-selected')).toBe('true'));
     await until(() => expect(rows()).toHaveLength(3));
   });
