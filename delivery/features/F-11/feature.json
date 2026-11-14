@@ -117,13 +117,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "technical review (lead)",
-      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
-      "evidence_refs": [
-        "delivery/features/F-11/round-2/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -149,13 +147,11 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
-      "evidence_refs": [
-        "delivery/features/F-11/round-2/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
       "status": "pending",
@@ -165,13 +161,11 @@
       "evidence_refs": []
     },
     "security": {
-      "status": "passed",
-      "reviewer": "reviewer-security",
-      "authority": "security reviewer",
-      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
-      "evidence_refs": [
-        "delivery/features/F-11/round-2/review-security.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -575,6 +569,27 @@
           "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503"
         }
       ]
+    },
+    {
+      "id": "FID-2-1",
+      "round": 2,
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone boards below the design-check pass mark (SCR-13 rules 66.0, finance 78.9, delivery 83.7 at 390): the page-local '\u2190 Setup' link sits under the phone bar; adopt the merged frame slot usePhoneBack (PR #17)",
+      "reproduction": "round-2/review-ui.md fidelity table; rule: visual >= 90 at 390 (feedback-design-fidelity)",
+      "evidence_refs": [],
+      "raised_by": "coordinator",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "coordinator",
+          "at": "2026-11-14T07:50:48Z",
+          "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -640,6 +655,70 @@
           "snapshot_ref": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
           "evidence_refs": [
             "delivery/features/F-11/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical review (lead)",
+          "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+          "evidence_refs": [
+            "delivery/features/F-11/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-11/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+          "evidence_refs": [
+            "delivery/features/F-11/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (round 2, design-fidelity gate)",
+          "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+          "evidence_refs": [
+            "delivery/features/F-11/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+          "evidence_refs": [
+            "delivery/features/F-11/round-2/review-security.md"
           ]
         }
       }
@@ -755,7 +834,7 @@
     }
   },
   "created_at": "2026-11-14T04:55:45Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -805,6 +884,30 @@
       "round": 2,
       "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T07:51:01Z",
+      "round": 2,
+      "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T07:51:05Z",
+      "round": 2,
+      "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T07:51:11Z",
+      "round": 3,
+      "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "reason": null
     }
   ],
   "routing": {
@@ -821,10 +924,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "edc476370a1b20444d9807811a9d7b0a6ed2f503"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

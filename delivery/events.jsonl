@@ -647,3 +647,8 @@
 {"at":"2026-11-14T07:45:34Z","feature":"F-12","round":1,"kind":"transition","head":"831b17164ca8","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-14T07:45:54Z","feature":"F-12","round":1,"kind":"fields","fields":{"git.ci_status":"passed"}}
 {"at":"2026-11-14T07:46:48Z","feature":"F-14","round":0,"kind":"created","tasks":["FE-WORKITEM"]}
+{"at":"2026-11-14T07:49:58Z","feature":"F-11","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"edc476370a1b","written_at":"2026-11-14T07:49:54Z"}
+{"at":"2026-11-14T07:50:48Z","feature":"F-11","round":2,"kind":"finding","action":"add","finding":"FID-2-1","by":"coordinator","severity":"medium","owner":"frontend","blocking":true,"role":"fid"}
+{"at":"2026-11-14T07:51:01Z","feature":"F-11","round":2,"kind":"transition","head":"edc476370a1b","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-14T07:51:05Z","feature":"F-11","round":2,"kind":"transition","head":"edc476370a1b","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-14T07:51:11Z","feature":"F-11","round":3,"kind":"transition","head":"edc476370a1b","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
