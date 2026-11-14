@@ -214,3 +214,39 @@ describe('F-04 fixtures', () => {
     }
   });
 });
+
+describe('decision board fixtures (F-16, W-19xx)', () => {
+  /** The served item without the PROPOSAL blocks, checked against the contract. */
+  async function getBoardItem(id: string) {
+    const response = await fetch(`${base}/api/v1/work/${id}`, { headers: { Cookie: COOKIE } });
+    expect(response.status).toBe(200);
+    const { presentation, decide_presentation: decidePresentation, ...item } = (await response.json()) as Record<string, unknown>;
+    expectValid('E-WORK-ITEM', 200, item);
+    return { item, presentation, decidePresentation };
+  }
+
+  it('W-1901 claims and approves as W-1201 does, then serves the decided board item', async () => {
+    expect(await claim('T-1901', { expected_revision: 2 })).toEqual({ status: 200, body: { task_id: 'T-1901', revision: 2, claimed_by: 'Ada Okafor' } });
+    const done = await decide('T-1901', { expected_revision: 2, verdict: 'approve' });
+    expect(done.status).toBe(200);
+    expect(done.body).toMatchObject({ task_id: 'T-1901', verdict: 'approve', decided_by: 'Ada Okafor' });
+    const after = await getBoardItem('W-1901');
+    expect(after.item).toEqual(Object.fromEntries(Object.entries(readJson('W-1901.approve.json')).filter(([k]) => k !== 'presentation' && k !== 'decide_presentation')));
+    expect(after.decidePresentation).toMatchObject({ client: 'Lagoon Health' });
+  });
+
+  it('W-1902 gives 409 once with the redraft, as W-1207 does, then decides the new revision', async () => {
+    expect((await claim('T-1902', { expected_revision: 4 })).status).toBe(200);
+    const stale = await decide('T-1902', { expected_revision: 4, verdict: 'approve' });
+    expect(stale.status).toBe(409);
+    expect(stale.body.code).toBe('stale_revision');
+    const next = await getBoardItem('W-1902');
+    expect((next.item.tasks as { revision: number }[])[0].revision).toBe(5);
+    expect((await claim('T-1902', { expected_revision: 5 })).status).toBe(200);
+    expect((await decide('T-1902', { expected_revision: 5, verdict: 'approve' })).status).toBe(200);
+  });
+
+  it('W-1903 and W-1904 refuse a claim (not your role, prepared by you)', async () => {
+    for (const task of ['T-1903', 'T-1904']) expect((await claim(task, { expected_revision: 2 })).status).toBe(403);
+  });
+});
