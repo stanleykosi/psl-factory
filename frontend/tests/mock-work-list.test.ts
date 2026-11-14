@@ -29,6 +29,7 @@ type Body = {
   as_of: string;
   counts?: Record<string, number>;
   filters?: { lines: { key: string; title: string }[] };
+  suggestions?: { id: string; agent: string; title: string; detail: string; action: string; href: string }[];
   code?: string;
   message?: string;
 };
@@ -56,7 +57,10 @@ async function list(query: string, persona = 'finance_lead', extraCookie = '') {
   const body = (await response.json()) as Body;
   const validate = validators[String(response.status)];
   expect(validate, `undeclared status ${response.status}`).toBeTruthy();
-  expect(validate(body), `${query} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+  // `suggestions` is a mock-only proposal (board sample only), outside the v4 contract; the rest must validate.
+  const { suggestions, ...contract } = body;
+  if (!extraCookie.includes('psl_mock_worklist=board')) expect(suggestions).toBeUndefined();
+  expect(validate(contract), `${query} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
   return { status: response.status, body };
 }
 
@@ -154,7 +158,7 @@ describe('E-WORK-LIST mock honours the query', () => {
     expect(new Set(titles)).toEqual(new Set(rows.filter((r) => r.personas.includes('finance_lead')).map((r) => r.item.line)));
   });
 
-  it('psl_mock_worklist=board serves the SCR-01 boards\' sample rows, still on contract', async () => {
+  it('psl_mock_worklist=board serves the SCR-01 boards\' sample rows, on contract apart from the proposed suggestions', async () => {
     const lead = await list('queue=needs_me', 'finance_lead', '; psl_mock_worklist=board');
     expect(lead.body.counts).toEqual({ needs_me: 3, waiting_on_others: 5, done: 28, unassigned: 1 });
     expect(lead.body.items.map((i) => i.title)).toContain('Lagoon Health · Milestone 2 invoice');
@@ -162,6 +166,13 @@ describe('E-WORK-LIST mock honours the query', () => {
     const pm = await list('queue=waiting_on_others&waiting_on=outside_party', 'pm', '; psl_mock_worklist=board');
     expect(pm.body.items.map((i) => i.reference)).toEqual(['REL-0077', 'COM-0233']);
     expect((await list('queue=needs_me', 'none', '; psl_mock_worklist=board')).body.items).toEqual([]);
+    expect(lead.body.suggestions).toBeUndefined();
+    const free = await list('queue=needs_me', 'pm', '; psl_mock_worklist=board');
+    expect(free.body.suggestions!.map((x) => [x.agent, x.action])).toEqual([
+      ['tola', 'Draft it'],
+      ['tola', 'Draft minutes'],
+      ['tola', 'Draft reminder'],
+    ]);
   });
 
   it('the X-Mock-Scenario header still wins', async () => {

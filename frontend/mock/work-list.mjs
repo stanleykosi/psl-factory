@@ -3,7 +3,8 @@
 // D-WORKLIST-FILTERS proposal fields (filters.lines, line_key, agent). Rows carry two mock-only keys
 // beside the item: project (a case_id) and waiting (the waiting_on category). With the cookie
 // psl_mock_worklist=board it serves the SCR-01 boards' own sample rows (fixtures/E-WORK-LIST.board.json)
-// for the design-fidelity check. Sample data only; no business rules.
+// for the design-fidelity check; for pm that includes `suggestions` ("While you're free"), a field the v4
+// contract does not have yet (proposed in F-02 round 3). Sample data only; no business rules.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -38,7 +39,7 @@ function linesOf(rows) {
 function dataset(persona, lead, name) {
   const drawn = name === 'board' ? board.personas[persona] : undefined;
   // The boards' rows keep the order the boards draw them in.
-  if (drawn) return { as_of: board.as_of, rows: drawn.rows, counts: drawn.counts, lines: drawn.lines, drawnOrder: true };
+  if (drawn) return { as_of: board.as_of, rows: drawn.rows, counts: drawn.counts, lines: drawn.lines, suggestions: drawn.suggestions, drawnOrder: true };
   const rows = fixture.rows.filter((row) => row.personas.includes(persona));
   const counts = { needs_me: 0, waiting_on_others: 0, done: 0 };
   if (lead) counts.unassigned = 0;
@@ -79,5 +80,7 @@ export function workList({ url, persona, dataset: name }) {
 
   const body = { items: items.slice(offset, offset + limit), as_of: data.as_of, counts: data.counts, filters: { lines: data.lines } };
   if (offset + limit < items.length) body.next_cursor = `o${offset + limit}`;
+  // Board sample only: the agent suggestions the empty boards draw. Not in the v4 contract (a proposal).
+  if (data.suggestions) body.suggestions = data.suggestions;
   return { status: 200, body };
 }

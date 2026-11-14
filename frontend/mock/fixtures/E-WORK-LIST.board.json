@@ -1,5 +1,5 @@
 {
-  "note": "The SCR-01 boards' own sample rows, served when the cookie psl_mock_worklist=board is set, so the design-fidelity check compares the page with the data the boards draw. Counts are the boards' numbers. Ids W-14xx have no work item fixture, so their links open the default sample item.",
+  "note": "The SCR-01 boards' own sample rows, served when the cookie psl_mock_worklist=board is set, so the design-fidelity check compares the page with the data the boards draw. Counts are the boards' numbers. pm also carries `suggestions`, the agent suggestions the empty boards draw (\"While you're free\"): a mock-only field outside the v4 contract, proposed for the architecture. Ids W-14xx have no work item fixture, so their links open the default sample item.",
   "as_of": "2026-11-10T09:42:00Z",
   "personas": {
     "finance_lead": {
@@ -27,6 +27,11 @@
     },
     "pm": {
       "counts": {"needs_me": 0, "waiting_on_others": 9, "done": 28},
+      "suggestions": [
+        {"id": "S-1", "agent": "tola", "title": "Draft the Harmattan Bank weekly report", "detail": "Due Friday · from this week's activity", "action": "Draft it", "href": "/assistant"},
+        {"id": "S-2", "agent": "tola", "title": "Write up yesterday's Ojo Foods call", "detail": "Recording note added 11 Nov · minutes not started", "action": "Draft minutes", "href": "/assistant"},
+        {"id": "S-3", "agent": "tola", "title": "Remind Lagoon Health about UAT", "detail": "Due 14 Nov · you send it", "action": "Draft reminder", "href": "/assistant"}
+      ],
       "lines": [
         {"key": "invoice", "title": "Invoice preparation and delivery"},
         {"key": "planning", "title": "Planning and delivery handoff"},
