@@ -1,0 +1,292 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:11:00.877Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-07-mobile.dc.html",
+  "boardName": "SCR-07-mobile.dc.html",
+  "pageUrl": "http://localhost:3711/projects/P-0101",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-07/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page (100%).",
+    "Visual match 68 is below 90."
+  ],
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 68
+  },
+  "visual": {
+    "score": 68,
+    "allCellsScore": 75.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1789,
+    "mismatchedCells": 572
+  },
+  "coverage": {
+    "total": 9,
+    "found": 9,
+    "coverage": 100,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Projects",
+        "pageName": "← Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · patient app",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 128,
+          "w": 358,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 130,
+          "w": 374,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 164,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 132,
+          "w": 84,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 166,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 132,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 166,
+          "w": 104,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 205,
+          "y": 132,
+          "w": 107,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 208,
+          "y": 166,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 312,
+          "y": 132,
+          "w": 75,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 166,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers",
+        "pageName": "Registers",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 387,
+          "y": 132,
+          "w": 93,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 391,
+          "y": 166,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "8 pieces of work · 2 waiting on people · 1 stopped",
+        "pageName": "8 pieces of work · 2 waiting on people · 1 stopped",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 190,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 224,
+          "w": 358,
+          "h": 21
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Journey",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 224,
+          "w": 358,
+          "h": 564
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

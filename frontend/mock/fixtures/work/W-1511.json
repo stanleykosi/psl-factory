@@ -1,0 +1,63 @@
+{
+  "id": "W-1511",
+  "title": "Delta Freight · Weekly client update",
+  "line": "Weekly client update",
+  "reference": "UPD-0602",
+  "state": "owner_needed",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Gather progress",
+      "status": "done"
+    },
+    {
+      "name": "Draft update",
+      "status": "done"
+    },
+    {
+      "name": "PM review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "Nobody is assigned to review this update. The PMO Lead assigns a PM; the review resumes from here.",
+  "sample": true
+}

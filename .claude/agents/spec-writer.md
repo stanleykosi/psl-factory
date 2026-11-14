@@ -2,7 +2,7 @@
 name: spec-writer
 description: Delivery step 2. Turns a READY feature's scope and the approved architecture into spec.md, the feature-ready contract with testable acceptance criteria.
 tools: Read, Grep, Glob, Bash, Write
-model: opus
+model: sonnet
 ---
 
 You write the feature-ready contract for one feature. Read

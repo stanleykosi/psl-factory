@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T05:36:49.519Z",
+  "generatedAt": "2026-11-14T05:50:32.474Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-06-mobile.dc.html",
   "boardName": "SCR-06-mobile.dc.html",
   "pageUrl": "http://localhost:3801/overview",
@@ -19,23 +19,23 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 89.5 is below 90."
+    "Visual match 89.8 is below 90."
   ],
   "scores": {
     "coverage": 77.8,
     "coverageWithExceptions": 100,
-    "visual": 89.5
+    "visual": 89.8
   },
   "visual": {
-    "score": 89.5,
-    "allCellsScore": 92,
+    "score": 89.8,
+    "allCellsScore": 92.3,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 992,
     "cell": 12,
-    "contentCells": 1774,
-    "mismatchedCells": 187
+    "contentCells": 1775,
+    "mismatchedCells": 181
   },
   "coverage": {
     "total": 18,
@@ -485,7 +485,9 @@
     ],
     "unexcepted": 0
   },
-  "warnings": [],
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
   "images": {
     "board": "board.png",
     "page": "page.png",

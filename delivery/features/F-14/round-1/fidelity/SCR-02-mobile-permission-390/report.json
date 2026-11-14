@@ -1,0 +1,216 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T09:04:55.867Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-permission.dc.html",
+  "boardName": "SCR-02-mobile-permission.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1099",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 84.2 is below 90."
+  ],
+  "scores": {
+    "coverage": 71.4,
+    "coverageWithExceptions": 100,
+    "visual": 84.2
+  },
+  "visual": {
+    "score": 84.2,
+    "allCellsScore": 84.8,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2248,
+    "mismatchedCells": 356
+  },
+  "coverage": {
+    "total": 7,
+    "found": 5,
+    "coverage": 71.4,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NO ACCESS",
+        "pageName": "NO ACCESS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 81,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 81,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "You can't open this work item",
+        "pageName": "You can’t open this work item",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 103,
+          "w": 358,
+          "h": 52
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 107,
+          "w": 358,
+          "h": 52
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "It belongs to a project or line you don't have access to. Nothing about it is shown.",
+        "pageName": "It belongs to a project or line you don’t have access to. Nothing about it is shown.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 167,
+          "w": 358,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 171,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "If your work needs it, ask the PMO Lead for access.",
+        "pageName": "If your work needs it, ask the PMO Lead for access.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 215,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 225,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to my queue",
+        "pageName": "Back to my queue",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 272,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask for access",
+        "key": "link: Ask for access",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 718,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "No access-request operation in scope.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

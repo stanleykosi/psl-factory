@@ -1,0 +1,71 @@
+{
+  "id": "W-1513",
+  "title": "Sable Foods · Milestone 1 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0608",
+  "state": "setup_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "current_person"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "The invoice cannot be issued until an invoice number series is set up for this entity. An Admin adds it in Setup.",
+  "sample": true
+}
