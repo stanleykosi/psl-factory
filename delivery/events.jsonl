@@ -510,3 +510,5 @@
 {"at":"2026-11-14T06:34:51Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"IMPLEMENTING","to":"IN_REVIEW"}
 {"at":"2026-11-14T06:36:03Z","feature":"F-09","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-14T06:36:33Z","feature":"F-12","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-14T06:36:59Z","feature":"F-10","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"02db3e841a47","findings":{"UX-1-1":"low"},"written_at":"2026-11-14T06:36:16Z"}
+{"at":"2026-11-14T06:36:59Z","feature":"F-10","round":1,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"02db3e841a47","findings":{"SEC-1-1":"low"},"written_at":"2026-11-14T06:36:52Z"}
