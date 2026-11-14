@@ -927,3 +927,6 @@
 {"at":"2026-11-14T17:17:48Z","feature":"F-07","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/24","git.pr_number":24,"git.ci_status":"passed","git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"ae1ce1232cad243cc9a85307f3557a93114e2b56"}}
 {"at":"2026-11-14T17:42:20Z","feature":"F-15","round":0,"kind":"created","tasks":["FE-ALERTS-MENU"]}
 {"at":"2026-11-14T17:45:04Z","feature":"F-16","round":0,"kind":"created","tasks":["FE-DECIDE"]}
+{"at":"2026-11-14T17:48:32Z","feature":"F-15","round":0,"kind":"planned","risk":"medium","surfaces":["ui","contract-change"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-14T17:48:33Z","feature":"F-15","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-14T17:48:39Z","feature":"F-15","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
