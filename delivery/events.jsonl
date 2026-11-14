@@ -404,3 +404,7 @@
 {"at":"2026-11-14T05:32:06Z","feature":"F-06","round":2,"kind":"transition","head":"c4d0b05e5e25","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-14T05:32:17Z","feature":"F-06","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
 {"at":"2026-11-14T05:32:53Z","feature":"F-13","round":0,"kind":"created","tasks":["FE-CONTRACT-V7"]}
+{"at":"2026-11-14T05:33:59Z","feature":"F-07","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"ab641e93900d","findings":{"UX-2-1":"low","UX-2-2":"low"},"written_at":"2026-11-14T05:33:16Z"}
+{"at":"2026-11-14T05:34:23Z","feature":"F-06","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"c4d0b05e5e25","reasons":["46 changed files exceed the auto-merge limit of 15","finding TECH-2-1 was accepted as a risk","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-14T05:34:23Z","feature":"F-06","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-14T05:34:23Z","feature":"F-06","round":2,"kind":"transition","head":"c4d0b05e5e25","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}

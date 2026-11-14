@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T04:45:24.503Z",
+  "generatedAt": "2026-11-14T05:32:33.314Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-06-desktop.dc.html",
   "boardName": "SCR-06-desktop.dc.html",
   "pageUrl": "http://localhost:3801/overview",
@@ -16,15 +16,15 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-08/round-2/fidelity/exceptions.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 98.5% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 94 meets 90.",
     "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 70.8,
-    "coverageWithExceptions": 98.5,
+    "coverageWithExceptions": 100,
     "visual": 94
   },
   "visual": {
@@ -35,7 +35,7 @@
     "boardHeight": 1240,
     "pageHeight": 1240,
     "cell": 12,
-    "contentCells": 8043,
+    "contentCells": 8045,
     "mismatchedCells": 481
   },
   "coverage": {
@@ -1115,7 +1115,10 @@
           "w": 1260,
           "h": 207
         },
-        "exception": null
+        "exception": {
+          "reason": "REQUEST: the exceptions table is F-06's ExceptionsList, mounted by follow-up (a); F-08 must not fetch E-EXCEPTIONS.",
+          "approved_by": "REQUESTED, not yet approved by the design engineer"
+        }
       },
       {
         "kind": "Table column",
@@ -1459,7 +1462,7 @@
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [],
   "images": {

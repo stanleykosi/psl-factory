@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-06",
   "outcome": "A Lead sees every exception they may see on one read-only list at /exceptions",
-  "state": "PR_OPEN",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-M2B"
   ],
@@ -832,12 +832,18 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-06/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "46 changed files exceed the auto-merge limit of 15",
+      "finding TECH-2-1 was accepted as a risk",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -932,6 +938,14 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-14T05:32:06Z",
+      "round": 2,
+      "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T05:34:23Z",
       "round": 2,
       "head": "c4d0b05e5e25272eb9a66bf37cc0c390ba487c01",
       "reason": null
