@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-11",
   "outcome": "A Lead or Admin opens Setup, reads every rule with its value or \"Not set\", and saves a role-list rule as its next version",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M3-SETUP"
   ],
@@ -1629,6 +1629,14 @@
       "at": "2026-11-14T07:51:11Z",
       "round": 3,
       "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T08:08:50Z",
+      "round": 3,
+      "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
       "reason": null
     }
   ],

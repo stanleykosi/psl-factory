@@ -660,3 +660,5 @@
 {"at":"2026-11-14T08:04:30Z","feature":"F-11","round":3,"kind":"finding","action":"fix","finding":"SEC-2-1","by":"builder"}
 {"at":"2026-11-14T08:04:30Z","feature":"F-11","round":3,"kind":"finding","action":"fix","finding":"FID-2-1","by":"builder"}
 {"at":"2026-11-14T08:05:31Z","feature":"F-11","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":60.9,"commit":"604e1b0a0f8f"}
+{"at":"2026-11-14T08:08:50Z","feature":"F-11","round":3,"kind":"transition","head":"604e1b0a0f8f","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-14T08:08:51Z","feature":"F-09","round":1,"kind":"transition","head":"4efaee8910bf","from":"IMPLEMENTING","to":"IN_REVIEW"}
