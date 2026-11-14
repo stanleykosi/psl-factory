@@ -125,3 +125,6 @@
 {"at":"2026-11-13T22:44:58Z","feature":"F-04","round":0,"kind":"created","tasks":["FE-DECIDE"],"backfilled":true}
 {"at":"2026-11-13T23:27:19Z","feature":"F-04","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","payments","contract-change"],"reviewers":["technical","ux","ui","security"],"backfilled":true}
 {"at":"2026-11-13T23:27:19Z","feature":"F-04","round":0,"kind":"transition","from":"PLANNED","to":"READY","backfilled":true}
+{"at":"2026-11-14T00:10:43Z","feature":"F-02","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"55e81940bdf7","findings":{"QA-2-1":"low"},"written_at":"2026-11-14T00:10:30Z"}
+{"at":"2026-11-14T00:10:43Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"reviewer-qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-14T00:10:43Z","feature":"F-02","round":2,"kind":"transition","head":"55e81940bdf7","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

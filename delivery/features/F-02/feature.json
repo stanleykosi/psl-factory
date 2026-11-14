@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -103,11 +103,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend against the contract mock only)",
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -291,6 +293,29 @@
       "verified_by": "reviewer-ui",
       "verification_refs": [
         "Scratch copy of `frontend/` at 55e8194, `next dev` on 3321 with the contract mock on 3322, Chromium at 390x844 (Africa/Lagos, reduced motion), finance_lead, `/my-work`. Measured all 20 `.my-work__card` elements: tag bottom is above title top on every card, tag and title left edges match (diff 0), gap 4px, tag height 23px on every card. Screenshot inspected at full length; headers align. Pre-fix header misalignment no longer appears."
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock accepts an empty `q=` (`GET /api/v1/work?queue=done&q=` returns 200 and ignores it), while the v3 contract says `q` has minLength 1. The UI never sends an empty `q` (checked: clearing the search box sent no `q`), so nothing breaks here, but the mock would hide that bug if the UI regressed. Source: `frontend/mock/work-list.mjs`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T00:10:43Z",
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        }
       ]
     }
   ],
@@ -488,6 +513,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T00:05:26Z",
+      "round": 2,
+      "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T00:10:43Z",
       "round": 2,
       "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
       "reason": null
