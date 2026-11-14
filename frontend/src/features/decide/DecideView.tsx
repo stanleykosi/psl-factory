@@ -79,7 +79,14 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
   if (view.kind === 'loading') return <LoadingState />;
   if (view.kind === 'error') {
     const { error } = view;
-    if (error.kind === 'unauthenticated') return <SignedOutState pathname={pathname} />;
+    if (error.kind === 'unauthenticated') {
+      return (
+        <>
+          <h1 className="decide-sr">Decision</h1>
+          <SignedOutState pathname={pathname} />
+        </>
+      );
+    }
     if (error.kind === 'forbidden' || error.kind === 'not_found') {
       // the decision page keeps the frame's title size on every state (F-16 criterion 6)
       return (
@@ -89,11 +96,14 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
       );
     }
     return (
-      <WorkErrorCard
-        message="We couldn’t load this decision. Your work is safe; nothing was changed."
-        error={error}
-        onRetry={() => void retry()}
-      />
+      <>
+        <h1 className="decide-sr">Decision</h1>
+        <WorkErrorCard
+          message="We couldn’t load this decision. Your work is safe; nothing was changed."
+          error={error}
+          onRetry={() => void retry()}
+        />
+      </>
     );
   }
   if (view.kind === 'done') {

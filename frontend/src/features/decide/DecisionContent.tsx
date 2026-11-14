@@ -2,7 +2,7 @@
 // agent note. Only values from tasks[].decision and E-WORK-ITEM are shown; absent fields are left out.
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { TaskDecision, WorkItem } from '@/api/types';
 import { agentImage, avatarClass, formatWat } from '@/features/work-item/labels';
@@ -31,11 +31,21 @@ type HeaderProps = {
   banner?: 'success' | 'neutral';
   /** The stale phone board draws no title: the header stays for screen readers only below 720px. */
   quietOnPhone?: boolean;
+  /** Move focus to the title on arrival (the done view, after a decision). */
+  focusHeading?: boolean;
 };
 
 /** The common header: the trail, the title (in a banner on the done view), the state tag and the sub-line. */
-export function DecideHeader({ item, title, trail, phoneEyebrow, eyebrow, sub, tag, banner, quietOnPhone }: HeaderProps) {
-  const heading = <h1 className="shell-title">{title}</h1>;
+export function DecideHeader({ item, title, trail, phoneEyebrow, eyebrow, sub, tag, banner, quietOnPhone, focusHeading }: HeaderProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (focusHeading) ref.current?.focus();
+  }, [focusHeading]);
+  const heading = (
+    <h1 ref={ref} tabIndex={focusHeading ? -1 : undefined} className="shell-title">
+      {title}
+    </h1>
+  );
   const sample = item.sample && showSampleLabel();
   return (
     <header className={`decide-header${quietOnPhone ? ' decide-header--quiet' : ''}`}>

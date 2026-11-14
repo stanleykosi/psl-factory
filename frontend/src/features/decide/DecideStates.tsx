@@ -1,12 +1,13 @@
 // SCR-03 states other than the default board: not open here, cannot act (read-only), stale and done.
 import Image from 'next/image';
 import Link from 'next/link';
-import { useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 
 import type { DecideResult, TaskDecision, WorkItem, WorkTask } from '@/api/types';
 import { InfoIcon } from '@/features/work-item/InfoIcon';
 import { FactsStrip } from '@/features/work-item/WorkItemOverview';
-import { agentPose, FACTS } from '@/features/work-item/labels';
+import { agentImage, FACTS } from '@/features/work-item/labels';
+import { useIsPhone } from '@/features/work-item/usePhone';
 import { presentationOf } from '@/features/work-item/presentation';
 import { WarningIcon } from '@/shell/icons';
 
@@ -311,10 +312,14 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
   const oldN = replaced.version.number;
   const newN = current.version.number;
   const rowClass = (row: Compared) => `decide-row${row.mark === 'changed' ? ' decide-row--changed' : ''}`;
+  const phone = useIsPhone();
+  const head = useRef<HTMLHeadingElement>(null);
+  // the page changed under the reader: move focus to what happened (the alert also announces it)
+  useEffect(() => head.current?.focus(), []);
   return (
     <section className="decide-stale" aria-labelledby="decide-stale-title">
       <div className="psl-callout psl-callout--warning decide-stale__notice" role="alert">
-        <h2 id="decide-stale-title" className="decide-stale__head">
+        <h2 id="decide-stale-title" ref={head} tabIndex={-1} className="decide-stale__head">
           A newer version arrived while you were reading.
         </h2>{' '}
         <p className="decide-plain">
@@ -364,9 +369,10 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
               </ul>
             </div>
           )}
+          {phone && agent}
         </section>
       </div>
-      {agent}
+      {!phone && agent}
       <div className="decide-stale__foot">
         <p className="decide-stale__action">
           <button type="button" className="psl-btn psl-btn--lg psl-btn--block" onClick={onReview}>
@@ -398,8 +404,10 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
   const approved = known && result.verdict === 'approve';
   const next = nextDecision(view);
   const facts = presentationOf(reloaded ?? item);
-  // the agent now at work on the next station (the done boards draw Chidi's full pose)
-  const image = agentPose((reloaded ?? item).agent.name, 'working');
+  // the done boards draw Chidi's thumbs-up pose (public/agents/chidi-done.png); other agents keep their avatar
+  const agentName = (reloaded ?? item).agent.name;
+  const image = agentName?.toLowerCase() === 'chidi' ? '/agents/chidi-done.png' : agentImage(agentName);
+  const showPaid = approved && !reloaded?.next_step.includes('Paid is tracked separately');
   return (
     <>
       <DecideHeader
@@ -411,7 +419,11 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
           </>
         }
         title={words.heading(view?.client ? `${label} for ${view.client}` : label)}
+        focusHeading
       />
+      <p className="decide-sr" role="status">
+        Your decision was recorded.
+      </p>
       <div className="decide-done">
         {refreshFailed && (
           <div className="psl-callout psl-callout--warning" role="alert">
@@ -440,7 +452,7 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
             </Link>
           </p>
         </div>
-        {approved && <p className="decide-plain decide-paid">Paid is tracked separately by Finance and is not part of this decision.</p>}
+        {showPaid && <p className="decide-plain decide-paid">Paid is tracked separately by Finance and is not part of this decision.</p>}
         <p className="decide-plain decide-back">
           <Link href="/my-work">Back to my work</Link>
         </p>

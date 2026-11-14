@@ -148,12 +148,31 @@ describe('done board (criterion 15)', () => {
     expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47');
     await screen.findByText(/^Chidi will issue it and email it to Lagoon Health\./);
     expect(factTexts().slice(0, 4)).toEqual(['DRAFTEDEarned: v2', 'REVIEWEDEarned: You', 'APPROVEDEarned: 10:47', 'SENTNot yet: Next']);
-    expect(screen.getByText('Paid is tracked separately by Finance and is not part of this decision.')).toBeTruthy();
+    // the board's next_step already says it: the page does not repeat it
+    expect(text().match(/Paid is tracked separately/g)).toHaveLength(1);
     expect(screen.getByRole('link', { name: 'Next decision · 2 of 3' }).getAttribute('href')).toBe('/work/W-1201/decide?task=T-1201');
     expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1901');
     expect(screen.getByRole('link', { name: 'Back to my work' }).getAttribute('href')).toBe('/my-work');
     expect(decisionControls()).toHaveLength(0);
     expect(onlyContractCalls()).toBe(true);
+  });
+
+  it('moves focus to the done heading, announces the result, and draws the next step on the agent surface with the done pose', async () => {
+    answers.item = (n) => json(200, item(n === 0 ? 'W-1901' : 'W-1901.approve'));
+    await open('W-1901', 'T-1901');
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    const heading = await screen.findByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health is approved' });
+    await waitFor(() => expect(document.activeElement).toBe(heading));
+    expect(screen.getByRole('status').textContent).toBe('Your decision was recorded.');
+    const card = (await screen.findByText(/^Chidi will issue it/)).closest('.decide-next')!;
+    expect(card.querySelector('img')!.getAttribute('src')).toContain('chidi-done.png');
+  });
+
+  it('the 5xx error card and the signed-out view each have an h1', async () => {
+    answers.item = () => json(500, { code: 'server_error', message: 'x' });
+    await open('W-1901', 'T-1901');
+    expect(await screen.findByRole('heading', { level: 1 })).toBeTruthy();
   });
 
   it('without queue.next there is no Next decision link; Back to my work stays', async () => {
