@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -115,7 +115,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance (delivery only; not client/product acceptance, merge or release)",
-      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "evidence_refs": [
         "delivery/features/F-02/round-2/acceptance-pmo.md"
       ]
@@ -126,7 +126,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb)",
       "authority": "product/design owner for the frontend (design engineer, as recorded in design/review.json and architecture/sources/decisions-2026-11-13*.md)",
-      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "evidence_refs": [
         "delivery/features/F-02/round-2/acceptance-product.md"
       ]
@@ -413,6 +413,52 @@
           "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
         }
       ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `operation_ids` is still `[]` while spec and readiness name E-WORK-LIST (this restates PMO-2-1, which stays OPEN). Record E-WORK-LIST so the coverage check can see it. Nothing else in scope is missing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:35:09Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Review and product-acceptance records point at 55e8194 (`snapshot_ref`), while the head is now eab6dff. This is correct for what each reviewer saw, and the carry-forward basis is below. The merge sync record (`merge_decision.pre_merge_sync`) is still `checks_rerun: not_run`; the coordinator's integration run above is the evidence to record there.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T00:35:09Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -496,11 +542,11 @@
     "task_branch": "fe-mywork-my-work-shows-a-person-s-queues-with-sea",
     "head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/5",
+    "pr_number": 5,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -676,6 +722,14 @@
       "at": "2026-11-14T00:10:43Z",
       "round": 2,
       "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T00:35:51Z",
+      "round": 2,
+      "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "reason": null
     }
   ],

@@ -163,3 +163,10 @@
 {"at":"2026-11-14T00:29:34Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T00:29:34Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-4","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T00:29:42Z","feature":"F-02","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"55e81940bdf7","written_at":"2026-11-14T00:29:42Z"}
+{"at":"2026-11-14T00:34:57Z","feature":"F-02","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"eab6dffa85a3","findings":{"PMO-2-5":"low","PMO-2-6":"low"},"written_at":"2026-11-14T00:34:57Z"}
+{"at":"2026-11-14T00:35:09Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-5","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T00:35:09Z","feature":"F-02","round":2,"kind":"finding","action":"add","finding":"PMO-2-6","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T00:35:30Z","feature":"F-02","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"eab6dffa85a3","written_at":"2026-11-14T00:35:30Z"}
+{"at":"2026-11-14T00:35:51Z","feature":"F-02","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/5","git.pr_number":5}}
+{"at":"2026-11-14T00:35:51Z","feature":"F-02","round":2,"kind":"transition","head":"eab6dffa85a3","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T00:36:25Z","feature":"F-02","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
