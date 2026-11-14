@@ -3,26 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-06",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "A Lead sees every exception they may see on one read-only list at /exceptions",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2B"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Default list.** As `finance_lead` at 1440x900, `/exceptions` shows:",
+    "**Order kept.** The rendered titles equal the fixture `items[].title` order exactly, with no sorting. \u2014 verify: the `tests/exceptions.test.tsx` case \"keeps the order returned\", using a fetch stub that returns rows out of `since` order.",
+    "**Kind mapping.** Each of the five `what` values renders its tag text and class from the table above. `effect_uncertain` is the only one with `psl-tag--waiting`. \u2014 verify: `tests/exceptions.test.tsx` \"maps every kind\".",
+    "**Times.** `since` on the same Lagos day as `as_of` reads \"since HH:mm\" in WAT, and an earlier day reads \"since D Mon\". \"As of\" uses `formatWat`. \u2014 verify: unit tests with `2026-11-14T10:02:00Z` \u2192 \"since 11:02\" and `2026-11-10T08:30:00Z` \u2192 \"since 10 Nov\".",
+    "**Paging.**",
+    "**Show more failure keeps rows.** A 500 on the second page leaves the 20 rows and shows \"We couldn\u2019t load more exceptions. Choose Show more to try again.\" \u2014 verify: `tests/exceptions.test.tsx`.",
+    "**Empty.** `items: []` shows \"No exceptions.\" and \"Everything is moving or verified.\", with no table, no Show more and no footer sentence. \u2014 verify: the unit test, and e2e with cookie `psl_mock_exceptions=empty` at 390 and 1440.",
+    "**Signed out.** A 401 shows \"You\u2019re signed out.\" with a Sign in link whose `next` is `/exceptions`. \u2014 verify: `tests/exceptions.test.tsx`, and e2e with cookie `psl_mock_scenario=401`.",
+    "**Wrong user.** As persona `pm`, `/exceptions` shows \"This list is for Leads\" and a \"Go to My work\" link, with no row titles, no \"shown\" count and no \"As of\". \u2014 verify: e2e with cookie `psl_mock_persona=pm`, and a unit test with a 403 stub.",
+    "**Wrong tenant / not visible.** A 404 renders the same no-access view as a 403 and shows no item data. \u2014 verify: `tests/exceptions.test.tsx` with a 404 stub, and e2e with `psl_mock_scenario=404`.",
+    "**Provider failure.** A network error or 503 on the first page shows \"ERROR \u00b7 COULDN\u2019T LOAD\", \"We couldn\u2019t load the exceptions. Your work is safe; nothing was changed.\", \"Reference <code> for support.\" and Try again. Try again issues one new first-page request. \u2014 verify: `tests/exceptions.test.tsx`.",
+    "**No actions.** In every state, the list renders no `button` other than Show more and Try again, and no link other than the title links, \"Go to My work\", \"Sign in\" and (in compact mode) \"See all exceptions\". \u2014 verify: a unit test that queries all buttons and links in the default state and asserts the allowed set.",
+    "**Compact embed.** `<ExceptionsList compact limit={10} maxRows={3} />`:",
+    "**Reusable exports.** `src/features/exceptions/index.ts` exports `ExceptionsList` and `useExceptions`, and nothing in `src/features/exceptions/**` imports from `src/app/**`. \u2014 verify: the file content, and `grep -r \"@/app\\|src/app\" frontend/src/features/exceptions` returns nothing.",
+    "**Phone layout.** At 390x844, `/exceptions` shows the rows as cards (tag, since, title link, doing, \"Who acts: \u2026\"), with no horizontal scroll (`document.documentElement.scrollWidth <= 390`). The Show more and Try again targets are at least 44px tall. \u2014 verify: e2e.",
+    "**Accessibility (A-ACCESSIBILITY).** axe reports no violations (wcag2a, wcag2aa, wcag21a, wcag21aa and wcag22aa) for:",
+    "**Mock contract.**",
+    "**Rows match items.** For every row in `E-EXCEPTIONS.json`:",
+    "**Rows open their item.** Clicking the first row's title on `/exceptions` opens `/work/W-1005`, which shows \"Kora Logistics \u00b7 Milestone 1 invoice\". Clicking a W-15xx row opens its own item, not the default fixture. \u2014 verify: e2e.",
+    "**Work item link.**",
+    "**Shared edits stay small.**"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "low",
+    "surfaces": [
+      "ui",
+      "api"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it low. The feature is a read-only list with no writes, no CSRF-bearing calls, no amounts and no external messaging. The backend does the grant filtering (\"Leads; filtered by grants\", handoff.md:4284). The frontend only has to render 401 and 403 correctly and offer no actions. Surfaces are `ui` (a new route and states) and `api` (it consumes a new endpoint through the mock). The small shared edits to `server.mjs` and `WorkItemOverview.tsx` are additive and contained, so they do not add a contract-change surface. Product acceptance is required: this is a new screen for the client, and SCR-10 is built without the reference, search, filter and total (PMO-0-1), so the design engineer must see the reduced board."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-06/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,21 +68,38 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T03:15:24Z",
+      "seconds": 124.0,
+      "evidence_ref": "delivery/features/F-06/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), round 1",
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (UI against the contract mock only; no real backend)",
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -59,16 +109,127 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-06/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (visual consistency against SCR-10 boards and the design system, read-only)",
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-ui.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/exceptions/labels.ts` `sinceText` (and `formatWat`, which F-03 owns): `Intl.DateTimeFormat.formatToParts` throws `RangeError: Invalid time value` for a malformed timestamp, so one bad `since` or `as_of` would crash the whole list render. The contract promises RFC 3339 strings, so this is a hardening item. Fix by guarding in `sinceText` or with an error boundary, or leave it and note it in the backend contract tests.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/exceptions/ExceptionsList.tsx:128`: the `limit` prop is read only as the initial value (`useExceptions({ limit: initialLimit })`). A later prop change is ignored. Spec-compliant for the current callers, but F-08 may pass a different limit. Either document it as initial-only or sync it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/server.mjs:24` (`M1_OPERATIONS`): the array line is the same line F-05, F-07 and F-08 are likely to append to, so a merge conflict is probable. The integration owner should resolve it at merge time. The change itself is correct.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop the \"since <t>\" text sits right after each tag, so its left edge shifts row to row (tag widths differ). The board uses a fixed tag column. Optional: give the tag a fixed-width slot. src/features/exceptions/exceptions.css",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -87,13 +248,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M2B",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "435f1585dab1462b9a73f335883ff5fe71c87c43",
+    "task_branch": "fe-m2b-a-lead-sees-every-exception-they-may-see",
+    "head_sha": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-06",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +264,48 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/mock/exceptions.mjs",
+      "frontend/mock/fixtures/E-EXCEPTIONS.json",
+      "frontend/mock/fixtures/work/W-1501.json",
+      "frontend/mock/fixtures/work/W-1502.json",
+      "frontend/mock/fixtures/work/W-1503.json",
+      "frontend/mock/fixtures/work/W-1504.json",
+      "frontend/mock/fixtures/work/W-1505.json",
+      "frontend/mock/fixtures/work/W-1506.json",
+      "frontend/mock/fixtures/work/W-1507.json",
+      "frontend/mock/fixtures/work/W-1508.json",
+      "frontend/mock/fixtures/work/W-1509.json",
+      "frontend/mock/fixtures/work/W-1510.json",
+      "frontend/mock/fixtures/work/W-1511.json",
+      "frontend/mock/fixtures/work/W-1512.json",
+      "frontend/mock/fixtures/work/W-1513.json",
+      "frontend/mock/fixtures/work/W-1514.json",
+      "frontend/mock/fixtures/work/W-1515.json",
+      "frontend/mock/fixtures/work/W-1516.json",
+      "frontend/mock/fixtures/work/W-1517.json",
+      "frontend/mock/fixtures/work/W-1518.json",
+      "frontend/mock/fixtures/work/W-1519.json",
+      "frontend/mock/fixtures/work/W-1520.json",
+      "frontend/mock/fixtures/work/W-1521.json",
+      "frontend/mock/fixtures/work/W-1522.json",
+      "frontend/mock/fixtures/work/W-1523.json",
+      "frontend/mock/fixtures/work/W-1524.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/exceptions/page.tsx",
+      "frontend/src/features/exceptions/ExceptionsList.tsx",
+      "frontend/src/features/exceptions/ExceptionsPage.tsx",
+      "frontend/src/features/exceptions/exceptions.css",
+      "frontend/src/features/exceptions/index.ts",
+      "frontend/src/features/exceptions/labels.ts",
+      "frontend/src/features/exceptions/types.ts",
+      "frontend/src/features/exceptions/useExceptions.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/tests/exceptions-mock.test.ts",
+      "frontend/tests/exceptions.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +338,67 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 3,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T02:58:03Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T02:58:08Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T03:15:25Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T03:18:43Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:20:27Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "haiku",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-06/readiness.md",
+      "delivery/features/F-06/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
   },
   "blocked": null
 }

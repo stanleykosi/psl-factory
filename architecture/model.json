@@ -103,6 +103,14 @@
       "version": "2026-11-14",
       "classification": "private",
       "sha256": "79aa4bab872d636c3e9b7867f42cb4b71c8360956a8e9b0971c58cd995c963e3"
+    },
+    {
+      "id": "S-DECISIONS-V5",
+      "title": "Build in parallel, split where the contract is missing, frontend drafts contract proposals, 14 Nov 2026",
+      "path": "sources/decisions-2026-11-14-v2.md",
+      "version": "2026-11-14b",
+      "classification": "private",
+      "sha256": "674dc87ae12bb1e9c3c0b78217951e7168d6d3b3a0d6c9b386ef7bbffd9bc26c"
     }
   ],
   "requirements": [
@@ -164,7 +172,7 @@
       ],
       "status": "confirmed",
       "kind": "endpoint",
-      "coverage": "E-LINES, E-WORK-START / A-START"
+      "coverage": "E-LINES, E-LINE-OPTIONS, E-WORK-START / A-START, A-START-INTAKE"
     },
     {
       "id": "R-RESPONSE",
@@ -176,7 +184,7 @@
       ],
       "status": "confirmed",
       "kind": "endpoint",
-      "coverage": "E-EVIDENCE-UPLOAD, E-RESPONSE / A-RESPONSE"
+      "coverage": "E-EVIDENCE-UPLOAD, E-RESPONSE, E-RFP-OUTCOME / A-RESPONSE, A-RFP-OUTCOME"
     },
     {
       "id": "R-EXCEPTION",
@@ -200,7 +208,7 @@
       ],
       "status": "confirmed",
       "kind": "endpoint",
-      "coverage": "E-PROJECTS, E-PROJECT, E-PROJECT-TAB, E-DOCUMENT / A-PROJECT"
+      "coverage": "E-PROJECTS, E-PROJECT, E-PROJECT-TAB, E-DOCUMENT / A-PROJECT, A-PROJECT-TABS"
     },
     {
       "id": "R-OVERVIEW",
@@ -981,6 +989,162 @@
           ]
         }
       ]
+    },
+    {
+      "id": "D-START-INTAKE",
+      "title": "What Start work needs from the contract",
+      "refs": [
+        "R-START",
+        "D-LEADERS-START"
+      ],
+      "evidence": [
+        "S-DECISIONS-V5",
+        "S-SCREENS",
+        "S-BACKEND"
+      ],
+      "owner": "backend developer",
+      "scope": "E-LINES, E-LINE-OPTIONS, E-WORK-START, E-EVIDENCE-UPLOAD, E-ME; SCR-04",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: (1) each E-LINES line says which case it starts on: case_scope project (the case and its revision come from the chosen option of the field named by case_field) or fixed (case_id and case_revision on the line, e.g. the Finance back-office lines with no Project field); (2) intake[].type takes a defined kind (text, long_text, date, date_range, period, datetime, integer, money, choice, record, records, evidence, display) with help, placeholder, fixed options, depends_on, evidence_kind, display value and restricted; (3) record fields read their options from a new E-LINE-OPTIONS endpoint, filtered by grants on the backend and narrowed by parent; (4) proof is uploaded first with E-EVIDENCE-UPLOAD on the line's case, which now returns the case revision after the upload, and the evidence_id is the intake value; (5) lines carry an optional subtitle, a \"what happens next\" block (station count, agent, deciding role, summary) and start_via (E-WORK-START, or E-IMPORT for an import line); (6) E-LINES returns default_line for the main button, absent for people whose button opens the menu; (7) /me startable_lines holds line keys; (8) a 422 on E-WORK-START names each field with its message.",
+          "rationale": "The approved SCR-04 drawers (16 lines, desktop and phone, plus validation) show choice lists from records, proof files, money and period fields and a \"What happens next\" block; v5 gives only key, title, group and name/label/type/required, and requires a case revision no read returns. All additions are optional, so v5 payloads stay valid. Field kinds, options, deciding roles and the default line come from the backend; the frontend derives none of them from roles. A blank money value is unknown, never 0 (INV-UNKNOWN). Whether the management accounts drawer starts through E-WORK-START or E-IMPORT, and E-IMPORT's missing entity, basis, extracted-at and control total, are for the backend developer.",
+          "alternatives": [
+            "Options inline in E-LINES (grows with records, cannot filter by parent)",
+            "One start endpoint per line",
+            "Read project options from E-PROJECTS (no revision, ties Start work to the projects feature)"
+          ],
+          "evidence": [
+            "S-DECISIONS-V5",
+            "S-SCREENS",
+            "S-BACKEND"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D-RESPONSE-VIEW",
+      "title": "What Record a response needs from the work item",
+      "refs": [
+        "R-RESPONSE"
+      ],
+      "evidence": [
+        "S-DECISIONS-V5",
+        "S-SCREENS",
+        "S-BACKEND"
+      ],
+      "owner": "backend developer",
+      "scope": "E-WORK-ITEM tasks[].response, case_id, case_revision; E-RESPONSE; SCR-16",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: E-WORK-ITEM gains optional case_id and case_revision (so proof can be uploaded from the work item) and each task an optional response block: the SCR-16 variant (client response, SOW signature, team input), the responders the backend allows, the actions this task accepts with their labels, the versions being answered, the teams with given or missing input, a blocking sentence, the evidence kind and claim_required. E-RESPONSE gains optional case_revision, version_id, team, estimate_person_days, what, evidence_ids and note. When claim_required is true the frontend calls E-TASK-CLAIM before E-RESPONSE.",
+          "rationale": "The approved SCR-16 boards show a who-responded picker, per-variant action choices, a version picker, several proof files and the team-input status; v5 tasks[] carry none of it. Which actions a task accepts and who may have responded are backend business rules, so the contract only carries what the backend allows. For the backend developer: workflows.factory.provide_information requires a factory_information task claimed by the actor, an evidence kind listed in context[\"missing\"] and a case revision, while E-RESPONSE had no claim step and a different action vocabulary; claim_required, evidence_kind and case_revision are proposed to bridge that, and the API maps actions to the backend vocabulary.",
+          "alternatives": [
+            "E-RESPONSE takes the file directly (one write, but no reuse of E-EVIDENCE-UPLOAD)",
+            "Frontend lists fixed actions per task kind (a business rule in the frontend)"
+          ],
+          "evidence": [
+            "S-DECISIONS-V5",
+            "S-SCREENS",
+            "S-BACKEND"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D-WORK-ACTIONS-VIEW",
+      "title": "Which work actions a person may take, and what reconcile shows",
+      "refs": [
+        "R-EXCEPTION"
+      ],
+      "evidence": [
+        "S-DECISIONS-V5",
+        "S-SCREENS"
+      ],
+      "owner": "backend developer",
+      "scope": "E-WORK-ITEM allowed_actions, reconcile; E-WORK-ACTION; SCR-02 awaiting reconciliation",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: E-WORK-ITEM gains optional allowed_actions (resume, cancel, reconcile: what this person may do now, decided by the backend from the line's operator and recovery authority) and a reconcile block (what was sent and when, the agent's checks, the outcomes the backend accepts, the evidence kind and the resend the backend allows after not delivered). The frontend offers an action only when it is listed.",
+          "rationale": "The approved SCR-02 awaiting-reconciliation board offers \"It arrived / It didn't arrive, allow one resend / I can't tell yet\"; a not-delivered answer authorises a resend to a client (INV-RESEND). Offering actions the API did not grant would put recovery authority in the frontend. The resend allowance is stated by the backend; none is assumed here.",
+          "alternatives": [
+            "Try the action and show the 403",
+            "Separate GET for allowed actions"
+          ],
+          "evidence": [
+            "S-DECISIONS-V5",
+            "S-SCREENS"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D-RFP-OUTCOME",
+      "title": "Recording an RFP outcome",
+      "refs": [
+        "R-RESPONSE"
+      ],
+      "evidence": [
+        "S-DECISIONS-V5",
+        "S-SCREENS",
+        "S-BACKEND",
+        "S-AUDIT"
+      ],
+      "owner": "backend developer",
+      "scope": "New E-RFP-OUTCOME; E-WORK-ITEM rfp_outcome; SCR-16 RFP outcome boards",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: a separate POST /api/v1/work/{work_id}/rfp-outcome records won, lost, pending or unknown against one submission, with when it was learned, the role recorded as, proof and a note; optional reason and lessons (lost), awarded amount (won, may be unknown), expected decision date and reminder (pending). E-WORK-ITEM gains an optional rfp_outcome block with the submission, the results, reasons and record-as roles the backend allows, and any outcome already recorded. Lessons map to the backend dispose step.",
+          "rationale": "Eight approved SCR-16 states record an RFP outcome; E-RESPONSE's actions cannot carry it and stretching rejected or input would misrecord it. The backend already has pmo.rfp.outcome (submission, result won/lost/pending/unknown, observed_at, role, evidence, note, case revision) and dispose (lessons); reason, awarded amount, expected decision date and reminder have no backend field today and stay optional until the backend developer confirms them. Who may record outcomes is a PSL rule the backend holds (\"only roles PSL allows\").",
+          "alternatives": [
+            "New actions on E-RESPONSE",
+            "Leave the RFP outcome states unbuilt"
+          ],
+          "evidence": [
+            "S-DECISIONS-V5",
+            "S-SCREENS",
+            "S-BACKEND",
+            "S-AUDIT"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D-PROJECT-TAB-ROWS",
+      "title": "Row shapes for the five project tabs",
+      "refs": [
+        "R-PROJECT",
+        "R-REPORTS"
+      ],
+      "evidence": [
+        "S-DECISIONS-V5",
+        "S-SCREENS"
+      ],
+      "owner": "backend developer",
+      "scope": "E-PROJECT-TAB, E-PROJECT tab counts, E-REPORT sources; SCR-38, SCR-12, SCR-11, SCR-29",
+      "revisions": [
+        {
+          "revision": 1,
+          "status": "proposed",
+          "choice": "PROPOSAL for the backend developer to confirm: E-PROJECT-TAB rows are typed per tab, in an optional array named by the tab (the untyped v5 items stays and holds the same rows): milestones (position, name, contract amount, completion with proof, invoice, paid, changes with their own amount), documents (document, version, status, test template), money (stage, amount, invoice and its status, paid, the E-REPORT figure that explains it), registers (register, reference, title, severity, owner, state, age; filtered by register and q) and actions (title, from which meeting, owner, due date or unknown, open/overdue/done); a summary carries register and action counts and the money report id. E-PROJECT gains optional revision and tab counts; E-REPORT figures gain an id and source details (document, rule, record, evidence).",
+          "rationale": "The approved project tab boards show these columns; v5 rows are untyped (\"documented in handoff\", never documented). Every amount uses the money form with unknown=true and no value when unknown, never 0, and paid is Finance data separate from the invoice (INV-UNKNOWN, INV-FACTS). Paid status categories and owed amounts are composed by the backend from receipts and allocations, not by the frontend. The documents tab has no approved list board, so its row is an engineering proposal.",
+          "alternatives": [
+            "Keep untyped rows documented in prose",
+            "One endpoint per tab"
+          ],
+          "evidence": [
+            "S-DECISIONS-V5",
+            "S-SCREENS"
+          ]
+        }
+      ]
     }
   ],
   "components": [
@@ -1524,11 +1688,13 @@
         "D-AUTH",
         "D-API-STYLE",
         "T-FOUNDATION",
-        "A-ME"
+        "A-ME",
+        "D-START-INTAKE"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "GET",
       "path": "/api/v1/me",
@@ -1576,7 +1742,8 @@
                 "items": {
                   "type": "string",
                   "minLength": 1
-                }
+                },
+                "description": "PROPOSAL (D-START-INTAKE): line keys, the same as E-LINES items[].key, never display titles. Start work shows when the list is not empty."
               },
               "csrf_token": {
                 "type": "string",
@@ -2074,12 +2241,18 @@
         "A-WORKITEM",
         "D-WORKITEM-DETAIL",
         "D-TASK-DECISION-VIEW",
-        "A-NOT-YOURS"
+        "A-NOT-YOURS",
+        "D-RESPONSE-VIEW",
+        "D-WORK-ACTIONS-VIEW",
+        "D-RFP-OUTCOME",
+        "A-RESPONSE",
+        "A-RECONCILE"
       ],
       "evidence": [
-        "S-SCREENS",
         "S-BACKEND",
-        "S-DECISIONS-V3"
+        "S-DECISIONS-V3",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "GET",
       "path": "/api/v1/work/{work_id}",
@@ -2265,7 +2438,8 @@
                     },
                     "kind": {
                       "type": "string",
-                      "minLength": 1
+                      "minLength": 1,
+                      "description": "Task kind as named by the backend. A task with a response block is a recorded response (open the response form); one with a decision block is a decision."
                     },
                     "title": {
                       "type": "string",
@@ -2521,6 +2695,155 @@
                         "additionalProperties": false
                       },
                       "description": "Who was asked to act on this task (shown when you cannot act); empty when nobody is assigned yet."
+                    },
+                    "response": {
+                      "type": "object",
+                      "properties": {
+                        "variant": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "client_response",
+                            "sow_signature",
+                            "team_input"
+                          ],
+                          "description": "Which SCR-16 form to show"
+                        },
+                        "responders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "name": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "role": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "organisation": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "actions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string",
+                                "minLength": 1,
+                                "enum": [
+                                  "approved",
+                                  "changes_requested",
+                                  "signed",
+                                  "rejected",
+                                  "estimate",
+                                  "input"
+                                ]
+                              },
+                              "label": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "versions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "label": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "note": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "e.g. \"the version sent for UAT\""
+                              },
+                              "sent_at": {
+                                "type": "string",
+                                "minLength": 1,
+                                "format": "date-time"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "teams": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "name": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "given": {
+                                "type": "boolean"
+                              },
+                              "estimate_needed": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "name",
+                              "given"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "blocking": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Plain sentence on who holds review, e.g. \"Security and Product haven't given input yet.\""
+                        },
+                        "evidence_kind": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "claim_required": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "actions",
+                        "responders"
+                      ],
+                      "additionalProperties": false,
+                      "description": "PROPOSAL (D-RESPONSE-VIEW): present on tasks a person records for someone who does not log in. Which actions a task accepts and who may have responded are backend rules; the frontend offers only what is listed. claim_required true: call E-TASK-CLAIM before E-RESPONSE."
                     }
                   },
                   "required": [
@@ -2649,6 +2972,227 @@
                 "type": "string",
                 "minLength": 1,
                 "format": "date-time"
+              },
+              "case_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Case the work belongs to; the path for E-EVIDENCE-UPLOAD"
+              },
+              "case_revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "allowed_actions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "enum": [
+                    "resume",
+                    "cancel",
+                    "reconcile"
+                  ]
+                },
+                "description": "PROPOSAL (D-WORK-ACTIONS-VIEW): the E-WORK-ACTION actions this person may take now, decided by the backend. Absent or empty: offer none."
+              },
+              "reconcile": {
+                "type": "object",
+                "properties": {
+                  "what": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "What was sent, e.g. \"Invoice INV-0412 v2 to the billing contact\""
+                  },
+                  "sent_at": {
+                    "type": "string",
+                    "minLength": 1,
+                    "format": "date-time"
+                  },
+                  "checks": {
+                    "type": "object",
+                    "properties": {
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "first_at": {
+                        "type": "string",
+                        "minLength": 1,
+                        "format": "date-time"
+                      },
+                      "last_at": {
+                        "type": "string",
+                        "minLength": 1,
+                        "format": "date-time"
+                      },
+                      "agent": {
+                        "type": "string",
+                        "minLength": 1,
+                        "enum": [
+                          "tola",
+                          "chidi",
+                          "zainab"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "outcomes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "delivered",
+                        "not_delivered",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "evidence_kind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "resend": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "What a not-delivered answer allows, as the backend states it, e.g. \"one resend of the same version\""
+                  }
+                },
+                "required": [
+                  "outcomes"
+                ],
+                "additionalProperties": false,
+                "description": "PROPOSAL (D-WORK-ACTIONS-VIEW): present when the state is awaiting_reconciliation or effect_uncertain."
+              },
+              "rfp_outcome": {
+                "type": "object",
+                "properties": {
+                  "submission": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sent_at": {
+                        "type": "string",
+                        "minLength": 1,
+                        "format": "date-time"
+                      },
+                      "delivery": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "results": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "won",
+                        "lost",
+                        "pending",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "reasons": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "value",
+                        "label"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "record_as": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "value",
+                        "label"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "evidence_kind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "recorded": {
+                    "type": "object",
+                    "properties": {
+                      "result": {
+                        "type": "string",
+                        "minLength": 1,
+                        "enum": [
+                          "won",
+                          "lost",
+                          "pending",
+                          "unknown"
+                        ]
+                      },
+                      "at": {
+                        "type": "string",
+                        "minLength": 1,
+                        "format": "date-time"
+                      },
+                      "by": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "result"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "submission",
+                  "results",
+                  "record_as"
+                ],
+                "additionalProperties": false,
+                "description": "PROPOSAL (D-RFP-OUTCOME): present on an RFP when the backend lets this person record its outcome. results, reasons and record_as come from the backend."
               }
             },
             "required": [
@@ -3402,11 +3946,14 @@
         "INV-ACCESS",
         "D-LEADERS-START",
         "T-START",
-        "A-START"
+        "A-START",
+        "D-START-INTAKE",
+        "A-START-INTAKE"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "GET",
       "path": "/api/v1/lines",
@@ -3456,9 +4003,70 @@
                           },
                           "type": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "PROPOSAL (D-START-INTAKE): one of text, long_text, date, date_range, period, datetime, integer, money, choice, record, records, evidence, display. The submitted intake value per kind: text/long_text a string; date YYYY-MM-DD; date_range {from, to}; period YYYY-MM; datetime ISO 8601; integer a number; money {amount, currency, unknown} (left blank = unknown=true with no amount, never 0); choice one options[].value; record one option value from E-LINE-OPTIONS; records a list of them; evidence an evidence_id returned by E-EVIDENCE-UPLOAD on the line's case; display is shown, never sent."
                           },
                           "required": {
+                            "type": "boolean"
+                          },
+                          "help": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Hint under the field as composed by the backend, e.g. \"Only milestones marked complete, with proof, are listed.\""
+                          },
+                          "placeholder": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "label": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "label"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "Fixed choices for a choice field (e.g. Audience: Internal or Client), listed by the backend."
+                          },
+                          "options_source": {
+                            "type": "string",
+                            "minLength": 1,
+                            "enum": [
+                              "line_options"
+                            ],
+                            "description": "Present on record/records fields: read the options from E-LINE-OPTIONS for this line and field"
+                          },
+                          "depends_on": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Name of the field whose value narrows these options (e.g. milestone depends on project); sent as parent to E-LINE-OPTIONS"
+                          },
+                          "evidence_kind": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Kind to send to E-EVIDENCE-UPLOAD for an evidence field"
+                          },
+                          "multiple": {
+                            "type": "boolean"
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "For display fields: the value shown, e.g. \"Client weekly report · test template v1\""
+                          },
+                          "restricted": {
                             "type": "boolean"
                           }
                         },
@@ -3470,6 +4078,80 @@
                         ],
                         "additionalProperties": false
                       }
+                    },
+                    "subtitle": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "One line under the title in the chooser, e.g. \"From a completed milestone\""
+                    },
+                    "case_scope": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "project",
+                        "fixed"
+                      ],
+                      "description": "project: the case is the project chosen in the intake field named by case_field; fixed: start on case_id below"
+                    },
+                    "case_field": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Name of the record field whose chosen option carries case_id and case_revision (case_scope project)"
+                    },
+                    "case_id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Case to start on when case_scope is fixed (e.g. the Finance back-office case)"
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "next": {
+                      "type": "object",
+                      "properties": {
+                        "station_count": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "agent": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "tola",
+                            "chidi",
+                            "zainab"
+                          ]
+                        },
+                        "decided_by": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Role that decides, as configured on the line"
+                          }
+                        },
+                        "summary": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "journey_url": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [],
+                      "additionalProperties": false,
+                      "description": "The \"What happens next\" block. Absent fields are not shown; the frontend derives none of it from roles."
+                    },
+                    "start_via": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "work_start",
+                        "finance_import"
+                      ],
+                      "description": "Which endpoint starts the line: E-WORK-START, or E-IMPORT for a file import line"
                     }
                   },
                   "required": [
@@ -3488,6 +4170,11 @@
                 "type": "string",
                 "minLength": 1,
                 "format": "date-time"
+              },
+              "default_line": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Line key the main Start work button opens directly. Absent: the button opens the menu (e.g. CEO and CTO, D-LEADERS-START)."
               }
             },
             "required": [
@@ -3583,11 +4270,13 @@
         "INV-REVISION",
         "D-LEADERS-START",
         "T-START",
-        "A-START"
+        "A-START",
+        "D-START-INTAKE"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "POST",
       "path": "/api/v1/work",
@@ -3615,7 +4304,8 @@
           },
           "intake": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "description": "Field name to value, one entry per E-LINES intake field the person filled; value shapes per field type (D-START-INTAKE). Evidence values are evidence_ids uploaded to the same case before the start."
           },
           "idempotency_key": {
             "type": "string",
@@ -3757,7 +4447,7 @@
         },
         {
           "status": "422",
-          "description": "Validation failed; fields named in message",
+          "description": "Validation failed; fields named",
           "schema": {
             "type": "object",
             "properties": {
@@ -3768,6 +4458,27 @@
               "message": {
                 "type": "string",
                 "minLength": 1
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
               }
             },
             "required": [
@@ -3794,15 +4505,18 @@
         "INV-ACCESS",
         "INV-AUDIT",
         "T-RESPONSE",
-        "A-RESPONSE"
+        "A-RESPONSE",
+        "D-START-INTAKE",
+        "D-RESPONSE-VIEW"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "POST",
       "path": "/api/v1/cases/{case_id}/evidence",
-      "trigger": "File drop in a form",
+      "trigger": "File drop in a form (record a response, reconcile, Start work proof fields)",
       "security": [
         "Session",
         "Csrf"
@@ -3862,6 +4576,11 @@
                 "type": "string",
                 "minLength": 1,
                 "pattern": "^[0-9a-f]{64}$"
+              },
+              "case_revision": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "The case revision after the upload; send it as case_revision on the start, response or action that follows"
               }
             },
             "required": [
@@ -4000,11 +4719,13 @@
         "INV-REVISION",
         "INV-AUDIT",
         "T-RESPONSE",
-        "A-RESPONSE"
+        "A-RESPONSE",
+        "D-RESPONSE-VIEW"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "POST",
       "path": "/api/v1/tasks/{task_id}/response",
@@ -4059,6 +4780,39 @@
           },
           "attested": {
             "type": "boolean"
+          },
+          "case_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "version_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "team": {
+            "type": "string",
+            "minLength": 1
+          },
+          "estimate_person_days": {
+            "type": "number",
+            "minimum": 0
+          },
+          "what": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What they gave (team input)"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Further proof files beyond evidence_id (\"Add another file\")"
+            }
+          },
+          "note": {
+            "type": "string",
+            "description": "Up to 2000 characters"
           }
         },
         "required": [
@@ -4237,11 +4991,13 @@
         "INV-RESEND",
         "INV-AUDIT",
         "T-EXCEPTIONS",
-        "A-RECONCILE"
+        "A-RECONCILE",
+        "D-WORK-ACTIONS-VIEW"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "POST",
       "path": "/api/v1/work/{work_id}/actions",
@@ -4849,11 +5605,13 @@
         "INV-ACCESS",
         "INV-FACTS",
         "T-PROJECTS",
-        "A-PROJECT"
+        "A-PROJECT",
+        "D-PROJECT-TAB-ROWS"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "GET",
       "path": "/api/v1/projects/{case_id}",
@@ -4931,6 +5689,34 @@
               "next": {
                 "type": "string",
                 "minLength": 1
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Case revision, for starts from the project page"
+              },
+              "tab_counts": {
+                "type": "object",
+                "properties": {
+                  "milestones": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "documents": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "registers": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "actions": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -5029,11 +5815,14 @@
         "INV-FACTS",
         "D-PAGING",
         "T-PROJECTS",
-        "A-PROJECT"
+        "A-PROJECT",
+        "D-PROJECT-TAB-ROWS",
+        "A-PROJECT-TABS"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "GET",
       "path": "/api/v1/projects/{case_id}/{tab}",
@@ -5066,6 +5855,31 @@
               "registers",
               "actions"
             ]
+          }
+        },
+        {
+          "name": "register",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "issues",
+              "changes",
+              "emergencies",
+              "rfps"
+            ],
+            "description": "Registers tab only"
+          }
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1
           }
         },
         {
@@ -5106,7 +5920,8 @@
                   "type": "object",
                   "additionalProperties": true,
                   "description": "Row shape per tab, documented in handoff"
-                }
+                },
+                "description": "v5 untyped rows, kept for compatibility. PROPOSAL (D-PROJECT-TAB-ROWS): read the typed array named by the tab instead (milestones, documents, money, registers or actions); items holds the same rows."
               },
               "next_cursor": {
                 "type": "string"
@@ -5115,6 +5930,664 @@
                 "type": "string",
                 "minLength": 1,
                 "format": "date-time"
+              },
+              "milestones": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "contract_amount": {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                          "description": "Decimal string; absent when unknown"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[A-Z]{3}$"
+                        },
+                        "unknown": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "currency",
+                        "unknown"
+                      ],
+                      "additionalProperties": false,
+                      "description": "From the signed SOW. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+                    },
+                    "amount_note": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "e.g. \"amount set at go-live\""
+                    },
+                    "completion": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "done",
+                            "not_yet"
+                          ]
+                        },
+                        "at": {
+                          "type": "string",
+                          "minLength": 1,
+                          "format": "date-time"
+                        },
+                        "proof": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Proof label, e.g. \"client UAT sign-off\""
+                        },
+                        "evidence_id": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "invoice": {
+                      "type": "object",
+                      "properties": {
+                        "reference": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "title": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "work_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "state": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "ready",
+                            "processing",
+                            "waiting",
+                            "owner_needed",
+                            "setup_needed",
+                            "action_needed",
+                            "effect_uncertain",
+                            "awaiting_reconciliation",
+                            "verified",
+                            "cancelled",
+                            "followup_needed"
+                          ]
+                        },
+                        "at": {
+                          "type": "string",
+                          "minLength": 1,
+                          "format": "date-time"
+                        }
+                      },
+                      "required": [
+                        "reference"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "paid": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "paid",
+                            "part_paid",
+                            "not_paid",
+                            "not_due",
+                            "finance_tracks",
+                            "unknown"
+                          ]
+                        },
+                        "owed": {
+                          "type": "object",
+                          "properties": {
+                            "amount": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                              "description": "Decimal string; absent when unknown"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^[A-Z]{3}$"
+                            },
+                            "unknown": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "currency",
+                            "unknown"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Amount still owed as recorded by Finance. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Paid is Finance data, separate from the invoice (INV-FACTS). Composed by the backend from receipts and allocations; never derived by the frontend."
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "reference": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "amount": {
+                            "type": "object",
+                            "properties": {
+                              "amount": {
+                                "type": "string",
+                                "minLength": 1,
+                                "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                                "description": "Decimal string; absent when unknown"
+                              },
+                              "currency": {
+                                "type": "string",
+                                "minLength": 1,
+                                "pattern": "^[A-Z]{3}$"
+                              },
+                              "unknown": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "currency",
+                              "unknown"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Change amount; unknown until a SOW amendment with it is signed. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+                          },
+                          "work_id": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "reference",
+                          "amount"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "position",
+                    "name",
+                    "contract_amount",
+                    "completion"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Row on the milestones tab (D-PROJECT-TAB-ROWS, proposal); present only when that tab is requested."
+                }
+              },
+              "documents": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "document_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "kind": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "version": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "format": "date-time"
+                    },
+                    "test_template": {
+                      "type": "boolean"
+                    },
+                    "work_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sample": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "document_id",
+                    "title",
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Row on the documents tab (D-PROJECT-TAB-ROWS, proposal); present only when that tab is requested."
+                }
+              },
+              "money": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "stage": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "amount": {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                          "description": "Decimal string; absent when unknown"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[A-Z]{3}$"
+                        },
+                        "unknown": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "currency",
+                        "unknown"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Stage amount. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+                    },
+                    "amount_note": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "invoice": {
+                      "type": "object",
+                      "properties": {
+                        "reference": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "title": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "work_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "state": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "ready",
+                            "processing",
+                            "waiting",
+                            "owner_needed",
+                            "setup_needed",
+                            "action_needed",
+                            "effect_uncertain",
+                            "awaiting_reconciliation",
+                            "verified",
+                            "cancelled",
+                            "followup_needed"
+                          ]
+                        },
+                        "at": {
+                          "type": "string",
+                          "minLength": 1,
+                          "format": "date-time"
+                        }
+                      },
+                      "required": [
+                        "reference"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "invoice_status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "As composed by the backend, e.g. \"Verified 03 Nov\", \"Held · owner needed\""
+                    },
+                    "paid": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "minLength": 1,
+                          "enum": [
+                            "paid",
+                            "part_paid",
+                            "not_paid",
+                            "not_due",
+                            "finance_tracks",
+                            "unknown"
+                          ]
+                        },
+                        "owed": {
+                          "type": "object",
+                          "properties": {
+                            "amount": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                              "description": "Decimal string; absent when unknown"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^[A-Z]{3}$"
+                            },
+                            "unknown": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "currency",
+                            "unknown"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Amount still owed as recorded by Finance. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Paid is Finance data, separate from the invoice (INV-FACTS). Composed by the backend from receipts and allocations; never derived by the frontend."
+                    },
+                    "figure_id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Figure in E-REPORT whose sources explain this amount"
+                    }
+                  },
+                  "required": [
+                    "position",
+                    "stage",
+                    "amount"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Row on the money tab (D-PROJECT-TAB-ROWS, proposal); present only when that tab is requested."
+                }
+              },
+              "registers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "register": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "issues",
+                        "changes",
+                        "emergencies",
+                        "rfps"
+                      ]
+                    },
+                    "reference": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "severity": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "high",
+                        "medium",
+                        "low"
+                      ],
+                      "description": "Set by the PM"
+                    },
+                    "owner": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "role": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "recorded_by_pm": {
+                          "type": "boolean"
+                        },
+                        "outside_party": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "name"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "state": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "State text as composed by the backend"
+                    },
+                    "age_seconds": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "work_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sample": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "register",
+                    "reference",
+                    "title"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Row on the registers tab (D-PROJECT-TAB-ROWS, proposal); present only when that tab is requested."
+                }
+              },
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "action_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "from": {
+                      "type": "object",
+                      "properties": {
+                        "meeting": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "at": {
+                          "type": "string",
+                          "minLength": 1,
+                          "format": "date"
+                        }
+                      },
+                      "required": [
+                        "meeting"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "owner": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "role": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "recorded_by_pm": {
+                          "type": "boolean"
+                        },
+                        "outside_party": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "name"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "due": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "minLength": 1,
+                          "format": "date"
+                        },
+                        "unknown": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "unknown"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "state": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "open",
+                        "overdue",
+                        "done"
+                      ]
+                    },
+                    "work_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "action_id",
+                    "title",
+                    "state"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Row on the actions tab (D-PROJECT-TAB-ROWS, proposal); present only when that tab is requested."
+                }
+              },
+              "summary": {
+                "type": "object",
+                "properties": {
+                  "registers": {
+                    "type": "object",
+                    "properties": {
+                      "issues": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "changes": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "emergencies": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "rfps": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  },
+                  "actions": {
+                    "type": "object",
+                    "properties": {
+                      "total": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "overdue": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "without_owner": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  },
+                  "report_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Money tab: E-REPORT id for the drill-down"
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -8028,11 +9501,13 @@
         "INV-ACCESS",
         "INV-UNKNOWN",
         "T-PROJECTS",
-        "A-REPORT"
+        "A-REPORT",
+        "D-PROJECT-TAB-ROWS"
       ],
       "evidence": [
-        "S-SCREENS",
-        "S-BACKEND"
+        "S-BACKEND",
+        "S-DECISIONS-V5",
+        "S-SCREENS"
       ],
       "method": "GET",
       "path": "/api/v1/reports/{report_id}",
@@ -8107,6 +9582,50 @@
                         "type": "string",
                         "minLength": 1
                       }
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "source_details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "reference": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1,
+                            "enum": [
+                              "document",
+                              "rule",
+                              "record",
+                              "evidence"
+                            ]
+                          },
+                          "document_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "work_id": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "reference",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
                     }
                   },
                   "required": [
@@ -8116,6 +9635,15 @@
                   ],
                   "additionalProperties": false
                 }
+              },
+              "agent": {
+                "type": "string",
+                "minLength": 1,
+                "enum": [
+                  "tola",
+                  "chidi",
+                  "zainab"
+                ]
               }
             },
             "required": [
@@ -8198,6 +9726,545 @@
       "local_work": "Resolve the record, check grants and authority, call pmo reporting services.",
       "integration_calls": [],
       "failure_recovery": "Read-only; 404 hides records the person may not see.",
+      "implementation": "unimplemented"
+    },
+    {
+      "id": "E-LINE-OPTIONS",
+      "title": "Options for a Start work field",
+      "refs": [
+        "R-START",
+        "REC-CASE",
+        "REC-GRANT",
+        "INV-ACCESS",
+        "INV-SAMPLE",
+        "D-START-INTAKE",
+        "D-PAGING",
+        "T-START",
+        "A-START-INTAKE"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-BACKEND",
+        "S-DECISIONS-V5"
+      ],
+      "method": "GET",
+      "path": "/api/v1/lines/{line_key}/fields/{field}/options",
+      "trigger": "Open a record choice in a Start work drawer",
+      "security": [
+        "Session"
+      ],
+      "permission": "factory.start on the line; each option filtered by the person's grants.",
+      "parameters": [
+        {
+          "name": "line_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        {
+          "name": "field",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        {
+          "name": "parent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Value chosen in the field named by depends_on"
+          }
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "enum": [
+              10,
+              20,
+              50
+            ],
+            "description": "Rows per page chosen by the person; default 20"
+          }
+        }
+      ],
+      "request": null,
+      "responses": [
+        {
+          "status": "200",
+          "description": "Options for a Start work field",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "label": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "hint": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "case_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "disabled_reason": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sample": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "next_cursor": {
+                "type": "string"
+              },
+              "as_of": {
+                "type": "string",
+                "minLength": 1,
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "items",
+              "as_of"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "401",
+          "description": "Not signed in",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "403",
+          "description": "No grant for this record",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "404",
+          "description": "Not found or not visible",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "handler": "api.lines.options",
+      "service": "workflows.factory_definitions + domain services",
+      "local_work": "Resolve the record, check grants and authority, call workflows.factory_definitions + domain services.",
+      "integration_calls": [],
+      "failure_recovery": "Read-only; 404 hides records the person may not see.",
+      "implementation": "unimplemented"
+    },
+    {
+      "id": "E-RFP-OUTCOME",
+      "title": "Record an RFP outcome",
+      "refs": [
+        "R-RESPONSE",
+        "REC-WORK",
+        "REC-EVIDENCE",
+        "REC-AUDIT",
+        "INV-ACCESS",
+        "INV-REVISION",
+        "INV-AUDIT",
+        "INV-UNKNOWN",
+        "D-RFP-OUTCOME",
+        "T-RESPONSE",
+        "A-RFP-OUTCOME"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-BACKEND",
+        "S-DECISIONS-V5"
+      ],
+      "method": "POST",
+      "path": "/api/v1/work/{work_id}/rfp-outcome",
+      "trigger": "Record the outcome form (won, lost, pending, unknown)",
+      "security": [
+        "Session",
+        "Csrf"
+      ],
+      "permission": "rfp.outcome on the case, as the backend allows; lessons use rfp.dispose.",
+      "parameters": [
+        {
+          "name": "work_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ],
+      "request": {
+        "type": "object",
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "case_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "submission_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "result": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "won",
+              "lost",
+              "pending",
+              "unknown"
+            ]
+          },
+          "learned_at": {
+            "type": "string",
+            "minLength": 1,
+            "format": "date-time"
+          },
+          "record_as": {
+            "type": "string",
+            "minLength": 1,
+            "description": "One of rfp_outcome.record_as[].value"
+          },
+          "evidence_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "note": {
+            "type": "string",
+            "description": "Up to 2000 characters"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "description": "One of rfp_outcome.reasons[].value"
+          },
+          "lessons": {
+            "type": "string",
+            "description": "Lost: what we would do differently"
+          },
+          "awarded_amount": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+                "description": "Decimal string; absent when unknown"
+              },
+              "currency": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[A-Z]{3}$"
+              },
+              "unknown": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "currency",
+              "unknown"
+            ],
+            "additionalProperties": false,
+            "description": "Won: as stated in the award letter. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN)."
+          },
+          "expected_decision_on": {
+            "type": "string",
+            "minLength": 1,
+            "format": "date"
+          },
+          "remind_at": {
+            "type": "string",
+            "minLength": 1,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "expected_revision",
+          "case_revision",
+          "submission_id",
+          "result",
+          "learned_at",
+          "record_as",
+          "evidence_id"
+        ],
+        "additionalProperties": false
+      },
+      "responses": [
+        {
+          "status": "200",
+          "description": "Record an RFP outcome",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "work_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "result": {
+                "type": "string",
+                "minLength": 1,
+                "enum": [
+                  "won",
+                  "lost",
+                  "pending",
+                  "unknown"
+                ]
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1,
+                "enum": [
+                  "ready",
+                  "processing",
+                  "waiting",
+                  "owner_needed",
+                  "setup_needed",
+                  "action_needed",
+                  "effect_uncertain",
+                  "awaiting_reconciliation",
+                  "verified",
+                  "cancelled",
+                  "followup_needed"
+                ]
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "engagement_work_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "work_id",
+              "result",
+              "state",
+              "revision"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "401",
+          "description": "Not signed in",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "403",
+          "description": "No grant for this record",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "404",
+          "description": "Not found or not visible",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "409",
+          "description": "Stale revision: the record changed; reload and act on the current version",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "status": "422",
+          "description": "Validation failed; fields named in message",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "handler": "api.rfp.outcome",
+      "service": "pmo.rfp.outcome / dispose",
+      "local_work": "Resolve the record, check grants and authority, call pmo.rfp.outcome / dispose; write one audit event.",
+      "integration_calls": [],
+      "failure_recovery": "409 on stale revision: the client reloads and shows the newer version; 422 names the fields; nothing is partially written.",
       "implementation": "unimplemented"
     }
   ],
@@ -8309,7 +10376,9 @@
       "refs": [
         "E-LINES",
         "E-WORK-START",
-        "E-WORK-ITEM"
+        "E-WORK-ITEM",
+        "E-LINE-OPTIONS",
+        "E-EVIDENCE-UPLOAD"
       ],
       "evidence": [
         "S-SCOPE",
@@ -8353,7 +10422,9 @@
       "title": "Record an outside response (J-03)",
       "refs": [
         "E-EVIDENCE-UPLOAD",
-        "E-RESPONSE"
+        "E-RESPONSE",
+        "E-WORK-ITEM",
+        "E-RFP-OUTCOME"
       ],
       "evidence": [
         "S-SCOPE",
@@ -8757,11 +10828,12 @@
         "R-RESPONSE"
       ],
       "evidence": [
+        "S-DECISIONS-V5",
         "S-SCREENS"
       ],
       "given": "A task waiting for the client UAT response",
       "when": "Upload proof, record approved with attestation",
-      "then": "Task completes; evidence hash stored; without proof 422",
+      "then": "Task completes; evidence hash stored; without proof 422; the form offers only the responders, actions and versions the task returns, and claims first when claim_required",
       "status": "not_run",
       "result_evidence": null
     },
@@ -8772,11 +10844,12 @@
         "R-EXCEPTION"
       ],
       "evidence": [
+        "S-DECISIONS-V5",
         "S-SCREENS"
       ],
       "given": "A delivery with unknown outcome",
       "when": "Record delivered with evidence",
-      "then": "State moves on; no resend happened before reconciliation",
+      "then": "State moves on; no resend happened before reconciliation; only actions in allowed_actions are offered",
       "status": "not_run",
       "result_evidence": null
     },
@@ -8959,6 +11032,54 @@
       "then": "No AA violations; focus ring and reduced motion work; layouts at 390px and 1440px",
       "status": "not_run",
       "result_evidence": null
+    },
+    {
+      "id": "A-START-INTAKE",
+      "title": "Start work drawers are built from what the backend returns",
+      "refs": [
+        "R-START"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-DECISIONS-V5"
+      ],
+      "given": "A PM with factory.start on two projects, a Finance user with the back-office lines, a CEO, and a milestone that is not complete",
+      "when": "Each opens Start work, chooses a line and fills its intake",
+      "then": "Fields render by their defined kind; record options come from E-LINE-OPTIONS filtered by grants and narrowed by the parent field; the case and its revision come from the chosen project or the line's fixed case; proof is uploaded first and sent as an evidence_id; a blank money value is sent as unknown, never 0; the CEO's main button opens the menu because no default_line is returned; a 422 names each field",
+      "status": "not_run",
+      "result_evidence": null
+    },
+    {
+      "id": "A-RFP-OUTCOME",
+      "title": "Record an RFP outcome against one submission",
+      "refs": [
+        "R-RESPONSE"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-DECISIONS-V5"
+      ],
+      "given": "A submitted RFP whose work item returns rfp_outcome, and a person not among the record_as roles",
+      "when": "Record won with the award letter; record lost with reason and lessons; record pending; the other person opens the RFP",
+      "then": "Each is stored once with its proof and the role recorded as; an unknown awarded amount stays unknown; lost lessons are kept; the person not allowed sees no outcome form (no rfp_outcome block); a stale revision returns 409",
+      "status": "not_run",
+      "result_evidence": null
+    },
+    {
+      "id": "A-PROJECT-TABS",
+      "title": "Project tabs show typed rows with separate facts",
+      "refs": [
+        "R-PROJECT"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-DECISIONS-V5"
+      ],
+      "given": "A project with four milestones (one amount unknown, one change with unknown amount), registers, documents and nine actions (three overdue, one without owner)",
+      "when": "Read each tab",
+      "then": "Rows match their tab's shape; unknown amounts have unknown=true and no value; completion, invoice and paid are separate; register filter and search narrow rows; action summary counts match the rows; tab counts match E-PROJECT",
+      "status": "not_run",
+      "result_evidence": null
     }
   ],
   "runbooks": [
@@ -9131,6 +11252,7 @@
       "refs": [
         "E-LINES",
         "E-WORK-START",
+        "E-LINE-OPTIONS",
         "R-START",
         "D-LEADERS-START"
       ],
@@ -9159,6 +11281,7 @@
       "refs": [
         "E-EVIDENCE-UPLOAD",
         "E-RESPONSE",
+        "E-RFP-OUTCOME",
         "R-RESPONSE"
       ],
       "evidence": [
@@ -9626,14 +11749,15 @@
     },
     {
       "id": "FE-M2A",
-      "title": "Frontend: Start work button and line intake drawers",
+      "title": "Frontend: core Start work: button, line chooser and intake drawers without proof fields (invoice, weekly, minutes, issue, change, incident, escalation, leadership)",
       "refs": [
         "R-START"
       ],
       "evidence": [
-        "S-SCREENS",
+        "S-DECISIONS-V4",
+        "S-DECISIONS-V5",
         "S-SCOPE",
-        "S-DECISIONS-V4"
+        "S-SCREENS"
       ],
       "owner_role": "frontend developer",
       "status": "planned",
@@ -9642,7 +11766,8 @@
       ],
       "gate_ids": [],
       "acceptance": [
-        "A-START"
+        "A-START",
+        "A-START-INTAKE"
       ],
       "estimate": null,
       "assignee": null,
@@ -9650,15 +11775,15 @@
     },
     {
       "id": "FE-M2B",
-      "title": "Frontend: record a client response and the all-exceptions list",
+      "title": "Frontend: all-exceptions list (exceptions only)",
       "refs": [
-        "R-RESPONSE",
         "R-EXCEPTION"
       ],
       "evidence": [
-        "S-SCREENS",
+        "S-DECISIONS-V4",
+        "S-DECISIONS-V5",
         "S-SCOPE",
-        "S-DECISIONS-V4"
+        "S-SCREENS"
       ],
       "owner_role": "frontend developer",
       "status": "planned",
@@ -9667,8 +11792,7 @@
       ],
       "gate_ids": [],
       "acceptance": [
-        "A-RESPONSE",
-        "A-RECONCILE"
+        "A-ACCESSIBILITY"
       ],
       "estimate": null,
       "assignee": null,
@@ -9676,14 +11800,15 @@
     },
     {
       "id": "FE-M3-PROJECTS",
-      "title": "Frontend: projects list, project journey and project tabs",
+      "title": "Frontend: projects list and project journey (tabs in FE-M3-PROJECT-TABS and FE-M3-REPORT)",
       "refs": [
         "R-PROJECT"
       ],
       "evidence": [
-        "S-SCREENS",
+        "S-DECISIONS-V4",
+        "S-DECISIONS-V5",
         "S-SCOPE",
-        "S-DECISIONS-V4"
+        "S-SCREENS"
       ],
       "owner_role": "frontend developer",
       "status": "planned",
@@ -9798,6 +11923,110 @@
       "estimate": null,
       "assignee": null,
       "due_date": null
+    },
+    {
+      "id": "FE-M2A-PROOF",
+      "title": "Frontend: Start work proof fields and the Finance and payroll drawers (accounts, schedules, fixed assets, forecast, BU totals, ledger, payroll restricted)",
+      "refs": [
+        "R-START",
+        "R-FINANCE"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V5"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "FE-M2A",
+        "FE-M2B-RESPONSE"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-START-INTAKE",
+        "A-PAYROLL"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M2B-RESPONSE",
+      "title": "Frontend: record a response (client response, SOW signature, team input, RFP outcome) and reconcile on the work item",
+      "refs": [
+        "R-RESPONSE",
+        "R-EXCEPTION"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V5"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "FE-WORKITEM"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-RESPONSE",
+        "A-RECONCILE",
+        "A-RFP-OUTCOME"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M3-PROJECT-TABS",
+      "title": "Frontend: project tabs: milestones, documents, registers and actions",
+      "refs": [
+        "R-PROJECT"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V5"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "FE-M3-PROJECTS"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-PROJECT-TABS"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
+    },
+    {
+      "id": "FE-M3-REPORT",
+      "title": "Frontend: project money tab report with drill-down (SCR-12)",
+      "refs": [
+        "R-PROJECT",
+        "R-REPORTS"
+      ],
+      "evidence": [
+        "S-SCREENS",
+        "S-SCOPE",
+        "S-DECISIONS-V5"
+      ],
+      "owner_role": "frontend developer",
+      "status": "planned",
+      "depends_on": [
+        "FE-M3-PROJECTS"
+      ],
+      "gate_ids": [],
+      "acceptance": [
+        "A-PROJECT",
+        "A-REPORT"
+      ],
+      "estimate": null,
+      "assignee": null,
+      "due_date": null
     }
   ],
   "milestones": [
@@ -9874,7 +12103,9 @@
         "FE-M2",
         "FE-M2A",
         "FE-M2B",
-        "FE-DECIDE-VARIANTS"
+        "FE-DECIDE-VARIANTS",
+        "FE-M2A-PROOF",
+        "FE-M2B-RESPONSE"
       ],
       "evidence": [
         "S-SCREENS"
@@ -9882,7 +12113,8 @@
       "owner_role": "delivery owner",
       "exit_criteria": [
         "A-START, A-RESPONSE, A-RECONCILE, A-RESUME pass",
-        "A-DECIDE-VARIANTS passes once D-DECISION-VARIANTS is decided"
+        "A-DECIDE-VARIANTS passes once D-DECISION-VARIANTS is decided",
+        "A-START-INTAKE and A-RFP-OUTCOME pass on the contract mock"
       ],
       "gate_ids": [
         "D-RETURN",
@@ -9902,14 +12134,17 @@
         "FE-M3-PROJECTS",
         "FE-M3-OVERVIEW",
         "FE-M3-FINANCE",
-        "FE-M3-SETUP"
+        "FE-M3-SETUP",
+        "FE-M3-PROJECT-TABS",
+        "FE-M3-REPORT"
       ],
       "evidence": [
         "S-SCREENS"
       ],
       "owner_role": "delivery owner",
       "exit_criteria": [
-        "A-PROJECT, A-REPORT, A-OVERVIEW, A-MONTHEND, A-PAYROLL, A-SETUP pass"
+        "A-PROJECT, A-REPORT, A-OVERVIEW, A-MONTHEND, A-PAYROLL, A-SETUP pass",
+        "A-PROJECT-TABS passes"
       ],
       "gate_ids": []
     },
