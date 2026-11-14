@@ -177,3 +177,5 @@
 {"at":"2026-11-14T00:42:58Z","feature":"F-02","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"eab6dffa85a3","written_at":"2026-11-14T00:42:49Z"}
 {"at":"2026-11-14T00:42:58Z","feature":"F-02","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"eab6dffa85a3","written_at":"2026-11-14T00:42:20Z"}
 {"at":"2026-11-14T00:44:58Z","feature":"F-02","round":2,"kind":"review","role":"integrated_qa","verdict":"CHANGES","reviewer":"reviewer-qa","commit":"eab6dffa85a3","findings":{"QA-2-2":"medium","QA-2-3":"low","QA-2-1":"low"},"written_at":"2026-11-14T00:44:44Z"}
+{"at":"2026-11-14T01:20:10Z","feature":"F-04","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":61.4,"commit":"86aefc6d97a2"}
+{"at":"2026-11-14T01:20:20Z","feature":"F-04","round":1,"kind":"transition","head":"86aefc6d97a2","from":"IMPLEMENTING","to":"IN_REVIEW"}

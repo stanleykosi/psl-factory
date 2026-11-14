@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 8ebcd417384e879b8b5bc7a48a475a6b4bc4d7e4
+COMMIT: 86aefc6d97a27dcb0f7c0801c9edce099038752d
 BUILDER: builder
 LANE: full
 
@@ -62,3 +62,10 @@ None (round 1).
 
 ## Blocked
 None.
+
+
+## Integration with the base (coordinator, 14 Nov 2026)
+After the builder pushed 8ebcd41, the base gained PR #7 (SAMPLE DATA tag hidden) and PR #8 (My work rows match their work item fixtures). The coordinator merged the base in as a3797d0 (kept all three mock imports: ajv, ajv-formats, workList) and committed 86aefc6:
+- My work's PM sample rows moved from W-1201..W-1205 to W-1301..W-1305, so the decision fixtures keep W-1201..W-1208 and PR #8's row-to-item guard test passes.
+- tests/decide.test.tsx no longer expects the hidden SAMPLE DATA tag.
+On 86aefc6: delivery/checks.sh exit 0 (vitest 311 passed; one run before had a transient ECONNRESET in mock-contract.test.ts that passed 3/3 on re-run and in the next full run), Playwright 78/78.

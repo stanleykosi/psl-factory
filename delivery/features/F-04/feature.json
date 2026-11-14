@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-04",
   "outcome": "Decide one exact version: approve, return or reject, with stale and cannot-act views",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -69,7 +69,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T01:20:10Z",
+      "seconds": 61.4,
+      "evidence_ref": "delivery/features/F-04/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -147,7 +160,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "25cd30e4e1dd4561bc4aad4ef182fe3055d5cc26",
     "task_branch": "fe-decide-decide-one-exact-version-approve-return",
-    "head_sha": "25cd30e4e1dd4561bc4aad4ef182fe3055d5cc26",
+    "head_sha": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-04",
     "pr_url": null,
     "pr_number": null,
@@ -158,7 +171,70 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "architecture/sources/decisions-2026-11-13-v3.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-02/decision.md",
+      "delivery/features/F-02/feature.json",
+      "delivery/features/F-02/round-2/acceptance-pmo.md",
+      "delivery/features/F-02/round-2/acceptance-product.md",
+      "delivery/features/F-02/round-2/review-qa.md",
+      "delivery/features/F-02/round-2/review-technical.md",
+      "delivery/features/F-02/round-2/review-ui.md",
+      "delivery/features/F-02/round-2/review-ux.md",
+      "delivery/features/F-04/feature.json",
+      "delivery/features/F-04/round-1/build.md",
+      "frontend/e2e/decide.spec.ts",
+      "frontend/e2e/frame.spec.ts",
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/work/W-1201.approve.json",
+      "frontend/mock/fixtures/work/W-1201.json",
+      "frontend/mock/fixtures/work/W-1201.reject.json",
+      "frontend/mock/fixtures/work/W-1201.return.json",
+      "frontend/mock/fixtures/work/W-1202.json",
+      "frontend/mock/fixtures/work/W-1203.json",
+      "frontend/mock/fixtures/work/W-1204.json",
+      "frontend/mock/fixtures/work/W-1205.json",
+      "frontend/mock/fixtures/work/W-1206.json",
+      "frontend/mock/fixtures/work/W-1207.json",
+      "frontend/mock/fixtures/work/W-1207.next.json",
+      "frontend/mock/fixtures/work/W-1208.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/package.json",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/schema.d.ts",
+      "frontend/src/api/types.ts",
+      "frontend/src/app/my-work/page.tsx",
+      "frontend/src/app/work/[id]/decide/page.tsx",
+      "frontend/src/features/decide/DecidePanel.tsx",
+      "frontend/src/features/decide/DecideStates.tsx",
+      "frontend/src/features/decide/DecideView.tsx",
+      "frontend/src/features/decide/DecisionContent.tsx",
+      "frontend/src/features/decide/decide.css",
+      "frontend/src/features/decide/format.ts",
+      "frontend/src/features/decide/useDecision.ts",
+      "frontend/src/features/my-work/FilterPanel.tsx",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/MyWorkPage.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/icons.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/shell/SampleLabel.tsx",
+      "frontend/src/shell/sample.ts",
+      "frontend/tests/api-schema-drift.test.ts",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/mock-decide.test.ts",
+      "frontend/tests/mock-row-item-match.test.ts",
+      "frontend/tests/mock-work-list.test.ts",
+      "frontend/tests/my-work-model.test.ts",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/work-item.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -209,6 +285,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T01:20:20Z",
+      "round": 1,
+      "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "reason": null
     }
   ],
   "routing": {
@@ -226,9 +310,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
   },
   "blocked": null
 }
