@@ -602,3 +602,4 @@
 {"at":"2026-11-14T07:18:05Z","feature":"F-11","round":1,"kind":"finding","action":"add","finding":"SEC-1-2","by":"reviewer-security","severity":"low","owner":"backend","blocking":false,"role":"security"}
 {"at":"2026-11-14T07:18:05Z","feature":"F-11","round":1,"kind":"finding","action":"add","finding":"SEC-1-3","by":"reviewer-security","severity":"low","owner":"backend","blocking":false,"role":"security"}
 {"at":"2026-11-14T07:18:06Z","feature":"F-11","round":1,"kind":"transition","head":"06b4c0e93bbc","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-14T07:19:55Z","feature":"F-10","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/16","git.pr_number":16}}

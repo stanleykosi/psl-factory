@@ -1,0 +1,830 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:19:09.187Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile-sow-signed.dc.html",
+  "boardName": "SCR-16-mobile-sow-signed.dc.html",
+  "pageUrl": "http://localhost:4401/work/W-1602/respond?task=T-1602",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 74 is below 90.",
+    "15 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 94.1,
+    "coverageWithExceptions": 100,
+    "visual": 74
+  },
+  "visual": {
+    "score": 74,
+    "allCellsScore": 75.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 965,
+    "cell": 12,
+    "contentCells": 2198,
+    "mismatchedCells": 572
+  },
+  "coverage": {
+    "total": 17,
+    "found": 16,
+    "coverage": 94.1,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← SOW",
+        "pageName": "← SOW",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 50,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 62,
+          "w": 50,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SOW-0207",
+        "pageName": "SOW-0207",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 77,
+          "w": 58,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "SOW signature",
+        "pageName": "SOW signature",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 124,
+          "w": 358,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Document",
+        "pageName": "Document",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 158,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SOW-0207 v1 · Tamarind Loans · sent 18 Dec 10:30",
+        "pageName": "SOW-0207 v1 · Tamarind Loans · sent 18 Dec 10:30",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 183,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The version the client received",
+        "pageName": "The version the client received",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 183,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 237,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Who signed",
+        "pageName": "Who signed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 212,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 267,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ngozi Bello · Head of Lending Operations, Tamarind Loans",
+        "pageName": "Ngozi Bello · Head of Lending Operations, Tamarind Loans",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 237,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 292,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "When",
+        "pageName": "When",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 297,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 352,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What they did",
+        "pageName": "What they did",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 382,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 525,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 469,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 604,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SOW-0207-v1-signed.pdf",
+        "pageName": "SOW-0207-v1-signed.pdf",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 506,
+          "w": 166,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 641,
+          "w": 268,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 1.1 MB",
+        "pageName": "Uploaded · 1.1 MB",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 526,
+          "w": 100,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 659,
+          "w": 268,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.",
+        "pageName": "What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 566,
+          "w": 358,
+          "h": 83
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 770,
+          "w": 358,
+          "h": 83
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next:",
+        "pageName": "What happens next:",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 28,
+          "y": 577,
+          "w": 130,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 28,
+          "y": 781,
+          "w": 130,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record signature",
+        "pageName": "Record signature",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "20 Dec 2026, 14:10",
+        "key": "text: 20 Dec 2026, 14:10",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 322,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "The board draws When as fixed text; the page has the required datetime-local input (responded_at is sworn and never defaulted). The design check cannot read a value inside a form field (same tool limit as D-16).",
+          "approved_by": ""
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"← SOW\"",
+        "kind": "Link",
+        "name": "← SOW",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 50,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 62,
+          "w": 50,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"SOW-0207\"",
+        "kind": "Text",
+        "name": "SOW-0207",
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 77,
+          "w": 58,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Document\"",
+        "kind": "Text",
+        "name": "Document",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 158,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"SOW-0207 v1 · Tamarind Loans · sent 18 Dec 10:30\"",
+        "kind": "Text",
+        "name": "SOW-0207 v1 · Tamarind Loans · sent 18 Dec 10:30",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 183,
+          "w": 358,
+          "h": 48
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"The version the client received\"",
+        "kind": "Text",
+        "name": "The version the client received",
+        "boardBox": {
+          "x": 16,
+          "y": 183,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 237,
+          "w": 358,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Who signed\"",
+        "kind": "Text",
+        "name": "Who signed",
+        "boardBox": {
+          "x": 16,
+          "y": 212,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 267,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Ngozi Bello · Head of Lending Operations, Tamarind Loans\"",
+        "kind": "Text",
+        "name": "Ngozi Bello · Head of Lending Operations, Tamarind Loans",
+        "boardBox": {
+          "x": 16,
+          "y": 237,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 292,
+          "w": 358,
+          "h": 48
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"When\"",
+        "kind": "Text",
+        "name": "When",
+        "boardBox": {
+          "x": 16,
+          "y": 297,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 352,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"What they did\"",
+        "kind": "Text",
+        "name": "What they did",
+        "boardBox": {
+          "x": 16,
+          "y": 382,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 525,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 16,
+          "y": 469,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 604,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"SOW-0207-v1-signed.pdf\"",
+        "kind": "Text",
+        "name": "SOW-0207-v1-signed.pdf",
+        "boardBox": {
+          "x": 58,
+          "y": 506,
+          "w": 166,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 641,
+          "w": 268,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Uploaded · 1.1 MB\"",
+        "kind": "Text",
+        "name": "Uploaded · 1.1 MB",
+        "boardBox": {
+          "x": 58,
+          "y": 526,
+          "w": 100,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 659,
+          "w": 268,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Pagination \"What happens next:\"",
+        "kind": "Pagination",
+        "name": "What happens next:",
+        "boardBox": {
+          "x": 28,
+          "y": 577,
+          "w": 130,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 28,
+          "y": 781,
+          "w": 130,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Pagination \"What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.\"",
+        "kind": "Pagination",
+        "name": "What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.",
+        "boardBox": {
+          "x": 16,
+          "y": 566,
+          "w": 358,
+          "h": 83
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 770,
+          "w": 358,
+          "h": 83
+        },
+        "reasons": [
+          "order: on the board it comes after Pagination \"What happens next:\"; on the page it comes after Link \"Record signature\"",
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Record signature\"",
+        "kind": "Link",
+        "name": "Record signature",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Back",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 56,
+          "w": 390,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "When",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 377,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 53,
+          "y": 441,
+          "w": 67,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 324,
+          "y": 443,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 467,
+          "w": 358,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Remove SOW-0207-v1-signed.pdf",
+        "container": "form",
+        "pageBox": {
+          "x": 336,
+          "y": 646,
+          "w": 24,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "I confirm this response is genuine and came from the client contact named above.",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 711,
+          "w": 20,
+          "h": 20
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

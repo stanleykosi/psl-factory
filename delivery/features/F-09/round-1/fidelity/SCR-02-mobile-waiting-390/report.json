@@ -1,0 +1,591 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:19:48.311Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-02-mobile-waiting.dc.html",
+  "boardName": "SCR-02-mobile-waiting.dc.html",
+  "pageUrl": "http://localhost:4401/work/W-1601",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 53 is below 90."
+  ],
+  "scores": {
+    "coverage": 10.5,
+    "coverageWithExceptions": 100,
+    "visual": 53
+  },
+  "visual": {
+    "score": 53,
+    "allCellsScore": 54,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1226,
+    "cell": 12,
+    "contentCells": 2290,
+    "mismatchedCells": 1077
+  },
+  "coverage": {
+    "total": 19,
+    "found": 2,
+    "coverage": 10.5,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · release to UAT",
+        "pageName": "Lagoon Health · release to UAT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 22px on the board, 26px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 98,
+          "w": 358,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record the client's response",
+        "pageName": "Record the client’s response",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 1150,
+          "w": 326,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 62,
+          "h": 44
+        },
+        "exception": {
+          "reason": "SCR-02 phone header belongs to F-03 / the frame's phone bar (D-08); F-09 adds only the entry button and the reconcile panel.",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REL-0077",
+        "key": "text: REL-0077",
+        "container": "page",
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 14
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING ON CLIENT",
+        "key": "text: WAITING ON CLIENT",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 106,
+          "w": 138,
+          "h": 21
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "key": "text: DRAFTED",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 149,
+          "w": 100,
+          "h": 12
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v1",
+        "key": "text: v1",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 161,
+          "w": 16,
+          "h": 18
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "key": "text: REVIEWED",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 149,
+          "w": 100,
+          "h": 12
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PMO Lead",
+        "key": "text: PMO Lead",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 161,
+          "w": 74,
+          "h": 18
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "key": "text: APPROVED",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 149,
+          "w": 102,
+          "h": 12
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PMO Lead",
+        "key": "text: PMO Lead",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 161,
+          "w": 74,
+          "h": 18
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "key": "text: SENT",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 197,
+          "w": 100,
+          "h": 12
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "To client 06 Nov",
+        "key": "text: To client 06 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 209,
+          "w": 85,
+          "h": 36
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "key": "text: RECEIPT",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 197,
+          "w": 100,
+          "h": 12
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Delivered",
+        "key": "text: Delivered",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 209,
+          "w": 69,
+          "h": 18
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "key": "text: VERIFIED",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 197,
+          "w": 102,
+          "h": 12
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 209,
+          "w": 13,
+          "h": 18
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola is waiting on Lagoon Health. UAT response due 14 Nov; Tola reminds them on 13 Nov.",
+        "key": "text: Tola is waiting on Lagoon Health. UAT response due 14 Nov; Tola reminds them on 13 Nov.",
+        "container": "page",
+        "boardBox": {
+          "x": 146,
+          "y": 352,
+          "w": 218,
+          "h": 93
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola is waiting on Lagoon Health.",
+        "key": "text: Tola is waiting on Lagoon Health.",
+        "container": "page",
+        "boardBox": {
+          "x": 146,
+          "y": 353,
+          "w": 172,
+          "h": 37
+        },
+        "exception": {
+          "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
+          "approved_by": ""
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MY WORK / PREPARE FOR RELEASE / REL-0077",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "MY WORK",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 73,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 162,
+          "w": 71,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 226,
+          "w": 176,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 18,
+          "y": 228,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 112,
+          "y": 228,
+          "w": 80,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Paid is a separate Finance fact and is not part of this line.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 495,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 74,
+          "y": 718,
+          "w": 156,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cannot approve, send or pay.",
+        "container": "main",
+        "pageBox": {
+          "x": 74,
+          "y": 739,
+          "w": 156,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "container": "main",
+        "pageBox": {
+          "x": 289,
+          "y": 726,
+          "w": 69,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "RECORD THE CLIENT'S UAT RESPONSE",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 1027,
+          "w": 354,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only a PM can decide.",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 1084,
+          "w": 326,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You are PM.",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 1117,
+          "w": 326,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.gstatic.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
