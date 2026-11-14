@@ -1,0 +1,36 @@
+{
+  "id": "W-1006",
+  "title": "Delta Foods · Milestone 1 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0388",
+  "state": "verified",
+  "revision": 7,
+  "stations": [
+    {"name":"Milestone evidence","status":"done"},
+    {"name":"Contract amount","status":"done"},
+    {"name":"Draft invoice","status":"done"},
+    {"name":"Finance review","status":"done"},
+    {"name":"Issue","status":"done"},
+    {"name":"Deliver","status":"done"},
+    {"name":"Verify","status":"verified"}
+  ],
+  "facts": [
+    {"name":"drafted","status":"earned","at":"2026-11-05T08:10:00Z"},
+    {"name":"reviewed","status":"earned","at":"2026-11-05T09:02:00Z"},
+    {"name":"approved","status":"earned","at":"2026-11-05T09:47:00Z"},
+    {"name":"sent","status":"earned","at":"2026-11-05T10:02:00Z"},
+    {"name":"receipt_recorded","status":"earned","at":"2026-11-05T10:09:00Z"},
+    {"name":"verified","status":"earned","at":"2026-11-05T10:12:00Z"}
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {"text":"Found the delivery receipt","status":"done","source":"INV-0388 · delivery reference"},
+      {"text":"Checked it against version 2 and the issue record","status":"done"}
+    ]
+  },
+  "next_step": "Every fact on this line is earned and checked. Payment is tracked separately by Finance; verified doesn't mean paid.",
+  "sample": true
+}

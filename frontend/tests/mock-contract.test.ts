@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
@@ -141,5 +141,119 @@ describe('mock server matches openapi.json', () => {
     });
     expect(run.status).toBe(1);
     expect(run.stderr).toContain('refuses to start');
+  });
+});
+
+describe('mock work items: per-id fixtures, fallback and history parameters', () => {
+  const workDir = join(__dirname, '../mock/fixtures/work');
+  const get = async (path: string) => {
+    const response = await fetch(base + path, { headers: { Cookie: 'psl_mock_persona=finance_lead' } });
+    const text = await response.text();
+    return { status: response.status, text, body: JSON.parse(text) as Record<string, unknown> };
+  };
+  const readJson = (path: string) => JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>;
+  type Row = { _kind?: string; at: string };
+  const w1004 = readJson(join(workDir, 'W-1004.history.json')) as { items: Row[] };
+
+  it('serves the per-id item and 404 for the reserved no-access id', async () => {
+    const w1003 = await get('/api/v1/work/W-1003');
+    expect(w1003.status).toBe(200);
+    expect(w1003.body).toEqual(readJson(join(workDir, 'W-1003.json')));
+    expectValid('E-WORK-ITEM', 200, w1003.body);
+    for (const path of ['/api/v1/work/W-1099', '/api/v1/work/W-1099/history?kind=all']) {
+      const denied = await get(path);
+      expect(denied).toMatchObject({ status: 404, body: { code: 'not_found', message: 'We could not find that record.' } });
+    }
+  });
+
+  it('falls back to the unchanged default fixtures for other ids', async () => {
+    const other = await get('/api/v1/work/ANY-OTHER');
+    expect(other.status).toBe(200);
+    expect(other.body).toEqual(readJson(join(__dirname, '../mock/fixtures/E-WORK-ITEM.json')));
+    const otherHistory = await get('/api/v1/work/ANY-OTHER/history?kind=all');
+    expect(otherHistory.body).toEqual(readJson(join(__dirname, '../mock/fixtures/E-WORK-HISTORY.json')));
+  });
+
+  it('never serves a sidecar file such as W-1004.history as an item', async () => {
+    const sidecar = await get('/api/v1/work/W-1004.history');
+    expect(sidecar.status).toBe(200);
+    expect(sidecar.body).toEqual(readJson(join(__dirname, '../mock/fixtures/E-WORK-ITEM.json')));
+  });
+
+  it('filters by kind, pages by limit and cursor, and treats other limits as 20', async () => {
+    const decisions = await get('/api/v1/work/W-1004/history?kind=decisions');
+    const expected = w1004.items.filter((row) => row._kind === 'decision').map((row) => row.at);
+    expect((decisions.body.items as Row[]).map((row) => row.at)).toEqual(expected);
+    expect(expected.length).toBeGreaterThan(0);
+    expectValid('E-WORK-HISTORY', 200, decisions.body);
+
+    const first = await get('/api/v1/work/W-1004/history?kind=all&limit=10');
+    expect((first.body.items as Row[]).map((row) => row.at)).toEqual(w1004.items.slice(0, 10).map((row) => row.at));
+    expect(typeof first.body.next_cursor).toBe('string');
+    const rest = await get(`/api/v1/work/W-1004/history?kind=all&limit=10&cursor=${encodeURIComponent(first.body.next_cursor as string)}`);
+    expect((rest.body.items as Row[]).map((row) => row.at)).toEqual(w1004.items.slice(10).map((row) => row.at));
+    expect(rest.body).not.toHaveProperty('next_cursor');
+
+    const odd = await get('/api/v1/work/W-1004/history?limit=7');
+    expect((odd.body.items as Row[]).length).toBe(12);
+    expect(odd.body).not.toHaveProperty('next_cursor');
+    const badCursor = await get('/api/v1/work/W-1004/history?limit=10&cursor=nonsense');
+    expect((badCursor.body.items as Row[])[0].at).toBe(w1004.items[0].at);
+  });
+
+  it('never sends the mock-only _kind', async () => {
+    for (const kind of ['all', 'decisions', 'agent_work', 'evidence']) {
+      for (const id of ['W-1001', 'W-1004', 'ANY-OTHER']) {
+        const { text, body } = await get(`/api/v1/work/${id}/history?kind=${kind}&limit=50`);
+        expect(text).not.toContain('"_kind"');
+        expectValid('E-WORK-HISTORY', 200, body);
+      }
+    }
+  });
+
+  it('scenarios still win over the per-id fixtures', async () => {
+    const response = await fetch(`${base}/api/v1/work/W-1003`, { headers: { 'X-Mock-Scenario': '403' } });
+    expect(response.status).toBe(403);
+  });
+
+  it('every fixture in fixtures/work is schema-valid with _kind removed', () => {
+    // Item bodies are W-<digits>.json and histories W-<digits>.history.json; other sidecars (F-04's) are not checked here.
+    const files = readdirSync(workDir).filter((name) => /^W-\d+(\.history)?\.json$/.test(name));
+    expect(files.length).toBeGreaterThanOrEqual(7);
+    for (const name of files) {
+      const body = readJson(join(workDir, name));
+      if (name.endsWith('.history.json')) {
+        const items = (body.items as Record<string, unknown>[]).map((item) =>
+          Object.fromEntries(Object.entries(item).filter(([key]) => key !== '_kind')),
+        );
+        expectValid('E-WORK-HISTORY', 200, { ...body, items });
+      } else {
+        expectValid('E-WORK-ITEM', 200, body);
+        expect(body.sample, name).toBe(true);
+      }
+    }
+  });
+
+  it('W-1004 carries the A-WORKITEM given and a 12-row history', () => {
+    const item = readJson(join(workDir, 'W-1004.json')) as { facts: { name: string; status: string }[]; agent: { status: string; steps: { text: string; status: string }[] } };
+    expect(item.facts.map((f) => `${f.name}:${f.status}`)).toEqual([
+      'drafted:earned',
+      'reviewed:earned',
+      'approved:earned',
+      'sent:not_yet',
+      'receipt_recorded:unknown',
+      'verified:not_yet',
+    ]);
+    expect(item.agent.status).toBe('done');
+    for (const step of item.agent.steps) expect(`${step.text} ${step.status}`).not.toMatch(/approv|send|pay/i);
+    const rows = w1004.items as (Row & { actor: string; event: string; restricted: boolean; version?: string; detail?: string })[];
+    expect(rows).toHaveLength(12);
+    expect([...rows].map((r) => r.at)).toEqual([...rows].map((r) => r.at).sort().reverse());
+    const restricted = rows.filter((r) => r.restricted);
+    expect(restricted).toHaveLength(1);
+    expect(restricted[0]).not.toHaveProperty('version');
+    expect(restricted[0]).not.toHaveProperty('detail');
+    expect(restricted[0].event).toBe('Restricted');
+    expect(rows.filter((r) => !r._kind).map((r) => r.event)).toEqual(['Started the line']);
   });
 });

@@ -4,7 +4,9 @@
 // Persona: cookie psl_mock_persona (finance_lead | pm | none; default finance_lead).
 // Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
 // applied only when the operation declares that status.
-import { readFileSync } from 'node:fs';
+// Work items: E-WORK-ITEM and E-WORK-HISTORY pick fixtures/work/<id>.json and <id>.history.json when
+// present (else the default fixture); W-1099 is the reserved no-access id. History honours kind, limit, cursor.
+import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -30,6 +32,41 @@ const NO_ROUTE = { code: 'not_found', message: 'We could not find that record.' 
 
 function readFixture(name) {
   return JSON.parse(readFileSync(join(here, 'fixtures', `${name}.json`), 'utf8'));
+}
+
+export const NO_ACCESS_WORK_ID = 'W-1099';
+const HISTORY_KINDS = { decisions: 'decision', agent_work: 'agent_work', evidence: 'evidence' };
+const HISTORY_LIMITS = [10, 20, 50];
+
+/** fixtures/work/*.json by file name without .json, e.g. "W-1003" and "W-1004.history". */
+function readWorkFixtures() {
+  const dir = join(here, 'fixtures', 'work');
+  const files = readdirSync(dir).filter((name) => name.endsWith('.json'));
+  return Object.fromEntries(files.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(dir, name), 'utf8'))]));
+}
+
+/** One history page: filter by the mock-only `_kind`, page by an "o:<offset>" cursor, strip `_kind`. */
+function historyPage(history, query) {
+  const kind = HISTORY_KINDS[query.get('kind')];
+  const rows = kind ? history.items.filter((item) => item._kind === kind) : history.items;
+  const limit = HISTORY_LIMITS.includes(Number(query.get('limit'))) ? Number(query.get('limit')) : 20;
+  const match = /^o:(\d+)$/.exec(query.get('cursor') ?? '');
+  const offset = match && Number(match[1]) < rows.length ? Number(match[1]) : 0;
+  const items = rows
+    .slice(offset, offset + limit)
+    .map((item) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== '_kind')));
+  const page = { items, as_of: history.as_of };
+  if (offset + limit < rows.length) page.next_cursor = `o:${offset + limit}`;
+  return page;
+}
+
+function workResponse(operationId, url, fixtures, work) {
+  const workId = decodeCookie(url.pathname.split('/')[4] ?? '');
+  if (workId === NO_ACCESS_WORK_ID) return [404, SCENARIO_BODIES[404]];
+  // Only plain ids ("W-1003") pick a per-id file, so "W-1004.history" or other sidecar names never answer as an item.
+  const own = (name) => (/^W-\d+$/.test(workId) && Object.hasOwn(work, name) ? work[name] : undefined);
+  if (operationId === 'E-WORK-ITEM') return [200, own(workId) ?? fixtures['E-WORK-ITEM']];
+  return [200, historyPage(own(`${workId}.history`) ?? fixtures['E-WORK-HISTORY'], url.searchParams)];
 }
 
 export function loadRoutes(openapi) {
@@ -74,6 +111,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const routes = loadRoutes(openapi);
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
   const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME').map((id) => [id, readFixture(id)]));
+  const work = readWorkFixtures();
 
   return http.createServer((req, res) => {
     // Drain any request body; the mock answers from fixtures only.
@@ -95,6 +133,9 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         return send(res, 403, CSRF_FAILED);
       }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
+      if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
+        return send(res, ...workResponse(route.operationId, url, fixtures, work));
+      }
       return send(res, 200, fixtures[route.operationId]);
     });
   });
