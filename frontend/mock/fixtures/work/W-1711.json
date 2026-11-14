@@ -96,17 +96,34 @@
       "stations_shown": 0,
       "panel": {
         "title": "Confirm what happened",
-        "body": [],
-        "bar_slot": true,
-        "summary": {
-          "text": "No receipt found after 6 checks. Confirm what happened before anything is resent.",
-          "kind": "warning"
-        }
+        "body": []
       },
       "title": "Lagoon Health · Milestone\n2 invoice"
     },
     "fact_tones": {
       "receipt_recorded": "waiting"
     }
-  }
+  },
+  "reconcile": {
+    "what": "Invoice INV-0412 v2 to the billing contact",
+    "sent_at": "2026-11-12T09:55:00Z",
+    "checks": {
+      "count": 6,
+      "first_at": "2026-11-12T10:00:00Z",
+      "last_at": "2026-11-12T12:00:00Z",
+      "agent": "chidi"
+    },
+    "outcomes": [
+      "delivered",
+      "not_delivered",
+      "unknown"
+    ],
+    "evidence_kind": "delivery_receipt",
+    "resend": "one resend of the same version",
+    "unknown_note": "Keep it held and remind me tomorrow",
+    "resend_note": "A resend reuses the same invoice number"
+  },
+  "allowed_actions": [
+    "reconcile"
+  ]
 }

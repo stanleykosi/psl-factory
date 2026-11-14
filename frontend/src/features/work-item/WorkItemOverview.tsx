@@ -115,7 +115,7 @@ export function StationTrack({ stations, state, details, list, quiet, shown }: T
       aria-label="Stations"
       tabIndex={quiet || shown === 0 ? undefined : 0}
     >
-      <div className="psl-track" role="list">
+      <div className="psl-track" role="list" aria-label="Stations in order">
         {stations.map((station, i) => {
           const { text, modifier } = STATIONS[station.status];
           const detail = details?.[i];

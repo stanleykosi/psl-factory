@@ -313,7 +313,7 @@ describe('state panels (AC 12) and links (AC 13)', () => {
 
 describe('read only (AC 14) and no role guesses (AC 15)', () => {
   const allowed = (el: Element) =>
-    el.hasAttribute('aria-expanded') || el.getAttribute('role') === 'radio' || /^(Show more|\+ \d+ earlier entries|Try again)$/.test(el.textContent ?? '');
+    el.hasAttribute('aria-expanded') || el.getAttribute('role') === 'radio' || /^(Show more|\+ \d+ earlier entries|Try again|Record and continue)$/.test(el.textContent ?? '');
 
   it.each([...BOARD_IDS, 'W-1001', 'W-1002', 'W-1003', 'W-1004', 'W-1005', 'W-1006'])('%s sends only GETs to E-WORK-ITEM and E-WORK-HISTORY', async (id) => {
     phone();
@@ -407,11 +407,11 @@ describe('round 3 fixes', () => {
     expect(screen.getByRole('link', { name: 'See all exceptions' }).closest('.work-sr')).toBeNull();
   });
 
-  it('puts the tabs under the header on phones, and keeps the contract title and started line', async () => {
+  it('puts the tabs in the header on phones, and keeps the contract title and started line', async () => {
     phone();
     await open('W-1701');
     const header = document.querySelector('header.work-header')!;
-    expect(header.nextElementSibling!.getAttribute('aria-label')).toBe('Work item');
+    expect(within(header as HTMLElement).getByRole('navigation', { name: 'Work item' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Lagoon Health · Milestone 2 invoice');
     expect(header.textContent).toContain('Started by Tunde Bello (PMO)');
   });

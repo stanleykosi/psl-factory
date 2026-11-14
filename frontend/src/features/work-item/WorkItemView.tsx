@@ -26,8 +26,8 @@ type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: Rea
 
 /**
  * Desktop: the breadcrumb or, on the state boards, the reference and client line; then the title line with the
- * state tag and the Overview / History tabs; then the started line. Without a started line the revision stays in the page for screen readers only.
- * Phones: the title, then the tag, then the tabs (placed by the page); the reference sits at the end of the frame's bar, as the boards draw it.
+ * state tag; the Overview / History tabs close the crumb line (after the header on history); then the started line. Without a started line the revision stays in the page for screen readers only.
+ * Phones: the title, then the tag with the tabs at the end of its line (beside the title on history); the reference sits at the end of the frame's bar, as the boards draw it.
  * History on phones reads "History · <ref>" with HISTORY in the bar.
  */
 function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
@@ -71,6 +71,7 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
           <div className="work-crumbrow">
             {crumb}
             {!started && sub}
+            {!history && tabs}
           </div>
         )}
         {phone && base && <span className="work-barref psl-mono">{history ? 'HISTORY' : item.reference}</span>}
@@ -90,12 +91,13 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
             )}
           </h1>
           {!phone && tagEl}
-          {!phone && !history && tabs}
+          {phone && history && tabs}
         </div>
         {phone && !(base && history) && (
           <div className="work-tagline">
             {tagEl}
             {sub}
+            {!history && tabs}
           </div>
         )}
         {!phone && started && sub}
@@ -156,7 +158,6 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   return (
     <>
       <WorkItemHeader item={state.item} tab={tab} phone={phone} tabs={tabs} />
-      {phone && tabs}
       {refreshFailed && (
         <div className="psl-callout psl-callout--warning">
           <WarningIcon />
