@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-09",
   "outcome": "Record a client response or SOW signature with proof, and confirm what happened to an uncertain send",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M2B-RESPONSE"
   ],
@@ -98,11 +98,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -128,25 +130,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design-fidelity gate)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -163,7 +171,7 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -180,11 +188,25 @@
           ],
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:11Z",
+          "refs": [
+            "14d6953"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "f37df1c"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "14d6953"
       ]
     },
     {
@@ -200,7 +222,7 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -217,11 +239,25 @@
           ],
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "`WorkItemOverview.tsx:1-3` now names ResponseEntryLink and ReconcilePanel's E-WORK-ACTION as the only write."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "dcf9fee"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemOverview.tsx:1-3` now names ResponseEntryLink and ReconcilePanel's E-WORK-ACTION as the only write."
       ]
     },
     {
@@ -237,7 +273,7 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -254,11 +290,25 @@
           ],
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "`load` sets `responderId` only when the task names exactly one responder, and sets `station` from `recordedStation`. `SuccessView` prefers `station`. Tests cover W-1601 reopened (\"REL-0077 \u00b7 LAGOON HEALTH\", h1 \"Client UAT response\"), W-1605 (two responders, no organisation) and W-1602 (\"SOW signature\", \"SOW-0207 \u00b7 TAMARIND LOANS\"). On the inference itself, see TECH-2-1."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "c23d727"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`load` sets `responderId` only when the task names exactly one responder, and sets `station` from `recordedStation`. `SuccessView` prefers `station`. Tests cover W-1601 reopened (\"REL-0077 \u00b7 LAGOON HEALTH\", h1 \"Client UAT response\"), W-1605 (two responders, no organisation) and W-1602 (\"SOW signature\", \"SOW-0207 \u00b7 TAMARIND LOANS\"). On the inference itself, see TECH-2-1."
       ]
     },
     {
@@ -274,7 +324,7 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -291,11 +341,25 @@
           ],
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "Pristine form at 1440 and 390 shows \"Choose when and what they did to record this.\" as a plain muted-grey hint (rgb 74,83,87, no alert role). The red alert, \"Add the proof and confirm it's genuine to record this.\", appears only after the first change."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "af17911"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Pristine form at 1440 and 390 shows \"Choose when and what they did to record this.\" as a plain muted-grey hint (rgb 74,83,87, no alert role). The red alert, \"Add the proof and confirm it's genuine to record this.\", appears only after the first change."
       ]
     },
     {
@@ -311,7 +375,7 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -328,11 +392,25 @@
           ],
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "After recording and after a reload, the h1 is \"Client UAT response\" both times, with eyebrow \"REL-0077 \u00b7 LAGOON HEALTH\" on desktop. Same at 390."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "c23d727"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "After recording and after a reload, the h1 is \"Client UAT response\" both times, with eyebrow \"REL-0077 \u00b7 LAGOON HEALTH\" on desktop. Same at 390."
       ]
     },
     {
@@ -348,7 +426,7 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -365,11 +443,25 @@
           ],
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "At 390 on W-1603 \"Record and continue\" is enabled before a choice. Pressing it shows \"Choose what happened to continue.\" (role=alert) and focuses the first option; nothing is sent. At 1440 the button stays disabled, as before."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "bd64e5e, 22660e9"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 390 on W-1603 \"Record and continue\" is enabled before a choice. Pressing it shows \"Choose what happened to continue.\" (role=alert) and focuses the first option; nothing is sent. At 1440 the button stays disabled, as before."
       ]
     },
     {
@@ -385,7 +477,7 @@
         "delivery/features/F-09/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -402,11 +494,48 @@
           ],
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T08:42:27Z",
+          "refs": [
+            "14d6953"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "c08f47d (merge), 14d6953"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "14d6953"
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`recordedStation` (`frontend/src/features/response/useResponse.ts:82-86`) treats the done station just before the current one as the station where the response was recorded. This holds when the item moves forward by one station. It does not hold when (a) a \"changes requested\" or \"rejected\" answer sends the item back for rework: then there is either no done station before the current one, so the heading falls back to the current station (for example \"Prepare UAT pack\"), or there is an unrelated one; or (b) the item has moved past the next station before someone reopens the task: then the heading names the later station. In both cases the heading is plausible but wrong. Round 1 had the same weakness, since it always used the current station, so this is no regression. The fix is the `recorded.station` (or similar) field that D-38 already says to raise. Until then, the inferred heading should not be taken as a fact about where the response was recorded.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:12Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
       ]
     }
   ],
@@ -1441,6 +1570,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T08:37:55Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T08:42:28Z",
       "round": 2,
       "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
       "reason": null
