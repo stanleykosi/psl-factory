@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-03",
   "outcome": "Open one work item and read its history",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -152,7 +152,7 @@
         "delivery/features/F-03/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -169,11 +169,25 @@
           ],
           "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "mock-contract.test.ts directory test now filters on `^W-\\d+(\\.history)?\\.json$`."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "99b181f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "mock-contract.test.ts directory test now filters on `^W-\\d+(\\.history)?\\.json$`."
       ]
     },
     {
@@ -189,7 +203,7 @@
         "delivery/features/F-03/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -206,11 +220,25 @@
           ],
           "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "server.mjs `own()` returns undefined unless workId matches `^W-\\d+$`, so `W-1004.history` returns the default item. A new test covers it."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "99b181f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "server.mjs `own()` returns undefined unless workId matches `^W-\\d+$`, so `W-1004.history` returns the default item. A new test covers it."
       ]
     },
     {
@@ -226,7 +254,7 @@
         "delivery/features/F-03/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -243,11 +271,25 @@
           ],
           "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "useWorkItem.ts poll catch sets the error state and returns without rescheduling for unauthenticated, forbidden and not_found. A unit test covers 403, 404 and 401."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "4f3831d"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "useWorkItem.ts poll catch sets the error state and returns without rescheduling for unauthenticated, forbidden and not_found. A unit test covers 403, 404 and 401."
       ]
     },
     {
@@ -263,7 +305,7 @@
         "delivery/features/F-03/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -280,11 +322,25 @@
           ],
           "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "Closed on the design-owner decision recorded in round-2/build.md and the 14 Nov 2026 decision: the agent station keeps the design system's blue (`psl-station--agent`), and the amber in the processing artboard is superseded. Checked on /work/W-1003 at 1440px (station 03 blue, \"Agent working\") and at 390px (blue row, \"Agent working\" on the right). The agent card on the phone also uses the blue action tint."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "none (decision)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Closed on the design-owner decision recorded in round-2/build.md and the 14 Nov 2026 decision: the agent station keeps the design system's blue (`psl-station--agent`), and the amber in the processing artboard is superseded. Checked on /work/W-1003 at 1440px (station 03 blue, \"Agent working\") and at 390px (blue row, \"Agent working\" on the right). The agent card on the phone also uses the blue action tint."
       ]
     },
     {
@@ -300,7 +356,7 @@
         "delivery/features/F-03/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -317,11 +373,48 @@
           ],
           "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "/work/W-1099 at 1440px and 390px: grey NO ACCESS tag, filled dark \"Back to my queue\" button, no item id or title shown. Matches the SCR-02-desktop-permission artboard (tag #E2E5E0, button #1F2427). The \"Ask for access\" control and the audit line are omitted, as the spec's gaps list records."
+          ],
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "7d2a270"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "/work/W-1099 at 1440px and 390px: grey NO ACCESS tag, filled dark \"Back to my queue\" button, no item id or title shown. Matches the SCR-02-desktop-permission artboard (tag #E2E5E0, button #1F2427). The \"Ask for access\" control and the audit line are omitted, as the spec's gaps list records."
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Between 720px and about 920px the seven stations sit in a row that is wider than the track. Station 07 \"Verify\" is clipped and hidden behind an internal horizontal scroll with no visible cue. Expected: all seven stations visible at every width where the row layout is used, or the list layout used until the row fits. Actual at 760px on /work/W-1005: `.work-track` clientWidth 704, scrollWidth 864, and the seventh station is cut off. The row fits at 1000px. Cause: `frontend/src/features/work-item/work-item.css` (`.work-track { overflow-x: auto; }` at the top of the file, with the row rules above the 719.98px media query). Screenshot: `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/a400a30b-92cb-4efc-99c2-4a72d08a67f7/scratchpad/f03r2-ui/track-760.png`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-03/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4"
+        }
       ]
     }
   ],
@@ -377,6 +470,61 @@
           "snapshot_ref": "9bb054bba06ab04ae80f40dc97ed5e8a63248cf4",
           "evidence_refs": [
             "delivery/features/F-03/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-03/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (visual lens only; no code or spec edits)",
+          "snapshot_ref": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+          "evidence_refs": [
+            "delivery/features/F-03/round-2/review-ui.md"
           ]
         }
       }
@@ -470,7 +618,7 @@
     }
   },
   "created_at": "2026-11-13T22:44:58Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 3,
   "history": [
     {
@@ -520,6 +668,22 @@
       "round": 2,
       "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T00:05:20Z",
+      "round": 2,
+      "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T00:05:20Z",
+      "round": 3,
+      "head": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4",
+      "reason": null
     }
   ],
   "routing": {
@@ -535,10 +699,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "4f3831d4aef9088f75beb7aaaeda518fa14ee3f4"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

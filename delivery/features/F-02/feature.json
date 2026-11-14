@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -94,11 +94,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -124,18 +126,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (visual consistency against the approved SCR-01 and STATES boards, tokens and layout at desktop and phone width)",
+      "snapshot_ref": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "evidence_refs": [
+        "delivery/features/F-02/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -175,7 +181,7 @@
         "delivery/features/F-02/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -192,11 +198,25 @@
           ],
           "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "`frontend/mock/work-list.mjs:31` now refuses unassigned with 403 only for non-lead personas other than `none`. Persona `none` reaches the normal path and gets empty items with zero counts (no `unassigned` key, since it is not a lead), matching C8. `tests/mock-work-list.test.ts` asserts that exact body, and the 403 case for `pm` is kept."
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "55e8194"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`frontend/mock/work-list.mjs:31` now refuses unassigned with 403 only for non-lead personas other than `none`. Persona `none` reaches the normal path and gets empty items with zero counts (no `unassigned` key, since it is not a lead), matching C8. `tests/mock-work-list.test.ts` asserts that exact body, and the 403 case for `pm` is kept."
       ]
     },
     {
@@ -235,7 +255,7 @@
         "delivery/features/F-02/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -252,11 +272,25 @@
           ],
           "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T00:05:20Z",
+          "refs": [
+            "Scratch copy of `frontend/` at 55e8194, `next dev` on 3321 with the contract mock on 3322, Chromium at 390x844 (Africa/Lagos, reduced motion), finance_lead, `/my-work`. Measured all 20 `.my-work__card` elements: tag bottom is above title top on every card, tag and title left edges match (diff 0), gap 4px, tag height 23px on every card. Screenshot inspected at full length; headers align. Pre-fix header misalignment no longer appears."
+          ],
+          "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a3ecdcd"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Scratch copy of `frontend/` at 55e8194, `next dev` on 3321 with the contract mock on 3322, Chromium at 390x844 (Africa/Lagos, reduced motion), finance_lead, `/my-work`. Measured all 20 `.my-work__card` elements: tag bottom is above title top on every card, tag and title left edges match (diff 0), gap 4px, tag height 23px on every card. Screenshot inspected at full length; headers align. Pre-fix header misalignment no longer appears."
       ]
     }
   ],
@@ -446,6 +480,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-13T23:47:29Z",
+      "round": 2,
+      "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T00:05:26Z",
       "round": 2,
       "head": "55e81940bdf715f222ebd7f15f26a9150d981915",
       "reason": null
