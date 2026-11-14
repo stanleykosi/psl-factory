@@ -698,3 +698,12 @@
 {"at":"2026-11-14T08:26:51Z","feature":"F-11","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/20","git.pr_number":20}}
 {"at":"2026-11-14T08:26:51Z","feature":"F-11","round":3,"kind":"transition","head":"604e1b0a0f8f","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-14T08:26:53Z","feature":"F-11","round":3,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-14T08:36:01Z","feature":"F-09","round":2,"kind":"finding","action":"fix","finding":"TECH-1-1","by":"builder"}
+{"at":"2026-11-14T08:36:01Z","feature":"F-09","round":2,"kind":"finding","action":"fix","finding":"TECH-1-2","by":"builder"}
+{"at":"2026-11-14T08:36:01Z","feature":"F-09","round":2,"kind":"finding","action":"fix","finding":"TECH-1-3","by":"builder"}
+{"at":"2026-11-14T08:36:01Z","feature":"F-09","round":2,"kind":"finding","action":"fix","finding":"UX-1-1","by":"builder"}
+{"at":"2026-11-14T08:36:01Z","feature":"F-09","round":2,"kind":"finding","action":"fix","finding":"UX-1-2","by":"builder"}
+{"at":"2026-11-14T08:36:01Z","feature":"F-09","round":2,"kind":"finding","action":"fix","finding":"UX-1-3","by":"builder"}
+{"at":"2026-11-14T08:36:01Z","feature":"F-09","round":2,"kind":"finding","action":"fix","finding":"UI-1-1","by":"builder"}
+{"at":"2026-11-14T08:37:42Z","feature":"F-09","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":101.5,"commit":"14d6953dd4a3"}
+{"at":"2026-11-14T08:37:55Z","feature":"F-09","round":2,"kind":"transition","head":"14d6953dd4a3","from":"IMPLEMENTING","to":"IN_REVIEW"}

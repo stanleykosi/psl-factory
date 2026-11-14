@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-09",
   "outcome": "Record a client response or SOW signature with proof, and confirm what happened to an uncertain send",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2B-RESPONSE"
   ],
@@ -82,6 +82,18 @@
       "at": "2026-11-14T08:03:59Z",
       "seconds": 73.6,
       "evidence_ref": "delivery/features/F-09/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T08:37:42Z",
+      "seconds": 101.5,
+      "evidence_ref": "delivery/features/F-09/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -151,14 +163,28 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "f37df1c"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f37df1c"
       ]
     },
     {
@@ -174,14 +200,28 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "dcf9fee"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "dcf9fee"
       ]
     },
     {
@@ -197,14 +237,28 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "c23d727"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c23d727"
       ]
     },
     {
@@ -220,14 +274,28 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "af17911"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "af17911"
       ]
     },
     {
@@ -243,14 +311,28 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "c23d727"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c23d727"
       ]
     },
     {
@@ -266,14 +348,28 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "bd64e5e, 22660e9"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "bd64e5e, 22660e9"
       ]
     },
     {
@@ -289,14 +385,28 @@
         "delivery/features/F-09/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "c08f47d (merge), 14d6953"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c08f47d (merge), 14d6953"
       ]
     }
   ],
@@ -388,7 +498,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "92d029b21768858dd0d1402ea22d02c98827508e",
     "task_branch": "fe-m2b-response-record-a-client-response-or-sow-signatur",
-    "head_sha": "4efaee8910bfe52304b9f253e66d96689f03862b",
+    "head_sha": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-09",
     "pr_url": null,
     "pr_number": null,
@@ -559,6 +669,31 @@
       "delivery/features/F-08/round-2/review-qa.md",
       "delivery/features/F-09/feature.json",
       "delivery/features/F-09/round-1/build.md",
+      "delivery/features/F-09/round-1/checks.md",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-sow-signed-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-sow-signed-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-success-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-success-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-validation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-validation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-sow-signed-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-sow-signed-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-success-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-success-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-validation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-validation-390/side-by-side.png",
       "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board-marked.png",
       "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board.png",
       "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board.rendered.html",
@@ -672,6 +807,10 @@
       "delivery/features/F-09/round-1/fidelity/_driver/runall.sh",
       "delivery/features/F-09/round-1/fidelity/exception-requests.json",
       "delivery/features/F-09/round-1/fidelity/scores.txt",
+      "delivery/features/F-09/round-1/review-security.md",
+      "delivery/features/F-09/round-1/review-technical.md",
+      "delivery/features/F-09/round-1/review-ui.md",
+      "delivery/features/F-09/round-1/review-ux.md",
       "delivery/features/F-10/feature.json",
       "delivery/features/F-10/fidelity-exceptions.json",
       "delivery/features/F-10/round-1/fidelity-review/SCR-36-desktop-1440/board-marked.png",
@@ -867,6 +1006,28 @@
       "delivery/features/F-11/round-1/review-ux.md",
       "delivery/features/F-11/round-2/build.md",
       "delivery/features/F-11/round-2/checks.md",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-delivery-rules-1440/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-finance-rules-1440/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-rules-1440/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-delivery-rules-390/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-finance-rules-390/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-rules-390/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-finance-1440.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-finance-800.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-rules-1440.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-rules-800.png",
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-delivery-rules-1440/board-marked.png",
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-delivery-rules-1440/board.png",
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-delivery-rules-1440/board.rendered.html",
@@ -896,10 +1057,60 @@
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-rules-1440/side-by-side.png",
       "delivery/features/F-11/round-2/review-security.md",
       "delivery/features/F-11/round-2/review-technical.md",
+      "delivery/features/F-11/round-2/review-ui.md",
       "delivery/features/F-11/round-2/review-ux.md",
+      "delivery/features/F-11/round-3/build.md",
+      "delivery/features/F-11/round-3/checks.md",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/exception-requests.json",
+      "delivery/features/F-11/round-3/fidelity/results.txt",
+      "delivery/features/F-11/round-3/qa-evidence/phone-finance-bar-390.png",
+      "delivery/features/F-11/round-3/qa-evidence/rules-after-show-more-1440.png",
+      "delivery/features/F-11/round-3/review-qa.md",
+      "delivery/features/F-11/round-3/review-security.md",
+      "delivery/features/F-11/round-3/review-technical.md",
+      "delivery/features/F-11/round-3/review-ui.md",
+      "delivery/features/F-11/round-3/review-ux.md",
+      "delivery/features/F-12/decision.md",
       "delivery/features/F-12/feature.json",
       "delivery/features/F-12/fidelity-exceptions.json",
       "delivery/features/F-12/round-1/acceptance-pmo.md",
+      "delivery/features/F-12/round-1/acceptance-product.md",
       "delivery/features/F-12/round-1/build.md",
       "delivery/features/F-12/round-1/checks.md",
       "delivery/features/F-12/round-1/fidelity-review/SCR-15-desktop-1440/board-marked.png",
@@ -984,6 +1195,123 @@
       "delivery/features/F-12/round-1/review-technical.md",
       "delivery/features/F-12/round-1/review-ui.md",
       "delivery/features/F-12/round-1/review-ux.md",
+      "delivery/features/F-14/feature.json",
+      "delivery/features/F-14/readiness.md",
+      "delivery/features/F-14/round-1/fidelity/_driver/act-wait.mjs",
+      "delivery/features/F-14/round-1/fidelity/_driver/fid.sh",
+      "delivery/features/F-14/round-1/fidelity/_driver/prod.sh",
+      "delivery/features/F-14/round-1/fidelity/_driver/runall.sh",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-issue-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-issue-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-14/spec.md",
       "delivery/frame-phone-back/build-note.md",
       "delivery/frame-phone-back/review-technical.md",
       "frontend/e2e/frame.spec.ts",
@@ -1108,6 +1436,14 @@
       "round": 2,
       "head": "4efaee8910bfe52304b9f253e66d96689f03862b",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T08:37:55Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
     }
   ],
   "routing": {
@@ -1125,9 +1461,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
   },
   "blocked": null
 }
