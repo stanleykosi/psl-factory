@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -98,13 +98,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "reviewer-technical",
-      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
-      "evidence_refs": [
-        "delivery/features/F-14/round-2/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -130,22 +128,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
-      "evidence_refs": [
-        "delivery/features/F-14/round-2/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "changes_requested",
-      "reviewer": "reviewer-ui",
-      "authority": "UI design reviewer (design fidelity gate, D-41 board-is-spec)",
-      "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
-      "evidence_refs": [
-        "delivery/features/F-14/round-2/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -570,6 +564,61 @@
           "evidence_refs": []
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+          "evidence_refs": [
+            "delivery/features/F-14/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-14/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+          "evidence_refs": [
+            "delivery/features/F-14/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design fidelity gate, D-41 board-is-spec)",
+          "snapshot_ref": "5b9605a81d197187056995c793c626b1b3c2c55d",
+          "evidence_refs": [
+            "delivery/features/F-14/round-2/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -667,7 +716,7 @@
     }
   },
   "created_at": "2026-11-14T07:46:48Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -717,6 +766,22 @@
       "round": 2,
       "head": "5b9605a81d197187056995c793c626b1b3c2c55d",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T14:38:40Z",
+      "round": 2,
+      "head": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T14:38:40Z",
+      "round": 3,
+      "head": "5b9605a81d197187056995c793c626b1b3c2c55d",
+      "reason": null
     }
   ],
   "routing": {
@@ -732,10 +797,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "5b9605a81d197187056995c793c626b1b3c2c55d"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
