@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-13",
   "outcome": "The frontend builds, type-checks and mocks against the v7 contract",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-CONTRACT-V7"
   ],
@@ -168,9 +168,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -188,7 +188,7 @@
     "pr_number": 13,
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "approved",
     "merge_status": "merged",
     "merge_sha": "4a48bfb99f8fd54a1e7e94318b3d377bfb1cbb9a",
@@ -224,9 +224,13 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -281,6 +285,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-14T06:22:09Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T15:03:29Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T15:03:29Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T15:03:29Z",
+      "round": 1,
+      "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T15:03:29Z",
       "round": 1,
       "head": "fe657c6cc1bbe552e569ab0305047dd63e9297ba",
       "reason": null
