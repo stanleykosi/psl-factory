@@ -46,3 +46,6 @@ Files to look at:
 - frontend/mock/server.mjs: claim and decide validation
 - frontend/src/api/schema.d.ts: the v4 types
 - delivery/features/F-04/round-2/review-qa.md: QA-2-1 to QA-2-3
+
+## Human decision (14 Nov 2026)
+Merge route HUMAN_APPROVAL. The design engineer (hunchoweb, designated approver) did the product check, replied "approved", and then gave the direct instruction "merge F-04" after being told what merging accepts (proposed v4 decision fields, open QA-2-1..3, policy limits). PR #9 squash-merged as d15e2931950d378a61086a3ec92a18955b27fe11.

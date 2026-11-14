@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-04",
   "outcome": "Decide one exact version: approve, return or reject, with stale and cannot-act views",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -1167,9 +1167,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -1188,9 +1188,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "d15e2931950d378a61086a3ec92a18955b27fe11",
     "merge_policy": "not_configured",
     "changed_paths": [
       "architecture/sources/decisions-2026-11-13-v3.md",
@@ -1275,12 +1275,22 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-04/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'payments' always needs a human",
+      "surface 'security' always needs a human",
+      "architecture/sources/decisions-2026-11-13-v3.md matches always-human path 'architecture/*'",
+      "62 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1359,6 +1369,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-14T02:30:49Z",
+      "round": 2,
+      "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T02:38:24Z",
+      "round": 2,
+      "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T02:38:25Z",
+      "round": 2,
+      "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T02:39:01Z",
+      "round": 2,
+      "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T02:39:02Z",
       "round": 2,
       "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
       "reason": null
