@@ -119,11 +119,13 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-12/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "coordinator, provisional for the design engineer (hunchoweb)",
+      "authority": "the design engineer's overnight instruction, 14 Nov 2026; recorded in delivery/OVERNIGHT-DECISIONS.md",
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",

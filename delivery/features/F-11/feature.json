@@ -117,11 +117,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical review (lead)",
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "evidence_refs": [
+        "delivery/features/F-11/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -147,11 +149,13 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "evidence_refs": [
+        "delivery/features/F-11/round-2/review-ux.md"
+      ]
     },
     "ui": {
       "status": "pending",
@@ -161,11 +165,13 @@
       "evidence_refs": []
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "evidence_refs": [
+        "delivery/features/F-11/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -389,7 +395,7 @@
         "delivery/features/F-11/round-1/review-qa.md"
       ],
       "raised_by": "reviewer-qa",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -406,11 +412,25 @@
           ],
           "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:44:49Z",
+          "refs": [
+            "Code path read in full. Unit tests \"403 that leaves no editable row\u2026\" and \"finance: a group whose only editable row loses its right\u2026\" (`tests/setup-rules.test.tsx`) check the exact text (`FORBIDDEN.message` + `EDITOR_GONE` + `NOT_SAVED`), that the region is gone, that focus is on the alert, 1 PUT and 2 reads, a single alert, and that Finance clears the callout on the next disclosure. The e2e tests in `e2e/setup.spec.ts` cover the readonly-after-load path on Rules and Finance, with focus, a panel count of 0, 10 rows kept and axe clean. Gate PASS on edc4763 (408 unit tests)."
+          ],
+          "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "9f91efe"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Code path read in full. Unit tests \"403 that leaves no editable row\u2026\" and \"finance: a group whose only editable row loses its right\u2026\" (`tests/setup-rules.test.tsx`) check the exact text (`FORBIDDEN.message` + `EDITOR_GONE` + `NOT_SAVED`), that the region is gone, that focus is on the alert, 1 PUT and 2 reads, a single alert, and that Finance clears the callout on the next disclosure. The e2e tests in `e2e/setup.spec.ts` cover the readonly-after-load path on Rules and Finance, with focus, a panel count of 0, 10 rows kept and axe clean. Gate PASS on edc4763 (408 unit tests)."
       ]
     },
     {
@@ -426,7 +446,7 @@
         "delivery/features/F-11/round-1/review-qa.md"
       ],
       "raised_by": "reviewer-qa",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -443,11 +463,117 @@
           ],
           "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:44:49Z",
+          "refs": [
+            "`resetSetup()` sets `uploads = 0` (`mock/setup.mjs`). `evidence.mjs` uses `nextEvidenceId()`. The mock test checks EV-1, then EV-2, then a reset, then EV-1."
+          ],
+          "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "edc4763"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`resetSetup()` sets `uploads = 0` (`mock/setup.mjs`). `evidence.mjs` uses `nextEvidenceId()`. The mock test checks EV-1, then EV-2, then a reset, then EV-1."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The page-level callout can say \"the Set a rule panel has closed\" while a panel is showing. `announce` checks only the panel's own components (`SetRulePanel.tsx:77-79`). The view decides whether the panel renders from every editable row in the re-read (`RulesView.tsx:57,110`) or in the group (`FinanceRulesView.tsx:104,130`). If the re-read drops the panel's rules but makes a different rule editable, the callout reports the panel closed and the panel stays open on the other rule. Separately, Rules never clears `closedNotice` (`RulesView.tsx:53`). If a later Show more brings editable rows back, the panel reappears under a stale \"panel has closed\" message. Finance clears it when a disclosure is toggled. Both cases are unlikely, and no write is unsafe. Expected: decide from the same set the view uses (for example, pass `editable` membership through, or let the view compare before and after), and clear `closedNotice` in RulesView when the panel renders again.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T07:44:49Z",
+          "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried from UX-1-1: phone fidelity visual scores stay below 90 until the D-08 back-link slot exists. Needs the design engineer's recorded exception. No change this round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T07:44:49Z",
+          "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried from UX-1-2: phone \"\u2190 Setup\" goes to the reserved Roles page. Fine until the phone Setup home is built.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T07:44:49Z",
+          "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503"
+        }
+      ]
+    },
+    {
+      "id": "SEC-2-1",
+      "round": 2,
+      "snapshot_ref": "edc476370a1b20444d9807811a9d7b0a6ed2f503",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The rule that \"the not-saved claim never appears on an uncertain result\" has no test. Expected: a unit test where a 5xx is followed by a re-read with every row's `can_change` false. It should check that the page callout contains EDITOR_GONE but not NOT_SAVED. Today only the 403 path is tested. Actual: the code is correct (frontend/src/features/setup/SetRulePanel.tsx:77-84, `rejected` is true only from line 164), but nothing stops a regression. Path: frontend/tests/setup-rules.test.tsx.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-2/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T07:44:49Z",
+          "head": "edc476370a1b20444d9807811a9d7b0a6ed2f503"
+        }
       ]
     }
   ],

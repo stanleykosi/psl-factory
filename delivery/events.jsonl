@@ -633,3 +633,13 @@
 {"at":"2026-11-14T07:40:09Z","feature":"F-12","round":1,"kind":"finding","action":"add","finding":"PMO-1-3","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T07:40:09Z","feature":"F-12","round":1,"kind":"finding","action":"add","finding":"PMO-1-4","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T07:41:32Z","feature":"F-11","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":66.1,"commit":"edc476370a1b"}
+{"at":"2026-11-14T07:43:58Z","feature":"F-11","round":2,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"edc476370a1b","findings":{"SEC-2-1":"low"},"written_at":"2026-11-14T07:43:49Z"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"edc476370a1b","findings":{"TECH-2-1":"low"},"written_at":"2026-11-14T07:44:28Z"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"edc476370a1b","findings":{"UX-2-1":"low","UX-2-2":"low"},"written_at":"2026-11-14T07:44:28Z"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"verify","finding":"QA-1-1","by":"reviewer-technical"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"verify","finding":"QA-1-2","by":"reviewer-technical"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"add","finding":"TECH-2-1","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"add","finding":"UX-2-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"add","finding":"UX-2-2","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-14T07:44:49Z","feature":"F-11","round":2,"kind":"finding","action":"add","finding":"SEC-2-1","by":"reviewer-security","severity":"low","owner":"frontend","blocking":false,"role":"security"}
+{"at":"2026-11-14T07:45:03Z","feature":"F-12","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"coordinator, provisional for the design engineer (hunchoweb)","commit":"831b17164ca8","written_at":"2026-11-14T07:45:02Z"}
