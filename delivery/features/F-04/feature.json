@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-04",
   "outcome": "Decide one exact version: approve, return or reject, with stale and cannot-act views",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -115,20 +115,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery step 6). Delivery acceptance only. Product acceptance by the design engineer, merge and release keep their own authorities.",
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-04/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "product/design owner for the frontend and designated approver (design/review.json; architecture/sources/decisions-2026-11-13*.md)",
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -949,6 +953,144 @@
           "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Product acceptance is pending (feature.json `product_acceptance.status: pending`). The design engineer must see, in the app:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T02:30:20Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The \"SAMPLE DATA\" label required by AC2 and the spec header is not visible on this build. The shared label is hidden by `NEXT_PUBLIC_SHOW_SAMPLE_LABEL` under the design engineer's 14 Nov decision (PR #7). The decision is recorded in round-1/build.md \"Departures\" and in QA Notes, and the fixtures still carry `sample: true`. Not a defect, but spec.md predates the decision and should be updated. The design engineer should confirm at product acceptance that the page is not required to show its own label.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T02:30:20Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Two spec lines are stale and are the coordinator's to update: spec.md:143 names `psl-btn--confirm` for Approve, but the approved board uses action blue (UI-1-1, fixed). The chain header \"<step_count> steps\" now reads \"1 step\" (UI-1-3). The mock's order of checks (revision 409 before eligibility 403) departs from spec.md's numbered order, and was agreed to satisfy AC16 (round-1 build.md \"Departures\"). The backend (T-DECIDE) should confirm the order.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T02:30:20Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open non-blocking findings stay with their owners. They do not gate delivery: UX-1-2, UX-1-3, UX-1-4 and UX-2-1 to UX-2-2, UI-2-1, QA-2-1 (shell drops `?task=` on a /me 401; a shell-lane fix), QA-2-2 and QA-2-3. UX-1-1 duplicates UI-1-3, which is verified as fixed (QA confirms \"1 step\"). It still reads OPEN in feature.json and should be closed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T02:30:20Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "I had no shell or git access, so I could not re-run `git diff 25cd30e -- architecture` or the file diff. I relied on the round-1 build report, which says the diff is empty (0 lines), the round-2 build report, which says `architecture/` is untouched, and the grep above. feature.json `changed_paths` also lists base-side files: F-02 round-2 delivery files, `architecture/sources/decisions-2026-11-13-v3.md` and the My work and shell files from PRs #7 and #8. These match the coordinator's integration with the base, recorded in round-1/build.md at 86aefc6. The coordinator should confirm before merge that the F-04 diff against the current base is limited to FE-DECIDE paths and the recorded My work rows move (W-1201..W-1205 to W-1301..W-1305).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T02:30:20Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Backend items to confirm before FE-CONNECT-1:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T02:30:20Z",
+          "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1041,11 +1183,11 @@
     "task_branch": "fe-decide-decide-one-exact-version-approve-return",
     "head_sha": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-04",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/9",
+    "pr_number": 9,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -1209,6 +1351,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-14T02:04:35Z",
+      "round": 2,
+      "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T02:30:49Z",
       "round": 2,
       "head": "3c93fe030ff5ac81da343dc7a0917820c8803d7b",
       "reason": null

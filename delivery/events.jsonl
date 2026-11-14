@@ -240,3 +240,13 @@
 {"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"reviewer-qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-14T02:04:35Z","feature":"F-04","round":2,"kind":"transition","head":"3c93fe030ff5","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
 {"at":"2026-11-14T02:05:31Z","feature":"F-04","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"3c93fe030ff5","findings":{"PMO-2-1":"medium","PMO-2-2":"medium","PMO-2-3":"low","PMO-2-4":"low","PMO-2-5":"low","PMO-2-6":"low"},"written_at":"2026-11-14T02:05:29Z"}
+{"at":"2026-11-14T02:30:20Z","feature":"F-04","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"3c93fe030ff5","written_at":"2026-11-14T02:30:19Z"}
+{"at":"2026-11-14T02:30:20Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T02:30:20Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T02:30:20Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T02:30:20Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"PMO-2-4","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T02:30:20Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"PMO-2-5","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T02:30:20Z","feature":"F-04","round":2,"kind":"finding","action":"add","finding":"PMO-2-6","by":"pmo-acceptance","severity":"low","owner":"backend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T02:30:49Z","feature":"F-04","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/9","git.pr_number":9}}
+{"at":"2026-11-14T02:30:49Z","feature":"F-04","round":2,"kind":"transition","head":"3c93fe030ff5","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T02:31:02Z","feature":"F-04","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
