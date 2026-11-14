@@ -30,6 +30,8 @@ const BODY: Record<string, unknown> = {
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
 };
+// Operations a persona may not use answer the declared status instead of 200 (E-EXCEPTIONS is Leads only).
+const PERSONA_STATUS: Record<string, Record<string, number>> = { 'E-EXCEPTIONS': { pm: 403 } };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
@@ -68,10 +70,11 @@ function expectValid(id: string, status: number, body: unknown) {
 describe('mock server matches openapi.json', () => {
   for (const id of M1_OPERATIONS as string[]) {
     for (const persona of PERSONAS as string[]) {
-      it(`${id} succeeds for persona ${persona} with a schema-valid body`, async () => {
+      const expected = PERSONA_STATUS[id]?.[persona] ?? 200;
+      it(`${id} answers ${expected} for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
-        expect(status).toBe(200);
-        expectValid(id, 200, body);
+        expect(status).toBe(expected);
+        expectValid(id, expected, body);
       });
     }
 

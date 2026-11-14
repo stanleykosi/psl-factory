@@ -1,0 +1,70 @@
+{
+  "id": "W-1512",
+  "title": "Northwind Clinics · Milestone 1 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0607",
+  "state": "action_needed",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "stopped"
+    },
+    {
+      "name": "Contract amount",
+      "status": "not_started"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "not_started"
+    },
+    {
+      "name": "Finance review",
+      "status": "not_started"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "The milestone has no signed acceptance note. The Project Manager uploads it on the project.",
+  "sample": true
+}
