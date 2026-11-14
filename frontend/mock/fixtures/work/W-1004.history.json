@@ -1,0 +1,17 @@
+{
+  "items": [
+    {"at":"2026-11-12T15:40:00Z","actor_kind":"person","actor":"Ada Okafor · Finance Lead","event":"Approved invoice v2","version":"v2","detail":"Note: \"Matches SOW-0198 stage 3.\"","restricted":false,"_kind":"decision"},
+    {"at":"2026-11-12T15:12:00Z","actor_kind":"person","actor":"Bisi Ade · Finance","event":"Reviewed invoice v2","version":"v2","restricted":false,"_kind":"decision"},
+    {"at":"2026-11-12T14:20:00Z","actor_kind":"person","actor":"Bisi Ade · Finance","event":"Restricted","restricted":true,"_kind":"evidence"},
+    {"at":"2026-11-12T09:58:00Z","actor_kind":"agent","actor":"Chidi · Finance agent","event":"Drafted invoice v2","version":"v2","detail":"With the PO number added. Used: SOW-0198 · client details (PO-7781)","restricted":false,"_kind":"agent_work"},
+    {"at":"2026-11-12T09:50:00Z","actor_kind":"agent","actor":"Chidi · Finance agent","event":"Read the client details","detail":"PO-7781","restricted":false,"_kind":"agent_work"},
+    {"at":"2026-11-12T08:30:00Z","actor_kind":"person","actor":"Tunde Bello · PMO","event":"Supplied the PO number","detail":"PO-7781 from the client's purchase order","restricted":false,"_kind":"evidence"},
+    {"at":"2026-11-11T10:04:00Z","actor_kind":"person","actor":"Ada Okafor · Finance Lead","event":"Returned v1","version":"v1","detail":"Reason: \"PO number missing.\"","restricted":false,"_kind":"decision"},
+    {"at":"2026-11-11T09:30:00Z","actor_kind":"person","actor":"Bisi Ade · Finance","event":"Reviewed invoice v1","version":"v1","restricted":false,"_kind":"decision"},
+    {"at":"2026-11-11T08:15:00Z","actor_kind":"agent","actor":"Chidi · Finance agent","event":"Drafted invoice v1","version":"v1","detail":"Used: SOW-0198 · stage 3","restricted":false,"_kind":"agent_work"},
+    {"at":"2026-11-10T16:30:00Z","actor_kind":"person","actor":"Tunde Bello · PMO","event":"Supplied evidence","detail":"Client UAT sign-off · lagoon-uat-signoff-m3.pdf","restricted":false,"_kind":"evidence"},
+    {"at":"2026-11-10T16:05:00Z","actor_kind":"agent","actor":"Chidi · Finance agent","event":"Asked for evidence from Tunde Bello","detail":"UAT sign-off not attached to milestone 3","restricted":false,"_kind":"agent_work"},
+    {"at":"2026-11-10T16:02:00Z","actor_kind":"factory","actor":"Factory","event":"Started the line","detail":"From the milestone 3 completion handoff","restricted":false}
+  ],
+  "as_of": "2026-11-12T15:45:00Z"
+}

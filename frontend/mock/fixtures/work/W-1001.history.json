@@ -1,0 +1,8 @@
+{
+  "items": [
+    {"at":"2026-11-10T14:05:00Z","actor_kind":"person","actor":"Tunde Bello","event":"Started the line","restricted":false},
+    {"at":"2026-11-10T10:40:00Z","actor_kind":"factory","actor":"Factory","event":"Restricted","restricted":true},
+    {"at":"2026-11-10T10:38:00Z","actor_kind":"agent","actor":"Chidi","event":"Drafted invoice","version":"v2","detail":"Changed: PO number","restricted":false,"_kind":"agent_work"}
+  ],
+  "as_of": "2026-11-10T10:42:00Z"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "W-1004",
+  "title": "Lagoon Health · Milestone 3 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0419",
+  "state": "ready",
+  "revision": 4,
+  "stations": [
+    {"name":"Milestone evidence","status":"done"},
+    {"name":"Contract amount","status":"done"},
+    {"name":"Draft invoice","status":"done"},
+    {"name":"Finance review","status":"done"},
+    {"name":"Issue","status":"current_person"},
+    {"name":"Deliver","status":"not_started"},
+    {"name":"Verify","status":"not_started"}
+  ],
+  "facts": [
+    {"name":"drafted","status":"earned","at":"2026-11-12T09:58:00Z"},
+    {"name":"reviewed","status":"earned","at":"2026-11-12T15:12:00Z"},
+    {"name":"approved","status":"earned","at":"2026-11-12T15:40:00Z"},
+    {"name":"sent","status":"not_yet"},
+    {"name":"receipt_recorded","status":"unknown"},
+    {"name":"verified","status":"not_yet"}
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {"text":"Read milestone 3 completion and UAT proof","status":"done","source":"Milestone LH-M3"},
+      {"text":"Read stage 3 terms in the signed SOW","status":"done","source":"SOW-0198 · stage 3"},
+      {"text":"Drafted invoice v2 with the PO number added","status":"done","source":"Client details · PO-7781"}
+    ]
+  },
+  "next_step": "Next, a Finance Officer issues invoice v2 and sends it to Lagoon Health. Sending earns SENT.",
+  "sample": true
+}

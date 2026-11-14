@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-04",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Decide one exact version: approve, return or reject, with stale and cannot-act views",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DECIDE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**The contract is v4 everywhere.** `grep -rn \"v2-reviewed\" frontend --exclude-dir=node_modules --exclude-dir=.next` prints nothing. The drift test regenerates from `architecture/packages/v4/openapi.json` and matches. Every existing `mock-contract.test.ts` case passes unchanged. `git diff <base> -- architecture` is empty. \u2014 verify: the grep, `npx vitest run tests/api-schema-drift.test.ts tests/mock-contract.test.ts`, and the diff.",
+    "**Default view (A-DECIDE, A-NOT-YOURS eligible half).** /work/W-1201/decide?task=T-1201 shows:",
+    "**Unknown is never zero.** W-1202 shows \"Unknown\" in the amount row. Neither the amount row nor the page text contains \"0.00\", \"\u20a60\" or an empty amount cell. A crafted decision with `unknown: true` **and** an `amount` string also shows \"Unknown\". \u2014 verify: component tests.",
+    "**Absent fields are omitted.** W-1208 renders no \"To\" row and no \"Changed since\" row. It shows \"Step 3 of 3\" and the two earlier steps as \"Approved\" with their times in WAT. \u2014 verify: component test.",
+    "**Claim on open with the right revision.** Opening W-1201 sends exactly one `POST /api/v1/tasks/T-1201/claim` with body `{\"expected_revision\":2}` and header `X-CSRFToken: mock-csrf-finance_lead`, also under StrictMode. The buttons stay disabled, with \"Getting this decision ready\u2026\", until it resolves. \u2014 verify: component test inspecting the stubbed `fetch` calls (method, URL, body and header).",
+    "**Approve.** After the claim, pressing \"Approve v2\" sends one `POST /api/v1/tasks/T-1201/decision` with `{\"expected_revision\":2,\"verdict\":\"approve\"}` and the CSRF header. The view then shows \"YOU APPROVED \u00b7 <HH:mm>\", \"Invoice v2 is approved\", \"Decided by Ada Okafor\", the reloaded facts with APPROVED earned, the success callout with next_step, the Paid line and \"Open the work item\". No Approve, Return or Reject button remains. \u2014 verify: component test. In the browser after `POST http://127.0.0.1:3402/__mock/reset`, approving W-1201 shows the done view.",
+    "**Note rules (PMO-0-5).**",
+    "**One write, no retry.** A double click on Approve sends one decide request. While it is pending all three buttons are disabled and the pressed one reads \"Approving\u2026\". \u2014 verify: component test with a deferred fetch.",
+    "**Stale (A-STALE).**",
+    "**409 on claim** goes to the same stale view, and no decide request is sent. \u2014 verify: component test with the claim stubbed to 409.",
+    "**Cannot act: controls absent.** For W-1203, W-1204, W-1205 and W-1206, the DOM contains no textarea and no button named /approve|return|reject/i, and no claim or decide request is sent. \u2014 verify: a table-driven component test over the four fixtures, asserting the buttons are absent and the fetch calls are GET only.",
+    "**Cannot-act copy per reason (A-NOT-YOURS).**",
+    "**Eligibility is not taken from `/me`.** With `/me` stubbed as the Finance Lead persona and W-1203 (`you_can_act: false`), no decision control renders. With `/me` stubbed as persona `pm` and W-1201 (`you_can_act: true`), the controls render. \u2014 verify: component test. `grep -n \"roles\\|destinations\" frontend/src/features/decide -r` finds no use in a branch that controls the decision UI.",
+    "**Errors (wrong user, invalid input, provider failure):**",
+    "**Mock: claim and decide validation (QA-3-2, PMO-0-3, PMO-0-5).** Against the running mock:",
+    "**Mock: stale and done flows.**",
+    "**Fixtures are valid and labelled.** Every `W-12xx*.json` (including the sidecars) validates against v4 E-WORK-ITEM with `strict` Ajv, has `sample: true`, and has `cannot_act_reason` only where `you_can_act` is false. \u2014 verify: a test iterating the files.",
+    "**Layout and accessibility (A-ACCESSIBILITY).** axe reports no WCAG 2.2 AA violations at 390x844 and 1440x900 for:",
+    "**Gate:** `delivery/checks.sh` passes. \u2014 verify: the gate run."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "payments",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it high: - People approve invoices on this screen with one tap. It renders amounts that must never show unknown as zero (INV-UNKNOWN, REC-MONEY), so the surfaces include `payments`. - It enforces \"act only on the current version\" through `expected_revision` and the 409 reload (INV-REVISION, O-STALE), and a stale approval is hard to undo. - It reflects separation of duties (\"Preparer cannot decide own work\", REC-TASK), so `security` also covers CSRF on the two writes and never offering actions the API did not grant. Surfaces: - `ui`: the SCR-03 standard boards. - `api`: the first contract writes. - `contract-change`: F-04 moves the mock and the generated client from v2-reviewed to v4 and is the first consumer of the proposed D-TASK-DECISION-VIEW fields (PMO-0-2). Excluded surfaces: - `auth`: the page only reacts to 401 and uses the existing session. - `dependency`: `ajv` is already a devDependency. - `product-decision`: the parked variants carry the open business rule."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-04/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +79,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +93,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-04/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -87,13 +142,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-DECIDE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "25cd30e4e1dd4561bc4aad4ef182fe3055d5cc26",
+    "task_branch": "fe-decide-decide-one-exact-version-approve-return",
+    "head_sha": "25cd30e4e1dd4561bc4aad4ef182fe3055d5cc26",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-04",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +158,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +191,41 @@
     }
   },
   "created_at": "2026-11-13T22:44:58Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 3,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-13T23:27:19Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T00:26:50Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-04/readiness.md",
+      "delivery/features/F-04/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
