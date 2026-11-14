@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-14",
   "outcome": "The work item page and its history match the SCR-02 boards at 1440 and 390",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-WORKITEM"
   ],
@@ -131,11 +131,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend production build with the contract mock)",
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -1182,6 +1184,29 @@
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T16:04:56Z",
+          "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
+        }
+      ]
+    },
+    {
+      "id": "QA-4-1",
+      "round": 4,
+      "snapshot_ref": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The awaiting-reconciliation board item cannot record a reconcile answer in the mock. Repro: reset the mock. `POST http://localhost:4511/api/v1/work/W-1711/actions` with `{\"expected_revision\":5,\"action\":\"reconcile\",\"outcome\":\"unknown\"}`, the finance_lead CSRF token and the cookie `psl_mock_persona=finance_lead` returns `501 {\"code\":\"not_mocked\"}`. The cause is that `mock/fixtures/response/` has no `W-1711.{delivered,not_delivered,unknown}.json` sidecar. In the browser, Unknown and Not delivered both end in \"We couldn't confirm your answer. Reload the work item\u2026\". Choosing \"It arrived\" shows \"Proof can't be uploaded for this item\" with Record disabled, because `mock/fixtures/work/W-1711.json` has no `case_id` or `case_revision`. Expected: the board item can be walked to a recorded answer, as W-1603 can (W-1603 not_delivered: one POST, then the page reloads to PROCESSING at revision 7). Actual: on W-1711 only the error and uncertain branches can be reached. The product code behaves correctly here: a 501 is treated as an uncertain effect and is never re-sent. Only the demo data falls short. Suggested fix: add `case_id`/`case_revision` to W-1711 and the three outcome sidecars, in F-09's fixtures folder.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-14/round-4/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T16:20:11Z",
           "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c"
         }
       ]
@@ -2243,6 +2268,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T16:04:57Z",
+      "round": 4,
+      "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T16:20:11Z",
       "round": 4,
       "head": "c26c9f34deee37f0078dbc4f852fec363bf35f6c",
       "reason": null
