@@ -7,13 +7,13 @@ import { expect, it } from 'vitest';
 
 const root = join(__dirname, '..');
 
-it('src/api/schema.d.ts equals openapi-typescript output for the v4 openapi.json', () => {
+it('src/api/schema.d.ts equals openapi-typescript output for the v6 openapi.json', () => {
   const dir = mkdtempSync(join(tmpdir(), 'psl-schema-'));
   try {
     const out = join(dir, 'schema.d.ts');
     execFileSync(process.execPath, [
       join(root, 'node_modules/openapi-typescript/bin/cli.js'),
-      join(root, '../architecture/packages/v4/openapi.json'),
+      join(root, '../architecture/packages/v6/openapi.json'),
       '-o',
       out,
     ]);

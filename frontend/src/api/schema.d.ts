@@ -639,6 +639,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/lines/{line_key}/fields/{field}/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Options for a Start work field
+         * @description factory.start on the line; each option filtered by the person's grants.
+         *     Recovery: Read-only; 404 hides records the person may not see.
+         */
+        get: operations["E-LINE-OPTIONS"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/work/{work_id}/rfp-outcome": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record an RFP outcome
+         * @description rfp.outcome on the case, as the backend allows; lessons use rfp.dispose.
+         *     Recovery: 409 on stale revision: the client reloads and shows the newer version; 422 names the fields; nothing is partially written.
+         */
+        post: operations["E-RFP-OUTCOME"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -670,6 +712,7 @@ export interface operations {
                         name: string;
                         roles: string[];
                         destinations: ("my_work" | "projects" | "overview" | "assistant" | "setup")[];
+                        /** @description PROPOSAL (D-START-INTAKE): line keys, the same as E-LINES items[].key, never display titles. Start work shows when the list is not empty. */
                         startable_lines: string[];
                         csrf_token: string;
                     };
@@ -828,6 +871,7 @@ export interface operations {
                     line: string;
                     case_id: string;
                     case_revision: number;
+                    /** @description Field name to value, one entry per E-LINES intake field the person filled; value shapes per field type (D-START-INTAKE). Evidence values are evidence_ids uploaded to the same case before the start. */
                     intake: {
                         [key: string]: unknown;
                     };
@@ -897,7 +941,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Validation failed; fields named in message */
+            /** @description Validation failed; fields named */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -906,6 +950,10 @@ export interface operations {
                     "application/json": {
                         code: string;
                         message: string;
+                        fields?: {
+                            name: string;
+                            message: string;
+                        }[];
                     };
                 };
             };
@@ -962,6 +1010,7 @@ export interface operations {
                         }[];
                         tasks: {
                             id: string;
+                            /** @description Task kind as named by the backend. A task with a response block is a recorded response (open the response form); one with a decision block is a decision. */
                             kind: string;
                             title: string;
                             required_role: string;
@@ -1028,6 +1077,43 @@ export interface operations {
                                 alerted_at?: string;
                                 channels?: ("whatsapp" | "email")[];
                             }[];
+                            /** @description PROPOSAL (D-RESPONSE-VIEW): present on tasks a person records for someone who does not log in. Which actions a task accepts and who may have responded are backend rules; the frontend offers only what is listed. claim_required true: call E-TASK-CLAIM before E-RESPONSE. */
+                            response?: {
+                                /**
+                                 * @description Which SCR-16 form to show
+                                 * @enum {string}
+                                 */
+                                variant?: "client_response" | "sow_signature" | "team_input";
+                                responders: {
+                                    id: string;
+                                    name: string;
+                                    role?: string;
+                                    organisation?: string;
+                                }[];
+                                actions: {
+                                    /** @enum {string} */
+                                    value: "approved" | "changes_requested" | "signed" | "rejected" | "estimate" | "input";
+                                    label?: string;
+                                }[];
+                                versions?: {
+                                    id: string;
+                                    label: string;
+                                    /** @description e.g. "the version sent for UAT" */
+                                    note?: string;
+                                    /** Format: date-time */
+                                    sent_at?: string;
+                                }[];
+                                teams?: {
+                                    key: string;
+                                    name: string;
+                                    given: boolean;
+                                    estimate_needed?: boolean;
+                                }[];
+                                /** @description Plain sentence on who holds review, e.g. "Security and Product haven't given input yet." */
+                                blocking?: string;
+                                evidence_kind?: string;
+                                claim_required?: boolean;
+                            };
                         }[];
                         agent: {
                             name?: string;
@@ -1059,6 +1145,58 @@ export interface operations {
                         };
                         /** Format: date-time */
                         started_at?: string;
+                        /** @description Case the work belongs to; the path for E-EVIDENCE-UPLOAD */
+                        case_id?: string;
+                        case_revision?: number;
+                        /** @description PROPOSAL (D-WORK-ACTIONS-VIEW): the E-WORK-ACTION actions this person may take now, decided by the backend. Absent or empty: offer none. */
+                        allowed_actions?: ("resume" | "cancel" | "reconcile")[];
+                        /** @description PROPOSAL (D-WORK-ACTIONS-VIEW): present when the state is awaiting_reconciliation or effect_uncertain. */
+                        reconcile?: {
+                            /** @description What was sent, e.g. "Invoice INV-0412 v2 to the billing contact" */
+                            what?: string;
+                            /** Format: date-time */
+                            sent_at?: string;
+                            checks?: {
+                                count: number;
+                                /** Format: date-time */
+                                first_at?: string;
+                                /** Format: date-time */
+                                last_at?: string;
+                                /** @enum {string} */
+                                agent?: "tola" | "chidi" | "zainab";
+                            };
+                            outcomes: ("delivered" | "not_delivered" | "unknown")[];
+                            evidence_kind?: string;
+                            /** @description What a not-delivered answer allows, as the backend states it, e.g. "one resend of the same version" */
+                            resend?: string;
+                        };
+                        /** @description PROPOSAL (D-RFP-OUTCOME): present on an RFP when the backend lets this person record its outcome. results, reasons and record_as come from the backend. */
+                        rfp_outcome?: {
+                            submission: {
+                                id: string;
+                                label: string;
+                                /** Format: date-time */
+                                sent_at?: string;
+                                delivery?: string;
+                            };
+                            results: ("won" | "lost" | "pending" | "unknown")[];
+                            reasons?: {
+                                value: string;
+                                label: string;
+                            }[];
+                            record_as: {
+                                value: string;
+                                label: string;
+                            }[];
+                            evidence_kind?: string;
+                            recorded?: {
+                                /** @enum {string} */
+                                result: "won" | "lost" | "pending" | "unknown";
+                                /** Format: date-time */
+                                at?: string;
+                                by?: string;
+                            };
+                        };
                     };
                 };
             };
@@ -1393,13 +1531,63 @@ export interface operations {
                             intake: {
                                 name: string;
                                 label: string;
+                                /** @description PROPOSAL (D-START-INTAKE): one of text, long_text, date, date_range, period, datetime, integer, money, choice, record, records, evidence, display. The submitted intake value per kind: text/long_text a string; date YYYY-MM-DD; date_range {from, to}; period YYYY-MM; datetime ISO 8601; integer a number; money {amount, currency, unknown} (left blank = unknown=true with no amount, never 0); choice one options[].value; record one option value from E-LINE-OPTIONS; records a list of them; evidence an evidence_id returned by E-EVIDENCE-UPLOAD on the line's case; display is shown, never sent. */
                                 type: string;
                                 required: boolean;
+                                /** @description Hint under the field as composed by the backend, e.g. "Only milestones marked complete, with proof, are listed." */
+                                help?: string;
+                                placeholder?: string;
+                                /** @description Fixed choices for a choice field (e.g. Audience: Internal or Client), listed by the backend. */
+                                options?: {
+                                    value: string;
+                                    label: string;
+                                }[];
+                                /**
+                                 * @description Present on record/records fields: read the options from E-LINE-OPTIONS for this line and field
+                                 * @enum {string}
+                                 */
+                                options_source?: "line_options";
+                                /** @description Name of the field whose value narrows these options (e.g. milestone depends on project); sent as parent to E-LINE-OPTIONS */
+                                depends_on?: string;
+                                /** @description Kind to send to E-EVIDENCE-UPLOAD for an evidence field */
+                                evidence_kind?: string;
+                                multiple?: boolean;
+                                /** @description For display fields: the value shown, e.g. "Client weekly report · test template v1" */
+                                value?: string;
+                                restricted?: boolean;
                             }[];
+                            /** @description One line under the title in the chooser, e.g. "From a completed milestone" */
+                            subtitle?: string;
+                            /**
+                             * @description project: the case is the project chosen in the intake field named by case_field; fixed: start on case_id below
+                             * @enum {string}
+                             */
+                            case_scope?: "project" | "fixed";
+                            /** @description Name of the record field whose chosen option carries case_id and case_revision (case_scope project) */
+                            case_field?: string;
+                            /** @description Case to start on when case_scope is fixed (e.g. the Finance back-office case) */
+                            case_id?: string;
+                            case_revision?: number;
+                            /** @description The "What happens next" block. Absent fields are not shown; the frontend derives none of it from roles. */
+                            next?: {
+                                station_count?: number;
+                                /** @enum {string} */
+                                agent?: "tola" | "chidi" | "zainab";
+                                decided_by?: string[];
+                                summary?: string;
+                                journey_url?: string;
+                            };
+                            /**
+                             * @description Which endpoint starts the line: E-WORK-START, or E-IMPORT for a file import line
+                             * @enum {string}
+                             */
+                            start_via?: "work_start" | "finance_import";
                         }[];
                         next_cursor?: string;
                         /** Format: date-time */
                         as_of: string;
+                        /** @description Line key the main Start work button opens directly. Absent: the button opens the menu (e.g. CEO and CTO, D-LEADERS-START). */
+                        default_line?: string;
                     };
                 };
             };
@@ -1470,6 +1658,8 @@ export interface operations {
                     "application/json": {
                         evidence_id: string;
                         sha256: string;
+                        /** @description The case revision after the upload; send it as case_revision on the start, response or action that follows */
+                        case_revision?: number;
                     };
                 };
             };
@@ -1555,6 +1745,15 @@ export interface operations {
                     responded_at: string;
                     evidence_id: string;
                     attested: boolean;
+                    case_revision?: number;
+                    version_id?: string;
+                    team?: string;
+                    estimate_person_days?: number;
+                    /** @description What they gave (team input) */
+                    what?: string;
+                    evidence_ids?: string[];
+                    /** @description Up to 2000 characters */
+                    note?: string;
                 };
             };
         };
@@ -1903,6 +2102,14 @@ export interface operations {
                             work_id: string;
                         }[];
                         next: string;
+                        /** @description Case revision, for starts from the project page */
+                        revision?: number;
+                        tab_counts?: {
+                            milestones?: number;
+                            documents?: number;
+                            registers?: number;
+                            actions?: number;
+                        };
                     };
                 };
             };
@@ -1947,6 +2154,8 @@ export interface operations {
     "E-PROJECT-TAB": {
         parameters: {
             query?: {
+                register?: "issues" | "changes" | "emergencies" | "rfps";
+                q?: string;
                 cursor?: string;
                 limit?: 10 | 20 | 50;
             };
@@ -1966,12 +2175,177 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @description v5 untyped rows, kept for compatibility. PROPOSAL (D-PROJECT-TAB-ROWS): read the typed array named by the tab instead (milestones, documents, money, registers or actions); items holds the same rows. */
                         items: {
                             [key: string]: unknown;
                         }[];
                         next_cursor?: string;
                         /** Format: date-time */
                         as_of: string;
+                        milestones?: {
+                            position: number;
+                            name: string;
+                            /** @description From the signed SOW. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                            contract_amount: {
+                                /** @description Decimal string; absent when unknown */
+                                amount?: string;
+                                currency: string;
+                                unknown: boolean;
+                            };
+                            /** @description e.g. "amount set at go-live" */
+                            amount_note?: string;
+                            completion: {
+                                /** @enum {string} */
+                                status: "done" | "not_yet";
+                                /** Format: date-time */
+                                at?: string;
+                                /** @description Proof label, e.g. "client UAT sign-off" */
+                                proof?: string;
+                                evidence_id?: string;
+                            };
+                            invoice?: {
+                                reference: string;
+                                title?: string;
+                                work_id?: string;
+                                /** @enum {string} */
+                                state?: "ready" | "processing" | "waiting" | "owner_needed" | "setup_needed" | "action_needed" | "effect_uncertain" | "awaiting_reconciliation" | "verified" | "cancelled" | "followup_needed";
+                                /** Format: date-time */
+                                at?: string;
+                            };
+                            /** @description Paid is Finance data, separate from the invoice (INV-FACTS). Composed by the backend from receipts and allocations; never derived by the frontend. */
+                            paid?: {
+                                /** @enum {string} */
+                                status: "paid" | "part_paid" | "not_paid" | "not_due" | "finance_tracks" | "unknown";
+                                /** @description Amount still owed as recorded by Finance. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                                owed?: {
+                                    /** @description Decimal string; absent when unknown */
+                                    amount?: string;
+                                    currency: string;
+                                    unknown: boolean;
+                                };
+                            };
+                            changes?: {
+                                reference: string;
+                                title?: string;
+                                /** @description Change amount; unknown until a SOW amendment with it is signed. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                                amount: {
+                                    /** @description Decimal string; absent when unknown */
+                                    amount?: string;
+                                    currency: string;
+                                    unknown: boolean;
+                                };
+                                work_id?: string;
+                            }[];
+                        }[];
+                        documents?: {
+                            document_id: string;
+                            title: string;
+                            kind?: string;
+                            version: string;
+                            status: string;
+                            /** Format: date-time */
+                            updated_at?: string;
+                            test_template?: boolean;
+                            work_id?: string;
+                            sample?: boolean;
+                        }[];
+                        money?: {
+                            position: number;
+                            stage: string;
+                            /** @description Stage amount. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                            amount: {
+                                /** @description Decimal string; absent when unknown */
+                                amount?: string;
+                                currency: string;
+                                unknown: boolean;
+                            };
+                            amount_note?: string;
+                            invoice?: {
+                                reference: string;
+                                title?: string;
+                                work_id?: string;
+                                /** @enum {string} */
+                                state?: "ready" | "processing" | "waiting" | "owner_needed" | "setup_needed" | "action_needed" | "effect_uncertain" | "awaiting_reconciliation" | "verified" | "cancelled" | "followup_needed";
+                                /** Format: date-time */
+                                at?: string;
+                            };
+                            /** @description As composed by the backend, e.g. "Verified 03 Nov", "Held · owner needed" */
+                            invoice_status?: string;
+                            /** @description Paid is Finance data, separate from the invoice (INV-FACTS). Composed by the backend from receipts and allocations; never derived by the frontend. */
+                            paid?: {
+                                /** @enum {string} */
+                                status: "paid" | "part_paid" | "not_paid" | "not_due" | "finance_tracks" | "unknown";
+                                /** @description Amount still owed as recorded by Finance. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                                owed?: {
+                                    /** @description Decimal string; absent when unknown */
+                                    amount?: string;
+                                    currency: string;
+                                    unknown: boolean;
+                                };
+                            };
+                            /** @description Figure in E-REPORT whose sources explain this amount */
+                            figure_id?: string;
+                        }[];
+                        registers?: {
+                            /** @enum {string} */
+                            register: "issues" | "changes" | "emergencies" | "rfps";
+                            reference: string;
+                            title: string;
+                            /**
+                             * @description Set by the PM
+                             * @enum {string}
+                             */
+                            severity?: "high" | "medium" | "low";
+                            owner?: {
+                                name: string;
+                                role?: string;
+                                recorded_by_pm?: boolean;
+                                outside_party?: boolean;
+                            };
+                            /** @description State text as composed by the backend */
+                            state?: string;
+                            age_seconds?: number;
+                            work_id?: string;
+                            sample?: boolean;
+                        }[];
+                        actions?: {
+                            action_id: string;
+                            title: string;
+                            from?: {
+                                meeting: string;
+                                /** Format: date */
+                                at?: string;
+                            };
+                            owner?: {
+                                name: string;
+                                role?: string;
+                                recorded_by_pm?: boolean;
+                                outside_party?: boolean;
+                            };
+                            due?: {
+                                /** Format: date */
+                                date?: string;
+                                unknown: boolean;
+                            };
+                            /** @enum {string} */
+                            state: "open" | "overdue" | "done";
+                            work_id?: string;
+                        }[];
+                        summary?: {
+                            registers?: {
+                                issues?: number;
+                                changes?: number;
+                                emergencies?: number;
+                                rfps?: number;
+                            };
+                            actions?: {
+                                total?: number;
+                                overdue?: number;
+                                without_owner?: number;
+                            };
+                            /** @description Money tab: E-REPORT id for the drill-down */
+                            report_id?: string;
+                        };
                     };
                 };
             };
@@ -3239,7 +3613,18 @@ export interface operations {
                                 unknown: boolean;
                             };
                             sources: string[];
+                            id?: string;
+                            source_details?: {
+                                label: string;
+                                reference: string;
+                                /** @enum {string} */
+                                kind: "document" | "rule" | "record" | "evidence";
+                                document_id?: string;
+                                work_id?: string;
+                            }[];
                         }[];
+                        /** @enum {string} */
+                        agent?: "tola" | "chidi" | "zainab";
                     };
                 };
             };
@@ -3269,6 +3654,205 @@ export interface operations {
             };
             /** @description Not found or not visible */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "E-LINE-OPTIONS": {
+        parameters: {
+            query?: {
+                parent?: string;
+                q?: string;
+                cursor?: string;
+                limit?: 10 | 20 | 50;
+            };
+            header?: never;
+            path: {
+                line_key: string;
+                field: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Options for a Start work field */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            value: string;
+                            label: string;
+                            hint?: string;
+                            case_id?: string;
+                            case_revision?: number;
+                            disabled_reason?: string;
+                            sample?: boolean;
+                        }[];
+                        next_cursor?: string;
+                        /** Format: date-time */
+                        as_of: string;
+                    };
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+            /** @description No grant for this record */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Not found or not visible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "E-RFP-OUTCOME": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                work_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    expected_revision: number;
+                    case_revision: number;
+                    submission_id: string;
+                    /** @enum {string} */
+                    result: "won" | "lost" | "pending" | "unknown";
+                    /** Format: date-time */
+                    learned_at: string;
+                    /** @description One of rfp_outcome.record_as[].value */
+                    record_as: string;
+                    evidence_id: string;
+                    /** @description Up to 2000 characters */
+                    note?: string;
+                    /** @description One of rfp_outcome.reasons[].value */
+                    reason?: string;
+                    /** @description Lost: what we would do differently */
+                    lessons?: string;
+                    /** @description Won: as stated in the award letter. When the value is not known: unknown=true and no amount, never 0 (INV-UNKNOWN). */
+                    awarded_amount?: {
+                        /** @description Decimal string; absent when unknown */
+                        amount?: string;
+                        currency: string;
+                        unknown: boolean;
+                    };
+                    /** Format: date */
+                    expected_decision_on?: string;
+                    /** Format: date-time */
+                    remind_at?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Record an RFP outcome */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        work_id: string;
+                        /** @enum {string} */
+                        result: "won" | "lost" | "pending" | "unknown";
+                        /** @enum {string} */
+                        state: "ready" | "processing" | "waiting" | "owner_needed" | "setup_needed" | "action_needed" | "effect_uncertain" | "awaiting_reconciliation" | "verified" | "cancelled" | "followup_needed";
+                        revision: number;
+                        engagement_work_id?: string;
+                    };
+                };
+            };
+            /** @description Not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+            /** @description No grant for this record */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Not found or not visible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Stale revision: the record changed; reload and act on the current version */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        code: string;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Validation failed; fields named in message */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
