@@ -177,6 +177,11 @@ describe('MonthEndView', () => {
     expect(rows().slice(0, 6).map((row) => within(row).getByRole('link').getAttribute('href'))).toEqual(
       ['W-1601', 'W-1602', 'W-1603', 'W-1604', 'W-1605', 'W-1606'].map((id) => `/work/${id}`),
     );
+    expect(
+      rows()
+        .slice(0, 6)
+        .map((row) => document.getElementById(within(row).getByRole('link').getAttribute('aria-describedby')!)!.textContent),
+    ).toEqual(['Bank statements', 'Management accounts', 'Income detail and schedules', 'Fixed asset schedule', 'Cash forecast', 'Business-unit totals']);
     const note = screen.getByText(/One Access Bank statement isn't imported/);
     expect(note.textContent).toBe(
       "Chidi · Finance agentOne Access Bank statement isn't imported, so October's cash received for that account is Unknown, not 0. Import it to complete the month.",

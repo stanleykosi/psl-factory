@@ -52,6 +52,8 @@
   .monthend-title { font-size: 22px; padding-right: 96px; }
   .monthend-summary { display: block; font-size: 14px; }
   .monthend-row { display: contents; }
+  /* the row is gone, so the empty panel sits in the full-height column: keep it sized to its text */
+  .monthend-empty { flex: none; }
   .monthend-cards { display: flex; flex-direction: column; gap: var(--space-3); }
   .monthend-card { background: var(--surface); border: 2px solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
   .monthend-card__top { display: flex; justify-content: space-between; }

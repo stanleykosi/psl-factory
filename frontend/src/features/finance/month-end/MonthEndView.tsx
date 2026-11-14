@@ -72,10 +72,16 @@ function Strip({ body }: { body: MonthEnd }) {
   );
 }
 
-function TaskEnd({ task }: { task: MonthEndTask }) {
+function TaskEnd({ task, titleId }: { task: MonthEndTask; titleId: string }) {
   const end = taskEnd(task);
   if (end.kind === 'restricted') return <span className="monthend-restricted">{end.text}</span>;
-  if (end.kind === 'link') return <Link href={end.href}>Open</Link>;
+  // the name stays "Open" as drawn; the row's task title is its description, so each link is told apart
+  if (end.kind === 'link')
+    return (
+      <Link href={end.href} aria-describedby={titleId}>
+        Open
+      </Link>
+    );
   return null;
 }
 
@@ -98,7 +104,7 @@ function TaskTable({ tasks }: { tasks: MonthEndTask[] }) {
               return (
                 <tr key={i}>
                   <td>
-                    <strong>{task.title ?? task.line}</strong>
+                    <strong id={`monthend-task-${i}`}>{task.title ?? task.line}</strong>
                     {task.detail && (
                       <>
                         <br />
@@ -111,7 +117,7 @@ function TaskTable({ tasks }: { tasks: MonthEndTask[] }) {
                     <span className={tag.className}>{tag.text}</span>
                   </td>
                   <td>
-                    <TaskEnd task={task} />
+                    <TaskEnd task={task} titleId={`monthend-task-${i}`} />
                   </td>
                 </tr>
               );

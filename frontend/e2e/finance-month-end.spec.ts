@@ -116,6 +116,7 @@ test.describe('desktop 1440', () => {
     await openPage(page, context, baseURL!);
     const targets = [...(await page.getByRole('link', { name: 'Open' }).all()), page.getByRole('link', { name: 'Import the missing statement' })];
     expect(targets).toHaveLength(7);
+    await expect(page.getByRole('link', { name: 'Open', exact: true }).first()).toHaveAccessibleDescription('Bank statements');
     for (const target of targets) {
       const outline = await tabTo(page, target);
       expect(outline.style).toBe('solid');
@@ -167,6 +168,8 @@ for (const [label, viewport] of [
     test('empty month', async ({ page, context, baseURL }) => {
       await openPage(page, context, baseURL!, { psl_mock_month_end: 'empty' });
       await expect(page.getByText('No month-end tasks you can see for October 2026.')).toBeVisible();
+      // the panel stays sized to its text, also on the phone's full-height column
+      expect((await page.locator('.monthend-empty').boundingBox())!.height).toBeLessThan(200);
       if (viewport === DESKTOP) await expect(page.locator('.monthend-cell__value')).toHaveText(['0 of 0', '0', '0', 'Unknown']);
       else await expect(page.locator('.monthend-summary')).toHaveText('0 of 0 done · 0 waiting');
       await expect(page.locator('table, .monthend-card, .monthend-note, .monthend-bar')).toHaveCount(0);
