@@ -1,0 +1,496 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T04:36:32.259Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-01-mobile-my-work.dc.html",
+  "boardName": "SCR-01-mobile-my-work.dc.html",
+  "pageUrl": "http://localhost:3511/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "11 board item(s) are missing from the page and are not approved exceptions (coverage 45% with exceptions, needs 100%).",
+    "Visual match 72 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 45,
+    "coverageWithExceptions": 45,
+    "visual": 72
+  },
+  "visual": {
+    "score": 72,
+    "allCellsScore": 82.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1495,
+    "mismatchedCells": 418
+  },
+  "coverage": {
+    "total": 20,
+    "found": 9,
+    "coverage": 45,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 20,
+          "w": 144,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 122,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me 3",
+        "pageName": "Needs me 0",
+        "pageRole": "tab",
+        "similarity": 90,
+        "looks": [
+          "text colour #1F2427 on the board, #FFFFFF on the page",
+          "background #FFFFFF on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 18,
+          "y": 112,
+          "w": 124,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 114,
+          "w": 124,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others 2",
+        "pageName": "Waiting on others 3",
+        "pageRole": "tab",
+        "similarity": 95,
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #1F2427 on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 142,
+          "y": 112,
+          "w": 174,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 142,
+          "y": 114,
+          "w": 172,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done 28",
+        "pageName": "Done 2",
+        "pageRole": "tab",
+        "similarity": 94,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 112,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 314,
+          "y": 114,
+          "w": 93,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 170,
+          "w": 358,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 170,
+          "w": 306,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 244,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "coloured bar under it on the board (#1F2427), none on the page"
+        ],
+        "boardBox": {
+          "x": 330,
+          "y": 170,
+          "w": 44,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 270,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "My work",
+        "key": "tablist: My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 48
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · M2 invoice",
+        "key": "text: Lagoon Health · M2 invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 240,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING ON FINANCE LEAD",
+        "key": "text: WAITING ON FINANCE LEAD",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 265,
+          "w": 177,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank · go-live report",
+        "key": "text: Harmattan Bank · go-live report",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 326,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CHECKING DELIVERY",
+        "key": "text: CHECKING DELIVERY",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 351,
+          "w": 137,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kora Logistics · SOW v3",
+        "key": "text: Kora Logistics · SOW v3",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 412,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING ON CEO",
+        "key": "text: WAITING ON CEO",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 437,
+          "w": 116,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ojo Foods · plan",
+        "key": "text: Ojo Foods · plan",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 498,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SETUP NEEDED",
+        "key": "text: SETUP NEEDED",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 523,
+          "w": 103,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sabi Market · closure",
+        "key": "text: Sabi Market · closure",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 584,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "key": "text: VERIFIED",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 609,
+          "w": 71,
+          "h": 21
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"PSL FACTORY\"",
+        "kind": "Text",
+        "name": "PSL FACTORY",
+        "boardBox": {
+          "x": 16,
+          "y": 20,
+          "w": 144,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 122,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        },
+        "reasons": [
+          "across the page: left on the board (23% across), middle on the page (51% across)",
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      },
+      {
+        "label": "Filter \"Filter\"",
+        "kind": "Filter",
+        "name": "Filter",
+        "boardBox": {
+          "x": 330,
+          "y": 170,
+          "w": 44,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 270,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (90% across), right on the page (75% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 280,
+          "y": 82,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 324,
+          "y": 185,
+          "w": 50,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 11
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

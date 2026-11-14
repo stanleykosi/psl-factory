@@ -1,0 +1,499 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:21:06.037Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-06-mobile.dc.html",
+  "boardName": "SCR-06-mobile.dc.html",
+  "pageUrl": "http://localhost:3811/overview",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-08/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 89.8 is below 90."
+  ],
+  "scores": {
+    "coverage": 77.8,
+    "coverageWithExceptions": 100,
+    "visual": 89.8
+  },
+  "visual": {
+    "score": 89.8,
+    "allCellsScore": 92.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 992,
+    "cell": 12,
+    "contentCells": 1775,
+    "mismatchedCells": 181
+  },
+  "coverage": {
+    "total": 18,
+    "found": 14,
+    "coverage": 77.8,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Factory floor",
+        "pageName": "Factory floor",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "18 in progress · 5 need a person",
+        "pageName": "18 in progress · 5 need a person",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale",
+        "pageName": "Pre-sale",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 154,
+          "w": 91,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 62,
+          "y": 159,
+          "w": 59,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 WAITING",
+        "pageName": "1 WAITING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 281,
+          "y": 154,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 281,
+          "y": 157,
+          "w": 79,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning",
+        "pageName": "Planning",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 242,
+          "w": 93,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 62,
+          "y": 247,
+          "w": 61,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 STOPPED",
+        "pageName": "1 STOPPED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 281,
+          "y": 242,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 281,
+          "y": 245,
+          "w": 79,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Release",
+        "pageName": "Release",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 330,
+          "w": 87,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 62,
+          "y": 335,
+          "w": 55,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 UNCERTAIN",
+        "pageName": "1 UNCERTAIN",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 267,
+          "y": 330,
+          "w": 93,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 267,
+          "y": 333,
+          "w": 93,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Closing",
+        "pageName": "Closing",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 418,
+          "w": 83,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 62,
+          "y": 423,
+          "w": 51,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ON TRACK",
+        "pageName": "ON TRACK",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 285,
+          "y": 418,
+          "w": 75,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 285,
+          "y": 421,
+          "w": 75,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoices",
+        "pageName": "Invoices",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 506,
+          "w": 91,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 62,
+          "y": 511,
+          "w": 59,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 WAITING",
+        "pageName": "2 WAITING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 281,
+          "y": 506,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 281,
+          "y": 509,
+          "w": 79,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Month-end",
+        "pageName": "Month-end",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 594,
+          "w": 108,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 62,
+          "y": 599,
+          "w": 76,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ON TRACK",
+        "pageName": "ON TRACK",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 285,
+          "y": 594,
+          "w": 75,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 285,
+          "y": 685,
+          "w": 75,
+          "h": 23
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Home",
+        "key": "link: ← Home",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Frame item: the phone header belongs to the shell (it draws a menu button and the PSL FACTORY mark).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "All exceptions · 4",
+        "key": "text: All exceptions · 4",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 668,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "REQUEST (phone): the count needs E-EXCEPTIONS (follow-up (a)); the heading reads 'All exceptions · everyone's'.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Harmattan Bank · go-live UNCERTAIN",
+        "key": "link: Harmattan Bank · go-live UNCERTAIN",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 691,
+          "w": 358,
+          "h": 45
+        },
+        "exception": {
+          "reason": "REQUEST (phone): F-06 exceptions preview item (follow-up (a)).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ojo Foods · plan OWNER NEEDED",
+        "key": "link: Ojo Foods · plan OWNER NEEDED",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 742,
+          "w": 358,
+          "h": 45
+        },
+        "exception": {
+          "reason": "REQUEST (phone): F-06 exceptions preview item (follow-up (a)).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 846,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "All exceptions · everyone’s",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 876,
+          "w": 212,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See all exceptions",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 906,
+          "w": 117,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Your own exceptions also appear in My work · Needs me, marked Fix.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 937,
+          "w": 358,
+          "h": 39
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

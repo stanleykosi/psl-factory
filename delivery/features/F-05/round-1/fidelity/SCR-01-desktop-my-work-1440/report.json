@@ -1,0 +1,647 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T04:36:28.655Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-01-desktop-my-work.dc.html",
+  "boardName": "SCR-01-desktop-my-work.dc.html",
+  "pageUrl": "http://localhost:3511/my-work",
+  "viewport": {
+    "width": 1440,
+    "height": 1060
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "11 board item(s) are missing from the page and are not approved exceptions (coverage 60.7% with exceptions, needs 100%).",
+    "Visual match 86 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 60.7,
+    "coverageWithExceptions": 60.7,
+    "visual": 86
+  },
+  "visual": {
+    "score": 86,
+    "allCellsScore": 96,
+    "width": 1440,
+    "height": 1060,
+    "boardHeight": 1060,
+    "pageHeight": 1060,
+    "cell": 12,
+    "contentCells": 3024,
+    "mismatchedCells": 423
+  },
+  "coverage": {
+    "total": 28,
+    "found": 17,
+    "coverage": 60.7,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 82,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 350,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1027,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1055,
+          "y": 9,
+          "w": 123,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1146,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1178,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 490
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 439
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 40px on the board, 36px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 206,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 169,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Queues",
+        "pageName": "Queues",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 148,
+          "w": 534,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 148,
+          "w": 392,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me3",
+        "pageName": "Needs me 0",
+        "pageRole": "tab",
+        "similarity": 80,
+        "looks": [
+          "text colour #1F2427 on the board, #FFFFFF on the page",
+          "background #FFFFFF on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 150,
+          "w": 124,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 150,
+          "w": 124,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others2",
+        "pageName": "Waiting on others 3",
+        "pageRole": "tab",
+        "similarity": 89,
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #1F2427 on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 214,
+          "y": 150,
+          "w": 172,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 214,
+          "y": 150,
+          "w": 172,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 220,
+          "w": 1264,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 220,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 220,
+          "w": 460,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 220,
+          "w": 460,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 558,
+          "y": 220,
+          "w": 88,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 558,
+          "y": 220,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "5 ITEMS",
+        "pageName": "0 ITEMS",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [],
+        "boardBox": {
+          "x": 1302,
+          "y": 235,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1302,
+          "y": 233,
+          "w": 50,
+          "h": 18
+        }
+      }
+    ],
+    "patterns": [
+      {
+        "kind": "Repeated rows",
+        "role": "pattern",
+        "name": "Table rows with columns WORK / WHERE ON ITS LINE / STATE / AGE",
+        "boardCount": 2,
+        "boardBox": {
+          "x": 90,
+          "y": 325,
+          "w": 1260,
+          "h": 163
+        },
+        "matched": true,
+        "pageName": "Repeated blocks with 3 text field(s) each",
+        "pageCount": 2,
+        "pageBox": {
+          "x": 88,
+          "y": 148,
+          "w": 1264,
+          "h": 292
+        },
+        "notes": [
+          "table rows on the board, built as separate blocks on the page",
+          "each item shows 7 field(s) on the board, 3 on the page",
+          "board field 1 (page field 1): a tab on the page, text on the board; text size 11px on the board, 14px on the page; text colour #3F474B on the board, #FFFFFF on the page; capitals on the board, not on the page; background #E2E5E0 on the board, #1F2427 on the page",
+          "board field 2 (page field 2): a tab on the page, link on the board; background none on the board, #FFFFFF on the page",
+          "board field 3 (page field 3): a tab on the page, text on the board; text size 12px on the board, 14px on the page; text colour #4A5357 on the board, #1F2427 on the page; background none on the board, #FFFFFF on the page",
+          "field 4 of the board item has no counterpart on the page",
+          "field 5 of the board item has no counterpart on the page",
+          "field 6 of the board item has no counterpart on the page",
+          "field 7 of the board item has no counterpart on the page"
+        ]
+      }
+    ],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "key": "link: Overview",
+        "container": "navigation",
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "key": "link: Setup",
+        "container": "navigation",
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "key": "text: Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "46 records you can see · updated 10:42",
+        "key": "text: 46 records you can see · updated 10:42",
+        "container": "main",
+        "boardBox": {
+          "x": 1078,
+          "y": 109,
+          "w": 274,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done28",
+        "key": "tab: Done28",
+        "container": "tablist",
+        "boardBox": {
+          "x": 386,
+          "y": 150,
+          "w": 99,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Unassigned1",
+        "key": "tab: Unassigned1",
+        "container": "tablist",
+        "boardBox": {
+          "x": 485,
+          "y": 150,
+          "w": 135,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "(table)",
+        "key": "table:",
+        "container": "table",
+        "boardBox": {
+          "x": 90,
+          "y": 290,
+          "w": 1260,
+          "h": 198
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WORK",
+        "key": "columnheader: WORK",
+        "container": "table",
+        "boardBox": {
+          "x": 90,
+          "y": 290,
+          "w": 426,
+          "h": 35
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHERE ON ITS LINE",
+        "key": "columnheader: WHERE ON ITS LINE",
+        "container": "table",
+        "boardBox": {
+          "x": 516,
+          "y": 290,
+          "w": 331,
+          "h": 35
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "key": "columnheader: STATE",
+        "container": "table",
+        "boardBox": {
+          "x": 847,
+          "y": 290,
+          "w": 417,
+          "h": 35
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "AGE",
+        "key": "columnheader: AGE",
+        "container": "table",
+        "boardBox": {
+          "x": 1264,
+          "y": 290,
+          "w": 86,
+          "h": 35
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Table rows with columns WORK / WHERE ON ITS LINE / STATE / AGE",
+        "kind": "Repeated rows",
+        "name": "Table rows with columns WORK / WHERE ON ITS LINE / STATE / AGE",
+        "boardBox": {
+          "x": 90,
+          "y": 325,
+          "w": 1260,
+          "h": 163
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 148,
+          "w": 1264,
+          "h": 292
+        },
+        "reasons": [
+          "inside the table frame on the board, inside the main area on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PM",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1254,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 1258,
+          "y": 106,
+          "w": 94,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 11
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

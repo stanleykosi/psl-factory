@@ -1,0 +1,88 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "Start work opens the F-05 start flow (top bar on every board; the same link in the empty boards' caught-up panel). F-05 is not merged; src/shell/** is not F-02's.",
+      "approved_by": "Coordinator, F-02 round 3 brief (top-bar Start work belongs to F-05; list as a frame item)"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "Split part of the F-05 Start work button in the top bar.",
+      "approved_by": "Coordinator, F-02 round 3 brief (frame item, F-05)"
+    },
+    {
+      "role": "link",
+      "name": "Start",
+      "reason": "Phone top-bar Start button, F-05.",
+      "approved_by": "Coordinator, F-02 round 3 brief (frame item, F-05)"
+    },
+    {
+      "role": "heading",
+      "name": "You're all caught up",
+      "reason": "The empty Needs me heading reads \"Nothing needs you right now\".",
+      "approved_by": "Design engineer, 14 Nov 2026 (round-2/acceptance-product.md)"
+    },
+    {
+      "role": "tablist",
+      "name": "Queues",
+      "reason": "SCR-01-desktop and -desktop-my-work name the tab list \"Queues\"; the other seven SCR-01 boards name it \"My work\". Built as \"My work\".",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "46 RECORDS YOU CAN SEE",
+      "reason": "Only SCR-01-desktop-filter drops \"\u00b7 updated 10:42\"; the page keeps one header line on every state.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "Any project \u25be",
+      "reason": "Built as a native select showing \"Any project\" with the board's small arrow; the check cannot read a select's shown value.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "Me \u25be",
+      "reason": "Native select (Waiting on); the check cannot read a select's shown value.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "Needs a person \u25be",
+      "reason": "\"Needs a person\" is not a contract state (the State filter offers the 11 E-WORK-LIST states); native select value is also unreadable to the check.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "Needs a person",
+      "reason": "State chip: \"Needs a person\" is not a contract state.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "Station 4 of 7 \u00b7 Finance review",
+      "reason": "SCR-01-desktop-filter draws a second invoice row (Harmattan Bank, 20m) that SCR-01-desktop's Needs me rows do not have; the board sample follows SCR-01-desktop.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "20m",
+      "reason": "Same second invoice row as above.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "link",
+      "name": "DECIDE Lagoon Health \u00b7 M2 invoice 2h AWAITING FINANCE DECISION Finance review \u00b7 you",
+      "reason": "\"Awaiting Finance decision\" is not a contract state (the card shows \"Waiting\"); the phone boards title this row \"M2 invoice\", the desktop boards \"Milestone 2 invoice\".",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    },
+    {
+      "role": "text",
+      "name": "CHECKING DELIVERY",
+      "reason": "A processing item's tag reads the contract state words \"Processing\"; the board shows the agent's activity, which the contract has no field for.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-17)"
+    }
+  ]
+}
