@@ -23,11 +23,11 @@ const fixture = read('E-EXCEPTIONS.json') as ExceptionsPage;
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
-/** The mock's paging over the fixture rows: "o:<offset>" cursors. */
+/** The mock's paging over the fixture rows: "o:<offset>" cursors; `open_count` is the proposal total. */
 function page(url: URL, rows: ExceptionRow[] = fixture.items): ExceptionsPage {
   const limit = Number(url.searchParams.get('limit') ?? 20);
   const offset = Number(/^o:(\d+)$/.exec(url.searchParams.get('cursor') ?? '')?.[1] ?? 0);
-  const body: ExceptionsPage = { items: rows.slice(offset, offset + limit), as_of: fixture.as_of };
+  const body: ExceptionsPage = { items: rows.slice(offset, offset + limit), as_of: fixture.as_of, open_count: rows.length };
   if (offset + limit < rows.length) body.next_cursor = `o:${offset + limit}`;
   return body;
 }
@@ -47,14 +47,21 @@ async function settled() {
   await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
 }
 const rowTitles = () => within(screen.getByRole('table')).queryAllByRole('link').map((a) => a.textContent);
+const search = (text: string) => {
+  fireEvent.change(screen.getByRole('searchbox', { name: 'Search' }), { target: { value: text } });
+  fireEvent.submit(screen.getByRole('search'));
+};
 
 describe('exceptions list', () => {
-  it('full page: header, columns, 20 rows in fixture order, count, As of and footer', async () => {
+  it('full page: header, search bar with the open total, columns, 20 rows in order, references, paging bar and footer', async () => {
     serve((url) => json(200, page(url)));
     render(<ExceptionsScreen />);
     await settled();
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('All exceptions');
     expect(screen.getByText(/^Everyone’s work that can’t move on by itself/)).toBeTruthy();
+    expect(screen.getByRole('searchbox', { name: 'Search' }).getAttribute('placeholder')).toBe('Search exceptions');
+    expect(screen.getByRole('button', { name: 'Filter' }).getAttribute('aria-haspopup')).toBe('dialog');
+    expect(screen.getByText('25 OPEN')).toBeTruthy();
     const table = screen.getByRole('table', { name: 'Exceptions, in the order the factory reports them' });
     expect(within(table).getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
       'WHAT HAPPENED',
@@ -66,7 +73,9 @@ describe('exceptions list', () => {
     const first = within(table).getAllByRole('row')[1];
     expect(within(first).getByText('SEND UNCERTAIN')).toBeTruthy();
     expect(within(first).getByRole('link').getAttribute('href')).toBe('/work/W-1005');
-    expect(screen.getByText('20 shown')).toBeTruthy();
+    expect(within(first).getByText('INV-0405').className).toBe('exc-ref');
+    expect(screen.getByText('Showing 20')).toBeTruthy();
+    expect(screen.getByRole('radiogroup', { name: 'Rows per page' })).toBeTruthy();
     expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.getByText(/^The factory never resends after an unknown outcome/)).toBeTruthy();
   });
@@ -130,31 +139,32 @@ describe('exceptions list', () => {
     expect(urls()[1].search).toBe('?limit=20&cursor=o%3A20');
     expect(rowTitles()).toEqual(fixture.items.map((r) => r.title));
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    expect(screen.getByText('25 shown')).toBeTruthy();
+    expect(screen.getByText('Showing 25')).toBeTruthy();
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Rows per page' }), { target: { value: '10' } });
+    fireEvent.click(screen.getByRole('radio', { name: '10' }));
     await waitFor(() => expect(rowTitles()).toHaveLength(10));
     expect(urls()[2].search).toBe('?limit=10');
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(rowTitles()).toHaveLength(20));
     expect(urls()[3].search).toBe('?limit=10&cursor=o%3A10');
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Rows per page' }), { target: { value: '50' } });
+    expect(screen.getByRole('radio', { name: '10' }).getAttribute('aria-checked')).toBe('true');
+    fireEvent.click(screen.getByRole('radio', { name: '50' }));
     await waitFor(() => expect(urls()).toHaveLength(5));
     expect(urls()[4].search).toBe('?limit=50');
     await waitFor(() => expect(rowTitles()).toEqual(fixture.items.map((r) => r.title)));
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
   });
 
-  it('drops an answer to a superseded limit', async () => {
+  it('drops an answer to a superseded request', async () => {
     let release: (r: Response) => void = () => {};
     serve((url) =>
-      url.searchParams.get('limit') === '20'
+      !url.searchParams.has('q')
         ? new Promise<Response>((resolve) => (release = resolve))
         : json(200, { items: [fixture.items[3]], as_of: fixture.as_of }),
     );
     render(<ExceptionsList />);
-    fireEvent.change(screen.getByRole('combobox', { name: 'Rows per page' }), { target: { value: '10' } });
+    search('Northwind');
     await waitFor(() => expect(rowTitles()).toEqual([fixture.items[3].title]));
     release(json(200, page(new URL('http://x/?limit=20'))));
     await new Promise((r) => setTimeout(r, 20));
@@ -188,9 +198,47 @@ describe('exceptions list', () => {
     expect(screen.getByText('Everything is moving or verified.')).toBeTruthy();
     expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.queryByRole('table')).toBeNull();
-    expect(screen.queryByRole('button')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.queryByText(/The factory never resends/)).toBeNull();
-    expect(screen.queryByText(/shown/)).toBeNull();
+    expect(screen.queryByText(/Showing|OPEN/)).toBeNull();
+  });
+
+  it('search and Filter send q and what, show the narrowed empty card, and Clear brings every row back', async () => {
+    serve((url) => {
+      const q = url.searchParams.get('q');
+      const what = url.searchParams.get('what');
+      const rows = fixture.items.filter((r) => (!q || r.title.includes(q)) && (!what || r.what === what));
+      return json(200, page(url, rows));
+    });
+    render(<ExceptionsList />);
+    await settled();
+    search('Kora');
+    await waitFor(() => expect(rowTitles()).toEqual(fixture.items.filter((r) => r.title.includes('Kora')).map((r) => r.title)));
+    expect(urls()[1].search).toBe('?limit=20&q=Kora');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
+    const dialog = screen.getByRole('dialog', { name: 'Filter' });
+    fireEvent.click(within(dialog).getByRole('radio', { name: 'Blocked' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Show results' }));
+    await screen.findByText('No exceptions match your search and filter.');
+    expect(urls()[2].search).toBe('?limit=20&q=Kora&what=blocked');
+    expect(screen.getByText('0 OPEN')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Remove What happened filter' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear search and filter' }));
+    await waitFor(() => expect(rowTitles()).toHaveLength(20));
+    expect(urls()[3].search).toBe('?limit=20');
+    expect((screen.getByRole('searchbox', { name: 'Search' }) as HTMLInputElement).value).toBe('');
+  });
+
+  it('draws no open total or reference when the backend does not send them (unknown is not zero)', async () => {
+    const rows = fixture.items.slice(0, 3).map((r) => ({ work_id: r.work_id, what: r.what, title: r.title, doing: r.doing, who_acts: r.who_acts, since: r.since }));
+    serve(() => json(200, { items: rows, as_of: fixture.as_of }));
+    render(<ExceptionsList />);
+    await settled();
+    expect(rowTitles()).toEqual(rows.map((r) => r.title));
+    expect(screen.queryByText(/OPEN/)).toBeNull();
+    expect(document.querySelector('.exc-ref')).toBeNull();
   });
 
   it('401 shows the signed-out callout with next=/exceptions', async () => {
@@ -210,8 +258,9 @@ describe('exceptions list', () => {
       expect(screen.getByText('Your own exceptions appear in My work, under Needs me.')).toBeTruthy();
       expect(screen.getByRole('link', { name: 'Go to My work' }).getAttribute('href')).toBe('/my-work');
       expect(screen.queryByRole('table')).toBeNull();
-      expect(screen.queryByText(/shown|As of/)).toBeNull();
-      expect(screen.queryByRole('combobox')).toBeNull();
+      expect(screen.queryByText(/Showing|As of|OPEN/)).toBeNull();
+      expect(screen.queryByRole('searchbox')).toBeNull();
+      expect(screen.queryByRole('radiogroup')).toBeNull();
     });
   }
 
@@ -234,11 +283,12 @@ describe('exceptions list', () => {
     });
   }
 
-  it('no actions: only title links and Show more in the default state', async () => {
+  it('no actions: only title links, and controls that narrow or page the list, in the default state', async () => {
     serve((url) => json(200, page(url)));
     render(<ExceptionsList />);
     await settled();
-    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['Show more']);
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['Filter', 'Show more']);
+    expect(screen.getAllByRole('radio').map((b) => b.textContent)).toEqual(['10', '20', '50']);
     const links = screen.getAllByRole('link');
     const titles = fixture.items.slice(0, 20).map((r) => r.title);
     expect(links.map((a) => a.textContent)).toEqual(titles);
@@ -253,9 +303,10 @@ describe('exceptions list', () => {
     expect(urls().map((u) => u.search)).toEqual(['?limit=10']);
     expect(rowTitles()).toEqual(fixture.items.slice(0, 3).map((r) => r.title));
     expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
-    expect(screen.queryByRole('combobox')).toBeNull();
+    expect(screen.queryByRole('searchbox')).toBeNull();
+    expect(screen.queryByRole('radiogroup')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();
-    expect(screen.queryByText(/The factory never resends|shown/)).toBeNull();
+    expect(screen.queryByText(/The factory never resends|Showing|OPEN/)).toBeNull();
     expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.getAllByRole('link', { name: 'See all exceptions' }).map((a) => a.getAttribute('href'))).toEqual(['/exceptions']);
     unmount();

@@ -1,14 +1,16 @@
 // E-EXCEPTIONS values to the words and classes on the SCR-10 boards. Presentation only.
 import type { ExceptionKind, ExceptionsLimit } from './types';
 
-/** Kind tag per `what`; a new contract value fails the typecheck here. */
-export const KIND_TAGS: Record<ExceptionKind, { text: string; className: string }> = {
-  effect_uncertain: { text: 'SEND UNCERTAIN', className: 'psl-tag psl-tag--waiting' },
-  owner_needed: { text: 'OWNER NEEDED', className: 'psl-tag psl-tag--person' },
-  setup_needed: { text: 'SETUP NEEDED', className: 'psl-tag psl-tag--person' },
-  blocked: { text: 'BLOCKED', className: 'psl-tag psl-tag--person' },
-  followup_needed: { text: 'FOLLOW-UP NEEDED', className: 'psl-tag psl-tag--person' },
+/** Kind tag per `what` (and the Filter panel's words); a new contract value fails the typecheck here. */
+export const KIND_TAGS: Record<ExceptionKind, { text: string; words: string; className: string }> = {
+  effect_uncertain: { text: 'SEND UNCERTAIN', words: 'Send uncertain', className: 'psl-tag psl-tag--waiting' },
+  owner_needed: { text: 'OWNER NEEDED', words: 'Owner needed', className: 'psl-tag psl-tag--person' },
+  setup_needed: { text: 'SETUP NEEDED', words: 'Setup needed', className: 'psl-tag psl-tag--person' },
+  blocked: { text: 'BLOCKED', words: 'Blocked', className: 'psl-tag psl-tag--person' },
+  followup_needed: { text: 'FOLLOW-UP NEEDED', words: 'Follow-up needed', className: 'psl-tag psl-tag--person' },
 };
+
+export const KINDS = Object.keys(KIND_TAGS) as ExceptionKind[];
 
 export const EXCEPTIONS_LIMITS: readonly ExceptionsLimit[] = [10, 20, 50];
 

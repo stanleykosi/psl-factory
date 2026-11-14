@@ -18,9 +18,10 @@ async function expectNoAxeViolations(page: Page) {
   expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([]);
 }
 
+/** The h1 reads "All exceptions" on desktop and "Exceptions · N" on phones (SCR-10-mobile). */
 async function loaded(page: Page) {
   await expect(page.getByRole('status')).toHaveCount(0);
-  await expect(page.getByRole('heading', { level: 1, name: 'All exceptions' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: /^(All exceptions|Exceptions( · \d+)?)$/ })).toBeVisible();
 }
 
 /** The scenario header on the list request only, so /me still loads and the page itself answers the status. */
@@ -51,9 +52,13 @@ const FOOTER = 'The factory never resends after an unknown outcome until it has 
 test.describe('desktop 1440', () => {
   test.use({ viewport: DESKTOP });
 
-  test('default list: header, columns, 20 rows in order, count, As of, footer; Show more gives 25', async ({ page }) => {
+  test('default list: header, search bar, columns, 20 rows in order, paging bar, footer; Show more gives 25', async ({ page }) => {
     await page.goto('/exceptions');
     await loaded(page);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('All exceptions');
+    await expect(page.getByRole('searchbox', { name: 'Search' })).toHaveAttribute('placeholder', 'Search exceptions');
+    await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
+    await expect(page.getByText('25 OPEN')).toBeVisible();
     await expect(page).toHaveTitle('All exceptions · PSL Factory');
     await expect(page.getByText(/^Everyone’s work that can’t move on by itself, across every line you can see/)).toBeVisible();
     const table = page.getByRole('table', { name: 'Exceptions, in the order the factory reports them' });
@@ -63,7 +68,11 @@ test.describe('desktop 1440', () => {
     await expect(rows.first().locator('.psl-tag')).toHaveText('SEND UNCERTAIN');
     await expect(rows.first().locator('time')).toHaveText('since 11:02');
     await expect(rows.first().getByRole('link')).toHaveAttribute('href', '/work/W-1005');
-    await expect(page.getByText('20 shown')).toBeVisible();
+    await expect(rows.first().getByRole('link')).toHaveCSS('text-decoration-line', 'none');
+    await expect(rows.first().getByRole('link')).toHaveCSS('color', 'rgb(31, 36, 39)');
+    await expect(rows.first().locator('.exc-ref')).toHaveText('INV-0405');
+    await expect(page.getByText('Showing 20')).toBeVisible();
+    await expect(page.getByRole('radio', { name: '20' })).toHaveAttribute('aria-checked', 'true');
     await expect(page.getByText('As of 14 Nov 11:05')).toBeVisible();
     await expect(page.getByText(FOOTER)).toBeVisible();
     await shot(page, 'exceptions-desktop-default');
@@ -76,8 +85,31 @@ test.describe('desktop 1440', () => {
     await page.keyboard.press('Enter');
     await expect(rows).toHaveCount(25);
     await expect(more).toHaveCount(0);
-    await expect(page.getByText('25 shown')).toBeVisible();
+    await expect(page.getByText('Showing 25')).toBeVisible();
     expect(await scrollWidth(page)).toBeLessThanOrEqual(DESKTOP.width);
+  });
+
+  test('search and Filter narrow the list through the API; the narrowed empty state clears both', async ({ page }) => {
+    await page.goto('/exceptions');
+    await loaded(page);
+    const rows = page.getByRole('table').locator('tbody tr');
+    await page.getByRole('searchbox', { name: 'Search' }).fill('Kora');
+    await expect(rows).toHaveCount(3);
+    await expect(page.getByText('3 OPEN')).toBeVisible();
+    await page.getByRole('button', { name: 'Filter' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Filter' });
+    await expect(dialog).toBeVisible();
+    await expectNoAxeViolations(page);
+    await dialog.getByRole('radio', { name: 'Follow-up needed' }).check();
+    await dialog.getByRole('button', { name: 'Show results' }).click();
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first().locator('.psl-tag')).toHaveText('FOLLOW-UP NEEDED');
+    await expect(page.getByText('1 OPEN')).toBeVisible();
+    await page.getByRole('searchbox', { name: 'Search' }).fill('Sable');
+    await expect(page.getByRole('heading', { level: 2, name: 'No exceptions match your search and filter.' })).toBeVisible();
+    await page.getByRole('button', { name: 'Clear search and filter' }).click();
+    await expect(rows).toHaveCount(20);
+    await expect(page.getByText('25 OPEN')).toBeVisible();
   });
 
   test('rows open their own work item', async ({ page }) => {
@@ -192,14 +224,16 @@ test.describe('phone 390', () => {
     await page.goto('/exceptions');
     await loaded(page);
     await expect(page.getByRole('table')).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Exceptions · 25');
+    await expect(page.getByRole('link', { name: '← Queue' })).toHaveAttribute('href', '/my-work');
+    await expect(page.getByRole('searchbox', { name: 'Search' })).toBeVisible();
+    expect((await page.getByRole('button', { name: 'Filter' }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
     const cards = page.getByRole('list', { name: 'Exceptions, in the order the factory reports them' }).getByRole('listitem');
     await expect(cards).toHaveCount(20);
     const first = cards.first();
     await expect(first.locator('.psl-tag')).toHaveText('SEND UNCERTAIN');
-    await expect(first.locator('time')).toHaveText('since 11:02');
     await expect(first.getByRole('link')).toHaveText('Kora Logistics · Milestone 1 invoice');
     await expect(first).toContainText('Chidi is checking for a delivery receipt by reference. Nothing resent.');
-    await expect(first).toContainText('Who acts: Chidi · then Finance if not found');
     expect(await scrollWidth(page)).toBeLessThanOrEqual(390);
     const more = page.getByRole('button', { name: 'Show more' });
     expect((await more.boundingBox())!.height).toBeGreaterThanOrEqual(44);
@@ -207,10 +241,20 @@ test.describe('phone 390', () => {
     await expectNoAxeViolations(page);
     const ring = { style: 'solid', width: '2px' };
     expect(await tabTo(page, first.getByRole('link'))).toEqual(ring);
+    // The title link covers the whole card: a tap on the card's text opens the item.
     await more.click();
     await expect(cards).toHaveCount(25);
     await expect(more).toHaveCount(0);
     expect(await scrollWidth(page)).toBeLessThanOrEqual(390);
+  });
+
+  test('tapping a card anywhere opens its work item', async ({ page }) => {
+    await page.goto('/exceptions');
+    await loaded(page);
+    // A real tap on the card's text: the title link's overlay takes it (Playwright's own click refuses a covered target).
+    const box = (await page.getByText('Waiting for an update template for this client.').boundingBox())!;
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page).toHaveURL(/\/work\/W-1503$/);
   });
 
   test('Try again is at least 44px tall', async ({ page }) => {
