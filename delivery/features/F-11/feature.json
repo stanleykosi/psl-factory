@@ -147,20 +147,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (not client/product acceptance, not merge or release)",
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-11/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "coordinator, provisional for the design engineer (hunchoweb)",
+      "authority": "the design engineer's overnight instruction, 14 Nov 2026; recorded in delivery/OVERNIGHT-DECISIONS.md",
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -793,6 +797,75 @@
           "action": "add",
           "by": "reviewer-qa",
           "at": "2026-11-14T08:22:52Z",
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Spec AC 26 and the Ownership lane forbid any edit to `frontend/src/shell/**`. Round 3 changed `PhoneBar.tsx`, `AppShell.tsx` and `shell.css` (optional `note`, \"RULES\" label) so the phone boards could pass. The checks gate reported no protected-path change, so the gate does not catch this. The change is disclosed in round-3/build.md and recorded in D-33 and D-34. Expected before merge: F-11 is rebased onto the frame PR (branch fe-frame-phone-note, D-34) so its own diff touches no shell file, and it takes the TECH-3-2 `margin-left: auto` line from that PR. Actual at this head: the shell change is in F-11's diff. Accepted at this head only because D-34 gives the route. If the frame PR does not merge first, AC 26 is not met and the merge needs a fresh decision.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T08:26:17Z",
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The \"Back to Setup\" fidelity exception (D-33) holds the phone boards at 100% coverage and is provisional, approved by the coordinator. Without it coverage is 92.9 / 87.5 / 66.7%. A permanent decision by the design engineer is still needed. It is listed so it is not mistaken for a final approval.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T08:26:17Z",
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []` although the spec names E-SETUP-RULES, E-SETUP-RULE-SAVE and E-EVIDENCE-UPLOAD, and `baseline.architecture_manifest_sha256` is null although the spec cites v7 digest f6231d20\u2026b624. Record gap only. The operations are covered (below). Fill the record before merge so traceability reads correctly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T08:26:17Z",
           "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
         }
       ]
