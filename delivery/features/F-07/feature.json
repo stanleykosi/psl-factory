@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -139,7 +139,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "snapshot_ref": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
       "evidence_refs": [
         "delivery/features/F-07/round-3/review-ux.md"
       ]
@@ -2702,6 +2702,14 @@
       "at": "2026-11-14T06:07:33Z",
       "round": 3,
       "head": "2892f009b88a0dfb1a2ec1df5f33b966f7ba0a7c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T16:09:01Z",
+      "round": 3,
+      "head": "4e8a8c7d75957adbc9de381887453e0e5e11ecf4",
       "reason": null
     }
   ],
