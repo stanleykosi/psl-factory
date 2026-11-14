@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-05",
   "outcome": "Start work: pick a line, fill its intake in a drawer, land on the new work item",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M2A"
   ],
@@ -69,7 +69,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T04:01:12Z",
+      "seconds": 52.6,
+      "evidence_ref": "delivery/features/F-05/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -79,7 +92,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -95,7 +108,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-05/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -123,8 +136,580 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "After a definitive 403 or 404 the form unlocks but keeps the same idempotency key. If the person then changes the project or a field and presses start, the same key goes out with a different body. That is the opposite of what the spec's assumption promises (\"the same key is only ever resent with the same body\"). On a backend that records keys before its permission or case check, it would also give a confusing 409 `idempotency_key_reused`. The spec only requires a new key after a 409 or 422, so this is a gap, not a contract break. Expected: a new key after any definitive 4xx, because nothing was written. Actual: `useStartWork.ts:186-208` makes a new key only in the 422 and 409 branches.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Whether a retry is safe depends on the order of the backend's checks, and the contract doesn't fix that order. Suppose the first POST did start and its answer was lost. \"Check again\" then only works if the backend looks up the idempotency key before it checks `case_revision` and the line grant. If it checks the revision first, a start that already happened, and moved the revision on, answers 409 `stale_revision`. The drawer would then unlock with a new key, and the next press would start the same work twice. The mock checks the key first (`mock/start-work.mjs:184-199`, though the line grant comes before the key). Also, any replay answer other than 201, for example a 200, shows as \"uncertain\" for good (`useStartWork.ts:181`). Please add both points to the PMO-0-1 question in build.md: look up the key first, then answer with the stored 201.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Some tests still name old contract versions. `tests/mock-work-list.test.ts:15` still reads `architecture/packages/v3/openapi.json` for E-WORK-LIST. The test name at `tests/mock-decide.test.ts:206` still says \"v4\" but validates through `OPENAPI_PATH`, which is now v6. Neither file is in F-05's lane, and the spec's 5-file repoint list doesn't cover them. Still, after the repoint there should be one contract version. Fix this in whichever lane owns those tests, or when rebasing onto F-06, F-07 or F-08.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A 201 is trusted without checking its body. `useStartWork.ts:180` casts `data` and reads `work_id`. With an empty 201 body (`data` undefined), it throws a TypeError out of `submit`: the error isn't caught and the drawer shows nothing. With no `work_id`, the browser goes to `/work/undefined`. Expected: a 201 without a string `work_id` is treated as uncertain.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The rebase isn't done yet. Base 2443664 isn't on `main`, and F-06, F-07 and F-08 haven't merged yet (their feature.json state is not merged). So the spec's rule that \"every fixture, theirs included, must pass mock-contract against v6\" can only be checked after the rebase. Re-run `tests/mock-contract.test.ts` and `tests/api-schema-drift.test.ts` after the rebase, before merging.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The primary start button in the line drawer and phone sheet (\"Start the invoice\") is action blue (#2459D6 family) when enabled. Boards SCR-04-desktop and SCR-04-mobile draw it in the Start orange (#C8401C), the same colour as the top-bar and phone-bar Start button. Expected the same orange on every enabled primary start button in the drawer footer; actual blue at 1440 and 390 (see the validation state, where it is enabled). Spec does not record this as an approved exception. Likely in `frontend/src/features/start-work/LineForm.tsx` / `DrawerFrame.tsx` footer button class (use `psl-btn--start`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"1 things to fix\" (eyebrow and callout \"1 things to fix before Chidi can start.\") reads wrongly for one item. The spec fixed this copy, but a singular form (\"1 thing to fix\") would be plain and consistent with the board's \"2 things to fix\". Ask product if the spec text may be changed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a 422 the footer primary stays enabled, where the board validation state shows it greyed until the problem is fixed. The spec does not say; keeping it enabled lets the person retry, which is reasonable. Note for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The top-bar label shows a wider gap in \"Start  work\" (visually hidden \" work\" span plus the space) at 1440; the board shows a single space.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone sheet stacks Back under the primary button; the mobile boards show only the full-width primary. Costs vertical space on 390px (the \"What happens next\" card is cut by the sticky footer and needs a scroll). Spec says a footer with Back/Cancel, so no change required unless the design engineer wants the board layout.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Primary start button is the wrong colour and size on every line drawer. Expected (all 10 desktop and 10 phone boards): start orange `#C8401C` (`--signal`, i.e. `psl-btn--start`), `flex: 2` beside a `flex: 1` Back/Cancel, 48px tall. Actual: plain `psl-btn` in action blue rgb(36,89,214), auto width (142px at 1440), right-aligned, 44px tall. At 1440 Back is 68px wide where the board has about 140px. `frontend/src/features/start-work/LineForm.tsx:181-201` (`className=\"psl-btn sw-primary\"`), `start-work.css:27` (`.sw-primary{margin-left:auto}`). The chooser's disabled Next has the same width problem (`LineChooser.tsx:163-170`). See fidelity/SCR-04-desktop-1440/side-by-side.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Choice (segmented) fields don't fill the row. Expected (desktop-minutes, desktop-escalation, desktop-leadership and the phone boards): two equal options across the whole field width (`flex: 1 0 auto`). Actual: `psl-seg` hugs its content (181px of 458px at 1440, 181 of 358 at 390). `IntakeField.tsx:236`, `start-work.css:47` (`.sw-seg{align-self:flex-start}`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The chooser doesn't match SCR-04-desktop-lines or SCR-04-mobile-lines:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "\"What happens next\" is restyled. Expected (desktop, desktop-validation; CMP-23 says \"a one-line what happens next\"): a 13px paragraph below a hairline rule, no fill, reading \"**7 stations.** Chidi drafts the invoice from the signed SOW \u00b7 **a Finance Lead decides** \u00b7 issue, delivery and verification are automatic.\" with \"a Finance Lead decides\" in `#9A2F10` bold, then the link \"See the full invoice journey\". Phone board: one line, \"Next: Chidi drafts \u00b7 a Finance Lead decides\". Actual: a grey `--surface-subtle` box with 5 stacked lines (stations / avatar + \"Chidi\" / summary / \"Decided by Finance Lead.\" / \"See the full journey\"). The phone shows the whole box, which pushes the form down. `LineForm.tsx:101-122`, `start-work.css:68-70`. The spec records only a different order; the fill, the stacking and the lost emphasis are not recorded.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The phone footer and head don't match the phone boards.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "product",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The phone line boards SCR-04-mobile-weekly, -minutes, -issue, -change, -incident, -escalation and -leadership draw the line as a full-screen page: \"\u2190 My work\" / \"START\" bar, large Archivo page title, cream background, form, start-orange footer. The page opens a bottom sheet over My work. Visual scores are 48\u201362. The spec (Layout, below 720px: `psl-sheet`) follows SCR-04-mobile and -validation, which are sheets. The boards disagree with each other and with the spec. The design engineer must pick one and record an exception for the other; the frontend then follows that choice.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The display field is unboxed. Expected (desktop-weekly \"Template\", desktop-leadership \"Audience\", phone weekly): the value sits in a 2px-bordered, 48px read-only box like an input. Actual: plain text under the label. `IntakeField.tsx:170` (`.sw-display`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Validation state (desktop-validation, mobile-validation):",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Spec-driven departures from the boards that need the design engineer's approval in `delivery/features/F-05/fidelity-exceptions.json`. Without it they fail the gate:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-10",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Record pickers draw a 12px stroked chevron SVG where every board uses a small \"\u25be\" glyph. The tool counts each chosen value (\"Lagoon Health \u00b7 patient app \u25be\") as missing because of it. Prefer the bundle's own select chevron if `psl-select` has one; otherwise list the glyph in the exceptions file. `RecordPicker.tsx:150-152`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-11",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The top-bar main part reads \"Start  work\" with a doubled gap: the flex `gap` of `psl-btn` applies between the \"Start \" text node and `.sw-word`. SCR-01-desktop-my-work shows \"Start work\" with a single space. `StartWorkButton.tsx:44-47`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-12",
+      "round": 1,
+      "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Hard-coded spacing where `--space-*` tokens exist, contrary to the spec's \"tokens and existing psl-* classes only\": `start-work.css:9` (`padding-right:112px`), `:10` (`height:56px`), `:13` (`padding:0 10px`), `:35` (`gap:4px`), `:42` (`gap:10px`), `:47`, `:51` (`padding:8px 0`), `:68` (`gap:6px; padding:12px 14px`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-05/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T04:39:11Z",
+          "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+          "evidence_refs": [
+            "delivery/features/F-05/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-05/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+          "evidence_refs": [
+            "delivery/features/F-05/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate)",
+          "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+          "evidence_refs": [
+            "delivery/features/F-05/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+          "evidence_refs": [
+            "delivery/features/F-05/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -142,13 +727,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M2A",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "2443664540147f9fc23537d9a6fcc2fc63589478",
+    "task_branch": "fe-m2a-start-work-pick-a-line-fill-its-intake-i",
+    "head_sha": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-05",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -158,7 +743,54 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/fixtures/me.ceo.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/me.pm.json",
+      "frontend/mock/fixtures/start-work/lines.ceo.json",
+      "frontend/mock/fixtures/start-work/lines.finance_lead.json",
+      "frontend/mock/fixtures/start-work/lines.none.json",
+      "frontend/mock/fixtures/start-work/lines.pm.json",
+      "frontend/mock/fixtures/start-work/options/incident.json",
+      "frontend/mock/fixtures/start-work/options/issue.json",
+      "frontend/mock/fixtures/start-work/options/meeting.json",
+      "frontend/mock/fixtures/start-work/options/milestone.json",
+      "frontend/mock/fixtures/start-work/options/project.json",
+      "frontend/mock/fixtures/work/W-1401.json",
+      "frontend/mock/fixtures/work/W-1402.json",
+      "frontend/mock/fixtures/work/W-1403.json",
+      "frontend/mock/fixtures/work/W-1404.json",
+      "frontend/mock/fixtures/work/W-1405.json",
+      "frontend/mock/fixtures/work/W-1406.json",
+      "frontend/mock/fixtures/work/W-1407.json",
+      "frontend/mock/fixtures/work/W-1408.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/package.json",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/schema.d.ts",
+      "frontend/src/features/start-work/DrawerFrame.tsx",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineChooser.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/StartWorkButton.tsx",
+      "frontend/src/features/start-work/StartWorkDrawer.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/types.ts",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/tests/api-schema-drift.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/start-work-intake.test.ts",
+      "frontend/tests/start-work-mock.test.ts",
+      "frontend/tests/start-work.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -191,8 +823,8 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 2,
+  "round_limit": 3,
   "history": [
     {
       "from": "PLANNED",
@@ -200,6 +832,38 @@
       "at": "2026-11-14T03:11:15Z",
       "round": 0,
       "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T03:11:36Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T04:29:14Z",
+      "round": 1,
+      "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T04:39:11Z",
+      "round": 1,
+      "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T04:39:11Z",
+      "round": 2,
+      "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
       "reason": null
     }
   ],
@@ -217,7 +881,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

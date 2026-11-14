@@ -226,7 +226,7 @@ Sample: list rows render `<SampleLabel show={item.sample} />` next to the title,
    - Behaviour: `/projects/P-0099` (any persona) and `/projects/P-0102` as pm show "You can't open this project" with "Back to projects". The page contains neither the requested case_id nor the error body's message, and there is no tab bar. `document.title` is "Project · PSL Factory". A stubbed 403 renders the same state.
    - Verify: a component test with 404 and 403 bodies whose `message` is "Lagoon Health secret" asserts that the text is absent. In e2e, check that `page.title()` and `body.innerText` do not contain "P-0099" and that P-0102's title is missing as pm.
 9. **Wrong user, no section.**
-   - Behaviour: with persona `none` (no `projects` destination), `/projects` and `/projects/P-0101` show "This section isn't open to your role." and send no E-PROJECTS or E-PROJECT request.
+   - Behaviour: with persona `none` (no destinations at all), the app frame from F-01 answers first on `/projects` and `/projects/P-0101` with its approved "No sections are open to your role yet." state, and no E-PROJECTS or E-PROJECT request is sent. "This section isn't open to your role." is for a person who has other sections but not Projects. (Corrected by the coordinator, 14 Nov 2026, after UI-1-1: the frame state was approved in F-01 and is the right answer for a person with no sections.)
    - Verify: a component test counting fetch calls to `/api/v1/projects`, plus e2e with cookie `psl_mock_persona=none`.
    - Behaviour: as pm, the list shows exactly pm's 4 projects and never P-0102.
    - Verify: e2e.

@@ -1,0 +1,617 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T04:34:40.456Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-04-mobile.dc.html",
+  "boardName": "SCR-04-mobile.dc.html",
+  "pageUrl": "http://localhost:3511/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "8 board item(s) are missing from the page and are not approved exceptions (coverage 46.7% with exceptions, needs 100%).",
+    "Visual match 42.4 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 46.7,
+    "coverageWithExceptions": 46.7,
+    "visual": 42.4
+  },
+  "visual": {
+    "score": 42.4,
+    "allCellsScore": 58.5,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1689,
+    "mismatchedCells": 973
+  },
+  "coverage": {
+    "total": 15,
+    "found": 7,
+    "coverage": 46.7,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Invoice preparation",
+        "pageName": "Invoice preparation and delivery",
+        "pageRole": "dialog",
+        "similarity": 84,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 68,
+          "w": 390,
+          "h": 776
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice preparation",
+        "pageName": "Invoice preparation and delivery",
+        "pageRole": "text",
+        "similarity": 84,
+        "looks": [
+          "text size 18px on the board, 20px on the page",
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 150,
+          "w": 166,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 110,
+          "w": 322,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "change line",
+        "pageName": "change line",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 89,
+          "y": 172,
+          "w": 67,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 248,
+          "y": 162,
+          "w": 69,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 215,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 234,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Completed milestone",
+        "pageName": "Completed milestone",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 297,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 317,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start the invoice",
+        "pageName": "Start the invoice",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #C8401C on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 778,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 730,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "key": "text: Lagoon Health · Milestone 2 invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 122,
+          "w": 245,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank · go-live report",
+        "key": "text: Harmattan Bank · go-live report",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 179,
+          "w": 221,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Step 2 of 2 · change line",
+        "key": "text: Step 2 of 2 · change line",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 172,
+          "w": 140,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "×",
+        "key": "text: ×",
+        "container": "dialog",
+        "boardBox": {
+          "x": 361,
+          "y": 150,
+          "w": 13,
+          "h": 39
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health ▾",
+        "key": "text: Lagoon Health ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 239,
+          "w": 358,
+          "h": 48
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 3 · UAT signed ▾",
+        "key": "text: Milestone 3 · UAT signed ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 321,
+          "w": 358,
+          "h": 48
+        },
+        "exception": null
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next: Chidi drafts · a Finance Lead decides",
+        "key": "text: Next: Chidi drafts · a Finance Lead decides",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 379,
+          "w": 358,
+          "h": 17
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"change line\"",
+        "kind": "Link",
+        "name": "change line",
+        "boardBox": {
+          "x": 89,
+          "y": 172,
+          "w": 67,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 248,
+          "y": 162,
+          "w": 69,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: left on the board (31% across), right on the page (72% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 122,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 280,
+          "y": 82,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 244,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 270,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 324,
+          "y": 185,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Line chosen from the Start work menu · change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 162,
+          "w": 322,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 338,
+          "y": 81,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Project",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 261,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Completed milestone",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 344,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only milestones marked complete, with proof, are listed.",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 394,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "dialog",
+        "pageBox": {
+          "x": 200,
+          "y": 425,
+          "w": 61,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Anything Chidi should know (optional)",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 451,
+          "w": 358,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "WHAT HAPPENS NEXT",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 563,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "7 stations.",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 585,
+          "w": 330,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "C Chidi",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 612,
+          "w": 330,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi drafts the invoice from the signed SOW; issue, delivery and verification are automatic.",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 639,
+          "w": 330,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Decided by Finance Lead.",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 687,
+          "w": 330,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See the full journey",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 714,
+          "w": 121,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Back",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 782,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 8
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

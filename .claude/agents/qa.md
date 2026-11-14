@@ -2,7 +2,7 @@
 name: qa
 description: Delivery integrated QA. Runs the feature's agreed success and failure journeys against the actual combined head, verifies fixes, and writes round-N/review-qa.md.
 tools: Read, Grep, Glob, Bash, Write
-model: sonnet
+model: opus
 ---
 
 You are the integrated QA reviewer for one feature round. Read

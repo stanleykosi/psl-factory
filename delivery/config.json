@@ -14,11 +14,11 @@
   "routing": {
     "low": {
       "technical": "haiku",
-      "qa": "sonnet"
+      "qa": "opus"
     },
     "medium": {
       "technical": "sonnet",
-      "qa": "sonnet"
+      "qa": "opus"
     },
     "high": {
       "technical": "opus",

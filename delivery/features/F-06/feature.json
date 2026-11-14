@@ -68,7 +68,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T03:15:24Z",
+      "seconds": 124.0,
+      "evidence_ref": "delivery/features/F-06/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -115,8 +128,251 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/exceptions/labels.ts` `sinceText` (and `formatWat`, which F-03 owns): `Intl.DateTimeFormat.formatToParts` throws `RangeError: Invalid time value` for a malformed timestamp, so one bad `since` or `as_of` would crash the whole list render. The contract promises RFC 3339 strings, so this is a hardening item. Fix by guarding in `sinceText` or with an error boundary, or leave it and note it in the backend contract tests.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/exceptions/ExceptionsList.tsx:128`: the `limit` prop is read only as the initial value (`useExceptions({ limit: initialLimit })`). A later prop change is ignored. Spec-compliant for the current callers, but F-08 may pass a different limit. Either document it as initial-only or sync it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/server.mjs:24` (`M1_OPERATIONS`): the array line is the same line F-05, F-07 and F-08 are likely to append to, so a merge conflict is probable. The integration owner should resolve it at merge time. The change itself is correct.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop the \"since <t>\" text sits right after each tag, so its left edge shifts row to row (tag widths differ). The board uses a fixed tag column. Optional: give the tag a fixed-width slot. src/features/exceptions/exceptions.css",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T03:18:43Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "FID-1",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Built page does not follow the approved boards (design-fidelity check fails; design engineer review 14 Nov 2026)",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "design engineer (hunchoweb)",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The feature record is incomplete. `operation_ids` in feature.json is empty although E-EXCEPTIONS is the in-scope operation, and `baseline.architecture_manifest_sha256` is null although the spec cites v5 digest a91bc3ce.... Expected: both recorded before merge. FE-M2B must stay open after merge: A-RESPONSE and A-RECONCILE belong to the response half (FE-M2B-RESPONSE, architecture v6), and A-RESUME belongs to backend T-EXCEPTIONS.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The parallel lanes F-05, F-07 and F-08 edit the same mock files (`M1_OPERATIONS` at `server.mjs:24`, the dispatch block, and the `PERSONA_STATUS` map). The coordinator integrates at merge, and the pre-merge sync and checks must be re-run on the merged head. F-08 must import `ExceptionsList` and `useExceptions` and must not edit `src/features/exceptions/**`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-4",
+      "round": 1,
+      "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carry TECH-1-1 (malformed timestamp throws in `sinceText`) and TECH-1-2 (`limit` prop is initial-only; document it before F-08 embeds) to follow-up. No accepted-risk authority is named for either. They remain OPEN, and neither blocks.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-06/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), round 1",
+          "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+          "evidence_refs": [
+            "delivery/features/F-06/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "passed",
+          "reviewer": "reviewer-qa",
+          "authority": "integrated QA (UI against the contract mock only; no real backend)",
+          "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+          "evidence_refs": [
+            "delivery/features/F-06/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "passed",
+          "reviewer": "pmo-acceptance",
+          "authority": "PMO delivery acceptance (round 1). Delivery acceptance only; product acceptance, merge and release keep their own authorities.",
+          "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+          "evidence_refs": [
+            "delivery/features/F-06/round-1/acceptance-pmo.md"
+          ]
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-06/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+          "evidence_refs": [
+            "delivery/features/F-06/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (visual consistency against SCR-10 boards and the design system, read-only)",
+          "snapshot_ref": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+          "evidence_refs": [
+            "delivery/features/F-06/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -139,7 +395,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "435f1585dab1462b9a73f335883ff5fe71c87c43",
     "task_branch": "fe-m2b-a-lead-sees-every-exception-they-may-see",
-    "head_sha": null,
+    "head_sha": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-06",
     "pr_url": null,
     "pr_number": null,
@@ -150,7 +406,48 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/mock/exceptions.mjs",
+      "frontend/mock/fixtures/E-EXCEPTIONS.json",
+      "frontend/mock/fixtures/work/W-1501.json",
+      "frontend/mock/fixtures/work/W-1502.json",
+      "frontend/mock/fixtures/work/W-1503.json",
+      "frontend/mock/fixtures/work/W-1504.json",
+      "frontend/mock/fixtures/work/W-1505.json",
+      "frontend/mock/fixtures/work/W-1506.json",
+      "frontend/mock/fixtures/work/W-1507.json",
+      "frontend/mock/fixtures/work/W-1508.json",
+      "frontend/mock/fixtures/work/W-1509.json",
+      "frontend/mock/fixtures/work/W-1510.json",
+      "frontend/mock/fixtures/work/W-1511.json",
+      "frontend/mock/fixtures/work/W-1512.json",
+      "frontend/mock/fixtures/work/W-1513.json",
+      "frontend/mock/fixtures/work/W-1514.json",
+      "frontend/mock/fixtures/work/W-1515.json",
+      "frontend/mock/fixtures/work/W-1516.json",
+      "frontend/mock/fixtures/work/W-1517.json",
+      "frontend/mock/fixtures/work/W-1518.json",
+      "frontend/mock/fixtures/work/W-1519.json",
+      "frontend/mock/fixtures/work/W-1520.json",
+      "frontend/mock/fixtures/work/W-1521.json",
+      "frontend/mock/fixtures/work/W-1522.json",
+      "frontend/mock/fixtures/work/W-1523.json",
+      "frontend/mock/fixtures/work/W-1524.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/exceptions/page.tsx",
+      "frontend/src/features/exceptions/ExceptionsList.tsx",
+      "frontend/src/features/exceptions/ExceptionsPage.tsx",
+      "frontend/src/features/exceptions/exceptions.css",
+      "frontend/src/features/exceptions/index.ts",
+      "frontend/src/features/exceptions/labels.ts",
+      "frontend/src/features/exceptions/types.ts",
+      "frontend/src/features/exceptions/useExceptions.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/tests/exceptions-mock.test.ts",
+      "frontend/tests/exceptions.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -183,7 +480,7 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 3,
   "history": [
     {
@@ -201,6 +498,46 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T03:15:25Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T03:18:43Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:20:27Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T04:27:54Z",
+      "round": 1,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T04:27:54Z",
+      "round": 2,
+      "head": "808e022dd99ef05d39614d16acdfbe4fb0e44f55",
+      "reason": null
     }
   ],
   "routing": {
@@ -216,7 +553,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

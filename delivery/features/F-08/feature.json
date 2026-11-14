@@ -69,7 +69,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T03:35:12Z",
+      "seconds": 97.9,
+      "evidence_ref": "delivery/features/F-08/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -116,8 +129,228 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/package-lock.json` adds `\"peer\": true` to `node_modules/eslint-plugin-import` (hunk at about line 3913). This is npm-version metadata, not three or one of its dependencies. The brief expects a lockfile change limited to three and its deps. It is harmless and `npm ci` passes, but ideally revert that one line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "3D floor: token cubes collide with each other and with the count sprite at busy stations (visible at 1440 on Invoices, Pre-sale and Planning). Expected: tokens sit clear of the sprite and the neighbouring block. Actual: the two-row token grid (`frontend/src/features/floor/scene.ts:140-143`) runs into the sprite placed at `scene.ts:135` and the adjacent block. The sprite text stays legible at 2x.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Tag tones and line identity differ from the approved SCR-06 artboard. The artboard shows ON TRACK in green, WAITING in amber, STOPPED and UNCERTAIN in red, and an avatar and subtitle per line (e.g. \"RFP \u00b7 commercial\"). The build draws every tag neutral (ON TRACK, the 2 PROBLEMS in the zero variant) or in the signal tint (WAITING, STOPPED, UNCERTAIN, 2 PROBLEMS), and omits avatars and subtitles, because E-OVERVIEW has no fields for them. This follows the recorded PMO-0-4 decision (spec.md lines 84, 91; readiness.md line 25), which is flagged for product acceptance. Expected: product confirms or supplies the tone rule before merge. Actual: as described, in `frontend/src/features/overview/OverviewPage.tsx` (`LineRows`, the `psl-tag` class choice). If product does not accept the recorded decision, this becomes blocking.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T03:39:54Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "FID-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Built page does not follow the approved boards (design-fidelity check fails; design engineer review 14 Nov 2026)",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "design engineer (hunchoweb)",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, but spec.md and readiness.md put E-OVERVIEW (read only) in scope. Expected: the record names E-OVERVIEW. Actual: it names none, so coverage cannot be read from the record. Evidence is intact in build.md, the e2e and `mock-overview.test.ts`. Add E-OVERVIEW to the record at merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In `feature.json` acceptance_criteria, criteria 12, 13, 14 and 20 are cut off at their lead-in line (\"Verify:\"). The sub-bullets are in spec.md lines 193-205 and 211-214, and build.md covers each. The record should carry the full text. `baseline.explicit_exception` is also null, though readiness.md says the scope gate is the recorded early-start exception (mock-only, unreleased). Reconcile both before merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "UI-1-2 is the tag tone and line identity gap against the approved artboard. If product rejects the recorded PMO-0-4 rule, UI-1-2 becomes blocking. Resolve it in product acceptance, not here.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:55Z",
+          "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "passed",
+          "reviewer": "qa",
+          "authority": "integrated QA (UI against the contract mock only; no backend exists for E-OVERVIEW in this lane)",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "passed",
+          "reviewer": "pmo-acceptance",
+          "authority": "PMO delivery acceptance (delivery only; product acceptance, merge and release keep their own authorities)",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/acceptance-pmo.md"
+          ]
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-08/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design system and approved SCR-06 artboards)",
+          "snapshot_ref": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+          "evidence_refs": [
+            "delivery/features/F-08/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -140,7 +373,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "d8e454f0fa0716ca9ee237f7f42364f78e807fde",
     "task_branch": "fe-m3-overview-a-lead-opens-overview-and-sees-every-lin",
-    "head_sha": null,
+    "head_sha": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-08",
     "pr_url": null,
     "pr_number": null,
@@ -151,7 +384,73 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      ".gitignore",
+      "architecture/build_model.py",
+      "architecture/model.json",
+      "architecture/packages/v6/delivery.md",
+      "architecture/packages/v6/endpoints.csv",
+      "architecture/packages/v6/handoff.md",
+      "architecture/packages/v6/impact.json",
+      "architecture/packages/v6/index.html",
+      "architecture/packages/v6/integrations.csv",
+      "architecture/packages/v6/manifest.json",
+      "architecture/packages/v6/manifest.sha256",
+      "architecture/packages/v6/model.json",
+      "architecture/packages/v6/openapi.json",
+      "architecture/packages/v6/reviews.json",
+      "architecture/packages/v6/tasks.csv",
+      "architecture/packages/v6/traceability.csv",
+      "architecture/packages/v6/validation.json",
+      "architecture/sources/decisions-2026-11-14-v2.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-01/.lock",
+      "delivery/features/F-02/.lock",
+      "delivery/features/F-03/.lock",
+      "delivery/features/F-04/.lock",
+      "delivery/features/F-05/feature.json",
+      "delivery/features/F-05/readiness-v5-not-ready.md",
+      "delivery/features/F-05/readiness.md",
+      "delivery/features/F-05/spec.md",
+      "delivery/features/F-06/.lock",
+      "delivery/features/F-06/feature.json",
+      "delivery/features/F-06/round-1/acceptance-pmo.md",
+      "delivery/features/F-06/round-1/build.md",
+      "delivery/features/F-06/round-1/checks.md",
+      "delivery/features/F-06/round-1/e2e-coordinator.md",
+      "delivery/features/F-06/round-1/review-qa.md",
+      "delivery/features/F-06/round-1/review-technical.md",
+      "delivery/features/F-06/round-1/review-ui.md",
+      "delivery/features/F-06/round-1/review-ux.md",
+      "delivery/features/F-07/.lock",
+      "delivery/features/F-08/.lock",
+      "delivery/features/F-08/feature.json",
+      "frontend/e2e/decide.spec.ts",
+      "frontend/e2e/overview.spec.ts",
+      "frontend/mock/fixtures/E-OVERVIEW.json",
+      "frontend/mock/fixtures/overview/changed.json",
+      "frontend/mock/fixtures/overview/empty.json",
+      "frontend/mock/fixtures/overview/zero.json",
+      "frontend/mock/overview.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/package-lock.json",
+      "frontend/package.json",
+      "frontend/src/app/overview/page.tsx",
+      "frontend/src/features/floor/Floor3D.tsx",
+      "frontend/src/features/floor/scene.ts",
+      "frontend/src/features/floor/support.ts",
+      "frontend/src/features/overview/OverviewPage.tsx",
+      "frontend/src/features/overview/overview.css",
+      "frontend/src/features/overview/types.ts",
+      "frontend/src/features/overview/useMedia.ts",
+      "frontend/src/features/overview/useOverview.ts",
+      "frontend/tests/floor.test.ts",
+      "frontend/tests/mock-overview.test.ts",
+      "frontend/tests/overview-floor-reject.test.tsx",
+      "frontend/tests/overview-floor.test.tsx",
+      "frontend/tests/overview-imports.test.ts",
+      "frontend/tests/overview.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -184,7 +483,7 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 3,
   "history": [
     {
@@ -202,6 +501,46 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T03:35:13Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T03:39:54Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T03:44:52Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T04:27:55Z",
+      "round": 1,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T04:27:55Z",
+      "round": 2,
+      "head": "ea088f9b0606c0e8e5fdfa1d047cd46619a96d13",
+      "reason": null
     }
   ],
   "routing": {
@@ -217,7 +556,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null
