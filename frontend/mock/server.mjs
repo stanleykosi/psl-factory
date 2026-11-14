@@ -1,4 +1,4 @@
-// Local contract mock for /api/v1. Routes come from the v4 openapi.json; M-1
+// Local contract mock for /api/v1. Routes come from the v7 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
 // Persona: cookie psl_mock_persona (finance_lead | pm | none; default finance_lead).
@@ -9,6 +9,8 @@
 // Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
 // the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
+// Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
+// Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -16,14 +18,20 @@ import { fileURLToPath } from 'node:url';
 
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { exceptionsList } from './exceptions.mjs';
+import { uploadEvidence } from './evidence.mjs';
+import { monthEnd } from './finance.mjs';
+import { overview } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
+import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { workList } from './work-list.mjs';
+import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v4', 'openapi.json');
+export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE'];
-export const PERSONAS = ['finance_lead', 'pm', 'none'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD'];
+export const PERSONAS = ['finance_lead', 'pm', 'none', 'admin'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 
@@ -204,6 +212,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const validators = bodyValidators(openapi);
   // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
   const overrides = new Map();
+  const alerts = createAlertsMock({ openapi });
 
   return http.createServer((req, res) => {
     const chunks = [];
@@ -215,6 +224,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
         resetResponses();
+        resetSetup();
+        alerts.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
@@ -234,14 +245,20 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WRITE_METHODS.has(method) && req.headers['x-csrftoken'] !== me[persona].csrf_token) {
         return send(res, 403, CSRF_FAILED);
       }
+      if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
-      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-MONTH-END') { const r = monthEnd({ url, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-SETUP-RULES' || route.operationId === 'E-SETUP-RULE-SAVE') { const r = (route.operationId === 'E-SETUP-RULES' ? setupRules : saveSetupRule)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
       }
       if (TASK_OPERATIONS.includes(route.operationId)) {
         return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));
       }
+      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
       return send(res, 200, fixtures[route.operationId]);
     });
   });

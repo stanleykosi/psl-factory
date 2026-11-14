@@ -1,0 +1,41 @@
+{
+  "as_of": "2026-11-14T10:05:00Z",
+  "items": [
+    {
+      "work_id": "W-1525",
+      "what": "effect_uncertain",
+      "title": "Lagoon Health · M2 invoice",
+      "ref": "INV-0412",
+      "doing": "Chidi is checking for a receipt. Nothing resent.",
+      "who_acts": "Chidi · then Finance if not found",
+      "since": "2026-11-14T10:02:00Z"
+    },
+    {
+      "work_id": "W-1526",
+      "what": "effect_uncertain",
+      "title": "Harmattan Bank · go-live report",
+      "ref": "GLV-0087",
+      "doing": "Tola is checking whether it arrived.",
+      "who_acts": "Tola · then PMO",
+      "since": "2026-11-14T09:02:00Z"
+    },
+    {
+      "work_id": "W-1527",
+      "what": "owner_needed",
+      "title": "Lagoon Health · M3 invoice",
+      "ref": "INV-0419",
+      "doing": "No Finance Lead set up for this project.",
+      "who_acts": "Admin or Finance Lead · Setup",
+      "since": "2026-11-09T09:00:00Z"
+    },
+    {
+      "work_id": "W-1528",
+      "what": "setup_needed",
+      "title": "Ojo Foods · ordering app plan",
+      "ref": "PLN-0151",
+      "doing": "No Design Lead role exists yet.",
+      "who_acts": "Admin · Setup",
+      "since": "2026-11-11T09:00:00Z"
+    }
+  ]
+}

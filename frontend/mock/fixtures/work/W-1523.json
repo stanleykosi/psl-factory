@@ -1,0 +1,63 @@
+{
+  "id": "W-1523",
+  "title": "Sable Foods · Weekly client update",
+  "line": "Weekly client update",
+  "reference": "UPD-0604",
+  "state": "action_needed",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Gather progress",
+      "status": "done"
+    },
+    {
+      "name": "Draft update",
+      "status": "done"
+    },
+    {
+      "name": "PM review",
+      "status": "stopped"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "The PM returned the draft because the figures do not match the plan. The Project Manager corrects the plan.",
+  "sample": true
+}

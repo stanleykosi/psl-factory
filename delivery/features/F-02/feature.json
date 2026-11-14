@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -957,9 +957,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -978,9 +978,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "d245fef1f9e38ae3e707cdcb02ea7b9b14994488",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/my-work.spec.ts",
@@ -1017,19 +1017,17 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": "AUTO_MERGE",
+    "approver_recommendation": "ESCALATE",
     "approver": "approver",
     "approver_reasons": [
       "delivery/features/F-02/decision.md"
     ],
-    "script_decision": "BLOCKED",
+    "script_decision": "HUMAN_APPROVAL",
     "script_reasons": [
-      "technical review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
-      "integrated_qa review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
-      "ux review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'",
-      "ui review covers '55e81940bdf715f222ebd7f15f26a9150d981915', not head 'eab6dffa85a3636cea84a414ea5ca4b55ab90534'"
+      "risk 'medium' is not auto-mergeable",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
     ],
-    "decided_for_head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+    "decided_for_head_sha": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1156,6 +1154,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-14T06:53:42Z",
+      "round": 3,
+      "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-14T08:56:56Z",
+      "round": 3,
+      "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-14T08:57:04Z",
+      "round": 3,
+      "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-14T08:57:13Z",
+      "round": 3,
+      "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-14T08:57:13Z",
       "round": 3,
       "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
       "reason": null

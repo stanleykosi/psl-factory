@@ -70,7 +70,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T09:18:49Z",
+      "seconds": 153.0,
+      "evidence_ref": "delivery/features/F-14/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -117,8 +130,80 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "FID-1-1",
+      "round": 1,
+      "snapshot_ref": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "20 of 26 SCR-02 boards under visual 90 (round-1/fidelity/scores.txt)",
+      "reproduction": "round-1/build.md fidelity table; rule visual >= 90 at 1440 and 390",
+      "evidence_refs": [],
+      "raised_by": "coordinator",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "coordinator",
+          "at": "2026-11-14T09:18:50Z",
+          "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-14/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -141,7 +226,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b7f7166781cd81326c03669da4ae88f092c4cf33",
     "task_branch": "fe-workitem-the-work-item-page-and-its-history-match",
-    "head_sha": "b7f7166781cd81326c03669da4ae88f092c4cf33",
+    "head_sha": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-14",
     "pr_url": null,
     "pr_number": null,
@@ -152,7 +237,34 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/work-item-board.spec.ts",
+      "frontend/e2e/work-item.spec.ts",
+      "frontend/mock/fixtures/work/W-1701.json",
+      "frontend/mock/fixtures/work/W-1702.json",
+      "frontend/mock/fixtures/work/W-1703.json",
+      "frontend/mock/fixtures/work/W-1704.json",
+      "frontend/mock/fixtures/work/W-1705.history.json",
+      "frontend/mock/fixtures/work/W-1705.json",
+      "frontend/mock/fixtures/work/W-1706.json",
+      "frontend/mock/fixtures/work/W-1707.json",
+      "frontend/mock/fixtures/work/W-1708.json",
+      "frontend/mock/fixtures/work/W-1709.json",
+      "frontend/mock/fixtures/work/W-1710.json",
+      "frontend/mock/fixtures/work/W-1711.json",
+      "frontend/src/features/work-item/InfoIcon.tsx",
+      "frontend/src/features/work-item/WorkItemHistory.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemStates.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/labels.ts",
+      "frontend/src/features/work-item/presentation.ts",
+      "frontend/src/features/work-item/usePhone.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/work-item-board.test.tsx",
+      "frontend/tests/work-item.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -185,7 +297,7 @@
     }
   },
   "created_at": "2026-11-14T07:46:48Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -203,6 +315,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T09:18:52Z",
+      "round": 1,
+      "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T09:18:53Z",
+      "round": 1,
+      "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T09:18:53Z",
+      "round": 2,
+      "head": "6eaac8c628c227f10a9aed6c64088a9c0f77902b",
+      "reason": null
     }
   ],
   "routing": {
@@ -218,7 +354,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

@@ -11,7 +11,6 @@
 // reconcile swaps in fixtures/response/<work_id>.<outcome>.json. A sidecar whose `recorded` has a `summary` is
 // board (r2) data and its 200 carries revision, recorded and next; otherwise the 200 is the bare
 // {task_id, work_state} and the reloaded item carries only recorded.by and .at.
-// Remove RESPONSE_OPENAPI_PATH once the mock reads v7 (F-13).
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -20,10 +19,9 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-import { DEFAULT_PERSONA, PERSONAS, SCENARIO_BODIES } from './server.mjs';
+import { DEFAULT_PERSONA, OPENAPI_PATH, PERSONAS, SCENARIO_BODIES } from './server.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const RESPONSE_OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 export const RESPONSE_OPERATIONS = ['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION'];
 
 const CSRF_FAILED = { code: 'csrf_failed', message: 'Your session check failed. Reload and try again.' };
@@ -37,7 +35,7 @@ let compiled;
 /** Request and reply validators for the three operations, compiled once from the v7 file. */
 function validators() {
   if (compiled) return compiled;
-  const openapi = JSON.parse(readFileSync(RESPONSE_OPENAPI_PATH, 'utf8'));
+  const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'));
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   addFormats(ajv);
   compiled = {};

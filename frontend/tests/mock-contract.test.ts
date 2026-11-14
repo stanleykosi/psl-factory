@@ -10,6 +10,14 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/server.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractEvidence } from '../mock/evidence.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractBody as monthEndBody } from '../mock/finance.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractRules } from '../mock/setup.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -24,11 +32,30 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 );
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
-const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001' };
-const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all' };
+const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', none: 'N-0201', admin: 'N-0201' };
+const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
+  'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
+  'E-SETUP-RULE-SAVE': { expected_revision: 2, value: { roles: ['pmo_lead'] } },
+  'E-EVIDENCE-UPLOAD': { kind: 'rule_proof', filename: 'minutes.pdf', content_base64: 'JVBERi0xLjQK', case_revision: 1 },
+};
+// Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only; E-MONTH-END Finance only).
+const PERSONA_STATUS: Record<string, Record<string, number>> = {
+  'E-EXCEPTIONS': { pm: 403 },
+  'E-MONTH-END': { pm: 403, none: 403 },
+  'E-SETUP-RULES': { pm: 403, none: 403 },
+  'E-SETUP-RULE-SAVE': { pm: 403, none: 403 },
+  'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
+};
+// Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10, F-11).
+const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
+  'E-EXCEPTIONS': exceptionsBody,
+  'E-MONTH-END': monthEndBody,
+  'E-SETUP-RULES': contractRules,
+  'E-EVIDENCE-UPLOAD': contractEvidence,
 };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
@@ -43,7 +70,9 @@ afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
 async function request(id: string, init: { persona?: string; scenario?: string; csrf?: string | null } = {}) {
   const { path, method } = byId(id);
-  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => PATH_VALUES[name] ?? 'X-1') + (QUERY[id] ?? '');
+  const persona = init.persona ?? 'finance_lead';
+  const value = (name: string) => (name === 'notification_id' ? NOTIFICATION_IDS[persona] : PATH_VALUES[name]);
+  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => value(name) ?? 'X-1') + (QUERY[id] ?? '');
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'finance_lead'}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
   if (method !== 'GET' && init.csrf !== null) headers['X-CSRFToken'] = init.csrf ?? `mock-csrf-${init.persona ?? 'finance_lead'}`;
@@ -61,17 +90,18 @@ function expectValid(id: string, status: number, body: unknown) {
   const declared = byId(id).op.responses[String(status)];
   const schema = declared ? declared.content['application/json'].schema : errorSchema;
   const validate = ajv.compile(schema);
-  const valid = validate(body);
+  const valid = validate(status === 200 ? (CONTRACT_BODY[id]?.(body) ?? body) : body);
   expect(valid, `${id} ${status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
 }
 
 describe('mock server matches openapi.json', () => {
   for (const id of M1_OPERATIONS as string[]) {
     for (const persona of PERSONAS as string[]) {
-      it(`${id} succeeds for persona ${persona} with a schema-valid body`, async () => {
+      const expected = PERSONA_STATUS[id]?.[persona] ?? 200;
+      it(`${id} answers ${expected} for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
-        expect(status).toBe(200);
-        expectValid(id, 200, body);
+        expect(status).toBe(expected);
+        expectValid(id, expected, body);
       });
     }
 
@@ -103,6 +133,7 @@ describe('mock server matches openapi.json', () => {
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-finance_lead'],
       ['Tunde Bello', ['my_work', 'projects', 'assistant'], 'mock-csrf-pm'],
       ['Sample Person', [], 'mock-csrf-none'],
+      ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
     ]);
   });
 

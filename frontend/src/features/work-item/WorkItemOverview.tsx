@@ -3,7 +3,7 @@
 // ResponseEntryLink); the only write here is ReconcilePanel's E-WORK-ACTION, shown with the reconcile grant.
 import Link from 'next/link';
 
-import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf } from '@/features/response';
+import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 
 import {
   AGENT_TAGS,
@@ -147,7 +147,7 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
   );
 }
 
-export function TaskPanels({ id, tasks }: { id: string; tasks: WorkItem['tasks'] }) {
+export function TaskPanels({ id, tasks }: { id: string; tasks: ResponseWorkItem['tasks'] }) {
   return tasks.map((task) => (
     <section key={task.id} className={task.you_can_act ? 'psl-panel psl-panel--decide' : 'psl-panel'} aria-label="Current human task">
       <h2 className={task.you_can_act ? 'psl-panel__head psl-panel__head--decide' : 'psl-panel__head'}>{task.title}</h2>
@@ -167,11 +167,25 @@ export function TaskPanels({ id, tasks }: { id: string; tasks: WorkItem['tasks']
   ));
 }
 
+const EXCEPTION_STATES = new Set<WorkItem['state']>([
+  'effect_uncertain',
+  'awaiting_reconciliation',
+  'owner_needed',
+  'setup_needed',
+  'followup_needed',
+]);
+
 export function NextStep({ item }: { item: WorkItem }) {
   return (
     <p className={`psl-callout psl-callout--${nextStepKind(item.state)} work-next`}>
       <span>
         <strong>Next step.</strong> {item.next_step}
+        {EXCEPTION_STATES.has(item.state) && (
+          <>
+            {' '}
+            <Link href="/exceptions">See all exceptions</Link>
+          </>
+        )}
       </span>
     </p>
   );
@@ -190,7 +204,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
         <ReconcilePanel id={id} item={asResponseItem(item)} />
         {item.tasks.length > 0 && (
           <div className="work-column">
-            <TaskPanels id={id} tasks={item.tasks} />
+            <TaskPanels id={id} tasks={asResponseItem(item).tasks} />
           </div>
         )}
       </div>

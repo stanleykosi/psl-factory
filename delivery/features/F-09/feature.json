@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-09",
   "outcome": "Record a client response or SOW signature with proof, and confirm what happened to an uncertain send",
-  "state": "IMPLEMENTING",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-M2B-RESPONSE"
   ],
@@ -82,59 +82,85 @@
       "at": "2026-11-14T08:03:59Z",
       "seconds": 73.6,
       "evidence_ref": "delivery/features/F-09/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T08:37:42Z",
+      "seconds": 101.5,
+      "evidence_ref": "delivery/features/F-09/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend + contract mock)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance (delivery acceptance only; product acceptance, design-exception approval, merge and release keep their own authorities)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-09/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "coordinator, provisional for the design engineer (hunchoweb)",
+      "authority": "the design engineer's ruling on D-32 (15 Nov 2026) and the overnight instruction; recorded in delivery/OVERNIGHT-DECISIONS.md",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design-fidelity gate)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -151,14 +177,42 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "f37df1c"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:11Z",
+          "refs": [
+            "14d6953"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f37df1c"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "14d6953"
       ]
     },
     {
@@ -174,14 +228,42 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "dcf9fee"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "`WorkItemOverview.tsx:1-3` now names ResponseEntryLink and ReconcilePanel's E-WORK-ACTION as the only write."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "dcf9fee"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemOverview.tsx:1-3` now names ResponseEntryLink and ReconcilePanel's E-WORK-ACTION as the only write."
       ]
     },
     {
@@ -197,14 +279,42 @@
         "delivery/features/F-09/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "c23d727"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "`load` sets `responderId` only when the task names exactly one responder, and sets `station` from `recordedStation`. `SuccessView` prefers `station`. Tests cover W-1601 reopened (\"REL-0077 \u00b7 LAGOON HEALTH\", h1 \"Client UAT response\"), W-1605 (two responders, no organisation) and W-1602 (\"SOW signature\", \"SOW-0207 \u00b7 TAMARIND LOANS\"). On the inference itself, see TECH-2-1."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c23d727"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`load` sets `responderId` only when the task names exactly one responder, and sets `station` from `recordedStation`. `SuccessView` prefers `station`. Tests cover W-1601 reopened (\"REL-0077 \u00b7 LAGOON HEALTH\", h1 \"Client UAT response\"), W-1605 (two responders, no organisation) and W-1602 (\"SOW signature\", \"SOW-0207 \u00b7 TAMARIND LOANS\"). On the inference itself, see TECH-2-1."
       ]
     },
     {
@@ -220,14 +330,42 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "af17911"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "Pristine form at 1440 and 390 shows \"Choose when and what they did to record this.\" as a plain muted-grey hint (rgb 74,83,87, no alert role). The red alert, \"Add the proof and confirm it's genuine to record this.\", appears only after the first change."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "af17911"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Pristine form at 1440 and 390 shows \"Choose when and what they did to record this.\" as a plain muted-grey hint (rgb 74,83,87, no alert role). The red alert, \"Add the proof and confirm it's genuine to record this.\", appears only after the first change."
       ]
     },
     {
@@ -243,14 +381,42 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "c23d727"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "After recording and after a reload, the h1 is \"Client UAT response\" both times, with eyebrow \"REL-0077 \u00b7 LAGOON HEALTH\" on desktop. Same at 390."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c23d727"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "After recording and after a reload, the h1 is \"Client UAT response\" both times, with eyebrow \"REL-0077 \u00b7 LAGOON HEALTH\" on desktop. Same at 390."
       ]
     },
     {
@@ -266,14 +432,42 @@
         "delivery/features/F-09/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "bd64e5e, 22660e9"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T08:41:12Z",
+          "refs": [
+            "At 390 on W-1603 \"Record and continue\" is enabled before a choice. Pressing it shows \"Choose what happened to continue.\" (role=alert) and focuses the first option; nothing is sent. At 1440 the button stays disabled, as before."
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "bd64e5e, 22660e9"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 390 on W-1603 \"Record and continue\" is enabled before a choice. Pressing it shows \"Choose what happened to continue.\" (role=alert) and focuses the first option; nothing is sent. At 1440 the button stays disabled, as before."
       ]
     },
     {
@@ -289,13 +483,202 @@
         "delivery/features/F-09/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T08:17:55Z",
           "head": "4efaee8910bfe52304b9f253e66d96689f03862b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T08:36:01Z",
+          "refs": [
+            "c08f47d (merge), 14d6953"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T08:42:27Z",
+          "refs": [
+            "14d6953"
+          ],
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c08f47d (merge), 14d6953"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "14d6953"
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`recordedStation` (`frontend/src/features/response/useResponse.ts:82-86`) treats the done station just before the current one as the station where the response was recorded. This holds when the item moves forward by one station. It does not hold when (a) a \"changes requested\" or \"rejected\" answer sends the item back for rework: then there is either no done station before the current one, so the heading falls back to the current station (for example \"Prepare UAT pack\"), or there is an unrelated one; or (b) the item has moved past the next station before someone reopens the task: then the heading names the later station. In both cases the heading is plausible but wrong. Round 1 had the same weakness, since it always used the current station, so this is no regression. The fix is the `recorded.station` (or similar) field that D-38 already says to raise. Until then, the inferred heading should not be taken as a fact about where the response was recorded.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T08:41:12Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Pre-existing shell issue, not caused by F-09; the same as F-04 QA-2-1 and still open. **Problem:** when the whole session is already signed out (`/me` answers 401), the frame renders `SignedOutState` with `usePathname()` only (`frontend/src/shell/AppShell.tsx:44,74`). The sign-in link becomes `/accounts/login/?next=%2Fwork%2FW-1601%2Frespond`, which drops `?task=T-1601`. After sign-in the person lands on \"This response isn't open here\" and must go through the work item. **Repro:** cookie `psl_mock_scenario=401`, then open `/work/W-1601/respond?task=T-1601` (evidence `qa-evidence/j15-401-1440.png`). **Expected:** the sign-in link keeps the query string. **Actual:** the query is dropped. F-09's own 401 handling is correct: a 401 on the item GET alone and a 401 on the Record press both give `next=%2Fwork%2FW-1601%2Frespond%3Ftask%3DT-1601`. The fix belongs to the shell lane, which is read-only for F-09.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T08:59:43Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Criterion 19 (design fidelity: 100% coverage after approved exceptions and visual score at least 90) is only partly evidenced. Desktop SCR-16 passes on all four boards (UI review: 95.4, 96.5, 94.1, 92.7) and phone success passes (95.2). Phone default (80.7), validation (73.2) and SOW signed (89.4) stay under 90 because of D-32: the spec requires \"When they responded\", Note and the attestation on the phone, and the boards do not draw them. The 100% coverage figure depends on the exception requests in `round-1/fidelity/exception-requests.json`, none of which the design engineer has approved; round-2/fidelity has no file of its own. Authority: the design engineer (D-32 is already logged as held in OVERNIGHT-DECISIONS.md:25). Expected before merge: rule on D-32 and the exception set, or redraw the three phone boards. The sworn fields must not be removed to raise the score. Not blocking delivery acceptance, because the gap comes from a drawn-versus-required conflict and no builder action can close it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The SCR-02 awaiting-reconciliation and waiting boards score 50.9 to 63.8. They score F-03's work item page, not F-09's panel or button (PMO-0-6; D-25). They were run for the record only. Raise against F-03 or the work item lane. Coverage on the F-09-owned panel and button was reported as 100% with exceptions.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, so the operation mapping (E-EVIDENCE-UPLOAD, E-TASK-CLAIM, E-RESPONSE, E-WORK-ACTION, E-WORK-ITEM) lives only in readiness.md and spec.md. The record also still reads `completion: blocked` and `component_readiness` NOT_ASSESSED. Fill in `operation_ids` when the record is updated. This does not change the code.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open non-blocking items carried forward, none to be fixed in this round:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Contract status for the merge decision. D-RESPONSE-VIEW r2 and D-WORK-ACTIONS-VIEW r2 are `proposed` and count only under the design engineer's recorded exception: contract mock only, the backend may change or refuse any field. build.md lists the one widening cast (`api as unknown as Client<ResponsePaths>` in api.ts) and the v7 constant `RESPONSE_OPENAPI_PATH`. Whichever of F-09 and F-13 rebases second must remove both. No claim of backend or released behaviour has been made.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
         }
       ]
     }
@@ -388,10 +771,10 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "92d029b21768858dd0d1402ea22d02c98827508e",
     "task_branch": "fe-m2b-response-record-a-client-response-or-sow-signatur",
-    "head_sha": "4efaee8910bfe52304b9f253e66d96689f03862b",
+    "head_sha": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-09",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/21",
+    "pr_number": 21,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
@@ -559,6 +942,31 @@
       "delivery/features/F-08/round-2/review-qa.md",
       "delivery/features/F-09/feature.json",
       "delivery/features/F-09/round-1/build.md",
+      "delivery/features/F-09/round-1/checks.md",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-awaiting-reconciliation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-awaiting-reconciliation-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-sow-signed-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-sow-signed-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-success-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-success-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-validation-1440/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-desktop-validation-1440/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-sow-signed-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-sow-signed-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-success-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-success-390/side-by-side.png",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-validation-390/report.json",
+      "delivery/features/F-09/round-1/fidelity-review/SCR-16-mobile-validation-390/side-by-side.png",
       "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board-marked.png",
       "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board.png",
       "delivery/features/F-09/round-1/fidelity/SCR-02-desktop-awaiting-reconciliation-1440/board.rendered.html",
@@ -672,6 +1080,10 @@
       "delivery/features/F-09/round-1/fidelity/_driver/runall.sh",
       "delivery/features/F-09/round-1/fidelity/exception-requests.json",
       "delivery/features/F-09/round-1/fidelity/scores.txt",
+      "delivery/features/F-09/round-1/review-security.md",
+      "delivery/features/F-09/round-1/review-technical.md",
+      "delivery/features/F-09/round-1/review-ui.md",
+      "delivery/features/F-09/round-1/review-ux.md",
       "delivery/features/F-10/feature.json",
       "delivery/features/F-10/fidelity-exceptions.json",
       "delivery/features/F-10/round-1/fidelity-review/SCR-36-desktop-1440/board-marked.png",
@@ -867,6 +1279,28 @@
       "delivery/features/F-11/round-1/review-ux.md",
       "delivery/features/F-11/round-2/build.md",
       "delivery/features/F-11/round-2/checks.md",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-delivery-rules-1440/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-finance-rules-1440/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-rules-1440/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-delivery-rules-390/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-finance-rules-390/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-rules-390/report.html",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-2/fidelity-review/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-finance-1440.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-finance-800.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-rules-1440.png",
+      "delivery/features/F-11/round-2/fidelity-review/states/callout-rules-800.png",
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-delivery-rules-1440/board-marked.png",
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-delivery-rules-1440/board.png",
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-delivery-rules-1440/board.rendered.html",
@@ -896,10 +1330,60 @@
       "delivery/features/F-11/round-2/fidelity/SCR-13-desktop-rules-1440/side-by-side.png",
       "delivery/features/F-11/round-2/review-security.md",
       "delivery/features/F-11/round-2/review-technical.md",
+      "delivery/features/F-11/round-2/review-ui.md",
       "delivery/features/F-11/round-2/review-ux.md",
+      "delivery/features/F-11/round-3/build.md",
+      "delivery/features/F-11/round-3/checks.md",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity-review/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-delivery-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-finance-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-desktop-rules-1440/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-delivery-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-finance-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/board.rendered.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/report.html",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/report.json",
+      "delivery/features/F-11/round-3/fidelity/SCR-13-mobile-rules-390/side-by-side.png",
+      "delivery/features/F-11/round-3/fidelity/exception-requests.json",
+      "delivery/features/F-11/round-3/fidelity/results.txt",
+      "delivery/features/F-11/round-3/qa-evidence/phone-finance-bar-390.png",
+      "delivery/features/F-11/round-3/qa-evidence/rules-after-show-more-1440.png",
+      "delivery/features/F-11/round-3/review-qa.md",
+      "delivery/features/F-11/round-3/review-security.md",
+      "delivery/features/F-11/round-3/review-technical.md",
+      "delivery/features/F-11/round-3/review-ui.md",
+      "delivery/features/F-11/round-3/review-ux.md",
+      "delivery/features/F-12/decision.md",
       "delivery/features/F-12/feature.json",
       "delivery/features/F-12/fidelity-exceptions.json",
       "delivery/features/F-12/round-1/acceptance-pmo.md",
+      "delivery/features/F-12/round-1/acceptance-product.md",
       "delivery/features/F-12/round-1/build.md",
       "delivery/features/F-12/round-1/checks.md",
       "delivery/features/F-12/round-1/fidelity-review/SCR-15-desktop-1440/board-marked.png",
@@ -984,6 +1468,123 @@
       "delivery/features/F-12/round-1/review-technical.md",
       "delivery/features/F-12/round-1/review-ui.md",
       "delivery/features/F-12/round-1/review-ux.md",
+      "delivery/features/F-14/feature.json",
+      "delivery/features/F-14/readiness.md",
+      "delivery/features/F-14/round-1/fidelity/_driver/act-wait.mjs",
+      "delivery/features/F-14/round-1/fidelity/_driver/fid.sh",
+      "delivery/features/F-14/round-1/fidelity/_driver/prod.sh",
+      "delivery/features/F-14/round-1/fidelity/_driver/runall.sh",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-history-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-issue-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-issue-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-processing-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-ready-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-desktop-waiting-1440/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-history-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-processing-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-ready-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/board-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/board.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/board.rendered.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/diff.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/page-marked.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/page.png",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/report.html",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/report.json",
+      "delivery/features/F-14/round-1/fidelity/_work/SCR-02-mobile-waiting-390/side-by-side.png",
+      "delivery/features/F-14/spec.md",
       "delivery/frame-phone-back/build-note.md",
       "delivery/frame-phone-back/review-technical.md",
       "frontend/e2e/frame.spec.ts",
@@ -1108,6 +1709,38 @@
       "round": 2,
       "head": "4efaee8910bfe52304b9f253e66d96689f03862b",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T08:37:55Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T08:42:28Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T08:59:44Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T09:07:39Z",
+      "round": 2,
+      "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "reason": null
     }
   ],
   "routing": {
@@ -1125,9 +1758,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
   },
   "blocked": null
 }

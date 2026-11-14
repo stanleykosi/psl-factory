@@ -1,0 +1,83 @@
+/* SCR-13 Setup rules layout. Token variables only; bundle classes are composed, and only the board's sizes,
+   the current tab, the blue Set a rule panel, the proof box and the phone cards are added. */
+
+.setup-page { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+/* the boards set no line height outside callouts, so rows, labels and cards use the browser's normal */
+.setup-desktop, .setup-phone { line-height: normal; }
+.setup-page h2.psl-panel__head { margin: 0; }
+.setup-page .psl-empty h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 18px; font-stretch: 112%; }
+.setup-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.setup-plain { margin: 0; line-height: 1.5; }
+
+/* frame: mono eyebrow, 34px title, seven route tabs (the current one takes the selected look) */
+.setup-eyebrow, .setup-crumb { letter-spacing: 0; }
+/* the board underlines the way back; a colour-only link inside the crumb text fails WCAG 1.4.1 */
+.setup-crumb a { text-decoration: underline; text-underline-offset: 2px; }
+.setup-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 34px; line-height: 1.08; }
+.setup-title--area { font-size: 32px; }
+.setup-lead { margin: 0; color: var(--ink-muted); font-size: 14px; }
+.setup-tabs { align-self: flex-start; flex-wrap: wrap; overflow-x: visible; }
+.psl .setup-tabs .psl-tab[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
+.setup-tabs .psl-tab[aria-current="page"] > .psl-badge { background: var(--on-strong-tint); color: var(--on-strong); }
+.setup-tabs .psl-tab[aria-current="page"]:focus-visible { outline-color: var(--focus-on-strong); }
+
+/* two columns that wrap like the board: the list, then the aside */
+.setup-columns { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.setup-main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.setup-aside { flex: 1 1 320px; max-width: 420px; display: flex; flex-direction: column; gap: 14px; }
+.setup-aside--next { flex-basis: 340px; max-width: 440px; }
+
+/* rules table */
+.setup-table { min-width: 760px; }
+.setup-table--delivery { min-width: 620px; }
+.setup-table td { vertical-align: middle; }
+.setup-notset { color: var(--waiting-ink); font-weight: 600; }
+.setup-version { font-size: 12px; color: var(--ink-muted); }
+.setup-tag { display: inline-block; line-height: normal; border-radius: var(--radius-none); }
+.setup-showmore .psl-btn { font-family: var(--font-sans); font-size: 14px; }
+
+/* Set a rule: action-blue frame and head */
+.setup-panel { border-color: var(--action); }
+.setup-page .setup-panel__head { background: var(--action); color: var(--on-strong); border-bottom-color: var(--action); letter-spacing: 0; }
+.setup-notice:focus { outline: none; }
+.setup-notice:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.setup-roles { margin: 0; padding: 0; border: none; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.setup-roles legend { padding: 0; margin-bottom: 12px; }
+/* the board's fields are 44px inside a 2px frame */
+.setup-panel .psl-input { min-height: 48px; }
+.setup-check { align-items: center; padding: 0; }
+.setup-check input { margin: 0; }
+
+/* proof: the board's dashed box, one line until a file is uploaded */
+.setup-drop { position: relative; flex-direction: row; align-items: center; gap: 10px; padding: 10px 12px; text-align: left; font-size: 14px; }
+.setup-drop:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.setup-drop strong { font-weight: 600; overflow-wrap: anywhere; }
+.setup-drop__size { font-size: 12px; color: var(--ink-muted); }
+.setup-help { margin: 0; font-size: 13px; color: var(--ink-muted); }
+.setup-help--error { color: var(--signal-ink); }
+.setup-footnote { margin: 0; font-size: 12px; color: var(--ink-muted); }
+
+/* finance: group panels that wrap, row lists, the secondary Set … rules control */
+.setup-groups { display: flex; flex-wrap: wrap; gap: 16px; }
+.setup-group { flex: 1 1 380px; min-width: 0; }
+.setup-list { list-style: none; margin: 0; padding: 0; }
+.setup-list li { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; border-top: 1px solid var(--rule-soft); font-size: 14px; }
+.setup-list__value { text-align: right; }
+.setup-groupaction { max-width: 220px; }
+.setup-groupaction .psl-btn { white-space: nowrap; }
+
+/* phone (below 720px): read-only cards; the desktop tree is hidden and vice versa */
+.setup-phone { display: none; gap: 12px; }
+.setup-phone-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 22px; line-height: 1.08; }
+.setup-phone-title--area { font-size: 20px; }
+.setup-cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.setup-card { background: var(--surface); border: 2px solid var(--ink); padding: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.setup-card__line { font-size: 13px; color: var(--ink-muted); }
+.setup-card__line.is-notset { color: var(--waiting-ink); }
+.setup-more { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+@media (max-width: 719.98px) {
+  .setup-desktop { display: none; }
+  .setup-phone { display: flex; flex-direction: column; }
+  .setup-title { font-size: 26px; }
+  .setup-tabs { flex-wrap: nowrap; overflow-x: auto; }
+}

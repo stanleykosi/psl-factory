@@ -8,13 +8,13 @@ import addFormats from 'ajv-formats';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
-import { RESPONSE_OPENAPI_PATH, RESPONSE_OPERATIONS } from '../mock/response.mjs';
+import { RESPONSE_OPERATIONS } from '../mock/response.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { M1_OPERATIONS, OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
 
 type Schema = { content: { 'application/json': { schema: object } } };
 type Operation = { operationId: string; responses: Record<string, Schema> };
-const openapi = JSON.parse(readFileSync(RESPONSE_OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
+const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
 const ops = Object.values(openapi.paths).flatMap((byMethod) => Object.values(byMethod));
 const byId = (id: string) => ops.find((op) => op && typeof op === 'object' && op.operationId === id)!;
 

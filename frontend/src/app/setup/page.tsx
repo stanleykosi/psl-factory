@@ -1,9 +1,6 @@
-import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
-import { DestinationPage } from '@/shell/DestinationPage';
-
-export const metadata: Metadata = { title: 'Setup · PSL Factory' };
-
+// Rules is the Setup landing page until the Roles screen lands (F-11C).
 export default function SetupPage() {
-  return <DestinationPage destination="setup" />;
+  redirect('/setup/rules');
 }

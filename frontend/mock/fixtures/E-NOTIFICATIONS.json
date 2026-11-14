@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "id": "N-0001",
+      "work_id": "W-1001",
+      "agent": "chidi",
+      "text": "Invoice for Lagoon Health is waiting for your review",
+      "at": "2026-11-14T09:42:00Z",
+      "read": false,
+      "reference": "INV-LH-002",
+      "delivered_via": [
+        "whatsapp",
+        "email"
+      ],
+      "delivered_at": "2026-11-14T09:42:00Z"
+    },
+    {
+      "id": "N-0002",
+      "work_id": "W-1002",
+      "agent": "tola",
+      "text": "The UAT response for Lagoon Health is due tomorrow",
+      "at": "2026-11-14T07:30:00Z",
+      "read": true,
+      "delivered_via": [
+        "email"
+      ],
+      "digest_at": "2026-11-14T08:00:00Z"
+    },
+    {
+      "id": "N-0003",
+      "work_id": "W-1099",
+      "agent": "zainab",
+      "text": "October payroll has 2 problems for HR",
+      "at": "2026-11-14T07:10:00Z",
+      "read": true,
+      "delivered_via": [
+        "in_app"
+      ],
+      "in_app_reason": "you are not HR"
+    },
+    {
+      "id": "N-0004",
+      "work_id": "W-1006",
+      "agent": "chidi",
+      "text": "Milestone 1 invoice was verified",
+      "at": "2026-11-13T15:20:00Z",
+      "read": true,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-13T15:20:00Z"
+    }
+  ],
+  "as_of": "2026-11-14T10:00:00Z",
+  "total": 4,
+  "unread_count": 1
+}
