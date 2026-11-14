@@ -30,5 +30,12 @@
       "reason": "Frame phone bar back link (usePhoneBack) draws the arrow as an icon, so its accessible name is 'Back to Projects'; same place and wording as the board",
       "approved_by": "builder proposal, extra round D-47 (design engineer to confirm)"
     }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-07-mobile",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-50",
+      "reason": "The board draws the phone title in Archivo at font-stretch 112%, so it wraps to two lines and moves the page down 24px; the app's frame title font is narrower. The spec-required 'What is next' row also adds height. Everything else matches; approved as an exception on this board."
+    }
   ]
 }
