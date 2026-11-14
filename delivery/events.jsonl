@@ -739,3 +739,8 @@
 {"at":"2026-11-14T09:06:57Z","feature":"F-09","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"coordinator, provisional for the design engineer (hunchoweb)","commit":"14d6953dd4a3","written_at":"2026-11-14T09:06:57Z"}
 {"at":"2026-11-14T09:07:38Z","feature":"F-09","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/21","git.pr_number":21}}
 {"at":"2026-11-14T09:07:39Z","feature":"F-09","round":2,"kind":"transition","head":"14d6953dd4a3","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-14T09:18:49Z","feature":"F-14","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":153.0,"commit":"6eaac8c628c2"}
+{"at":"2026-11-14T09:18:50Z","feature":"F-14","round":1,"kind":"finding","action":"add","finding":"FID-1-1","by":"coordinator","severity":"high","owner":"frontend","blocking":true,"role":"fid"}
+{"at":"2026-11-14T09:18:52Z","feature":"F-14","round":1,"kind":"transition","head":"6eaac8c628c2","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-14T09:18:53Z","feature":"F-14","round":1,"kind":"transition","head":"6eaac8c628c2","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-14T09:18:53Z","feature":"F-14","round":2,"kind":"transition","head":"6eaac8c628c2","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
