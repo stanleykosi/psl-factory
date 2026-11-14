@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -95,11 +95,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -125,25 +127,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI reviewer (round 2, design-fidelity gate)",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -229,7 +237,7 @@
         "delivery/features/F-10/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -246,11 +254,25 @@
           ],
           "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T07:08:55Z",
+          "refs": [
+            "On the shared build (4011), the six Open links resolve to \"Bank statements\", \"Management accounts\", \"Income detail and schedules\", \"Fixed asset schedule\", \"Cash forecast\" and \"Business-unit totals\". The code is in MonthEndView.tsx, lines 81 and 107."
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "752ab93"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "On the shared build (4011), the six Open links resolve to \"Bank statements\", \"Management accounts\", \"Income detail and schedules\", \"Fixed asset schedule\", \"Cash forecast\" and \"Business-unit totals\". The code is in MonthEndView.tsx, lines 81 and 107."
       ]
     },
     {
@@ -266,7 +288,7 @@
         "delivery/features/F-10/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -283,11 +305,25 @@
           ],
           "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T07:08:55Z",
+          "refs": [
+            "I opened the shared build at 390 x 844 with `psl_mock_month_end=empty` set on path `/`. `.monthend-empty` has computed flex `0 0 auto` and is 84px tall (it was 690px in round 1). The page shows the strip and summary \"0 of 0 done \u00b7 0 waiting\", then a text-sized panel, with no table, cards, note or action. At 1440 the panel is 64px. Screenshots: `round-2/fidelity-review/states/empty-390.png` and `empty-1440.png`."
+          ],
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "752ab93"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "I opened the shared build at 390 x 844 with `psl_mock_month_end=empty` set on path `/`. `.monthend-empty` has computed flex `0 0 auto` and is 84px tall (it was 690px in round 1). The page shows the strip and summary \"0 of 0 done \u00b7 0 waiting\", then a text-sized panel, with no table, cards, note or action. At 1440 the panel is 64px. Screenshots: `round-2/fidelity-review/states/empty-390.png` and `empty-1440.png`."
       ]
     },
     {
@@ -513,6 +549,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T07:01:35Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T07:08:56Z",
       "round": 2,
       "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
       "reason": null

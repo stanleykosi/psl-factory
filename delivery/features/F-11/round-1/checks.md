@@ -1,11 +1,11 @@
 GATE: PASS
 COMMIT: 06b4c0e93bbc3083cea431c2f022c1e267486f24
-ATTEMPT: 1
+ATTEMPT: 2
 
 ## Summary
 - checks.sh passed
 - Protected paths: none changed
-- Commit 06b4c0e93bbc, round 1, attempt 1
+- Commit 06b4c0e93bbc, round 1, attempt 2
 
 ## checks.sh (last 80 lines of checks.log)
 
@@ -28,29 +28,29 @@ ATTEMPT: 1
 
  Test Files  16 passed (16)
       Tests  405 passed (405)
-   Start at  08:06:23
-   Duration  12.12s (tests 56%, environment 25%, transform 8%, import 6%, setup 5%)
+   Start at  08:08:31
+   Duration  10.74s (tests 51%, environment 28%, transform 8%, import 7%, setup 5%)
 
-    Isolate  16 workers spawned · ~1.57s startup each (spawn + environment, per file)
-             at least ~2.02s faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  16 workers spawned · ~1.47s startup each (spawn + environment, per file)
+             at least ~1.89s faster with isolate: false — reuses workers across files instead of one per file
 
 
 > psl-factory-frontend@0.1.0 build
 > next build
 
 ▲ Next.js 16.4.6 (Turbopack)
-✓ Running next.config.ts took 2.4s
+✓ Running next.config.ts took 1766ms
 
   Creating an optimized production build ...
-✓ Compiled successfully in 901ms
+✓ Compiled successfully in 755ms
   Running TypeScript ...
-  Finished TypeScript in 5.1s ...
+  Finished TypeScript in 3.9s ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/17) ...
   Generating static pages using 7 workers (4/17) 
   Generating static pages using 7 workers (8/17) 
   Generating static pages using 7 workers (12/17) 
-✓ Generating static pages using 7 workers (17/17) in 1015ms
+✓ Generating static pages using 7 workers (17/17) in 759ms
   Finalizing page optimization ...
 
 Route (app)

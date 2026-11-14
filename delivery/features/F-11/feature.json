@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-11",
   "outcome": "A Lead or Admin opens Setup, reads every rule with its value or \"Not set\", and saves a role-list rule as its next version",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M3-SETUP"
   ],
@@ -88,6 +88,18 @@
       "protected_paths_changed": [],
       "at": "2026-11-14T07:06:52Z",
       "seconds": 115.1,
+      "evidence_ref": "delivery/features/F-11/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T07:08:54Z",
+      "seconds": 102.4,
       "evidence_ref": "delivery/features/F-11/round-1/checks.md"
     }
   ],
@@ -274,6 +286,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T07:08:55Z",
+      "round": 1,
+      "head": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "reason": null
     }
   ],
   "routing": {
@@ -291,7 +311,7 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 1,
+    "attempts": 2,
     "verdict": "PASS",
     "commit": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
   },
