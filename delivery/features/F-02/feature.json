@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "PR_OPEN",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -94,60 +94,48 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "technical reviewer (lead)",
-      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
-      "evidence_refs": [
-        "delivery/features/F-02/round-2/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "changes_requested",
-      "reviewer": "reviewer-qa",
-      "authority": "integrated QA (frontend against the contract mock only)",
-      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
-      "evidence_refs": [
-        "delivery/features/F-02/round-2/review-qa.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "pmo_acceptance": {
-      "status": "passed",
-      "reviewer": "pmo-acceptance",
-      "authority": "PMO delivery acceptance (delivery only; not client/product acceptance, merge or release)",
-      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
-      "evidence_refs": [
-        "delivery/features/F-02/round-2/acceptance-pmo.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-02/readiness.md",
-      "status": "passed",
-      "reviewer": "design engineer (hunchoweb)",
-      "authority": "product/design owner for the frontend (design engineer, as recorded in design/review.json and architecture/sources/decisions-2026-11-13*.md)",
-      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
-      "evidence_refs": [
-        "delivery/features/F-02/round-2/acceptance-product.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
-      "evidence_refs": [
-        "delivery/features/F-02/round-2/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "UI reviewer (visual consistency against the approved SCR-01 and STATES boards, tokens and layout at desktop and phone width)",
-      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
-      "evidence_refs": [
-        "delivery/features/F-02/round-2/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -505,6 +493,27 @@
           "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
         }
       ]
+    },
+    {
+      "id": "FID-1",
+      "round": 2,
+      "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "My work does not follow the approved SCR-01 boards (design-fidelity check not yet run; design engineer, 14 Nov 2026); round also closes the record after QA-2-2 (fixed in PR #8)",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "design engineer (hunchoweb)",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-14T04:38:42Z",
+          "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -562,6 +571,67 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+          "evidence_refs": [
+            "delivery/features/F-02/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-qa",
+          "authority": "integrated QA (frontend against the contract mock only)",
+          "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+          "evidence_refs": [
+            "delivery/features/F-02/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "passed",
+          "reviewer": "pmo-acceptance",
+          "authority": "PMO delivery acceptance (delivery only; not client/product acceptance, merge or release)",
+          "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+          "evidence_refs": [
+            "delivery/features/F-02/round-2/acceptance-pmo.md"
+          ]
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-02/readiness.md",
+          "status": "passed",
+          "reviewer": "design engineer (hunchoweb)",
+          "authority": "product/design owner for the frontend (design engineer, as recorded in design/review.json and architecture/sources/decisions-2026-11-13*.md)",
+          "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+          "evidence_refs": [
+            "delivery/features/F-02/round-2/acceptance-product.md"
+          ]
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+          "evidence_refs": [
+            "delivery/features/F-02/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (visual consistency against the approved SCR-01 and STATES boards, tokens and layout at desktop and phone width)",
+          "snapshot_ref": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+          "evidence_refs": [
+            "delivery/features/F-02/round-2/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -584,9 +654,9 @@
     "repository": "stanleykosi/psl-factory",
     "task_id": "FE-MYWORK",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "37aa53ea379d155892bb84ab665d4ae310fdbf9c",
-    "task_branch": "fe-mywork-my-work-shows-a-person-s-queues-with-sea",
-    "head_sha": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+    "base_sha": "d3eb449b136592bec4756950ba86817a1ed3ee85",
+    "task_branch": "fe-mywork-fidelity",
+    "head_sha": "d3eb449b136592bec4756950ba86817a1ed3ee85",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/5",
     "pr_number": 5,
@@ -597,80 +667,7 @@
     "merge_status": "merged",
     "merge_sha": "e78038f318c0c50e15e08baf23606a39a1b7f40d",
     "merge_policy": "not_configured",
-    "changed_paths": [
-      "delivery/events.jsonl",
-      "delivery/features/F-02/feature.json",
-      "delivery/features/F-02/round-1/build.md",
-      "delivery/features/F-02/round-1/checks.md",
-      "delivery/features/F-02/round-1/review-technical.md",
-      "delivery/features/F-02/round-1/review-ui.md",
-      "delivery/features/F-02/round-1/review-ux.md",
-      "delivery/features/F-02/round-2/acceptance-pmo.md",
-      "delivery/features/F-02/round-2/build.md",
-      "delivery/features/F-02/round-2/checks.md",
-      "delivery/features/F-02/round-2/review-qa.md",
-      "delivery/features/F-02/round-2/review-technical.md",
-      "delivery/features/F-02/round-2/review-ui.md",
-      "delivery/features/F-02/round-2/review-ux.md",
-      "delivery/features/F-03/decision.md",
-      "delivery/features/F-03/feature.json",
-      "delivery/features/F-03/round-1/build.md",
-      "delivery/features/F-03/round-1/checks.md",
-      "delivery/features/F-03/round-1/review-technical.md",
-      "delivery/features/F-03/round-1/review-ui.md",
-      "delivery/features/F-03/round-1/review-ux.md",
-      "delivery/features/F-03/round-2/build.md",
-      "delivery/features/F-03/round-2/checks.md",
-      "delivery/features/F-03/round-2/review-technical.md",
-      "delivery/features/F-03/round-2/review-ui.md",
-      "delivery/features/F-03/round-2/review-ux.md",
-      "delivery/features/F-03/round-3/acceptance-pmo.md",
-      "delivery/features/F-03/round-3/build.md",
-      "delivery/features/F-03/round-3/checks.md",
-      "delivery/features/F-03/round-3/review-qa.md",
-      "delivery/features/F-03/round-3/review-technical.md",
-      "delivery/features/F-03/round-3/review-ui.md",
-      "delivery/features/F-03/round-3/review-ux.md",
-      "delivery/features/F-03/spec.md",
-      "delivery/features/F-04/feature.json",
-      "delivery/features/F-04/readiness.md",
-      "delivery/features/F-04/spec.md",
-      "frontend/e2e/my-work.spec.ts",
-      "frontend/e2e/work-item.spec.ts",
-      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
-      "frontend/mock/fixtures/work/W-1001.history.json",
-      "frontend/mock/fixtures/work/W-1002.json",
-      "frontend/mock/fixtures/work/W-1003.json",
-      "frontend/mock/fixtures/work/W-1004.history.json",
-      "frontend/mock/fixtures/work/W-1004.json",
-      "frontend/mock/fixtures/work/W-1005.json",
-      "frontend/mock/fixtures/work/W-1006.json",
-      "frontend/mock/server.mjs",
-      "frontend/mock/work-list.mjs",
-      "frontend/src/app/my-work/page.tsx",
-      "frontend/src/app/work/[id]/history/page.tsx",
-      "frontend/src/app/work/[id]/page.tsx",
-      "frontend/src/features/my-work/FilterPanel.tsx",
-      "frontend/src/features/my-work/MyWork.tsx",
-      "frontend/src/features/my-work/MyWorkPage.tsx",
-      "frontend/src/features/my-work/WorkRows.tsx",
-      "frontend/src/features/my-work/icons.tsx",
-      "frontend/src/features/my-work/model.ts",
-      "frontend/src/features/my-work/my-work.css",
-      "frontend/src/features/work-item/WorkItemHistory.tsx",
-      "frontend/src/features/work-item/WorkItemOverview.tsx",
-      "frontend/src/features/work-item/WorkItemStates.tsx",
-      "frontend/src/features/work-item/WorkItemView.tsx",
-      "frontend/src/features/work-item/labels.ts",
-      "frontend/src/features/work-item/useWorkHistory.ts",
-      "frontend/src/features/work-item/useWorkItem.ts",
-      "frontend/src/features/work-item/work-item.css",
-      "frontend/tests/mock-contract.test.ts",
-      "frontend/tests/mock-work-list.test.ts",
-      "frontend/tests/my-work-model.test.ts",
-      "frontend/tests/my-work.test.tsx",
-      "frontend/tests/work-item.test.tsx"
-    ]
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -710,7 +707,7 @@
     }
   },
   "created_at": "2026-11-13T22:44:58Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 3,
   "history": [
     {
@@ -784,6 +781,22 @@
       "round": 2,
       "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T04:38:42Z",
+      "round": 2,
+      "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T04:38:42Z",
+      "round": 3,
+      "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
+      "reason": null
     }
   ],
   "routing": {
@@ -799,10 +812,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "55e81940bdf715f222ebd7f15f26a9150d981915"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

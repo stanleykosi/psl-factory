@@ -1,0 +1,4 @@
+{ "exceptions": [
+  { "role": "link", "name": "Start work", "reason": "App frame item: the top-bar Start work control is built by F-05 (src/shell/**), not this feature.", "approved_by": "" },
+  { "role": "link", "name": "More ways to start", "reason": "App frame item: part of F-05's Start work control (src/shell/**).", "approved_by": "" }
+] }

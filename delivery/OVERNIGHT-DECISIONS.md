@@ -1,0 +1,43 @@
+# Overnight decisions (14–15 Nov 2026)
+
+The design engineer went to bed and asked the coordinator to keep working without pausing:
+follow the coordinator's recommendation on anything not serious, keep anything that truly needs
+their approval in the "Waiting for you" list, record every decision here so they can revert it,
+and make the final screens match the approved boards at least 99%.
+
+Each entry: what was decided, why, and how to revert.
+
+## Rules the coordinator follows overnight
+- The approved boards are the spec. A UI round passes only when the design-fidelity check passes
+  on every board in scope (100% of elements after approved exceptions, visual >= 90) and the
+  reviewer's side-by-side reading finds no remaining difference.
+- Low and medium risk features that pass every review, QA, PMO acceptance and the fidelity gate
+  are merged into `dlv-00-delivery-setup` under the standing merge delegation. Product acceptance
+  for those is recorded as **provisional, by the coordinator**, marked for your check.
+- High-risk features (money, security, sign-in) are built and reviewed fully but **not merged**;
+  they wait for you.
+- Nothing is merged into `main`.
+- Business rules, approvers, money values and backend decisions are never invented; anything
+  needing PSL or the backend developer waits.
+
+## Waiting for you
+- **Merge Exceptions (F-06)?** PR #11 is ready and passes every check, review, QA and the design check, but it is **not merged**: merging would settle the D-04 design exceptions and rely on search/Filter fields that are only proposed in v7 (`q`, `what`, `open_count`, `ref`). Look at /exceptions and say "merge F-06", or what to change. If the backend may not adopt those fields, the safe option is to show search and Filter only when the backend sends the count.
+
+- **Decisions for PSL or the backend developer** (raised in architecture v7; the screens behind them are built only up to what doesn't need the rule): sign-in method (D-SIGNIN), who holds Admin (D-ADMIN-AUTHORITY), payroll field visibility (D-PAYROLL-VISIBILITY), the costing rule (D-COSTING-RULE), who decides changes (D-CHANGE-DECIDERS), receipt allocation (D-RECEIPT-ALLOCATION), assistant speech input (D-SPEECH-INPUT), plus the existing payment-exception variants (D-DECISION-VARIANTS).
+- **For you (design):** where the alert bell sits and where the account-menu links go (D-ALERTS-ENTRY); no board draws a bell.
+
+## Decisions taken
+- **D-01 · 3D floor concept: 3, the tilted swimlane board.** Four live concepts: https://claude.ai/artifact/Mc4ouUKmHtRsyJk8xkALKw (copy in `design/concepts/floor-3d-concepts.html`). I picked 3 because it is your approved flat board leaned back like a drafting table: same reading order, every label readable, closest to the design you drew, and the lightest to run. 1 (isometric conveyor) was the runner-up; 2 (city) and 4 (amphitheatre) look striking but hide labels and read worse at a glance. Built into the Overview's "3D floor" option in F-08. Revert: reply with another concept number and F-08 gets a round to swap it.
+- **D-02 · Phone Start work forms** use a bottom sheet for every line (your answer, 14 Nov).
+- **D-03 · Round limit raised from 3 to 5** in `delivery/config.json`, so fidelity rounds can finish unattended. Revert: set `max_rounds` back to 3.
+- **D-04 · Exceptions (F-06) design exceptions, provisional.** Accepted so the round can be reviewed: (a) the top-bar Start work button and the Overview highlight are app-frame items that arrive with F-05; (b) paging (Showing N, As of, rows per page, Show more) sits in a bar *below* the table frame, since the board has none and real lists are longer than 4 rows; (c) "← Queue" sits beside the phone heading because the phone top bar belongs to the frame; (d) phone cards show only tag, title and what's being done, as the board does; (e) "since" keeps the precise form ("since 11:02", "since 10 Nov") instead of the board's "since Mon"/"since 3d"; (f) the phone visual score is measured with the board's own four rows (cookie `psl_mock_exceptions=board`), because the default sample rows have longer text that wraps. Revert any of these by saying which, and F-06 gets a round.
+- **D-05 · Screen coverage.** A check (`delivery/screen-coverage.md`) found 27 of the 59 approved screens had no frontend task (mostly the line workspaces SCR-19..59). Architecture v7 is being drafted overnight as a proposal for the backend developer: the fields those boards need, one typed `workspace` block per line on the work item, and a frontend task for every unassigned screen. Revert: drop v7; v6 stays valid.
+- **D-06 · Next-wave splits.** Finance (F-10) starts with Month-end (SCR-36); Setup (F-11) starts with the Rules tabs (SCR-13 rules boards); responses (F-09) and alerts/assistant (F-12) wait for v7. Finance and Setup slices are high risk (money, authority), so they are built and reviewed but not merged until you check them.
+- **D-07 · F-10 Month-end link.** Both SCR-36 boards point "Import the missing statement" at SCR-09, which is now the HR-only payroll inputs board; the link goes to the task's work item instead. Route `/finance/month-end?period=YYYY-MM` (no Finance item in the top bar yet). Revert: tell me where the link and route should go.
+- **D-08 · Phone back links in the top bar.** Your phone boards draw a back link inside the phone top bar on sub-pages ("← Home", "← Queue", "← Projects"). The top bar belongs to the app frame, so for now each page carries its own back link just under the bar (provisional exception for F-06 and F-07; the SCR-07 phone visual score is 68 because of it). Follow-up task added: the app frame gets a back-link slot in the phone bar, then pages move their link into it and re-run the design check. Revert: none needed; this is the path to matching the boards.
+- **D-09 · Projects "Active" tab** shows only active projects (the board's Active tab also drew one closed project and "5 PROJECTS"; I treated that as a board slip). Revert: tell me Active should include recently closed ones.
+- **D-10 · Journey tag words** come only from the state list ("WAITING"), not the board's custom "AWAITING FINANCE DECISION"; the richer wording needs a field from the backend and is noted for v7. On phones the journey shows the coloured square without a visible tag, as your board does; the detail line beside it still says what is happening in words, so colour is not the only signal. Revert: ask for visible tags on phones.
+- **D-11 · Exceptions (F-06) passed everything and its product acceptance is recorded as provisional, but the merge is held for you** (the merge-decision agent escalated: design exceptions plus a contract change). PR #11 stays open.
+- **D-12 · Architecture v7 drafted as a proposal** (commit 61a7ade): the fields every remaining board needs, one typed `workspace` block per line plus a step write, and a frontend task for each of the 27 unassigned screens (now zero unassigned). All additive; v6 screens keep working. Business rules are not designed, only raised as open decisions above. Revert: drop v7.
+- **D-13 · App-frame design follow-up (planned).** Two frame-level gaps show on several boards: page titles are 36px where the boards draw 40px (My work, Projects), and phone sub-pages draw a back link inside the top bar (D-08). Both go into one frame task after Start work (F-05, which owns the frame now) is settled. Revert: none needed.
+- **D-14 · Agent avatars use your mascot images** (design/system/project/assets/Mascots) everywhere, not initials.
