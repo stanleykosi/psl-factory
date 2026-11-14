@@ -1,5 +1,6 @@
 // SCR-02 Overview: the six facts, the station track, the agent at work, the current human task and the
-// next step. Read-only; the only link that leads to an action is "Open the decision" when you_can_act.
+// next step. When you_can_act, a task links to its action ("Open the decision", or the response page through
+// ResponseEntryLink); the only write here is ReconcilePanel's E-WORK-ACTION, shown with the reconcile grant.
 import Link from 'next/link';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf } from '@/features/response';
