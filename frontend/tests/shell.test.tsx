@@ -12,6 +12,7 @@ import type { Destination } from '@/api/types';
 import { AppShell, usePhoneBack } from '@/shell/AppShell';
 import { DestinationPage, UnknownPage } from '@/shell/DestinationPage';
 import { HomeRedirect } from '@/shell/HomeRedirect';
+import { withoutBellFeed } from './bell-feed';
 
 const nav = vi.hoisted(() => ({ pathname: '/my-work', replace: vi.fn() }));
 vi.mock('next/navigation', () => ({
@@ -28,7 +29,7 @@ let fetchStub: ReturnType<typeof vi.fn<(request: Request) => Promise<Response>>>
 beforeEach(() => {
   nav.replace.mockReset();
   fetchStub = vi.fn<(request: Request) => Promise<Response>>();
-  vi.stubGlobal('fetch', fetchStub);
+  vi.stubGlobal('fetch', withoutBellFeed(fetchStub));
 });
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -155,10 +156,11 @@ describe('navigation follows /me', () => {
     await loaded();
     expect(screen.queryByRole('button', { name: 'Start work' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'More ways to start' })).toBeNull();
-    expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Menu']);
+    // The alert bell (F-15) is in both bars: top bar, then the phone bar's Menu and bell.
+    expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Alerts', 'Menu', 'Alerts']);
   });
 
-  it('finance_lead has no bell, account menu or sign-out', async () => {
+  it('finance_lead has no account menu or sign-out', async () => {
     fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
     renderAt('/my-work');
     await loaded();
@@ -379,7 +381,7 @@ describe('phone back link', () => {
     await loaded();
     await waitFor(() => expect(backLink()?.textContent).toBe('← Setup'));
     const kids = Array.from(phoneBar().children);
-    expect(kids.map((k) => k.className)).toEqual([kids[0].className, 'shell-phonenote', 'psl-sample']);
+    expect(kids.map((k) => k.className)).toEqual([kids[0].className, 'shell-phonenote', 'psl-sample', 'shell-bellwrap']);
     // the bar spreads its children with space-between; the auto margin is what holds the note at the right
     const css = readFileSync(join(__dirname, '../src/styles/shell.css'), 'utf8');
     expect(css).toMatch(/\.shell-phonenote\s*\{[^}]*margin-left:\s*auto/);

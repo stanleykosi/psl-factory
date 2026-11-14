@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import type { Me } from '@/api/types';
+import { AlertsBell, type BellProps } from '@/features/alerts/AlertsBell';
 import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 
 import type { DestinationInfo } from './destinations';
@@ -18,13 +19,15 @@ type Props = {
   destinations: DestinationInfo[];
   current: DestinationInfo | undefined;
   back?: PhoneBack | null;
+  bell?: BellProps;
 };
 
 /**
- * CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label and "+ Start" (CMP-23). On a sub-page
- * that sets a back link the bar shows "← label" instead of Menu and PSL FACTORY (SCR-10-mobile, SCR-22-mobile).
+ * CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label, the alert bell (F-15) and
+ * "+ Start" (CMP-23). On a sub-page that sets a back link the bar shows "← label" instead of Menu and PSL FACTORY
+ * (SCR-10-mobile, SCR-22-mobile); the bell stays.
  */
-export function PhoneBar({ me, destinations, current, back = null }: Props) {
+export function PhoneBar({ me, destinations, current, back = null, bell }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const hasMenu = me !== null && back === null;
@@ -66,6 +69,7 @@ export function PhoneBar({ me, destinations, current, back = null }: Props) {
         )}
         {back?.note && <span className="shell-phonenote">{back.note}</span>}
         <SampleLabel />
+        {bell && <AlertsBell {...bell} phone />}
       </header>
       {hasMenu && open && (
         <nav id="phone-menu" aria-label="Main" className="psl-pop psl-menu">

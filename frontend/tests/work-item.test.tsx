@@ -9,6 +9,7 @@ import { STATE_TAGS, type HistoryEntry, type WorkHistory, type WorkItem, type Wo
 import { FactsStrip, StationTrack } from '@/features/work-item/WorkItemOverview';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { AppShell } from '@/shell/AppShell';
+import { withoutBellFeed } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-1001',
@@ -52,7 +53,7 @@ const inFrame = (id: string, tab: 'overview' | 'history') => (
 
 beforeEach(() => {
   fetchStub = vi.fn<(request: Request) => Promise<Response>>();
-  vi.stubGlobal('fetch', fetchStub);
+  vi.stubGlobal('fetch', withoutBellFeed(fetchStub));
 });
 afterEach(() => {
   vi.useRealTimers();

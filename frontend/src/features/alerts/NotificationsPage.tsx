@@ -2,17 +2,17 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { formatClock } from '@/features/decide/format';
 import { FilterIcon, SearchIcon } from '@/features/my-work/icons';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
+import { AlertAvatar, AlertBody, AlertsLoadError, useOpenAlert, type OpenAlert } from './AlertParts';
 import { AlertsFilterPanel, type AlertFilters } from './AlertsFilterPanel';
 import type { Alert } from './types';
-import { agentImage, buildAlertQuery, countLine, filterCount, isNarrowed, metaLine, parseView, viewSearch, type View } from './model';
+import { buildAlertQuery, countLine, filterCount, isNarrowed, parseView, viewSearch, workHref, type View } from './model';
 import { useIsPhone } from './useIsPhone';
 import './alerts.css';
 
@@ -51,7 +51,6 @@ function Notifications() {
   const [filterOpen, setFilterOpen] = useState(false);
 
   const seq = useRef(0);
-  const opening = useRef(false);
   const viewRef = useRef(view);
   const filterButton = useRef<HTMLButtonElement>(null);
 
@@ -146,20 +145,7 @@ function Notifications() {
     navigate({ agent: filters.agent, unread: filters.unread });
   };
 
-  /** An unread alert is marked read first; the work opens whether or not that worked, and nothing retries. */
-  const openAlert = async (event: MouseEvent<HTMLAnchorElement>, alert: Alert) => {
-    if (alert.read || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    if (opening.current) return;
-    opening.current = true;
-    try {
-      await call(api.POST('/api/v1/notifications/{notification_id}/read', { params: { path: { notification_id: alert.id } } }));
-    } catch {
-      // The row keeps NEW: the list is re-read on return and shows what the server holds.
-    }
-    opening.current = false;
-    router.push(workHref(alert));
-  };
+  const openAlert = useOpenAlert();
 
   if (signedOut) return <SignedOutState pathname={`/notifications${search ? `?${search}` : ''}`} />;
 
@@ -189,20 +175,7 @@ function Notifications() {
   if (list.status === 'loading') {
     body = <LoadingState />;
   } else if (list.status === 'error') {
-    body = (
-      <div className="shell-errorcard" role="alert">
-        <span className="shell-eyebrow">ERROR · COULDN&rsquo;T LOAD</span>
-        <span>We couldn&rsquo;t load your alerts. Your work is safe; nothing was changed.</span>
-        <span className="shell-reference">
-          {asOf && `Last loaded ${formatClock(asOf)}. `}Reference {list.error.code} for support.
-        </span>
-        <div className="shell-errorcard__action">
-          <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" onClick={() => void load(view)}>
-            Try again
-          </button>
-        </div>
-      </div>
-    );
+    body = <AlertsLoadError error={list.error} asOf={asOf} onRetry={() => void load(view)} />;
   } else if (list.items.length === 0 && isNarrowed(view)) {
     body = (
       <div className="psl-empty">
@@ -308,28 +281,16 @@ function Notifications() {
   );
 }
 
-const workHref = (alert: Alert) => `/work/${encodeURIComponent(alert.work_id)}`;
-
-type RowProps = { alert: Alert; now: number; onOpen: (event: MouseEvent<HTMLAnchorElement>, alert: Alert) => void };
+type RowProps = { alert: Alert; now: number; onOpen: OpenAlert };
 
 /** One alert: avatar, text over the meta line, NEW while unread. The whole row is one link to its work. */
 function AlertRow({ alert, now, onOpen }: RowProps) {
   const unread = alert.read === false;
-  const meta = metaLine(alert, now);
-  const image = agentImage(alert.agent);
   return (
     <li className={unread ? 'alerts-row alerts-row--unread' : 'alerts-row'}>
       <Link href={workHref(alert)} className="alerts-link" onClick={(event) => onOpen(event, alert)}>
-        <span className={image ? `psl-avatar psl-avatar--40 psl-avatar--${alert.agent}` : 'psl-avatar psl-avatar--40'}>
-          {/* Decorative: the agent's name is in the meta line. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {image && <img src={image} alt="" width={40} height={40} />}
-        </span>
-        <span className="alerts-body">
-          <span className="alerts-text">{alert.text}</span>
-          <span className="alerts-sr">, </span>
-          <span className="alerts-meta">{meta}</span>
-        </span>
+        <AlertAvatar agent={alert.agent} />
+        <AlertBody alert={alert} now={now} />
         {unread && (
           <span className="psl-tag psl-tag--person alerts-new">
             <span className="alerts-sr">, </span>NEW

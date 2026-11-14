@@ -50,9 +50,39 @@ body { margin: 0; background: var(--steel); }
    wordmark and the page title share a left edge; it fits at 720px by tightening the gaps between items and
    links, and the who-line shows the name only (design owner, 13 Nov 2026); the role stays for screen readers */
 .shell-navend { margin-left: auto; flex: none; }
+/* the first of bell, who-line and Start work takes the free space, so they sit together at the right in that order
+   (F-15, concept 3: Start work is the last item and the last tab stop) */
+.shell-topbar .shell-bellwrap, .psl-nav__in > .psl-nav__who { margin-left: auto; }
+.shell-topbar .shell-bellwrap ~ .psl-nav__who, .shell-bellwrap ~ .shell-navend, .psl-nav__who ~ .shell-navend { margin-left: 0; }
 @media (min-width: 720px) and (max-width: 1079.98px) {
   .shell-topbar .psl-nav__in { gap: var(--space-2); }
   .shell-topbar .psl-navlink { padding-left: var(--space-1); padding-right: var(--space-1); }
   .psl-nav__who { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .shell-who-role { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
+
+/* (g) alert bell (F-15, concept 3 of design/concepts/alerts-bell-concepts.html): 36px in the top bar, 44px in the
+   phone bar; the red unread badge at its top-right; the open state has a white 2px border on a darker fill. The
+   "N need you" chip touches the bell and shows from bp-desktop (1080px) only. */
+.shell-bellwrap { display: inline-flex; align-items: center; flex: none; }
+.shell-bell {
+  position: relative; flex: none; display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0;
+  color: var(--on-strong); background: transparent; border: 2px solid transparent; font: inherit; cursor: pointer;
+}
+.shell-bell:hover { background: var(--ink-strong); }
+.shell-bell.is-open { border-color: var(--on-strong); background: var(--ink-strong); }
+.shell-bellbadge {
+  position: absolute; top: -2px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px;
+  background: var(--signal); color: var(--on-strong); font-family: var(--font-sans); font-weight: 600; font-size: 11px; line-height: 17px; text-align: center;
+}
+.shell-bellchip {
+  display: none; align-items: center; height: 24px; padding: 0 8px; white-space: nowrap;
+  background: var(--signal); color: var(--on-strong); font-weight: 600; font-size: 12px; line-height: 1;
+}
+@media (min-width: 1080px) {
+  .shell-bellchip { display: inline-flex; }
+}
+.shell-phone .shell-bellwrap { margin-left: auto; }
+/* after a sub-page's note (which holds the right edge with its own auto margin) the bell follows it */
+.shell-phone .shell-phonenote ~ .shell-bellwrap { margin-left: var(--space-2); }
+.shell-phone .shell-bell { width: var(--control-md); height: var(--control-md); }

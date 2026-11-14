@@ -11,6 +11,7 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { workList } from '../mock/work-list.mjs';
+import { bellFeed, isBellFeed } from './bell-feed';
 
 process.env.TZ = 'Africa/Lagos';
 
@@ -65,6 +66,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
+      if (isBellFeed(request)) return bellFeed();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me(persona));
       calls.push(url);

@@ -12,3 +12,9 @@ export type AlertEvent = AlertPrefs['events'][number];
 export type AlertOption = NonNullable<AlertPrefs['digest_at']>['options'][number];
 export type SavedPrefs = Json<operations['E-ALERT-PREFS']['responses'][200]>;
 export type PrefsBody = NonNullable<operations['E-ALERT-PREFS']['requestBody']>['content']['application/json'];
+
+/**
+ * PROPOSAL: not in v7. An E-NOTIFICATIONS item that may carry `needs_you`: true when the alert waits on this person
+ * (a decision or an exception). The backend adds it through the contract-change route; until then it is absent.
+ */
+export type AlertWithNeed = Alert & { needs_you?: boolean };
