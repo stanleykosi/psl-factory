@@ -3,13 +3,12 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { call } from '@/api/client';
+import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
-import { alertsApi } from './api';
 import { AlertSwitch } from './AlertSwitch';
-import type { AlertEvent, AlertPrefs, SavedPrefs } from './contract-proposal';
+import type { AlertEvent, AlertPrefs, SavedPrefs } from './types';
 import { buildPrefsBody, draftFrom, quietLabel, selectsShown, type Draft } from './model';
 import { useIsPhone } from './useIsPhone';
 import './alerts.css';
@@ -28,7 +27,7 @@ type Notice =
   | { kind: 'problem'; message: string; code: string };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
-const readPrefs = () => call(alertsApi.GET('/api/v1/me/alert-preferences'));
+const readPrefs = () => call(api.GET('/api/v1/me/alert-preferences'));
 
 /** A body without an events array is not a settings page: it gets the error card (Reference missing_events). */
 function pageFrom(data: AlertPrefs | SavedPrefs): PageState {
@@ -86,7 +85,7 @@ export function AlertSettingsPage() {
     setSaving(true);
     setNotice(null);
     try {
-      const data = await call(alertsApi.PUT('/api/v1/me/alert-preferences', { body: buildPrefsBody(page.prefs, page.draft, phone) }));
+      const data = await call(api.PUT('/api/v1/me/alert-preferences', { body: buildPrefsBody(page.prefs, page.draft, phone) }));
       setPage(pageFrom(data));
       setNotice({ kind: 'saved' });
     } catch (error) {

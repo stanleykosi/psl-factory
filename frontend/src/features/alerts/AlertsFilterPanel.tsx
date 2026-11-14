@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 
 import { CloseIcon } from '@/features/my-work/icons';
 
-import type { AlertAgent } from './contract-proposal';
+import type { AlertAgent } from './types';
 import { AGENTS, agentName } from './model';
 
 export type AlertFilters = { agent?: AlertAgent; unread?: true };

@@ -2,7 +2,7 @@
 // Presentation only: a proposal field the API does not return is never defaulted, and nothing here decides access.
 import { AGENT_NAMES, formatClock } from '@/features/decide/format';
 
-import type { Alert, AlertAgent, AlertPrefs, AlertQuery, PrefsBody } from './contract-proposal';
+import type { Alert, AlertAgent, AlertPrefs, AlertQuery, PrefsBody } from './types';
 
 export const AGENTS: readonly AlertAgent[] = ['tola', 'chidi', 'zainab'];
 

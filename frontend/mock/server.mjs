@@ -1,4 +1,4 @@
-// Local contract mock for /api/v1. Routes come from the v4 openapi.json; M-1
+// Local contract mock for /api/v1. Routes come from the v7 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
 // Persona: cookie psl_mock_persona (finance_lead | pm | none; default finance_lead).
@@ -9,7 +9,7 @@
 // Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
 // the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
-// Alerts (F-12): the four alert operations go to alerts.mjs; routes v4 lacks come from the v7 overlay proposals/alerts.json.
+// Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -17,14 +17,14 @@ import { fileURLToPath } from 'node:url';
 
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { exceptionsList } from './exceptions.mjs';
 import { workList } from './work-list.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v4', 'openapi.json');
-const overlay = JSON.parse(readFileSync(join(here, 'proposals', 'alerts.json'), 'utf8'));
+export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS'];
 export const PERSONAS = ['finance_lead', 'pm', 'none'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -194,14 +194,13 @@ function send(res, status, body) {
 
 export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'))) {
   const routes = loadRoutes(openapi);
-  routes.push(...loadRoutes(overlay).filter((o) => !routes.some((r) => r.method === o.method && r.template === o.template)));
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
   const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME').map((id) => [id, readFixture(id)]));
   const work = readWorkFixtures();
   const validators = bodyValidators(openapi);
   // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
   const overrides = new Map();
-  const alerts = createAlertsMock({ overlay });
+  const alerts = createAlertsMock({ openapi });
 
   return http.createServer((req, res) => {
     const chunks = [];
@@ -231,7 +230,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
-      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
       }

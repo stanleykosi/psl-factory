@@ -1,0 +1,62 @@
+{
+  "id": "W-1526",
+  "title": "Harmattan Bank · go-live report",
+  "line": "Weekly client update",
+  "reference": "GLV-0087",
+  "state": "effect_uncertain",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Gather progress",
+      "status": "done"
+    },
+    {
+      "name": "Draft update",
+      "status": "current_person"
+    },
+    {
+      "name": "PM review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "Tola is checking whether the client report arrived. Client acceptance waits until it does; nothing is resent.",
+  "sample": true
+}

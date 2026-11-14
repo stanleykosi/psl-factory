@@ -11,6 +11,8 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { createAlertsMock } from '../mock/alerts.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { OPENAPI_PATH } from '../mock/server.mjs';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/settings/alerts',
@@ -19,7 +21,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 const mockDir = join(__dirname, '../mock');
-const overlay = JSON.parse(readFileSync(join(mockDir, 'proposals/alerts.json'), 'utf8'));
+const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'));
 const me = JSON.parse(readFileSync(join(mockDir, 'fixtures/me.finance_lead.json'), 'utf8'));
 const board = JSON.parse(readFileSync(join(mockDir, 'fixtures/E-ALERT-PREFS-READ.json'), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
@@ -37,7 +39,7 @@ function fromMock(call: Call) {
 }
 
 beforeEach(() => {
-  mock = createAlertsMock({ overlay });
+  mock = createAlertsMock({ openapi });
   scenario = 'board';
   calls = [];
   hook = () => undefined;

@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import type { Alert, AlertPrefs } from '@/features/alerts/contract-proposal';
+import type { Alert, AlertPrefs } from '@/features/alerts/types';
 import {
   agentImage,
   agentName,

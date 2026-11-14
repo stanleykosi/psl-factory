@@ -1,0 +1,738 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:58:27.281Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-11/design/canvas/project/SCR-13-desktop-finance-rules.dc.html",
+  "boardName": "SCR-13-desktop-finance-rules.dc.html",
+  "pageUrl": "http://localhost:4601/setup/rules/finance",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-11/round-3/fidelity/exception-requests.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 96.2 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 93.1,
+    "coverageWithExceptions": 100,
+    "visual": 96.2
+  },
+  "visual": {
+    "score": 96.2,
+    "allCellsScore": 97.5,
+    "width": 1440,
+    "height": 1400,
+    "boardHeight": 1400,
+    "pageHeight": 1275,
+    "cell": 12,
+    "contentCells": 9335,
+    "mismatchedCells": 354
+  },
+  "coverage": {
+    "total": 29,
+    "found": 27,
+    "coverage": 93.1,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 428,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 515,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 601,
+          "y": 1,
+          "w": 66,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 66,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 1231
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1218
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SETUP / RULES / FINANCE",
+        "pageName": "SETUP / RULES / FINANCE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Finance rules",
+        "pageName": "Finance rules",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 1264,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Every value the Finance lines need before they can run. Each is decided by PSL; the factory never guesses. A line stops at \"Setup needed\" only at the step that needs a missing value.",
+        "pageName": "Every value the Finance lines need before they can run. Each is decided by PSL; the factory never guesses. A line stops at “Setup needed” only at the step that needs a missing value.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "All 25 values are Not set. Real reviewers and approvers come from PSL; none are invented here.",
+        "pageName": "All 25 values are Not set. Real reviewers and approvers come from PSL; none are invented here.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 128,
+          "y": 222,
+          "w": 598,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 128,
+          "y": 223,
+          "w": 598,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MANAGEMENT ACCOUNTS",
+        "pageName": "MANAGEMENT ACCOUNTS",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 275,
+          "w": 407,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 276,
+          "w": 407,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set management accounts rules",
+        "pageName": "Set management accounts rules",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 502,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 499,
+          "w": 220,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INCOME SCHEDULES",
+        "pageName": "INCOME SCHEDULES",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 517,
+          "y": 275,
+          "w": 407,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 517,
+          "y": 276,
+          "w": 407,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set income schedules rules",
+        "pageName": "Set income schedules rules",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 531,
+          "y": 461,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 531,
+          "y": 459,
+          "w": 220,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ASSET SCHEDULE",
+        "pageName": "ASSET SCHEDULE",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 943,
+          "y": 275,
+          "w": 407,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 943,
+          "y": 276,
+          "w": 407,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set asset schedule rules",
+        "pageName": "Set asset schedule rules",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 957,
+          "y": 461,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 957,
+          "y": 459,
+          "w": 220,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CASH FORECAST",
+        "pageName": "CASH FORECAST",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 586,
+          "w": 407,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 583,
+          "w": 407,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set cash forecast rules",
+        "pageName": "Set cash forecast rules",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 772,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 766,
+          "w": 220,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "BU TOTALS",
+        "pageName": "BU TOTALS",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 517,
+          "y": 586,
+          "w": 407,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 517,
+          "y": 583,
+          "w": 407,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set bu totals rules",
+        "pageName": "Set BU totals rules",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 531,
+          "y": 813,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 531,
+          "y": 806,
+          "w": 220,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LEDGER SOURCES",
+        "pageName": "LEDGER SOURCES",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 943,
+          "y": 586,
+          "w": 407,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 943,
+          "y": 583,
+          "w": 407,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set ledger sources rules",
+        "pageName": "Set ledger sources rules",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 957,
+          "y": 772,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 957,
+          "y": 766,
+          "w": 220,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PAYROLL",
+        "pageName": "PAYROLL",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 897,
+          "w": 1260,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 890,
+          "w": 1260,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set payroll rules",
+        "pageName": "Set payroll rules",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 1165,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1153,
+          "w": 220,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Start work and More ways to start belong to F-05 (D-04), which has not merged at this base; the top bar is the shell's (src/shell, not touched).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "As Start work (F-05, D-04).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"SETUP / RULES / FINANCE\"",
+        "kind": "Text",
+        "name": "SETUP / RULES / FINANCE",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "SETUP",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 36,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "RULES",
+        "container": "navigation",
+        "pageBox": {
+          "x": 146,
+          "y": 85,
+          "w": 36,
+          "h": 15
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-11/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

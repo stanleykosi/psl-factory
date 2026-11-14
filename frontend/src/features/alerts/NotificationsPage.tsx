@@ -4,15 +4,14 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from 'react';
 
-import { call } from '@/api/client';
+import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import { formatClock } from '@/features/decide/format';
 import { FilterIcon, SearchIcon } from '@/features/my-work/icons';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { AlertsFilterPanel, type AlertFilters } from './AlertsFilterPanel';
-import { alertsApi } from './api';
-import type { Alert } from './contract-proposal';
+import type { Alert } from './types';
 import { agentImage, buildAlertQuery, countLine, filterCount, isNarrowed, metaLine, parseView, viewSearch, type View } from './model';
 import { useIsPhone } from './useIsPhone';
 import './alerts.css';
@@ -24,7 +23,7 @@ type Loaded = { items: Alert[]; nextCursor?: string; total?: number; now: number
 type ListState = { status: 'loading' } | ({ status: 'ready' } & Loaded) | { status: 'error'; error: ApiError };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
-const fetchPage = (v: View, cursor?: string) => call(alertsApi.GET('/api/v1/notifications', { params: { query: buildAlertQuery(v, cursor) } }));
+const fetchPage = (v: View, cursor?: string) => call(api.GET('/api/v1/notifications', { params: { query: buildAlertQuery(v, cursor) } }));
 
 /** /notifications (SCR-15): the person's own alerts. useSearchParams needs a Suspense boundary for `next build`. */
 export function NotificationsPage() {
@@ -154,7 +153,7 @@ function Notifications() {
     if (opening.current) return;
     opening.current = true;
     try {
-      await call(alertsApi.POST('/api/v1/notifications/{notification_id}/read', { params: { path: { notification_id: alert.id } } }));
+      await call(api.POST('/api/v1/notifications/{notification_id}/read', { params: { path: { notification_id: alert.id } } }));
     } catch {
       // The row keeps NEW: the list is re-read on return and shows what the server holds.
     }

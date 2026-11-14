@@ -1,15 +1,13 @@
-import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-import type { AlertPrefs } from '@/features/alerts/contract-proposal';
+import type { AlertPrefs } from '@/features/alerts/types';
 import { buildPrefsBody, draftFrom } from '@/features/alerts/model';
 
 // @ts-expect-error plain ESM module without type declarations
@@ -19,9 +17,7 @@ const root = join(__dirname, '..');
 const readJson = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 type Op = { operationId: string; requestBody?: { content: { 'application/json': { schema: object } } }; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 type Spec = { paths: Record<string, Record<string, Op>> };
-const overlay = readJson(join(root, 'mock/proposals/alerts.json')) as Spec;
-const v7 = readJson(join(root, '../architecture/packages/v7/openapi.json')) as Spec;
-const base = readJson(OPENAPI_PATH) as Spec;
+const v7 = readJson(OPENAPI_PATH) as Spec;
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
@@ -32,62 +28,24 @@ function expectValid(schema: object, body: unknown, label: string) {
   expect(validate(body), `${label}: ${ajv.errorsText(validate.errors)}`).toBe(true);
 }
 
-const PATHS = ['/api/v1/notifications', '/api/v1/notifications/{notification_id}/read', '/api/v1/me/alert-preferences'];
-const ITEM_PROPOSALS = ['reference', 'delivered_via', 'delivered_at', 'digest_at', 'in_app_reason'];
-const pick = (body: Record<string, unknown>, keys: string[]) => Object.fromEntries(Object.entries(body).filter(([k]) => keys.includes(k)));
-/** E-NOTIFICATIONS with the proposal properties removed: the v4 shape. */
-const coreList = (body: { items: Record<string, unknown>[] } & Record<string, unknown>) => ({
-  ...pick(body, ['next_cursor', 'as_of']),
-  items: body.items.map((item) => Object.fromEntries(Object.entries(item).filter(([k]) => !ITEM_PROPOSALS.includes(k)))),
-});
-
-describe('the overlay is verbatim v7 and the core never drifts', () => {
-  it('the three path items deep-equal architecture/packages/v7/openapi.json', () => {
-    expect(Object.keys(overlay.paths)).toEqual(PATHS);
-    for (const path of PATHS) expect(overlay.paths[path], path).toEqual(v7.paths[path]);
-  });
-
+describe('the alerts fixtures match the v7 contract', () => {
   const fixtures = join(root, 'mock/fixtures');
   const alertFiles = readdirSync(join(fixtures, 'alerts')).map((name) => `alerts/${name}`);
 
-  it('every alerts fixture and the four default fixtures validate against the overlay 200 schema', () => {
+  it('every alerts fixture and the four default fixtures validate against the v7 200 schema', () => {
     expect(alertFiles.length).toBeGreaterThanOrEqual(9);
     for (const name of [...alertFiles, 'E-NOTIFICATIONS.json', 'E-ALERT-PREFS-READ.json']) {
-      expectValid(response(overlay, name.includes('notifications') || name.startsWith('E-NOTIFICATIONS') ? 'E-NOTIFICATIONS' : 'E-ALERT-PREFS-READ'), readJson(join(fixtures, name)), name);
+      expectValid(response(v7, name.includes('notifications') || name.startsWith('E-NOTIFICATIONS') ? 'E-NOTIFICATIONS' : 'E-ALERT-PREFS-READ'), readJson(join(fixtures, name)), name);
     }
-    expectValid(response(overlay, 'E-NOTIFICATION-READ'), readJson(join(fixtures, 'E-NOTIFICATION-READ.json')), 'E-NOTIFICATION-READ');
-    expectValid(response(overlay, 'E-ALERT-PREFS'), readJson(join(fixtures, 'E-ALERT-PREFS.json')), 'E-ALERT-PREFS');
+    expectValid(response(v7, 'E-NOTIFICATION-READ'), readJson(join(fixtures, 'E-NOTIFICATION-READ.json')), 'E-NOTIFICATION-READ');
+    expectValid(response(v7, 'E-ALERT-PREFS'), readJson(join(fixtures, 'E-ALERT-PREFS.json')), 'E-ALERT-PREFS');
   });
 
-  it('without the proposal properties the same bodies, and the PUT bodies the UI builds, validate against the base (v4) contract', () => {
-    for (const name of [...alertFiles, 'E-NOTIFICATIONS.json', 'E-ALERT-PREFS-READ.json', 'E-ALERT-PREFS.json']) {
-      const body = readJson(join(fixtures, name));
-      if ('items' in body) expectValid(response(base, 'E-NOTIFICATIONS'), coreList(body), `${name} (v4)`);
-      else {
-        expectValid(response(base, 'E-ALERT-PREFS'), pick(body, ['channel', 'frequency']), `${name} (v4)`);
-        if (name.includes('invalid')) continue; // channel "sms" is the 422 case on purpose
-        const putSchema = find(base, 'E-ALERT-PREFS').requestBody!.content['application/json'].schema;
-        for (const phone of [false, true]) {
-          const sent = buildPrefsBody(body as AlertPrefs, draftFrom(body as AlertPrefs), phone);
-          expectValid(find(overlay, 'E-ALERT-PREFS').requestBody!.content['application/json'].schema, sent, `${name} PUT (overlay)`);
-          expectValid(putSchema, pick(sent as Record<string, unknown>, ['channel', 'frequency']), `${name} PUT (v4)`);
-        }
-      }
-    }
-  });
-
-  it('src/features/alerts/contract-proposal.ts holds a fresh openapi-typescript run of the overlay', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'psl-alerts-'));
-    try {
-      const out = join(dir, 'alerts.d.ts');
-      execFileSync(process.execPath, [join(root, 'node_modules/openapi-typescript/bin/cli.js'), join(root, 'mock/proposals/alerts.json'), '-o', out], { stdio: 'pipe' });
-      const source = readFileSync(join(root, 'src/features/alerts/contract-proposal.ts'), 'utf8');
-      const begin = '// BEGIN openapi-typescript mock/proposals/alerts.json\n';
-      const generated = source.slice(source.indexOf(begin) + begin.length, source.indexOf('// END openapi-typescript'));
-      expect(source.indexOf(begin)).toBeGreaterThan(0);
-      expect(generated).toBe(readFileSync(out, 'utf8'));
-    } finally {
-      rmSync(dir, { recursive: true, force: true });
+  it('the PUT bodies the UI builds validate against the v7 request schema', () => {
+    const putSchema = find(v7, 'E-ALERT-PREFS').requestBody!.content['application/json'].schema;
+    for (const name of alertFiles.filter((n) => n.includes('prefs') && !n.includes('invalid'))) {
+      const body = readJson(join(fixtures, name)) as AlertPrefs;
+      for (const phone of [false, true]) expectValid(putSchema, buildPrefsBody(body, draftFrom(body), phone), `${name} PUT`);
     }
   });
 });
@@ -125,7 +83,7 @@ describe('E-NOTIFICATIONS on the mock', () => {
     expect([body.total, body.unread_count]).toEqual([4, 1]);
     const lagos = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos' });
     expect(lagos.format(new Date(body.as_of as string))).toBe(lagos.format(new Date()));
-    expectValid(response(overlay, 'E-NOTIFICATIONS'), body, 'board');
+    expectValid(response(v7, 'E-NOTIFICATIONS'), body, 'board');
   });
 
   it('filters by q (text or reference), agent and unread; total is the filtered count, unread_count is all', async () => {
@@ -157,7 +115,7 @@ describe('E-NOTIFICATIONS on the mock', () => {
     expect(ids(bare)).toEqual(['N-0001', 'N-0002', 'N-0003', 'N-0004']);
     expect(bare).not.toHaveProperty('total');
     expect(bare).not.toHaveProperty('unread_count');
-    expectValid(response(base, 'E-NOTIFICATIONS'), bare, 'bare (v4)');
+    expectValid(response(v7, 'E-NOTIFICATIONS'), bare, 'bare (v7)');
     expect((await api('/api/v1/me/alert-preferences', { scenario: 'bare' })).status).toBe(404);
     expect((await api('/api/v1/notifications/N-0001/read', { scenario: 'bare', method: 'POST' })).status).toBe(404);
   });
@@ -189,7 +147,7 @@ describe('E-NOTIFICATION-READ on the mock', () => {
   it('marks the own alert read; a repeat answers the same 200', async () => {
     const first = await api('/api/v1/notifications/N-0001/read', { method: 'POST' });
     expect(first).toEqual({ status: 200, body: { id: 'N-0001', read: true, unread_count: 0 } });
-    expectValid(response(overlay, 'E-NOTIFICATION-READ'), first.body, 'read');
+    expectValid(response(v7, 'E-NOTIFICATION-READ'), first.body, 'read');
     expect(await api('/api/v1/notifications/N-0001/read', { method: 'POST' })).toEqual(first);
     expect((await api('/api/v1/notifications?unread=true')).body.items).toEqual([]);
   });
@@ -215,7 +173,7 @@ describe('E-ALERT-PREFS on the mock', () => {
     expect(saved.status).toBe(200);
     expect(saved.body.revision).toBe(4);
     expect((saved.body.digest_at as { value: string }).value).toBe('09:00');
-    expectValid(response(overlay, 'E-ALERT-PREFS'), saved.body, 'saved');
+    expectValid(response(v7, 'E-ALERT-PREFS'), saved.body, 'saved');
     expect((await api('/api/v1/me/alert-preferences')).body).toEqual(saved.body);
     expect((await prefsPut(body)).status).toBe(409);
     expect((await prefsPut({ ...body, expected_revision: 4 })).body.revision).toBe(5);

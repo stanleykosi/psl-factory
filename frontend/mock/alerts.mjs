@@ -1,5 +1,5 @@
 // Alerts in the contract mock (F-12): E-NOTIFICATIONS, E-NOTIFICATION-READ, E-ALERT-PREFS-READ and E-ALERT-PREFS,
-// shaped by the v7 overlay in proposals/alerts.json. Sample data only; nothing is sent anywhere.
+// shaped by the v7 contract. Sample data only; nothing is sent anywhere.
 //
 // Scenario: cookie psl_mock_alerts, else env MOCK_ALERTS_SCENARIO, else board
 // (board | phone | empty | many | bare | stale | invalid | locked). State is in memory per persona:scenario;
@@ -60,10 +60,10 @@ function initialState(persona, scenario) {
   return { list: shifted(list), prefs, staleDone: false };
 }
 
-function putValidator(overlay) {
+function putValidator(openapi) {
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   addFormats(ajv);
-  const op = overlay.paths['/api/v1/me/alert-preferences'].put;
+  const op = openapi.paths['/api/v1/me/alert-preferences'].put;
   return ajv.compile(op.requestBody.content['application/json'].schema);
 }
 
@@ -151,8 +151,8 @@ function savePrefs(state, raw, validate, scenario) {
   return { status: 200, body: prefs };
 }
 
-export function createAlertsMock({ overlay }) {
-  const validate = putValidator(overlay);
+export function createAlertsMock({ openapi }) {
+  const validate = putValidator(openapi);
   const states = new Map();
 
   return {
