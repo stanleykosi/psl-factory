@@ -9,8 +9,8 @@ import type { DestinationInfo } from './destinations';
 import { MenuIcon } from './icons';
 import { SampleLabel } from './SampleLabel';
 
-/** A sub-page's way back, drawn in the phone bar as "← label". */
-export type PhoneBack = { label: string; href: string };
+/** A sub-page's way back, drawn in the phone bar as "← label", with an optional mono note at the right ("RULES"). */
+export type PhoneBack = { label: string; href: string; note?: string };
 
 type Props = {
   me: Me | null;
@@ -62,6 +62,7 @@ export function PhoneBar({ me, destinations, current, back = null }: Props) {
         ) : (
           <span className="psl-brand">PSL FACTORY</span>
         )}
+        {back?.note && <span className="shell-phonenote">{back.note}</span>}
         <SampleLabel />
       </header>
       {hasMenu && open && (

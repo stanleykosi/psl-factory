@@ -1,0 +1,85 @@
+/* Alerts (SCR-15 list and settings). Token variables and color-mix only; layout switches at 720px (bp-phone).
+   No bundle or shell class is restyled: the alerts- classes sit beside them. */
+
+.alerts-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.alerts-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: normal; color: var(--ink-muted); }
+/* the page's own column: the boards space SCR-15 sections 20px apart (12px on phones) */
+.alerts-page { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.alerts-back { min-height: var(--control-md); display: inline-flex; align-items: center; white-space: nowrap; }
+
+/* list header: title, Alert settings on the right */
+.alerts-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
+
+/* toolbar: search, Filter, count */
+.alerts-search { flex: 1 1 320px; max-width: 460px; }
+.alerts-filter { position: relative; flex: none; }
+.alerts-filterbtn { padding: 0 14px; }
+.alerts-count { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+
+/* desktop filter popover under the button, phone bottom sheet over the scrim */
+.alerts-pop { position: absolute; top: calc(100% + var(--space-2)); left: 0; z-index: 5; width: 340px; }
+.alerts-pophead { padding: var(--space-3) var(--space-4); border-bottom: 2px solid var(--ink); font-family: var(--font-display); font-weight: 800; font-size: 14px; text-transform: uppercase; }
+.alerts-popbody { padding: var(--space-4); display: flex; flex-direction: column; gap: 14px; }
+.alerts-popfoot { display: flex; gap: 10px; padding: var(--space-3) var(--space-4); border-top: 2px solid var(--ink); }
+.alerts-fieldset { margin: 0; padding: 0; border: none; display: flex; flex-direction: column; min-width: 0; }
+.alerts-hint { color: var(--ink-muted); }
+.alerts-scrim { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; justify-content: flex-end; }
+.alerts-sheet { max-height: 85vh; overflow-y: auto; }
+
+/* rows: one link each, avatar / text over meta / NEW */
+.alerts-listwrap { display: flex; flex-direction: column; min-width: 0; }
+.alerts-list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 2px solid var(--ink); }
+.alerts-row { border-bottom: 1px solid var(--rule-soft); }
+.alerts-row--unread { background: color-mix(in srgb, var(--signal-tint) 40%, var(--surface)); }
+.alerts-link { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 16px; color: var(--ink); text-decoration: none; }
+.psl .alerts-link { color: var(--ink); }
+.alerts-link:hover { background: var(--surface-subtle); }
+.alerts-link:focus-visible { outline-offset: -3px; }
+.alerts-link .psl-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.alerts-body { display: flex; flex-direction: column; min-width: 0; }
+.alerts-text { font-weight: 400; overflow-wrap: anywhere; }
+.alerts-row--unread .alerts-text { font-weight: 600; }
+.alerts-meta { font-size: 12px; color: var(--ink-muted); }
+.alerts-new { align-self: flex-start; }
+.alerts-showmore { justify-content: center; border: 2px solid var(--ink); border-top: none; }
+.alerts-morefail { align-items: center; flex-wrap: wrap; }
+
+/* settings: switch matrix, digest and number cards, Save */
+.alerts-table { min-width: 760px; }
+.alerts-table td { vertical-align: middle; }
+.alerts-locked { display: block; font-size: 13px; color: var(--ink-muted); }
+.alerts-switch { position: relative; flex: none; display: inline-flex; align-items: center; justify-content: flex-start; width: 44px; height: 26px; margin: 0; padding: 2px; box-sizing: border-box; border: 2px solid var(--ink); background: var(--surface); cursor: pointer; vertical-align: middle; }
+.alerts-switch__knob { width: 18px; height: 18px; background: var(--ink); }
+.alerts-switch.is-on { justify-content: flex-end; background: var(--ink); }
+.alerts-switch.is-on .alerts-switch__knob { background: var(--surface); }
+.alerts-switch.is-locked { border-color: var(--disabled); background: var(--surface); cursor: not-allowed; }
+.alerts-switch.is-locked .alerts-switch__knob { background: var(--disabled); }
+.alerts-cards { display: flex; flex-wrap: wrap; gap: 22px; }
+.alerts-card { flex: 1 1 300px; background: var(--surface); border: 2px solid var(--ink); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.alerts-cardlabel { font-weight: 500; }
+.alerts-select { padding: 0 10px; }
+.alerts-number { font-family: var(--font-mono); }
+.alerts-note { font-size: 13px; color: var(--ink-muted); }
+.alerts-save { max-width: 260px; }
+
+/* phone settings: one card per event, quiet hours as text, Save pinned to the bottom */
+.alerts-settitle { font-size: 24px; }
+.alerts-eventcard { line-height: normal; background: var(--surface); border: 2px solid var(--ink); padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.alerts-eventlabel { font-weight: 600; }
+.alerts-eventswitches { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; font-size: 13px; }
+.alerts-switchwrap { display: contents; }
+.alerts-timing { font-size: 12px; color: var(--ink-muted); }
+.alerts-quiet { margin: 0; line-height: normal; font-size: 13px; color: var(--ink-muted); }
+.alerts-footspace { height: 86px; flex: none; }
+.alerts-footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 12px 16px 18px; background: var(--surface); border-top: 2px solid var(--ink); }
+
+@media (max-width: 719.98px) {
+  .alerts-page { gap: var(--space-3); }
+  .alerts-head { flex-wrap: nowrap; align-items: center; }
+  /* the 44px target overlaps the gaps around the heading row instead of making it taller */
+  .alerts-head .alerts-back { margin: -8px 0; }
+  .alerts-search { flex: 1 1 0; min-width: 0; max-width: none; }
+  .alerts-link { padding: 10px 12px; }
+  /* the 26px-high switch gets a 44px touch target */
+  .alerts-switch::before { content: ""; position: absolute; inset: -11px 0; }
+}

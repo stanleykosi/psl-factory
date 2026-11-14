@@ -16,6 +16,8 @@ export type WorkItemPresentation = {
   phone?: PhonePresentation;
   /** Visible detail per fact ("v2", "Ada", "To client 06 Nov"); an unknown fact still reads Unknown. */
   facts?: Partial<Record<FactName, string>>;
+  /** Tint a fact box the way the board does: `waiting` amber, `signal` red. Never for an unknown fact. */
+  fact_tones?: Partial<Record<FactName, 'waiting' | 'signal'>>;
   /** Visible detail per station index ("Approved 10:47", "Held · no reviewer"). */
   stations?: (string | null)[];
   /** Phone only: the boards draw just the first N stations (the others stay for screen readers). */
@@ -77,7 +79,7 @@ export type WorkItemPresentation = {
   history_counts?: Record<HistoryKind, number>;
 };
 
-export type PhonePresentation = Partial<Pick<WorkItemPresentation, 'facts' | 'stations' | 'stations_shown' | 'agent' | 'panel' | 'preview'>> & {
+export type PhonePresentation = Partial<Pick<WorkItemPresentation, 'facts' | 'fact_tones' | 'stations' | 'stations_shown' | 'agent' | 'panel' | 'preview'>> & {
   /** The phone boards' shorter title ("Lagoon Health · M2 invoice"). */
   title?: string;
 };

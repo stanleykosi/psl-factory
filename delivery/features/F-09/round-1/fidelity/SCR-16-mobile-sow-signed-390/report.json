@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:19:09.187Z",
+  "generatedAt": "2026-11-14T07:55:25.686Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile-sow-signed.dc.html",
   "boardName": "SCR-16-mobile-sow-signed.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1602/respond?task=T-1602",
@@ -19,51 +19,30 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 74 is below 90.",
-    "15 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Visual match 89 is below 90.",
+    "14 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 94.1,
+    "coverage": 88.2,
     "coverageWithExceptions": 100,
-    "visual": 74
+    "visual": 89
   },
   "visual": {
-    "score": 74,
-    "allCellsScore": 75.6,
+    "score": 89,
+    "allCellsScore": 89.9,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
-    "pageHeight": 965,
+    "pageHeight": 908,
     "cell": 12,
-    "contentCells": 2198,
-    "mismatchedCells": 572
+    "contentCells": 2152,
+    "mismatchedCells": 236
   },
   "coverage": {
     "total": 17,
-    "found": 16,
-    "coverage": 94.1,
+    "found": 15,
+    "coverage": 88.2,
     "matched": [
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "← SOW",
-        "pageName": "← SOW",
-        "pageRole": "link",
-        "similarity": 100,
-        "looks": [],
-        "boardBox": {
-          "x": 16,
-          "y": 6,
-          "w": 50,
-          "h": 44
-        },
-        "pageBox": {
-          "x": 16,
-          "y": 62,
-          "w": 50,
-          "h": 44
-        }
-      },
       {
         "kind": "Text",
         "role": "text",
@@ -71,7 +50,9 @@
         "pageName": "SOW-0207",
         "pageRole": "text",
         "similarity": 100,
-        "looks": [],
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page"
+        ],
         "boardBox": {
           "x": 316,
           "y": 21,
@@ -80,7 +61,7 @@
         },
         "pageBox": {
           "x": 316,
-          "y": 77,
+          "y": 75,
           "w": 58,
           "h": 15
         }
@@ -101,8 +82,8 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 124,
-          "w": 358,
+          "y": 70,
+          "w": 165,
           "h": 22
         }
       },
@@ -122,7 +103,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 158,
+          "y": 104,
           "w": 358,
           "h": 19
         }
@@ -143,7 +124,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 183,
+          "y": 129,
           "w": 358,
           "h": 48
         }
@@ -164,9 +145,9 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 237,
+          "y": 183,
           "w": 358,
-          "h": 18
+          "h": 17
         }
       },
       {
@@ -185,7 +166,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 267,
+          "y": 212,
           "w": 358,
           "h": 19
         }
@@ -206,7 +187,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 292,
+          "y": 237,
           "w": 358,
           "h": 48
         }
@@ -227,7 +208,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 352,
+          "y": 297,
           "w": 358,
           "h": 19
         }
@@ -248,7 +229,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 525,
+          "y": 382,
           "w": 358,
           "h": 19
         }
@@ -269,7 +250,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 604,
+          "y": 469,
           "w": 358,
           "h": 19
         }
@@ -290,7 +271,7 @@
         },
         "pageBox": {
           "x": 58,
-          "y": 641,
+          "y": 506,
           "w": 268,
           "h": 18
         }
@@ -311,9 +292,9 @@
         },
         "pageBox": {
           "x": 58,
-          "y": 659,
+          "y": 524,
           "w": 268,
-          "h": 15
+          "h": 18
         }
       },
       {
@@ -332,7 +313,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 770,
+          "y": 566,
           "w": 358,
           "h": 83
         }
@@ -353,7 +334,7 @@
         },
         "pageBox": {
           "x": 28,
-          "y": 781,
+          "y": 577,
           "w": 130,
           "h": 18
         }
@@ -375,7 +356,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 776,
+          "y": 840,
           "w": 358,
           "h": 50
         }
@@ -383,6 +364,23 @@
     ],
     "patterns": [],
     "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← SOW",
+        "key": "link: ← SOW",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 50,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← SOW\" in the board's place, but the frame names it \"Back to SOW\" for screen readers, and the tool matches on that name. The page draws no back link of its own.",
+          "approved_by": ""
+        }
+      },
       {
         "kind": "Text",
         "role": "text",
@@ -403,26 +401,6 @@
     ],
     "misplaced": [
       {
-        "label": "Link \"← SOW\"",
-        "kind": "Link",
-        "name": "← SOW",
-        "boardBox": {
-          "x": 16,
-          "y": 6,
-          "w": 50,
-          "h": 44
-        },
-        "pageBox": {
-          "x": 16,
-          "y": 62,
-          "w": 50,
-          "h": 44
-        },
-        "reasons": [
-          "inside the main area on the board, inside the top navigation on the page"
-        ]
-      },
-      {
         "label": "Text \"SOW-0207\"",
         "kind": "Text",
         "name": "SOW-0207",
@@ -434,12 +412,12 @@
         },
         "pageBox": {
           "x": 316,
-          "y": 77,
+          "y": 75,
           "w": 58,
           "h": 15
         },
         "reasons": [
-          "inside the main area on the board, inside the top navigation on the page"
+          "order: on the board it comes first; on the page it comes after Heading \"SOW signature\""
         ]
       },
       {
@@ -454,7 +432,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 158,
+          "y": 104,
           "w": 358,
           "h": 19
         },
@@ -474,7 +452,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 183,
+          "y": 129,
           "w": 358,
           "h": 48
         },
@@ -494,9 +472,9 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 237,
+          "y": 183,
           "w": 358,
-          "h": 18
+          "h": 17
         },
         "reasons": [
           "inside the main area on the board, inside a form on the page"
@@ -514,7 +492,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 267,
+          "y": 212,
           "w": 358,
           "h": 19
         },
@@ -534,7 +512,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 292,
+          "y": 237,
           "w": 358,
           "h": 48
         },
@@ -554,7 +532,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 352,
+          "y": 297,
           "w": 358,
           "h": 19
         },
@@ -574,7 +552,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 525,
+          "y": 382,
           "w": 358,
           "h": 19
         },
@@ -594,7 +572,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 604,
+          "y": 469,
           "w": 358,
           "h": 19
         },
@@ -614,7 +592,7 @@
         },
         "pageBox": {
           "x": 58,
-          "y": 641,
+          "y": 506,
           "w": 268,
           "h": 18
         },
@@ -634,9 +612,9 @@
         },
         "pageBox": {
           "x": 58,
-          "y": 659,
+          "y": 524,
           "w": 268,
-          "h": 15
+          "h": 18
         },
         "reasons": [
           "inside the main area on the board, inside a form on the page"
@@ -654,7 +632,7 @@
         },
         "pageBox": {
           "x": 28,
-          "y": 781,
+          "y": 577,
           "w": 130,
           "h": 18
         },
@@ -674,12 +652,11 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 770,
+          "y": 566,
           "w": 358,
           "h": 83
         },
         "reasons": [
-          "order: on the board it comes after Pagination \"What happens next:\"; on the page it comes after Link \"Record signature\"",
           "inside the main area on the board, inside a form on the page"
         ]
       },
@@ -695,7 +672,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 776,
+          "y": 840,
           "w": 358,
           "h": 50
         },
@@ -706,39 +683,15 @@
     ],
     "extra": [
       {
-        "kind": "Button",
-        "role": "button",
-        "name": "Menu",
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to SOW",
         "container": "banner",
         "pageBox": {
           "x": 16,
           "y": 6,
-          "w": 44,
+          "w": 46,
           "h": 44
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "PSL FACTORY",
-        "container": "banner",
-        "pageBox": {
-          "x": 218,
-          "y": 15,
-          "w": 156,
-          "h": 26
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Back",
-        "container": "main",
-        "pageBox": {
-          "x": 0,
-          "y": 56,
-          "w": 390,
-          "h": 56
         }
       },
       {
@@ -748,7 +701,7 @@
         "container": "form",
         "pageBox": {
           "x": 16,
-          "y": 377,
+          "y": 322,
           "w": 358,
           "h": 48
         }
@@ -760,7 +713,7 @@
         "container": "form",
         "pageBox": {
           "x": 53,
-          "y": 441,
+          "y": 661,
           "w": 67,
           "h": 19
         }
@@ -772,9 +725,9 @@
         "container": "form",
         "pageBox": {
           "x": 324,
-          "y": 443,
+          "y": 663,
           "w": 50,
-          "h": 18
+          "h": 17
         }
       },
       {
@@ -784,21 +737,9 @@
         "container": "form",
         "pageBox": {
           "x": 16,
-          "y": 467,
+          "y": 686,
           "w": 358,
           "h": 47
-        }
-      },
-      {
-        "kind": "Button",
-        "role": "button",
-        "name": "Remove SOW-0207-v1-signed.pdf",
-        "container": "form",
-        "pageBox": {
-          "x": 336,
-          "y": 646,
-          "w": 24,
-          "h": 24
         }
       },
       {
@@ -808,7 +749,7 @@
         "container": "form",
         "pageBox": {
           "x": 16,
-          "y": 711,
+          "y": 753,
           "w": 20,
           "h": 20
         }

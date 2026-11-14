@@ -1,7 +1,8 @@
 'use client';
 
 // SCR-02 Overview: the six facts, the station track, the agent at work, the current human task and the
-// next step. Read-only; the only link that leads to an action is "Open the decision" when you_can_act.
+// next step. Read-only except the links to an action: "Open the decision", or the response page through
+// ResponseEntryLink; the only write here is ReconcilePanel's E-WORK-ACTION, shown with the reconcile grant.
 // With a PROPOSAL `presentation` block (board fixtures only) the page follows the state's board: its section
 // order per viewport (LAYOUTS), the state card and the board's detail words. Without it, the F-03 layout.
 import Link from 'next/link';
@@ -12,6 +13,8 @@ import { formatClock } from '@/features/decide/format';
 import { WarningIcon } from '@/shell/icons';
 
 import { InfoIcon } from './InfoIcon';
+
+import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 
 import {
   AGENT_TAGS,
@@ -67,17 +70,19 @@ function FactValue({ fact, detail }: { fact: Fact | undefined; detail?: string }
   return <strong>Unknown</strong>;
 }
 
-function factClass(fact: Fact | undefined): string {
+function factClass(fact: Fact | undefined, tone?: 'waiting' | 'signal'): string {
   const status = fact?.status ?? 'unknown';
+  // the board's warning tint on a fact that has not happened ("Not found", "Not yet"); an unknown fact keeps its own
+  if (status === 'not_yet' && tone) return tone === 'waiting' ? 'psl-fact psl-fact--unknown' : 'psl-fact psl-fact--current';
   if (status === 'earned') return fact?.name === 'verified' ? 'psl-fact psl-fact--verified' : 'psl-fact psl-fact--earned';
   if (status === 'current') return 'psl-fact psl-fact--current';
   if (status === 'unknown') return 'psl-fact psl-fact--unknown';
   return 'psl-fact';
 }
 
-type FactsProps = { facts: WorkItem['facts']; details?: Partial<Record<FactName, string>>; paidNote?: boolean };
+type FactsProps = { facts: WorkItem['facts']; details?: Partial<Record<FactName, string>>; tones?: Partial<Record<FactName, 'waiting' | 'signal'>>; paidNote?: boolean };
 
-export function FactsStrip({ facts, details, paidNote = true }: FactsProps) {
+export function FactsStrip({ facts, details, tones, paidNote = true }: FactsProps) {
   return (
     <div className="work-facts">
       {/* div list: the boards draw the facts as boxes; the list roles keep them one list for screen readers */}
@@ -85,7 +90,7 @@ export function FactsStrip({ facts, details, paidNote = true }: FactsProps) {
         {FACTS.map(({ name, label, more }) => {
           const fact = facts.find((f) => f.name === name);
           return (
-            <div key={name} role="listitem" className={factClass(fact)}>
+            <div key={name} role="listitem" className={factClass(fact, tones?.[name])}>
               <b>{label}</b>
               {more && <span className="work-sr">{more}</span>}
               <FactValue fact={fact} detail={details?.[name]} />
@@ -549,7 +554,7 @@ function PreviewSummary({ item, preview }: { item: WorkItem; preview: NonNullabl
   );
 }
 
-export function TaskPanels({ id, tasks }: { id: string; tasks: WorkItem['tasks'] }) {
+export function TaskPanels({ id, tasks }: { id: string; tasks: ResponseWorkItem['tasks'] }) {
   return tasks.map((task) => (
     <section key={task.id} className={task.you_can_act ? 'psl-panel psl-panel--decide' : 'psl-panel'} aria-label="Current human task">
       <h2 className={task.you_can_act ? 'psl-panel__head psl-panel__head--decide' : 'psl-panel__head'}>{task.title}</h2>
@@ -557,22 +562,42 @@ export function TaskPanels({ id, tasks }: { id: string; tasks: WorkItem['tasks']
         <p className="work-plain">Only a {task.required_role} can decide.</p>
         {task.you_can_act && <p className="work-plain">You are {task.required_role}.</p>}
         {task.decision && <DecisionRows decision={task.decision} />}
-        {task.you_can_act && (
-          <Link className="psl-btn" href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
-            Open the decision
-          </Link>
-        )}
+        {task.you_can_act &&
+          (responseOf(task) ? (
+            <ResponseEntryLink id={id} task={task} />
+          ) : (
+            <Link className="psl-btn" href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
+              Open the decision
+            </Link>
+          ))}
       </div>
     </section>
   ));
 }
 
-export function NextStep({ item }: { item: WorkItem }) {
+const EXCEPTION_STATES = new Set<WorkItem['state']>([
+  'effect_uncertain',
+  'awaiting_reconciliation',
+  'owner_needed',
+  'setup_needed',
+  'followup_needed',
+]);
+
+/** Where a person finds every uncertain or stuck item; offered on the exception states. */
+export const hasExceptionsLink = (item: WorkItem) => EXCEPTION_STATES.has(item.state);
+
+/** `quiet`: the text only; the board page draws the exceptions link itself, visibly, where its board does. */
+export function NextStep({ item, quiet }: { item: WorkItem; quiet?: boolean }) {
   return (
     <p className={`psl-callout psl-callout--${nextStepKind(item.state)} work-next`}>
       <span>
         <strong>Next step.</strong> {item.next_step}
-        {/* F-06: the "See all exceptions" link attaches inside this text */}
+        {!quiet && hasExceptionsLink(item) && (
+          <>
+            {' '}
+            <Link href="/exceptions">See all exceptions</Link>
+          </>
+        )}
       </span>
     </p>
   );
@@ -670,7 +695,16 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
         case 'banner':
           return agent.status === 'none' ? null : <AgentBanner key={b} agent={agent} view={view.agent} phone={phone} />;
         case 'panel':
-          return panel ? <StatePanel key={b} panel={panel} /> : null;
+          // the effect-uncertain desktop board draws "See all exceptions" as a button between the facts and the small print
+          return panel ? (
+            <StatePanel key={b} panel={panel}>
+              {!phone && item.state === 'effect_uncertain' && (
+                <Link className="psl-btn psl-btn--secondary psl-btn--lg" href="/exceptions">
+                  See all exceptions
+                </Link>
+              )}
+            </StatePanel>
+          ) : null;
         case 'panel-agent':
           return panel ? (
             <StatePanel key={b} panel={panel}>
@@ -689,7 +723,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
     before = (
       <>
         {/* the default board carries the Paid note; the state boards say it in their own card where it matters */}
-        <FactsStrip facts={item.facts} details={view.facts} paidNote={layout === LAYOUTS.task && !phone} />
+        <FactsStrip facts={item.facts} details={view.facts} tones={view.fact_tones} paidNote={layout === LAYOUTS.task && !phone} />
         {top.map(block)}
       </>
     );
@@ -700,11 +734,28 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
       </>
     );
     aside = order.aside.map(block);
-    // the boards draw no separate next-step block; the text stays for screen readers (F-06 attaches inside it)
+    // The boards draw no next-step block; the text stays for screen readers. The processing desktop board draws
+    // its line as small print, and the exception states keep "See all exceptions" visible (never inside hidden text).
+    const nextDrawn = !phone && item.state === 'processing';
+    const exceptionsButton = !phone && item.state === 'effect_uncertain' && panel !== undefined;
     after = (
-      <div className="work-sr">
-        <NextStep item={item} />
-      </div>
+      <>
+        {nextDrawn ? (
+          <p className="work-note">
+            <span className="work-sr">Next step. </span>
+            {item.next_step}
+          </p>
+        ) : (
+          <div className="work-sr">
+            <NextStep item={item} quiet />
+          </div>
+        )}
+        {hasExceptionsLink(item) && !exceptionsButton && (
+          <p className="work-note">
+            <Link href="/exceptions">See all exceptions</Link>
+          </p>
+        )}
+      </>
     );
   }
 
@@ -714,9 +765,9 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
       <div className="work-columns">
         <div className="work-column">{main}</div>
         <div className="work-column work-aside">
-          {/* F-09: ReconcilePanel mounts here */}
+          <ReconcilePanel id={id} item={asResponseItem(item)} />
           {aside}
-          {item.tasks.length > 0 && <TaskPanels id={id} tasks={item.tasks} />}
+          {item.tasks.length > 0 && <TaskPanels id={id} tasks={asResponseItem(item).tasks} />}
           {view?.task_note && item.tasks.length > 0 && <p className="work-note">{view.task_note}</p>}
         </div>
       </div>

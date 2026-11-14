@@ -189,9 +189,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "4a48bfb99f8fd54a1e7e94318b3d377bfb1cbb9a",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/mock/server.mjs",

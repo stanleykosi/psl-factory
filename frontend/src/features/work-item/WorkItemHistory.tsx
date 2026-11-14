@@ -15,13 +15,17 @@ import { WorkErrorCard } from './WorkItemStates';
 
 type Counts = WorkItemPresentation['history_counts'];
 
-function HistoryFilter({ kind, onChange, counts }: { kind: HistoryKind; onChange: (kind: HistoryKind) => void; counts: Counts }) {
+type FilterProps = { kind: HistoryKind; onChange: (kind: HistoryKind) => void; counts: Counts; phoneBoard: boolean };
+
+function HistoryFilter({ kind, onChange, counts, phoneBoard }: FilterProps) {
   const options = useRef<(HTMLButtonElement | null)[]>([]);
-  const index = HISTORY_FILTERS.findIndex((f) => f.kind === kind);
+  // the phone board draws three segments: All, Decisions, Agents (Evidence is on the desktop filter)
+  const filters = phoneBoard ? HISTORY_FILTERS.filter((f) => f.kind !== 'evidence').map((f) => (f.kind === 'agent_work' ? { ...f, label: 'Agents' } : f)) : HISTORY_FILTERS;
+  const index = filters.findIndex((f) => f.kind === kind);
 
   // Radio-group keys: arrows move and choose, Home and End jump to the ends.
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-    const last = HISTORY_FILTERS.length - 1;
+    const last = filters.length - 1;
     const keys: Record<string, number> = {
       ArrowRight: index === last ? 0 : index + 1,
       ArrowDown: index === last ? 0 : index + 1,
@@ -33,13 +37,13 @@ function HistoryFilter({ kind, onChange, counts }: { kind: HistoryKind; onChange
     if (!(event.key in keys)) return;
     event.preventDefault();
     const next = keys[event.key];
-    onChange(HISTORY_FILTERS[next].kind);
+    onChange(filters[next].kind);
     options.current[next]?.focus();
   }
 
   return (
     <div className="psl-seg work-filter" role="radiogroup" aria-label="Show">
-      {HISTORY_FILTERS.map((f, i) => (
+      {filters.map((f, i) => (
         <button
           key={f.kind}
           ref={(el) => {
@@ -48,7 +52,7 @@ function HistoryFilter({ kind, onChange, counts }: { kind: HistoryKind; onChange
           type="button"
           role="radio"
           aria-checked={f.kind === kind}
-          tabIndex={f.kind === kind ? 0 : -1}
+          tabIndex={f.kind === kind || (index < 0 && i === 0) ? 0 : -1}
           className="psl-seg__opt"
           onClick={() => onChange(f.kind)}
           onKeyDown={onKeyDown}
@@ -217,12 +221,12 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
     <div className="work-columns work-columns--history">
       <div className="work-column">
         <div className="work-historybar">
-          <HistoryFilter kind={kind} onChange={setKind} counts={counts} />
+          <HistoryFilter kind={kind} onChange={setKind} counts={counts} phoneBoard={board} />
         </div>
         {body}
         {/* rows per page, then Show more: the approved paging footer (D-PAGING r2), under the list */}
         <div className="work-historyfoot">
-          {!board && !side && limitControl}
+          {!side && limitControl}
           {(ready?.nextCursor || hidden > 0) && (
             <div className="psl-showmore">
               {!board && <span>Showing {ready!.items.length}</span>}

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:18:57.835Z",
+  "generatedAt": "2026-11-14T07:55:20.302Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-desktop-sow-signed.dc.html",
   "boardName": "SCR-16-desktop-sow-signed.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1602/respond?task=T-1602",
@@ -19,24 +19,24 @@
   "pass": true,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 90.6 meets 90.",
+    "Visual match 92.5 meets 90.",
     "14 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 89.7,
     "coverageWithExceptions": 100,
-    "visual": 90.6
+    "visual": 92.5
   },
   "visual": {
-    "score": 90.6,
-    "allCellsScore": 95.4,
+    "score": 92.5,
+    "allCellsScore": 96.3,
     "width": 1440,
     "height": 960,
     "boardHeight": 960,
     "pageHeight": 960,
     "cell": 12,
-    "contentCells": 4718,
-    "mismatchedCells": 444
+    "contentCells": 4787,
+    "mismatchedCells": 360
   },
   "coverage": {
     "total": 29,
@@ -190,7 +190,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 814
+          "h": 817
         }
       },
       {
@@ -252,7 +252,7 @@
         "pageBox": {
           "x": 88,
           "y": 120,
-          "w": 1264,
+          "w": 605,
           "h": 35
         }
       },
@@ -485,7 +485,7 @@
           "x": 146,
           "y": 636,
           "w": 337,
-          "h": 15
+          "h": 18
         }
       },
       {
@@ -504,7 +504,7 @@
         },
         "pageBox": {
           "x": 104,
-          "y": 675,
+          "y": 678,
           "w": 870,
           "h": 62
         }
@@ -525,7 +525,7 @@
         },
         "pageBox": {
           "x": 116,
-          "y": 686,
+          "y": 689,
           "w": 130,
           "h": 18
         }
@@ -547,7 +547,7 @@
         },
         "pageBox": {
           "x": 104,
-          "y": 749,
+          "y": 752,
           "w": 320,
           "h": 50
         }
@@ -864,7 +864,7 @@
           "x": 146,
           "y": 636,
           "w": 337,
-          "h": 15
+          "h": 18
         },
         "reasons": [
           "inside the main area on the board, inside a form on the page"
@@ -882,11 +882,12 @@
         },
         "pageBox": {
           "x": 116,
-          "y": 686,
+          "y": 689,
           "w": 130,
           "h": 18
         },
         "reasons": [
+          "order: on the board it comes after Text \"Uploaded · 1.1 MB\"; on the page it comes after Pagination \"What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.\"",
           "inside the main area on the board, inside a form on the page"
         ]
       },
@@ -902,7 +903,7 @@
         },
         "pageBox": {
           "x": 104,
-          "y": 675,
+          "y": 678,
           "w": 870,
           "h": 62
         },
@@ -922,7 +923,7 @@
         },
         "pageBox": {
           "x": 104,
-          "y": 749,
+          "y": 752,
           "w": 320,
           "h": 50
         },
@@ -987,7 +988,7 @@
         "container": "form",
         "pageBox": {
           "x": 493,
-          "y": 622,
+          "y": 624,
           "w": 24,
           "h": 24
         }
@@ -999,7 +1000,7 @@
         "container": "form",
         "pageBox": {
           "x": 547,
-          "y": 616,
+          "y": 619,
           "w": 20,
           "h": 20
         }

@@ -1,0 +1,471 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T11:44:50.472Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-ready.dc.html",
+  "boardName": "SCR-02-mobile-ready.dc.html",
+  "pageUrl": "http://localhost:4511/work/W-1702",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 98.6 meets 90."
+  ],
+  "scores": {
+    "coverage": 88.9,
+    "coverageWithExceptions": 100,
+    "visual": 98.6
+  },
+  "visual": {
+    "score": 98.6,
+    "allCellsScore": 99.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1067,
+    "mismatchedCells": 15
+  },
+  "coverage": {
+    "total": 18,
+    "found": 16,
+    "coverage": 88.9,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLN-0160",
+        "pageName": "PLN-0160",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Kora Logistics · phase 2 plan",
+        "pageName": "Kora Logistics · phase 2 plan",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 291,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 172,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 186,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 173,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 172,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 186,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 173,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 172,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 186,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 186,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 222,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 236,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 223,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 222,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 236,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 223,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 222,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 236,
+          "w": 12,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 236,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent Starting in a few minutes. Nothing needed from you yet.",
+        "pageName": "Tola · PMO agent Starting in a few minutes. Nothing needed from you yet. Cannot approve, send or pay.",
+        "pageRole": "text",
+        "similarity": 88,
+        "looks": [],
+        "boardBox": {
+          "x": 76,
+          "y": 437,
+          "w": 284,
+          "h": 61
+        },
+        "pageBox": {
+          "x": 76,
+          "y": 434,
+          "w": 284,
+          "h": 61
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "pageName": "Tola",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 76,
+          "y": 438,
+          "w": 27,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 76,
+          "y": 435,
+          "w": 27,
+          "h": 18
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READY",
+        "key": "text: READY",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 130,
+          "w": 55,
+          "h": 21
+        },
+        "exception": {
+          "reason": "The tag shows STATE_TAGS.ready (\"Ready to continue\").",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READY TO CONTINUE",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 140,
+          "h": 23
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 161,
+          "w": 358,
+          "h": 102
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

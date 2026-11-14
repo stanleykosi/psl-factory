@@ -1,0 +1,63 @@
+{
+  "id": "W-1528",
+  "title": "Ojo Foods · ordering app plan",
+  "line": "Prepare a costing",
+  "reference": "PLN-0151",
+  "state": "setup_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Scope",
+      "status": "done"
+    },
+    {
+      "name": "Estimate",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "current_person"
+    },
+    {
+      "name": "Approve",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "Held at design sign-off because no Design Lead role exists yet. An Admin adds the role in Setup.",
+  "sample": true
+}

@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { nextStepKind, STATE_TAGS, type HistoryEntry, type WorkHistory, type WorkItem } from '@/features/work-item/labels';
@@ -94,9 +94,11 @@ describe('header (AC 9) and titles (AC 5)', () => {
     expect(document.querySelector('header.work-header')!.textContent).not.toContain('Started by');
   });
 
-  it('board overviews draw no tabs and no next-step block; the next step stays for screen readers', async () => {
+  it('board overviews carry the Overview / History tabs (D-45) and no next-step block; the next step stays for screen readers', async () => {
     await open('W-1701');
-    expect(screen.queryByRole('navigation', { name: 'Work item' })).toBeNull();
+    const tabs = screen.getByRole('navigation', { name: 'Work item' });
+    expect(within(tabs).getByRole('link', { name: 'Overview' }).getAttribute('aria-current')).toBe('page');
+    expect(within(tabs).getByRole('link', { name: /^History/ }).getAttribute('href')).toBe('/work/W-1701/history');
     const next = document.querySelector('.work-next')!;
     expect(next.textContent).toContain('A Finance Lead decides invoice v2.');
     expect(next.closest('.work-sr')).not.toBeNull();
@@ -264,9 +266,18 @@ describe('state panels (AC 12) and links (AC 13)', () => {
     await open(id);
     expect(screen.getAllByText(title).length).toBeGreaterThan(0);
     if (extra) expect(main().textContent).toContain(extra);
-    const next = main().querySelector('.work-next')!;
-    expect(next.className).toBe(`psl-callout psl-callout--${nextStepKind(item(id).state)} work-next`);
-    expect(next.textContent).toBe(`Next step. ${item(id).next_step}`);
+    const next = document.querySelector('.work-next');
+    if (id === 'W-1703') {
+      // the processing board draws the line as small print
+      expect(next).toBeNull();
+      expect(screen.getByText(item(id).next_step, { exact: false }).className).toBe('work-note');
+      return;
+    }
+    expect(next!.className).toBe(`psl-callout psl-callout--${nextStepKind(item(id).state)} work-next`);
+    // the exceptions link is drawn on its own, never inside the hidden text
+    expect(next!.textContent).toBe(`Next step. ${item(id).next_step}`);
+    expect(next!.closest('.work-sr')).not.toBeNull();
+    expect(next!.querySelector('a')).toBeNull();
   });
 
   it('W-1710 lists Sent at, Checks and If not found', async () => {
@@ -369,6 +380,43 @@ describe('phone disclosures', () => {
   });
 });
 
+describe('round 3 fixes', () => {
+  it('tints RECEIPT amber on W-1711 and SENT red on W-1706, but never an unknown fact', async () => {
+    await open('W-1711');
+    expect(facts()[4].className).toBe('psl-fact psl-fact--unknown');
+    expect(facts()[3].className).toBe('psl-fact psl-fact--unknown');
+    cleanup();
+    await open('W-1706');
+    expect(facts()[3].className).toBe('psl-fact psl-fact--current');
+  });
+
+  it('draws "See all exceptions" as a button in the effect-uncertain panel, and no link sits in hidden text', async () => {
+    await open('W-1710');
+    const link = screen.getByRole('link', { name: 'See all exceptions' });
+    expect(link.className).toContain('psl-btn--secondary');
+    expect(link.closest('.work-sr')).toBeNull();
+    expect(document.querySelectorAll('.work-sr a, .work-sr button')).toHaveLength(0);
+  });
+
+  it('keeps the link visible on the other exception boards and on the phone', async () => {
+    await open('W-1708');
+    expect(screen.getByRole('link', { name: 'See all exceptions' }).closest('.work-sr')).toBeNull();
+    cleanup();
+    phone();
+    await open('W-1710');
+    expect(screen.getByRole('link', { name: 'See all exceptions' }).closest('.work-sr')).toBeNull();
+  });
+
+  it('puts the tabs under the header on phones, and keeps the contract title and started line', async () => {
+    phone();
+    await open('W-1701');
+    const header = document.querySelector('header.work-header')!;
+    expect(header.nextElementSibling!.getAttribute('aria-label')).toBe('Work item');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Lagoon Health · Milestone 2 invoice');
+    expect(header.textContent).toContain('Started by Tunde Bello (PMO)');
+  });
+});
+
 describe('history on the boards (AC 18)', () => {
   it('W-1705 at desktop: History 7, filter counts, the table with detail lines, About history', async () => {
     await open('W-1705', 'history');
@@ -398,6 +446,10 @@ describe('history on the boards (AC 18)', () => {
     await waitFor(() => expect(screen.getByRole('list', { name: 'History, newest first' })).toBeTruthy());
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History · INV-0412');
     expect(screen.getByText('HISTORY')).toBeTruthy();
+    // the phone board's three segments, and the paging control the contract keeps
+    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agents 2']);
+    expect(screen.getByLabelText('Rows per page')).toBeTruthy();
+    expect(screen.getByRole('navigation', { name: 'Work item' })).toBeTruthy();
     const cards = within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem');
     // the phone board lists the five newest entries; "+ 2 earlier entries" shows the rest in place
     expect(cards).toHaveLength(5);

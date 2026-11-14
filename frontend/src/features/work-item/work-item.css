@@ -361,6 +361,8 @@
   .work-track:not(.work-track--list) .psl-station:last-child { border-right: none; }
   .work-track:not(.work-track--list) .psl-station--todo { color: var(--ink-subtle); }
   .work-track .psl-station--waiting.work-station--uncertain { background: var(--waiting); border-color: var(--ink); color: var(--on-strong); }
+  /* owner-needed: the held station is a solid red box, as the current station is on the default board */
+  .work-state--owner_needed .work-track:not(.work-track--list) .psl-station--stopped { background: var(--signal); color: var(--on-strong); }
 }
 
 /* a track the board does not draw stays for screen readers only, and never as a scroll area */

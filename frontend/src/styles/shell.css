@@ -21,6 +21,8 @@
 .shell-menuwho { margin: 0; padding: var(--space-2) 14px; display: flex; flex-direction: column; }
 .shell-menuwho strong { font-weight: 600; }
 .shell-menuwho small { font-size: 12px; color: var(--ink-muted); }
+/* a sub-page's mono note at the right of the phone bar ("RULES" on SCR-13-mobile-finance-rules); auto margin keeps it at the right edge when the SAMPLE DATA tag follows */
+.shell-phonenote { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
 
 /* (d) skip link, visually hidden until focused */
 .shell-skip { position: absolute; left: var(--space-4); top: var(--space-2); z-index: 20; transform: translateY(-200%); }

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:18:47.199Z",
+  "generatedAt": "2026-11-14T07:55:13.272Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile-success.dc.html",
   "boardName": "SCR-16-mobile-success.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601/respond?task=T-1601",
@@ -16,54 +16,33 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "Every board item is on the page (100%).",
-    "Visual match 77.8 is below 90.",
-    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 95.4 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 100,
+    "coverage": 88.9,
     "coverageWithExceptions": 100,
-    "visual": 77.8
+    "visual": 95.4
   },
   "visual": {
-    "score": 77.8,
-    "allCellsScore": 78.5,
+    "score": 95.4,
+    "allCellsScore": 95.6,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 2275,
-    "mismatchedCells": 504
+    "contentCells": 2239,
+    "mismatchedCells": 103
   },
   "coverage": {
     "total": 9,
-    "found": 9,
-    "coverage": 100,
+    "found": 8,
+    "coverage": 88.9,
     "matched": [
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "← Work item",
-        "pageName": "← Work item",
-        "pageRole": "link",
-        "similarity": 100,
-        "looks": [],
-        "boardBox": {
-          "x": 16,
-          "y": 6,
-          "w": 86,
-          "h": 44
-        },
-        "pageBox": {
-          "x": 16,
-          "y": 62,
-          "w": 88,
-          "h": 44
-        }
-      },
       {
         "kind": "Text",
         "role": "text",
@@ -71,7 +50,9 @@
         "pageName": "REL-0077",
         "pageRole": "text",
         "similarity": 100,
-        "looks": [],
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page"
+        ],
         "boardBox": {
           "x": 316,
           "y": 21,
@@ -80,7 +61,7 @@
         },
         "pageBox": {
           "x": 316,
-          "y": 77,
+          "y": 78,
           "w": 58,
           "h": 15
         }
@@ -101,8 +82,8 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 124,
-          "w": 358,
+          "y": 70,
+          "w": 271,
           "h": 26
         }
       },
@@ -110,7 +91,7 @@
         "kind": "Status message",
         "role": "status",
         "name": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 15:04 with 1 proof file.",
-        "pageName": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 08:18 with 1 proof file.",
+        "pageName": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 08:55 with 1 proof file.",
         "pageRole": "status",
         "similarity": 92,
         "looks": [],
@@ -122,7 +103,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 162,
+          "y": 108,
           "w": 358,
           "h": 104
         }
@@ -143,7 +124,7 @@
         },
         "pageBox": {
           "x": 32,
-          "y": 294,
+          "y": 240,
           "w": 326,
           "h": 18
         }
@@ -164,7 +145,7 @@
         },
         "pageBox": {
           "x": 32,
-          "y": 318,
+          "y": 264,
           "w": 326,
           "h": 18
         }
@@ -185,7 +166,7 @@
         },
         "pageBox": {
           "x": 32,
-          "y": 342,
+          "y": 288,
           "w": 326,
           "h": 36
         }
@@ -206,7 +187,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 406,
+          "y": 352,
           "w": 358,
           "h": 34
         }
@@ -234,28 +215,26 @@
       }
     ],
     "patterns": [],
-    "missing": [],
-    "misplaced": [
+    "missing": [
       {
-        "label": "Link \"← Work item\"",
         "kind": "Link",
+        "role": "link",
         "name": "← Work item",
+        "key": "link: ← Work item",
+        "container": "page",
         "boardBox": {
           "x": 16,
           "y": 6,
           "w": 86,
           "h": 44
         },
-        "pageBox": {
-          "x": 16,
-          "y": 62,
-          "w": 88,
-          "h": 44
-        },
-        "reasons": [
-          "inside the main area on the board, inside the top navigation on the page"
-        ]
-      },
+        "exception": {
+          "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Work item\" in the board's place, but the frame names it \"Back to Work item\" for screen readers, and the tool matches on that name. The page draws no back link of its own.",
+          "approved_by": ""
+        }
+      }
+    ],
+    "misplaced": [
       {
         "label": "Text \"REL-0077\"",
         "kind": "Text",
@@ -268,50 +247,26 @@
         },
         "pageBox": {
           "x": 316,
-          "y": 77,
+          "y": 78,
           "w": 58,
           "h": 15
         },
         "reasons": [
-          "inside the main area on the board, inside the top navigation on the page"
+          "order: on the board it comes first; on the page it comes after Heading \"Client UAT response\""
         ]
       }
     ],
     "extra": [
       {
-        "kind": "Button",
-        "role": "button",
-        "name": "Menu",
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Work item",
         "container": "banner",
         "pageBox": {
           "x": 16,
           "y": 6,
-          "w": 44,
+          "w": 80,
           "h": 44
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "PSL FACTORY",
-        "container": "banner",
-        "pageBox": {
-          "x": 218,
-          "y": 15,
-          "w": 156,
-          "h": 26
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Back",
-        "container": "main",
-        "pageBox": {
-          "x": 0,
-          "y": 56,
-          "w": 390,
-          "h": 56
         }
       }
     ],

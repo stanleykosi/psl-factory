@@ -136,6 +136,9 @@
       "version": "v2",
       "basis": "Stage 2 of 4 · from signed SOW-0198 v2"
     },
-    "eyebrow": "INV-0412 · LAGOON HEALTH"
+    "eyebrow": "INV-0412 · LAGOON HEALTH",
+    "fact_tones": {
+      "sent": "signal"
+    }
   }
 }

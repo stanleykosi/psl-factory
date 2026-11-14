@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:20:28.555Z",
+  "generatedAt": "2026-11-14T07:55:45.942Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-02-mobile-waiting.dc.html",
   "boardName": "SCR-02-mobile-waiting.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601",
@@ -102,7 +102,7 @@
           "h": 44
         },
         "exception": {
-          "reason": "SCR-02 phone header belongs to F-03 / the frame's phone bar (D-08); F-09 adds only the entry button and the reconcile panel.",
+          "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Queue\" in the board's place, but the frame names it \"Back to Queue\" for screen readers, and the tool matches on that name. The page draws no back link of its own. On SCR-02 phone boards the page is F-03's (D-25/D-26).",
           "approved_by": ""
         }
       },

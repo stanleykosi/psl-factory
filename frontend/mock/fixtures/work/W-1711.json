@@ -104,6 +104,9 @@
         }
       },
       "title": "Lagoon Health · Milestone\n2 invoice"
+    },
+    "fact_tones": {
+      "receipt_recorded": "waiting"
     }
   }
 }

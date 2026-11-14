@@ -1,0 +1,220 @@
+{
+  "items": [
+    {
+      "component": "presale.rfp_assigner",
+      "name": "Who may assign an RFP to a PM",
+      "set": false,
+      "revision": 0,
+      "area": "pre_sale",
+      "area_label": "Pre-sale",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "pmo_lead",
+            "label": "PMO Lead"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          },
+          {
+            "role": "pmo",
+            "label": "PMO"
+          }
+        ]
+      },
+      "proof_case": {
+        "case_id": "C-SETUP-1",
+        "case_revision": 1,
+        "evidence_kind": "rule_proof"
+      }
+    },
+    {
+      "component": "documents.client_reviewer",
+      "name": "Who reviews client documents",
+      "set": true,
+      "revision": 2,
+      "area": "all",
+      "area_label": "All lines",
+      "value": {
+        "roles": [
+          "pmo_lead"
+        ]
+      },
+      "display_value": "PMO Lead",
+      "effective_from": "2026-10-01T00:00:00+01:00",
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "pmo_lead",
+            "label": "PMO Lead"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          },
+          {
+            "role": "pmo",
+            "label": "PMO"
+          }
+        ],
+        "selected": [
+          "pmo_lead"
+        ]
+      },
+      "proof_case": {
+        "case_id": "C-SETUP-2",
+        "case_revision": 1,
+        "evidence_kind": "rule_proof"
+      }
+    },
+    {
+      "component": "presale.costing_rule",
+      "name": "Costing rule",
+      "set": true,
+      "revision": 4,
+      "area": "pre_sale",
+      "area_label": "Pre-sale",
+      "display_value": "PSL standard pricing v4",
+      "link": "costing-rule",
+      "effective_from": "2026-10-01T00:00:00+01:00",
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.short_payments",
+      "name": "Short payments (e.g. tax deducted)",
+      "set": false,
+      "revision": 0,
+      "area": "finance",
+      "area_label": "Finance",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.hypercare_criteria",
+      "name": "Hypercare criteria",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "delivery.archive_retention",
+      "name": "Archive storage and retention",
+      "set": false,
+      "revision": 0,
+      "area": "delivery",
+      "area_label": "Delivery",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "finance.invoice_payment_terms",
+      "name": "Invoice payment terms default",
+      "set": true,
+      "revision": 1,
+      "area": "finance",
+      "area_label": "Finance",
+      "display_value": "From each signed SOW",
+      "effective_from": "2026-06-30T00:00:00+01:00",
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    },
+    {
+      "component": "presale.rfp_outcome_recorder",
+      "name": "Who may record an RFP outcome",
+      "set": false,
+      "revision": 0,
+      "area": "pre_sale",
+      "area_label": "Pre-sale",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "pmo_lead",
+            "label": "PMO Lead"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          },
+          {
+            "role": "pmo",
+            "label": "PMO"
+          }
+        ]
+      }
+    },
+    {
+      "component": "presale.costing_adjuster",
+      "name": "Who may adjust a project's costing",
+      "set": false,
+      "revision": 0,
+      "area": "pre_sale",
+      "area_label": "Pre-sale",
+      "holds_work": true,
+      "can_change": true,
+      "editor": {
+        "kind": "role_set",
+        "options": [
+          {
+            "role": "pmo_lead",
+            "label": "PMO Lead"
+          },
+          {
+            "role": "ceo",
+            "label": "CEO"
+          },
+          {
+            "role": "pmo",
+            "label": "PMO"
+          }
+        ]
+      },
+      "proof_case": {
+        "case_id": "C-SETUP-4",
+        "case_revision": 1,
+        "evidence_kind": "rule_proof"
+      }
+    },
+    {
+      "component": "presale.costing_adjustment_limit",
+      "name": "Costing adjustment limit (per role)",
+      "set": false,
+      "revision": 0,
+      "area": "pre_sale",
+      "area_label": "Pre-sale",
+      "holds_work": true,
+      "can_change": false,
+      "editor": {
+        "kind": "read_only"
+      }
+    }
+  ],
+  "as_of": "2026-11-12T10:40:00+01:00",
+  "not_set_count": 8,
+  "roles_missing_count": 2
+}

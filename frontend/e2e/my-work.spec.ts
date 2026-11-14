@@ -20,7 +20,7 @@ async function expectNoAxeViolations(page: Page) {
 
 async function loaded(page: Page) {
   await expect(page.getByRole('status')).toHaveCount(0);
-  await expect(page.getByRole('tablist', { name: 'Queues' })).toBeVisible();
+  await expect(page.getByRole('tablist', { name: 'My work' })).toBeVisible();
 }
 
 const panel = (page: Page) => page.locator('#my-work-panel');
@@ -63,7 +63,7 @@ for (const [label, viewport] of [
       await loaded(page);
       const tabs = page.getByRole('tab');
       await expect(tabs).toHaveText(['Needs me24', 'Waiting on others12', 'Done6', 'Unassigned2']);
-      await expect(page.getByText('Updated 10:42')).toBeVisible();
+      if (!phone) await expect(page.getByText('44 records you can see · updated 10:42')).toBeVisible();
       await expect(panel(page).locator('[data-work-link]')).toHaveCount(20);
       await expect(page.locator('.psl-showmore')).toContainText('20 of 24 showing');
       await expect(page.getByRole('button', { name: 'Show 4 more' })).toBeVisible();
@@ -82,23 +82,25 @@ for (const [label, viewport] of [
       await shot(page, `my-work-${viewport.width}-footer`);
     });
 
-    test('filter open: Line and State only; applying narrows the list', async ({ page }) => {
+    test('filter open (SCR-01-*-filter): Line, Project, State and Waiting on; applying narrows the list', async ({ page }) => {
       await page.goto('/my-work');
       await loaded(page);
       await page.getByRole('button', { name: /^Filter/ }).click();
       const dialog = page.getByRole('dialog', { name: 'Filter' });
       await expect(dialog).toBeVisible();
       await expect(dialog).toHaveClass(phone ? /psl-sheet/ : /psl-pop/);
-      await expect(dialog.getByText(/Project|Waiting on/)).toHaveCount(0);
-      await dialog.getByRole('radio', { name: 'Prepare an invoice' }).check();
+      for (const name of ['Project', 'State', 'Waiting on']) await expect(dialog.getByRole('combobox', { name })).toBeVisible();
+      await dialog.getByRole('checkbox', { name: 'Prepare an invoice' }).check();
       await dialog.getByRole('combobox', { name: 'State' }).selectOption('action_needed');
+      const show = dialog.getByRole('button', { name: 'Show 2 items' });
+      await expect(show).toBeVisible();
       await shot(page, `my-work-${viewport.width}-filter`);
       await expectNoAxeViolations(page);
-      const request = page.waitForRequest((r) => r.url().includes('/api/v1/work?'));
-      await dialog.getByRole('button', { name: 'Show results' }).click();
-      expect(new URL((await request).url()).search).toContain('line=Prepare%20an%20invoice&state=action_needed');
+      const request = page.waitForRequest((r) => r.url().includes('/api/v1/work?') && r.url().includes('limit=20'));
+      await show.click();
+      expect(new URL((await request).url()).search).toContain('line=invoice&state=action_needed');
       await expect(dialog).toHaveCount(0);
-      await expect(page).toHaveURL(/line=Prepare\+an\+invoice/);
+      await expect(page).toHaveURL(/line=invoice/);
       await expect(page.locator('.psl-chip')).toHaveCount(2);
       await expect(panel(page).locator('[data-work-link]')).toHaveCount(2);
       await page.getByRole('button', { name: /^Filter/ }).click();
@@ -107,15 +109,18 @@ for (const [label, viewport] of [
       await expect(page.getByRole('button', { name: /^Filter/ })).toBeFocused();
     });
 
-    test('empty (pm): Nothing needs you right now, then what is waiting on others', async ({ page, context }) => {
+    test('empty (pm, SCR-01-*-empty): caught up, then what you started', async ({ page, context }) => {
       await setCookies(context, { psl_mock_persona: 'pm' });
       await page.goto('/my-work');
       await loaded(page);
       await expect(page.getByRole('tab')).toHaveCount(3);
       await expect(page.getByRole('heading', { name: 'Nothing needs you right now' })).toBeVisible();
+      await expect(page.getByRole('searchbox')).toHaveCount(0);
+      await expect(page.getByRole('region', { name: 'Where your work is' })).toHaveCount(phone ? 0 : 1);
+      if (!phone) await expect(page.getByRole('region', { name: 'Where your work is' }).getByRole('link', { name: /Ordering app plan/ })).toBeVisible();
       await shot(page, `my-work-${viewport.width}-empty`);
       await expectNoAxeViolations(page);
-      await page.getByRole('button', { name: 'See what’s waiting on others' }).click();
+      await page.getByRole('button', { name: 'See what you started' }).click();
       await expect(page.getByRole('tab', { name: /Waiting on others/ })).toHaveAttribute('aria-selected', 'true');
       await expect(panel(page).locator('[data-work-link]')).toHaveCount(3);
     });
@@ -228,8 +233,8 @@ test.describe('phone 390 card headers', () => {
       .evaluateAll((cards) =>
         cards.map((card) => {
           const box = card.getBoundingClientRect();
-          const tag = card.querySelector('.my-work__work > .psl-tag')!.getBoundingClientRect();
-          const title = card.querySelector('.my-work__work > .my-work__title')!.getBoundingClientRect();
+          const tag = card.querySelector('.my-work__cardwork > .psl-tag')!.getBoundingClientRect();
+          const title = card.querySelector('.my-work__cardwork > .my-work__cardtitle')!.getBoundingClientRect();
           return {
             stacked: tag.bottom <= title.top,
             tagLeft: tag.left - box.left,

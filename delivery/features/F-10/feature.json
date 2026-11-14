@@ -520,9 +520,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "f305c1aeecae865401ac5c96bb2ea25d278729a3",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/features/F-10/fidelity-exceptions.json",

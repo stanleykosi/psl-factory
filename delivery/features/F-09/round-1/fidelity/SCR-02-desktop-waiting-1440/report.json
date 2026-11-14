@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:20:21.472Z",
+  "generatedAt": "2026-11-14T07:55:40.640Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-02-desktop-waiting.dc.html",
   "boardName": "SCR-02-desktop-waiting.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 48.5 is below 90.",
+    "Visual match 50.9 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 28.1,
     "coverageWithExceptions": 100,
-    "visual": 48.5
+    "visual": 50.9
   },
   "visual": {
-    "score": 48.5,
-    "allCellsScore": 66,
+    "score": 50.9,
+    "allCellsScore": 67.1,
     "width": 1440,
     "height": 900,
     "boardHeight": 900,
     "pageHeight": 900,
     "cell": 12,
-    "contentCells": 5948,
-    "mismatchedCells": 3062
+    "contentCells": 6040,
+    "mismatchedCells": 2963
   },
   "coverage": {
     "total": 32,
@@ -190,7 +190,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 804
+          "h": 808
         }
       },
       {
@@ -200,7 +200,9 @@
         "pageName": "Lagoon Health · release to UAT",
         "pageRole": "heading",
         "similarity": 100,
-        "looks": [],
+        "looks": [
+          "text size 36px on the board, 40px on the page"
+        ],
         "boardBox": {
           "x": 88,
           "y": 119,
@@ -210,8 +212,8 @@
         "pageBox": {
           "x": 88,
           "y": 111,
-          "w": 616,
-          "h": 39
+          "w": 685,
+          "h": 43
         }
       },
       {
@@ -230,7 +232,7 @@
         },
         "pageBox": {
           "x": 1044,
-          "y": 656,
+          "y": 660,
           "w": 292,
           "h": 44
         }
@@ -643,7 +645,7 @@
         },
         "pageBox": {
           "x": 1044,
-          "y": 656,
+          "y": 660,
           "w": 292,
           "h": 44
         },
@@ -695,8 +697,8 @@
         "name": "WAITING",
         "container": "main",
         "pageBox": {
-          "x": 720,
-          "y": 119,
+          "x": 789,
+          "y": 121,
           "w": 71,
           "h": 23
         }
@@ -708,7 +710,7 @@
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 203,
+          "y": 207,
           "w": 176,
           "h": 48
         }
@@ -720,7 +722,7 @@
         "container": "navigation",
         "pageBox": {
           "x": 90,
-          "y": 205,
+          "y": 209,
           "w": 94,
           "h": 44
         }
@@ -732,7 +734,7 @@
         "container": "navigation",
         "pageBox": {
           "x": 184,
-          "y": 205,
+          "y": 209,
           "w": 80,
           "h": 44
         }
@@ -744,7 +746,7 @@
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 380,
+          "y": 385,
           "w": 1264,
           "h": 18
         }
@@ -756,7 +758,7 @@
         "container": "main",
         "pageBox": {
           "x": 146,
-          "y": 543,
+          "y": 547,
           "w": 156,
           "h": 21
         }
@@ -768,7 +770,7 @@
         "container": "main",
         "pageBox": {
           "x": 146,
-          "y": 564,
+          "y": 568,
           "w": 156,
           "h": 18
         }
@@ -780,7 +782,7 @@
         "container": "main",
         "pageBox": {
           "x": 919,
-          "y": 551,
+          "y": 555,
           "w": 69,
           "h": 23
         }
@@ -792,7 +794,7 @@
         "container": "main",
         "pageBox": {
           "x": 1030,
-          "y": 533,
+          "y": 537,
           "w": 320,
           "h": 43
         }
@@ -804,7 +806,7 @@
         "container": "main",
         "pageBox": {
           "x": 1044,
-          "y": 590,
+          "y": 594,
           "w": 292,
           "h": 21
         }
@@ -816,7 +818,7 @@
         "container": "main",
         "pageBox": {
           "x": 1044,
-          "y": 623,
+          "y": 627,
           "w": 292,
           "h": 21
         }

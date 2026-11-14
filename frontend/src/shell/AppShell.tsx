@@ -29,15 +29,15 @@ export function useMe(): Me {
  * shows this link in place of Menu and PSL FACTORY, as the phone boards draw it. Pages that never call it keep
  * the menu bar.
  */
-export function usePhoneBack({ label, href }: PhoneBack) {
+export function usePhoneBack({ label, href, note }: PhoneBack) {
   const setBack = useContext(PhoneBackContext);
   if (!setBack) throw new Error('usePhoneBack is only available inside AppShell');
   // Layout effect: the link is set and cleared before paint, so no frame shows the previous page's bar.
   useLayoutEffect(() => {
-    const back = { label, href };
+    const back = { label, href, note };
     setBack(back);
     return () => setBack(null);
-  }, [setBack, label, href]);
+  }, [setBack, label, href, note]);
 }
 
 export function AppShell({ children }: { children: ReactNode }) {

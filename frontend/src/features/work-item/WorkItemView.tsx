@@ -22,13 +22,12 @@ import './work-item.css';
 
 export type WorkItemTab = 'overview' | 'history';
 
-type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: ReactNode | null };
+type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: ReactNode };
 
 /**
  * Desktop: the breadcrumb or, on the state boards, the reference and client line; then the title line with the
- * state tag (and the Overview / History tabs where the board draws them: history, and items without a board);
- * then the started line. Without a started line the revision stays in the page for screen readers only.
- * Phones: the title, then the tag; the reference sits at the end of the frame's bar, as the boards draw it.
+ * state tag and the Overview / History tabs; then the started line. Without a started line the revision stays in the page for screen readers only.
+ * Phones: the title, then the tag, then the tabs (placed by the page); the reference sits at the end of the frame's bar, as the boards draw it.
  * History on phones reads "History · <ref>" with HISTORY in the bar.
  */
 function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
@@ -39,13 +38,13 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
   const end = tab === 'history' || boardLayout(item)?.tag === 'end';
   const history = tab === 'history';
   const started = item.started_by !== undefined;
-  const title = phone && view?.phone?.title ? view.phone.title : item.title;
+  const boardTitle = phone ? view?.phone?.title : undefined;
   const sub = (
     <div className={`work-sub${base && (!started || phone) ? ' work-sr' : ''}`}>
-      {/* phones: the reference and revision (the bar draws the reference on the boards) */}
+      {/* phones: the reference and the started line (the bar draws the reference on the boards) */}
       {phone ? (
         <span>
-          <span className="psl-mono">{item.reference}</span> · revision {item.revision}
+          <span className="psl-mono">{item.reference}</span> · {startedLine(item)}
         </span>
       ) : (
         <span>{startedLine(item)}</span>
@@ -77,7 +76,19 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
         {phone && base && <span className="work-barref psl-mono">{history ? 'HISTORY' : item.reference}</span>}
         {phone && !base && history && <p className="work-eyebrow psl-mono">HISTORY</p>}
         <div className="work-titleline">
-          <h1 className="shell-title">{phone && history ? `History · ${item.reference}` : title}</h1>
+          <h1 className="shell-title">
+            {phone && history ? (
+              `History · ${item.reference}`
+            ) : boardTitle ? (
+              // the phone board's shorter title is what is drawn; the contract title stays as the heading's name
+              <>
+                <span aria-hidden="true">{boardTitle}</span>
+                <span className="work-sr">{item.title}</span>
+              </>
+            ) : (
+              item.title
+            )}
+          </h1>
           {!phone && tagEl}
           {!phone && !history && tabs}
         </div>
@@ -140,11 +151,12 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   }
 
   const { loadedAt, refreshFailed } = state;
-  // The overview boards draw no tabs; history is reached from the history board's own link. Items without a board keep F-03's tabs.
-  const tabs = tab === 'overview' && boardLayout(state.item) ? null : <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
+  // D-45: the Overview / History strip is on every work item page, boards included, so History is reachable.
+  const tabs = <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
   return (
     <>
       <WorkItemHeader item={state.item} tab={tab} phone={phone} tabs={tabs} />
+      {phone && tabs}
       {refreshFailed && (
         <div className="psl-callout psl-callout--warning">
           <WarningIcon />
@@ -158,7 +170,6 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
       ) : (
         <WorkItemHistory id={id} revision={state.item.revision} counts={view?.history_counts} phone={phone} />
       )}
-      {phone && !(tab === 'history' && view) && tabs}
     </>
   );
 }
