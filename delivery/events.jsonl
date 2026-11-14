@@ -1025,3 +1025,7 @@
 {"at":"2026-11-14T21:07:50Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
 {"at":"2026-11-14T21:07:50Z","feature":"F-15","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T21:07:50Z","feature":"F-15","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"df180ca0716d","findings":{"PMO-2-1":"low","PMO-2-2":"low","PMO-2-3":"low"},"written_at":"2026-11-14T21:08:26Z"}
+{"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}

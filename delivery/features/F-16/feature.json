@@ -131,11 +131,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance",
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -467,6 +469,75 @@
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-14T20:51:44Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` still has `pre_merge_sync` as not run and the head is not on the current base (base has the F-15 shell, PR #25 and bookkeeping). Before merge: merge the current base, re-run `delivery/checks.sh`, and re-run the 390 e2e and axe for `decide.spec.ts` and `decide-board.spec.ts` to check that the phone back link still shows after the F-15 bell lands (spec criterion 21). Start the review server with `FRAME_FIXTURES=1` so that `frame.spec.ts:260` can run.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:08:39Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec criterion 2 asks for a `round-<N>/fidelity/scores.txt` listing all 10 boards. Round 2 has the per-board `report.json` and `side-by-side.png`, and build.md has the table with the same numbers. `scores.txt` exists only in round 1. The evidence is complete, so this is bookkeeping, and no action is needed unless the integration owner wants the file.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:08:39Z",
+          "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "df180ca0716d9a70e19bc82f5df57cce37e99aeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Hand-off for the follow-up that carries UI-2-1 (the Paid sentence shows twice on the phone done view), TECH-1-1 and TECH-1-2. Also carry the security notes: validate `decide_presentation` fields when they enter the contract, and bind `serve-frozen.mjs` to 127.0.0.1. The contract proposals (pager, next decision, waiting, agent summary, comment box) have no endpoint, are inert and are marked PROPOSAL in the build. They need a backend decision before they go live.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-16/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T21:08:39Z",
           "head": "df180ca0716d9a70e19bc82f5df57cce37e99aeb"
         }
       ]
