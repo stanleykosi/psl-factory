@@ -20,8 +20,6 @@ import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
 import { contractBody as monthEndBody } from '../mock/finance.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
-// @ts-expect-error plain ESM module without type declarations
-import { contractBody as projectsBody } from '../mock/projects.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -60,8 +58,6 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-MONTH-END': monthEndBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
-  'E-PROJECTS': (body) => projectsBody('E-PROJECTS', body),
-  'E-PROJECT': (body) => projectsBody('E-PROJECT', body),
 };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
