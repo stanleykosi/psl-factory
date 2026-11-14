@@ -24,5 +24,5 @@ None.
   - There is no `dangerouslySetInnerHTML`, `innerHTML`, `window.open` or location assignment in the start-work files or the shell bars.
 
 ## Notes
-- Non-blocking: the component-level `it.each` at `tests/start-work.test.tsx:713` still covers only the round-2 forms. Adding one dot-segment case there would also prove the link is never drawn. The unit test already covers the function.
+- Non-blocking: the component-level `it.each` at `tests/start-work.test.tsx:714` still covers only the round-2 forms. Adding one dot-segment case there would also prove the link is never drawn. The unit test already covers the function.
 - Still open from round 1, by design (PMO-0-2): if the user leaves after an uncertain result, the idempotency key is thrown away. Only server-side duplicate detection closes that gap. This is for backend/product.
