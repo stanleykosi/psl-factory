@@ -42,3 +42,6 @@ Open and non-blocking: QA-2-1 (the mock accepts an empty `q=`), TECH-1-3 (two na
 
 ## For the human
 Not applicable (AUTO_MERGE).
+
+## Merge (14 Nov 2026)
+The design engineer merged PR #5 themselves on GitHub as e78038f318c0c50e15e08baf23606a39a1b7f40d, while the post-merge re-reviews of the combined head eab6dff were running. Those re-reviews: technical, UX and UI passed; QA found QA-2-2 (rows W-1004..W-1006 opened different sample invoices). QA-2-2 was fixed in PR #8 (mock data only, with a guard test) and merged under the standing delegation. The factory record stays at PR_OPEN because its merge route needs QA to pass on eab6dff, which it cannot do retroactively; the merged code and the fix are both on dlv-00-delivery-setup.
