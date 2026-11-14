@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-16",
   "outcome": "The decision page matches the SCR-03 boards at 1440 and 390, and every decide rule stays as it is",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -84,6 +84,18 @@
       "protected_paths_changed": [],
       "at": "2026-11-14T19:53:07Z",
       "seconds": 185.4,
+      "evidence_ref": "delivery/features/F-16/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T19:59:14Z",
+      "seconds": 251.7,
       "evidence_ref": "delivery/features/F-16/round-1/checks.md"
     }
   ],
@@ -243,6 +255,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T19:59:15Z",
+      "round": 1,
+      "head": "713e628b94ce0babdd045dbb45f17ac85cafb507",
+      "reason": null
     }
   ],
   "routing": {
@@ -260,8 +280,8 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 1,
-    "verdict": "FAIL",
+    "attempts": 2,
+    "verdict": "PASS",
     "commit": "713e628b94ce0babdd045dbb45f17ac85cafb507"
   },
   "blocked": null
