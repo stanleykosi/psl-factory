@@ -258,7 +258,15 @@ describe('overview', () => {
     expect(screen.getByText('Next step.').closest('.psl-callout')!.classList.contains(`psl-callout--${kind}`)).toBe(true);
   });
 
-  it('shows SAMPLE DATA from the record even when the build says the API is live', async () => {
+  it('shows no SAMPLE DATA tag by default, though the record is sample', async () => {
+    serve(() => json(200, item('W-1004')));
+    await open('W-1004');
+    expect(item('W-1004').sample).toBe(true);
+    expect(document.querySelector('.psl-sample')).toBeNull();
+  });
+
+  it('with the tag switched on, shows SAMPLE DATA from the record even when the build says the API is live', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
     vi.stubEnv('NEXT_PUBLIC_API_MODE', 'live');
     serve(() => json(200, item('W-1004')));
     await open('W-1004');
