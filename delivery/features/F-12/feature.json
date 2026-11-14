@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-12",
   "outcome": "A person sees their own alerts, opens one to its work, and sets how they are alerted",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -321,6 +321,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-14T07:26:27Z",
+      "round": 1,
+      "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-14T07:32:32Z",
       "round": 1,
       "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
       "reason": null
