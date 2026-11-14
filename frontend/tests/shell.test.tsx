@@ -4,10 +4,12 @@ import { join } from 'node:path';
 
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import axe from 'axe-core';
+import { flushSync } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Destination } from '@/api/types';
-import { AppShell } from '@/shell/AppShell';
+import { AppShell, usePhoneBack } from '@/shell/AppShell';
 import { DestinationPage, UnknownPage } from '@/shell/DestinationPage';
 import { HomeRedirect } from '@/shell/HomeRedirect';
 
@@ -246,6 +248,132 @@ describe('phone bar menu', () => {
     expect(projects.getAttribute('href')).toBe('/projects');
     fireEvent.click(projects);
     expect(document.getElementById('phone-menu')).toBeNull();
+  });
+});
+
+describe('phone back link', () => {
+  function SubPage({ label = 'Queue', href = '/my-work' }: { label?: string; href?: string }) {
+    usePhoneBack({ label, href });
+    return <h1 className="shell-title">Exceptions</h1>;
+  }
+  const backLink = () => within(phoneBar()).queryByRole('link', { name: /^Back to / });
+
+  it('a page that sets it gets "← label" in the bar in place of Menu and PSL FACTORY', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/exceptions';
+    render(
+      <AppShell>
+        <SubPage />
+      </AppShell>,
+    );
+    await loaded();
+    const link = await within(phoneBar()).findByRole('link', { name: 'Back to Queue' });
+    expect(link.textContent).toBe('← Queue');
+    expect(link.getAttribute('href')).toBe('/my-work');
+    expect(within(phoneBar()).queryByRole('button', { name: 'Menu' })).toBeNull();
+    expect(within(phoneBar()).queryByText('PSL FACTORY')).toBeNull();
+    expect(document.getElementById('phone-menu')).toBeNull();
+    expect(phoneBar().children[0]).toBe(link);
+    link.focus();
+    expect(document.activeElement).toBe(link);
+    expect(link.tabIndex).toBe(0);
+    expect(within(topNav()).getAllByRole('link').map((a) => a.textContent)).toContain('My work');
+  });
+
+  it('follows the page: a new label replaces it, and leaving the page brings Menu back', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/setup/rules';
+    const { rerender } = render(
+      <AppShell>
+        <SubPage label="Setup" href="/setup" />
+      </AppShell>,
+    );
+    await loaded();
+    await waitFor(() => expect(backLink()).toBeTruthy());
+    expect(backLink()?.getAttribute('href')).toBe('/setup');
+    rerender(
+      <AppShell>
+        <SubPage label="Home" href="/my-work" />
+      </AppShell>,
+    );
+    await waitFor(() => expect(backLink()?.textContent).toBe('← Home'));
+    rerender(
+      <AppShell>
+        <DestinationPage destination="my_work" />
+      </AppShell>,
+    );
+    await waitFor(() => expect(backLink()).toBeNull());
+    expect(menuButton()).toBeTruthy();
+    expect(within(phoneBar()).getByText('PSL FACTORY')).toBeTruthy();
+  });
+
+  it('swapping to a different sub-page never commits the old link for the new page', async () => {
+    function ProjectPage() {
+      usePhoneBack({ label: 'Projects', href: '/projects' });
+      return <h1 className="shell-title">Lagoon Health</h1>;
+    }
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    nav.pathname = '/exceptions';
+    // A bare root with no act(): act would flush passive effects and hide the difference. flushSync returns
+    // right after the commit, so the bar is read before any passive effect has had a chance to run.
+    const reactEnv = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean };
+    const wasActEnv = reactEnv.IS_REACT_ACT_ENVIRONMENT;
+    reactEnv.IS_REACT_ACT_ENVIRONMENT = false;
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    try {
+      flushSync(() =>
+        root.render(
+          <AppShell>
+            <SubPage />
+          </AppShell>,
+        ),
+      );
+      await loaded();
+      expect(backLink()?.textContent).toBe('← Queue');
+      nav.pathname = '/projects/lagoon';
+      flushSync(() =>
+        root.render(
+          <AppShell>
+            <ProjectPage />
+          </AppShell>,
+        ),
+      );
+      // Read straight after the swap commit, before passive effects: the layout effect has already replaced
+      // the link, so the bar never shows "← Queue" for the new page (a passive-effect hook still would).
+      expect(within(phoneBar()).getAllByRole('link').map((a) => a.textContent)).toEqual(['← Projects']);
+      expect(backLink()?.getAttribute('href')).toBe('/projects');
+      expect(within(phoneBar()).queryByRole('button', { name: 'Menu' })).toBeNull();
+    } finally {
+      flushSync(() => root.unmount());
+      container.remove();
+      reactEnv.IS_REACT_ACT_ENVIRONMENT = wasActEnv;
+    }
+  });
+
+  it('pages that do not set it keep the menu bar', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    renderAt('/projects');
+    await loaded();
+    expect(backLink()).toBeNull();
+    expect(menuButton()).toBeTruthy();
+  });
+
+  it('the bar with a back link has no axe violations', async () => {
+    fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
+    render(
+      <AppShell>
+        <SubPage />
+      </AppShell>,
+    );
+    await loaded();
+    await waitFor(() => expect(backLink()).toBeTruthy());
+    const results = await axe.run(document.body, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] },
+      rules: { 'color-contrast': { enabled: false } },
+    });
+    expect(results.violations.map((v) => v.id)).toEqual([]);
   });
 });
 

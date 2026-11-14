@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-08",
   "outcome": "A Lead opens Overview and sees every line, its stations and the work at each, flat or as a 3D floor",
-  "state": "INTEGRATED_QA",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-M3-OVERVIEW"
   ],
@@ -106,27 +106,33 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (UI-only, against the contract mock; no backend for E-OVERVIEW in this lane)",
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-08/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "coordinator, provisional for the design engineer (hunchoweb)",
+      "authority": "the design engineer's overnight instruction, 14 Nov 2026; recorded in delivery/OVERNIGHT-DECISIONS.md",
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -472,6 +478,121 @@
           "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Spec drift is recorded only in build.md. FID-1 made the board the spec, and build.md \"Spec deviations\" lists four changes. On the phone, the 2x2 totals grid becomes the \"18 in progress \u00b7 5 need a person\" summary, so STOPPED and VERIFIED THIS MONTH are not shown under 720px (spec state 8, criterion 19, Assumption 4). The legend moves after the exceptions section. Rows become ARIA list items instead of `ul/li` (spec state 5). The 3D stage is `clamp(460px, 50vw, 640px)` instead of 480px (state 6). spec.md and the acceptance criteria in `feature.json` still carry the old text. D-18 covers the phone score and the exceptions and frame items. It does not name the dropped phone totals. Expected: the design engineer confirms the phone summary line and the dropped totals in product acceptance, and the spec or record is updated at merge. Actual: only build.md has it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:44:10Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "PMO-1-1 and PMO-1-2 are unchanged and still open. `feature.json` has `operation_ids: []` while E-OVERVIEW is in scope. Acceptance criteria 12, 13, 14 and 20 are still cut off at \"Verify:\". `baseline.explicit_exception` is still null, though readiness records the early-start exception. Evidence for each is intact in build.md and the tests. Reconcile the record at merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:44:10Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Contract field `lines[].status` (on_track, waiting, stopped, uncertain, problems) is a frontend proposal. It is absent from the E-OVERVIEW v4, v5 and v6 schemas, which close `lines[]`. Until the architecture or backend confirms it, the default page shows WAITING in red and ON TRACK in grey (UI-2-3). Expected: the architecture owner either adds the field or rejects it, and the avatar and subtitle (`LINE_IDENTITY` in `lines.ts`) are decided the same way. Actual: the field is proposed in build.md Notes and is accepted provisionally by D-18. It is not an authority to ship the field.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:44:10Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UX-2-1: \"See all exceptions\" opens the 404 page while F-06 is unmerged. Merge F-06 before or with F-08, or hide the link. This is a merge-order condition for the integration owner.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:44:10Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The open reviewer findings TECH-1-1 (lockfile `peer` flag), TECH-2-1 (unknown `status` gives class `undefined`), TECH-2-2 (no disposal test; QA proved context loss at runtime), UI-2-1 (two chip overlaps), UI-2-2 (legend says work \"moving between stations\"; the floor does not move work between stations) and UI-2-3 are all non-blocking. UI-1-1 is superseded by concept 3. UI-1-2 and PMO-1-3 depend on PMO-2-3. None needs a blocking state. The owners should close or carry them knowingly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-08/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T06:44:10Z",
+          "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -559,10 +680,10 @@
     "task_branch": "fe-m3-overview-a-lead-opens-overview-and-sees-every-lin",
     "head_sha": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-08",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/14",
+    "pr_number": 14,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
     "ci_status": "not_run",
     "human_approval": "pending",
     "merge_status": "not_merged",
@@ -701,6 +822,22 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T06:26:11Z",
+      "round": 2,
+      "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T06:42:31Z",
+      "round": 2,
+      "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T06:44:10Z",
       "round": 2,
       "head": "568c0a407f78b39a3cb7cf33f0030cc3b0a6028c",
       "reason": null

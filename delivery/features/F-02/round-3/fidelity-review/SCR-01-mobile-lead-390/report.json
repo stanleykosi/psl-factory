@@ -1,0 +1,426 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:40:50.016Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-mobile-lead.dc.html",
+  "boardName": "SCR-01-mobile-lead.dc.html",
+  "pageUrl": "http://localhost:3311/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81.1 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 85.7,
+    "coverageWithExceptions": 100,
+    "visual": 81.1
+  },
+  "visual": {
+    "score": 81.1,
+    "allCellsScore": 86.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1623,
+    "mismatchedCells": 306
+  },
+  "coverage": {
+    "total": 14,
+    "found": 12,
+    "coverage": 85.7,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 20,
+          "w": 144,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me 3",
+        "pageName": "Needs me 3",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 110,
+          "w": 124,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 114,
+          "w": 124,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others 2",
+        "pageName": "Waiting on others 5",
+        "pageRole": "tab",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 142,
+          "y": 110,
+          "w": 174,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 142,
+          "y": 114,
+          "w": 172,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done 28",
+        "pageName": "Done 28",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 110,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 314,
+          "y": 114,
+          "w": 99,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Unassigned 1",
+        "pageName": "Unassigned 1",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 412,
+          "y": 110,
+          "w": 134,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 413,
+          "y": 114,
+          "w": 135,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 166,
+          "w": 358,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 166,
+          "w": 306,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 304,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "coloured bar under it on the board (#1F2427), none on the page"
+        ],
+        "boardBox": {
+          "x": 330,
+          "y": 166,
+          "w": 44,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 330,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Harmattan Bank · go-live report 40m EFFECT UNCERTAIN Checking delivery",
+        "pageName": "FIX Harmattan Bank · go-live report 40m Effect uncertain Checking delivery before any resend",
+        "pageRole": "link",
+        "similarity": 92,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 331,
+          "w": 358,
+          "h": 105
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 342,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Ojo Foods · ordering app plan 3d OWNER NEEDED No Design Lead role set",
+        "pageName": "FIX Ojo Foods · ordering app plan 3d Owner needed No Design Lead role set up",
+        "pageRole": "link",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 444,
+          "w": 358,
+          "h": 105
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 456,
+          "w": 358,
+          "h": 106
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "key": "link: Start",
+        "container": "page",
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone top-bar Start button, F-05.",
+          "approved_by": "Coordinator, F-02 round 3 brief (frame item, F-05)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Lagoon Health · M2 invoice 2h AWAITING FINANCE DECISION Finance review · you",
+        "key": "link: DECIDE Lagoon Health · M2 invoice 2h AWAITING FINANCE DECISION Finance review · you",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 218,
+          "w": 358,
+          "h": 105
+        },
+        "exception": {
+          "reason": "\"Awaiting Finance decision\" is not a contract state (the card shows \"Waiting\"); the phone boards title this row \"M2 invoice\", the desktop boards \"Milestone 2 invoice\".",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"PSL FACTORY\"",
+        "kind": "Text",
+        "name": "PSL FACTORY",
+        "boardBox": {
+          "x": 16,
+          "y": 20,
+          "w": 144,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        },
+        "reasons": [
+          "across the page: left on the board (23% across), right on the page (76% across)",
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Needs me3",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 228,
+          "w": 358,
+          "h": 444
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Lagoon Health · Milestone 2 invoice 2h Waiting You · Finance Lead (Chidi drafted v2)",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 228,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "All 3 showing",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 584,
+          "w": 326,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
