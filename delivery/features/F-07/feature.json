@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-07",
   "outcome": "Projects shows the projects a person can see, and each opens its whole journey, against the contract mock",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-PROJECTS"
   ],
@@ -80,22 +80,18 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "technical reviewer (lead)",
-      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
-      "evidence_refs": [
-        "delivery/features/F-07/round-1/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "passed",
-      "reviewer": "reviewer-qa",
-      "authority": "integrated QA (UI against the contract mock only)",
-      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
-      "evidence_refs": [
-        "delivery/features/F-07/round-1/review-qa.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -114,22 +110,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
-      "evidence_refs": [
-        "delivery/features/F-07/round-1/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "UI reviewer (round 1)",
-      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
-      "evidence_refs": [
-        "delivery/features/F-07/round-1/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -178,9 +170,159 @@
           "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
         }
       ]
+    },
+    {
+      "id": "FID-1",
+      "round": 1,
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Built page does not follow the approved boards (design-fidelity check fails; design engineer review 14 Nov 2026)",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "design engineer (hunchoweb)",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is `[]`, but the scope is E-PROJECTS and E-PROJECT (readiness Scope, spec Contract). Expected: the feature record lists both IDs. Actual: empty, so tooling cannot trace the operations to this feature. Evidence in this folder (readiness.md, spec.md, build.md) names them and covers both, so acceptance rests on that. The coordinator should fill the field.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The parent package status claim needs to stop at this slice. Architecture v6 `tasks.csv:27` makes FE-M3-PROJECTS the list and journey only, and lists A-PROJECT on it. The money half of A-PROJECT moves to FE-M3-REPORT (`tasks.csv:35`, which also lists A-PROJECT), and the tab acceptance A-PROJECT-TABS to FE-M3-PROJECT-TABS (`tasks.csv:34`). This feature proves only the JR-08 half of A-PROJECT (open a project, see every line and what is next, no grant gives 404). spec.md and readiness.md still say \"first part\", which is v5 wording. Expected: when FE-M3-PROJECTS is marked done, A-PROJECT stays open until FE-M3-REPORT passes, and no status says that milestones, documents, money, registers or actions work. Actual: nothing in the round files over-claims. build.md and review-qa.md limit themselves to the list and journey. This finding is a reminder for the coordinator's record update.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UX-1-1 and QA-1-1 are open and non-blocking, as the reviewers rated them. UX-1-1: lines with the same name give identical link text, so add a hidden \"line, state\" label. QA-1-1: a case_id with reserved characters is encoded twice (no effect with uuids and the mock). Neither blocks delivery. QA-1-1 must be rechecked at FE-CONNECT-1, and both go to the next round or a follow-up. They are named here so they are not lost.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-07/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T04:27:54Z",
+          "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+        }
+      ]
     }
   ],
-  "prior_review_records": [],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+          "evidence_refs": [
+            "delivery/features/F-07/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "passed",
+          "reviewer": "reviewer-qa",
+          "authority": "integrated QA (UI against the contract mock only)",
+          "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+          "evidence_refs": [
+            "delivery/features/F-07/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "passed",
+          "reviewer": "pmo-acceptance",
+          "authority": "PMO acceptance (delivery acceptance only; client/product acceptance, merge and release keep their own authorities)",
+          "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+          "evidence_refs": [
+            "delivery/features/F-07/round-1/acceptance-pmo.md"
+          ]
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-07/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+          "evidence_refs": [
+            "delivery/features/F-07/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI reviewer (round 1)",
+          "snapshot_ref": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+          "evidence_refs": [
+            "delivery/features/F-07/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -330,7 +472,7 @@
     }
   },
   "created_at": "2026-11-14T02:46:08Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 3,
   "history": [
     {
@@ -372,6 +514,22 @@
       "round": 1,
       "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
       "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T04:27:54Z",
+      "round": 1,
+      "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T04:27:55Z",
+      "round": 2,
+      "head": "195926d6854956a6918ef6199c0a5f57ce3a32ad",
+      "reason": null
     }
   ],
   "routing": {
@@ -387,10 +545,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "195926d6854956a6918ef6199c0a5f57ce3a32ad"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

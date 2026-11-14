@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-05",
   "outcome": "Start work: pick a line, fill its intake in a drawer, land on the new work item",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2A"
   ],
@@ -268,6 +268,14 @@
       "at": "2026-11-14T03:11:36Z",
       "round": 1,
       "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T04:29:14Z",
+      "round": 1,
+      "head": "9ee65d4d689c0101591a3f94a5146c72db9545bc",
       "reason": null
     }
   ],
