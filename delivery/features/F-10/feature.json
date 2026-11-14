@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -67,7 +67,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T06:31:13Z",
+      "seconds": 150.8,
+      "evidence_ref": "delivery/features/F-10/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -145,7 +158,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b91ca6a7c8c4016ac7b11bccd76e87c1265fb765",
     "task_branch": "fe-m3-finance-a-finance-lead-opens-month-end-for-octob",
-    "head_sha": null,
+    "head_sha": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-10",
     "pr_url": null,
     "pr_number": null,
@@ -156,7 +169,27 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/features/F-10/fidelity-exceptions.json",
+      "frontend/e2e/finance-month-end.spec.ts",
+      "frontend/mock/finance.mjs",
+      "frontend/mock/fixtures/E-MONTH-END.json",
+      "frontend/mock/fixtures/finance/month-end.board-phone.json",
+      "frontend/mock/fixtures/finance/month-end.empty.json",
+      "frontend/mock/fixtures/finance/month-end.known.json",
+      "frontend/mock/fixtures/finance/month-end.unknown.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/finance/month-end/page.tsx",
+      "frontend/src/features/finance/month-end/MonthEndStates.tsx",
+      "frontend/src/features/finance/month-end/MonthEndView.tsx",
+      "frontend/src/features/finance/month-end/model.ts",
+      "frontend/src/features/finance/month-end/month-end.css",
+      "frontend/src/features/finance/month-end/proposal.ts",
+      "frontend/src/features/finance/month-end/useMonthEnd.ts",
+      "frontend/tests/finance-month-end-mock.test.ts",
+      "frontend/tests/finance-month-end.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -207,6 +240,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T06:31:25Z",
+      "round": 1,
+      "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164",
+      "reason": null
     }
   ],
   "routing": {
@@ -224,9 +265,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
   },
   "blocked": null
 }
