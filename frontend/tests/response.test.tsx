@@ -443,7 +443,7 @@ describe('success (SCR-16-desktop-success)', () => {
     fireEvent.click(recordButton('Record response'));
     await screen.findByRole('status');
     await expectPhoneBack('Work item', '/work/W-1601');
-    expect(screen.getByText('REL-0077').className).toContain('resp-phoneref');
+    expect(document.querySelector('.psl-phonebar .shell-phonenote')!.textContent).toBe('REL-0077');
     expect(screen.getByRole('link', { name: 'Back to my queue' }).getAttribute('href')).toBe('/my-work');
   });
 
@@ -540,7 +540,7 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
     await open('W-1602', 'T-1602');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('SOW signature');
     await expectPhoneBack('SOW', '/work/W-1602');
-    expect(screen.getByText('SOW-0207').className).toContain('resp-phoneref');
+    expect(document.querySelector('.psl-phonebar .shell-phonenote')!.textContent).toBe('SOW-0207');
     expect(screen.queryByRole('complementary')).toBeNull();
   });
 

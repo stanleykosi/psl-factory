@@ -170,7 +170,7 @@ test('success at 390 shows the way back to the work item and the queue', async (
   await expect(back).toHaveText('← Work item');
   await expect(back).toHaveAttribute('href', '/work/W-1601');
   await expect(page.getByRole('button', { name: 'Menu' })).toHaveCount(0);
-  await expect(page.locator('.resp-phoneref')).toHaveText('REL-0077');
+  await expect(page.locator('.psl-phonebar .shell-phonenote')).toHaveText('REL-0077');
   await expect(page.getByRole('link', { name: 'Back to my queue' })).toBeInViewport();
 });
 

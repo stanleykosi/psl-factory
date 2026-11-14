@@ -24,11 +24,6 @@ import './response.css';
 
 const work = (id: string) => `/work/${encodeURIComponent(id)}`;
 
-/** On the phone the boards draw the reference at the right of the bar; the frame's bar holds only the back link. */
-function PhoneReference({ reference }: { reference?: string }) {
-  return reference ? <span className="psl-mono resp-phoneref">{reference}</span> : null;
-}
-
 function Crumb({ item, response }: { item: ResponseWorkItem; response: TaskResponse }) {
   const project = response.context?.project;
   const document = response.context?.document;
@@ -149,10 +144,7 @@ function SuccessView({ id, before, task, recorded, next, responderId, station, p
   return (
     <>
       {!phone && <p className="resp-eyebrow">{[before.reference, organisation].filter(Boolean).join(' · ').toUpperCase()}</p>}
-      <div className="resp-titlerow">
-        <h1 className="shell-title resp-title resp-title--tight">{heading}</h1>
-        {phone && <PhoneReference reference={before.reference} />}
-      </div>
+      <h1 className="shell-title resp-title resp-title--tight resp-title--done">{heading}</h1>
       <div className="resp-success">
         <div className="psl-callout psl-callout--success" role="status">
           <CheckIcon />
@@ -195,11 +187,14 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
   const pathname = `${work(id)}/respond${taskId ? `?task=${encodeURIComponent(taskId)}` : ''}`;
   const open = view.kind === 'form' && flow.task?.you_can_act === true && !!flow.response && RECORDABLE.has(flow.response.variant);
   // The phone bar's way back, as the SCR-16 phone boards draw it: the form goes back to the queue, the SOW form
-  // to its document and the success view (and anything else) to the work item.
+  // to its document and the success view (and anything else) to the work item. The reference sits at the bar's
+  // right on the SOW form (the document's) and on success (the item's).
+  const note =
+    view.kind === 'done' ? view.before.reference : open && flow.response?.variant === 'sow_signature' ? flow.response.context?.document?.reference : undefined;
   usePhoneBack(
     open && flow.response?.variant === 'client_response'
       ? { label: 'Queue', href: '/my-work' }
-      : { label: (open && flow.response?.context?.document?.label) || 'Work item', href: work(id) },
+      : { label: (open && flow.response?.context?.document?.label) || 'Work item', href: work(id), note },
   );
 
   if (view.kind === 'loading') return <LoadingState />;
@@ -262,16 +257,12 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
     notice: <FormNotice notice={notice} />,
   };
   const current = currentStationIndex(item.stations);
-  const document = response.context?.document;
 
   return (
     <div className={phone ? 'resp-page resp-page--phone' : 'resp-page'}>
       <header className="resp-header">
         {!phone && <Crumb item={item} response={response} />}
-        <div className="resp-titlerow">
-          <h1 className={sow ? 'shell-title resp-title resp-title--tight' : 'shell-title resp-title'}>{phone && sow && current >= 0 ? item.stations[current].name : task.title}</h1>
-          {phone && sow && <PhoneReference reference={document?.reference} />}
-        </div>
+        <h1 className={sow ? 'shell-title resp-title resp-title--tight' : 'shell-title resp-title'}>{phone && sow && current >= 0 ? item.stations[current].name : task.title}</h1>
         {!phone && !sow && response.intro && <p className="resp-intro">{response.intro}</p>}
       </header>
       <PageNotice notice={notice} onRecheck={recheck} />

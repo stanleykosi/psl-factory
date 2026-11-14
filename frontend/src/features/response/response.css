@@ -116,9 +116,8 @@
   .resp-actionbar { padding: 0; border-top: none; background: none; }
 }
 
-/* the title and, on the phone, the reference the boards draw at the right of the bar */
-.resp-titlerow { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.resp-phoneref { flex: none; font-size: 12px; }
+/* the success board's h1 (the phone size below still applies) */
+.resp-title--done { font-size: 36px; }
 
 @media (max-width: 719.98px) {
   /* the phone boards start the content 14px under the bar; the frame pads 16px */
