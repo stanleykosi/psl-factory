@@ -10,6 +10,7 @@ import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
 
+import { AGENT_INITIAL, LINE_IDENTITY, tagTone } from './lines';
 import type { Overview as OverviewData, OverviewLine, OverviewStation } from './types';
 import { useMedia } from './useMedia';
 import { useOverview } from './useOverview';
@@ -44,12 +45,30 @@ const stationKind = (s: OverviewStation) => (s.needs_person ? 'person' : s.count
 const stationText = (s: OverviewStation) =>
   `${s.name}: ${s.count} ${s.count === 1 ? 'item' : 'items'}${s.needs_person ? ', needs a person' : ''}`;
 
+function LineName({ line }: { line: string }) {
+  const identity = LINE_IDENTITY[line];
+  return (
+    <span className="overview__who">
+      {identity && (
+        <span className={`psl-avatar psl-avatar--${identity.agent} overview__avatar`} aria-hidden="true">
+          {AGENT_INITIAL[identity.agent]}
+        </span>
+      )}
+      <span className="overview__id">
+        <span className="overview__name">{line}</span>
+        {identity && <span className="overview__sub">{identity.subtitle}</span>}
+      </span>
+    </span>
+  );
+}
+
+// Rows are ARIA list items rather than <li>, as on the board, so a row's name, subtitle and tag read as its own text.
 function LineRows({ lines }: { lines: readonly OverviewLine[] }) {
   return (
-    <ul className="overview__rows">
+    <div role="list" className="overview__rows">
       {lines.map((l, i) => (
-        <li key={`${i}-${l.line}`} className="overview__row">
-          <span className="overview__name">{l.line}</span>
+        <div role="listitem" key={`${i}-${l.line}`} className="overview__row">
+          <LineName line={l.line} />
           <ol className="overview__track" aria-label={`${l.line} stations`}>
             {l.stations.map((s, j) => (
               <li key={`${j}-${s.name}`} className={`overview__station overview__station--${stationKind(s)}`}>
@@ -61,11 +80,11 @@ function LineRows({ lines }: { lines: readonly OverviewLine[] }) {
             ))}
           </ol>
           <span className="overview__tag">
-            <span className={`psl-tag ${l.stations.some((s) => s.needs_person) ? 'psl-tag--person' : 'psl-tag--neutral'}`}>{l.note}</span>
+            <span className={`psl-tag ${tagTone(l)}`}>{l.note}</span>
           </span>
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }
 
@@ -169,6 +188,7 @@ function FactoryFloor() {
           }}
           type="button"
           role="radio"
+          aria-label={v.label}
           aria-checked={v.key === view}
           tabIndex={v.key === view ? 0 : -1}
           className="psl-seg__opt"
@@ -186,7 +206,9 @@ function FactoryFloor() {
       {phone ? (
         <>
           {title}
-          {eyebrow}
+          <p className="overview__summary">
+            <strong>{data.totals.in_progress}</strong> in progress · <strong className="overview__need">{data.totals.need_a_person}</strong> need a person
+          </p>
         </>
       ) : (
         <>
@@ -196,17 +218,16 @@ function FactoryFloor() {
             {viewSwitch}
           </div>
           {hint && <p className="psl-hint overview__hint">{hint}</p>}
+          <dl className="overview__totals">
+            {TOTALS.map((t) => (
+              <div key={t.key} className="overview__total">
+                <dt>{t.label}</dt>
+                <dd>{data.totals[t.key]}</dd>
+              </div>
+            ))}
+          </dl>
         </>
       )}
-
-      <dl className="overview__totals">
-        {TOTALS.map((t) => (
-          <div key={t.key} className="overview__total">
-            <dt>{t.label}</dt>
-            <dd>{data.totals[t.key]}</dd>
-          </div>
-        ))}
-      </dl>
 
       {failed && (
         <div className="psl-callout psl-callout--warning">
@@ -216,34 +237,29 @@ function FactoryFloor() {
       )}
 
       {hasLines ? (
-        <>
-          <section aria-label="Lines" className="overview__lines">
-            {show3d ? (
-              <>
-                {Floor ? (
-                  <Floor lines={data.lines} onFailure={fail} />
-                ) : (
-                  <span className="psl-loading overview__floorwait" role="status">
-                    <span className="psl-busy" aria-hidden="true">
-                      <i />
-                      <i />
-                      <i />
-                    </span>
-                    Loading the 3D floor…
+        <section aria-label="Lines" className="overview__lines">
+          {show3d ? (
+            <>
+              {Floor ? (
+                <Floor lines={data.lines} onFailure={fail} />
+              ) : (
+                <span className="psl-loading overview__floorwait" role="status">
+                  <span className="psl-busy" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
                   </span>
-                )}
-                <div className="overview__sr">
-                  <LineRows lines={data.lines} />
-                </div>
-              </>
-            ) : (
-              <LineRows lines={data.lines} />
-            )}
-          </section>
-          <p className="psl-hint">
-            Each square is a station; dark squares hold work, orange ones need a person. The number in a square is how many items are there.
-          </p>
-        </>
+                  Loading the 3D floor…
+                </span>
+              )}
+              <div className="overview__sr">
+                <LineRows lines={data.lines} />
+              </div>
+            </>
+          ) : (
+            <LineRows lines={data.lines} />
+          )}
+        </section>
       ) : (
         <div className="psl-empty">
           <h3>No lines to show yet.</h3>
@@ -251,13 +267,25 @@ function FactoryFloor() {
         </div>
       )}
 
+      {/* The phone board has no coverage line; the time still shows, under the lines. */}
+      {phone && eyebrow}
+
       <section className="overview-exceptions" aria-labelledby="overview-exceptions-title">
-        <h2 id="overview-exceptions-title">All exceptions · everyone&rsquo;s</h2>
-        <Link href="/exceptions" className="psl-link">
-          See all exceptions
-        </Link>
+        <div className="overview-exceptions__head">
+          <h2 id="overview-exceptions-title">All exceptions · everyone&rsquo;s</h2>
+          <Link href="/exceptions" prefetch={false} className="psl-link">
+            See all exceptions
+          </Link>
+        </div>
         <p>Your own exceptions also appear in My work · Needs me, marked Fix.</p>
       </section>
+
+      {hasLines && !phone && (
+        <p className="psl-hint overview__legend">
+          Each square is a station; dark squares hold work, orange ones need a person. The 3D floor shows the same lines with work moving
+          between stations. With reduced motion, this flat view is shown instead. The number in a square is how many items are there.
+        </p>
+      )}
     </div>
   );
 }

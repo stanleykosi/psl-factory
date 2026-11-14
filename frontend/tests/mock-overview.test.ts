@@ -19,6 +19,11 @@ const schema = openapi.paths['/api/v1/overview'].get.responses['200'].content['a
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 const validate = ajv.compile(schema);
+// The status variant carries the proposed optional line field; it is checked against the v4 schema plus that one field.
+type Schema = { properties: { lines: { items: { properties: Record<string, object> } } } };
+const proposed = structuredClone(schema) as Schema;
+proposed.properties.lines.items.properties.status = { type: 'string', enum: ['on_track', 'waiting', 'stopped', 'uncertain', 'problems'] };
+const validateProposed = ajv.compile(proposed);
 
 const fixtures = join(__dirname, '../mock/fixtures');
 const read = (path: string) => JSON.parse(readFileSync(join(fixtures, path), 'utf8'));
@@ -33,8 +38,19 @@ beforeAll(async () => {
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
 describe('E-OVERVIEW mock', () => {
-  it('lists the three variants', () => {
-    expect(OVERVIEW_VARIANTS).toEqual(['empty', 'zero', 'changed']);
+  it('lists the four variants', () => {
+    expect(OVERVIEW_VARIANTS).toEqual(['empty', 'zero', 'changed', 'status']);
+  });
+
+  it('the status variant is the default plus a proposed status per line, outside the v4 contract', () => {
+    const status = read('overview/status.json');
+    expect(validate(status)).toBe(false);
+    expect(validateProposed(status), ajv.errorsText(validateProposed.errors)).toBe(true);
+    type Line = { line: string; status: string };
+    expect((status.lines as Line[]).map((l) => l.status)).toEqual(['waiting', 'stopped', 'uncertain', 'on_track', 'waiting', 'on_track', 'on_track', 'problems']);
+    const { lines, ...rest } = status;
+    expect(rest).toEqual({ as_of: DEFAULT.as_of, totals: DEFAULT.totals });
+    expect((lines as Line[]).map((line) => Object.fromEntries(Object.entries(line).filter(([k]) => k !== 'status')))).toEqual(DEFAULT.lines);
   });
 
   for (const file of ['E-OVERVIEW.json', 'overview/empty.json', 'overview/zero.json', 'overview/changed.json']) {

@@ -27,6 +27,7 @@ const fixtures = join(__dirname, '../mock/fixtures');
 const read = (path: string) => JSON.parse(readFileSync(join(fixtures, path), 'utf8'));
 const DEFAULT: Overview = read('E-OVERVIEW.json');
 const ZERO: Overview = read('overview/zero.json');
+const STATUS: Overview = read('overview/status.json');
 const EMPTY: Overview = read('overview/empty.json');
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -74,7 +75,7 @@ async function until(check: () => void, tries = 100) {
 
 const overviewCalls = () => calls.filter((u) => u.pathname === '/api/v1/overview');
 const linesSection = () => screen.queryByRole('region', { name: 'Lines' });
-const rows = () => [...linesSection()!.querySelectorAll(':scope > ul > li')];
+const rows = () => within(within(linesSection()!).getAllByRole('list')[0]).getAllByRole('listitem').filter((el) => el.classList.contains('overview__row'));
 const stations = (line: string) => within(screen.getByRole('list', { name: `${line} stations` })).getAllByRole('listitem');
 const station = (line: string, name: string) => stations(line).find((li) => li.querySelector('.overview__sr')!.textContent!.startsWith(`${name}: `))!;
 const tiles = () =>
@@ -126,7 +127,7 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
     expect(station('Pre-sale', 'Qualify').textContent).toContain('Qualify: 0 items');
   });
 
-  it('square state follows count and needs_person; the tag tone follows needs_person only', async () => {
+  it('square state follows count and needs_person; without a status the tag tone follows needs_person only', async () => {
     await open();
     const person = station('Pre-sale', 'Proposal');
     expect(person.className).toContain('overview__station--person');
@@ -144,6 +145,39 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
     expect(tag(0).className).toBe('psl-tag psl-tag--person');
     expect(tag(3).textContent).toBe('ON TRACK');
     expect(tag(3).className).toBe('psl-tag psl-tag--neutral');
+  });
+
+  it('a line status sets the board tag tones: on track green, waiting amber, stopped, uncertain and problems red', async () => {
+    settle(STATUS);
+    await open();
+    expect(rows().map((li) => [li.querySelector('.psl-tag')!.textContent, li.querySelector('.psl-tag')!.className])).toEqual([
+      ['1 WAITING', 'psl-tag psl-tag--waiting'],
+      ['1 STOPPED', 'psl-tag psl-tag--person'],
+      ['1 UNCERTAIN', 'psl-tag psl-tag--person'],
+      ['ON TRACK', 'psl-tag psl-tag--done'],
+      ['2 WAITING', 'psl-tag psl-tag--waiting'],
+      ['ON TRACK', 'psl-tag psl-tag--done'],
+      ['ON TRACK', 'psl-tag psl-tag--done'],
+      ['2 PROBLEMS', 'psl-tag psl-tag--person'],
+    ]);
+  });
+
+  it('the tone never comes from the note text', async () => {
+    settle({ ...DEFAULT, lines: [{ ...DEFAULT.lines[0], note: 'ON TRACK', status: 'stopped' }, { ...DEFAULT.lines[3], note: '1 STOPPED' }] });
+    await open();
+    expect(rows().map((li) => li.querySelector('.psl-tag')!.className)).toEqual(['psl-tag psl-tag--person', 'psl-tag psl-tag--neutral']);
+  });
+
+  it('each board line shows its agent avatar and subtitle; an unknown line shows neither', async () => {
+    settle({ ...DEFAULT, lines: [DEFAULT.lines[0], DEFAULT.lines[4], DEFAULT.lines[7], { ...DEFAULT.lines[3], line: 'Something new' }] });
+    await open();
+    expect(rows().map((li) => [li.querySelector('.psl-avatar')?.className ?? null, li.querySelector('.overview__sub')?.textContent ?? null])).toEqual([
+      ['psl-avatar psl-avatar--tola overview__avatar', 'RFP · commercial'],
+      ['psl-avatar psl-avatar--chidi overview__avatar', 'Milestone to verified'],
+      ['psl-avatar psl-avatar--zainab overview__avatar', 'Restricted'],
+      [null, null],
+    ]);
+    expect(rows()[0].querySelector('.psl-avatar')!.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('shows a note word for word, unparsed and not re-cased', async () => {
@@ -190,6 +224,9 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
     expect(within(place).getByRole('link', { name: 'See all exceptions' }).getAttribute('href')).toBe('/exceptions');
     expect(within(place).getByText('Your own exceptions also appear in My work · Needs me, marked Fix.')).toBeTruthy();
     expect(calls.some((u) => u.pathname.startsWith('/api/v1/exceptions'))).toBe(false);
+    // Board order: lines, then the exceptions place, then the legend.
+    expect(linesSection()!.nextElementSibling).toBe(place);
+    expect(place.nextElementSibling!.textContent).toMatch(/^Each square is a station; dark squares hold work, orange ones need a person/);
   });
 });
 
@@ -352,15 +389,18 @@ describe('the 3D option follows reduced motion, WebGL and width', () => {
     expect(rows()).toHaveLength(8);
   });
 
-  it('phone: no View switch and no hint; h1 comes before the eyebrow', async () => {
+  it('phone (SCR-06-mobile): no View switch, no hint, the board summary line after the h1, the time under the lines', async () => {
     media['(max-width: 719.98px)'] = true;
     media['(prefers-reduced-motion: reduce)'] = true;
     await open();
     expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
     expect(document.querySelector('.overview__hint')).toBeNull();
     const h1 = screen.getByRole('heading', { level: 1 });
-    expect(h1.nextElementSibling!.className).toBe('overview__eyebrow');
-    expect(tiles()).toHaveLength(4);
+    expect(h1.nextElementSibling!.textContent).toBe('18 in progress · 5 need a person');
+    expect(tiles()).toHaveLength(0);
+    expect(linesSection()!.nextElementSibling!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
+    expect(screen.queryByText(/Each square is a station/)).toBeNull();
+    expect(rows()).toHaveLength(8);
   });
 
   it('otherwise the View switch shows with Flat checked', async () => {

@@ -59,6 +59,6 @@ it('a rejected floor import falls back to Flat with a warning and hides the 3D o
   await until(() => expect(screen.getByText('We couldn’t show the 3D floor, so it’s shown flat.')).toBeTruthy());
   expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
   expect(screen.queryByRole('status')).toBeNull();
-  const rows = document.querySelectorAll('section[aria-label="Lines"] > ul > li');
+  const rows = document.querySelectorAll('section[aria-label="Lines"] .overview__row');
   expect(rows).toHaveLength(8);
 });

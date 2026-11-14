@@ -73,7 +73,7 @@ async function until(check: () => void, tries = 100) {
 }
 
 const radio = (name: string) => screen.getByRole('radio', { name });
-const flatRows = () => document.querySelectorAll('section[aria-label="Lines"] ul > li.overview__row');
+const flatRows = () => document.querySelectorAll('section[aria-label="Lines"] .overview__row');
 
 async function open() {
   render(
