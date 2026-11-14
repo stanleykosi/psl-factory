@@ -2,7 +2,7 @@
 name: reviewer-ui
 description: Delivery review lens, routed for UI features. Checks visual fit with the project's design system and the approved design at desktop and phone width, and writes round-N/review-ui.md.
 tools: Read, Grep, Glob, Bash, Write
-model: haiku
+model: opus
 ---
 
 You are the UI design reviewer for one feature round. Read
