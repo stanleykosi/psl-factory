@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:19:39.861Z",
+  "generatedAt": "2026-11-14T07:20:21.472Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-02-desktop-waiting.dc.html",
   "boardName": "SCR-02-desktop-waiting.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601",
@@ -18,13 +18,13 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
   "pass": false,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 96.9% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 48.5 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 28.1,
-    "coverageWithExceptions": 96.9,
+    "coverageWithExceptions": 100,
     "visual": 48.5
   },
   "visual": {
@@ -556,7 +556,10 @@
           "w": 324,
           "h": 332
         },
-        "exception": null
+        "exception": {
+          "reason": "The SCR-02 waiting board's side panel (\"Waiting on the client\") is F-03's; F-09 places only its \"Record the client's response\" button (readiness PMO-0-6, PMO-0-7).",
+          "approved_by": ""
+        }
       },
       {
         "kind": "Text",
@@ -819,7 +822,7 @@
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped)."

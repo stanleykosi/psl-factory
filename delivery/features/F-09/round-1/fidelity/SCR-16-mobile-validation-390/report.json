@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:18:26.014Z",
+  "generatedAt": "2026-11-14T07:20:36.479Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile-validation.dc.html",
   "boardName": "SCR-16-mobile-validation.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601/respond?task=T-1601",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 50.3 is below 90.",
+    "Visual match 52.4 is below 90.",
     "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 92.9,
     "coverageWithExceptions": 100,
-    "visual": 50.3
+    "visual": 52.4
   },
   "visual": {
-    "score": 50.3,
-    "allCellsScore": 60.7,
+    "score": 52.4,
+    "allCellsScore": 62.4,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 897,
     "cell": 12,
-    "contentCells": 1854,
-    "mismatchedCells": 921
+    "contentCells": 1851,
+    "mismatchedCells": 881
   },
   "coverage": {
     "total": 14,
@@ -54,7 +54,7 @@
         "boardBox": {
           "x": 16,
           "y": 6,
-          "w": 62,
+          "w": 61,
           "h": 44
         },
         "pageBox": {
@@ -97,7 +97,7 @@
           "x": 16,
           "y": 72,
           "w": 358,
-          "h": 56
+          "h": 52
         },
         "pageBox": {
           "x": 16,
@@ -116,9 +116,9 @@
         "looks": [],
         "boardBox": {
           "x": 16,
-          "y": 142,
+          "y": 138,
           "w": 358,
-          "h": 17
+          "h": 18
         },
         "pageBox": {
           "x": 16,
@@ -137,9 +137,9 @@
         "looks": [],
         "boardBox": {
           "x": 16,
-          "y": 173,
+          "y": 170,
           "w": 358,
-          "h": 18
+          "h": 19
         },
         "pageBox": {
           "x": 16,
@@ -158,7 +158,7 @@
         "looks": [],
         "boardBox": {
           "x": 35,
-          "y": 216,
+          "y": 214,
           "w": 18,
           "h": 18
         },
@@ -179,7 +179,7 @@
         "looks": [],
         "boardBox": {
           "x": 35,
-          "y": 274,
+          "y": 272,
           "w": 18,
           "h": 18
         },
@@ -200,7 +200,7 @@
         "looks": [],
         "boardBox": {
           "x": 35,
-          "y": 332,
+          "y": 330,
           "w": 18,
           "h": 18
         },
@@ -221,9 +221,9 @@
         "looks": [],
         "boardBox": {
           "x": 16,
-          "y": 379,
+          "y": 377,
           "w": 358,
-          "h": 18
+          "h": 19
         },
         "pageBox": {
           "x": 16,
@@ -244,7 +244,7 @@
         ],
         "boardBox": {
           "x": 16,
-          "y": 403,
+          "y": 402,
           "w": 358,
           "h": 52
         },
@@ -269,7 +269,7 @@
         ],
         "boardBox": {
           "x": 20,
-          "y": 472,
+          "y": 471,
           "w": 20,
           "h": 20
         },
@@ -290,9 +290,9 @@
         "looks": [],
         "boardBox": {
           "x": 53,
-          "y": 469,
-          "w": 221,
-          "h": 17
+          "y": 468,
+          "w": 215,
+          "h": 18
         },
         "pageBox": {
           "x": 46,
@@ -333,9 +333,9 @@
         "container": "form",
         "boardBox": {
           "x": 16,
-          "y": 509,
+          "y": 508,
           "w": 358,
-          "h": 54
+          "h": 38
         },
         "exception": {
           "reason": "On the page the line is role=\"alert\" (spec: announced beside the disabled Record, as on the desktop validation board); the phone board draws a plain div, so the tool counts it as a different role. Same words.",
@@ -351,7 +351,7 @@
         "boardBox": {
           "x": 16,
           "y": 6,
-          "w": 62,
+          "w": 61,
           "h": 44
         },
         "pageBox": {
@@ -372,7 +372,7 @@
           "x": 16,
           "y": 72,
           "w": 358,
-          "h": 56
+          "h": 52
         },
         "pageBox": {
           "x": 16,
@@ -506,8 +506,7 @@
     "unexcepted": 0
   },
   "warnings": [
-    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped).",
-    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped)."
   ],
   "images": {
     "board": "board.png",

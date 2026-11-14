@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-14T07:19:48.311Z",
+  "generatedAt": "2026-11-14T07:20:28.555Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-02-mobile-waiting.dc.html",
   "boardName": "SCR-02-mobile-waiting.dc.html",
   "pageUrl": "http://localhost:4401/work/W-1601",
@@ -19,23 +19,23 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 53 is below 90."
+    "Visual match 52.7 is below 90."
   ],
   "scores": {
     "coverage": 10.5,
     "coverageWithExceptions": 100,
-    "visual": 53
+    "visual": 52.7
   },
   "visual": {
-    "score": 53,
-    "allCellsScore": 54,
+    "score": 52.7,
+    "allCellsScore": 53.9,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 1226,
     "cell": 12,
-    "contentCells": 2290,
-    "mismatchedCells": 1077
+    "contentCells": 2285,
+    "mismatchedCells": 1081
   },
   "coverage": {
     "total": 19,
@@ -56,7 +56,7 @@
           "x": 16,
           "y": 70,
           "w": 358,
-          "h": 24
+          "h": 48
         },
         "pageBox": {
           "x": 16,
@@ -98,7 +98,7 @@
         "boardBox": {
           "x": 16,
           "y": 6,
-          "w": 62,
+          "w": 61,
           "h": 44
         },
         "exception": {
@@ -116,7 +116,7 @@
           "x": 316,
           "y": 21,
           "w": 58,
-          "h": 14
+          "h": 15
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -131,8 +131,8 @@
         "container": "page",
         "boardBox": {
           "x": 16,
-          "y": 106,
-          "w": 138,
+          "y": 130,
+          "w": 134,
           "h": 21
         },
         "exception": {
@@ -148,9 +148,9 @@
         "container": "page",
         "boardBox": {
           "x": 26,
-          "y": 149,
+          "y": 173,
           "w": 100,
-          "h": 12
+          "h": 13
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -165,9 +165,9 @@
         "container": "page",
         "boardBox": {
           "x": 26,
-          "y": 161,
-          "w": 16,
-          "h": 18
+          "y": 186,
+          "w": 17,
+          "h": 19
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -182,9 +182,9 @@
         "container": "page",
         "boardBox": {
           "x": 144,
-          "y": 149,
+          "y": 173,
           "w": 100,
-          "h": 12
+          "h": 13
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -199,9 +199,9 @@
         "container": "page",
         "boardBox": {
           "x": 144,
-          "y": 161,
-          "w": 74,
-          "h": 18
+          "y": 186,
+          "w": 70,
+          "h": 19
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -216,9 +216,9 @@
         "container": "page",
         "boardBox": {
           "x": 262,
-          "y": 149,
+          "y": 173,
           "w": 102,
-          "h": 12
+          "h": 13
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -233,9 +233,9 @@
         "container": "page",
         "boardBox": {
           "x": 262,
-          "y": 161,
-          "w": 74,
-          "h": 18
+          "y": 186,
+          "w": 70,
+          "h": 19
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -250,9 +250,9 @@
         "container": "page",
         "boardBox": {
           "x": 26,
-          "y": 197,
+          "y": 223,
           "w": 100,
-          "h": 12
+          "h": 13
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -267,9 +267,9 @@
         "container": "page",
         "boardBox": {
           "x": 26,
-          "y": 209,
-          "w": 85,
-          "h": 36
+          "y": 236,
+          "w": 80,
+          "h": 38
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -284,9 +284,9 @@
         "container": "page",
         "boardBox": {
           "x": 144,
-          "y": 197,
+          "y": 223,
           "w": 100,
-          "h": 12
+          "h": 13
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -301,9 +301,9 @@
         "container": "page",
         "boardBox": {
           "x": 144,
-          "y": 209,
-          "w": 69,
-          "h": 18
+          "y": 236,
+          "w": 67,
+          "h": 19
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -318,9 +318,9 @@
         "container": "page",
         "boardBox": {
           "x": 262,
-          "y": 197,
+          "y": 223,
           "w": 102,
-          "h": 12
+          "h": 13
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -335,9 +335,9 @@
         "container": "page",
         "boardBox": {
           "x": 262,
-          "y": 209,
-          "w": 13,
-          "h": 18
+          "y": 236,
+          "w": 12,
+          "h": 19
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -352,9 +352,9 @@
         "container": "page",
         "boardBox": {
           "x": 146,
-          "y": 352,
+          "y": 401,
           "w": 218,
-          "h": 93
+          "h": 73
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -369,9 +369,9 @@
         "container": "page",
         "boardBox": {
           "x": 146,
-          "y": 353,
-          "w": 172,
-          "h": 37
+          "y": 402,
+          "w": 213,
+          "h": 18
         },
         "exception": {
           "reason": "SCR-02 page content owned by F-03 (work item header, facts strip, agent card, waiting panel); F-09 adds only the entry button and the reconcile panel (readiness PMO-0-6: differences raised against F-03).",
@@ -577,8 +577,7 @@
     "unexcepted": 0
   },
   "warnings": [
-    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped).",
-    "Fonts: Google Fonts could not be reached (fonts.gstatic.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped)."
   ],
   "images": {
     "board": "board.png",

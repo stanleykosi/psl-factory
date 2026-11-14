@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -113,20 +113,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (round 2). Delivery acceptance only. Product acceptance, merge and release keep their own authorities.",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-10/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "coordinator, provisional for the design engineer (hunchoweb)",
+      "authority": "the design engineer's overnight instruction, 14 Nov 2026; recorded in delivery/OVERNIGHT-DECISIONS.md",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -350,6 +354,75 @@
           "head": "02db3e841a47c4d83ed907c5bba467ef3a05a164"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, although E-MONTH-END is in scope (spec Summary, readiness \"Endpoints\"). The record cannot show operation coverage for this feature. Expected: `E-MONTH-END` listed. Actual: empty list. The coverage itself is evidenced in the spec, QA and the mock tests (`finance-month-end-mock.test.ts`, `mock-contract.test.ts`). Fix the record when the feature is closed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:20:36Z",
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The reported phone fidelity scores disagree. build.md says 97.3 and review-ui.md says 97.8 (the coordinator brief also says 97.8). Both are above the 90 gate and the cause is probably different run timing. The reviewer's run is the gate number, so I rely on 97.8. The reports are under `round-2/fidelity/` and `round-2/fidelity-review/`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:20:36Z",
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec's fidelity exceptions list also names the link targets, \"\u2190 Finance\" placement and the avatar swap, but `delivery/features/F-10/fidelity-exceptions.json` (as the UI reviewer read it) holds only \"Start work\" and \"More ways to start\". The gate still passes at 100% coverage. The back link now sits top right (D-19), not under the phone bar as spec criterion 3 and D-08 described. D-19 records it as interim until the frame's back-link slot (D-23). The design engineer should confirm this when giving product acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T07:20:36Z",
+          "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -567,6 +640,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-14T07:16:43Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-14T07:20:36Z",
       "round": 2,
       "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
       "reason": null
