@@ -646,3 +646,4 @@
 {"at":"2026-11-14T07:45:34Z","feature":"F-12","round":1,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/18","git.pr_number":18}}
 {"at":"2026-11-14T07:45:34Z","feature":"F-12","round":1,"kind":"transition","head":"831b17164ca8","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-14T07:45:54Z","feature":"F-12","round":1,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-14T07:46:48Z","feature":"F-14","round":0,"kind":"created","tasks":["FE-WORKITEM"]}
