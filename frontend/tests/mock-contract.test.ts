@@ -27,8 +27,10 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', none: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all' };
 const BODY: Record<string, unknown> = {
+  'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
 };
@@ -49,7 +51,9 @@ afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
 async function request(id: string, init: { persona?: string; scenario?: string; csrf?: string | null } = {}) {
   const { path, method } = byId(id);
-  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => PATH_VALUES[name] ?? 'X-1') + (QUERY[id] ?? '');
+  const persona = init.persona ?? 'finance_lead';
+  const value = (name: string) => (name === 'notification_id' ? NOTIFICATION_IDS[persona] : PATH_VALUES[name]);
+  const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => value(name) ?? 'X-1') + (QUERY[id] ?? '');
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'finance_lead'}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
   if (method !== 'GET' && init.csrf !== null) headers['X-CSRFToken'] = init.csrf ?? `mock-csrf-${init.persona ?? 'finance_lead'}`;

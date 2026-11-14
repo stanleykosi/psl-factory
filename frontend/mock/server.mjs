@@ -9,6 +9,7 @@
 // Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
 // the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
+// Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -18,11 +19,12 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { exceptionsList } from './exceptions.mjs';
 import { workList } from './work-list.mjs';
+import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS'];
 export const PERSONAS = ['finance_lead', 'pm', 'none'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -198,6 +200,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const validators = bodyValidators(openapi);
   // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
   const overrides = new Map();
+  const alerts = createAlertsMock({ openapi });
 
   return http.createServer((req, res) => {
     const chunks = [];
@@ -208,6 +211,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       const method = (req.method ?? 'GET').toLowerCase();
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
+        alerts.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
@@ -224,6 +228,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WRITE_METHODS.has(method) && req.headers['x-csrftoken'] !== me[persona].csrf_token) {
         return send(res, 403, CSRF_FAILED);
       }
+      if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
