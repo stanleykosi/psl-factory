@@ -1,0 +1,1212 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T08:21:59.913Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-desktop.dc.html",
+  "boardName": "SCR-02-desktop.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1701",
+  "viewport": {
+    "width": 1440,
+    "height": 1200
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "13 board item(s) are missing from the page and are not approved exceptions (coverage 68.3% with exceptions, needs 100%).",
+    "Visual match 61.1 is below 90.",
+    "13 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 68.3,
+    "coverageWithExceptions": 68.3,
+    "visual": 61.1
+  },
+  "visual": {
+    "score": 61.1,
+    "allCellsScore": 81.9,
+    "width": 1440,
+    "height": 1260,
+    "boardHeight": 1260,
+    "pageHeight": 1200,
+    "cell": 12,
+    "contentCells": 5863,
+    "mismatchedCells": 2281
+  },
+  "coverage": {
+    "total": 41,
+    "found": 28,
+    "coverage": 68.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 939
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 946
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "QUEUE / PREPARE AN INVOICE / INV-0412",
+        "pageName": "MY WORK / PREPARE AN INVOICE / INV-0412",
+        "pageRole": "text",
+        "similarity": 82,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "pageName": "Lagoon Health · Milestone 2 invoice",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 34px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 109,
+          "w": 746,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 113,
+          "w": 787,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Paid is a separate Finance fact and is not part of this line.",
+        "pageName": "Paid is a separate Finance fact and is not part of this line.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 268,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 364,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Chidi · Finance agent",
+        "pageName": "Chidi · Finance agent",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 427,
+          "w": 203,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 528,
+          "w": 185,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Prepares drafts. Cannot approve, send or pay.",
+        "pageName": "Cannot approve, send or pay.",
+        "pageRole": "text",
+        "similarity": 85,
+        "looks": [],
+        "boardBox": {
+          "x": 743,
+          "y": 427,
+          "w": 244,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 736,
+          "y": 537,
+          "w": 156,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi drafted invoice v2. It is marked DRAFTED, not REVIEWED, until a Finance Lead decides.",
+        "pageName": "Chidi drafted invoice v2. It is marked DRAFTED, not REVIEWED, until a Finance Lead decides.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 713,
+          "w": 914,
+          "h": 31
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 848,
+          "w": 786,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "STATION 4 · FINANCE REVIEW",
+        "pageName": "STATION 4 · FINANCE REVIEW",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "letter width 112% on the board, 100% on the page",
+          "background none on the board, #C8401C on the page",
+          "bar under it on the page (#C8401C), none on the board"
+        ],
+        "boardBox": {
+          "x": 1046,
+          "y": 427,
+          "w": 288,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 934,
+          "y": 516,
+          "w": 416,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only a Finance Lead can decide. You are Finance Lead.",
+        "pageName": "Only a Finance Lead can decide.",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1046,
+          "y": 489,
+          "w": 288,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 582,
+          "w": 384,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Amount",
+        "pageName": "Amount",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 539,
+          "w": 50,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 651,
+          "w": 80,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Basis",
+        "pageName": "Basis",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 567,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 680,
+          "w": 80,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Contract stage 2 of 4 · terms v1",
+        "pageName": "Contract stage 2 of 4 · terms v1",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1109,
+          "y": 567,
+          "w": 225,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 680,
+          "w": 290,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "To",
+        "pageName": "To",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 593,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 709,
+          "w": 80,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "accounts@lagoonhealth.example",
+        "pageName": "accounts@lagoonhealth.example",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1109,
+          "y": 593,
+          "w": 225,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 709,
+          "w": 290,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Version",
+        "pageName": "Version",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 619,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 738,
+          "w": 80,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2 · changed: PO number",
+        "pageName": "v2 · changed: PO number",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1109,
+          "y": 619,
+          "w": 225,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 738,
+          "w": 290,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approving earns APPROVED only. SENT is earned at station 6.",
+        "pageName": "Approving earns APPROVED only. SENT is earned at station 6.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1046,
+          "y": 891,
+          "w": 288,
+          "h": 30
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 861,
+          "w": 420,
+          "h": 18
+        }
+      }
+    ],
+    "patterns": [
+      {
+        "kind": "Repeated rows",
+        "role": "pattern",
+        "name": "Repeated blocks with 2 text field(s) each",
+        "boardCount": 6,
+        "boardBox": {
+          "x": 90,
+          "y": 197,
+          "w": 1260,
+          "h": 59
+        },
+        "matched": true,
+        "pageName": "Repeated blocks with 2 text field(s) each",
+        "pageCount": 4,
+        "pageBox": {
+          "x": 950,
+          "y": 648,
+          "w": 384,
+          "h": 111
+        },
+        "notes": [
+          "board field 1 (page field 1): font IBM Plex Mono on the board, IBM Plex Sans on the page; text size 11px on the board, 14px on the page; text colour #FFFFFF on the board, #4A5357 on the page; capitals on the board, not on the page",
+          "board field 2 (page field 2): font Archivo on the board, IBM Plex Mono on the page; weight 700 on the board, 500 on the page; text colour #FFFFFF on the board, #1F2427 on the page",
+          "item frame: text colour #FFFFFF on the board, #1F2427 on the page; background #1F2427 on the board, none on the page"
+        ]
+      },
+      {
+        "kind": "Repeated rows",
+        "role": "pattern",
+        "name": "Repeated blocks with 3 text field(s) each",
+        "boardCount": 7,
+        "boardBox": {
+          "x": 90,
+          "y": 307,
+          "w": 1260,
+          "h": 82
+        },
+        "matched": true,
+        "pageName": "Repeated list items with 3 text field(s) each",
+        "pageCount": 7,
+        "pageBox": {
+          "x": 90,
+          "y": 404,
+          "w": 1260,
+          "h": 89
+        },
+        "notes": []
+      },
+      {
+        "kind": "Repeated rows",
+        "role": "pattern",
+        "name": "Repeated list items with 4 text field(s) each",
+        "boardCount": 4,
+        "boardBox": {
+          "x": 106,
+          "y": 485,
+          "w": 882,
+          "h": 216
+        },
+        "matched": true,
+        "pageName": "Repeated list items with 4 text field(s) each",
+        "pageCount": 4,
+        "pageBox": {
+          "x": 106,
+          "y": 582,
+          "w": 786,
+          "h": 240
+        },
+        "notes": []
+      }
+    ],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 915,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1033,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1087,
+          "y": 8,
+          "w": 100,
+          "h": 40
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "QUEUE",
+        "key": "link: QUEUE",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 36,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AWAITING FINANCE DECISION",
+        "key": "text: AWAITING FINANCE DECISION",
+        "container": "main",
+        "boardBox": {
+          "x": 848,
+          "y": 114,
+          "w": 197,
+          "h": 25
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2",
+        "key": "text: Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 155,
+          "w": 1264,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Your decision",
+        "key": "complementary: Your decision",
+        "container": "main",
+        "boardBox": {
+          "x": 1028,
+          "y": 413,
+          "w": 324,
+          "h": 526
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00",
+        "key": "text: ₦4,250,000.00",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1109,
+          "y": 539,
+          "w": 225,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(required to return or reject)",
+        "key": "text: (required to return or reject)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1080,
+          "y": 651,
+          "w": 176,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (required to return or reject)",
+        "key": "textbox: Note (required to return or reject)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1046,
+          "y": 683,
+          "w": 288,
+          "h": 74
+        },
+        "exception": null
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Approve v2",
+        "key": "button: Approve v2",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1046,
+          "y": 771,
+          "w": 288,
+          "h": 48
+        },
+        "exception": null
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Return",
+        "key": "button: Return",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1046,
+          "y": 833,
+          "w": 139,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Reject",
+        "key": "button: Reject",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1195,
+          "y": 833,
+          "w": 139,
+          "h": 44
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"QUEUE / PREPARE AN INVOICE / INV-0412\"",
+        "kind": "Text",
+        "name": "QUEUE / PREPARE AN INVOICE / INV-0412",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Repeated blocks with 2 text field(s) each",
+        "kind": "Repeated rows",
+        "name": "Repeated blocks with 2 text field(s) each",
+        "boardBox": {
+          "x": 90,
+          "y": 197,
+          "w": 1260,
+          "h": 59
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 648,
+          "w": 384,
+          "h": 111
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"Lagoon Health · Milestone 2 invoice\"; on the page it comes after Repeated list items with 4 text field(s) each"
+        ]
+      },
+      {
+        "label": "Heading \"STATION 4 · FINANCE REVIEW\"",
+        "kind": "Heading",
+        "name": "STATION 4 · FINANCE REVIEW",
+        "boardBox": {
+          "x": 1046,
+          "y": 427,
+          "w": 288,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 934,
+          "y": 516,
+          "w": 416,
+          "h": 50
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Only a Finance Lead can decide. You are Finance Lead.\"",
+        "kind": "Text",
+        "name": "Only a Finance Lead can decide. You are Finance Lead.",
+        "boardBox": {
+          "x": 1046,
+          "y": 489,
+          "w": 288,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 582,
+          "w": 384,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 939
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 946
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Only a Finance Lead can decide. You are Finance Lead.\"; on the page it comes after Repeated blocks with 3 text field(s) each"
+        ]
+      },
+      {
+        "label": "Text \"Amount\"",
+        "kind": "Text",
+        "name": "Amount",
+        "boardBox": {
+          "x": 1046,
+          "y": 539,
+          "w": 50,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 651,
+          "w": 80,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Basis\"",
+        "kind": "Text",
+        "name": "Basis",
+        "boardBox": {
+          "x": 1046,
+          "y": 567,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 680,
+          "w": 80,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Contract stage 2 of 4 · terms v1\"",
+        "kind": "Text",
+        "name": "Contract stage 2 of 4 · terms v1",
+        "boardBox": {
+          "x": 1109,
+          "y": 567,
+          "w": 225,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 680,
+          "w": 290,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"To\"",
+        "kind": "Text",
+        "name": "To",
+        "boardBox": {
+          "x": 1046,
+          "y": 593,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 709,
+          "w": 80,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"accounts@lagoonhealth.example\"",
+        "kind": "Text",
+        "name": "accounts@lagoonhealth.example",
+        "boardBox": {
+          "x": 1109,
+          "y": 593,
+          "w": 225,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 709,
+          "w": 290,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Version\"",
+        "kind": "Text",
+        "name": "Version",
+        "boardBox": {
+          "x": 1046,
+          "y": 619,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 950,
+          "y": 738,
+          "w": 80,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"v2 · changed: PO number\"",
+        "kind": "Text",
+        "name": "v2 · changed: PO number",
+        "boardBox": {
+          "x": 1109,
+          "y": 619,
+          "w": 225,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 738,
+          "w": 290,
+          "h": 21
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Approving earns APPROVED only. SENT is earned at station 6.\"",
+        "kind": "Text",
+        "name": "Approving earns APPROVED only. SENT is earned at station 6.",
+        "boardBox": {
+          "x": 1046,
+          "y": 891,
+          "w": 288,
+          "h": 30
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 861,
+          "w": 420,
+          "h": 18
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "MY WORK",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "container": "main",
+        "pageBox": {
+          "x": 889,
+          "y": 121,
+          "w": 75,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 211,
+          "w": 176,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 90,
+          "y": 213,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 184,
+          "y": 213,
+          "w": 80,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You are Finance Lead.",
+        "container": "main",
+        "pageBox": {
+          "x": 950,
+          "y": 615,
+          "w": 384,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the decision",
+        "container": "main",
+        "pageBox": {
+          "x": 950,
+          "y": 771,
+          "w": 384,
+          "h": 48
+        }
+      }
+    ],
+    "unexcepted": 13
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

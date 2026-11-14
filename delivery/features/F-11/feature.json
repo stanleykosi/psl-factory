@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-11",
   "outcome": "A Lead or Admin opens Setup, reads every rule with its value or \"Not set\", and saves a role-list rule as its next version",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-SETUP"
   ],
@@ -138,11 +138,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (UI-only feature: shared next build on 4111 against the contract mock on 4112)",
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -768,6 +770,29 @@
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-14T08:13:12Z",
+          "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Focus drops to `body` when the last Show more is activated by keyboard. Repro: admin, `psl_mock_setup=many`, 1440, `/setup/rules`. Focus \"Show more\" and press Enter. Expected: focus moves to a sensible place, such as the first new row or the table. Actual: 55 rows render, the button unmounts, `document.activeElement` is BODY, and the next Tab starts again at the top of the page. The same thing happens in the QA-1-1 Show more path, where the panel returns but focus is on body. This was not introduced in round 3 (the paging code is unchanged), and AC 19 does not specify focus. Path: frontend/src/features/setup/SetupFrame.tsx (Show more / the paging footer).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-11/round-3/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T08:22:52Z",
           "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de"
         }
       ]
@@ -1770,6 +1795,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T08:13:36Z",
+      "round": 3,
+      "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T08:22:53Z",
       "round": 3,
       "head": "604e1b0a0f8fb3ac2cee49124f70370b1343e6de",
       "reason": null
