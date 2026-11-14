@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -90,6 +90,18 @@
       "protected_paths_changed": [],
       "at": "2026-11-13T23:47:29Z",
       "evidence_ref": "delivery/features/F-02/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T06:34:26Z",
+      "seconds": 157.3,
+      "evidence_ref": "delivery/features/F-02/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -300,14 +312,28 @@
         "delivery/features/F-02/round-2/review-qa.md"
       ],
       "raised_by": "reviewer-qa",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-qa",
           "at": "2026-11-14T00:10:43Z",
           "head": "55e81940bdf715f222ebd7f15f26a9150d981915"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-14T06:34:26Z",
+          "refs": [
+            "b5873de"
+          ],
+          "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b5873de"
       ]
     },
     {
@@ -654,9 +680,9 @@
     "repository": "stanleykosi/psl-factory",
     "task_id": "FE-MYWORK",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "d3eb449b136592bec4756950ba86817a1ed3ee85",
+    "base_sha": "18272602287193bdfd6b95e00e68650df877ee60",
     "task_branch": "fe-mywork-fidelity",
-    "head_sha": "d3eb449b136592bec4756950ba86817a1ed3ee85",
+    "head_sha": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-02",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/5",
     "pr_number": 5,
@@ -667,7 +693,22 @@
     "merge_status": "merged",
     "merge_sha": "e78038f318c0c50e15e08baf23606a39a1b7f40d",
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/mock/fixtures/E-WORK-LIST.board.json",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/src/features/my-work/CaughtUp.tsx",
+      "frontend/src/features/my-work/FilterPanel.tsx",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/tests/mock-work-list.test.ts",
+      "frontend/tests/my-work-model.test.ts",
+      "frontend/tests/my-work.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -797,6 +838,14 @@
       "round": 3,
       "head": "eab6dffa85a3636cea84a414ea5ca4b55ab90534",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-14T06:34:51Z",
+      "round": 3,
+      "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "reason": null
     }
   ],
   "routing": {
@@ -813,9 +862,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
   },
   "blocked": null
 }

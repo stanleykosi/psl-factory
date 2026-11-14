@@ -505,3 +505,6 @@
 {"at":"2026-11-14T06:26:11Z","feature":"F-08","round":2,"kind":"transition","head":"568c0a407f78","from":"IN_REVIEW","to":"INTEGRATED_QA"}
 {"at":"2026-11-14T06:31:13Z","feature":"F-10","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":150.8,"commit":"02db3e841a47"}
 {"at":"2026-11-14T06:31:25Z","feature":"F-10","round":1,"kind":"transition","head":"02db3e841a47","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-14T06:34:26Z","feature":"F-02","round":3,"kind":"finding","action":"fix","finding":"QA-2-1","by":"builder"}
+{"at":"2026-11-14T06:34:26Z","feature":"F-02","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":157.3,"commit":"02d59d8bb221"}
+{"at":"2026-11-14T06:34:51Z","feature":"F-02","round":3,"kind":"transition","head":"02d59d8bb221","from":"IMPLEMENTING","to":"IN_REVIEW"}
