@@ -77,7 +77,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-14T07:06:52Z",
+      "seconds": 115.1,
+      "evidence_ref": "delivery/features/F-11/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -155,7 +168,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "3c0e57e947384473d480e82b89a11180083416f6",
     "task_branch": "fe-m3-setup-a-lead-or-admin-opens-setup-reads-every",
-    "head_sha": "3c0e57e947384473d480e82b89a11180083416f6",
+    "head_sha": "06b4c0e93bbc3083cea431c2f022c1e267486f24",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-11",
     "pr_url": null,
     "pr_number": null,
@@ -166,7 +179,51 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/setup.spec.ts",
+      "frontend/mock/evidence.mjs",
+      "frontend/mock/fixtures/E-EVIDENCE-UPLOAD.json",
+      "frontend/mock/fixtures/E-SETUP-RULE-SAVE.json",
+      "frontend/mock/fixtures/E-SETUP-RULES.json",
+      "frontend/mock/fixtures/me.admin.json",
+      "frontend/mock/fixtures/setup/delivery.desktop.json",
+      "frontend/mock/fixtures/setup/delivery.mobile.json",
+      "frontend/mock/fixtures/setup/finance.desktop.json",
+      "frontend/mock/fixtures/setup/finance.mobile.json",
+      "frontend/mock/fixtures/setup/rules.desktop.json",
+      "frontend/mock/fixtures/setup/rules.mobile.json",
+      "frontend/mock/proposals/setup.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/setup.mjs",
+      "frontend/src/app/setup/costing-rule/page.tsx",
+      "frontend/src/app/setup/delegation/page.tsx",
+      "frontend/src/app/setup/page.tsx",
+      "frontend/src/app/setup/payroll-visibility/page.tsx",
+      "frontend/src/app/setup/roles/page.tsx",
+      "frontend/src/app/setup/rules/delivery/page.tsx",
+      "frontend/src/app/setup/rules/finance/page.tsx",
+      "frontend/src/app/setup/rules/page.tsx",
+      "frontend/src/app/setup/staff/page.tsx",
+      "frontend/src/app/setup/templates/page.tsx",
+      "frontend/src/features/setup/DeliveryRulesView.tsx",
+      "frontend/src/features/setup/FinanceRulesView.tsx",
+      "frontend/src/features/setup/ProofField.tsx",
+      "frontend/src/features/setup/ReservedTab.tsx",
+      "frontend/src/features/setup/RulesView.tsx",
+      "frontend/src/features/setup/SetRulePanel.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/setup/api.ts",
+      "frontend/src/features/setup/contract-proposal.ts",
+      "frontend/src/features/setup/format.ts",
+      "frontend/src/features/setup/icons.tsx",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/setup/useRuleSave.ts",
+      "frontend/src/features/setup/useSetupRules.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/setup-mock.test.ts",
+      "frontend/tests/setup-proposal.test.ts",
+      "frontend/tests/setup-rules.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -234,9 +291,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "06b4c0e93bbc3083cea431c2f022c1e267486f24"
   },
   "blocked": null
 }
