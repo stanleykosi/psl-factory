@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-11",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "A Lead or Admin opens Setup, reads every rule with its value or \"Not set\", and saves a role-list rule as its next version",
+  "state": "READY",
   "task_ids": [
     "FE-M3-SETUP"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/setup` lands on `/setup/rules`. The Setup top-bar item is current. The SETUP eyebrow, the h1 \"Roles, rules and delegation\" and the seven tabs appear in the drawn order, Rules marked `aria-current=\"page\"`, Roles badge \"2\" and Rules badge \"8\". \u2014 verify: e2e as admin at 1440 (`page.url()` ends `/setup/rules`, tab names and hrefs, badge texts).",
+    "The list shows the 10 board rows in returned order. Set rows show `display_value` and \"v2 \u00b7 since 01 Oct\". Not-set rows show amber \"Not set\" and the HOLDS WORK tag. The costing value links to `/setup/costing-rule`. The banner reads \"8 rules aren\u2019t set yet\u2026\". \u2014 verify: unit `setup-rules.test.tsx` with the `rules.desktop.json` fixture, plus e2e.",
+    "Counts come only from the count fields. With `not_set_count` and `roles_missing_count` removed there is no badge, no banner and the phone h1 reads \"Rules\". With `not_set_count: 0` the badge shows \"0\" and there is no banner. Rows never change a count. \u2014 verify: unit, with three fixtures.",
+    "Unknown values are never shown as values. `set:false` always renders \"Not set\" or NOT SET even when a stray `value` or `display_value` is present. `set:true` without `display_value` renders \"Set\". Nothing renders `value` contents. \u2014 verify: unit.",
+    "Wrong user (read-only Lead): with `psl_mock_setup=readonly` the page shows the same rows but no \"Set a rule\" panel, no Finance \"Set \u2026 rules\" buttons and no form controls. A forced PUT on any component returns 403. \u2014 verify: unit with `can_change:false`; e2e with the cookie (`getByRole('button', { name: /Save as version/ })` count 0); mock test `setup-mock.test.ts` (PUT \u2192 403).",
+    "Editor gating is per row. A row with `can_change:true` but `editor.kind:'read_only'`, or with `link`, or with no options, is absent from the Rule picker. The panel is absent when no row qualifies. `/me` roles have no effect: the same fixture under the `finance_lead` and `admin` personas renders identically. \u2014 verify: unit.",
+    "Roles allowed checkboxes come from `editor.options`, in order, labelled `label`. They start ticked only from `editor.selected`: none for a Not-set rule, \"PMO Lead\" for the client-documents rule. The duplicate \"PMO Lead\" on the board does not appear. \u2014 verify: unit and e2e.",
+    "First save. On \"Who may assign an RFP to a PM\" (revision 0), tick PMO Lead, keep Starts as today (Lagos), type a Why and attach a file, then click \"Save as version 1\". It sends one PUT with exactly `{expected_revision:0, value:{roles:['pmo_lead']}, starts:<today>, reason:<text>, evidence_id:'EV-\u2026'}` and `X-CSRFToken: mock-csrf-admin`. The list reloads: the row shows \"PMO Lead\", \"v1 \u00b7 since <today DD Mon>\" and no HOLDS WORK. The Rules badge and banner read 7. \"Saved as version 1.\" is announced. \u2014 verify: unit (captured request body and headers), and e2e against the mock (row text and badge after save).",
+    "A blank Why sends no `reason` key, and no upload sends no `evidence_id`. A double click sends one PUT. \u2014 verify: unit.",
+    "Stale save. With `psl_mock_setup_save=stale`, Save shows the 409 message in the panel's `role=\"alert\"` callout, which takes focus. The list reloads to the other person's version. The ticks, Why and Proof are cleared, and the button reads \"Save as version {new+1}\". Exactly one PUT was sent. \u2014 verify: unit, and e2e (request count via `page.on('request')`).",
+    "Invalid input. With `psl_mock_setup_save=invalid` the alert shows \"Check these fields: reason, starts.\". Why and Starts have `aria-invalid=\"true\"` and the edits are kept. `fieldsFromMessage` maps `value.roles`, `roles`, `starts`, `reason` and `evidence_id`, and ignores unknown words. \u2014 verify: unit (mapping table), and e2e.",
+    "Mock validation. A PUT with roles outside `editor.options` answers 422 naming `value.roles`. `expected_revision` \u22121 or a string answers 422. A mismatched revision answers 409 and changes nothing (a following GET shows the old revision). Unknown component answers 404. No `X-CSRFToken`, or another persona's token, answers 403 `csrf_failed`. \u2014 verify: `setup-mock.test.ts`.",
+    "Uncertain effect. A PUT that rejects with a network error re-reads the list once. If the row's revision is unchanged, the edits stay with the \"couldn\u2019t confirm\" text and no second PUT is sent until a click. If the revision changed, the edits are cleared with \"This rule changed\u2026\". If the re-read fails, Save is disabled with \"Reload the page before saving again.\" \u2014 verify: unit with stubbed fetch sequences.",
+    "401 on read or on save shows `SignedOutState` with `next=%2Fsetup%2Frules`. 403 on read (`psl_mock_setup=forbidden`) shows \"This section isn\u2019t open to your role.\" and no rule names. The pm persona sees `NotOpenState` on `/setup/rules` and the mock records no E-SETUP-RULES call. A server error shows the load error card, and Try again re-reads. \u2014 verify: unit, and e2e (pm persona and the forbidden cookie).",
+    "Proof upload. Choosing a file sends one POST to `/api/v1/cases/C-SETUP-1/evidence` with the row's `evidence_kind`, filename, base64 content and `case_revision` 1. The box then shows the filename and \"Uploaded \u00b7 N KB\". A second file in the same edit sends `case_revision` 2. On a row without `proof_case` the drop area is disabled with \"Proof can\u2019t be attached here yet.\" A 422 upload marks Proof invalid and Save still works. \u2014 verify: unit and `setup-mock.test.ts` (sha256 equals the content's real digest).",
+    "Finance view. `/setup/rules/finance` shows the breadcrumb, h1, lead text, \"All 25 values are Not set. Real reviewers\u2026\", and 7 group panels in board order with every row and NOT SET tag. Each group has its \"Set \u2026 rules\" button (the label for BU totals reads \"Set BU totals rules\"). Activating it expands a panel limited to that group's editable rules, and `aria-expanded` toggles. As `readonly`, no buttons appear. \u2014 verify: unit and e2e as finance_lead.",
+    "Delivery view. `/setup/rules/delivery` shows the Delivery panel table (RULE, VALUE, USED BY) with the 5 board rows, \"Keep, never purge\" for the set row, the info callout, and the Next panel text. There are no edit controls. \u2014 verify: unit and e2e.",
+    "Phone. At 390px with `psl_mock_setup=mobile`:",
+    "Paging. With `psl_mock_setup=many` the list shows 50 rows and \"Show more\". Clicking it appends 5 more, and Show more disappears. A failing second page keeps the 50 rows and shows the warning callout. \u2014 verify: unit and e2e.",
+    "Reserved tabs. Each of the six tab links opens its route with the frame (that tab current) and \"{Label} comes next.\". It makes no API call besides `/me`. The pm persona gets `NotOpenState`. \u2014 verify: e2e (loop over the six), plus a unit test for `ReservedTab`.",
+    "Empty. With `psl_mock_setup=empty`, `/setup/rules` shows the frame, \"No rules to show.\" and no banner or panel. Finance and delivery show the same empty pattern. \u2014 verify: e2e.",
+    "Contract overlay (PMO-0-2).",
+    "`mock-contract.test.ts` passes with the new operations and the `admin` persona: 200 for finance_lead and admin, 403 for pm and none, and every declared error scenario. \u2014 verify: `cd frontend && npx vitest run tests/mock-contract.test.ts`.",
+    "Accessibility (A-ACCESSIBILITY).",
+    "Design fidelity: all six boards PASS (coverage 100% after approved exceptions, visual \u2265 90). Reports and side-by-sides go in `delivery/features/F-11/round-<N>/fidelity/`.",
+    "Shared edits stay additive. `git diff <base> -- frontend/src/shell frontend/src/api architecture frontend/package.json frontend/package-lock.json delivery/checks.sh delivery/config.json delivery/merge-policy.json` is empty. The `server.mjs` and `mock-contract.test.ts` diffs add lines only and change only the lists named under Lanes. \u2014 verify: `git diff --stat` and the diff itself."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "I rated it high: - The save is a CSRF write to policy configuration (REC-CONFIG, INV-REVISION, INV-AUDIT; handoff.md:7508-7705). It sets who holds authority on pre-sale, documents and every Finance line. - The UI must not: - invent or prefill a policy value (\"Not set\" is display only, and unknown is never shown as a value); - show edit controls without the backend's `can_change`; - re-apply stale edits after a 409; - imply that Admin confers approval (guide/10-POLICY-CONFIGURATION.md:16). - It also adds an evidence upload. Surfaces: - `security` and `auth`: permission gating, CSRF, and 401 and 403 handling. - `api`: two setup endpoints plus evidence. - `contract-change`: the PMO-0-1 and PMO-0-2 proposal. - `ui`: six boards. - `product-decision`: PMO-0-3 and PMO-0-4, and the reserved-tab placeholders."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-11/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +101,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-11/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +201,29 @@
   "created_at": "2026-11-14T04:55:45Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T05:48:10Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-11/readiness.md",
+      "delivery/features/F-11/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
