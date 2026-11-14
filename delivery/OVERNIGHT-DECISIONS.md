@@ -21,7 +21,7 @@ Each entry: what was decided, why, and how to revert.
   needing PSL or the backend developer waits.
 
 ## Waiting for you
-(updated as the night goes on)
+- **Check Exceptions (F-06)**: merged with my provisional product acceptance (D-11). Open /exceptions; confirm or reject D-04's exceptions.
 
 ## Decisions taken
 - **D-01 · 3D floor concept: 3, the tilted swimlane board.** Four live concepts: https://claude.ai/artifact/Mc4ouUKmHtRsyJk8xkALKw (copy in `design/concepts/floor-3d-concepts.html`). I picked 3 because it is your approved flat board leaned back like a drafting table: same reading order, every label readable, closest to the design you drew, and the lightest to run. 1 (isometric conveyor) was the runner-up; 2 (city) and 4 (amphitheatre) look striking but hide labels and read worse at a glance. Built into the Overview's "3D floor" option in F-08. Revert: reply with another concept number and F-08 gets a round to swap it.
@@ -34,3 +34,4 @@ Each entry: what was decided, why, and how to revert.
 - **D-08 · Phone back links in the top bar.** Your phone boards draw a back link inside the phone top bar on sub-pages ("← Home", "← Queue", "← Projects"). The top bar belongs to the app frame, so for now each page carries its own back link just under the bar (provisional exception for F-06 and F-07; the SCR-07 phone visual score is 68 because of it). Follow-up task added: the app frame gets a back-link slot in the phone bar, then pages move their link into it and re-run the design check. Revert: none needed; this is the path to matching the boards.
 - **D-09 · Projects "Active" tab** shows only active projects (the board's Active tab also drew one closed project and "5 PROJECTS"; I treated that as a board slip). Revert: tell me Active should include recently closed ones.
 - **D-10 · Journey tag words** come only from the state list ("WAITING"), not the board's custom "AWAITING FINANCE DECISION"; the richer wording needs a field from the backend and is noted for v7. On phones the journey shows the coloured square without a visible tag, as your board does; the detail line beside it still says what is happening in words, so colour is not the only signal. Revert: ask for visible tags on phones.
+- **D-11 · Exceptions (F-06) merged with provisional product acceptance** after it passed the design check (desktop 100%/90.7, phone 100%/91.6 with the board's rows), all reviews, QA and PMO. Revert: tell me what to change; F-06 reopens.
