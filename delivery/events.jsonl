@@ -1029,3 +1029,5 @@
 {"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-14T21:08:39Z","feature":"F-16","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-14T21:15:05Z","feature":"F-15","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"abf4b7a0660a","written_at":"2026-11-14T21:15:05Z"}
+{"at":"2026-11-14T21:15:05Z","feature":"F-16","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"df180ca0716d","written_at":"2026-11-14T21:15:05Z"}
