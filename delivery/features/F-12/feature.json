@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-12",
   "outcome": "A person sees their own alerts, opens one to its work, and sets how they are alerted",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -99,11 +99,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA reviewer (F-12 round 1)",
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -192,6 +194,29 @@
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-14T07:31:20Z",
+          "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone 390, `/settings/alerts`: after a 409 (scenario `stale`) or a 500 on Save, the callout (\"Someone changed these settings since you opened them. This is the latest version; make your changes again.\") is focused but its last line sits under the fixed Save footer. Measured: callout y 696-779, footer y 758-844 (position fixed), scrollY 0 with 49px still scrollable. `elementFromPoint` at y=775 hits the footer, not the callout. Repro: cookie `psl_mock_alerts=stale`, 390x844 touch, tap \"WhatsApp, A decision is waiting for me\", tap Save settings. Expected: the whole focused callout shows above the footer. Actual: \"again.\" is hidden until the person scrolls. Evidence: `round-1/qa-evidence/stale-callout-under-footer-390.png`. The 422 callout is shorter (696-758) and just clears the footer. This passes WCAG 2.4.11 because the callout is only partly hidden, so it is not blocking. Suggested fix: add `scroll-margin-bottom`/`scroll-padding-bottom` equal to the footer height (86px, matching `.alerts-footspace`) and scroll the callout into view on focus. `frontend/src/features/alerts/AlertSettingsPage.tsx:72`, `alerts.css:73`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-12/round-1/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T07:38:46Z",
           "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5"
         }
       ]
@@ -329,6 +354,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T07:32:32Z",
+      "round": 1,
+      "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T07:38:57Z",
       "round": 1,
       "head": "831b17164ca8b1200e9ff84d2d486ea0d7dc7dc5",
       "reason": null
