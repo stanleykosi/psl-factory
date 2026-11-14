@@ -1,4 +1,4 @@
-// Local contract mock for /api/v1. Routes come from the reviewed openapi.json; M-1
+// Local contract mock for /api/v1. Routes come from the v4 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
 // Persona: cookie psl_mock_persona (finance_lead | pm | none; default finance_lead).
@@ -6,15 +6,20 @@
 // applied only when the operation declares that status.
 // Work items: E-WORK-ITEM and E-WORK-HISTORY pick fixtures/work/<id>.json and <id>.history.json when
 // present (else the default fixture); W-1099 is the reserved no-access id. History honours kind, limit, cursor.
+// Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
+// the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
+// <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 import { workList } from './work-list.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v2-reviewed', 'openapi.json');
+export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v4', 'openapi.json');
 
 export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE'];
 export const PERSONAS = ['finance_lead', 'pm', 'none'];
@@ -62,13 +67,88 @@ function historyPage(history, query) {
   return page;
 }
 
-function workResponse(operationId, url, fixtures, work) {
+function workResponse(operationId, url, fixtures, work, overrides) {
   const workId = decodeCookie(url.pathname.split('/')[4] ?? '');
   if (workId === NO_ACCESS_WORK_ID) return [404, SCENARIO_BODIES[404]];
   // Only plain ids ("W-1003") pick a per-id file, so "W-1004.history" or other sidecar names never answer as an item.
   const own = (name) => (/^W-\d+$/.test(workId) && Object.hasOwn(work, name) ? work[name] : undefined);
-  if (operationId === 'E-WORK-ITEM') return [200, own(workId) ?? fixtures['E-WORK-ITEM']];
+  if (operationId === 'E-WORK-ITEM') return [200, overrides.get(workId) ?? own(workId) ?? fixtures['E-WORK-ITEM']];
   return [200, historyPage(own(`${workId}.history`) ?? fixtures['E-WORK-HISTORY'], url.searchParams)];
+}
+
+const TASK_OPERATIONS = ['E-TASK-CLAIM', 'E-TASK-DECIDE'];
+const NOTE_REQUIRED = new Set(['return', 'reject', 'revoke']);
+const NOTE_MAX = 2000;
+const invalid = (fields) => [422, { code: 'invalid', message: `Check these fields: ${[...new Set(fields)].join(', ')}.` }];
+
+/** One request-body validator per task operation, compiled once from the loaded openapi. */
+function bodyValidators(openapi) {
+  const ajv = new Ajv2020({ allErrors: true, strict: true });
+  addFormats(ajv);
+  const validators = {};
+  for (const ops of Object.values(openapi.paths)) {
+    for (const op of Object.values(ops)) {
+      if (TASK_OPERATIONS.includes(op?.operationId)) {
+        validators[op.operationId] = ajv.compile(op.requestBody.content['application/json'].schema);
+      }
+    }
+  }
+  return validators;
+}
+
+/** Field names from Ajv errors: the missing or extra property, else the failing path; "body" for the whole body. */
+function errorFields(errors) {
+  return errors.map(
+    (e) => e.params.missingProperty ?? e.params.additionalProperty ?? (e.instancePath.split('/')[1] || 'body'),
+  );
+}
+
+/** The task with this id in the items the mock currently serves: default, per-id files, then overrides. */
+function findTask(taskId, fixtures, work, overrides) {
+  const items = new Map([[fixtures['E-WORK-ITEM'].id, fixtures['E-WORK-ITEM']]]);
+  for (const [name, body] of Object.entries(work)) if (/^W-\d+$/.test(name)) items.set(name, body);
+  for (const [workId, body] of overrides) items.set(workId, body);
+  for (const [workId, item] of items) {
+    const task = item.tasks.find((t) => t.id === taskId);
+    if (task) return { workId, item, task };
+  }
+  return undefined;
+}
+
+function taskResponse(operationId, url, raw, ctx) {
+  const { fixtures, work, overrides, validators, me } = ctx;
+  const taskId = decodeCookie(url.pathname.split('/')[4] ?? '');
+  const found = findTask(taskId, fixtures, work, overrides);
+  if (!found) return [404, SCENARIO_BODIES[404]];
+  let body;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return invalid(['body']);
+  }
+  const validate = validators[operationId];
+  if (!validate(body)) return invalid(errorFields(validate.errors));
+  const decide = operationId === 'E-TASK-DECIDE';
+  if (decide) {
+    const blank = typeof body.note !== 'string' || body.note.trim() === '';
+    if ((NOTE_REQUIRED.has(body.verdict) && blank) || (body.note?.length ?? 0) > NOTE_MAX) return invalid(['note']);
+    if (body.verdict === 'revoke') return [501, NOT_MOCKED];
+  }
+  const { workId, item, task } = found;
+  // Revision before eligibility, so a decided task (now you_can_act: false) answers a repeat decide with 409.
+  if (body.expected_revision !== task.revision) return [409, SCENARIO_BODIES[409]];
+  if (!task.you_can_act) return [403, SCENARIO_BODIES[403]];
+  if (!decide) return [200, { task_id: task.id, revision: task.revision, claimed_by: me.name }];
+
+  const next = work[`${workId}.next`];
+  if (next && !overrides.has(workId)) {
+    overrides.set(workId, next);
+    return [409, SCENARIO_BODIES[409]];
+  }
+  const decided = work[`${workId}.${body.verdict}`];
+  if (decided) overrides.set(workId, decided);
+  const result = { task_id: task.id, verdict: body.verdict, decided_by: me.name, decided_at: new Date().toISOString() };
+  return [200, { ...result, work_state: (decided ?? item).state }];
 }
 
 export function loadRoutes(openapi) {
@@ -114,13 +194,22 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
   const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME').map((id) => [id, readFixture(id)]));
   const work = readWorkFixtures();
+  const validators = bodyValidators(openapi);
+  // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
+  const overrides = new Map();
 
   return http.createServer((req, res) => {
-    // Drain any request body; the mock answers from fixtures only.
-    req.resume();
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
     req.on('end', () => {
+      const raw = Buffer.concat(chunks).toString('utf8');
       const url = new URL(req.url ?? '/', 'http://mock.local');
       const method = (req.method ?? 'GET').toLowerCase();
+      if (method === 'post' && url.pathname === '/__mock/reset') {
+        overrides.clear();
+        res.writeHead(204, { 'Cache-Control': 'no-store' });
+        return res.end();
+      }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
@@ -137,7 +226,10 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
-        return send(res, ...workResponse(route.operationId, url, fixtures, work));
+        return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
+      }
+      if (TASK_OPERATIONS.includes(route.operationId)) {
+        return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));
       }
       return send(res, 200, fixtures[route.operationId]);
     });

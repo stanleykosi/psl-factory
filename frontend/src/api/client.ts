@@ -1,4 +1,4 @@
-// Typed client for the PSL Factory data API (architecture/packages/v2-reviewed/openapi.json).
+// Typed client for the PSL Factory data API (architecture/packages/v4/openapi.json).
 // Same origin, session cookie included, X-CSRFToken on every write. Feature code calls
 // `call(api.GET(...))` and gets data or an ApiError; it never reads a raw Response.
 import createClient, { type Middleware } from 'openapi-fetch';
