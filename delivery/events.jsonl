@@ -423,3 +423,4 @@
 {"at":"2026-11-14T05:40:06Z","feature":"F-13","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-14T05:45:48Z","feature":"F-10","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","payments","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-14T05:45:51Z","feature":"F-10","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-14T05:46:31Z","feature":"F-10","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}

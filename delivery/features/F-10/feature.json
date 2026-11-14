@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -77,7 +77,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -93,7 +93,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-10/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -140,13 +140,13 @@
     "evidence_refs": []
   },
   "git": {
-    "repository": null,
+    "repository": "stanleykosi/psl-factory",
     "task_id": "FE-M3-FINANCE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "b91ca6a7c8c4016ac7b11bccd76e87c1265fb765",
+    "task_branch": "fe-m3-finance-a-finance-lead-opens-month-end-for-octob",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-10",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -189,14 +189,22 @@
     }
   },
   "created_at": "2026-11-14T04:55:45Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-14T05:45:51Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T05:46:31Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -215,7 +223,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
