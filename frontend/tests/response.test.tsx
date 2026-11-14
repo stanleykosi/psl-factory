@@ -874,11 +874,10 @@ describe('boundaries', () => {
     }
   };
 
-  it('no feature branch reads /me roles or destinations, and the only casts are in api.ts', () => {
+  it('no feature branch reads /me roles or destinations, and there are no casts', () => {
     expect(grep('roles\\|destinations', 'src/features/response')).toBe('');
     const casts = grep(' as unknown as\\| as Response', 'src/features/response').split('\n').filter(Boolean);
-    expect(casts.length).toBeGreaterThan(0);
-    expect(casts.every((line) => line.startsWith('src/features/response/api.ts:'))).toBe(true);
+    expect(casts).toEqual([]);
     expect(grep('resend\\|deliver', 'src/features/response/api.ts')).toBe('');
   });
 });

@@ -6,12 +6,9 @@ import type { WorkItem } from '@/api/types';
 
 import type {
   EvidenceUploadBody,
-  EvidenceUploadResult,
   ResponseBody,
-  ResponseResult,
   ResponseWorkItem,
   WorkActionBody,
-  WorkActionResult,
 } from './contract';
 
 /** An item (from F-03's useWorkItem or E-WORK-ITEM) read with the response fields. A task whose response names no variant has no response to show. */

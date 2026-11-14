@@ -105,9 +105,11 @@ describe('fixtures', () => {
     expect(body.sample).toBe(true);
   });
 
-  it('the base keeps v4 and its M-1 list, and no fixtures/work/W-16 file exists', () => {
-    expect(OPENAPI_PATH).toMatch(/packages\/v4\/openapi\.json$/);
-    expect(M1_OPERATIONS).toEqual(['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE']);
+  it('the base is v7, E-RESPONSE and E-WORK-ACTION stay outside the M-1 list, and no fixtures/work/W-16 file exists', () => {
+    expect(OPENAPI_PATH).toMatch(/packages\/v7\/openapi\.json$/);
+    expect(M1_OPERATIONS).toEqual(expect.arrayContaining(['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE']));
+    expect(M1_OPERATIONS).not.toContain('E-RESPONSE');
+    expect(M1_OPERATIONS).not.toContain('E-WORK-ACTION');
     expect(RESPONSE_OPERATIONS).toEqual(['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION']);
     expect(readdirSync(join(__dirname, '../mock/fixtures/work')).filter((n) => n.startsWith('W-16'))).toEqual([]);
   });
