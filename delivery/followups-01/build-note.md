@@ -27,3 +27,15 @@ LANE: frontend
 - Playwright (E2E_PORT=4521 MOCK_PORT=4522): my-work, work-item-board, setup, alerts-bell, decide-board and projects specs: 163 passed, 1 failed (projects "1 PROJECTS", fixed in e2e and re-run: passed). alerts.spec.ts at 390: 9 passed. I did not run the other e2e specs (decide, exceptions, finance-month-end, overview, response, start-work, work-item, frame).
 - Not done: the design-fidelity tool on the My work empty boards (item 9) and on the decide done phone board (item 1). The changes are small, but a fidelity score has not been re-measured.
 - Ports 4521 and 4522 are free; test-results was deleted; `git status --porcelain` is empty.
+
+## Round 2
+
+Head: 290a212a2441e67190e21fc61c940a77a670f4ce (was 1a7e4c9).
+
+Fixed UI-1-1 only. The state panel has a new presentation flag `note_first` (type, mock-contract schema, `StatePanel` in WorkItemOverview.tsx). When true, the note renders before the panel links; otherwise it stays after them. W-1709's desktop panel sets it, so setup-needed now reads body, note, "Open Setup", "See all exceptions", as the board draws. Owner-needed and effect-uncertain do not set it and are unchanged. No check on the work id.
+
+Design-fidelity, production build, 1440, FRAME_FIXTURES=1, ports 4811/4812, pm cookie, F-14 exceptions, wait 500 ms (reports in fidelity/<board>-1440/):
+- SCR-02-desktop-setup-needed (W-1709): visual 95.4 (was 89.8), coverage 96.7 raw, 100 with exceptions. PASS.
+- SCR-02-desktop-owner-needed (W-1708): visual 92.7 (was 92.7), coverage 100 with exceptions. PASS. One run scored 88 because Google Fonts could not be reached; two reruns gave 92.7.
+
+Checks: lint and typecheck clean, production build clean, and every test file passes. The machine load was above 200 while I ran the full suite, so each full `delivery/checks.sh` run failed 1 to 4 different timing-sensitive tests (ECONNRESET or loading-state timeouts in mock-contract, work-item-board, work-item, decide, setup-rules, start-work, response). Each of those files passes when run alone (459 of 459 in the last six-file run; 134 of 134 for response and work-item-board). Re-run the gate on a quiet machine to confirm.
