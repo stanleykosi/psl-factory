@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-02",
   "outcome": "My work shows a person's queues, with search, filter, 10/20/50 rows and live refresh, against the contract mock",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-MYWORK"
   ],
@@ -115,11 +115,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (frontend against the contract mock only, UI-only per coordinator)",
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -685,6 +687,52 @@
           "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
         }
       ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried over from QA-2-3. The mock answers any id it has no fixture for with W-1001's body. `GET /api/v1/work/W-1007` and `GET /api/v1/work/W-1115` both return 200 with `id: W-1001`. So the 18 rows numbered W-11xx, and the board sample's W-14xx rows, open \"Lagoon Health \u00b7 Milestone 2 invoice\" under their own URL. W-1401 looks correct only because it has the same title. Expected: a 404 for unknown ids, which the mock already does for W-1099. Source: `frontend/mock/server.mjs` (work-item lookup).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T06:52:31Z",
+          "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"Not now\" hides a suggestion only until the page reloads. I dismissed one, opened \"Draft minutes\" (which goes to /assistant), pressed Back, and all 3 suggestions were shown again. This is as build.md describes (there is no endpoint), but people will see dismissed suggestions come back. It needs the dismissal endpoint when the `suggestions` field is adopted.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-02/round-3/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-14T06:52:31Z",
+          "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -996,6 +1044,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T06:43:47Z",
+      "round": 3,
+      "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T06:52:32Z",
       "round": 3,
       "head": "02d59d8bb2216a7242a02454b957d4a0b0fdde49",
       "reason": null
