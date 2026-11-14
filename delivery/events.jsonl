@@ -946,3 +946,4 @@
 {"at":"2026-11-14T19:47:51Z","feature":"F-15","round":1,"kind":"finding","action":"add","finding":"UI-1-2","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
 {"at":"2026-11-14T19:49:12Z","feature":"F-15","round":1,"kind":"transition","head":"07d078ef95ae","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-14T19:49:12Z","feature":"F-15","round":2,"kind":"transition","head":"07d078ef95ae","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-14T19:53:07Z","feature":"F-16","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":185.4,"commit":"713e628b94ce"}
