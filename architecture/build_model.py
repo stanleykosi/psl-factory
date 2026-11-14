@@ -4,7 +4,7 @@ The canonical model is authored here as compact tables so it stays reviewable; t
 factory compiler (packages/architecture/arch.py) validates it and generates the package.
 Run: python3 architecture/build_model.py
 """
-import hashlib, json, os
+import copy, hashlib, json, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = {
@@ -17,6 +17,7 @@ SRC = {
     'S-DECISIONS-V3': ('Contract fields for the approved boards; decision variants parked, 13 Nov 2026', 'sources/decisions-2026-11-13-v3.md', '2026-11-13c', 'private'),
     'S-DECISIONS-V4': ('Sample tag hidden; remaining frontend screens split to build in parallel, 14 Nov 2026', 'sources/decisions-2026-11-14.md', '2026-11-14', 'private'),
     'S-DECISIONS-V5': ('Build in parallel, split where the contract is missing, frontend drafts contract proposals, 14 Nov 2026', 'sources/decisions-2026-11-14-v2.md', '2026-11-14b', 'private'),
+    'S-DECISIONS-V6': ('Boards are the spec with a fidelity gate; overnight contract proposals and screen-family splits, 14-15 Nov 2026', 'sources/decisions-2026-11-15.md', '2026-11-15', 'private'),
 }
 def sha(p): return hashlib.sha256(open(os.path.join(HERE, p), 'rb').read()).hexdigest()
 sources = [{'id': k, 'title': t, 'path': p, 'version': v, 'classification': c, 'sha256': sha(p)} for k, (t, p, v, c) in SRC.items()]
@@ -503,6 +504,417 @@ decisions += [
         ['Keep untyped rows documented in prose', 'One endpoint per tab'], ['R-PROJECT', 'R-REPORTS'], ('S-DECISIONS-V5', 'S-SCREENS')),
 ]
 
+# ---- v7 PROPOSAL (backend developer to confirm; S-DECISIONS-V6, under S-DECISIONS-V5 item (g)): the fields, parameters and
+# endpoints the remaining approved boards need. Every addition to an existing payload is optional and every v6 required list,
+# enum value and parameter is kept, so built screens and their fixtures keep validating. Business rules (which steps, actions,
+# events, responders or authorities exist, who may act, every amount) stay with the backend; the contract only carries them.
+# Where the rule itself is undecided the screen gets display fields only and the decision stays open.
+V7_EV = ['S-DECISIONS-V6', 'S-SCREENS']
+B_CANVAS = 'design/canvas/project/'; F_CANVAS = 'design/canvas/finance/project/'
+TONE = S(enum=['neutral', 'person', 'agent', 'stopped', 'uncertain', 'verified', 'restricted'], description='Display tone the backend assigns; the frontend maps it to the design-system tag colour and never derives it from state names')
+TAG = O({'label': S(), 'tone': TONE}, ['label'])
+LINK = O({'label': S(), 'reference': S(), 'work_id': S(), 'document_id': S(), 'case_id': S(), 'evidence_id': S()}, [])
+AGENT_NOTE = O({'agent': AGENT_KEY, 'lines': A(S())}, ['agent', 'lines'])
+PERSON = O({'name': S(), 'role': S(), 'is_you': B}, ['name'])
+DUE = O({'date': DATE, 'unknown': B}, ['unknown'])
+CASE_REF = O({'case_id': S(), 'title': S()}, ['case_id', 'title'])
+def described(schema, text):
+    schema['description'] = text; return schema
+def add_param(e, *params):
+    names = {p['name'] for p in e['parameters']}
+    for p in params:
+        assert p['name'] not in names, p['name']
+        e['parameters'].append(p)
+def link_eps(pairs, scen=None):
+    for eid, decs in pairs:
+        e = EP_BY_ID[eid]; e['refs'] = e['refs'] + [d for d in decs if d not in e['refs']]; e['evidence'] = sorted(set(e['evidence']) | {'S-DECISIONS-V6'})
+        if scen and scen not in e['refs']: e['refs'].append(scen)
+FIELDS_422 = {'status': '422', 'description': 'Validation failed; fields named', 'schema': O({'code': S(), 'message': S(), 'fields': A(O({'name': S(), 'message': S()}))}, ['code', 'message'])}
+
+# -- All exceptions (SCR-10; F-06 round 2 build) -> D-EXCEPTIONS-LIST
+ex = EP_BY_ID['E-EXCEPTIONS']
+add_param(ex, P('q', 'query', False, S(description='PROPOSAL (D-EXCEPTIONS-LIST): free-text search over title, reference, what is being done and who acts, across every row the person may see')),
+          P('what', 'query', False, S(enum=['effect_uncertain', 'owner_needed', 'setup_needed', 'blocked', 'followup_needed'], description='PROPOSAL (D-EXCEPTIONS-LIST): one kind')))
+add_props(ex['responses'][0]['schema'], {'open_count': I(description='PROPOSAL (D-EXCEPTIONS-LIST): every row matching q/what the person may see, across pages ("4 OPEN", "Exceptions · 4"); absent when not counted, never guessed')})
+add_props(ex['responses'][0]['schema']['properties']['items']['items'], {'ref': S(description='The work\'s business reference shown under the title, e.g. INV-0412')})
+
+# -- Record a response r2 (SCR-16 client response, SOW, success; F-09 PMO-0-1) and team input (F-09B) -> D-RESPONSE-VIEW r2
+wi = EP_BY_ID['E-WORK-ITEM']['responses'][0]['schema']
+task_item = wi['properties']['tasks']['items']
+resp_block = task_item['properties']['response']
+resp_block['properties']['variant']['enum'] += ['go_live_acceptance', 'support_handover']
+RECORDED = O({'by': PERSON, 'at': DT, 'responded_at': DT, 'received_via': S(description='One of response.channels[].value'), 'proof_count': I(), 'summary': S()}, ['by', 'at'])
+add_props(resp_block, {
+    'intro': S(description='Sentence above the form as composed by the backend, e.g. "Lagoon Health\'s client contact doesn\'t log in… The release waits for this."'),
+    'proof_hint': S(description='Hint under the proof field, e.g. "Signed PDF, e-signature record, or the client\'s email saved as PDF"'),
+    'agent_note': AGENT_NOTE,
+    'channels': A(LABELLED),
+    'context': O({'project': CASE_REF, 'document': O({'reference': S(), 'label': S(), 'document_id': S()}, ['reference'])}, []),
+    'next': A(S(description='"What happens next" lines, e.g. "the SOW\'s 4 stages become the project\'s milestones"')),
+    'recorded': RECORDED,
+})
+resp_block['properties']['channels']['description'] = 'How the response may have been received (e.g. email, letter, in person), as the backend lists them; sent back as received_via'
+resp_block['properties']['recorded']['description'] = 'Present once the response is recorded (success board): who recorded it, when, how it was received and how many proof files'
+rs = EP_BY_ID['E-RESPONSE']
+add_props(rs['request'], {'received_via': S(description='One of response.channels[].value')})
+add_props(rs['responses'][0]['schema'], {'revision': I(minimum=1), 'recorded': copy.deepcopy(RECORDED), 'next': A(S())})
+
+# -- Reconcile r2 (SCR-02 awaiting reconciliation; F-09 PMO-0-1, PMO-0-5) -> D-WORK-ACTIONS-VIEW r2
+add_props(wi['properties']['reconcile'], {
+    'unknown_note': S(description='What "I can\'t tell yet" does, as the backend states it, e.g. "Keep it held and remind me tomorrow"'),
+    'resend_note': S(description='What a resend reuses, e.g. "A resend reuses the same invoice number"')})
+add_props(EP_BY_ID['E-WORK-ACTION']['request'], {'case_revision': I(minimum=1, description='Case revision returned by the proof upload, when evidence_id is sent')})
+
+# -- RFP frame, outcome boards and drafted follow-up (SCR-16 rfp-*; F-09 PMO-0-2) -> D-RFP-OUTCOME r2
+add_props(wi, {'rfp': O({
+    'reference': S(), 'title': S(), 'client': S(),
+    'status': O({'kind': S(enum=['deadline', 'submitted', 'won', 'lost', 'pending', 'unknown']), 'label': S(description='e.g. "DEADLINE 28 NOV · 16 DAYS", "WON · 04 DEC"'), 'at': DT, 'days_left': I()}, ['kind', 'label']),
+    'pm': PERSON,
+    'tabs': A(O({'key': S(enum=['requirements', 'team_input', 'pricing', 'submission', 'outcome']), 'label': S(), 'count': I(), 'of': I(), 'work_id': S(), 'current': B}, ['key', 'label'])),
+}, ['reference', 'status'])})
+wi['properties']['rfp']['description'] = 'PROPOSAL (D-RFP-OUTCOME r2): the RFP frame on every RFP board and on team input. Counts are composed by the backend; absent counts are not shown.'
+ro = wi['properties']['rfp_outcome']
+add_props(ro['properties']['recorded'], {
+    'rows': A(O({'label': S(), 'value': S(), 'at': DT}, ['label', 'value'])),
+    'reminder': O({'holder': PERSON, 'at': DT}, ['holder', 'at']),
+    'lessons': A(O({'category': LABELLED, 'text': S()}, ['text'])),
+    'lessons_by': PERSON,
+    'debrief': LINK,
+    'archive_reference': S(description='e.g. ARC-0117'),
+    'engagement': O({'reference': S(), 'work_id': S()}, ['reference']),
+    'next': A(S()),
+})
+add_props(ro, {
+    'lesson_categories': A(LABELLED),
+    'followup': O({
+        'to': S(description='Recipient address exactly as the backend returns it'),
+        'body': S(), 'version': I(minimum=1), 'agent': AGENT_KEY,
+        'checks': A(O({'text': S(), 'source': S(), 'status': S(enum=['done', 'now', 'next'])}, ['text', 'status'])),
+        'status': S(enum=['drafted', 'sending', 'sent', 'effect_uncertain']), 'sent_at': DT,
+        'note': S(description='e.g. "It goes only if you send it"'), 'can_send': B, 'can_edit': B}, ['to', 'body', 'version', 'status']),
+})
+ro['properties']['followup']['description'] = 'PROPOSAL (D-RFP-OUTCOME r2): a follow-up drafted by the agent. It is sent only by a person through E-RFP-FOLLOWUP; an uncertain send is reconciled before any resend (INV-RESEND).'
+ror = EP_BY_ID['E-RFP-OUTCOME']
+add_props(ror['request'], {'lessons_items': A(O({'category': S(description='One of rfp_outcome.lesson_categories[].value'), 'text': S()}, ['text']))})
+
+# -- Month-end (SCR-36; F-10 PMO-0-1) -> D-MONTH-END-VIEW
+me_ep = EP_BY_ID['E-MONTH-END']
+me_resp = me_ep['responses'][0]['schema']
+add_props(me_resp, {
+    'as_of': DT, 'coverage': S(description='e.g. "FROM RECORDS YOU CAN SEE"'),
+    'summary': O({'done': I(), 'waiting': I(), 'in_progress': I(), 'total': I()}, []),
+    'cash_received_detail': O({'known': MONEY_OR_UNKNOWN('The part of cash received that is known.'), 'has_unknown': B, 'unknown_note': S()}, ['has_unknown']),
+    'agent_note': O({'agent': AGENT_KEY, 'text': S()}, ['agent', 'text']),
+    'next_action': O({'label': S(), 'work_id': S()}, ['label']),
+})
+me_resp['properties']['summary']['description'] = 'Counts composed by the backend; the frontend never buckets task states itself'
+me_resp['properties']['cash_received_detail']['description'] = 'Known part plus an Unknown marker ("₦4.7M + Unknown"); has_unknown true means some cash is not yet known, never 0 (INV-UNKNOWN)'
+add_props(me_resp['properties']['tasks']['items'], {'title': S(), 'detail': S(), 'status_label': S(), 'tone': TONE, 'restricted': B, 'restricted_label': S(description='e.g. "HR only"; restricted rows carry no work_id')})
+
+# -- Line workspace (27 unassigned screens and the Finance line screens; screen-coverage.md) -> D-LINE-WORKSPACE
+FIELD_DESC = copy.deepcopy(field)
+FIELD_DESC['description'] = 'Same descriptor as an E-LINES intake field (D-START-INTAKE): kind, label, help, options, evidence kind'
+CELL = O({'column': S(), 'text': S(), 'money': MONEY_OR_UNKNOWN('Cell amount.'), 'date': DUE, 'tag': TAG, 'link': LINK, 'restricted': B}, ['column'])
+WS_ITEM = O({
+    'id': S(), 'text': S(), 'detail': S(), 'label': S(), 'value': S(),
+    'money': MONEY_OR_UNKNOWN('Item amount.'), 'cells': A(CELL),
+    'status': S(enum=['done', 'now', 'next', 'not_yet', 'held', 'blocked', 'unknown', 'not_applicable']),
+    'tag': TAG, 'severity': S(enum=['high', 'medium', 'low', 'info']),
+    'owner': OWNER, 'due': DUE, 'held_by': HOLDER, 'agent': AGENT_KEY, 'at': DT,
+    'cites': A(LINK), 'cite_label': S(description='e.g. "2 RECORDS"'),
+    'channel': S(), 'receipt': S(enum=['received', 'not_yet', 'uncertain', 'failed', 'unknown']),
+    'restricted': B, 'steps': A(S(description='Keys of workspace.steps that act on this item'))}, ['id'])
+WS_SECTION = O({
+    'key': S(), 'kind': S(enum=['facts', 'table', 'checklist', 'findings', 'suggestions', 'recipients', 'figures', 'text', 'timeline']),
+    'title': S(), 'note': S(), 'agent': AGENT_KEY, 'as_of': DT, 'coverage': S(), 'restricted': B, 'restricted_label': S(),
+    'columns': A(O({'key': S(), 'label': S(), 'kind': S(enum=['text', 'money', 'date', 'tag', 'reference', 'integer'])}, ['key', 'label'])),
+    'items': A(WS_ITEM), 'total': I(), 'filters': A(LABELLED), 'next_cursor': S()}, ['key', 'kind', 'items'])
+WS_STEP = O({
+    'key': S(), 'label': S(), 'emphasis': S(enum=['primary', 'secondary', 'danger']), 'applies_to': S(enum=['workspace', 'item', 'items']),
+    'fields': A(FIELD_DESC), 'confirm': S(), 'consequence': S(description='Plain sentence on what the step does, e.g. "Approving sends this exact version to Lagoon Health."'),
+    'task_id': S(description='Present when the step is a decision: use E-TASK-CLAIM/E-TASK-DECIDE on this task instead of E-WORK-STEP'),
+    'claim_required': B, 'sends': B, 'disabled_reason': S()}, ['key', 'label'])
+WORKSPACE = O({
+    'line_key': S(), 'screen': S(description='Approved screen id, e.g. SCR-25'), 'view': S(description='Board state, e.g. review'),
+    'title': S(), 'subtitle': S(), 'status': TAG, 'byline': S(description='e.g. "Report v1 · written by Tunde Bello, assembled by Tola"'),
+    'version': O({'label': S(), 'number': I(minimum=1), 'document_id': S()}, ['label']),
+    'context': O({'project': CASE_REF, 'crumbs': A(LABELLED)}, []),
+    'agent_note': AGENT_NOTE, 'sections': A(WS_SECTION), 'steps': A(WS_STEP), 'next': A(S()), 'revision': I(minimum=1)}, ['line_key', 'sections'])
+WORKSPACE['description'] = ('PROPOSAL (D-LINE-WORKSPACE): the line-specific content of the work item, one typed block for every line, rendered by section kind. '
+    'Which sections and steps exist, their values and who may take each step are composed by the backend; the frontend shows only what is returned. '
+    'Restricted sections carry restricted=true and no rows for people without the grant (INV-RESTRICTED); unknown amounts and dates use the unknown form, never 0.')
+add_props(wi, {'workspace': WORKSPACE})
+
+# -- Assign the accountable person (SCR-24) -> D-RFP-INTAKE
+add_props(wi, {'assign': O({'role': S(), 'candidates': A(O({'person_id': S(), 'name': S(), 'role': S(), 'hint': S(description='e.g. current load, as the backend states it')}, ['person_id', 'name'])), 'note_required': B}, ['candidates'])})
+wi['properties']['assign']['description'] = 'PROPOSAL (D-RFP-INTAKE): present when this person may assign the accountable person (e.g. an Unassigned RFP); candidates come from the backend\'s configured rule'
+
+# -- Setup rules (SCR-13 rules, finance-rules, delivery-rules; F-11 PMO-0-1..0-3) and payroll visibility (SCR-13 fields) -> D-SETUP-RULES-VIEW, D-PAYROLL-VISIBILITY
+sr = EP_BY_ID['E-SETUP-RULES']
+sr_resp = sr['responses'][0]['schema']
+add_props(sr_resp['properties']['items']['items'], {
+    'area': S(), 'area_label': S(), 'group': S(), 'group_label': S(), 'used_by': A(S()), 'display_value': S(description='Current value as text; absent when not set (the screen shows Not set)'),
+    'link': S(description='Screen the rule is edited on instead, e.g. costing-rule'), 'holds_work': B, 'effective_from': DT, 'can_change': B, 'restricted': B,
+    'editor': O({'kind': S(enum=['role_set', 'read_only']), 'options': A(O({'role': S(), 'label': S()}, ['role', 'label'])), 'selected': A(S())}, ['kind'])})
+add_props(sr_resp, {'not_set_count': I(), 'roles_missing_count': I()})
+srs = EP_BY_ID['E-SETUP-RULE-SAVE']
+srs['request']['properties']['expected_revision'] = I(minimum=0, description='PROPOSAL (D-SETUP-RULES-VIEW): the revision exactly as read; 0 saves the first version of a rule that is Not set (fixes the v6 minimum of 1, which made a first save impossible)')
+add_props(srs['request'], {'starts': DATE, 'reason': S(), 'evidence_id': S()})
+
+# -- Delegation (SCR-13 delegation; F-11B) -> D-DELEGATION-VIEW
+dl = EP_BY_ID['E-DELEGATION']
+add_props(dl['request'], {'authority': S(description='One of E-DELEGATIONS authorities[].value'), 'reason': S()})
+# -- People and staff accounts (SCR-13, SCR-21; F-11C) -> D-PEOPLE-VIEW (writes gated by D-ADMIN-AUTHORITY)
+pp = EP_BY_ID['E-PEOPLE']['responses'][0]['schema']
+add_props(pp['properties']['items']['items'], {'person_id': S(), 'email': S(description='As the backend returns it'), 'scopes': A(S()), 'state': S(enum=['active', 'invited', 'deactivated']),
+                                               'last_signed_in_at': DT, 'open_items': I(), 'can_change': B, 'revision': I(minimum=1)})
+add_props(pp, {'roles_missing': A(O({'role': S(), 'label': S(), 'held_work': I()}, ['role', 'label'])), 'role_options': A(O({'role': S(), 'label': S(), 'scope_needed': B}, ['role', 'label']))})
+# -- Templates (SCR-34; F-11D) -> D-TEMPLATES-VIEW
+tp = EP_BY_ID['E-TEMPLATES']['responses'][0]['schema']
+add_props(tp['properties']['items']['items'], {'template_id': S(), 'kind': S(), 'updated_at': DT, 'updated_by': S(), 'versions': I(), 'revision': I(minimum=1), 'can_upload': B})
+
+# -- Alerts (SCR-15, SCR-15 settings; F-12 PMO-0-1) -> D-NOTIFY-MODEL r3, D-ALERT-PREFS-VIEW
+PREF_EVENT = O({'key': S(), 'label': S(), 'whatsapp': B, 'email': B, 'timing': S(enum=['immediate', 'daily_digest']), 'timing_label': S(), 'locked_reason': S()}, ['key', 'label', 'whatsapp', 'email'])
+PREFS_VIEW = {
+    'revision': I(minimum=1), 'events': A(PREF_EVENT),
+    'digest_at': O({'value': S(pattern='^[0-2][0-9]:[0-5][0-9]$'), 'options': A(LABELLED)}, ['options']),
+    'quiet_hours': O({'value': S(), 'options': A(LABELLED)}, ['options']),
+    'whatsapp': O({'masked_number': S(description='e.g. "+234 803 *** 4412"; never unmasked'), 'verified': B}, ['verified']),
+    'note': S(description='e.g. "Alerts never include amounts or client details beyond the name."')}
+ap = EP_BY_ID['E-ALERT-PREFS']
+add_props(ap['request'], {'expected_revision': I(minimum=0), 'events': A(O({'key': S(), 'whatsapp': B, 'email': B}, ['key'])), 'digest_at': S(pattern='^[0-2][0-9]:[0-5][0-9]$'), 'quiet_hours': S()})
+ap['request']['properties']['channel']['description'] = 'v6 summary field, kept: the backend derives per-event values from it only when events is absent'
+add_props(ap['responses'][0]['schema'], copy.deepcopy(PREFS_VIEW))
+nt = EP_BY_ID['E-NOTIFICATIONS']
+add_param(nt, P('q', 'query', False, S(description='PROPOSAL (D-ALERT-PREFS-VIEW): search over the alert text and reference')),
+          P('agent', 'query', False, AGENT_KEY), P('unread', 'query', False, {'type': 'boolean'}))
+add_props(nt['responses'][0]['schema'], {'total': I(), 'unread_count': I()})
+add_props(nt['responses'][0]['schema']['properties']['items']['items'], {
+    'reference': S(), 'delivered_via': A(S(enum=['whatsapp', 'email', 'in_app'])), 'delivered_at': DT, 'digest_at': DT,
+    'in_app_reason': S(description='e.g. "you are not HR": why this alert was shown in the app only')})
+
+# -- Assistant (SCR-05; F-12 PMO-0-2) -> D-CONVERSATION-MODEL r3, D-ASSISTANT-VIEW
+cv = EP_BY_ID['E-CONVERSATION']['responses'][0]['schema']
+CONV_STATUS = S(enum=['working', 'answered', 'cannot_answer', 'drafted'])
+add_props(cv, {'agent': AGENT_KEY, 'title': S(), 'status': CONV_STATUS, 'context': O({'project': CASE_REF, 'access': A(S(description='"Your access" lines as the backend states them'))}, [])})
+msg = cv['properties']['messages']['items']
+add_props(msg, {
+    'at': DT,
+    'step_details': A(O({'text': S(), 'state': S(enum=['done', 'now', 'next']), 'reference': LINK}, ['text', 'state'])),
+    'handoff': O({'from_agent': AGENT_KEY, 'to': S(), 'note': S()}, ['note']),
+    'source_details': A(O({'kind': S(), 'label': S(), 'reference': S(), 'restricted': B, 'link': LINK}, ['kind', 'label', 'restricted'])),
+    'cannot_reason': S(),
+    'draft': O({'title': S(), 'status_label': S(description='e.g. "DRAFTED · NOT REVIEWED"'), 'rows': A(O({'label': S(), 'value': S(), 'money': MONEY_OR_UNKNOWN('Drafted amount.')}, ['label'])),
+                'start': O({'line_key': S(), 'case_id': S(), 'case_revision': I(minimum=1), 'intake': {'type': 'object', 'additionalProperties': True, 'description': 'Prefill for the line\'s E-LINES intake fields; the person reviews it in the normal Start work drawer'}, 'label': S()}, ['line_key', 'label']),
+                'next': S(), 'started': O({'work_id': S(), 'reference': S()}, ['work_id'])}, ['title', 'rows']),
+})
+msg['properties']['draft']['description'] = 'PROPOSAL (D-ASSISTANT-VIEW): a draft is started only through the normal E-WORK-START of its line (D-CONVERSATION-MODEL); started is present once it has been'
+add_props(EP_BY_ID['E-MESSAGE']['request'], {'mentions': A(O({'kind': S(enum=['project', 'work', 'document', 'person']), 'id': S()}, ['kind', 'id']))})
+add_props(EP_BY_ID['E-ME']['responses'][0]['schema'], {'assistant_agents': A(AGENT_KEY)})
+EP_BY_ID['E-ME']['responses'][0]['schema']['properties']['assistant_agents']['description'] = 'PROPOSAL (D-ASSISTANT-VIEW): the agents this person may talk to, as the backend allows'
+
+# -- Projects list and journey (SCR-22, SCR-07, SCR-43; F-07 round 1 left-out elements) -> D-PROJECTS-VIEW
+pl = EP_BY_ID['E-PROJECTS']
+add_param(pl, P('status', 'query', False, S(enum=['active', 'closed', 'all'], description='PROPOSAL (D-PROJECTS-VIEW): the Active / Closed / All I can see tabs')))
+add_props(pl['responses'][0]['schema'], {'counts': O({'active': I(), 'closed': I(), 'all': I()}, []), 'total': I()})
+add_props(pl['responses'][0]['schema']['properties']['items']['items'], {'reference': S(), 'next_milestone': O({'name': S(), 'due': DUE}, ['name']), 'needs_person': I(), 'stopped': I()})
+pr = EP_BY_ID['E-PROJECT']['responses'][0]['schema']
+add_props(pr, {'pm': PERSON, 'route': S(), 'work_count': I(), 'line_count': I(),
+               'facts': A(O({'label': S(), 'value': S(), 'money': MONEY_OR_UNKNOWN('Figure amount.'), 'unknown': B}, ['label'])),
+               'agent_summary': O({'agent': AGENT_KEY, 'text': S()}, ['agent', 'text']),
+               'delivery': A(O({'line_key': S(), 'title': S(), 'state': STATE, 'gate': TAG, 'work_id': S(), 'held_by': HOLDER}, ['line_key', 'title']))})
+pr['properties']['delivery']['description'] = 'PROPOSAL (D-PROJECTS-VIEW): the delivery overview (SCR-43), one row per delivery line with its gate status as the backend composes it'
+add_props(pr['properties']['lines']['items'], {'reference': S(), 'title': S(), 'detail': S(description='e.g. "Station 2 of 5 · client UAT"'), 'station': O({'index': I(minimum=1), 'count': I(minimum=1), 'name': S()}, ['index', 'count']),
+                                               'status_label': S(), 'tone': TONE})
+# -- Factory floor lines (SCR-06; F-08 round 1 PMO-0-4) -> D-OVERVIEW-VIEW
+ov = EP_BY_ID['E-OVERVIEW']['responses'][0]['schema']
+add_props(ov['properties']['lines']['items'], {'key': S(), 'subtitle': S(description='e.g. "RFP · commercial"'), 'agent': AGENT_KEY, 'status': TAG})
+
+# -- new endpoints
+PREFS_READ = O(dict({'channel': S(), 'frequency': S()}, **copy.deepcopy(PREFS_VIEW)), ['channel', 'frequency', 'revision', 'events'])
+INVOICE_ROW = O({'invoice_id': S(), 'reference': S(), 'client': S(), 'project': CASE_REF, 'issued_on': DATE, 'due': DUE,
+                 'invoiced': MONEY_OR_UNKNOWN('Invoiced amount.'), 'received': MONEY_OR_UNKNOWN('Receipts recorded by Finance.'), 'owed': MONEY_OR_UNKNOWN('Still owed, as composed by the backend.'),
+                 'status': TAG, 'work_id': S(), 'revision': I(minimum=1), 'reminder': O({'status': S(), 'last_sent_at': DT, 'work_id': S()}, ['status']), 'sample': B}, ['invoice_id', 'reference', 'invoiced', 'received', 'owed'])
+EP_V7 = [
+ ('E-RFP-FOLLOWUP', 'POST', '/api/v1/work/{work_id}/rfp-outcome/followup', 'Send the drafted RFP follow-up', 'Send follow-up on the outcome-unknown board', 'rfp.outcome on the case, as the backend allows; agents rejected.', 'api.rfp.followup', 'pmo.rfp (follow-up) + outbox', 'R-RESPONSE', ['REC-WORK', 'REC-EVIDENCE', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-RESEND', 'INV-AGENT', 'INV-AUDIT'], ['D-RFP-OUTCOME'], 'T-RESPONSE', 'A-RFP-FOLLOWUP', [P('work_id')],
+  O(dict(EXPECTED, version=I(minimum=1, description='rfp_outcome.followup.version being sent'), body=S(description='Edited text; absent sends the draft as is'), idempotency_key=S()), ['expected_revision', 'version', 'idempotency_key']),
+  O({'work_id': S(), 'status': S(enum=['sending', 'sent', 'effect_uncertain']), 'revision': I(minimum=1)})),
+ ('E-WORK-STEP', 'POST', '/api/v1/work/{work_id}/steps', 'Take a line step', 'A step button in a line workspace (accept a suggestion, record impact, confirm minutes, send a reminder, etc.)', 'The step\'s authority on the line as the backend checks it; agents rejected for steps that approve, send or pay.', 'api.work.step', 'workflows.factory (line step handlers)', 'R-WORKITEM', ['REC-WORK', 'REC-EVIDENCE', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-RESEND', 'INV-AGENT', 'INV-UNKNOWN', 'INV-AUDIT'], ['D-LINE-WORKSPACE'], 'T-WORKSPACE', 'A-WORKSPACE', [P('work_id')],
+  O(dict(EXPECTED, step=S(description='One of workspace.steps[].key'), item_ids=A(S()), inputs={'type': 'object', 'additionalProperties': True, 'description': 'Field name to value for the step\'s fields, shaped per field kind as in D-START-INTAKE'},
+         case_revision=I(minimum=1), evidence_ids=A(S()), note={'type': 'string', 'description': 'Up to 2000 characters'}, idempotency_key=S()), ['expected_revision', 'step', 'idempotency_key']),
+  O({'work_id': S(), 'state': STATE, 'revision': I(minimum=1), 'outcome': S(enum=['done', 'queued', 'effect_uncertain']), 'message': S()}, ['work_id', 'state', 'revision', 'outcome'])),
+ ('E-WORK-ASSIGN', 'POST', '/api/v1/work/{work_id}/assignment', 'Assign the accountable person', 'Assign drawer from the Unassigned queue (SCR-24)', 'The assign authority configured for the line (e.g. rfp.assign).', 'api.work.assign', 'pmo.rfp.assign', 'R-START', ['REC-WORK', 'REC-GRANT', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT'], ['D-RFP-INTAKE'], 'T-ASSIGN', 'A-ASSIGN', [P('work_id')],
+  O(dict(EXPECTED, person_id=S(description='One of assign.candidates[].person_id'), note={'type': 'string', 'description': 'Up to 2000 characters'}), ['expected_revision', 'person_id']),
+  O({'work_id': S(), 'state': STATE, 'revision': I(minimum=1), 'assigned_to': S()})),
+ ('E-ALERT-PREFS-READ', 'GET', '/api/v1/me/alert-preferences', 'Read my alert preferences', 'Alert settings page load', 'Own preferences only.', 'api.me.alert_prefs_read', 'api notifications (new)', 'R-ALERTS', ['REC-ALERT-PREF'], ['INV-ACCESS'], ['D-NOTIFY-MODEL', 'D-ALERT-PREFS-VIEW'], 'T-ALERTS', 'A-ALERT-PREFS', [], None, PREFS_READ),
+ ('E-NOTIFICATION-READ', 'POST', '/api/v1/notifications/{notification_id}/read', 'Mark an alert read', 'Open an alert', 'Own notifications only.', 'api.notifications.read', 'api notifications (new)', 'R-ALERTS', ['REC-NOTIFICATION', 'REC-AUDIT'], ['INV-ACCESS', 'INV-AUDIT'], ['D-NOTIFY-MODEL', 'D-ALERT-PREFS-VIEW'], 'T-ALERTS', 'A-NOTIFICATIONS', [P('notification_id')], None,
+  O({'id': S(), 'read': B, 'unread_count': I()})),
+ ('E-CONVERSATIONS', 'GET', '/api/v1/assistant/conversations', 'My conversations', 'Assistant page side list', 'Own conversations only.', 'api.assistant.list', 'agents (new)', 'R-ASSISTANT', ['REC-CONVERSATION'], ['INV-ACCESS', 'INV-AGENT'], ['D-CONVERSATION-MODEL', 'D-ASSISTANT-VIEW', 'D-PAGING'], 'T-ASSISTANT', 'A-ASSISTANT-THREADS', [P('cursor', 'query', False), PAGE_LIMIT], None,
+  LIST(O({'conversation_id': S(), 'title': S(), 'agent': AGENT_KEY, 'status': CONV_STATUS, 'status_line': S(description='e.g. "Working · step 3 of 5", "Can\'t share"'), 'updated_at': DT}, ['conversation_id', 'title', 'agent', 'status', 'updated_at']))),
+ ('E-MENTION-OPTIONS', 'GET', '/api/v1/assistant/mentions', 'Records I can mention', 'Typing @ in the assistant composer', 'Signed in; only records the person may read.', 'api.assistant.mentions', 'identity.services.visible_cases + domain services', 'R-ASSISTANT', ['REC-CASE', 'REC-WORK', 'REC-DOCUMENT'], ['INV-ACCESS', 'INV-RESTRICTED', 'INV-SAMPLE'], ['D-ASSISTANT-VIEW', 'D-PAGING'], 'T-ASSISTANT', 'A-ASSISTANT-THREADS',
+  [P('q', 'query', True), P('kind', 'query', False, S(enum=['project', 'work', 'document', 'person'])), P('cursor', 'query', False), PAGE_LIMIT], None,
+  LIST(O({'kind': S(enum=['project', 'work', 'document', 'person']), 'id': S(), 'label': S(), 'hint': S(), 'sample': B}, ['kind', 'id', 'label']))),
+ ('E-DELEGATIONS', 'GET', '/api/v1/setup/delegations', 'Delegations I can see', 'Setup delegation tab', 'Leads for their own authority; Admin as the backend allows.', 'api.setup.delegations', 'policy.role_assignments', 'R-SETUP', ['REC-CONFIG'], ['INV-ACCESS'], ['D-DELEGATION-VIEW', 'D-PAGING'], 'T-SETUP', 'A-DELEGATIONS', [P('cursor', 'query', False), PAGE_LIMIT], None,
+  LIST(O({'delegation_id': S(), 'from': PERSON, 'delegate': PERSON, 'authority': S(), 'starts': DATE, 'ends': DATE, 'reason': S(), 'status': S(enum=['scheduled', 'active', 'ended']), 'can_change': B, 'revision': I(minimum=1)}, ['delegation_id', 'from', 'delegate', 'starts', 'status']),
+       {'authorities': A(LABELLED), 'delegate_options': A(O({'person_id': S(), 'name': S(), 'role': S()}, ['person_id', 'name'])), 'revision': I(minimum=0)})),
+ ('E-PERSON-ROLES', 'PUT', '/api/v1/setup/people/{person_id}/roles', 'Assign roles to a person', 'Assign and resume held work (SCR-13 validation)', 'Role assignment authority as configured (D-ADMIN-AUTHORITY).', 'api.setup.person_roles', 'policy.role_assignments', 'R-SETUP', ['REC-GRANT', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT'], ['D-PEOPLE-VIEW', 'D-ADMIN-AUTHORITY'], 'T-SETUP-PEOPLE', 'A-PEOPLE-ADMIN', [P('person_id')],
+  O(dict(EXPECTED, roles=A(O({'role': S(), 'scope': S()}, ['role'])), reason=S(), resume_held=B), ['expected_revision', 'roles']),
+  O({'person_id': S(), 'revision': I(minimum=1), 'resumed': I()}, ['person_id', 'revision'])),
+ ('E-INVITE', 'POST', '/api/v1/setup/people/invitations', 'Invite a staff member', 'Invite drawer (SCR-21 invite)', 'Account authority as configured (D-ADMIN-AUTHORITY).', 'api.setup.invite', 'identity services', 'R-SETUP', ['REC-GRANT', 'REC-AUDIT'], ['INV-ACCESS', 'INV-AUDIT'], ['D-PEOPLE-VIEW', 'D-ADMIN-AUTHORITY', 'D-SIGNIN'], 'T-SETUP-PEOPLE', 'A-PEOPLE-ADMIN', [],
+  O({'name': S(), 'email': S(), 'roles': A(O({'role': S(), 'scope': S()}, ['role'])), 'idempotency_key': S()}),
+  O({'person_id': S(), 'state': S(enum=['invited'])})),
+ ('E-DEACTIVATE', 'POST', '/api/v1/setup/people/{person_id}/deactivation', 'Deactivate a staff account', 'Deactivate drawer with reassignment (SCR-21 deactivate)', 'Account authority as configured (D-ADMIN-AUTHORITY).', 'api.setup.deactivate', 'identity services + workflows reassignment', 'R-SETUP', ['REC-GRANT', 'REC-WORK', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT'], ['D-PEOPLE-VIEW', 'D-ADMIN-AUTHORITY'], 'T-SETUP-PEOPLE', 'A-PEOPLE-ADMIN', [P('person_id')],
+  O(dict(EXPECTED, reassign=A(O({'work_id': S(), 'person_id': S()}, ['work_id', 'person_id'])), reason=S()), ['expected_revision', 'reason']),
+  O({'person_id': S(), 'state': S(enum=['deactivated']), 'reassigned': I(), 'revision': I(minimum=1)})),
+ ('E-TEMPLATE-VERSION', 'POST', '/api/v1/setup/templates/{template_id}/versions', 'Upload a new template version', 'Upload on Setup templates (SCR-34)', 'documents template authority as the backend allows.', 'api.setup.template_version', 'documents services', 'R-SETUP', ['REC-DOCUMENT', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT', 'INV-SAMPLE'], ['D-TEMPLATES-VIEW'], 'T-SETUP', 'A-TEMPLATE-VERSION', [P('template_id')],
+  O(dict(EXPECTED, filename=S(), content_base64=S(), note={'type': 'string', 'description': 'Up to 2000 characters'}), ['expected_revision', 'filename', 'content_base64']),
+  O({'template_id': S(), 'version': S(), 'test_template': B, 'revision': I(minimum=1)})),
+ ('E-COSTING-RULE', 'GET', '/api/v1/setup/costing-rule', 'The costing rule and its versions', 'Setup costing rule tab (SCR-39)', 'policy read for costing; Leads.', 'api.setup.costing_rule', 'policy.services.resolve (costing)', 'R-SETUP', ['REC-CONFIG'], ['INV-ACCESS', 'INV-UNKNOWN'], ['D-SETUP-RULES-VIEW', 'D-COSTING-RULE'], 'T-COSTING-RULE', 'A-COSTING-RULE', [], None,
+  O({'versions': A(O({'version': I(minimum=1), 'label': S(), 'status': S(enum=['current', 'proposed', 'withdrawn', 'superseded']), 'proposed_by': PERSON, 'proposed_at': DT, 'reviewed_by': PERSON, 'effective_from': DT}, ['version', 'label', 'status'])),
+     'sections': A(copy.deepcopy(WS_SECTION)), 'examples': A(O({'label': S(), 'expected': MONEY_OR_UNKNOWN('Expected result.'), 'computed': MONEY_OR_UNKNOWN('Result under the version.'), 'result': S(enum=['match', 'differs', 'unknown'])}, ['label', 'result'])),
+     'review_work_id': S(), 'cannot_review_reason': S(description='e.g. "you proposed this version"'), 'not_set': B}, ['versions', 'not_set'])),
+ ('E-INVOICES', 'GET', '/api/v1/finance/invoices', 'Invoices and what is owed', 'Payments and follow-up (SCR-20)', 'finance.read; rows filtered by grants.', 'api.finance.invoices', 'finance services', 'R-FINANCE', ['REC-MONEY'], ['INV-ACCESS', 'INV-UNKNOWN', 'INV-FACTS', 'INV-SAMPLE'], ['D-RECEIVABLES-VIEW', 'D-PAGING'], 'T-RECEIVABLES', 'A-RECEIVABLES',
+  [P('q', 'query', False), P('status', 'query', False, S(description='One of filters[].value as the backend lists them')), P('client', 'query', False), P('cursor', 'query', False), PAGE_LIMIT], None,
+  LIST(INVOICE_ROW, {'totals': O({'invoiced': MONEY_OR_UNKNOWN('Total invoiced.'), 'received': MONEY_OR_UNKNOWN('Total received.'), 'owed': MONEY_OR_UNKNOWN('Total owed.')}, []), 'filters': A(LABELLED), 'total': I()})),
+ ('E-RECEIPT', 'POST', '/api/v1/finance/invoices/{invoice_id}/receipts', 'Record a receipt', 'Record a payment (SCR-20 record)', 'finance receipt authority as configured; agents rejected.', 'api.finance.receipt', 'finance services (receipts; allocation per D-RECEIPT-ALLOCATION)', 'R-FINANCE', ['REC-MONEY', 'REC-EVIDENCE', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-FACTS', 'INV-UNKNOWN', 'INV-AGENT', 'INV-AUDIT'], ['D-RECEIVABLES-VIEW', 'D-RECEIPT-ALLOCATION'], 'T-RECEIVABLES', 'A-RECEIVABLES', [P('invoice_id')],
+  O(dict(EXPECTED, amount=dict(MONEY, description='Amount as on the bank record; must be known to record'), received_on=DATE, bank_reference=S(), evidence_id=S(), case_revision=I(minimum=1), idempotency_key=S()), ['expected_revision', 'amount', 'received_on', 'evidence_id', 'idempotency_key']),
+  O({'receipt_id': S(), 'invoice_id': S(), 'revision': I(minimum=1), 'allocation': TAG}, ['receipt_id', 'invoice_id', 'revision'])),
+ ('E-CLIENTS', 'GET', '/api/v1/clients', 'Clients', 'Clients page (SCR-35)', 'case.read on at least one of the client\'s cases.', 'api.clients.list', 'pmo client register', 'R-PROJECT', ['REC-CLIENT'], ['INV-ACCESS', 'INV-UNKNOWN', 'INV-SAMPLE'], ['D-CLIENTS-VIEW', 'D-PAGING'], 'T-CLIENTS', 'A-CLIENTS', [P('q', 'query', False), P('cursor', 'query', False), PAGE_LIMIT], None,
+  LIST(O({'client_id': S(), 'name': S(), 'projects': I(), 'owed': MONEY_OR_UNKNOWN('Owed across visible invoices.'), 'billing_contact_set': B, 'sample': B}, ['client_id', 'name', 'billing_contact_set']))),
+ ('E-CLIENT', 'GET', '/api/v1/clients/{client_id}', 'Client detail', 'Open a client (SCR-35 detail)', 'As E-CLIENTS.', 'api.clients.read', 'pmo client register', 'R-PROJECT', ['REC-CLIENT', 'REC-CASE', 'REC-MONEY'], ['INV-ACCESS', 'INV-UNKNOWN', 'INV-FACTS'], ['D-CLIENTS-VIEW'], 'T-CLIENTS', 'A-CLIENTS', [P('client_id')], None,
+  O({'client_id': S(), 'name': S(), 'revision': I(minimum=1), 'billing_contact': O({'name': S(), 'email': S(), 'set': B}, ['set']), 'projects': A(O({'case_id': S(), 'title': S(), 'stage': S()}, ['case_id', 'title'])),
+     'money': O({'invoiced': MONEY_OR_UNKNOWN('Invoiced.'), 'received': MONEY_OR_UNKNOWN('Received.'), 'owed': MONEY_OR_UNKNOWN('Owed.')}, []), 'blocked': A(S(description='e.g. "Invoices wait until a billing contact is set"')), 'can_change': B, 'sample': B},
+    ['client_id', 'name', 'revision', 'billing_contact', 'projects'])),
+ ('E-CLIENT-CONTACT', 'PUT', '/api/v1/clients/{client_id}/billing-contact', 'Set the billing contact', 'Billing contact form (SCR-35 detail)', 'client contact authority as the backend allows.', 'api.clients.contact', 'pmo client register', 'R-PROJECT', ['REC-CLIENT', 'REC-AUDIT'], ['INV-ACCESS', 'INV-REVISION', 'INV-AUDIT'], ['D-CLIENTS-VIEW'], 'T-CLIENTS', 'A-CLIENTS', [P('client_id')],
+  O(dict(EXPECTED, name=S(), email=S(), reason=S()), ['expected_revision', 'name', 'email']), O({'client_id': S(), 'revision': I(minimum=1)})),
+]
+for row in EP_V7:
+    e = make_endpoint(*row); e['evidence'] = e['evidence'] + ['S-DECISIONS-V6']; endpoints.append(e); EP_BY_ID[e['id']] = e
+for eid in ('E-WORK-STEP', 'E-RECEIPT', 'E-PERSON-ROLES', 'E-INVITE', 'E-DEACTIVATE', 'E-TEMPLATE-VERSION', 'E-CLIENT-CONTACT', 'E-WORK-ASSIGN'):
+    EP_BY_ID[eid]['responses'] = [r if r['status'] != '422' else copy.deepcopy(FIELDS_422) for r in EP_BY_ID[eid]['responses']]
+EP_BY_ID['E-RFP-FOLLOWUP']['failure_recovery'] = 'Idempotent on idempotency_key. A send whose outcome is unknown returns effect_uncertain and blocks any resend until reconciled (INV-RESEND); 409 on a stale revision or draft version.'
+EP_BY_ID['E-WORK-STEP']['failure_recovery'] = 'Idempotent on idempotency_key. A step that sends and cannot confirm the send returns effect_uncertain; the work item then offers reconcile, never an automatic retry (INV-RESEND). 409 stale; 422 names fields.'
+EP_BY_ID['E-RECEIPT']['failure_recovery'] = 'Idempotent on idempotency_key; a retried request never records a second receipt. 409 stale; 422 names fields. Allocation is composed by the backend and returned, never by the frontend.'
+link_eps([('E-EXCEPTIONS', ['D-EXCEPTIONS-LIST'])], 'A-EXCEPTIONS-LIST')
+link_eps([('E-WORK-ITEM', ['D-RESPONSE-VIEW', 'D-WORK-ACTIONS-VIEW', 'D-RFP-OUTCOME', 'D-LINE-WORKSPACE', 'D-RFP-INTAKE']), ('E-RESPONSE', ['D-RESPONSE-VIEW']), ('E-WORK-ACTION', ['D-WORK-ACTIONS-VIEW']), ('E-RFP-OUTCOME', ['D-RFP-OUTCOME'])], 'A-WORKSPACE')
+link_eps([('E-MONTH-END', ['D-MONTH-END-VIEW'])], 'A-MONTHEND-VIEW')
+link_eps([('E-SETUP-RULES', ['D-SETUP-RULES-VIEW']), ('E-SETUP-RULE-SAVE', ['D-SETUP-RULES-VIEW'])], 'A-SETUP-RULES-VIEW')
+link_eps([('E-DELEGATION', ['D-DELEGATION-VIEW'])], 'A-DELEGATIONS')
+link_eps([('E-PEOPLE', ['D-PEOPLE-VIEW'])], 'A-PEOPLE-ADMIN')
+link_eps([('E-TEMPLATES', ['D-TEMPLATES-VIEW'])], 'A-TEMPLATE-VERSION')
+link_eps([('E-ALERT-PREFS', ['D-NOTIFY-MODEL', 'D-ALERT-PREFS-VIEW'])], 'A-ALERT-PREFS')
+link_eps([('E-NOTIFICATIONS', ['D-NOTIFY-MODEL', 'D-ALERT-PREFS-VIEW'])], 'A-NOTIFICATIONS')
+link_eps([('E-CONVERSATION', ['D-CONVERSATION-MODEL', 'D-ASSISTANT-VIEW']), ('E-MESSAGE', ['D-ASSISTANT-VIEW']), ('E-ME', ['D-ASSISTANT-VIEW'])], 'A-ASSISTANT-THREADS')
+link_eps([('E-PROJECTS', ['D-PROJECTS-VIEW']), ('E-PROJECT', ['D-PROJECTS-VIEW'])], 'A-PROJECTS-VIEW')
+link_eps([('E-OVERVIEW', ['D-OVERVIEW-VIEW'])], 'A-OVERVIEW-LINES')
+records.append({'id': 'REC-CLIENT', 'title': 'Client and billing contact (proposed; backend developer to confirm where it lives)', 'refs': ['REC-CASE'], 'evidence': ['S-SCREENS', 'S-DECISIONS-V6'],
+                'fields': ['id', 'name', 'billing_contact: name, email', 'revision'], 'relationships': ['REC-CASE'], 'constraints': ['An invoice is not sent without a billing contact (as SCR-35 states; the backend holds the rule)', 'Visible only through a case the person may read'], 'owner': 'pmo (backend developer to confirm)'})
+
+# -- decisions (v7)
+def dec7(i, title, owner, scope, status, choice, rationale, alts, refs, ev=('S-DECISIONS-V6', 'S-SCREENS')):
+    return dec(i, title, owner, scope, status, choice, rationale, alts, refs, ev)
+PROPOSAL = 'PROPOSAL for the backend developer to confirm (drafted overnight by the coordinator for the frontend, S-DECISIONS-V6 (i)): '
+decisions += [
+    dec7('D-EXCEPTIONS-LIST', 'Search, filter and count on All exceptions', 'backend developer', 'E-EXCEPTIONS; SCR-10', 'proposed',
+         PROPOSAL + 'E-EXCEPTIONS accepts optional q (search over title, reference, what is being done, who acts) and what (one kind); the response gains optional open_count (all matching rows the person may see, across pages) and each row an optional ref (the work\'s business reference).',
+         'Boards: ' + B_CANVAS + 'SCR-10-desktop.dc.html (search, Filter, "4 OPEN", reference under the title), SCR-10-mobile.dc.html ("Exceptions · 4"). Same names as the F-06 round-2 mock (delivery/features/F-06/round-2/build.md), so its fixtures need no rename. A count the backend does not send is not shown, never guessed.',
+         ['Client-side search over the loaded page (wrong across pages)', 'Leave search and count off the screen'], ['R-EXCEPTION']),
+    dec7('D-MONTH-END-VIEW', 'What the month-end checklist shows', 'backend developer', 'E-MONTH-END; SCR-36', 'proposed',
+         PROPOSAL + 'E-MONTH-END gains optional as_of and coverage, a summary (done, waiting, in progress, total) composed by the backend, cash_received_detail (the known part plus has_unknown), an agent note and a next action (label, work_id); each task gains optional title, detail, status_label, tone, restricted and restricted_label (restricted rows carry no work_id). cash_received keeps its v6 shape.',
+         'Boards: ' + F_CANVAS + 'SCR-36-desktop.dc.html (as-of line, four-cell strip "2 of 7 / 3 / 2", "Cash received ₦4.7M + Unknown", task detail and "NEEDS FINANCE DECISION" tags, "HR only" row, Chidi\'s note, "Import the missing statement") and SCR-36-mobile.dc.html. v6 money is all-or-unknown and cannot say "known plus Unknown" (F-10 readiness PMO-0-1). Which month is being closed, what is restricted and every amount are backend facts; the frontend buckets nothing.',
+         ['Frontend counts states (puts a rule in the browser)', 'Show cash as Unknown whenever any part is unknown (hides the known part the board shows)'], ['R-FINANCE']),
+    dec7('D-LINE-WORKSPACE', 'One typed workspace block per line on the work item, and one step write', 'backend developer', 'E-WORK-ITEM workspace; new E-WORK-STEP; line screens SCR-19..SCR-59', 'proposed',
+         PROPOSAL + 'E-WORK-ITEM gains an optional workspace block for the line-specific content of every line screen: line key, screen and board state, title, status, byline, version, project context, an agent note, typed sections (facts, table with typed cells, checklist, findings, suggestions, recipients with receipts, figures, text with cited records, timeline) and the steps this person may take now, each with typed fields (the E-LINES field descriptor) and its consequence sentence. Decisions inside a workspace stay on E-TASK-CLAIM/E-TASK-DECIDE (a step carries task_id); responses stay on E-RESPONSE; reconcile stays on E-WORK-ACTION. Every other line step goes through one new POST /api/v1/work/{work_id}/steps with the step key, item ids, typed inputs, proof, expected revision and an idempotency key; a step that sends and cannot confirm the send returns effect_uncertain.',
+         'The 27 screens with no task (delivery/screen-coverage.md) and the Finance line screens (F-10 readiness) are line workspaces: e.g. ' + B_CANVAS + 'SCR-25-desktop-review.dc.html (report sections citing records, "2 RECORDS", "Approving sends this exact version"), SCR-26-desktop.dc.html (requirements matrix with suggestions to accept, edit or reject), SCR-28-desktop-suggesting.dc.html (suggested decisions and actions with owner and due date), SCR-31-desktop-impact.dc.html (impact per team), SCR-44-desktop-readiness.dc.html (readiness checklist), SCR-45-desktop-signatures.dc.html (signatures), SCR-46-desktop-evaluating.dc.html (criteria), SCR-49-desktop-blocked.dc.html (closure blockers), SCR-52-desktop-received.dc.html (receipts per recipient), and ' + F_CANVAS + 'SCR-53..SCR-59 (quarantine findings, review results, schedules by class with Unknown, recipients and receipts). One shared block avoids about 25 endpoints and follows the v6 reconcile and rfp_outcome pattern. Which sections and steps exist, their values, who may take a step and what it does are backend rules; the frontend renders by kind and offers only returned steps. Restricted sections return restricted=true and no rows (INV-RESTRICTED); unknown amounts and dates use the unknown form, never 0.',
+         ['One endpoint per line workspace (about 25 reads and writes)', 'Untyped workspace JSON (the mock cannot validate it)'], ['R-WORKITEM', 'R-FINANCE']),
+    dec7('D-RFP-INTAKE', 'Logging a received RFP and assigning its accountable person', 'backend developer', 'E-LINES (case_scope fixed), E-WORK-ITEM assign, new E-WORK-ASSIGN; SCR-23, SCR-24', 'proposed',
+         PROPOSAL + 'a received RFP starts on a fixed pre-sale intake case the backend names on the line (D-START-INTAKE case_scope fixed), because E-WORK-START requires a case and a new RFP has none; the work item gains an optional assign block (role, candidates, note required) when this person may assign, and a new POST /api/v1/work/{work_id}/assignment records the choice.',
+         'Boards: ' + B_CANVAS + 'SCR-23-desktop.dc.html / -mobile (log a received RFP), SCR-24-desktop.dc.html / -mobile (assign the accountable PM from the Unassigned queue). Who may assign ("who may assign an RFP" is a Setup rule) and who the candidates are come from the backend. Whether the backend instead creates the case on start is for the backend developer.',
+         ['A start that creates its own case (changes the E-WORK-START contract)', 'Assign through E-TASK-DECIDE'], ['R-START']),
+    dec7('D-SETUP-RULES-VIEW', 'What the Setup rule tabs show and save', 'backend developer', 'E-SETUP-RULES, E-SETUP-RULE-SAVE, new E-COSTING-RULE (read only); SCR-13 rules, finance-rules, delivery-rules; SCR-39', 'proposed',
+         PROPOSAL + 'E-SETUP-RULES rows gain optional area and group (with labels), used_by, display_value (absent when Not set), link, holds_work, effective_from, can_change, restricted and an editor (role_set with role options, or read_only); the response gains not_set_count and roles_missing_count. E-SETUP-RULE-SAVE accepts expected_revision 0 for the first version of a rule that is Not set (v6 required at least 1, which made A-SETUP impossible) and optional starts, reason and evidence_id. A read-only GET /api/v1/setup/costing-rule returns the rule\'s versions, its content as typed sections, worked examples and the review work item, for display only.',
+         'Boards: ' + B_CANVAS + 'SCR-13-desktop-rules.dc.html ("Save as version 1", Roles allowed, Starts, Why, Proof, HOLDS WORK), SCR-13-desktop-finance-rules.dc.html (groups, NOT SET), SCR-13-desktop-delivery-rules.dc.html (USED BY), SCR-39-desktop.dc.html / -review / -example / -review-own (costing versions and examples) and their mobile boards. Only the role-list editor is drawn, so other value kinds stay read-only. Edit controls follow can_change, never /me roles; a missing value is Not set, never a default (REC-CONFIG). How the costing rule is proposed, reviewed and withdrawn is open (D-COSTING-RULE), so no costing write is proposed.',
+         ['Rule-specific endpoints per area', 'A create endpoint for the first version'], ['R-SETUP']),
+    dec7('D-DELEGATION-VIEW', 'Listing delegations', 'backend developer', 'New E-DELEGATIONS; E-DELEGATION; SCR-13 delegation', 'proposed',
+         PROPOSAL + 'a new GET /api/v1/setup/delegations lists the delegations the person may see (from, delegate, authority, starts, ends, reason, status, can_change, revision) with the authorities and delegate options the backend allows; E-DELEGATION gains optional authority and reason.',
+         'Boards: ' + B_CANVAS + 'SCR-13-desktop-delegation.dc.html and SCR-13-mobile-delegation.dc.html show current and scheduled delegations; v6 E-DELEGATION is a PUT with nothing to read (F-11 readiness, F-11B). Which authority may be delegated and to whom is the backend\'s rule.',
+         ['Read delegations from E-PEOPLE'], ['R-SETUP']),
+    dec7('D-PEOPLE-VIEW', 'People, roles and staff accounts', 'backend developer', 'E-PEOPLE; new E-PERSON-ROLES, E-INVITE, E-DEACTIVATE; SCR-13 default, permission, validation; SCR-21', 'proposed',
+         PROPOSAL + 'E-PEOPLE rows gain optional person_id, email, scopes, state (active, invited, deactivated), last_signed_in_at, open_items, can_change and revision, and the response the missing roles (with held work) and role options; three proposed writes assign roles (optionally resuming held work), invite a staff member and deactivate an account with reassignment of open items. The writes are gated by D-ADMIN-AUTHORITY; invite also depends on D-SIGNIN.',
+         'Boards: ' + B_CANVAS + 'SCR-13-desktop.dc.html ("Roles · 2 missing"), SCR-13-desktop-validation.dc.html ("Assign and resume held work"), SCR-13-desktop-permission.dc.html, SCR-21-desktop.dc.html, SCR-21-desktop-invite.dc.html, SCR-21-desktop-deactivate.dc.html and their mobile boards. Who holds Admin and who may assign roles is PSL\'s to name (design/screens.md); the contract carries only what the backend allows.',
+         ['Leave staff accounts in Django admin'], ['R-SETUP']),
+    dec7('D-TEMPLATES-VIEW', 'Template list detail and versioned upload', 'backend developer', 'E-TEMPLATES; new E-TEMPLATE-VERSION; SCR-34', 'proposed',
+         PROPOSAL + 'E-TEMPLATES rows gain optional template_id, kind, updated_at, updated_by, versions, revision and can_upload; a new POST /api/v1/setup/templates/{template_id}/versions uploads a new version with the expected revision; test_template is returned by the backend, never set by the frontend.',
+         'Boards: ' + B_CANVAS + 'SCR-34-desktop.dc.html and SCR-34-mobile.dc.html (versioned upload). PSL supplies real templates; until then they are test templates (13 Nov decision).',
+         ['Upload through E-EVIDENCE-UPLOAD (templates have no case)'], ['R-SETUP']),
+    dec7('D-ALERT-PREFS-VIEW', 'What the alert settings and notification centre show', 'backend developer', 'New E-ALERT-PREFS-READ, E-NOTIFICATION-READ; E-ALERT-PREFS; E-NOTIFICATIONS; SCR-15', 'proposed',
+         PROPOSAL + 'a new GET /api/v1/me/alert-preferences returns the v6 channel and frequency plus revision, per-event rows (key, label, WhatsApp, email, timing), digest time and quiet hours with their options, and the WhatsApp number masked with its verified flag; PUT accepts optional expected_revision, events, digest_at and quiet_hours and keeps channel and frequency required; E-NOTIFICATIONS accepts optional q, agent and unread and returns total and unread_count, each alert its reference, how and when it was delivered, its digest time and why it was in the app only; a new POST /api/v1/notifications/{id}/read marks one alert read.',
+         'Boards: ' + B_CANVAS + 'SCR-15-desktop-settings.dc.html (WHEN / WHATSAPP / EMAIL / TIMING rows, "Daily digest at 08:00", "Quiet hours 20:00 to 07:00, and weekends", "+234 803 *** 4412 · verified"), SCR-15-mobile-settings.dc.html, SCR-15-desktop.dc.html ("4 ALERTS", "WhatsApp and email · 10:42", "In app only (you are not HR)", NEW). Which events exist, which channels a restricted alert may use and what quiet hours suppress are backend rules. The number is never unmasked. Keeping channel/frequency as required summaries is the additive choice; whether to retire them is for the backend developer (F-12 PMO-0-1 e).',
+         ['Opening an alert marks it read (no write; NEW would clear on any fetch)', 'Replace channel/frequency (breaks v6 PUT bodies)'], ['R-ALERTS', 'D-NOTIFY-MODEL']),
+    dec7('D-ASSISTANT-VIEW', 'What the assistant screens show', 'backend developer', 'New E-CONVERSATIONS, E-MENTION-OPTIONS; E-CONVERSATION; E-MESSAGE; E-ME; SCR-05', 'proposed',
+         PROPOSAL + 'a conversation list (title, agent, status, status line, updated), the conversation\'s agent, title, status and context (project, "Your access"), per message typed steps (done, now, next, with a record reference), a handoff note, source details with links, why it cannot answer, and a draft (title, label/value rows, status label, what to start: line, case, revision and intake prefill for the normal Start work drawer, and the started work once started); E-MESSAGE accepts mentions, with a new mention search over records the person may read; /me lists the agents this person may talk to.',
+         'Boards: ' + B_CANVAS + 'SCR-05-desktop.dc.html (side list "Drafted · ready to start", "Working · step 3 of 5"), SCR-05-desktop-thread.dc.html (steps, sources, draft rows with "₦6,800,000.00"), SCR-05-desktop-draft-started.dc.html, SCR-05-desktop-cant.dc.html ("Can\'t share"), SCR-05-desktop-working.dc.html and their mobile boards. A draft starts only through E-WORK-START (D-CONVERSATION-MODEL); answers use only records the person may read (INV-RESTRICTED). Attachments and speech input are not proposed (D-SPEECH-INPUT open).',
+         ['Stateless assistant with no list', 'Start drafts from the assistant directly (bypasses the line)'], ['R-ASSISTANT']),
+    dec7('D-PROJECTS-VIEW', 'Projects list, project journey and delivery overview detail', 'backend developer', 'E-PROJECTS, E-PROJECT; SCR-22, SCR-07, SCR-43', 'proposed',
+         PROPOSAL + 'E-PROJECTS accepts an optional status (active, closed, all) and returns counts per status and a total; rows gain reference, next milestone (name, due or unknown), needs_person and stopped counts. E-PROJECT gains pm, route, work and line counts, a facts strip, an agent summary, per-line reference, title, detail, station, status label and tone, and a delivery block (one row per delivery line with its gate status) for the delivery overview.',
+         'Boards: ' + B_CANVAS + 'SCR-22-desktop.dc.html (Active / Closed / All I can see tabs with counts, NEXT MILESTONE, NEEDS A PERSON, STOPPED, "5 PROJECTS"), SCR-07-desktop.dc.html (PM and route sub-line, six-cell facts strip, RFP-0031, "Station 2 of 5 · client UAT", Tola\'s summary), SCR-43-desktop.dc.html (six delivery lines with gate status). F-07 left these out because v6 had no field (delivery/features/F-07/round-1/build.md). Counts are composed from authorised records by the backend, never by the frontend.',
+         ['Frontend counts lines by state (puts a rule in the browser)'], ['R-PROJECT']),
+    dec7('D-OVERVIEW-VIEW', 'Factory floor line labels', 'backend developer', 'E-OVERVIEW; SCR-06', 'proposed',
+         PROPOSAL + 'each E-OVERVIEW line gains an optional key, subtitle, agent and status (label and tone).',
+         'Board: ' + B_CANVAS + 'SCR-06-desktop.dc.html (lines "Pre-sale · RFP · commercial · 1 WAITING", "Payroll · Restricted · 2 PROBLEMS", "ON TRACK"). F-08 drew no avatar, subtitle or tag colour because v6 had none (delivery/features/F-08/round-1/build.md PMO-0-4). Tones are display hints chosen by the backend.',
+         ['Parse colours from note (a rule in the browser)'], ['R-OVERVIEW']),
+    dec7('D-RECEIVABLES-VIEW', 'Finance-wide invoices, receipts and reminders', 'backend developer', 'New E-INVOICES, E-RECEIPT; SCR-20, SCR-32', 'proposed',
+         PROPOSAL + 'a new GET /api/v1/finance/invoices lists invoices with invoiced, received and owed (each may be unknown), status, reminder and totals, filtered by q, status and client; a new POST /api/v1/finance/invoices/{id}/receipts records one receipt (known amount, date, bank reference, proof, idempotency key) and returns the allocation status the backend composed. The payment reminder (SCR-32) is the reminder line\'s workspace (D-LINE-WORKSPACE). The short-payment decision stays parked (D-DECISION-VARIANTS).',
+         'Boards: ' + F_CANVAS + 'SCR-20-desktop.dc.html (invoiced, received, owed with Unknown), SCR-20-desktop-record.dc.html (record a payment with bank reference and proof), SCR-32-desktop.dc.html (reminder draft, edit, send) and their mobile boards. Stages, invoices, receipts and allocations are separate (AGENTS.md); how a receipt is allocated and what a short payment does are not decided (D-RECEIPT-ALLOCATION, D-DECISION-VARIANTS), so the receipt write is gated and nothing here erases debt.',
+         ['Per-project money tab only (no Finance-wide view)', 'Record receipts through E-WORK-STEP'], ['R-FINANCE']),
+    dec7('D-CLIENTS-VIEW', 'Client register and billing contact', 'backend developer', 'New E-CLIENTS, E-CLIENT, E-CLIENT-CONTACT; new REC-CLIENT; SCR-35', 'proposed',
+         PROPOSAL + 'a client list (name, projects, owed, billing contact set), a client detail (billing contact, projects, money, what is blocked) and a PUT that sets the billing contact with the expected revision.',
+         'Boards: ' + B_CANVAS + 'SCR-35-desktop.dc.html, SCR-35-desktop-detail.dc.html and their mobile boards (billing contact that blocks invoices until set). Where client records live in the backend is for the backend developer (REC-CLIENT is proposed).',
+         ['Clients as project fields only'], ['R-PROJECT']),
+    # open decisions raised for PSL or the backend developer; the screens that depend on them are gated
+    dec7('D-SIGNIN', 'How people sign in, sign out and reset a password in the new frontend', 'backend developer', 'SCR-17 (sign in, error, reset, setup); SCR-15 account menu sign-out; E-INVITE', 'open',
+         'Not decided. D-AUTH keeps the Django session; whether the Next.js app renders sign-in through new session endpoints or the Django sign-in pages are styled to the boards, and how reset and invite set-up work, are for the backend developer. No sign-in endpoint is proposed.',
+         'Boards: ' + B_CANVAS + 'SCR-17-desktop.dc.html, -error, -reset, -setup and their mobile boards; SCR-15-desktop-account.dc.html "Sign out". Sign-in is a security boundary; designing it from the frontend would set the backend\'s auth design.',
+         ['Session endpoints under /api/v1/session', 'Styled Django sign-in templates'], ['R-SESSION', 'D-AUTH']),
+    dec7('D-ADMIN-AUTHORITY', 'Who holds Admin and who may assign roles, invite and deactivate', 'business owner', 'SCR-13 roles, SCR-21; E-PERSON-ROLES, E-INVITE, E-DEACTIVATE', 'open',
+         'Not decided. PSL names who holds Admin and who may assign roles, invite and deactivate staff; Admin confers no approval authority (guide/10-POLICY-CONFIGURATION.md). The proposed writes stay gated until then.',
+         'design/screens.md lists "who holds Admin" for PSL to confirm; F-11 readiness F-11C. Inventing it would name approvers.', ['Leads manage their own team', 'One named Admin'], ['R-SETUP']),
+    dec7('D-PAYROLL-VISIBILITY', 'Which payroll fields are restricted and who may change that', 'business owner', 'SCR-13 fields; E-SETUP-RULES area payroll_visibility', 'open',
+         'Not decided. Proposed shape only: payroll field visibility would be Setup rules in area payroll_visibility with a role_set editor, read through E-SETUP-RULES. Which fields are configurable and that the HR Lead decides are for PSL to confirm; INV-RESTRICTED stays enforced by the backend whatever is configured.',
+         'Boards: ' + B_CANVAS + 'SCR-13-desktop-fields.dc.html and SCR-13-mobile-fields.dc.html. Restricted payroll data is a security boundary owned by HR (F-11 readiness F-11E).', ['A separate payroll visibility endpoint'], ['R-SETUP', 'R-FINANCE']),
+    dec7('D-COSTING-RULE', 'The studio-wide costing rule: shape, review and withdrawal', 'business owner with the backend developer', 'SCR-39; SCR-27; E-COSTING-RULE', 'open',
+         'Not decided. How a costing rule version is proposed, who reviews it (the proposer may not review their own, 12 Nov), how worked examples are checked, how a version is withdrawn, and the backend change to one studio-wide rule are for PSL and the backend developer. v7 proposes only a read for display (E-COSTING-RULE).',
+         'Boards: ' + B_CANVAS + 'SCR-39-desktop.dc.html, -review, -example, -review-own; SCR-27-desktop.dc.html, -adjust, -ask, -approvals. Costing is a financial rule; design/screens.md notes "backend change needed".', ['Keep per-project costing rules'], ['R-SETUP', 'D-APPROVAL-ORDER']),
+    dec7('D-CHANGE-DECIDERS', 'Who decides a change request', 'business owner', 'SCR-31 decision and authorise', 'open',
+         'Not decided. Whether a change request needs all five deciders drawn or only some, and in which order, is for PSL; the decision view shows only the chain the backend returns (D-TASK-DECISION-VIEW).',
+         'Board: ' + B_CANVAS + 'SCR-31-desktop-decision.dc.html and -authorise ("does the change need all five deciders or only some?", delivery/screen-coverage.md).', ['All five', 'Only the affected teams'], ['R-DECIDE']),
+    dec7('D-RECEIPT-ALLOCATION', 'How a recorded receipt is allocated, and who records it', 'business owner with the backend developer', 'E-RECEIPT; SCR-20 record', 'open',
+         'Not decided. How a receipt is allocated to invoices and stages, what happens on a part payment, and which role records receipts are financial rules for PSL and the backend developer. The receipt write stays gated; payment exceptions stay under D-DECISION-VARIANTS and never erase debt.',
+         'Board: ' + F_CANVAS + 'SCR-20-desktop-record.dc.html. Receipts and allocations are separate records (AGENTS.md product invariants).', ['Oldest invoice first', 'Allocation chosen by the person recording'], ['R-FINANCE']),
+    dec7('D-SPEECH-INPUT', 'Speech input in the assistant', 'business owner', 'SCR-05 "Speak your request"', 'open',
+         'Not decided. Browser speech recognition can send audio to the browser maker, an external connection not authorised in this phase. Options: build the control wired to nothing, use an approved local engine, or record a fidelity exception.',
+         'Boards: ' + B_CANVAS + 'SCR-05-desktop.dc.html and SCR-05-mobile.dc.html composer (F-12 readiness PMO-0-9).', ['Browser speech API', 'Local engine', 'Omit by fidelity exception'], ['R-ASSISTANT']),
+    dec7('D-ALERTS-ENTRY', 'Where the bell sits and where the account menu links go', 'design engineer', 'SCR-15 account menu; the bell; top bar', 'open',
+         'Not decided. No approved board draws the bell (only the site map says "Bell, top right"); the account menu links "My roles" and "Delegate while away" to nothing, and no phone board shows how the account page opens.',
+         'Boards: ' + B_CANVAS + 'SCR-15-desktop-account.dc.html, SCR-15-mobile-account.dc.html, SITEMAP-desktop.dc.html (F-12 readiness PMO-0-6, PMO-0-7). A drawing question for the design engineer, not a backend rule.', ['Draw the bell on the top bar', 'Notifications from the account menu only'], ['R-ALERTS']),
+]
+# revisions of existing proposals (each stays proposed and owned by the backend developer)
+add_rev('D-RESPONSE-VIEW', 'proposed', PROPOSAL + 'r1 plus, on tasks[].response: intro, proof_hint, agent_note, the channels a response may have been received by, context (project, document), next lines and a recorded block (by, at, received via, proof count, summary); variants go_live_acceptance and support_handover (go-live signatures recorded by the PM, Support\'s reply recorded by the PM); E-RESPONSE accepts received_via and returns revision, recorded and next.',
+        'F-09 readiness PMO-0-1: ' + B_CANVAS + 'SCR-16-desktop.dc.html:20 (intro), :34 (proof hint), :46-47 (Tola\'s aside), SCR-16-desktop-success.dc.html:17 ("received by email", recorded by and at, "1 proof file", what happens next), SCR-16-desktop-sow-signed.dc.html:17 (project crumb, "the SOW\'s 4 stages become the project\'s milestones"); SCR-45-desktop-signatures.dc.html and SCR-48-desktop-record.dc.html record go-live signatures and Support\'s reply. Every sentence is composed by the backend from records, so the mock can hold it under additionalProperties false.',
+        ['A fidelity exception with static board copy (F-09 PMO-0-1 b)'], ['S-DECISIONS-V6', 'S-SCREENS'])
+add_rev('D-WORK-ACTIONS-VIEW', 'proposed', PROPOSAL + 'r1 plus reconcile.unknown_note and reconcile.resend_note, and an optional case_revision on E-WORK-ACTION for the proof upload that precedes a reconcile.',
+        'F-09 readiness PMO-0-1 and PMO-0-5: ' + B_CANVAS + 'SCR-02-desktop-awaiting-reconciliation.dc.html:17 ("Keep it held and remind me tomorrow", "A resend reuses the same invoice number"); E-EVIDENCE-UPLOAD says to send its case_revision on the action that follows, which E-WORK-ACTION could not carry. What "can\'t tell yet" does and what a resend reuses are backend rules stated by the backend.',
+        ['Static board copy'], ['S-DECISIONS-V6', 'S-SCREENS'])
+add_rev('D-RFP-OUTCOME', 'proposed', PROPOSAL + 'r1 plus an RFP frame on the work item (reference, title, client, status tag with days left, PM, five tabs with counts), and on rfp_outcome: lesson categories, a recorded block with what\'s recorded rows, reminder holder and time, categorised lessons, the debrief proof, the archive reference, the engagement created and next lines, and a follow-up the agent drafted (recipient as returned, body, version, checks, status, can send, can edit). A new POST /api/v1/work/{work_id}/rfp-outcome/followup sends that draft (optionally edited) with the expected revision, draft version and an idempotency key; an unknown outcome returns effect_uncertain and blocks a resend until reconciled. E-RFP-OUTCOME accepts lessons_items.',
+        'F-09 readiness PMO-0-2: ' + B_CANVAS + 'SCR-16-desktop-team-input.dc.html:17 and -rfp-outcome.dc.html:17 (frame: "DEADLINE 28 NOV · 16 DAYS", "PM TUNDE BELLO", "Requirements 64", "Team input 2/4"), SCR-16-desktop-rfp-lost.dc.html (PRICE, TIMELINE, STRENGTH lessons, "Debrief notes (proof)", ARC-0117), SCR-16-desktop-rfp-won.dc.html ("Engagement EN-0042 created"), SCR-16-desktop-rfp-pending.dc.html ("Reminder for Tunde Bello · 10 DEC 09:00"), SCR-16-desktop-rfp-unknown.dc.html (follow-up to the procurement address, "It goes only if you send it", Send follow-up, Edit). The send is external messaging, so it is a person\'s action with idempotency and uncertain-effect handling (INV-RESEND, INV-AGENT); the email provider stays open (D-ALERT-PROVIDERS). Who may send is a backend rule.',
+        ['Send follow-ups through E-WORK-STEP', 'Leave the follow-up unbuilt'], ['S-DECISIONS-V6', 'S-SCREENS'])
+add_rev('D-NOTIFY-MODEL', 'proposed', 'Unchanged storage choice (Notification and AlertPreference records, outbox, mock adapter until I-03), extended as a PROPOSAL for the backend developer: AlertPreference holds per-event WhatsApp and email choices, a digest time, quiet hours and a revision, and keeps channel and frequency as summaries; Notification records how and when it was delivered (or why it stayed in the app) and when it was read, and read is changed only by the mark-read write. Retention and storage details stay the backend developer\'s.',
+        'F-12 readiness PMO-0-1: the approved settings board is a per-event matrix with digest time, quiet hours and a verified WhatsApp number, which one channel and one frequency cannot store (' + B_CANVAS + 'SCR-15-desktop-settings.dc.html). Screen fields are in D-ALERT-PREFS-VIEW.',
+        ['In-app only for v1', 'One channel and frequency per person (r2)'], ['S-DECISIONS-V6', 'S-SCREENS'])
+add_rev('D-CONVERSATION-MODEL', 'proposed', 'Unchanged choice (Conversation and Message records per person, cited records and the agent run on each answer, drafts only through the normal line start), extended as a PROPOSAL for the backend developer: a Conversation stores its agent, title, status and project context; a Message stores typed steps, a handoff note, source details, the reason it cannot answer, and a draft with what to start and the started work once started. Retention and storage details stay the backend developer\'s.',
+        'F-12 readiness PMO-0-2: a page reload loses the status today, steps are strings and drafts have no shape (' + B_CANVAS + 'SCR-05-desktop-thread.dc.html, -draft-started, -working). Screen fields are in D-ASSISTANT-VIEW.',
+        ['Stateless assistant', 'r2 shape'], ['S-DECISIONS-V6', 'S-SCREENS'])
+
 # ---------------------------------------------------------------- integrations and jobs
 integrations = [
     {'id': 'I-ALERTS', 'title': 'WhatsApp and email alerts', 'refs': ['D-NOTIFY-MODEL', 'D-ALERT-PROVIDERS', 'T-ALERTS', 'JOB-ALERTS'], 'evidence': ['S-SCOPE', 'S-BACKEND'], 'provider': 'Not chosen (mock adapter)', 'selection': 'unresolved',
@@ -677,6 +1089,177 @@ for r in requirements:
 for j in journeys:
     if j['id'] == 'JR-01': j['refs'] = j['refs'] + ['E-LINE-OPTIONS', 'E-EVIDENCE-UPLOAD']
     if j['id'] == 'JR-03': j['refs'] = j['refs'] + ['E-WORK-ITEM', 'E-RFP-OUTCOME']
+
+# ---- v7 (S-DECISIONS-V6): client messages integration, scenarios, backend and frontend tasks for every remaining screen and slice
+integrations.append({'id': 'I-CLIENT-MESSAGES', 'title': 'Messages to clients (RFP follow-ups, payment reminders, report sends)', 'refs': ['D-ALERT-PROVIDERS', 'D-RFP-OUTCOME', 'D-LINE-WORKSPACE', 'T-RESPONSE', 'T-WORKSPACE'],
+    'evidence': ['S-SCOPE', 'S-BACKEND', 'S-DECISIONS-V6'], 'provider': 'Not chosen (existing delivery outbox with a mock adapter)', 'selection': 'unresolved',
+    'purpose': 'Send what a person approved or chose to send to a client contact (e.g. the RFP follow-up on SCR-16 rfp-unknown, the payment reminder on SCR-32).',
+    'data': 'Only the exact version the person sent; recipient as recorded by the backend.', 'secret_boundary': 'Provider credentials server-only; never in the frontend.',
+    'failure_recovery': 'An unknown send outcome makes the work effect_uncertain; it is reconciled (E-WORK-ACTION) before any resend (INV-RESEND).',
+    'operations': [{'name': 'queue_client_message', 'relationship': 'queued_work', 'contract': 'E-RFP-FOLLOWUP and sending steps on E-WORK-STEP write an outbox entry for the exact version; the outbox worker sends it and records the receipt or an uncertain effect.',
+                    'authentication': 'Internal; provider call authenticated server-side when chosen.', 'evidence': ['S-BACKEND', 'S-DECISIONS-V6']}]})
+for eid in ('E-RFP-FOLLOWUP', 'E-WORK-STEP'):
+    EP_BY_ID[eid]['integration_calls'] = [{'integration': 'I-CLIENT-MESSAGES', 'operation': 'queue_client_message'}]
+
+def SC7(*a):
+    s = SC(*a); s['evidence'] = ['S-SCREENS', 'S-DECISIONS-V6']; return s
+scenarios += [
+    SC7('A-EXCEPTIONS-LIST', 'Search, filter and count all exceptions', 'R-EXCEPTION', 'A Lead with 25 visible exceptions of several kinds', 'Search a reference, filter one kind, page through', 'Rows match q and what across pages; open_count counts every match the Lead may see; each row\'s ref equals its work item\'s reference; absent counts are not shown'),
+    SC7('A-RFP-FOLLOWUP', 'Send a drafted RFP follow-up exactly once', 'R-RESPONSE', 'An RFP with outcome unknown and a follow-up drafted by the agent', 'The PM edits and sends it; sends again with the same idempotency key; the provider outcome is unknown',
+        'One outbox entry for the exact version; the repeat changes nothing; an unknown outcome shows effect_uncertain and no resend is possible until reconciled; an agent actor is refused; a stale version returns 409'),
+    SC7('A-MONTHEND-VIEW', 'Month-end shows known cash plus Unknown and restricted rows without links', 'R-FINANCE', 'October with one statement missing and a restricted payroll task', 'A Finance Lead reads month-end',
+        'Summary counts are as returned; cash shows the known part and Unknown, never 0; the payroll row says HR only with no work_id; the next action opens its work item'),
+    SC7('A-WORKSPACE', 'A line workspace shows typed sections and takes only offered steps', 'R-WORKITEM', 'A weekly report in review, a minutes item with suggestions, a fixed-asset schedule with one Unknown, and a restricted payroll section',
+        'Each is read; a suggestion is accepted with E-WORK-STEP; a step is repeated with the same idempotency key; a sending step cannot confirm the send',
+        'Sections render by kind with cited records; unknown amounts are unknown, never 0; restricted sections return restricted=true and no rows to people without the grant; only returned steps are offered; the repeat changes nothing; an unconfirmed send returns effect_uncertain and the item offers reconcile; decisions use E-TASK-DECIDE; a stale revision returns 409'),
+    SC7('A-ASSIGN', 'Assign the accountable person on an unassigned RFP', 'R-START', 'A logged RFP in the Unassigned queue and a person allowed to assign', 'Assign a candidate; a person without the authority opens the RFP',
+        'The work moves to the chosen PM with one audit event; the other person sees no assign block; a person not in candidates gets 422; stale 409'),
+    SC7('A-SETUP-RULES-VIEW', 'Rules show Not set, holds work and can_change; the first version saves', 'R-SETUP', 'A rule that is Not set (revision 0) and a read-only Lead', 'The Admin saves roles allowed for it; the read-only Lead opens Rules',
+        'Save with expected_revision 0 creates version 1; not_set_count drops; the read-only Lead sees no edit control; a stale save returns 409 and re-applies nothing'),
+    SC7('A-DELEGATIONS', 'Delegations are listed and set', 'R-SETUP', 'A Lead with one scheduled delegation', 'Read delegations; set a new one with authority and reason', 'The list shows from, delegate, authority, dates and status as returned; the new delegation appears with a new revision; an authority not offered gets 422'),
+    SC7('A-PEOPLE-ADMIN', 'Assign roles, invite and deactivate (once D-ADMIN-AUTHORITY is decided)', 'R-SETUP', 'D-ADMIN-AUTHORITY and D-SIGNIN decided; a person with held work and a person leaving',
+        'Assign the missing role and resume; invite a new staff member; deactivate the leaver with reassignment', 'Held work resumes; the invite is idempotent; open items are reassigned before deactivation; every write is audited; defined fully when the decisions are made'),
+    SC7('A-TEMPLATE-VERSION', 'Upload a new template version', 'R-SETUP', 'A test template at version 1', 'Upload version 2; upload with a stale revision', 'Version 2 is listed with who and when; test_template is as the backend returns it; stale 409'),
+    SC7('A-PAYROLL-FIELDS', 'Payroll field visibility (once D-PAYROLL-VISIBILITY is decided)', 'R-SETUP', 'D-PAYROLL-VISIBILITY decided by PSL', 'The HR Lead changes who may see a payroll field', 'Defined when D-PAYROLL-VISIBILITY is decided; INV-RESTRICTED holds whatever is configured'),
+    SC7('A-COSTING-RULE', 'Costing rule versions and examples are shown as returned', 'R-SETUP', 'A current costing rule, a proposed version and worked examples, one with an unknown result', 'A Lead and the proposer open the costing rule',
+        'Versions, sections and examples show as returned; an unknown result stays unknown; the proposer sees cannot_review_reason; the review and withdrawal writes are defined when D-COSTING-RULE is decided'),
+    SC7('A-ALERT-PREFS', 'Read and save per-event alert preferences', 'R-ALERTS', 'A person with a verified WhatsApp number', 'Read preferences; turn off email for one event; set the digest time; save with a stale revision',
+        'Events, digest time and quiet hours come back with their options; the number is masked; the save returns a new revision; stale 409; channel and frequency stay valid'),
+    SC7('A-NOTIFICATIONS', 'Search, count and mark alerts read', 'R-ALERTS', 'A person with four alerts, one restricted (in app only) and one sent in a digest', 'Search, filter unread, open one',
+        'total and unread_count are as returned; each alert shows how and when it was delivered or why it stayed in the app; opening marks it read and unread_count drops'),
+    SC7('A-ASSISTANT-THREADS', 'Conversation list, typed steps and a draft that starts its line', 'R-ASSISTANT', 'A PM with three conversations, one drafted and one working', 'Reload the page; open the drafted one; start the draft; mention a project',
+        'The list and each conversation keep their status after reload; steps show done, now and next with references; the draft opens the normal Start work drawer prefilled and the started work is linked; mentions offer only readable records'),
+    SC7('A-SPEECH-INPUT', 'Speech input in the assistant (once D-SPEECH-INPUT is decided)', 'R-ASSISTANT', 'D-SPEECH-INPUT decided', 'Use Speak your request', 'Defined when D-SPEECH-INPUT is decided; no external connection is made before then'),
+    SC7('A-SIGNIN', 'Sign in, sign out and reset (once D-SIGNIN is decided)', 'R-SESSION', 'D-SIGNIN decided by the backend developer', 'Sign in, fail once, reset, sign out', 'Defined when D-SIGNIN is decided'),
+    SC7('A-PROJECTS-VIEW', 'Projects list counts and journey detail come from the backend', 'R-PROJECT', 'Five active and two closed projects, one with lines needing a person', 'Read each status tab and one project',
+        'Counts and totals are as returned; next milestone due may be unknown; the journey shows PM, facts, per-line detail and station as returned; nothing is counted by the frontend'),
+    SC7('A-OVERVIEW-LINES', 'Floor lines carry subtitle, agent and status', 'R-OVERVIEW', 'A PMO Lead with sample work on every line', 'Read overview', 'Each line shows its subtitle, agent and status tag as returned; no tone is parsed from note'),
+    SC7('A-RECEIVABLES', 'Invoices list what is owed; a receipt is recorded once and kept separate', 'R-FINANCE', 'Invoices with one received amount unknown; D-RECEIPT-ALLOCATION decided for the receipt part',
+        'A Finance user lists invoices; records a receipt with proof; repeats it with the same idempotency key', 'Owed and received show Unknown where unknown, never 0; the receipt is a separate record with its allocation status as returned; the repeat records nothing; no debt is erased; agents are refused'),
+    SC7('A-CLIENTS', 'Client register and billing contact', 'R-PROJECT', 'A client with no billing contact and an invoice waiting', 'Read clients and the detail; set the billing contact', 'billing_contact_set is false and the blocked line says invoices wait; after the save it is set with a new revision; stale 409'),
+    SC7('A-CONTRACT-V7', 'The frontend contract is v7 and every mock validates', 'R-FRONTEND', 'The frontend on the v6 contract with all merged fixtures', 'Repoint the mock, generated types and drift test to packages/v7', 'Every existing fixture and request validates against v7 unchanged; proposal-only fields from earlier rounds now validate without stripping where v7 carries them'),
+]
+for s in scenarios:
+    if s['id'] == 'A-RFP-OUTCOME':
+        s['then'] += '; the RFP frame, recorded rows, categorised lessons, reminder and engagement show as returned (D-RFP-OUTCOME r2)'
+        s['evidence'] = sorted(set(s['evidence']) | {'S-DECISIONS-V6'})
+    if s['id'] == 'A-RESPONSE':
+        s['then'] += '; the success view shows the recorded block (who, when, how received, proof count) and the next lines as returned'
+        s['evidence'] = sorted(set(s['evidence']) | {'S-DECISIONS-V6'})
+
+V7_TASK_EV = ['S-SCREENS', 'S-SCOPE', 'S-DECISIONS-V6']
+def T7(*a, **kw):
+    return dict(T(*a, **kw), evidence=V7_TASK_EV)
+task_by_id = {t['id']: t for t in tasks}
+for tid, extra_refs, extra_acc in (('T-RESPONSE', ['I-CLIENT-MESSAGES'], ['A-RFP-FOLLOWUP', 'A-RFP-OUTCOME']), ('T-ALERTS', [], ['A-ALERT-PREFS', 'A-NOTIFICATIONS']), ('T-ASSISTANT', [], ['A-ASSISTANT-THREADS']),
+                                   ('T-SETUP', [], ['A-SETUP-RULES-VIEW', 'A-DELEGATIONS', 'A-TEMPLATE-VERSION']), ('T-EXCEPTIONS', [], ['A-EXCEPTIONS-LIST']), ('T-FINANCE', [], ['A-MONTHEND-VIEW']),
+                                   ('T-PROJECTS', [], ['A-PROJECTS-VIEW']), ('T-FLOOR', [], ['A-OVERVIEW-LINES']), ('T-WORKITEM', [], ['A-WORKSPACE'])):
+    t = task_by_id[tid]; t['refs'] = t['refs'] + extra_refs; t['acceptance'] = t['acceptance'] + [a for a in extra_acc if a not in t['acceptance']]
+    t['evidence'] = sorted(set(t['evidence']) | {'S-DECISIONS-V6'})
+tasks += [
+    T7('T-WORKSPACE', 'API: line workspace block on the work item and the line step write', by_task['T-WORKSPACE'] + ['I-CLIENT-MESSAGES'], ['R-WORKITEM', 'R-FINANCE'], [], ['T-WORKITEM'], ['A-WORKSPACE'], BE),
+    T7('T-ASSIGN', 'API: assign the accountable person', by_task['T-ASSIGN'], ['R-START'], [], ['T-START'], ['A-ASSIGN'], BE),
+    T7('T-SETUP-PEOPLE', 'API: role assignment, invite and deactivate (gated)', by_task['T-SETUP-PEOPLE'], ['R-SETUP'], ['D-ADMIN-AUTHORITY', 'D-SIGNIN'], ['T-SETUP'], ['A-PEOPLE-ADMIN'], BE),
+    T7('T-COSTING-RULE', 'API: costing rule read (writes wait for D-COSTING-RULE)', by_task['T-COSTING-RULE'], ['R-SETUP'], ['D-COSTING-RULE'], ['T-SETUP'], ['A-COSTING-RULE'], BE),
+    T7('T-RECEIVABLES', 'API: Finance-wide invoices and receipt recording (receipt gated)', by_task['T-RECEIVABLES'], ['R-FINANCE'], ['D-RECEIPT-ALLOCATION'], ['T-FINANCE'], ['A-RECEIVABLES'], BE),
+    T7('T-CLIENTS', 'API: client register and billing contact', by_task['T-CLIENTS'], ['R-PROJECT'], [], ['T-PROJECTS'], ['A-CLIENTS'], BE),
+]
+# frontend: retitles for the slices readiness split, then one task per remaining screen or slice. All build on the v7 contract mock.
+def retitle7(i, title, acc=None):
+    t = task_by_id[i]; t['title'] = title; t['evidence'] = sorted(set(t['evidence']) | {'S-DECISIONS-V6'})
+    if acc is not None: t['acceptance'] = acc
+retitle7('FE-M2B-RESPONSE', 'Frontend (F-09): record a client response or SOW signature (SCR-16 default, validation, success, sow-signed) and reconcile on the work item (SCR-02 awaiting-reconciliation); team input and RFP outcome are FE-M2B-RFP', ['A-RESPONSE', 'A-RECONCILE'])
+retitle7('FE-M2B', 'Frontend (F-06): all-exceptions list with search, filter and count (SCR-10)', ['A-ACCESSIBILITY', 'A-EXCEPTIONS-LIST'])
+retitle7('FE-M3-FINANCE', 'Frontend (F-10): Finance month-end checklist (SCR-36); the other Finance screens are FE-FIN-*', ['A-MONTHEND', 'A-MONTHEND-VIEW'])
+retitle7('FE-M3-SETUP', 'Frontend (F-11): Setup frame and rule tabs (SCR-13 rules, finance-rules, delivery-rules); other Setup tabs are FE-SETUP-*', ['A-SETUP', 'A-SETUP-RULES-VIEW'])
+retitle7('FE-M3-PROJECTS', 'Frontend (F-07): projects list and project journey (SCR-22, SCR-07) with the v7 list and journey fields; tabs in FE-M3-PROJECT-TABS and FE-M3-REPORT', ['A-PROJECT', 'A-PROJECTS-VIEW'])
+retitle7('FE-M3-OVERVIEW', 'Frontend (F-08): overview and factory floor (SCR-06) with line subtitle, agent and status', ['A-OVERVIEW', 'A-OVERVIEW-LINES'])
+task_by_id['FE-M4']['status'] = 'retired'
+retitle7('FE-M4', 'Frontend: notification centre, alert settings, assistant (retired 15 Nov 2026: split into FE-ALERTS, FE-ALERTS-MENU, FE-ASSISTANT and FE-ASSISTANT-SPEECH)')
+V7DEP = 'FE-CONTRACT-V7'; WSF = 'FE-WORKSPACE-FRAME'
+tasks += [
+    T7('FE-CONTRACT-V7', 'Frontend: repoint the frontend contract to v7 and validate all mocks (mock server, gen:api types, drift test, client version comment); one lane owns the repoint', [], ['R-FRONTEND'], [], ['T-FRONTEND-SHELL'], ['A-CONTRACT-V7'], FE),
+    T7('FE-M2B-RFP', 'Frontend (F-09B): team input and RFP outcome in the RFP frame, with the drafted follow-up (SCR-16 team-input, rfp-outcome, -lost, -pending, -unknown, rfp-won, rfp-lost, rfp-pending, rfp-unknown)', [], ['R-RESPONSE'], [], ['FE-M2B-RESPONSE', V7DEP], ['A-RFP-OUTCOME', 'A-RFP-FOLLOWUP'], FE),
+    T7('FE-WORKSPACE-FRAME', 'Frontend: line workspace renderer on the work item (typed sections, step forms from field descriptors, step write with idempotency and uncertain-effect handling)', [], ['R-WORKITEM'], [], ['FE-WORKITEM', 'FE-DECIDE', 'FE-M2B-RESPONSE', V7DEP], ['A-WORKSPACE'], FE),
+    T7('FE-RFP-INTAKE', 'Frontend: log a received RFP (SCR-23) and assign the accountable PM from Unassigned (SCR-24)', [], ['R-START'], [], ['FE-M2A', 'FE-MYWORK', V7DEP], ['A-START-INTAKE', 'A-ASSIGN'], FE),
+    T7('FE-RFP-RESPONSE', 'Frontend: RFP response workspace (SCR-26 default, review, edit, accepted, reject, response-review)', [], ['R-WORKITEM', 'R-DECIDE'], [], [WSF, 'FE-M2B-RFP'], ['A-WORKSPACE'], FE),
+    T7('FE-RFP-SUBMIT', 'Frontend: RFP submission (SCR-40 draft, review, submitted, submitted-portal)', [], ['R-WORKITEM', 'R-DECIDE'], [], [WSF, 'FE-M2B-RFP'], ['A-WORKSPACE', 'A-RECONCILE'], FE),
+    T7('FE-COSTING', 'Frontend: costing sheet (SCR-27 default, adjust, ask, approvals); the CEO final decision stays in FE-DECIDE-VARIANTS', [], ['R-WORKITEM', 'R-DECIDE'], ['D-COSTING-RULE'], [WSF, 'FE-SETUP-COSTING'], ['A-WORKSPACE', 'A-COSTING-RULE'], FE),
+    T7('FE-ENGAGEMENT-PLANNING', 'Frontend: engagement and planning (SCR-41 default, register; SCR-42 default, record, held, readiness, ready)', [], ['R-WORKITEM', 'R-RESPONSE'], [], [WSF], ['A-WORKSPACE', 'A-RESPONSE'], FE),
+    T7('FE-LINE-WEEKLY', 'Frontend: weekly client update (SCR-25 default, invalid, assembling, review, returned, received)', [], ['R-WORKITEM', 'R-DECIDE'], [], [WSF], ['A-WORKSPACE'], FE),
+    T7('FE-LINE-MINUTES', 'Frontend: confirm the minutes (SCR-28 default, suggesting, drafted, review, internal, published)', [], ['R-WORKITEM', 'R-DECIDE'], [], [WSF], ['A-WORKSPACE'], FE),
+    T7('FE-ISSUE', 'Frontend: issue detail (SCR-30 default, overdue, no-owner, verified)', [], ['R-WORKITEM'], [], [WSF, 'FE-M3-PROJECT-TABS'], ['A-WORKSPACE'], FE),
+    T7('FE-CHANGE', 'Frontend: change request detail (SCR-31 default, impact, decision, rejected, authorise, notice, execution, go-live-note, closed)', [], ['R-WORKITEM', 'R-DECIDE'], ['D-CHANGE-DECIDERS'], [WSF, 'FE-M3-PROJECT-TABS'], ['A-WORKSPACE'], FE),
+    T7('FE-EMERGENCY-ESCALATION', 'Frontend: emergency change (SCR-50 record, refused, review, retro, report) and escalation (SCR-51 investigating, decide, not-escalated, draft, review, received); the CTO emergency decision stays in FE-DECIDE-VARIANTS', [], ['R-WORKITEM', 'R-DECIDE'], [], [WSF, 'FE-M2A'], ['A-WORKSPACE'], FE),
+    T7('FE-LEADERSHIP-REPORT', 'Frontend: leadership report (SCR-52 setup, drafting, review, tuesday, received)', [], ['R-WORKITEM', 'R-REPORTS'], [], [WSF, 'FE-M3-REPORT'], ['A-WORKSPACE', 'A-REPORT'], FE),
+    T7('FE-MILESTONE-COMPLETE', 'Frontend: mark a milestone complete from the Milestones tab (SCR-19), started as the invoice line with proof', [], ['R-START', 'R-PROJECT'], [], ['FE-M3-PROJECT-TABS', 'FE-M2A-PROOF'], ['A-START-INTAKE', 'A-PROJECT-TABS'], FE),
+    T7('FE-DOCUMENT-REVIEW', 'Frontend: document review page (SCR-08 default, returned)', [], ['R-PROJECT', 'R-DECIDE'], [], ['FE-M3-PROJECT-TABS', 'FE-DECIDE'], ['A-PROJECT-TABS', 'A-DECIDE'], FE),
+    T7('FE-DELIVERY-RELEASE', 'Frontend: delivery overview (SCR-43), release gates (SCR-44 default, decision, returned, owner-needed, readiness, ready) and go-live acceptance (SCR-45 default, signatures, accepted, changes, declined)', [], ['R-PROJECT', 'R-WORKITEM', 'R-RESPONSE'], [], [WSF, 'FE-M3-PROJECTS'], ['A-WORKSPACE', 'A-PROJECTS-VIEW', 'A-RESPONSE'], FE),
+    T7('FE-DELIVERY-HYPERCARE-ARCHIVE', 'Frontend: hypercare (SCR-46 default, record, evaluating, qualified, not-met, setup-needed) and archive (SCR-47 default, working, uncertain)', [], ['R-WORKITEM', 'R-EXCEPTION'], [], [WSF], ['A-WORKSPACE', 'A-RECONCILE'], FE),
+    T7('FE-DELIVERY-CLOSURE', 'Frontend: handover to Support (SCR-48 default, record, gaps, received), closure (SCR-49 default, blocked, decision, returned, closed) and the retrospective (SCR-33)', [], ['R-WORKITEM', 'R-DECIDE', 'R-RESPONSE'], [], [WSF], ['A-WORKSPACE', 'A-RESPONSE'], FE),
+    T7('FE-PAYMENTS', 'Frontend: payments and follow-up list (SCR-20 default) and the payment reminder (SCR-32); the short payment stays in FE-DECIDE-VARIANTS', [], ['R-FINANCE'], [], [WSF], ['A-RECEIVABLES', 'A-WORKSPACE'], FE),
+    T7('FE-PAYMENTS-RECEIPT', 'Frontend: record a payment (SCR-20 record), gated until the allocation rule is decided', [], ['R-FINANCE'], ['D-RECEIPT-ALLOCATION'], ['FE-PAYMENTS'], ['A-RECEIVABLES'], FE),
+    T7('FE-CLIENTS', 'Frontend: clients and client detail with the billing contact (SCR-35 default, detail)', [], ['R-PROJECT'], [], ['FE-M3-PROJECTS', V7DEP], ['A-CLIENTS'], FE),
+    T7('FE-SIGNIN', 'Frontend: sign in, error, reset and account set-up (SCR-17), gated until sign-in is decided', [], ['R-SESSION'], ['D-SIGNIN'], ['T-FRONTEND-SHELL'], ['A-SIGNIN'], FE),
+    T7('FE-FIN-PAYROLL-IMPORT', 'Frontend (F-10B): payroll inputs and restricted matching (SCR-09 default, error; SCR-18 default, permission)', [], ['R-FINANCE'], [], [WSF], ['A-PAYROLL', 'A-WORKSPACE'], FE),
+    T7('FE-FIN-PAYROLL-CORRECTIONS', 'Frontend (F-10C): payroll corrections and the HR Lead decision (SCR-37)', [], ['R-FINANCE', 'R-DECIDE'], [], [WSF], ['A-PAYROLL', 'A-WORKSPACE'], FE),
+    T7('FE-FIN-PAYROLL-RUN', 'Frontend (F-10D): payroll run (SCR-59 input-review, combine-review, match-held, match-review, totals-review, publish, receipts, verified, followup)', [], ['R-FINANCE'], [], ['FE-FIN-PAYROLL-IMPORT'], ['A-PAYROLL', 'A-WORKSPACE'], FE),
+    T7('FE-FIN-ACCOUNTS-INTAKE', 'Frontend (F-10E1): management accounts intake and investigation (SCR-53 quarantined, units, investigating, owner-needed, setup-needed, returned)', [], ['R-FINANCE'], [], [WSF, 'FE-M2A-PROOF'], ['A-MONTHEND', 'A-WORKSPACE'], FE),
+    T7('FE-FIN-ACCOUNTS-PUBLISH', 'Frontend (F-10E2): management accounts reviews and publication (SCR-53 reviews, drafting, publishing, uncertain, verified)', [], ['R-FINANCE', 'R-DECIDE'], [], ['FE-FIN-ACCOUNTS-INTAKE', 'FE-M3-FINANCE'], ['A-WORKSPACE', 'A-RECONCILE'], FE),
+    T7('FE-FIN-SCHEDULES', 'Frontend (F-10F): income detail and schedules (SCR-54 investigating, held, review, returned, verified, export, withdrawn)', [], ['R-FINANCE'], [], [WSF], ['A-WORKSPACE'], FE),
+    T7('FE-FIN-PPE', 'Frontend (F-10G): fixed asset schedule (SCR-55 investigating, register-review, date-review, calculating, schedule-review, returned, verified)', [], ['R-FINANCE'], [], [WSF], ['A-WORKSPACE'], FE),
+    T7('FE-FIN-FORECAST', 'Frontend (F-10H): cash forecast and actuals (SCR-56 investigating, review, group-rows, group-review, uncertain, verified, actuals)', [], ['R-FINANCE'], [], [WSF], ['A-WORKSPACE'], FE),
+    T7('FE-FIN-BU', 'Frontend (F-10I): business-unit totals (SCR-57 source-review, investigating, held, result-review, publish, receipts, verified)', [], ['R-FINANCE'], [], [WSF], ['A-WORKSPACE'], FE),
+    T7('FE-FIN-LEDGER', 'Frontend (F-10J): ledger source reference (SCR-58 investigating, duplicate, observe, review, rejected, verified)', [], ['R-FINANCE'], [], [WSF], ['A-WORKSPACE'], FE),
+    T7('FE-SETUP-DELEGATION', 'Frontend (F-11B): delegation tab (SCR-13 delegation)', [], ['R-SETUP'], [], ['FE-M3-SETUP', V7DEP], ['A-DELEGATIONS'], FE),
+    T7('FE-SETUP-ROLES', 'Frontend (F-11C): roles and staff accounts (SCR-13 default, permission, validation; SCR-21 default, invite, deactivate), gated until PSL names who holds Admin', [], ['R-SETUP'], ['D-ADMIN-AUTHORITY'], ['FE-M3-SETUP', V7DEP], ['A-PEOPLE-ADMIN'], FE),
+    T7('FE-SETUP-TEMPLATES', 'Frontend (F-11D): templates with versioned upload (SCR-34)', [], ['R-SETUP'], [], ['FE-M3-SETUP', V7DEP], ['A-TEMPLATE-VERSION'], FE),
+    T7('FE-SETUP-PAYROLL-FIELDS', 'Frontend (F-11E): payroll field visibility (SCR-13 fields), gated until PSL decides it', [], ['R-SETUP'], ['D-PAYROLL-VISIBILITY'], ['FE-M3-SETUP', V7DEP], ['A-PAYROLL-FIELDS'], FE),
+    T7('FE-SETUP-COSTING', 'Frontend (F-11F): costing rule (SCR-39 default, review, example, review-own), gated until the rule is decided', [], ['R-SETUP'], ['D-COSTING-RULE'], ['FE-M3-SETUP', V7DEP], ['A-COSTING-RULE'], FE),
+    T7('FE-ALERTS', 'Frontend (F-12A): notification centre and alert settings (SCR-15 default, settings; STATES); the WhatsApp and email boards are T-ALERTS message content', [], ['R-ALERTS'], [], [V7DEP], ['A-ALERTS', 'A-ALERT-PREFS', 'A-NOTIFICATIONS'], FE),
+    T7('FE-ALERTS-MENU', 'Frontend (F-12A2): bell and account menu in the top bar (SCR-15 account), gated on where the bell is drawn and on sign-out', [], ['R-ALERTS', 'R-SESSION'], ['D-ALERTS-ENTRY', 'D-SIGNIN'], ['FE-ALERTS', 'FE-M2A'], ['A-NOTIFICATIONS'], FE),
+    T7('FE-ASSISTANT', 'Frontend (F-12B): assistant (SCR-05 default, thread, draft-started, cant, working) without speech input', [], ['R-ASSISTANT'], [], [V7DEP, 'FE-M2A'], ['A-ASSISTANT', 'A-ASSISTANT-THREADS'], FE),
+    T7('FE-ASSISTANT-SPEECH', 'Frontend: "Speak your request" in the assistant composer (SCR-05), gated on D-SPEECH-INPUT', [], ['R-ASSISTANT'], ['D-SPEECH-INPUT'], ['FE-ASSISTANT'], ['A-SPEECH-INPUT'], FE),
+]
+for m in milestones:
+    if m['id'] == 'M-2':
+        m['refs'] += ['FE-CONTRACT-V7', 'FE-M2B-RFP', 'FE-RFP-INTAKE', 'T-ASSIGN']; m['exit_criteria'] = m['exit_criteria'] + ['A-CONTRACT-V7, A-RFP-FOLLOWUP, A-ASSIGN and A-EXCEPTIONS-LIST pass on the v7 contract mock']
+    if m['id'] == 'M-3':
+        m['refs'] += ['T-SETUP-PEOPLE', 'T-COSTING-RULE', 'T-CLIENTS', 'FE-SETUP-DELEGATION', 'FE-SETUP-ROLES', 'FE-SETUP-TEMPLATES', 'FE-SETUP-PAYROLL-FIELDS', 'FE-SETUP-COSTING', 'FE-DOCUMENT-REVIEW', 'FE-MILESTONE-COMPLETE', 'FE-CLIENTS']
+        m['exit_criteria'] = m['exit_criteria'] + ['A-MONTHEND-VIEW, A-SETUP-RULES-VIEW, A-DELEGATIONS, A-TEMPLATE-VERSION, A-PROJECTS-VIEW, A-OVERVIEW-LINES and A-CLIENTS pass', 'A-PEOPLE-ADMIN, A-PAYROLL-FIELDS and A-COSTING-RULE pass once their decisions are made']
+        m['gate_ids'] = m['gate_ids'] + ['D-ADMIN-AUTHORITY', 'D-PAYROLL-VISIBILITY', 'D-COSTING-RULE']
+    if m['id'] == 'M-4':
+        m['refs'] += ['FE-ALERTS', 'FE-ALERTS-MENU', 'FE-ASSISTANT', 'FE-ASSISTANT-SPEECH']; m['exit_criteria'] = m['exit_criteria'] + ['A-ALERT-PREFS, A-NOTIFICATIONS and A-ASSISTANT-THREADS pass on the contract mock']
+        m['gate_ids'] = m['gate_ids'] + ['D-ALERTS-ENTRY', 'D-SPEECH-INPUT']
+MS7 = lambda i, t, refs, exits, gates: {'id': i, 'title': t, 'refs': refs, 'evidence': ['S-SCREENS', 'S-DECISIONS-V6'], 'owner_role': 'delivery owner', 'exit_criteria': exits, 'gate_ids': gates}
+milestones += [
+    MS7('M-5', 'Line workspaces: frame, pre-sale and planning lines', ['T-WORKSPACE', 'FE-WORKSPACE-FRAME', 'FE-RFP-RESPONSE', 'FE-RFP-SUBMIT', 'FE-COSTING', 'FE-ENGAGEMENT-PLANNING'],
+        ['A-WORKSPACE passes on PostgreSQL and on the contract mock', 'Every SCR-26, SCR-40, SCR-41, SCR-42 board passes the design-fidelity check', 'SCR-27 passes once D-COSTING-RULE is decided'], ['D-LINE-WORKSPACE', 'D-COSTING-RULE']),
+    MS7('M-6', 'Delivery lines: weekly, minutes, issues, changes, emergencies, escalations, leadership report, release, hypercare, archive, handover and closure',
+        ['FE-LINE-WEEKLY', 'FE-LINE-MINUTES', 'FE-ISSUE', 'FE-CHANGE', 'FE-EMERGENCY-ESCALATION', 'FE-LEADERSHIP-REPORT', 'FE-DELIVERY-RELEASE', 'FE-DELIVERY-HYPERCARE-ARCHIVE', 'FE-DELIVERY-CLOSURE'],
+        ['Every board of SCR-25, 28, 30, 31, 33, 43-52 passes the design-fidelity check on the contract mock', 'SCR-31 decision and authorise pass once D-CHANGE-DECIDERS is decided'], ['D-LINE-WORKSPACE', 'D-CHANGE-DECIDERS', 'D-DECISION-VARIANTS']),
+    MS7('M-7', 'Finance lines, payroll, payments and receipts',
+        ['T-RECEIVABLES', 'FE-FIN-PAYROLL-IMPORT', 'FE-FIN-PAYROLL-CORRECTIONS', 'FE-FIN-PAYROLL-RUN', 'FE-FIN-ACCOUNTS-INTAKE', 'FE-FIN-ACCOUNTS-PUBLISH', 'FE-FIN-SCHEDULES', 'FE-FIN-PPE', 'FE-FIN-FORECAST', 'FE-FIN-BU', 'FE-FIN-LEDGER', 'FE-PAYMENTS', 'FE-PAYMENTS-RECEIPT'],
+        ['Every Finance canvas board of SCR-09, 18, 20, 32, 37, 53-59 passes the design-fidelity check', 'A-PAYROLL and A-RECEIVABLES pass; the receipt write once D-RECEIPT-ALLOCATION is decided'], ['D-LINE-WORKSPACE', 'D-RECEIPT-ALLOCATION', 'D-RETURN', 'D-DECISION-VARIANTS']),
+    MS7('M-8', 'Sign-in', ['FE-SIGNIN'], ['A-SIGNIN passes once D-SIGNIN is decided'], ['D-SIGNIN', 'D-AUTH']),
+]
+for r in requirements:
+    if r['id'] == 'R-EXCEPTION': r['coverage'] = 'E-WORK-ACTION, E-EXCEPTIONS / A-RECONCILE, A-RESUME, A-EXCEPTIONS-LIST'
+    if r['id'] == 'R-RESPONSE': r['coverage'] = 'E-EVIDENCE-UPLOAD, E-RESPONSE, E-RFP-OUTCOME, E-RFP-FOLLOWUP / A-RESPONSE, A-RFP-OUTCOME, A-RFP-FOLLOWUP'
+    if r['id'] == 'R-WORKITEM': r['coverage'] = 'E-WORK-ITEM, E-WORK-HISTORY, E-WORK-STEP / A-WORKITEM, A-HISTORY, A-WORKSPACE'
+    if r['id'] == 'R-START': r['coverage'] = 'E-LINES, E-LINE-OPTIONS, E-WORK-START, E-WORK-ASSIGN / A-START, A-START-INTAKE, A-ASSIGN'
+    if r['id'] == 'R-PROJECT': r['coverage'] = 'E-PROJECTS, E-PROJECT, E-PROJECT-TAB, E-DOCUMENT, E-CLIENTS, E-CLIENT, E-CLIENT-CONTACT / A-PROJECT, A-PROJECT-TABS, A-PROJECTS-VIEW, A-CLIENTS'
+    if r['id'] == 'R-FINANCE': r['coverage'] = 'E-MONTH-END, E-IMPORT, E-PAYROLL-MATCH, E-INVOICES, E-RECEIPT, E-WORK-STEP / A-MONTHEND, A-MONTHEND-VIEW, A-PAYROLL, A-RECEIVABLES, A-WORKSPACE'
+    if r['id'] == 'R-SETUP': r['coverage'] = 'E-SETUP-RULES, E-SETUP-RULE-SAVE, E-PEOPLE, E-DELEGATION, E-DELEGATIONS, E-TEMPLATES, E-TEMPLATE-VERSION, E-PERSON-ROLES, E-INVITE, E-DEACTIVATE, E-COSTING-RULE / A-SETUP, A-SETUP-RULES-VIEW, A-DELEGATIONS, A-TEMPLATE-VERSION, A-PEOPLE-ADMIN, A-COSTING-RULE'
+    if r['id'] == 'R-ALERTS': r['coverage'] = 'E-NOTIFICATIONS, E-NOTIFICATION-READ, E-ALERT-PREFS, E-ALERT-PREFS-READ / A-ALERTS, A-ALERT-PREFS, A-NOTIFICATIONS'
+    if r['id'] == 'R-ASSISTANT': r['coverage'] = 'E-CONVERSATION-NEW, E-CONVERSATIONS, E-MESSAGE, E-CONVERSATION, E-MENTION-OPTIONS / A-ASSISTANT, A-ASSISTANT-THREADS'
+for j in journeys:
+    if j['id'] == 'JR-03': j['refs'] = j['refs'] + ['E-RFP-FOLLOWUP']
+    if j['id'] == 'JR-05': j['refs'] = j['refs'] + ['E-WORK-STEP']
+for v in views:
+    if v['id'] == 'V-DATA':
+        v['nodes'] = v['nodes'] + ['REC-CLIENT']; v['refs'] = v['nodes']; v['edges'].append({'from': 'REC-CLIENT', 'to': 'REC-CASE', 'label': 'has cases (proposed)'})
+        v['notes'] += ' v7 proposes REC-CLIENT (client and billing contact).'
 
 model = {
     'schema_version': '1.0', 'pins': {'skill': '0.1.0', 'generator': '0.1.0'},
