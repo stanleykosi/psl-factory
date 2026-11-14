@@ -348,9 +348,9 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "537607ea51f692ca919bf24525202183a00e8297",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/alerts.spec.ts",

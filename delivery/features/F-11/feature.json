@@ -1032,9 +1032,9 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "622819d847b0a5edad9d6098eff8e440b0710a52",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/OVERNIGHT-DECISIONS.md",
