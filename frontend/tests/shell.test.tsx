@@ -332,8 +332,6 @@ describe('phone back link', () => {
     expect(phoneBar().querySelector('.shell-phonenote')).toBeNull();
   });
 
-<<<<<<< HEAD
-=======
   it('the note stays at the right edge of the bar when the SAMPLE DATA tag follows it (TECH-3-2)', async () => {
     vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
     function NotePage() {
@@ -356,7 +354,6 @@ describe('phone back link', () => {
     expect(css).toMatch(/\.shell-phonenote\s*\{[^}]*margin-left:\s*auto/);
   });
 
->>>>>>> origin/dlv-00-delivery-setup
   it('swapping to a different sub-page never commits the old link for the new page', async () => {
     function ProjectPage() {
       usePhoneBack({ label: 'Projects', href: '/projects' });
