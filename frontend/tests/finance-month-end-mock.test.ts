@@ -20,7 +20,7 @@ const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
 const v4 = ajv.compile(schemaOf(OPENAPI_PATH, '200'));
 const v4Error = ajv.compile(schemaOf(OPENAPI_PATH, '403'));
-// v7 (proposal D-MONTH-END-VIEW r1) is read by this test only; the mock and the app stay on v4.
+// OPENAPI_PATH is now v7, so "v4" below is the v7 contract with the proposal keys stripped; the default body is valid as served too.
 const v7 = ajv.compile(schemaOf(join(__dirname, '../../architecture/packages/v7/openapi.json'), '200'));
 
 const fixtures = join(__dirname, '../mock/fixtures');
@@ -79,7 +79,6 @@ describe('E-MONTH-END mock', () => {
       expect(v4(contractBody(body)), ajv.errorsText(v4.errors)).toBe(true);
       expect(body).not.toHaveProperty('sample');
     }
-    expect(v4(read('E-MONTH-END.json'))).toBe(false);
   });
 
   it('contractBody strips exactly the proposal keys', () => {
