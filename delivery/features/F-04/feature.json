@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-04",
   "outcome": "Decide one exact version: approve, return or reject, with stale and cannot-act views",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DECIDE"
   ],
@@ -136,8 +136,419 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Uncertain effect left unreconciled when the reload fails. Expected (spec \"Network or 5xx is an uncertain effect\", AGENTS.md \"reconcile uncertain effects before retrying\"): the controls come back only when the reloaded task is still actionable at the same revision. Actual: `frontend/src/features/decide/useDecision.ts:184-186` sets `submit` to idle and then returns early when `reload()` gives a non-access `ApiError` (network, 5xx or 403). The view stays `{kind:'item'}` on the pre-decide item, and the claim stays `ready` under the same key. So Approve/Return/Reject are enabled again on a version whose decision may already be recorded. The notice beside them also says \"We've reloaded this item\", which is not true here. A 403 on that GET is not treated as lost access either (`ACCESS_LOST` holds only unauthenticated and not_found). Fix: when the reload fails, do not re-enable the controls. For example, show the load error card, or the no-access view for 403/404 (as `toStale` already does at lines 78-81), so that Try again re-reads the item first. Add a test in which the decide and the reload both fail, asserting that no enabled decision control remains.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The done view turns an unexpected verdict into \"approved\". `frontend/src/features/decide/DecideStates.tsx:221`: `result.verdict in VERDICT_WORDS ? result.verdict : 'approve'`. If the response echoes anything other than the three verdicts (the contract types `verdict` as a plain string), the page shows \"<label> is approved\", the success callout and the Paid line. Use the verdict the client sent, which `decide()` already knows, rather than defaulting to approve.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After an uncertain effect, the stale check compares against the item's revision, not the claim's. `useDecision.ts:188` tests `now.revision !== task.revision`. Under the spec's assumption that the backend may bump the revision on claim, an undecided task reloads at the claim revision and is shown as \"A newer version arrived\" with the same version number on both sides. It is safe, but it is the wrong view. Compare with `claim.revision` instead.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "build.md \"Not built\" says \"`revoke` \u2026 The mock returns 422 for it\". The mock (`frontend/mock/server.mjs`, `taskResponse`) returns 422 only when the note is missing or blank. With a valid note it returns 501 `not_mocked`, as spec.md requires and `mock-decide.test.ts` \"revoke with a note is not mocked\" asserts. Correct the report.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Chain header reads \"1 steps\" for a single-step chain (W-1203, W-1204; spec says \"<step_count> steps\"). Expected: \"1 step\". Actual: ungrammatical. Fix with a plural rule in the chain header in `frontend/src/features/decide/DecisionContent.tsx`, and update the spec line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The already-decided view (W-1205) shows \"Waiting for Finance Lead\" above a chain whose only step is Approved, then \"Nobody has been asked yet.\" Both contradict \"This decision has already been made.\" The spec's read-only panel copy causes it. Suggest dropping \"Waiting for <role>\" and the Asked list when `cannot_act_reason` is `already_decided`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The \"Add a note to return or reject.\" error has no `role=\"alert\"` or `aria-describedby` link to the textarea. Focus does move to the textarea, but a screen reader may not announce the cause. Suggest linking it with `aria-describedby` and `aria-invalid`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Mock-only: the persona is always Ada Okafor (Finance Lead), so W-1203 (not_your_role) says \"This decision needs a Finance Lead\" to a Finance Lead. The board's viewer is Bisi (Finance). Not a defect in the real app, but it can confuse a demo. Consider a persona switch in a later round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Approve is filled green, not action blue. The approved boards `design/canvas/project/SCR-03-desktop.dc.html` and `SCR-03-mobile.dc.html` set \"Approve v2\" on `#2459D6` (action), and `design/system/project/components/Button/README.md` makes Approve a Primary (action blue) button, reserving Confirm (green) for \"verified or complete\". The build uses `psl-btn--confirm`, which the bundle maps to `--verified` `#22764A`. Seen on the 1440 aside and the 390 action bar. Actual: `frontend/src/features/decide/DecidePanel.tsx:121` `psl-btn psl-btn--confirm psl-btn--lg psl-btn--block`. Expected: the default `psl-btn` (action blue) with the same size and full width, matching the board. The spec names `psl-btn--confirm`, but it does not record the colour as an approved deviation from the board; if the design owner wants green, the spec must record it first.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The done view does not match the approved done boards. `SCR-03-desktop-done.dc.html` and `SCR-03-mobile-done.dc.html` show a green-tinted success banner (verified tint and border), the eyebrow \"YOU APPROVED \u00b7 10:47\" in verified green and the heading \"Invoice v2 for Lagoon Health is approved\" in verified ink. The build renders the eyebrow in `.decide-eyebrow` (`--signal-ink`, the alarm colour) on the plain steel background, with the h1 in ink and no banner. Actual: `frontend/src/features/decide/DecideStates.tsx` DoneView (lines 220-236) with `DecideHeader` and `frontend/src/features/decide/decide.css:15`. Expected: a `psl-callout--success`-style banner (`--verified-tint`, `--verified-ink`) around the done header for the approve verdict, with the eyebrow in verified ink. Re-check the return and reject done states against the design owner's intent (no board exists for them).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The cannot-act chain reads \"1 steps\" (W-1203 and W-1204, desktop and phone), from `frontend/src/features/decide/DecisionContent.tsx:119` `${chain.step_count} steps`. The spec text is literal, but \"1 step\" reads correctly; this is copy, so route to product if the spec wording is kept.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The phone Approve is 50px (`psl-btn--lg`, `DecidePanel.tsx`). The Button README and the phone board use `control-xl` 54px for phone footers. It meets the 44px rule, so this is a small size deviation only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-1206 chain step 3 renders \"CEO \u00b7 Not assigned yet (you)\". A step with no person and `is_you: true` reads as a contradiction. Adjust the fixture so \"(you)\" only follows a named person.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Uncertain decide effect re-arms the controls without reconciling. Expected (AGENTS.md \"reconcile uncertain effects before retrying\"; spec E-TASK-DECIDE: controls come back only \"if the reloaded task is still actionable at the same revision\"): when a decide gets a network or 5xx error and the single reload also fails with a network or server error, the buttons stay disabled and the copy says the item could not be checked, with a Try again that only reloads the item (a GET, never a resend). Actual: `reload()` returns the ApiError, then `setSubmit({status:'idle'})` runs and the function returns. The view stays `item` and the claim stays `ready`, so Approve, Return and Reject are enabled again on the old snapshot. The notice still says \"We've reloaded this item so you can see whether it was recorded.\" (DecideView.tsx:25), which is not true here. A second tap is deliberate and the backend's revision check should answer 409 if the first decision landed, but that check is unproved here and the UI should not depend on it. No test covers reload failure after an uncertain decide; tests/decide.test.tsx:467 covers only a reload that succeeds. Path: frontend/src/features/decide/useDecision.ts:182-186.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-2",
+      "round": 1,
+      "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The done view can claim an approval the server did not report. `DoneView` maps any `result.verdict` that is not one of its three keys to `'approve'` (`result.verdict in VERDICT_WORDS ? \u2026 : 'approve'`), so an unexpected echo (for example `revoke`) would show \"YOU APPROVED\" and \"<label> is approved\". The `in` operator also matches inherited keys (`constructor`), which would crash the render. Expected: use the verdict the client sent, or show a neutral \"Decision recorded\" when the echo does not match, and check with `Object.hasOwn`. Path: frontend/src/features/decide/DecideStates.tsx:221.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-04/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-14T01:26:33Z",
+          "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+          "evidence_refs": [
+            "delivery/features/F-04/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-04/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+          "evidence_refs": [
+            "delivery/features/F-04/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer, round 1 (visual review against the approved SCR-03 boards and the design system)",
+          "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+          "evidence_refs": [
+            "delivery/features/F-04/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+          "evidence_refs": [
+            "delivery/features/F-04/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -267,7 +678,7 @@
     }
   },
   "created_at": "2026-11-13T22:44:58Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 3,
   "history": [
     {
@@ -293,6 +704,22 @@
       "round": 1,
       "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-14T01:26:33Z",
+      "round": 1,
+      "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T01:26:33Z",
+      "round": 2,
+      "head": "86aefc6d97a27dcb0f7c0801c9edce099038752d",
+      "reason": null
     }
   ],
   "routing": {
@@ -309,10 +736,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "86aefc6d97a27dcb0f7c0801c9edce099038752d"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
