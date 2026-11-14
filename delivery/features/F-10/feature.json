@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-10",
   "outcome": "A Finance Lead opens Month-end for October 2026 and sees every task, known cash plus Unknown, and the next action",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-FINANCE"
   ],
@@ -104,11 +104,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA (round 2, UI-only feature against the contract mock)",
+      "snapshot_ref": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "evidence_refs": [
+        "delivery/features/F-10/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -557,6 +559,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-14T07:08:56Z",
+      "round": 2,
+      "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-14T07:16:43Z",
       "round": 2,
       "head": "752ab93e4edc6fe7f3b9f85c410b377cff051bc9",
       "reason": null
