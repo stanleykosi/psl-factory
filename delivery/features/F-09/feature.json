@@ -116,11 +116,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance (delivery acceptance only; product acceptance, design-exception approval, merge and release keep their own authorities)",
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -559,6 +561,121 @@
           "action": "add",
           "by": "reviewer-qa",
           "at": "2026-11-14T08:59:43Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Criterion 19 (design fidelity: 100% coverage after approved exceptions and visual score at least 90) is only partly evidenced. Desktop SCR-16 passes on all four boards (UI review: 95.4, 96.5, 94.1, 92.7) and phone success passes (95.2). Phone default (80.7), validation (73.2) and SOW signed (89.4) stay under 90 because of D-32: the spec requires \"When they responded\", Note and the attestation on the phone, and the boards do not draw them. The 100% coverage figure depends on the exception requests in `round-1/fidelity/exception-requests.json`, none of which the design engineer has approved; round-2/fidelity has no file of its own. Authority: the design engineer (D-32 is already logged as held in OVERNIGHT-DECISIONS.md:25). Expected before merge: rule on D-32 and the exception set, or redraw the three phone boards. The sworn fields must not be removed to raise the score. Not blocking delivery acceptance, because the gap comes from a drawn-versus-required conflict and no builder action can close it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The SCR-02 awaiting-reconciliation and waiting boards score 50.9 to 63.8. They score F-03's work item page, not F-09's panel or button (PMO-0-6; D-25). They were run for the record only. Raise against F-03 or the work item lane. Coverage on the F-09-owned panel and button was reported as 100% with exceptions.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, so the operation mapping (E-EVIDENCE-UPLOAD, E-TASK-CLAIM, E-RESPONSE, E-WORK-ACTION, E-WORK-ITEM) lives only in readiness.md and spec.md. The record also still reads `completion: blocked` and `component_readiness` NOT_ASSESSED. Fill in `operation_ids` when the record is updated. This does not change the code.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open non-blocking items carried forward, none to be fixed in this round:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
+          "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Contract status for the merge decision. D-RESPONSE-VIEW r2 and D-WORK-ACTIONS-VIEW r2 are `proposed` and count only under the design engineer's recorded exception: contract mock only, the backend may change or refuse any field. build.md lists the one widening cast (`api as unknown as Client<ResponsePaths>` in api.ts) and the v7 constant `RESPONSE_OPENAPI_PATH`. Whichever of F-09 and F-13 rebases second must remove both. No claim of backend or released behaviour has been made.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-09/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-14T09:04:44Z",
           "head": "14d6953dd4a39c4ceed7f77dba5a77fb2ecf65cb"
         }
       ]
