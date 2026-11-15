@@ -89,7 +89,7 @@ test.describe('desktop 1440', () => {
     await expect(rows.locator('td:nth-child(3) .psl-tag')).toHaveText(['WAITING', 'NEEDS FINANCE DECISION', 'DONE', 'WAITING', 'DONE', 'WAITING', 'WAITING ON HR']);
     await expect(rows.nth(1).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--person');
     await expect(rows.nth(2).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--done');
-    await expect(rows.nth(6).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--neutral');
+    await expect(rows.nth(6).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--waiting');
     await expect(rows.nth(0)).toContainText('Access Bank statement missing');
     await expect(rows.nth(0)).toContainText('2 of 3 accounts imported');
 
