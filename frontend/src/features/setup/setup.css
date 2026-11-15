@@ -83,3 +83,24 @@
 }
 
 .setup-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* templates: the muted lines under a name, the link-style upload control, the inline upload panel */
+.setup-table--templates { min-width: 760px; }
+.setup-docname { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.setup-name:focus { outline: none; }
+.setup-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.setup-meta { font-size: 12px; color: var(--ink-muted); }
+.setup-line { font-size: 13px; }
+.setup-search { flex: 1 1 320px; max-width: 460px; }
+.setup-counts { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+/* the board's link, as a button; the 44px target is carried by negative margins so the row keeps its height */
+.setup-linkbtn { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; min-height: 44px; margin: -12px 0; color: var(--action); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.setup-linkbtn:hover { color: var(--action-ink); }
+.setup-linkbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.setup-upload { display: flex; flex-direction: column; gap: 12px; padding: 12px; border: 2px solid var(--action); background: var(--surface); }
+.setup-upload-row > td { background: var(--surface-subtle); }
+.setup-upload__head { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 16px; font-stretch: 112%; }
+.setup-upload__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.setup-fileinput { padding-top: 8px; padding-bottom: 8px; }
+.setup-card .psl-btn { align-self: stretch; }
+.setup-card .setup-upload { margin-top: 6px; }

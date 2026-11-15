@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import { ReservedTab } from '@/features/setup/ReservedTab';
+import { TemplatesPageView } from '@/features/setup/TemplatesView';
 
 export const metadata: Metadata = { title: 'Templates · Setup · PSL Factory' };
 
 export default function Page() {
-  return <ReservedTab tab="templates" />;
+  return <TemplatesPageView />;
 }
